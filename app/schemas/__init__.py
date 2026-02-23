@@ -6,7 +6,5 @@ class AgentRequest(BaseModel):
 
 
 class AgentResponse(BaseModel):
-    sql: str
-    query_results: list[dict]
-    enrichments: dict
-    summary: str
+    study_accession: str = ""
+    subject_results: list[dict] = []

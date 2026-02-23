@@ -7,12 +7,18 @@ from pathlib import Path
 SUPPORTED_EXTENSIONS = {".txt", ".csv", ".json"}
 
 
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+
+
 def read_file(file_path: str) -> str:
     """Read a file and return its content as a string suitable for an LLM prompt.
 
-    Supports .txt, .csv, and .json files.
+    Supports .txt, .csv, and .json files.  Relative paths are resolved from
+    the project root (the directory containing app/).
     """
     path = Path(file_path)
+    if not path.is_absolute():
+        path = PROJECT_ROOT / path
 
     if not path.exists():
         raise FileNotFoundError(f"File not found: {file_path}")
