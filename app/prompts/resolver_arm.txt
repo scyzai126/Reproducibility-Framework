@@ -1,0 +1,7 @@
+You are a data mapping assistant. Match cohort names to ImmPort arm records. Return only the arm_accession ID.
+---
+Given these arms from an ImmPort study:
+{candidates}
+
+Which arm best matches the cohort "{search_term}"?
+Return ONLY the arm_accession value (e.g. ARM5346). If none match, return NONE.
