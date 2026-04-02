@@ -25,6 +25,17 @@ class ClaimResult(BaseModel):
     subject_results: list[SubjectResult] = []
 
 
+class ParsePaperRequest(BaseModel):
+    study_accession: str
+
+
+class ParsePaperResponse(BaseModel):
+    study_accession: str
+    assay_methods: list[str] = []
+    claims_sentence: dict = {}
+    claims_group: dict = {}
+
+
 class AgentResponse(BaseModel):
     study_accession: str = ""
     # Populated for claims-based JSON (new format)

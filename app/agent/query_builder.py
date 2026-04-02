@@ -56,8 +56,7 @@ VIEW_FILTERS = [
     # resolved accessions
     {"field": "arm_accession",        "col": "arm_accession",        "type": "eq"},
     {"field": "experiment_accession", "col": "experiment_accession", "type": "eq"},
-    # biosample
-    {"field": "tissue_type",          "col": "tissue_type",          "type": "eq"},
+    # biosample — tissue_type handled separately in _build_query (type vs subtype)
     # immune exposure
     {"field": "disease",              "col": "`condition`",             "type": "eq"},
     {"field": "disease_stage",        "col": "disease_stage_preferred", "type": "eq"},
@@ -112,6 +111,7 @@ _TISSUE_TYPE_LLM_CONFIG = _make_config(
     "tissue_type", "biosample", "type",
     ["type"], "type",
 )
+
 
 _CONDITION_LLM_CONFIG = _make_config(
     "condition", "immune_exposure", "disease_preferred",
@@ -264,53 +264,95 @@ async def resolve_planned_visit_accession(
 
 async def resolve_tissue_type(
     session: AsyncSession, tissue_type: str, study_accession: str,
-) -> tuple[str, str] | None:
-    """Resolve a tissue/sample type → canonical biosample type value.
+) -> tuple[str, str, str] | None:
+    """Resolve a tissue/sample type → (canonical_value, method, matched_col).
 
-    Step 1: LIKE search on biosample.type for this study.
-    Step 2: LLM fallback using all distinct type values for the study.
+    Step 1: LIKE search on biosample.type — return on single hit.
+    Step 2: LIKE search on biosample.subtype — return on single hit.
+    Step 3: LLM fallback over all distinct type + subtype values combined.
+    matched_col is "type" or "subtype".
     """
     if not tissue_type or not study_accession:
         return None
 
-    # Step 1: fuzzy LIKE match
+    pattern = f"%{tissue_type}%"
+
+    # ── Step 1: fuzzy search on biosample.type ────────────────────────────
     result = await session.execute(
         text(
             "SELECT DISTINCT type FROM biosample "
-            "WHERE study_accession = :sa "
-            "AND type LIKE :pattern "
-            "AND type IS NOT NULL"
+            "WHERE study_accession = :sa AND type LIKE :pattern AND type IS NOT NULL"
         ),
-        {"sa": study_accession, "pattern": f"%{tissue_type}%"},
+        {"sa": study_accession, "pattern": pattern},
     )
     rows = [r[0] for r in result.fetchall() if r[0]]
-
     if len(rows) == 1:
-        logger.info("Tissue type resolved via SQL: %r → %r", tissue_type, rows[0])
-        return (rows[0], "SQL")
+        logger.info("Tissue type resolved via SQL (type): %r → %r", tissue_type, rows[0])
+        return (rows[0], "SQL", "type")
 
-    # Step 2: LLM fallback — fetch all distinct type values for the study
-    logger.info(
-        "SQL tissue_type match returned %d rows for %r; falling back to LLM",
-        len(rows), tissue_type,
+    # ── Step 2: fuzzy search on biosample.subtype ─────────────────────────
+    logger.info("SQL type match returned %d rows for %r; trying subtype", len(rows), tissue_type)
+    result = await session.execute(
+        text(
+            "SELECT DISTINCT subtype FROM biosample "
+            "WHERE study_accession = :sa AND subtype LIKE :pattern AND subtype IS NOT NULL"
+        ),
+        {"sa": study_accession, "pattern": pattern},
     )
+    rows = [r[0] for r in result.fetchall() if r[0]]
+    if len(rows) == 1:
+        logger.info("Tissue type resolved via SQL (subtype): %r → %r", tissue_type, rows[0])
+        return (rows[0], "SQL", "subtype")
+
+    # ── Step 3: LLM fallback over combined type + subtype values ──────────
+    logger.info("SQL subtype match returned %d rows for %r; falling back to LLM", len(rows), tissue_type)
     all_result = await session.execute(
         text(
-            "SELECT DISTINCT type FROM biosample "
-            "WHERE study_accession = :sa AND type IS NOT NULL"
+            "SELECT DISTINCT type, subtype FROM biosample "
+            "WHERE study_accession = :sa AND (type IS NOT NULL OR subtype IS NOT NULL)"
         ),
         {"sa": study_accession},
     )
-    all_candidates = [{"type": r[0]} for r in all_result.fetchall() if r[0]]
+    candidates = []
+    for row in all_result.fetchall():
+        if row[0]:
+            candidates.append({"value": row[0], "col": "type"})
+        if row[1]:
+            candidates.append({"value": row[1], "col": "subtype"})
+    # deduplicate
+    seen = set()
+    candidates = [c for c in candidates if (c["value"], c["col"]) not in seen and not seen.add((c["value"], c["col"]))]
 
-    if not all_candidates:
-        logger.warning("No biosample type values found for study %s", study_accession)
+    if not candidates:
+        logger.warning("No biosample type/subtype values found for study %s", study_accession)
         return None
 
-    resolved = await _llm_resolve(tissue_type, all_candidates, _TISSUE_TYPE_LLM_CONFIG)
-    if resolved:
-        return (resolved, "LLM")
-    return None
+    system_prompt, user_template = _load_resolver_prompt("tissue_type")
+    prompt = user_template.format(candidates=json.dumps(candidates, indent=2), search_term=tissue_type)
+    client = _get_openai_client()
+    response = await client.chat.completions.create(
+        model=settings.OPENAI_MODEL,
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": prompt},
+        ],
+        temperature=0,
+        max_tokens=50,
+    )
+    answer = response.choices[0].message.content.strip()
+    if answer.upper() == "NONE" or "|" not in answer:
+        logger.warning("LLM returned no tissue match for %r: %r", tissue_type, answer)
+        return None
+
+    value, _, col = answer.partition("|")
+    value = value.strip()
+    col = col.strip()
+    if col not in ("type", "subtype") or not value:
+        logger.warning("LLM returned unexpected tissue format %r for %r", answer, tissue_type)
+        return None
+
+    logger.info("Tissue type resolved via LLM (%s): %r → %r", col, tissue_type, value)
+    return (value, "LLM", col)
 
 
 async def resolve_condition(
@@ -506,6 +548,13 @@ def _build_query(group: dict) -> tuple[str, dict]:
             where_clauses.append(f"sdv.{col} <= :{param_key}")
             params[param_key] = value
 
+    # tissue_type: column depends on which biosample column matched during resolution
+    tissue_val = group.get("tissue_type") or ""
+    if tissue_val:
+        sdv_col = "tissue_subtype" if group.get("tissue_matched_col") == "subtype" else "tissue_type"
+        where_clauses.append(f"sdv.{sdv_col} = :tissue_type")
+        params["tissue_type"] = tissue_val
+
     sql = (
         "SELECT DISTINCT\n"
         "  sdv.expsample_accession,\n"
@@ -619,7 +668,7 @@ async def _resolve_group(
             return await resolve_tissue_type(s, tissue_type, study_accession)
 
     async def _pv():
-        if not (time_point and study_accession and study_design == "longitudinal"):
+        if not (time_point and study_accession):
             return None
         async with session_factory() as s:
             return await resolve_planned_visit_accession(s, time_point, study_accession)
@@ -658,10 +707,11 @@ async def _resolve_group(
         group["study_accession"] = study_accession
 
     if tissue_result:
-        resolved_tissue, method = tissue_result
+        resolved_tissue, method, matched_col = tissue_result
         group["tissue_type"] = resolved_tissue
-        resolution_log["tissue_type"] = {"value": resolved_tissue, "method": method}
-        logger.info("Resolved tissue_type %r → %r for group %s", tissue_type, resolved_tissue, group_id)
+        group["tissue_matched_col"] = matched_col
+        resolution_log["tissue_type"] = {"value": resolved_tissue, "method": method, "matched_column": matched_col}
+        logger.info("Resolved tissue_type %r → %r (column: %s) for group %s", tissue_type, resolved_tissue, matched_col, group_id)
     else:
         group["tissue_type"] = ""
 
@@ -769,7 +819,7 @@ async def resolve_and_build_queries(
                 return await resolve_tissue_type(s, tissue_type, study_accession)
 
         async def _pv():
-            if not (time_point and study_accession and study_design == "longitudinal"):
+            if not (time_point and study_accession):
                 return None
             async with session_factory() as s:
                 return await resolve_planned_visit_accession(s, time_point, study_accession)
@@ -816,9 +866,10 @@ async def resolve_and_build_queries(
         if study_accession:
             group["study_accession"] = study_accession
         if tissue_result:
-            resolved_tissue, method = tissue_result
+            resolved_tissue, method, matched_col = tissue_result
             group["tissue_type"] = resolved_tissue
-            resolution_log["tissue_type"] = {"value": resolved_tissue, "method": method}
+            group["tissue_matched_col"] = matched_col
+            resolution_log["tissue_type"] = {"value": resolved_tissue, "method": method, "matched_column": matched_col}
         else:
             group["tissue_type"] = ""
         if pv_result:
