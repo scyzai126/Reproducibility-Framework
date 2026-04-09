@@ -16,6 +16,7 @@ export default function Home() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [prefillText, setPrefillText] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -110,7 +111,7 @@ export default function Home() {
     }
   };
 
-  const handleFileUpload = async (file: File) => {
+  const handleFileUpload = async (file: File, question?: string) => {
     const userMsgId = crypto.randomUUID();
     const assistantMsgId = crypto.randomUUID();
 
@@ -121,7 +122,7 @@ export default function Home() {
     const userMsg: ChatMessage = {
       id: userMsgId,
       role: 'user',
-      content: pastedText,
+      content: question || pastedText,
       filename: file.name,
       timestamp: new Date().toISOString(),
     };
@@ -139,7 +140,7 @@ export default function Home() {
     setIsAnalyzing(true);
 
     try {
-      const result = await runAgentUpload(file);
+      const result = await runAgentUpload(file, question);
 
       const finalMessages = withLoading.map((m) =>
         m.id === assistantMsgId ? { ...m, isLoading: false, result } : m
@@ -200,9 +201,9 @@ export default function Home() {
             <div className="w-14 h-14 rounded-full bg-emerald-600 flex items-center justify-center text-white text-xl font-bold mb-5">
               AI
             </div>
-            <h1 className="text-3xl font-semibold text-gray-800 mb-2">ImmTrace</h1>
+            <h1 className="text-3xl font-semibold text-gray-800 mb-2">ClaimRepro</h1>
             <p className="text-gray-500 text-base mb-8">
-              Upload an ImmPort signature JSON file, or ask a question in plain text
+              Ask questions about a study you're interested in
             </p>
 
             {/* Example questions */}
@@ -210,18 +211,14 @@ export default function Home() {
               <p className="text-xs text-gray-400 uppercase tracking-wide mb-3">Example questions</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {[
-                  'In SDY1669, find all healthy subjects with plasma samples analyzed by Olink',
-                  'In SDY1669, find COVID-19 subjects with PBMC samples analyzed by CITE-seq',
-                  'In SDY1669, find all female subjects',
-                  'In SDY1669, find healthy female subjects with plasma samples',
-                  'In SDY1669, find COVID-19 subjects from the Atlanta cohort',
-                  'In SDY1669, find all subjects with PBMC samples analyzed by CITE-seq',
+                  'For this paper, find all the healthy subjects with plasma samples analyzed by Olink: https://pmc.ncbi.nlm.nih.gov/articles/PMC7665312/',
+                  'Find healthy subjects with plasma samples analyzed by Olink in SDY1669',
                 ].map((q) => (
                   <button
                     key={q}
-                    onClick={() => handleTextMessage(q)}
+                    onClick={() => setPrefillText(q)}
                     disabled={isAnalyzing}
-                    className="text-left px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-600 hover:border-emerald-400 hover:text-emerald-700 hover:bg-emerald-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="text-left px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-600 hover:border-emerald-400 hover:text-emerald-700 hover:bg-emerald-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed select-text break-all whitespace-normal"
                   >
                     {q}
                   </button>
@@ -230,9 +227,9 @@ export default function Home() {
             </div>
 
             <div className="w-full max-w-2xl">
-              <ChatInput onFileUpload={handleFileUpload} onTextSubmit={handleTextMessage} disabled={isAnalyzing} />
+              <ChatInput onFileUpload={handleFileUpload} onTextSubmit={handleTextMessage} disabled={isAnalyzing} prefill={prefillText} />
               <p className="text-center text-xs text-gray-400 mt-3">
-                Accepts .json signature files · drag &amp; drop supported
+                Accepts .pdf (PMC&lt;id&gt;.pdf) or .json · drag &amp; drop supported
               </p>
             </div>
           </div>
@@ -251,7 +248,7 @@ export default function Home() {
             {/* Input bar */}
             <div className="flex-shrink-0 px-4 pb-6">
               <div className="max-w-3xl mx-auto">
-                <ChatInput onFileUpload={handleFileUpload} onTextSubmit={handleTextMessage} disabled={isAnalyzing} />
+                <ChatInput onFileUpload={handleFileUpload} onTextSubmit={handleTextMessage} disabled={isAnalyzing} prefill={prefillText} />
                 <p className="text-center text-xs text-gray-400 mt-2">
                   Upload another file to run a new analysis
                 </p>

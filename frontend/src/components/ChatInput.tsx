@@ -1,21 +1,34 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 
 interface Props {
-  onFileUpload: (file: File) => void;
+  onFileUpload: (file: File, question?: string) => void;
   onTextSubmit: (text: string) => void;
   disabled?: boolean;
+  prefill?: string;
 }
 
 function isJson(s: string): boolean {
   try { JSON.parse(s); return true; } catch { return false; }
 }
 
-export default function ChatInput({ onFileUpload, onTextSubmit, disabled }: Props) {
+export default function ChatInput({ onFileUpload, onTextSubmit, disabled, prefill }: Props) {
   const fileRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [text, setText] = useState('');
+
+  useEffect(() => {
+    if (prefill) setText(prefill);
+  }, [prefill]);
+
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 200) + 'px';
+  }, [text]);
 
   const canSend = !disabled && (!!selectedFile || text.trim().length > 0);
 
@@ -31,8 +44,9 @@ export default function ChatInput({ onFileUpload, onTextSubmit, disabled }: Prop
     if (!canSend) return;
 
     if (selectedFile) {
-      onFileUpload(selectedFile);
+      onFileUpload(selectedFile, text.trim() || undefined);
       setSelectedFile(null);
+      setText('');
       if (fileRef.current) fileRef.current.value = '';
     } else if (text.trim()) {
       if (isJson(text.trim())) {
@@ -57,7 +71,7 @@ export default function ChatInput({ onFileUpload, onTextSubmit, disabled }: Prop
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     const file = e.dataTransfer.files?.[0];
-    if (file && file.name.endsWith('.json')) {
+    if (file && (file.name.endsWith('.json') || file.name.endsWith('.pdf') || file.name.endsWith('.txt'))) {
       setSelectedFile(file);
       setText('');
     }
@@ -95,7 +109,7 @@ export default function ChatInput({ onFileUpload, onTextSubmit, disabled }: Prop
         <input
           type="file"
           ref={fileRef}
-          accept=".json"
+          accept=".json,.pdf,.txt"
           className="hidden"
           onChange={handleFileChange}
         />
@@ -104,7 +118,7 @@ export default function ChatInput({ onFileUpload, onTextSubmit, disabled }: Prop
           onClick={() => fileRef.current?.click()}
           disabled={disabled}
           className="p-2 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
-          title="Upload JSON file"
+          title="Upload PDF or JSON file"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" />
@@ -112,25 +126,21 @@ export default function ChatInput({ onFileUpload, onTextSubmit, disabled }: Prop
         </button>
 
         <textarea
-          value={selectedFile ? '' : text}
-          onChange={(e) => { if (!selectedFile) setText(e.target.value); }}
+          ref={textareaRef}
+          value={text}
+          onChange={(e) => setText(e.target.value)}
           onKeyDown={handleKeyDown}
-          disabled={disabled || !!selectedFile}
+          disabled={disabled}
           rows={1}
           placeholder={
             disabled
               ? 'Analyzing…'
               : selectedFile
-              ? 'File attached — press Enter or click ↑ to analyze'
-              : 'Paste JSON here, or upload a file with the 📎 button…'
+              ? 'Optional: ask a question about this paper…'
+              : 'Upload a paper with the 📎 button, or ask a question…'
           }
           className="flex-1 bg-transparent outline-none text-gray-800 placeholder-gray-400 text-sm resize-none overflow-hidden leading-6 disabled:cursor-default"
           style={{ minHeight: '24px', maxHeight: '200px' }}
-          onInput={(e) => {
-            const el = e.currentTarget;
-            el.style.height = 'auto';
-            el.style.height = Math.min(el.scrollHeight, 200) + 'px';
-          }}
         />
 
         <button
