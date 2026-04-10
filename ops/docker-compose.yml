@@ -1,0 +1,47 @@
+version: "3.9"
+
+services:
+  db:
+    image: mysql:8.4
+    container_name: claim-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: claim_reproduce
+      MYSQL_USER: claim
+      MYSQL_PASSWORD: claim
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  api:
+    build:
+      context: ../apps/api
+      dockerfile: Dockerfile
+    container_name: claim-api
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    environment:
+      MYSQL_URL: mysql+aiomysql://claim:claim@db:3306/claim_reproduce
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+
+  web:
+    build:
+      context: ../apps/web
+      dockerfile: Dockerfile
+    container_name: claim-web
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_BACKEND_ORIGIN: http://api:8000
+    depends_on:
+      - api
+    ports:
+      - "3000:3000"
+
+volumes:
+  mysql_data:

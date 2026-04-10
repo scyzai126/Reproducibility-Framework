@@ -45,13 +45,13 @@ This is an AI agent that takes a **signature JSON** file (ImmPort study format) 
 ### Full stack
 
 ```
-frontend/          Next.js 15 + React 19 + Tailwind CSS (port 3000)
-app/               FastAPI backend (port 8000)
+apps/web/          Next.js 15 + React 19 + Tailwind CSS (port 3000)
+apps/api/app/      FastAPI backend (port 8000)
 ```
 
 The frontend proxies `/backend/*` → `http://localhost:8000/*` via `next.config.ts` rewrites, so both servers must be running.
 
-### Frontend components (`frontend/src/`)
+### Frontend components (`apps/web/src/`)
 
 ```
 app/
@@ -73,7 +73,7 @@ lib/
 
 Sessions (up to 20) persist in browser `localStorage` under key `chat_sessions`.
 
-### Backend pipeline (`app/agent/orchestrator.py:run_agent`)
+### Backend pipeline (`apps/api/app/agent/orchestrator.py:run_agent`)
 
 ```
 POST /agent/run-upload  (multipart file upload — used by the UI)
@@ -124,4 +124,4 @@ The UI renders this as a formatted JSON block in the assistant chat bubble.
 
 ### LLM prompt
 
-The description analyzer system prompt lives in `app/prompts/description_analyzer.txt` (not inline). Modify it there to change how groups are parsed from paper text.
+The description analyzer system prompt lives in `apps/api/app/prompts/description_analyzer.txt` (not inline). Modify it there to change how groups are parsed from paper text.

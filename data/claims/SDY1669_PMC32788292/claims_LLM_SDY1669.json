@@ -1,0 +1,249 @@
+{
+  "claim_1": {
+    "claim": "CyTOF analysis of PBMCs from 52 COVID-19 patients and 62 healthy controls showed a significant reduction in the frequency of plasmacytoid dendritic cells (pDCs) and decreased pS6 signaling in pDCs of infected individuals.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "There were several differences, but notably the frequency of plasmacytoid dendritic cells (pDCs) was significantly reduced in the PBMCs of SARS-CoV-2\u2013infected individuals in both cohorts."
+      },
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Additionally, there was reduced expression of pS6 [(phosphorylated ribosomal protein S6), a canonical target of mammalian target of rapamycin (mTOR) activation (15)] in pDCs."
+      },
+      {
+        "type": "text",
+        "section": "Methods",
+        "quote": "We used mass cytometry to assess immune responses to SARS-CoV-2 infection in 52 COVID-19 patients, who were confirmed positive for viral RNA by polymerase chain reaction (PCR), and 62 age- and gender-matched healthy controls distributed between the two cohorts."
+      }
+    ],
+    "comparison_strategy": "case_control",
+    "groups": [
+      {
+        "group_id": 0,
+        "assay_method": "CyTOF",
+        "tissue_type": "PBMC",
+        "sample_size": 52,
+        "disease": "COVID-19",
+        "disease_stage": null,
+        "cohort": null,
+        "gender": null,
+        "age": null,
+        "time_point": null
+      },
+      {
+        "group_id": 1,
+        "assay_method": "CyTOF",
+        "tissue_type": "PBMC",
+        "sample_size": 62,
+        "disease": "healthy",
+        "disease_stage": null,
+        "cohort": null,
+        "gender": null,
+        "age": null,
+        "time_point": null
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "significant reduction in the frequency of plasmacytoid dendritic cells (pDCs) and decreased pS6 signaling in pDCs of infected individuals"
+      }
+    ]
+  },
+  "claim_2": {
+    "claim": "Flow Cytometry analysis of PBMCs from COVID-19 patients showed reduced production of IFN-a and TNF-a in response to TLR stimulation in pDCs compared to healthy controls.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Consistent with our hypothesis, there was reduced production of IFN-a in response to the TLR stimuli in the pDCs of infected individuals compared with those of healthy controls."
+      },
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "The TNF-a response was also significantly reduced in the pDCs of infected individuals, which demonstrates that the pDCs are functionally impaired in COVID-19 infection."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 2A"
+      }
+    ],
+    "comparison_strategy": "case_control",
+    "groups": [
+      {
+        "group_id": 0,
+        "assay_method": "Flow Cytometry",
+        "tissue_type": "PBMC",
+        "sample_size": null,
+        "disease": "COVID-19",
+        "disease_stage": null,
+        "cohort": null,
+        "gender": null,
+        "age": null,
+        "time_point": null
+      },
+      {
+        "group_id": 1,
+        "assay_method": "Flow Cytometry",
+        "tissue_type": "PBMC",
+        "sample_size": null,
+        "disease": "healthy",
+        "disease_stage": null,
+        "cohort": null,
+        "gender": null,
+        "age": null,
+        "time_point": null
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "reduced production of IFN-a and TNF-a in response to TLR stimulation in pDCs"
+      }
+    ]
+  },
+  "claim_3": {
+    "claim": "ELISA analysis of plasma from COVID-19 patients showed increased levels of TNFSF14, EN-RAGE, and OSM, which correlated with disease severity.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "In addition to IL-6 and other cytokines described previously (10), we identified three proteins that were significantly enhanced in COVID-19 infection and strongly correlated with clinical severity (Fig. 3, bottom row). These were TNFSF14 [LIGHT, a ligand of lymphotoxin B receptor that is highly expressed in human lung fibroblasts and implicated in lung tissue fibrosis and remodeling and inflammation (20)], EN-RAGE [S100A12, a biomarker of pulmonary injury that is implicated in pathogenesis of sepsis-induced ARDS (21)], and oncostatin M [(OSM), a regulator of IL-6]."
+      },
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Given the pronounced and unappreciated observations of the enhanced plasma concentrations of TNFSF14, EN-RAGE, and OSM and their correlation to disease severity, we used an enzyme-linked immunosorbent assay (ELISA) to independently validate these results."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 3"
+      }
+    ],
+    "comparison_strategy": "severity",
+    "groups": [
+      {
+        "group_id": 0,
+        "assay_method": "ELISA",
+        "tissue_type": "plasma",
+        "sample_size": null,
+        "disease": "COVID-19",
+        "disease_stage": "mild",
+        "cohort": null,
+        "gender": null,
+        "age": null,
+        "time_point": null
+      },
+      {
+        "group_id": 1,
+        "assay_method": "ELISA",
+        "tissue_type": "plasma",
+        "sample_size": null,
+        "disease": "COVID-19",
+        "disease_stage": "moderate",
+        "cohort": null,
+        "gender": null,
+        "age": null,
+        "time_point": null
+      },
+      {
+        "group_id": 2,
+        "assay_method": "ELISA",
+        "tissue_type": "plasma",
+        "sample_size": null,
+        "disease": "COVID-19",
+        "disease_stage": "severe",
+        "cohort": null,
+        "gender": null,
+        "age": null,
+        "time_point": null
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "increased levels of TNFSF14, EN-RAGE, and OSM correlated with disease severity"
+      },
+      {
+        "contrast": [
+          0,
+          2
+        ],
+        "finding": "increased levels of TNFSF14, EN-RAGE, and OSM correlated with disease severity"
+      },
+      {
+        "contrast": [
+          1,
+          2
+        ],
+        "finding": "increased levels of TNFSF14, EN-RAGE, and OSM correlated with disease severity"
+      }
+    ]
+  },
+  "claim_4": {
+    "claim": "RNA sequencing analysis of PBMCs from 17 COVID-19 patients and 17 healthy controls showed an early, transient induction of interferon-stimulated genes (ISGs) in COVID-19 patients, despite impaired type I IFN production.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "We observed a strong induction of the ISGs in COVID-19 subjects compared with healthy donors in this dataset as well (Fig. 4G)."
+      },
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Although the ISG signature shows a strong temporal dependence in our datasets, we also find that the ISG signature is strongly induced in patients with moderate COVID-19 infection (Fig. 4G)."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 4G"
+      }
+    ],
+    "comparison_strategy": "case_control",
+    "groups": [
+      {
+        "group_id": 0,
+        "assay_method": "RNA sequencing",
+        "tissue_type": "PBMC",
+        "sample_size": 17,
+        "disease": "COVID-19",
+        "disease_stage": null,
+        "cohort": null,
+        "gender": null,
+        "age": null,
+        "time_point": null
+      },
+      {
+        "group_id": 1,
+        "assay_method": "RNA sequencing",
+        "tissue_type": "PBMC",
+        "sample_size": 17,
+        "disease": "healthy",
+        "disease_stage": null,
+        "cohort": null,
+        "gender": null,
+        "age": null,
+        "time_point": null
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "early, transient induction of interferon-stimulated genes (ISGs) in COVID-19 patients, despite impaired type I IFN production"
+      }
+    ]
+  }
+}

@@ -1,0 +1,34 @@
+name: Deploy (Manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'What to deploy'
+        required: true
+        default: 'api'
+        type: choice
+        options:
+          - api
+          - web
+          - all
+      environment:
+        description: 'Environment'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deployment placeholder
+        run: |
+          echo "Hook this workflow up to ECS/Amplify once IAM/OIDC and infra are in place."
+          echo "Target: ${{ inputs.target }}"
+          echo "Environment: ${{ inputs.environment }}"
