@@ -1,0 +1,15 @@
+[Unit]
+Description=Claim Reproduce Docker Compose Stack
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/claim-reproduce/ops
+RemainAfterExit=yes
+ExecStart=/usr/bin/docker compose -f docker-compose.prod.yml --env-file env/api.env up -d --build
+ExecStop=/usr/bin/docker compose -f docker-compose.prod.yml --env-file env/api.env down
+TimeoutStartSec=0
+
+[Install]
+WantedBy=multi-user.target

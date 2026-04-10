@@ -1,0 +1,51 @@
+version: "3.9"
+
+services:
+  db:
+    image: mysql:8.4
+    container_name: claim-db
+    restart: unless-stopped
+    command: ["--default-authentication-plugin=mysql_native_password"]
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-claim_reproduce}
+      MYSQL_USER: ${MYSQL_USER:-claim}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "127.0.0.1:3307:3306"
+
+  api:
+    build:
+      context: ../apps/api
+      dockerfile: Dockerfile
+    container_name: claim-api
+    restart: unless-stopped
+    env_file:
+      - ./env/api.env
+    environment:
+      MYSQL_URL: mysql+aiomysql://${MYSQL_USER:-claim}:${MYSQL_PASSWORD}@db:3306/${MYSQL_DATABASE:-claim_reproduce}
+    depends_on:
+      - db
+    volumes:
+      - ../data:/service/data
+      - ../logs:/service/logs
+    ports:
+      - "127.0.0.1:8000:8000"
+
+  web:
+    build:
+      context: ../apps/web
+      dockerfile: Dockerfile
+    container_name: claim-web
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_BACKEND_ORIGIN: http://api:8000
+    depends_on:
+      - api
+    ports:
+      - "127.0.0.1:3000:3000"
+
+volumes:
+  mysql_data:

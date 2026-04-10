@@ -30,6 +30,9 @@ async def agent_run_paper(
         raise HTTPException(status_code=400, detail=str(exc))
     except RuntimeError as exc:
         raise HTTPException(status_code=500, detail=str(exc))
+    except Exception as exc:
+        import traceback
+        raise HTTPException(status_code=500, detail=f"{type(exc).__name__}: {exc}\n{traceback.format_exc()}")
 
 
 @router.post("/chat", response_model=AgentResponse)
@@ -45,6 +48,9 @@ async def agent_chat(
         raise HTTPException(status_code=400, detail=str(exc))
     except RuntimeError as exc:
         raise HTTPException(status_code=500, detail=str(exc))
+    except Exception as exc:
+        import traceback
+        raise HTTPException(status_code=500, detail=f"{type(exc).__name__}: {exc}\n{traceback.format_exc()}")
 
 
 @router.post("/parse-paper", response_model=ParsePaperResponse)

@@ -10,8 +10,17 @@ from openai import AsyncOpenAI
 
 from app.config import settings
 
-_XLSX_PATH = Path(__file__).resolve().parent.parent.parent / "studyid_pmcid.xlsx"
-_CLAIMS_DIR = Path(__file__).resolve().parent.parent.parent / "claims"
+
+def _find_repo_root() -> Path:
+    for parent in Path(__file__).resolve().parents:
+        if (parent / ".git").exists():
+            return parent
+    return Path(__file__).resolve().parent.parent.parent
+
+
+_REPO_ROOT = _find_repo_root()
+_XLSX_PATH = _REPO_ROOT / "data" / "studyid_pmcid.xlsx"
+_CLAIMS_DIR = _REPO_ROOT / "data" / "claims"
 
 
 def _extract_pmcid(url: str) -> str:

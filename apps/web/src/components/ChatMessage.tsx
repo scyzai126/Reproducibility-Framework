@@ -12,9 +12,14 @@ function UserMessage({ message }: Props) {
     <div className="flex justify-end">
       <div className="max-w-[80%] bg-gray-100 rounded-2xl px-4 py-3 text-sm text-gray-800">
         {message.filename && message.filename !== 'input.json' ? (
-          <div className="flex items-center gap-2">
-            <span className="text-blue-500">📄</span>
-            <span>{message.filename}</span>
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2">
+              <span className="text-blue-500">📄</span>
+              <span>{message.filename}</span>
+            </div>
+            {message.content && (
+              <p className="text-sm text-gray-700">{message.content}</p>
+            )}
           </div>
         ) : message.content ? (
           <pre className="whitespace-pre-wrap font-mono text-xs max-h-40 overflow-auto">{message.content}</pre>

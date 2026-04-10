@@ -209,7 +209,7 @@ export default function Home() {
             {/* Example questions */}
             <div className="w-full max-w-2xl mb-6">
               <p className="text-xs text-gray-400 uppercase tracking-wide mb-3">Example questions</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 gap-2">
                 {[
                   'For this paper, find all the healthy subjects with plasma samples analyzed by Olink: https://pmc.ncbi.nlm.nih.gov/articles/PMC7665312/',
                   'Find healthy subjects with plasma samples analyzed by Olink in SDY1669',
@@ -218,7 +218,7 @@ export default function Home() {
                     key={q}
                     onClick={() => setPrefillText(q)}
                     disabled={isAnalyzing}
-                    className="text-left px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-600 hover:border-emerald-400 hover:text-emerald-700 hover:bg-emerald-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed select-text break-all whitespace-normal"
+                    className="text-left px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-600 hover:border-emerald-400 hover:text-emerald-700 hover:bg-emerald-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed select-text break-words whitespace-normal"
                   >
                     {q}
                   </button>
@@ -228,9 +228,6 @@ export default function Home() {
 
             <div className="w-full max-w-2xl">
               <ChatInput onFileUpload={handleFileUpload} onTextSubmit={handleTextMessage} disabled={isAnalyzing} prefill={prefillText} />
-              <p className="text-center text-xs text-gray-400 mt-3">
-                Accepts .pdf (PMC&lt;id&gt;.pdf) or .json · drag &amp; drop supported
-              </p>
             </div>
           </div>
         ) : (
