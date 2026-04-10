@@ -1,0 +1,57 @@
+export interface Subject {
+  subject_accession: string;
+  biosample_accession?: string;
+  expsample_accession?: string;
+  [key: string]: unknown;
+}
+
+export interface SubjectResult {
+  group_id: number;
+  resolvers: Record<string, string>;
+  comparison: unknown[];
+  subjects: Subject[];
+  error?: string;
+}
+
+export interface ClaimResult {
+  claim_id: number;
+  claim_text: string;
+  source: Record<string, unknown>;
+  study_design?: string;
+  subject_results: SubjectResult[];
+  error?: string;
+}
+
+export interface PaperClaim {
+  claim_id: string;
+  claim_text: string;
+  sources: Array<{ type: string; section?: string; quote?: string; ref?: string }>;
+}
+
+export interface AgentResponse {
+  study_accession: string;
+  // PDF + question path: step-1 claim sentences
+  paper_claims: PaperClaim[];
+  // Chat / plain-text path
+  subject_results: SubjectResult[];
+  // PDF-only path
+  claims: ClaimResult[];
+}
+
+export interface ChatMessage {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp: string;
+  filename?: string;
+  result?: AgentResponse;
+  error?: string;
+  isLoading?: boolean;
+}
+
+export interface ChatSession {
+  id: string;
+  title: string;
+  messages: ChatMessage[];
+  createdAt: string;
+}

@@ -1,0 +1,151 @@
+{
+  "claim_1": {
+    "claim": "Flow Cytometry analysis of PBMCs from COVID-19 patients and healthy controls showed marked reductions in T cell number and frequency in both CD4+ and CD8+ T cells, with increases in monocytes, low-density neutrophils, and eosinophils correlating with disease severity.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "We analysed PBMC and plasma samples from patients with moderate or severe COVID-19 and healthy HCW donors by flow cytometry and ELISA to quantify leukocytes and soluble mediators, respectively."
+      },
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "COVID-19 patients presented with marked reductions in T cell number and frequency in both CD4+ and CD8+ T cells, even after normalization for age as a possible confounder."
+      },
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "In patients with COVID-19, increases in monocytes, low-density neutrophils and eosinophils correlated with the severity of disease."
+      }
+    ],
+    "comparison_strategy": "severity",
+    "groups": [
+      {
+        "group_id": 0,
+        "assay_method": "Flow Cytometry",
+        "tissue_type": "PBMC",
+        "disease": "healthy",
+        "disease_stage": "healthy"
+      },
+      {
+        "group_id": 1,
+        "assay_method": "Flow Cytometry",
+        "tissue_type": "PBMC",
+        "disease": "COVID-19",
+        "disease_stage": "moderate"
+      },
+      {
+        "group_id": 2,
+        "assay_method": "Flow Cytometry",
+        "tissue_type": "PBMC",
+        "disease": "COVID-19",
+        "disease_stage": "severe"
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "marked reductions in T cell number and frequency in moderate COVID-19 vs healthy"
+      },
+      {
+        "contrast": [
+          0,
+          2
+        ],
+        "finding": "marked reductions in T cell number and frequency in severe COVID-19 vs healthy"
+      },
+      {
+        "contrast": [
+          1,
+          2
+        ],
+        "finding": "increases in monocytes, low-density neutrophils, and eosinophils in severe vs moderate COVID-19"
+      }
+    ]
+  },
+  "claim_2": {
+    "claim": "ELISA analysis of plasma from COVID-19 patients showed increased levels of cytokines linked to cytokine release syndrome, such as IL-1\u03b1, IL-1\u03b2, IL-6, IL-10, IL-18, and TNF, with higher associations in severe disease.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "We analysed PBMC and plasma samples from patients with moderate or severe COVID-19 and healthy HCW donors by flow cytometry and ELISA to quantify leukocytes and soluble mediators, respectively."
+      },
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Most of the cytokines linked to cytokine release syndrome (CRS), such as IL-1\u03b1, IL-1\u03b2, IL-6, IL-10, IL-18 and TNF, showed increased positive associations in patients with severe disease."
+      }
+    ],
+    "comparison_strategy": "severity",
+    "groups": [
+      {
+        "group_id": 0,
+        "assay_method": "ELISA",
+        "tissue_type": "plasma",
+        "disease": "COVID-19",
+        "disease_stage": "moderate"
+      },
+      {
+        "group_id": 1,
+        "assay_method": "ELISA",
+        "tissue_type": "plasma",
+        "disease": "COVID-19",
+        "disease_stage": "severe"
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "increased levels of cytokines linked to CRS in severe vs moderate COVID-19"
+      }
+    ]
+  },
+  "claim_3": {
+    "claim": "Real time polymerase chain reaction assay of nasopharyngeal swabs from COVID-19 patients showed no significant difference in viral RNA load between moderate and severe disease at specific time points, but a steady decline in viral load over the course of disease in moderate patients, unlike in severe patients.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "We assessed viral RNA load (quantified by quantitative PCR with reverse transcription (RT\u2013qPCR) using nasopharyngeal swabs)."
+      },
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Although there was no significant difference in viral RNA load between patients with moderate and severe disease at any specific time point analysed, patients with moderate disease showed a steady decline in viral load over the course of disease, whereas those with severe disease did not."
+      }
+    ],
+    "comparison_strategy": "severity",
+    "groups": [
+      {
+        "group_id": 0,
+        "assay_method": "Real time polymerase chain reaction",
+        "tissue_type": "nasopharyngeal swabs",
+        "disease": "COVID-19",
+        "disease_stage": "moderate"
+      },
+      {
+        "group_id": 1,
+        "assay_method": "Real time polymerase chain reaction",
+        "tissue_type": "nasopharyngeal swabs",
+        "disease": "COVID-19",
+        "disease_stage": "severe"
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "no significant difference in viral RNA load between moderate and severe at specific time points"
+      }
+    ]
+  }
+}

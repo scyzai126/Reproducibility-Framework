@@ -1,0 +1,21 @@
+LOAD DATA LOCAL INFILE "../MySQL/file_details.txt"
+    into table file_details
+    fields terminated by '~@~'
+    lines terminated by '~@@~\n'
+    (
+      file_details_id,
+      reported_md5,
+      generated_md5,
+      study_accession,
+      filesize_bytes,
+      file_type,
+      file_accession,
+      file_name,
+      path,
+      date_file_updated,
+      ai_generated_keywords,
+      ai_generated_summary,
+      file_uuid,
+      drs_object_created,
+      workspace_id
+    );

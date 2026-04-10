@@ -1,0 +1,156 @@
+You are a biomedical research analyst. Given the following claims extracted from a paper, convert them into structured JSON groups and return only valid JSON.
+
+## Input claims
+{claims}
+
+## Task — Convert claims to JSON groups
+
+For each claim, first classify its **comparison_strategy**, then use that classification to decide how many groups to emit. group_id restarts from 0 for each claim.
+
+**comparison_strategy** — choose one based on the claim sentence:
+- `longitudinal`: same subjects (one population) measured at multiple time points → one group per time point; set disease=null
+- `case_control`: distinct disease vs healthy (or disease A vs disease B) → one group per condition
+- `severity`: same disease stratified by severity level → one group per level (mild/moderate/severe/ICU) + healthy control if present
+- `cross_sectional`: distinct populations compared at a single time point (or time point not mentioned) → one group per population
+- `cross_sectional_longitudinal`: distinct populations compared at multiple explicit time points → one group per (population × time point) combination; comparisons are between populations within each time point
+- `none`: assay reported but no comparison stated, or grouping is unclear → one group, comparison=[]
+
+**cross_sectional_longitudinal grouping rule:**
+When the claim names K distinct populations and T explicit time points, emit K × T groups. Assign each group both its `cohort` (or `disease`) and its `time_point`. Then emit one comparison object per (population pair) per time point. Do NOT emit inter-timepoint contrasts (e.g., day 0 vs day 2 within the same cohort) — only cross-sectional contrasts within each timepoint.
+
+**Source ordering rule:** In the `sources` array, always place Results-section text entries first, followed by Methods-section text entries, then figure and table references. This ensures the primary evidence appears at `sources[0]`.
+
+Emit `comparison_strategy` as the first field in each claim object, before `groups`. This classification drives all grouping decisions below.
+
+**Fields per group** — every field is null unless it can be determined from the claim sentence or the paper. Do not infer, derive, or copy from other groups, except for the two mandatory fields below:
+
+**MANDATORY — always populate from the claim sentence (never null):**
+- assay_method: the claim sentence always begins with "[Assay] analysis of …" — extract the assay name from that opening phrase for every group in the claim, regardless of comparison_strategy. Example: "Hemagglutination Inhibition analysis of serum…" → assay_method = "Hemagglutination Inhibition".
+- tissue_type: the claim sentence always includes "of [tissue/sample]" immediately after the assay name — extract it from there. If not present in the claim sentence, infer from assay: Olink → plasma, CyTOF/Flow Cytometry/CITE-seq/scRNA-seq → PBMC, Bulk RNA-seq → whole blood, Hemagglutination Inhibition/ELISA/Neutralizing Antibody → serum. These two fields must be non-null in every group.
+
+**Other fields** — null unless the paper or claim sentence explicitly states the value for this specific group:
+- group_id: integer, unique within this claim, starting from 0
+- study_accession: only if an ImmPort accession (SDY####) appears verbatim in the paper
+- sample_size: only if the paper states a count for this specific group; do not split a total or derive by subtraction
+- disease, disease_stage: only if the paper explicitly names the condition or severity for this group
+- cohort: only if the paper names a cohort or geographic location for this group
+- gender: only if stated for this group specifically; do not copy from another group or infer from a demographics table that does not break down by group
+- age: only if stated for this group specifically; same rule as gender
+- time_point: the absolute day extracted from the parenthetical in the claim (e.g., "after secondary vaccination (day 21)" → "day 21"; "days 1 and 2 after primary vaccination (day 1-2)" → split into two groups, "day 1" and "day 2"). Always use the bare absolute day form: "day 0", "day 1", "day 21", etc. — never use the relative phrase. If a claim names a range or list of days (e.g., "day 1-2", "days 1 and 2"), emit one group per day.
+
+**If an assay is present but grouping is unclear** (e.g., the paper mentions the assay but does not describe separate subject groups), still emit the claim with a single group containing whatever is known (including the mandatory assay_method and tissue_type), and set comparison=[].
+
+**comparison** is a top-level field on the claim object (not inside each group). It is an array of comparison objects, each with:
+- contrast: [groupId_A, groupId_B] — integer group_ids referencing the groups array
+- finding: description of the biological result for that contrast; if the claim names specific genes, proteins, cell types, or molecular signatures, include those names here — do not replace them with a general category label
+
+Use [] if the claim has no comparison or grouping is unclear.
+
+**Output format:**
+```json
+{
+  "claim_1": {
+    "claim": "<sentence from Step 1>",
+    "sources": [
+      {"type": "text", "section": "Results", "quote": "<Results-section quote — always first>"},
+      {"type": "text", "section": "Methods", "quote": "<Methods-section quote>"},
+      {"type": "figure", "ref": "Figure 2A"},
+      {"type": "table", "ref": "Table 1"}
+    ],
+    "comparison_strategy": "<longitudinal|case_control|severity|cross_sectional|none>",
+    "groups": [ {group object}, ... ],
+    "comparison": [ {"contrast": [0, 1], "finding": "..."}, ... ]
+  },
+  "claim_2": {
+    "claim": "<sentence from Step 1>",
+    "sources": [ {"type": "text", "section": "Results", "quote": "<verbatim excerpt>"} ],
+    "comparison_strategy": "none",
+    "groups": [ {group object} ],
+    "comparison": []
+  }
+}
+```
+
+**Example — longitudinal (Olink, SDY2189, 31 subjects):**
+```json
+{
+  "claim_1": {
+    "claim": "Olink analysis of plasma from 31 vaccinated individuals showed IFNγ and CXCL10 increased on days 1–2 vs day 0, peaking at day 22 after secondary immunization.",
+    "sources": [
+      {"type": "text", "section": "Results", "quote": "IFNγ and CXCL10 were significantly elevated on days 1–2 following primary vaccination compared to day 0"},
+      {"type": "text", "section": "Methods", "quote": "The second vaccination was administered on day 21."},
+      {"type": "figure", "ref": "Figure 3B"}
+    ],
+    "comparison_strategy": "longitudinal",
+    "groups": [
+      {"group_id": 0, "study_accession": "SDY2189", "sample_size": 31, "disease": null, "disease_stage": null, "cohort": null, "assay_method": "Olink", "tissue_type": "plasma", "gender": null, "age": null, "time_point": "day 0"},
+      {"group_id": 1, "study_accession": "SDY2189", "sample_size": 31, "disease": null, "disease_stage": null, "cohort": null, "assay_method": "Olink", "tissue_type": "plasma", "gender": null, "age": null, "time_point": "day 1"}
+    ],
+    "comparison": [
+      {"contrast": [0, 1], "finding": "IFNγ and CXCL10 significantly increased on days 1-2 vs day 0"}
+    ]
+  }
+}
+```
+
+**Example — severity (Flow Cytometry, SDY5678, COVID-19):**
+```json
+{
+  "claim_1": {
+    "claim": "Flow Cytometry analysis of PBMCs from 60 COVID-19 patients (20 healthy, 20 mild, 20 severe) showed that CD8+ T cell exhaustion markers were progressively elevated with disease severity.",
+    "sources": [
+      {"type": "text", "section": "Methods", "quote": "PBMCs were collected from 20 healthy donors, 20 mild, and 20 severe COVID-19 patients"},
+      {"type": "figure", "ref": "Figure 4C"},
+      {"type": "table", "ref": "Table 2"}
+    ],
+    "comparison_strategy": "severity",
+    "groups": [
+      {"group_id": 0, "study_accession": "SDY5678", "sample_size": 20, "disease": "healthy", "disease_stage": "healthy", "cohort": null, "assay_method": "Flow Cytometry", "tissue_type": "PBMC", "gender": null, "age": null, "time_point": null},
+      {"group_id": 1, "study_accession": "SDY5678", "sample_size": 20, "disease": "COVID-19", "disease_stage": "mild", "cohort": null, "assay_method": "Flow Cytometry", "tissue_type": "PBMC", "gender": null, "age": null, "time_point": null},
+      {"group_id": 2, "study_accession": "SDY5678", "sample_size": 20, "disease": "COVID-19", "disease_stage": "severe", "cohort": null, "assay_method": "Flow Cytometry", "tissue_type": "PBMC", "gender": null, "age": null, "time_point": null}
+    ],
+    "comparison": [
+      {"contrast": [0, 1], "finding": "lower CD8+ T cell exhaustion markers in healthy vs mild"},
+      {"contrast": [0, 2], "finding": "lower CD8+ T cell exhaustion markers in healthy vs severe"},
+      {"contrast": [1, 2], "finding": "lower CD8+ T cell exhaustion markers in mild vs severe"}
+    ]
+  }
+}
+```
+
+**Example — cross_sectional_longitudinal (Bulk RNA-seq, SDY1393, 3 cohorts × 3 timepoints):**
+```json
+{
+  "claim_2": {
+    "claim": "Bulk RNA-seq analysis of platelet-rich plasma from 65 individuals across young, older community-dwelling, and older SNF-resident adults at Day 0, Day 2, and Day 7 post-vaccination showed an age-associated increase in platelet activation RNAs and mitochondrial genes.",
+    "sources": [
+      {"type": "text", "section": "Results", "quote": "We isolated platelet-rich plasma (PRP) from blood samples of participants obtained prior to vaccination (Day 0) and at Days 2, 7, and 28 post-vaccine for isolation of RNA and elucidation of the platelet transcriptome via RNA-seq."}
+    ],
+    "comparison_strategy": "cross_sectional_longitudinal",
+    "groups": [
+      {"group_id": 0, "study_accession": "SDY1393", "sample_size": null, "disease": null, "disease_stage": null, "cohort": "young adults", "assay_method": "Bulk RNA-seq", "tissue_type": "platelet-rich plasma", "gender": null, "age": null, "time_point": "day 0"},
+      {"group_id": 1, "study_accession": "SDY1393", "sample_size": null, "disease": null, "disease_stage": null, "cohort": "older community-dwelling adults", "assay_method": "Bulk RNA-seq", "tissue_type": "platelet-rich plasma", "gender": null, "age": null, "time_point": "day 0"},
+      {"group_id": 2, "study_accession": "SDY1393", "sample_size": null, "disease": null, "disease_stage": null, "cohort": "older SNF-resident adults", "assay_method": "Bulk RNA-seq", "tissue_type": "platelet-rich plasma", "gender": null, "age": null, "time_point": "day 0"},
+      {"group_id": 3, "study_accession": "SDY1393", "sample_size": null, "disease": null, "disease_stage": null, "cohort": "young adults", "assay_method": "Bulk RNA-seq", "tissue_type": "platelet-rich plasma", "gender": null, "age": null, "time_point": "day 2"},
+      {"group_id": 4, "study_accession": "SDY1393", "sample_size": null, "disease": null, "disease_stage": null, "cohort": "older community-dwelling adults", "assay_method": "Bulk RNA-seq", "tissue_type": "platelet-rich plasma", "gender": null, "age": null, "time_point": "day 2"},
+      {"group_id": 5, "study_accession": "SDY1393", "sample_size": null, "disease": null, "disease_stage": null, "cohort": "older SNF-resident adults", "assay_method": "Bulk RNA-seq", "tissue_type": "platelet-rich plasma", "gender": null, "age": null, "time_point": "day 2"},
+      {"group_id": 6, "study_accession": "SDY1393", "sample_size": null, "disease": null, "disease_stage": null, "cohort": "young adults", "assay_method": "Bulk RNA-seq", "tissue_type": "platelet-rich plasma", "gender": null, "age": null, "time_point": "day 7"},
+      {"group_id": 7, "study_accession": "SDY1393", "sample_size": null, "disease": null, "disease_stage": null, "cohort": "older community-dwelling adults", "assay_method": "Bulk RNA-seq", "tissue_type": "platelet-rich plasma", "gender": null, "age": null, "time_point": "day 7"},
+      {"group_id": 8, "study_accession": "SDY1393", "sample_size": null, "disease": null, "disease_stage": null, "cohort": "older SNF-resident adults", "assay_method": "Bulk RNA-seq", "tissue_type": "platelet-rich plasma", "gender": null, "age": null, "time_point": "day 7"}
+    ],
+    "comparison": [
+      {"contrast": [0, 1], "finding": "age-associated increase in platelet activation RNAs and mitochondrial genes at day 0"},
+      {"contrast": [0, 2], "finding": "age-associated increase in platelet activation RNAs and mitochondrial genes at day 0"},
+      {"contrast": [1, 2], "finding": "age-associated increase in platelet activation RNAs and mitochondrial genes at day 0"},
+      {"contrast": [3, 4], "finding": "age-associated increase in platelet activation RNAs and mitochondrial genes at day 2"},
+      {"contrast": [3, 5], "finding": "age-associated increase in platelet activation RNAs and mitochondrial genes at day 2"},
+      {"contrast": [4, 5], "finding": "age-associated increase in platelet activation RNAs and mitochondrial genes at day 2"},
+      {"contrast": [6, 7], "finding": "age-associated increase in platelet activation RNAs and mitochondrial genes at day 7"},
+      {"contrast": [6, 8], "finding": "age-associated increase in platelet activation RNAs and mitochondrial genes at day 7"},
+      {"contrast": [7, 8], "finding": "age-associated increase in platelet activation RNAs and mitochondrial genes at day 7"}
+    ]
+  }
+}
+```
+
+Return ONLY valid JSON — no markdown, no explanation.
