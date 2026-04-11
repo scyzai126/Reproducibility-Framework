@@ -5,10 +5,7 @@ from app.config import settings
 
 import os
 
-_connect_args = {}
-_unix_socket = os.getenv("MYSQL_SOCKET", "/tmp/mysql.sock")
-if os.path.exists(_unix_socket):
-    _connect_args["unix_socket"] = _unix_socket
+_connect_args = {"ssl": False}
 
 engine = create_async_engine(
     settings.MYSQL_URL,

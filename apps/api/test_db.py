@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import text
 
-engine = create_async_engine(os.environ["MYSQL_URL"])
+engine = create_async_engine(os.environ["MYSQL_URL"], connect_args={"ssl": False})
 Session = sessionmaker(engine, class_=AsyncSession)
 
 async def test():
