@@ -451,6 +451,12 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
                     f"PMC ID from URL: {pmc_id} → PubMed ID from paper: {pubmed_id} → study_accession: {study_accession}"
                 )
 
+                if not study_accession:
+                    raise ValueError(
+                        f"This paper (PubMed ID: {pubmed_id}) is not linked to any study in ImmPort. "
+                        "Only papers associated with ImmPort studies can be analyzed."
+                    )
+
                 # ── Paper URL path: always do claim analysis ─────────────────
                 if study_accession:
                     assay_rows = (await session.execute(
@@ -583,12 +589,9 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
                             _write_workflow_log(log_sections)
                             return result
                     else:
-                        # SDY found but no pubmed_id in DB — subject query only
-                        study_accession = sdy_accession
-                        question = sdy_question
-                        log_sections.append(
-                            f"--- Step 2: SDY accession (no paper available) ---\n"
-                            f"study_accession: {sdy_accession} — no pubmed_id in study_pubmed, subject query only"
+                        raise ValueError(
+                            f"Study {sdy_accession} was not found in ImmPort. "
+                            "Please check the study accession and try again."
                         )
                 else:
                     study_accession = None
