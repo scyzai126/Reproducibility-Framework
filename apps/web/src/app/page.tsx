@@ -73,6 +73,7 @@ export default function Home() {
     const withLoading = [...messages, userMsg, loadingMsg];
     setMessages(withLoading);
     setIsAnalyzing(true);
+    setPrefillText('');
 
     try {
       const result = await runAgentText(text);
@@ -138,6 +139,7 @@ export default function Home() {
     const withLoading = [...messages, userMsg, loadingMsg];
     setMessages(withLoading);
     setIsAnalyzing(true);
+    setPrefillText('');
 
     try {
       const result = await runAgentUpload(file, question);
