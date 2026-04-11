@@ -11,6 +11,9 @@ from app.schemas import AgentResponse, ParsePaperRequest, ParsePaperResponse, Te
 
 router = APIRouter(prefix="/agent", tags=["agent"])
 
+# Simple in-memory cache for text queries (keyed by normalized question)
+_chat_cache: dict[str, dict] = {}
+
 
 @router.post("/run-paper", response_model=AgentResponse)
 async def agent_run_paper(
@@ -41,8 +44,12 @@ async def agent_chat(
     session: AsyncSession = Depends(get_session),
 ):
     """Send a free-text question or paste JSON directly."""
+    cache_key = request.message.strip().lower()
+    if cache_key in _chat_cache:
+        return AgentResponse(**_chat_cache[cache_key])
     try:
         result = await run_agent_from_text(request.message, session)
+        _chat_cache[cache_key] = result
         return AgentResponse(**result)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
