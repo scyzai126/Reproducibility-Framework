@@ -109,7 +109,7 @@ interface Props {
 }
 
 export function ResultsPanel({ run }: Props) {
-  const { study_accession, subject_results } = run.result;
+  const { study_accession, subject_results } = run.result ?? { study_accession: '', subject_results: [] };
   const totalSubjects = subject_results.reduce((sum, g) => sum + g.subjects.length, 0);
   const errorCount = subject_results.filter((g) => g.error).length;
 
