@@ -13,15 +13,13 @@ def extract_pdf_text(pdf_bytes: bytes, max_chars: int = 120000) -> str:
 
 
 def extract_pubmed_id_from_filename(filename: str) -> str | None:
-    """Parse a PubMed or PMC numeric ID from a PDF filename.
+    """Parse a PubMed ID from a PDF filename.
 
-    Tries PMC\\d+ first (e.g. "PMC9924941.pdf" → "9924941"),
-    then falls back to any digit sequence (e.g. "36543218.pdf" → "36543218").
+    Accepts e.g. "PMID32788292.pdf" or "32788292.pdf" → "32788292".
+    PMC IDs are not accepted here since they cannot be directly mapped
+    to ImmPort study accessions.
     Returns None if no digits found.
     """
-    match = re.search(r"PMC(\d+)", filename, re.IGNORECASE)
-    if match:
-        return match.group(1)
     match = re.search(r"(\d+)", filename)
     if match:
         return match.group(1)

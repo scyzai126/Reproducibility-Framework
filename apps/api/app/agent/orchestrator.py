@@ -9,6 +9,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.agent.claim_parser import fetch_paper_content_async, fetch_paper_text_async, parse_paper_claims_from_text, parse_paper_claims_step1_only
+from app.agent.ncbi_utils import pmid_to_pmc_url
 from app.agent.description_analyzer import analyze_claims_batch, analyze_descriptions
 from app.agent.file_reader import read_file
 from app.agent.paper_reader import extract_pdf_text, extract_pubmed_id_from_filename
@@ -38,6 +39,7 @@ _URL_PATTERNS = [
 ]
 
 
+
 def _extract_pubmed_id_from_text(message: str) -> tuple[str | None, str | None, str]:
     """Scan message for a paper URL or bare PMC/PMID pattern.
 
@@ -65,9 +67,9 @@ def _extract_pubmed_id_from_text(message: str) -> tuple[str | None, str | None, 
     m = re.search(r"\bPMID[:\s]*(\d+)\b", message, re.I)
     if m:
         pubmed_id = m.group(1)
-        paper_url = f"https://pmc.ncbi.nlm.nih.gov/articles/PMC{pubmed_id}/"
         cleaned = re.sub(r"\bPMID[:\s]*\d+\b", "", message, flags=re.I).strip()
-        return pubmed_id, paper_url, cleaned
+        # Return None for paper_url — caller must convert PMID → PMC ID via NCBI API
+        return pubmed_id, None, cleaned
 
     return None, None, message
 
@@ -437,6 +439,14 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
         else:
             # Try to extract pubmed_id + URL from the question
             pmc_id, paper_url, question = _extract_pubmed_id_from_text(file_content)
+            # Bare PMID (e.g. "PMID:32788292") has no URL yet — convert via NCBI
+            if pmc_id and not paper_url:
+                paper_url = await pmid_to_pmc_url(pmc_id)
+                if not paper_url:
+                    raise ValueError(
+                        f"PubMed ID {pmc_id} has no open-access PMC article. "
+                        "Please provide the full PMC URL instead."
+                    )
             if pmc_id and paper_url:
                 # Fetch paper XML once — get text + real PubMed ID (PMC ID ≠ PubMed ID)
                 fetched_paper_text, pubmed_id_from_paper = await fetch_paper_content_async(paper_url)
@@ -534,7 +544,12 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
                     )).fetchone()
                     if sdy_row:
                         sdy_pubmed_id = str(sdy_row[0])
-                        sdy_paper_url = f"https://pmc.ncbi.nlm.nih.gov/articles/PMC{sdy_pubmed_id}/"
+                        sdy_paper_url = await pmid_to_pmc_url(sdy_pubmed_id)
+                        if not sdy_paper_url:
+                            raise ValueError(
+                                f"Study {sdy_accession} (PubMed ID: {sdy_pubmed_id}) has no open-access PMC article. "
+                                "Cannot fetch paper for claim analysis."
+                            )
                         sdy_paper_text, _ = await fetch_paper_content_async(sdy_paper_url)
                         sdy_assay_rows = (await session.execute(
                             text(
@@ -594,10 +609,12 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
                             "Please check the study accession and try again."
                         )
                 else:
-                    study_accession = None
-                    log_sections.append(
-                        f"--- Step 2: Plain Text Input ---\n"
-                        f"No study ID found — LLM will attempt to infer from question text."
+                    raise ValueError(
+                        "Please include a paper source in your question. Supported formats:\n"
+                        "• Paper URL: https://pmc.ncbi.nlm.nih.gov/articles/PMC7665312/\n"
+                        "• PubMed ID: PMID:32788292\n"
+                        "• PMC ID: PMC7665312\n"
+                        "• ImmPort study ID: SDY1669"
                     )
 
         description_analysis, raw_llm = await analyze_descriptions(
@@ -669,8 +686,11 @@ async def run_agent_from_paper(pdf_bytes: bytes, filename: str, session: AsyncSe
     pubmed_id = extract_pubmed_id_from_filename(filename)
     if not pubmed_id:
         raise ValueError(
-            f"Could not extract a PubMed/PMC ID from filename '{filename}'. "
-            "Rename the file to include the numeric ID (e.g. PMC9924941.pdf)."
+            f"Could not extract a PubMed ID from the filename '{filename}'. "
+            "Please rename the file to include the PubMed ID before uploading. "
+            "Accepted formats:\n"
+            "• PMID32788292.pdf\n"
+            "• 32788292.pdf"
         )
     log_sections.append(f"--- Step 2: PubMed ID ---\npubmed_id: {pubmed_id}")
 
