@@ -7,6 +7,11 @@ export interface Subject {
 
 export interface SubjectResult {
   group_id: number;
+  group_name?: string;
+  arm_accession?: string;
+  experiment_accession?: string;
+  tissue_type?: string;
+  condition?: string;
   resolvers: Record<string, string>;
   comparison: unknown[];
   subjects: Subject[];
