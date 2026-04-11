@@ -517,11 +517,85 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
                         _write_workflow_log(log_sections)
                         return result
             else:
-                study_accession = None
-                log_sections.append(
-                    f"--- Step 2: Plain Text Input ---\n"
-                    f"No study ID found — LLM will attempt to infer from question text."
-                )
+                # Check for SDY accession → look up pubmed_id → fetch paper → claim analysis
+                sdy_match = re.search(r"\bSDY\d+\b", file_content, re.I)
+                if sdy_match:
+                    sdy_accession = sdy_match.group(0).upper()
+                    sdy_question = re.sub(r"\bSDY\d+\b", "", file_content, flags=re.I).strip()
+                    sdy_row = (await session.execute(
+                        text("SELECT pubmed_id FROM study_pubmed WHERE study_accession = :sa LIMIT 1"),
+                        {"sa": sdy_accession},
+                    )).fetchone()
+                    if sdy_row:
+                        sdy_pubmed_id = str(sdy_row[0])
+                        sdy_paper_url = f"https://pmc.ncbi.nlm.nih.gov/articles/PMC{sdy_pubmed_id}/"
+                        sdy_paper_text, _ = await fetch_paper_content_async(sdy_paper_url)
+                        sdy_assay_rows = (await session.execute(
+                            text(
+                                "SELECT DISTINCT measurement_technique FROM experiment "
+                                "WHERE study_accession = :sa AND measurement_technique IS NOT NULL"
+                            ),
+                            {"sa": sdy_accession},
+                        )).fetchall()
+                        sdy_assay_methods = [r[0] for r in sdy_assay_rows if r[0]]
+                        await _sync_study(sdy_accession, log_sections)
+
+                        _sdy_filters: list[dict] = []
+                        if sdy_question.strip():
+                            prompt = f"Study: {sdy_accession}\n{sdy_question}"
+                            _sdy_filters, _ = await analyze_descriptions(prompt)
+
+                        log_sections.append(
+                            f"--- Step 2: SDY → Paper ---\n"
+                            f"study_accession: {sdy_accession} → pubmed_id: {sdy_pubmed_id}\n"
+                            f"filters found: {len(_sdy_filters)}"
+                        )
+
+                        if _sdy_filters:
+                            async def _task_sdy_claims() -> list[dict]:
+                                step1_json = await parse_paper_claims_step1_only(
+                                    sdy_paper_text, sdy_accession, sdy_assay_methods, pmcid=sdy_pubmed_id
+                                )
+                                return [
+                                    {"claim_id": k, "claim_text": v.get("claim", ""), "sources": v.get("sources", [])}
+                                    for k, v in step1_json.items()
+                                    if k.startswith("claim_")
+                                ]
+
+                            async def _task_sdy_subjects() -> list[dict]:
+                                gqs = await resolve_and_build_queries(_sdy_filters, sdy_accession, async_session)
+                                exec_log: list[str] = []
+                                return await _execute_all_queries(gqs, async_session, exec_log)
+
+                            sdy_claims, sdy_subjects = await asyncio.gather(
+                                _task_sdy_claims(), _task_sdy_subjects()
+                            )
+                            _write_workflow_log(log_sections)
+                            return {
+                                "study_accession": sdy_accession,
+                                "paper_claims": sdy_claims,
+                                "subject_results": sdy_subjects,
+                            }
+                        else:
+                            result = await _run_full_paper_analysis(
+                                sdy_paper_text, sdy_accession, sdy_assay_methods, sdy_pubmed_id, log_sections
+                            )
+                            _write_workflow_log(log_sections)
+                            return result
+                    else:
+                        # SDY found but no pubmed_id in DB — subject query only
+                        study_accession = sdy_accession
+                        question = sdy_question
+                        log_sections.append(
+                            f"--- Step 2: SDY accession (no paper available) ---\n"
+                            f"study_accession: {sdy_accession} — no pubmed_id in study_pubmed, subject query only"
+                        )
+                else:
+                    study_accession = None
+                    log_sections.append(
+                        f"--- Step 2: Plain Text Input ---\n"
+                        f"No study ID found — LLM will attempt to infer from question text."
+                    )
 
         description_analysis, raw_llm = await analyze_descriptions(
             f"Study: {study_accession}\n{question}" if study_accession else question
