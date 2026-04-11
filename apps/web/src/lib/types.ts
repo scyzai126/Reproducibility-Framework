@@ -49,6 +49,14 @@ export interface ChatMessage {
   isLoading?: boolean;
 }
 
+export interface RunRecord {
+  id: string;
+  filename: string;
+  study_accession: string;
+  timestamp: string;
+  result?: AgentResponse;
+}
+
 export interface ChatSession {
   id: string;
   title: string;
