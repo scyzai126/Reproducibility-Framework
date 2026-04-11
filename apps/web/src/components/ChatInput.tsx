@@ -9,10 +9,6 @@ interface Props {
   prefill?: string;
 }
 
-function isJson(s: string): boolean {
-  try { JSON.parse(s); return true; } catch { return false; }
-}
-
 export default function ChatInput({ onFileUpload, onTextSubmit, disabled, prefill }: Props) {
   const fileRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -49,14 +45,7 @@ export default function ChatInput({ onFileUpload, onTextSubmit, disabled, prefil
       setText('');
       if (fileRef.current) fileRef.current.value = '';
     } else if (text.trim()) {
-      if (isJson(text.trim())) {
-        // Pasted JSON → wrap as virtual file and use the upload endpoint
-        const blob = new Blob([text.trim()], { type: 'application/json' });
-        onFileUpload(new File([blob], 'input.json', { type: 'application/json' }));
-      } else {
-        // Plain natural language → use the text endpoint
-        onTextSubmit(text.trim());
-      }
+      onTextSubmit(text.trim());
       setText('');
     }
   };
@@ -71,7 +60,7 @@ export default function ChatInput({ onFileUpload, onTextSubmit, disabled, prefil
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     const file = e.dataTransfer.files?.[0];
-    if (file && (file.name.endsWith('.json') || file.name.endsWith('.pdf') || file.name.endsWith('.txt'))) {
+    if (file && (file.name.endsWith('.pdf') || file.name.endsWith('.txt'))) {
       setSelectedFile(file);
       setText('');
     }
@@ -109,7 +98,7 @@ export default function ChatInput({ onFileUpload, onTextSubmit, disabled, prefil
         <input
           type="file"
           ref={fileRef}
-          accept=".json,.pdf,.txt"
+          accept=".pdf,.txt"
           className="hidden"
           onChange={handleFileChange}
         />
@@ -118,7 +107,7 @@ export default function ChatInput({ onFileUpload, onTextSubmit, disabled, prefil
           onClick={() => fileRef.current?.click()}
           disabled={disabled}
           className="p-2 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
-          title="Upload PDF or JSON file"
+          title="Upload PDF or text file"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" />
