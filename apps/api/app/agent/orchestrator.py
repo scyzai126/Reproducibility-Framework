@@ -202,6 +202,96 @@ async def _sync_study(study_accession: str, log_sections: list[str]) -> None:
     )
 
 
+async def _run_full_paper_analysis(
+    paper_text: str,
+    study_accession: str,
+    assay_methods: list[str],
+    pubmed_id: str,
+    log_sections: list[str],
+) -> dict:
+    """Full two-step claim extraction + DB queries for every claim."""
+    _, step2_json = await parse_paper_claims_from_text(
+        paper_text, study_accession, assay_methods, pmcid=pubmed_id
+    )
+
+    claims: list[dict] = []
+    batch_analysis: dict[str, list[dict]] = {}
+    for key, val in step2_json.items():
+        try:
+            num = int(key.split("_")[1])
+        except (IndexError, ValueError):
+            continue
+        sources = val.get("sources") or []
+        claims.append({
+            "id": num,
+            "claim_text": val.get("claim", ""),
+            "source": sources[0] if sources else {},
+        })
+        batch_analysis[str(num)] = val.get("groups", [])
+
+    log_sections.append(
+        f"--- Full Claim Extraction ---\n"
+        f"Claims extracted: {len(claims)}"
+    )
+
+    async def _process_claim(claim: dict) -> tuple[dict, list[str]]:
+        claim_id = claim["id"]
+        claim_analysis = batch_analysis.get(str(claim_id), [])
+        local_logs: list[str] = []
+        try:
+            if not claim_analysis:
+                local_logs.append(f"--- Claim {claim_id}: no groups — skipping.")
+                return {
+                    "claim_id": claim_id,
+                    "claim_text": claim.get("claim_text", ""),
+                    "source": claim.get("source", {}),
+                    "subject_results": [],
+                }, local_logs
+
+            local_logs.append(
+                f"--- Claim {claim_id}: Analysis ---\n"
+                f"{json.dumps(claim_analysis, indent=2)}"
+            )
+            t1 = time.time()
+            group_queries = await resolve_and_build_queries(claim_analysis, study_accession, async_session)
+            logger.info("Claim %s: resolve_and_build_queries took %.2fs", claim_id, time.time() - t1)
+            local_logs.append(_log_queries(group_queries))
+
+            t2 = time.time()
+            exec_log: list[str] = [f"--- Claim {claim_id}: Query Execution ---"]
+            subject_results = await _execute_all_queries(group_queries, async_session, exec_log)
+            logger.info("Claim %s: execute_all_queries took %.2fs", claim_id, time.time() - t2)
+            for i, sr in enumerate(subject_results):
+                sr["group_id"] = i
+            local_logs.append("\n".join(exec_log))
+
+            return {
+                "claim_id": claim_id,
+                "claim_text": claim.get("claim_text", ""),
+                "source": claim.get("source", {}),
+                "study_design": claim_analysis[0].get("study_design") if claim_analysis else None,
+                "subject_results": subject_results,
+            }, local_logs
+        except Exception as exc:
+            logger.error("Claim %s failed: %s", claim_id, exc)
+            local_logs.append(f"--- Claim {claim_id}: ERROR ---\n{exc}")
+            return {
+                "claim_id": claim_id,
+                "claim_text": claim.get("claim_text", ""),
+                "source": claim.get("source", {}),
+                "subject_results": [],
+                "error": str(exc),
+            }, local_logs
+
+    pairs = await asyncio.gather(*[_process_claim(c) for c in claims])
+    claims_results: list[dict] = []
+    for result, logs in pairs:
+        claims_results.append(result)
+        log_sections.extend(logs)
+
+    return {"study_accession": study_accession, "claims": claims_results}
+
+
 async def _run_agent_core(file_content: str, session: AsyncSession, study_accession_hint: str | None = None) -> dict:
     """Shared agent core: parse/analyze -> build SQL -> execute -> summarize.
 
@@ -361,8 +451,8 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
                     f"PMC ID from URL: {pmc_id} → PubMed ID from paper: {pubmed_id} → study_accession: {study_accession}"
                 )
 
-                # ── Parallel: parse claims from fetched text AND answer question ──
-                if study_accession and question.strip():
+                # ── Paper URL path: always do claim analysis ─────────────────
+                if study_accession:
                     assay_rows = (await session.execute(
                         text(
                             "SELECT DISTINCT measurement_technique FROM experiment "
@@ -372,42 +462,60 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
                     )).fetchall()
                     assay_methods: list[str] = [r[0] for r in assay_rows if r[0]]
 
-                    async def _task_paper_claims_url() -> list[dict]:
-                        step1_json = await parse_paper_claims_step1_only(
-                            fetched_paper_text, study_accession, assay_methods, pmcid=pubmed_id
-                        )
-                        return [
-                            {
-                                "claim_id": key,
-                                "claim_text": val.get("claim", ""),
-                                "sources": val.get("sources", []),
-                            }
-                            for key, val in step1_json.items()
-                            if key.startswith("claim_")
-                        ]
+                    await _sync_study(study_accession, log_sections)
 
-                    async def _task_question_subjects_url() -> list[dict]:
+                    # Try to extract filters from the question
+                    _url_filters: list[dict] = []
+                    if question.strip():
                         prompt = f"Study: {study_accession}\n{question}"
-                        desc_analysis, _ = await analyze_descriptions(prompt)
-                        if not desc_analysis:
-                            return []
-                        gqs = await resolve_and_build_queries(desc_analysis, study_accession, async_session)
-                        exec_log: list[str] = []
-                        return await _execute_all_queries(gqs, async_session, exec_log)
+                        _url_filters, _ = await analyze_descriptions(prompt)
+                        log_sections.append(
+                            f"--- Step 3: Question Filter Extraction ---\n"
+                            f"filters found: {len(_url_filters)}"
+                        )
 
-                    paper_claims, subject_results = await asyncio.gather(
-                        _task_paper_claims_url(), _task_question_subjects_url()
-                    )
-                    log_sections.append(
-                        f"--- Step 3: Parallel URL Mode ---\n"
-                        f"Paper claims: {len(paper_claims)}, Subject groups: {len(subject_results)}"
-                    )
-                    _write_workflow_log(log_sections)
-                    return {
-                        "study_accession": study_accession,
-                        "paper_claims": paper_claims,
-                        "subject_results": subject_results,
-                    }
+                    if _url_filters:
+                        # Parallel: step-1 claims + subject query from filters
+                        async def _task_paper_claims_url() -> list[dict]:
+                            step1_json = await parse_paper_claims_step1_only(
+                                fetched_paper_text, study_accession, assay_methods, pmcid=pubmed_id
+                            )
+                            return [
+                                {
+                                    "claim_id": key,
+                                    "claim_text": val.get("claim", ""),
+                                    "sources": val.get("sources", []),
+                                }
+                                for key, val in step1_json.items()
+                                if key.startswith("claim_")
+                            ]
+
+                        async def _task_question_subjects_url() -> list[dict]:
+                            gqs = await resolve_and_build_queries(_url_filters, study_accession, async_session)
+                            exec_log: list[str] = []
+                            return await _execute_all_queries(gqs, async_session, exec_log)
+
+                        paper_claims, subject_results = await asyncio.gather(
+                            _task_paper_claims_url(), _task_question_subjects_url()
+                        )
+                        log_sections.append(
+                            f"--- Step 3: Parallel URL Mode ---\n"
+                            f"Paper claims: {len(paper_claims)}, Subject groups: {len(subject_results)}"
+                        )
+                        _write_workflow_log(log_sections)
+                        return {
+                            "study_accession": study_accession,
+                            "paper_claims": paper_claims,
+                            "subject_results": subject_results,
+                        }
+                    else:
+                        # No filters → full deep claim analysis
+                        log_sections.append("--- Step 3: Full Deep Analysis (no filters in question) ---")
+                        result = await _run_full_paper_analysis(
+                            fetched_paper_text, study_accession, assay_methods, pubmed_id, log_sections
+                        )
+                        _write_workflow_log(log_sections)
+                        return result
             else:
                 study_accession = None
                 log_sections.append(
@@ -520,13 +628,19 @@ async def run_agent_from_paper(pdf_bytes: bytes, filename: str, session: AsyncSe
     # ── 5. Study sync ────────────────────────────────────────────────────────
     await _sync_study(study_accession, log_sections)
 
-    # ── 6. Parallel: step-1 claim extraction + question analysis ─────────────
+    # ── 6. Try to extract filters from question ───────────────────────────────
+    _pdf_filters: list[dict] = []
     if question and question.strip():
+        prompt = f"Study: {study_accession}\n{question}"
+        _pdf_filters, _ = await analyze_descriptions(prompt)
         log_sections.append(
-            f"--- Step 6: Parallel Mode ---\n"
-            f"question: {question}"
+            f"--- Step 6: Question Filter Extraction ---\n"
+            f"question: {question}\n"
+            f"filters found: {len(_pdf_filters)}"
         )
 
+    if _pdf_filters:
+        # Parallel: step-1 claims + subject query from filters
         async def _task_paper_claims() -> list[dict]:
             step1_json = await parse_paper_claims_step1_only(
                 paper_text, study_accession, assay_methods, pmcid=pubmed_id
@@ -542,12 +656,8 @@ async def run_agent_from_paper(pdf_bytes: bytes, filename: str, session: AsyncSe
             ]
 
         async def _task_question_subjects() -> list[dict]:
-            prompt = f"Study: {study_accession}\n{question}"
-            description_analysis, _ = await analyze_descriptions(prompt)
-            if not description_analysis:
-                return []
             group_queries = await resolve_and_build_queries(
-                description_analysis, study_accession, async_session
+                _pdf_filters, study_accession, async_session
             )
             exec_log: list[str] = []
             return await _execute_all_queries(group_queries, async_session, exec_log)
@@ -555,11 +665,9 @@ async def run_agent_from_paper(pdf_bytes: bytes, filename: str, session: AsyncSe
         paper_claims, subject_results = await asyncio.gather(
             _task_paper_claims(), _task_question_subjects()
         )
-
         log_sections.append(
             f"--- Step 6 Results ---\n"
-            f"Paper claims: {len(paper_claims)}\n"
-            f"Subject result groups: {len(subject_results)}"
+            f"Paper claims: {len(paper_claims)}, Subject groups: {len(subject_results)}"
         )
         _write_workflow_log(log_sections)
         return {
@@ -568,100 +676,10 @@ async def run_agent_from_paper(pdf_bytes: bytes, filename: str, session: AsyncSe
             "subject_results": subject_results,
         }
 
-    # ── 7. No question → full two-step LLM claim extraction ──────────────────
-    _, step2_json = await parse_paper_claims_from_text(
-        paper_text, study_accession, assay_methods, pmcid=pubmed_id
+    # ── 7. No filters (or no question) → full deep claim analysis ────────────
+    log_sections.append("--- Step 7: Full Deep Analysis (no filters in question) ---")
+    result = await _run_full_paper_analysis(
+        paper_text, study_accession, assay_methods, pubmed_id, log_sections
     )
-
-    # Convert step2_json {"claim_1": {groups, claim, sources, ...}} →
-    # claims list + batch_analysis dict consumed by _process_one_claim
-    claims: list[dict] = []
-    batch_analysis: dict[str, list[dict]] = {}
-    for key, val in step2_json.items():
-        try:
-            num = int(key.split("_")[1])
-        except (IndexError, ValueError):
-            continue
-        sources = val.get("sources") or []
-        first_source = sources[0] if sources else {}
-        claims.append({
-            "id": num,
-            "claim_text": val.get("claim", ""),
-            "source": first_source,
-        })
-        batch_analysis[str(num)] = val.get("groups", [])
-
-    log_sections.append(
-        f"--- Step 6: Claim Extraction ---\n"
-        f"Claims extracted: {len(claims)}"
-    )
-
-    # ── 7. Resolve + execute (reuse claims processing logic) ─────────────────
-    async def _process_one_claim(claim: dict) -> tuple[dict, list[str]]:
-        claim_id = claim["id"]
-        claim_analysis = batch_analysis.get(str(claim_id), [])
-        local_logs: list[str] = []
-        try:
-            if not claim_analysis:
-                local_logs.append(
-                    f"--- Claim {claim_id}: Analysis ---\n"
-                    f"No groups — skipping."
-                )
-                return {
-                    "claim_id": claim_id,
-                    "claim_text": claim.get("claim_text", ""),
-                    "source": claim.get("source", {}),
-                    "subject_results": [],
-                }, local_logs
-
-            local_logs.append(
-                f"--- Claim {claim_id}: Analysis ---\n"
-                f"{json.dumps(claim_analysis, indent=2)}"
-            )
-
-            t1 = time.time()
-            group_queries = await resolve_and_build_queries(
-                claim_analysis, study_accession, async_session
-            )
-            logger.info("Claim %s: resolve_and_build_queries took %.2fs", claim_id, time.time() - t1)
-            local_logs.append(_log_queries(group_queries))
-
-            t2 = time.time()
-            exec_log: list[str] = [f"--- Claim {claim_id}: Query Execution ---"]
-            subject_results = await _execute_all_queries(group_queries, async_session, exec_log)
-            logger.info("Claim %s: execute_all_queries took %.2fs", claim_id, time.time() - t2)
-            for i, sr in enumerate(subject_results):
-                sr["group_id"] = i
-            local_logs.append("\n".join(exec_log))
-
-            return {
-                "claim_id": claim_id,
-                "claim_text": claim.get("claim_text", ""),
-                "source": claim.get("source", {}),
-                "study_design": claim_analysis[0].get("study_design") if claim_analysis else None,
-                "subject_results": subject_results,
-            }, local_logs
-
-        except Exception as exc:
-            logger.error("Claim %s failed: %s", claim_id, exc)
-            local_logs.append(f"--- Claim {claim_id}: ERROR ---\n{exc}")
-            return {
-                "claim_id": claim_id,
-                "claim_text": claim.get("claim_text", ""),
-                "source": claim.get("source", {}),
-                "subject_results": [],
-                "error": str(exc),
-            }, local_logs
-
-    pairs = await asyncio.gather(*[_process_one_claim(c) for c in claims])
-
-    claims_results: list[dict] = []
-    for result, logs in pairs:
-        claims_results.append(result)
-        log_sections.extend(logs)
-
     _write_workflow_log(log_sections)
-    return {
-        "study_accession": study_accession,
-        "claims": claims_results,
-    }
+    return result
