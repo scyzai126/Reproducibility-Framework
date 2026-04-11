@@ -33,7 +33,7 @@ cd frontend && npm run dev
 ## Environment
 
 Copy `.env.example` to `.env` and fill in:
-- `OPENAI_API_KEY` — OpenAI key (model defaults to `gpt-4o`)
+- `OPENAI_API_KEY` — OpenAI key (model defaults to `gpt-5.4`)
 - `MYSQL_URL` — async MySQL URL, e.g. `mysql+aiomysql://user:pass@localhost:3306/claim_reproduce`
 
 Tests stub these out automatically via `tests/conftest.py`.

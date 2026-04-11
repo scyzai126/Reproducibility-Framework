@@ -3,7 +3,7 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     OPENAI_API_KEY: str
-    MYSQL_URL: str = "mysql+aiomysql://cs2635:Edic-123@localhost:3306/claim_reproduce"
+    MYSQL_URL: str = "mysql+aiomysql://immport_user@localhost:3306/immport_dr62"
     OPENAI_MODEL: str = "gpt-5.4"
     IMMPORT_BASE_URL: str = "https://www.immport.org"
     IMMPORT_USERNAME: str = ""

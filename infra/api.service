@@ -1,0 +1,16 @@
+[Unit]
+Description=Reproducibility Framework API (uvicorn)
+After=network.target mysql.service
+Requires=mysql.service
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/opt/app/apps/api
+EnvironmentFile=/opt/app/apps/api/.env
+ExecStart=/opt/app/apps/api/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
