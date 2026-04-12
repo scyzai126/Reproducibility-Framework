@@ -230,10 +230,11 @@ class TestRunAgentFromPaperFilename:
 class TestRunAgentFromTextNoPaperSource:
 
     @pytest.mark.asyncio
-    async def test_plain_question_without_source_raises(self):
+    async def test_plain_question_without_source_returns_clarification(self):
         from app.agent.orchestrator import run_agent_from_text
-        with pytest.raises(ValueError, match="Please include a paper source"):
-            await run_agent_from_text("find healthy subjects with plasma samples", _mock_session())
+        result = await run_agent_from_text("find healthy subjects with plasma samples", _mock_session())
+        assert result.get("type") == "clarification"
+        assert "question" in result
 
     @pytest.mark.asyncio
     async def test_sdy_not_in_immport_raises(self):

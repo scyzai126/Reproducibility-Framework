@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AgentResponse, SubjectResult, ClaimResult, PaperClaim, ChatMessage } from '@/lib/types';
 
 interface Props {
@@ -34,6 +34,55 @@ function UserMessage({ message }: Props) {
   );
 }
 
+const WORKFLOW_STEPS = [
+  { label: 'Reading and parsing the input',                          delay: 0 },
+  { label: 'Fetching full paper text from PubMed/PMC',               delay: 1500 },
+  { label: 'Extracting claims and participant groups',                delay: 3000 },
+  { label: 'Syncing study data from ImmPort',                        delay: 4500 },
+  { label: 'Resolving terms to ImmPort accessions', delay: 6000 },
+  { label: 'Querying matched subjects from the database',            delay: 7500 },
+  { label: 'Generating the final report',                            delay: 9500 },
+];
+
+function WorkflowProgress() {
+  const [activeStep, setActiveStep] = useState(0);
+
+  useEffect(() => {
+    const timers = WORKFLOW_STEPS.slice(1).map((step, i) =>
+      setTimeout(() => setActiveStep(i + 1), step.delay)
+    );
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
+  return (
+    <div className="space-y-2 py-1">
+      {WORKFLOW_STEPS.map((step, i) => {
+        const done = i < activeStep;
+        const active = i === activeStep;
+        return (
+          <div key={i} className={`flex items-center gap-2.5 text-sm transition-opacity ${i > activeStep ? 'opacity-30' : 'opacity-100'}`}>
+            {done ? (
+              <svg className="w-4 h-4 text-emerald-500 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            ) : active ? (
+              <svg className="w-4 h-4 text-gray-400 flex-shrink-0 animate-spin" viewBox="0 0 24 24" fill="none">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+              </svg>
+            ) : (
+              <div className="w-4 h-4 rounded-full border-2 border-gray-200 flex-shrink-0" />
+            )}
+            <span className={active ? 'text-gray-700 font-medium' : done ? 'text-gray-400' : 'text-gray-300'}>
+              {step.label}
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 function AssistantMessage({ message }: Props) {
   return (
     <div className="flex gap-3">
@@ -42,16 +91,14 @@ function AssistantMessage({ message }: Props) {
       </div>
       <div className="flex-1 min-w-0 pt-1">
         {message.isLoading ? (
-          <div className="flex items-center gap-1 py-1">
-            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-            <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-          </div>
+          <WorkflowProgress />
         ) : message.error ? (
           <div className="text-red-400 text-sm">
             <span className="font-medium">Error: </span>
             {message.error}
           </div>
+        ) : message.result?.type === 'clarification' ? (
+          <p className="text-sm text-gray-700 whitespace-pre-line">{message.result.question}</p>
         ) : message.result ? (
           <ResultsDisplay result={message.result} />
         ) : null}
@@ -71,7 +118,7 @@ function Badge({ label, value }: { label: string; value: string }) {
 }
 
 function GroupCard({ group, index }: { group: SubjectResult; index: number }) {
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(false);
   const count = group.subjects?.length ?? 0;
   const resolvers = group.resolvers ?? {};
 

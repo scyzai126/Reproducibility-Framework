@@ -134,6 +134,7 @@ async def _resolve_accession(
     search_term: str,
     study_accession: str,
     config: dict,
+    claim_text: str | None = None,
 ) -> tuple[str, str] | None:
     """Resolve a human-readable term to a database accession.
 
@@ -192,7 +193,7 @@ async def _resolve_accession(
         logger.warning("No %s rows found for study %s", table, study_accession)
         return None
 
-    resolved = await _llm_resolve(search_term, all_candidates, config)
+    resolved = await _llm_resolve(search_term, all_candidates, config, claim_text=claim_text)
     if resolved is not None:
         return (resolved, "LLM")
     return None
@@ -200,12 +201,15 @@ async def _resolve_accession(
 
 async def _llm_resolve(
     search_term: str, candidates: list[dict], config: dict,
+    claim_text: str | None = None,
 ) -> str | None:
     """Ask the LLM to pick the best-matching candidate."""
     id_col = config["id_col"]
     system_prompt, user_template = _load_resolver_prompt(config["prompt_name"])
     candidates_text = json.dumps(candidates, indent=2)
     prompt = user_template.format(candidates=candidates_text, search_term=search_term)
+    if claim_text:
+        prompt += f"\n\nOriginal claim for context:\n{claim_text}"
 
     client = _get_openai_client()
     response = await client.chat.completions.create(
@@ -243,16 +247,18 @@ async def _llm_resolve(
 
 async def resolve_arm_accession(
     session: AsyncSession, cohort: str, study_accession: str,
+    claim_text: str | None = None,
 ) -> tuple[str, str] | None:
     """Resolve a cohort name → arm_accession."""
-    return await _resolve_accession(session, cohort, study_accession, _ARM_CONFIG)
+    return await _resolve_accession(session, cohort, study_accession, _ARM_CONFIG, claim_text=claim_text)
 
 
 async def resolve_experiment_accession(
     session: AsyncSession, assay_method: str, study_accession: str,
+    claim_text: str | None = None,
 ) -> tuple[str, str] | None:
     """Resolve an assay method → experiment_accession."""
-    return await _resolve_accession(session, assay_method, study_accession, _EXPERIMENT_CONFIG)
+    return await _resolve_accession(session, assay_method, study_accession, _EXPERIMENT_CONFIG, claim_text=claim_text)
 
 
 async def get_assay_method_for_experiment(
@@ -269,13 +275,15 @@ async def get_assay_method_for_experiment(
 
 async def resolve_planned_visit_accession(
     session: AsyncSession, time_point: str, study_accession: str,
+    claim_text: str | None = None,
 ) -> tuple[str, str] | None:
     """Resolve a time point string → planned_visit_accession."""
-    return await _resolve_accession(session, time_point, study_accession, _PLANNED_VISIT_CONFIG)
+    return await _resolve_accession(session, time_point, study_accession, _PLANNED_VISIT_CONFIG, claim_text=claim_text)
 
 
 async def resolve_tissue_type(
     session: AsyncSession, tissue_type: str, study_accession: str,
+    claim_text: str | None = None,
 ) -> tuple[str, str, str] | None:
     """Resolve a tissue/sample type → (canonical_value, method, matched_col).
 
@@ -341,6 +349,8 @@ async def resolve_tissue_type(
 
     system_prompt, user_template = _load_resolver_prompt("tissue_type")
     prompt = user_template.format(candidates=json.dumps(candidates, indent=2), search_term=tissue_type)
+    if claim_text:
+        prompt += f"\n\nOriginal claim for context:\n{claim_text}"
     client = _get_openai_client()
     response = await client.chat.completions.create(
         model=settings.OPENAI_MODEL,
@@ -349,7 +359,7 @@ async def resolve_tissue_type(
             {"role": "user", "content": prompt},
         ],
         temperature=0,
-        max_tokens=50,
+        max_completion_tokens=50,
     )
     answer = response.choices[0].message.content.strip()
     if answer.upper() == "NONE" or "|" not in answer:
@@ -369,6 +379,7 @@ async def resolve_tissue_type(
 
 async def resolve_condition(
     session: AsyncSession, condition: str, study_accession: str,
+    claim_text: str | None = None,
 ) -> tuple[str, str] | None:
     """Resolve a condition/disease name → canonical condition value in subject_data_view.
 
@@ -414,7 +425,7 @@ async def resolve_condition(
         logger.warning("No condition values found for study %s", study_accession)
         return None
 
-    resolved = await _llm_resolve(condition, all_candidates, _CONDITION_LLM_CONFIG)
+    resolved = await _llm_resolve(condition, all_candidates, _CONDITION_LLM_CONFIG, claim_text=claim_text)
     if resolved:
         return (resolved, "LLM")
     return None
@@ -422,6 +433,7 @@ async def resolve_condition(
 
 async def resolve_disease_stage(
     session: AsyncSession, condition: str, study_accession: str,
+    claim_text: str | None = None,
 ) -> tuple[str, str] | None:
     """Resolve a severity label → canonical disease_stage_preferred value in subject_data_view.
 
@@ -468,7 +480,7 @@ async def resolve_disease_stage(
         logger.warning("No disease_stage_preferred values found for study %s", study_accession)
         return None
 
-    resolved = await _llm_resolve(condition, all_candidates, _DISEASE_STAGE_LLM_CONFIG)
+    resolved = await _llm_resolve(condition, all_candidates, _DISEASE_STAGE_LLM_CONFIG, claim_text=claim_text)
     if resolved:
         return (resolved, "LLM")
     return None
@@ -626,6 +638,7 @@ async def _resolve_group(
     group: dict,
     study_accession: str | None,
     session_factory,
+    claim_text: str | None = None,
 ) -> list[dict]:
     """Resolve accessions and build SQL for a single participant group.
 
@@ -655,35 +668,35 @@ async def _resolve_group(
         if not (cohort and study_accession):
             return None
         async with session_factory() as s:
-            return await resolve_arm_accession(s, cohort, study_accession)
+            return await resolve_arm_accession(s, cohort, study_accession, claim_text=claim_text)
 
     async def _exp():
         if not (assay_method and study_accession):
             return None
         async with session_factory() as s:
-            return await resolve_experiment_accession(s, assay_method, study_accession)
+            return await resolve_experiment_accession(s, assay_method, study_accession, claim_text=claim_text)
 
     async def _cond():
         if study_design == "longitudinal" or not study_accession:
             return None
         async with session_factory() as s:
             if study_design == "severity" and disease_stage:
-                return await resolve_disease_stage(s, disease_stage, study_accession)
+                return await resolve_disease_stage(s, disease_stage, study_accession, claim_text=claim_text)
             if disease:
-                return await resolve_condition(s, disease, study_accession)
+                return await resolve_condition(s, disease, study_accession, claim_text=claim_text)
             return None
 
     async def _tissue():
         if not (tissue_type and study_accession):
             return None
         async with session_factory() as s:
-            return await resolve_tissue_type(s, tissue_type, study_accession)
+            return await resolve_tissue_type(s, tissue_type, study_accession, claim_text=claim_text)
 
     async def _pv():
         if not (time_point and study_accession):
             return None
         async with session_factory() as s:
-            return await resolve_planned_visit_accession(s, time_point, study_accession)
+            return await resolve_planned_visit_accession(s, time_point, study_accession, claim_text=claim_text)
 
     arm_result, exp_result, cond_result, tissue_result, pv_result = await asyncio.gather(
         _arm(), _exp(), _cond(), _tissue(), _pv()
@@ -703,7 +716,7 @@ async def _resolve_group(
 
     if cond_result:
         canonical, method = cond_result
-        if study_design == "severity":
+        if disease_stage:
             group["disease_stage"] = canonical
             group["disease"] = ""
             resolution_log["disease_stage"] = {"value": canonical, "method": method}
@@ -757,6 +770,7 @@ async def resolve_and_build_queries(
     description_analysis: list[dict],
     study_accession: str | None,
     session_factory,
+    claim_text: str | None = None,
 ) -> list[dict]:
     """Resolve accessions and build SQL queries for all participant groups.
 
@@ -806,35 +820,35 @@ async def resolve_and_build_queries(
             if not (cohort and study_accession):
                 return None
             async with session_factory() as s:
-                return await resolve_arm_accession(s, cohort, study_accession)
+                return await resolve_arm_accession(s, cohort, study_accession, claim_text=claim_text)
 
         async def _exp():
             if not (assay_method and study_accession):
                 return None
             async with session_factory() as s:
-                return await resolve_experiment_accession(s, assay_method, study_accession)
+                return await resolve_experiment_accession(s, assay_method, study_accession, claim_text=claim_text)
 
         async def _cond():
             if study_design == "longitudinal" or not study_accession:
                 return None
             async with session_factory() as s:
                 if study_design == "severity" and disease_stage:
-                    return await resolve_disease_stage(s, disease_stage, study_accession)
+                    return await resolve_disease_stage(s, disease_stage, study_accession, claim_text=claim_text)
                 if disease:
-                    return await resolve_condition(s, disease, study_accession)
+                    return await resolve_condition(s, disease, study_accession, claim_text=claim_text)
             return None
 
         async def _tissue():
             if not (tissue_type and study_accession):
                 return None
             async with session_factory() as s:
-                return await resolve_tissue_type(s, tissue_type, study_accession)
+                return await resolve_tissue_type(s, tissue_type, study_accession, claim_text=claim_text)
 
         async def _pv():
             if not (time_point and study_accession):
                 return None
             async with session_factory() as s:
-                return await resolve_planned_visit_accession(s, time_point, study_accession)
+                return await resolve_planned_visit_accession(s, time_point, study_accession, claim_text=claim_text)
 
         # Use cached tasks for arm, experiment, condition, tissue (commonly shared across groups)
         arm_key  = ("arm",  cohort)
@@ -866,7 +880,7 @@ async def resolve_and_build_queries(
             resolution_log["experiment"] = {"accession": exp_acc, "method": method, "assay_method": assay_method}
         if cond_result:
             canonical, method = cond_result
-            if study_design == "severity":
+            if disease_stage:
                 group["disease_stage"] = canonical
                 group["disease"] = ""
                 resolution_log["disease_stage"] = {"value": canonical, "method": method}

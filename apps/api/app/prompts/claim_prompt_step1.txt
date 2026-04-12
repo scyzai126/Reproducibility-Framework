@@ -49,6 +49,8 @@ Sentence count: prefer one sentence. Use two only if a single sentence would exc
 
 **Template fields:** Include N, tissue type, timeframe, and statistics only if explicitly stated. Use precise assay names from assay_methods. Do not invent or infer details — omit if missing.
 
+**Assay name normalization:** If assay_methods contains "Other" or "other", treat it as "Olink" when the paper describes proximity extension assay, proximity assay, or protein measurement consistent with Olink technology. Always write "Olink" in the claim, never "Other".
+
 ## Sources
 
 For each claim include a `sources` array with the minimal set of entries needed to justify the full claim. Place Results-section quotes first, then Methods, then figures/tables.

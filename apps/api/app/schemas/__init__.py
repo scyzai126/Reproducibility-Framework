@@ -40,3 +40,6 @@ class AgentResponse(BaseModel):
     paper_claims: list[dict] = []
     # Populated for legacy signature / plain-text / question input
     subject_results: list[dict] = []
+    # Populated when the backend needs more information from the user
+    type: str | None = None
+    question: str | None = None

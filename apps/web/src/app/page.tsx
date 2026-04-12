@@ -15,7 +15,15 @@ export default function Home() {
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  // Stores the last unanswered question when the backend asks for clarification,
+  // so it can be prepended to the user's follow-up reply.
+  const [pendingQuestion, setPendingQuestion] = useState<string | null>(null);
+
+  // Default sidebar open only on wider screens (after hydration)
+  useEffect(() => {
+    setSidebarOpen(window.innerWidth >= 768);
+  }, []);
   const [prefillText, setPrefillText] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -52,6 +60,11 @@ export default function Home() {
   };
 
   const handleTextMessage = async (text: string) => {
+    // If backend previously asked a clarifying question, prepend the original
+    // question so the backend has full context on the follow-up.
+    const fullText = pendingQuestion ? `${pendingQuestion} ${text}` : text;
+    setPendingQuestion(null);
+
     const userMsgId = crypto.randomUUID();
     const assistantMsgId = crypto.randomUUID();
 
@@ -76,7 +89,12 @@ export default function Home() {
     setPrefillText('');
 
     try {
-      const result = await runAgentText(text);
+      const result = await runAgentText(fullText);
+
+      if (result.type === 'clarification') {
+        // Store the combined text so the next reply has full context
+        setPendingQuestion(fullText);
+      }
 
       const finalMessages = withLoading.map((m) =>
         m.id === assistantMsgId ? { ...m, isLoading: false, result } : m
@@ -142,7 +160,10 @@ export default function Home() {
     setPrefillText('');
 
     try {
-      const result = await runAgentUpload(file, question);
+      const [result] = await Promise.all([
+        runAgentUpload(file, question),
+        new Promise((r) => setTimeout(r, 8000)),
+      ]);
 
       const finalMessages = withLoading.map((m) =>
         m.id === assistantMsgId ? { ...m, isLoading: false, result } : m
@@ -187,19 +208,42 @@ export default function Home() {
 
   return (
     <div className="flex h-screen bg-white text-gray-900 overflow-hidden">
-      <Sidebar
-        sessions={sessions}
-        currentId={currentSessionId}
-        isOpen={sidebarOpen}
-        onToggle={() => setSidebarOpen((v) => !v)}
-        onNewChat={handleNewChat}
-        onSelectSession={handleSelectSession}
-      />
+      {/* Mobile overlay — closes sidebar when tapping outside */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/30 z-10 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
 
-      <main className="flex-1 flex flex-col min-w-0">
+      {/* Sidebar: always in flow on md+, overlay on mobile */}
+      <div className={`${sidebarOpen ? 'fixed md:relative z-20 h-full' : 'hidden md:block md:h-full'}`}>
+        <Sidebar
+          sessions={sessions}
+          currentId={currentSessionId}
+          isOpen={sidebarOpen}
+          onToggle={() => setSidebarOpen((v) => !v)}
+          onNewChat={() => { handleNewChat(); setSidebarOpen(false); }}
+          onSelectSession={(id) => { handleSelectSession(id); if (window.innerWidth < 768) setSidebarOpen(false); }}
+        />
+      </div>
+
+      <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {messages.length === 0 ? (
           /* Welcome screen */
-          <div className="flex-1 flex flex-col items-center justify-center px-4">
+          <div className="flex-1 flex flex-col items-center justify-center px-4 relative">
+            {/* Mobile hamburger */}
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="absolute top-4 left-4 md:hidden p-2 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+              title="Open menu"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+            </button>
             <div className="w-14 h-14 rounded-full bg-emerald-600 flex items-center justify-center text-white text-xl font-bold mb-5">
               AI
             </div>
@@ -213,8 +257,8 @@ export default function Home() {
               <p className="text-xs text-gray-400 uppercase tracking-wide mb-3">Example questions</p>
               <div className="grid grid-cols-1 gap-2">
                 {[
-                  'For this paper, find all the healthy subjects with plasma samples analyzed by Olink: https://pmc.ncbi.nlm.nih.gov/articles/PMC7665312/',
-                  'Find healthy subjects with plasma samples analyzed by Olink in SDY1669',
+                  'Identify all claims in https://pmc.ncbi.nlm.nih.gov/articles/PMC8761119 and the corresponding subjects for each claim.',
+                  'In paper PMID:32788292, identify all healthy subjects whose plasma samples were analyzed using Olink proteomics.',
                 ].map((q) => (
                   <button
                     key={q}
@@ -234,6 +278,21 @@ export default function Home() {
           </div>
         ) : (
           <>
+            {/* Mobile header bar */}
+            <div className="flex-shrink-0 flex items-center px-4 pt-4 md:hidden">
+              <button
+                onClick={() => setSidebarOpen(true)}
+                className="p-2 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+                title="Open menu"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="3" y1="6" x2="21" y2="6" />
+                  <line x1="3" y1="12" x2="21" y2="12" />
+                  <line x1="3" y1="18" x2="21" y2="18" />
+                </svg>
+              </button>
+            </div>
+
             {/* Chat messages */}
             <div className="flex-1 overflow-y-auto">
               <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">

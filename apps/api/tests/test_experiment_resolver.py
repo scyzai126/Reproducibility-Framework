@@ -9,6 +9,15 @@ from app.agent.query_builder import (
 )
 
 
+@pytest.fixture(autouse=True)
+def reset_openai_client():
+    """Reset the cached OpenAI client before each test so patches take effect."""
+    import app.agent.query_builder as qb
+    qb._openai_client = None
+    yield
+    qb._openai_client = None
+
+
 @pytest.fixture
 def mock_session():
     """Create a mock AsyncSession that returns configurable query results."""

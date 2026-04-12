@@ -33,13 +33,11 @@ SAMPLE_SIGNATURE = {
 def test_parse_signature_extracts_groups():
     groups, study_accession = parse_signature(json.dumps(SAMPLE_SIGNATURE))
     assert len(groups) == 2
-    assert groups[0]["group_name"] == "Healthy controls"
     assert groups[0]["group_id"] == 0
     assert groups[0]["descriptions"] == [
         "n = 18 healthy subjects",
         "from the Atlanta cohort",
     ]
-    assert groups[1]["group_name"] == "COVID-19 patients"
     assert groups[1]["group_id"] == 1
     assert study_accession == "SDY1669"
 
@@ -72,7 +70,7 @@ def test_parse_signature_skips_groups_without_descriptions():
     }
     groups, study_accession = parse_signature(json.dumps(data))
     assert len(groups) == 1
-    assert groups[0]["group_name"] == "Has descriptions"
+    assert groups[0]["group_id"] == 0
 
 
 def test_parse_signature_extracts_study_accession():
@@ -99,22 +97,20 @@ def test_parse_signature_no_repository():
 def test_format_descriptions_for_llm():
     groups = [
         {
-            "group_name": "Healthy",
             "group_id": 0,
             "descriptions": ["18 healthy subjects", "Atlanta cohort"],
         },
         {
-            "group_name": "COVID-19",
             "group_id": 1,
             "descriptions": ["36 patients"],
         },
     ]
     result = format_descriptions_for_llm(groups)
 
-    assert "Participant Group 0: Healthy" in result
+    assert "Participant Group 0:" in result
     assert "  - 18 healthy subjects" in result
     assert "  - Atlanta cohort" in result
-    assert "Participant Group 1: COVID-19" in result
+    assert "Participant Group 1:" in result
     assert "  - 36 patients" in result
 
 

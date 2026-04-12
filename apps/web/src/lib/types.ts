@@ -41,6 +41,9 @@ export interface AgentResponse {
   subject_results: SubjectResult[];
   // PDF-only path
   claims: ClaimResult[];
+  // Clarification request from backend
+  type?: string;
+  question?: string;
 }
 
 export interface ChatMessage {

@@ -8,7 +8,7 @@ from pathlib import Path
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.agent.claim_parser import fetch_paper_content_async, fetch_paper_text_async, parse_paper_claims_from_text, parse_paper_claims_step1_only
+from app.agent.claim_parser import fetch_paper_content_async, parse_paper_claims_from_text, parse_paper_claims_step1_only
 from app.agent.ncbi_utils import pmid_to_pmc_url
 from app.agent.description_analyzer import analyze_claims_batch, analyze_descriptions
 from app.agent.file_reader import read_file
@@ -28,6 +28,34 @@ from app.database import async_session
 
 logger = logging.getLogger(__name__)
 
+# Fields that count as meaningful filter criteria (non-null = user specified something)
+_FILTER_FIELDS = {"disease", "disease_stage", "cohort", "assay_method",
+                  "tissue_type", "gender", "age", "time_point", "study_design"}
+
+# Cache keyed by pubmed_id for the expensive LLM claim extraction steps.
+# Different questions about the same paper skip re-parsing the paper entirely.
+_paper_step1_cache: dict[str, dict] = {}   # pubmed_id → step1_json
+_paper_claims_cache: dict[str, dict] = {}  # pubmed_id → step2_json (full analysis)
+
+_EXAMPLE_CLAIMS_DIR = Path(__file__).resolve().parent.parent.parent / "exampleClaims"
+
+
+def _load_example_claims(study_accession: str) -> tuple[dict, dict] | None:
+    """Return (step1_json, step2_json) from exampleClaims/ for known studies, or None."""
+    if not _EXAMPLE_CLAIMS_DIR.exists():
+        return None
+    for subdir in _EXAMPLE_CLAIMS_DIR.iterdir():
+        if subdir.is_dir() and subdir.name.startswith(study_accession + "_"):
+            step1_path = subdir / "step1.json"
+            step2_files = list(subdir.glob("claims_LLM_*.json"))
+            if step1_path.exists() and step2_files:
+                step1 = json.loads(step1_path.read_text(encoding="utf-8"))
+                step2 = json.loads(step2_files[0].read_text(encoding="utf-8"))
+                logger.info("Loaded example claims for %s from %s", study_accession, subdir.name)
+                return step1, step2
+    return None
+
+
 
 _URL_PATTERNS = [
     # PubMed: pubmed.ncbi.nlm.nih.gov/32788292
@@ -38,6 +66,43 @@ _URL_PATTERNS = [
     (re.compile(r"europepmc\.org/article/MED/(\d+)", re.I), "pubmed_id"),
 ]
 
+
+
+async def _get_study_assay_methods(session: AsyncSession, study_accession: str) -> list[str]:
+    """Return study assay labels with RNA-seq name fallback for multi-row studies.
+
+    If a study has more than one experiment row with measurement_technique
+    'RNA sequencing', we use each row's `name` as the assay label for those rows.
+    Otherwise we use measurement_technique.
+    """
+    result = await session.execute(
+        text(
+            "SELECT measurement_technique, name "
+            "FROM experiment "
+            "WHERE study_accession = :sa AND measurement_technique IS NOT NULL"
+        ),
+        {"sa": study_accession},
+    )
+    rows = result.fetchall()
+
+    def _is_rna_seq(mt: str | None) -> bool:
+        return bool(mt and mt.strip().lower() == "rna sequencing")
+
+    rna_seq_count = sum(1 for mt, _ in rows if _is_rna_seq(mt))
+    use_rna_names = rna_seq_count > 1
+
+    assay_methods: list[str] = []
+    seen: set[str] = set()
+    for measurement_technique, name in rows:
+        mt = (measurement_technique or "").strip()
+        nm = (name or "").strip()
+        if not mt:
+            continue
+        assay = nm if (use_rna_names and _is_rna_seq(mt) and nm) else mt
+        if assay not in seen:
+            seen.add(assay)
+            assay_methods.append(assay)
+    return assay_methods
 
 
 def _extract_pubmed_id_from_text(message: str) -> tuple[str | None, str | None, str]:
@@ -204,6 +269,91 @@ async def _sync_study(study_accession: str, log_sections: list[str]) -> None:
     )
 
 
+async def _run_paper_pipeline(
+    paper_text: str,
+    pubmed_id: str,
+    study_accession: str,
+    session: AsyncSession,
+    question: str | None,
+    log_sections: list[str],
+) -> dict:
+    """Shared pipeline after paper text + study are resolved.
+
+    Runs for both the text (URL/PMID) path and the PDF upload path:
+      1. Sync study data
+      2. Extract filters from question (if any)
+      3a. Filters found → parallel: step-1 claims + subject query
+      3b. No filters → full step-2 deep claim analysis
+    """
+    await _sync_study(study_accession, log_sections)
+    assay_methods = await _get_study_assay_methods(session, study_accession)
+    log_sections.append(
+        f"--- Assay Methods ---\n"
+        f"study_accession: {study_accession}\n"
+        f"assay_methods: {assay_methods}"
+    )
+
+    # Extract filters from the question
+    _filters: list[dict] = []
+    if question and question.strip():
+        prompt = f"Study: {study_accession}\n{question}"
+        _raw_filters, _ = await analyze_descriptions(prompt)
+        _filters = [
+            f for f in _raw_filters
+            if any(f.get(field) for field in _FILTER_FIELDS) or f.get("comparison")
+        ]
+        log_sections.append(
+            f"--- Filter Extraction ---\n"
+            f"filters found: {len(_filters)} (raw: {len(_raw_filters)})"
+        )
+
+    if _filters:
+        # Parallel: step-1 claims listing + subject query from filters
+        async def _task_claims() -> list[dict]:
+            example = _load_example_claims(study_accession)
+            if example is not None:
+                step1_json, _ = example
+            elif pubmed_id in _paper_step1_cache:
+                logger.info("Step1 cache hit for pubmed_id=%s", pubmed_id)
+                step1_json = _paper_step1_cache[pubmed_id]
+            else:
+                step1_json = await parse_paper_claims_step1_only(
+                    paper_text, study_accession, assay_methods
+                )
+                _paper_step1_cache[pubmed_id] = step1_json
+                logger.info("Cached step1 claims for pubmed_id=%s", pubmed_id)
+            return [
+                {"claim_id": key, "claim_text": val.get("claim", ""), "sources": val.get("sources", [])}
+                for key, val in step1_json.items()
+                if key.startswith("claim_")
+            ]
+
+        async def _task_subjects() -> list[dict]:
+            gqs = await resolve_and_build_queries(_filters, study_accession, async_session)
+            exec_log: list[str] = []
+            return await _execute_all_queries(gqs, async_session, exec_log)
+
+        paper_claims, subject_results = await asyncio.gather(_task_claims(), _task_subjects())
+        log_sections.append(
+            f"--- Parallel Mode ---\n"
+            f"Paper claims: {len(paper_claims)}, Subject groups: {len(subject_results)}"
+        )
+        _write_workflow_log(log_sections)
+        return {
+            "study_accession": study_accession,
+            "paper_claims": paper_claims,
+            "subject_results": subject_results,
+        }
+
+    # No filters → full deep claim analysis
+    log_sections.append("--- Full Deep Analysis (no filters in question) ---")
+    result = await _run_full_paper_analysis(
+        paper_text, study_accession, assay_methods, pubmed_id, log_sections
+    )
+    _write_workflow_log(log_sections)
+    return result
+
+
 async def _run_full_paper_analysis(
     paper_text: str,
     study_accession: str,
@@ -212,9 +362,30 @@ async def _run_full_paper_analysis(
     log_sections: list[str],
 ) -> dict:
     """Full two-step claim extraction + DB queries for every claim."""
-    _, step2_json = await parse_paper_claims_from_text(
-        paper_text, study_accession, assay_methods, pmcid=pubmed_id
-    )
+    example = _load_example_claims(study_accession)
+    if example is not None:
+        # Pre-computed example claims — skip LLM entirely
+        step1_json, step2_json = example
+    elif pubmed_id in _paper_claims_cache:
+        # Both step1 + step2 cached — skip everything
+        logger.info("Cache hit (step1+step2) for pubmed_id=%s — skipping both LLM steps", pubmed_id)
+        step2_json = _paper_claims_cache[pubmed_id]
+    elif pubmed_id in _paper_step1_cache:
+        # Step1 cached — skip step1, run step2 only
+        logger.info("Cache hit (step1 only) for pubmed_id=%s — skipping step1, running step2", pubmed_id)
+        _, step2_json = await parse_paper_claims_from_text(
+            paper_text, study_accession, assay_methods,
+            cached_step1=_paper_step1_cache[pubmed_id]
+        )
+        _paper_claims_cache[pubmed_id] = step2_json
+    else:
+        # No cache — run both steps, populate both caches
+        step1_json, step2_json = await parse_paper_claims_from_text(
+            paper_text, study_accession, assay_methods
+        )
+        _paper_step1_cache[pubmed_id] = step1_json
+        _paper_claims_cache[pubmed_id] = step2_json
+        logger.info("Cached step1+step2 for pubmed_id=%s", pubmed_id)
 
     claims: list[dict] = []
     batch_analysis: dict[str, list[dict]] = {}
@@ -229,7 +400,11 @@ async def _run_full_paper_analysis(
             "claim_text": val.get("claim", ""),
             "source": sources[0] if sources else {},
         })
-        batch_analysis[str(num)] = val.get("groups", [])
+        comparison_strategy = val.get("comparison_strategy") or val.get("study_design") or ""
+        groups = [
+            {**g, "study_design": comparison_strategy} for g in val.get("groups", [])
+        ]
+        batch_analysis[str(num)] = groups
 
     log_sections.append(
         f"--- Full Claim Extraction ---\n"
@@ -255,7 +430,7 @@ async def _run_full_paper_analysis(
                 f"{json.dumps(claim_analysis, indent=2)}"
             )
             t1 = time.time()
-            group_queries = await resolve_and_build_queries(claim_analysis, study_accession, async_session)
+            group_queries = await resolve_and_build_queries(claim_analysis, study_accession, async_session, claim_text=claim.get("claim_text"))
             logger.info("Claim %s: resolve_and_build_queries took %.2fs", claim_id, time.time() - t1)
             local_logs.append(_log_queries(group_queries))
 
@@ -353,7 +528,8 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
 
                 t1 = time.time()
                 group_queries = await resolve_and_build_queries(
-                    claim_analysis, study_accession, async_session
+                    claim_analysis, study_accession, async_session,
+                    claim_text=claim.get("claim_text"),
                 )
                 logger.info("Claim %s: resolve_and_build_queries took %.2fs", claim_id, time.time() - t1)
                 local_logs.append(_log_queries(group_queries))
@@ -469,69 +645,10 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
 
                 # ── Paper URL path: always do claim analysis ─────────────────
                 if study_accession:
-                    assay_rows = (await session.execute(
-                        text(
-                            "SELECT DISTINCT measurement_technique FROM experiment "
-                            "WHERE study_accession = :sa AND measurement_technique IS NOT NULL"
-                        ),
-                        {"sa": study_accession},
-                    )).fetchall()
-                    assay_methods: list[str] = [r[0] for r in assay_rows if r[0]]
-
-                    await _sync_study(study_accession, log_sections)
-
-                    # Try to extract filters from the question
-                    _url_filters: list[dict] = []
-                    if question.strip():
-                        prompt = f"Study: {study_accession}\n{question}"
-                        _url_filters, _ = await analyze_descriptions(prompt)
-                        log_sections.append(
-                            f"--- Step 3: Question Filter Extraction ---\n"
-                            f"filters found: {len(_url_filters)}"
-                        )
-
-                    if _url_filters:
-                        # Parallel: step-1 claims + subject query from filters
-                        async def _task_paper_claims_url() -> list[dict]:
-                            step1_json = await parse_paper_claims_step1_only(
-                                fetched_paper_text, study_accession, assay_methods, pmcid=pubmed_id
-                            )
-                            return [
-                                {
-                                    "claim_id": key,
-                                    "claim_text": val.get("claim", ""),
-                                    "sources": val.get("sources", []),
-                                }
-                                for key, val in step1_json.items()
-                                if key.startswith("claim_")
-                            ]
-
-                        async def _task_question_subjects_url() -> list[dict]:
-                            gqs = await resolve_and_build_queries(_url_filters, study_accession, async_session)
-                            exec_log: list[str] = []
-                            return await _execute_all_queries(gqs, async_session, exec_log)
-
-                        paper_claims, subject_results = await asyncio.gather(
-                            _task_paper_claims_url(), _task_question_subjects_url()
-                        )
-                        log_sections.append(
-                            f"--- Step 3: Parallel URL Mode ---\n"
-                            f"Paper claims: {len(paper_claims)}, Subject groups: {len(subject_results)}"
-                        )
-                        _write_workflow_log(log_sections)
-                        return {
-                            "study_accession": study_accession,
-                            "paper_claims": paper_claims,
-                            "subject_results": subject_results,
-                        }
-                    else:
-                        # No filters → full deep claim analysis
-                        log_sections.append("--- Step 3: Full Deep Analysis (no filters in question) ---")
-                        result = await _run_full_paper_analysis(
-                            fetched_paper_text, study_accession, assay_methods, pubmed_id, log_sections
-                        )
-                        _write_workflow_log(log_sections)
-                        return result
+                    return await _run_paper_pipeline(
+                        fetched_paper_text, pubmed_id, study_accession,
+                        session, question or None, log_sections
+                    )
             else:
                 # Check for SDY accession → look up pubmed_id → fetch paper → claim analysis
                 sdy_match = re.search(r"\bSDY\d+\b", file_content, re.I)
@@ -551,71 +668,31 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
                                 "Cannot fetch paper for claim analysis."
                             )
                         sdy_paper_text, _ = await fetch_paper_content_async(sdy_paper_url)
-                        sdy_assay_rows = (await session.execute(
-                            text(
-                                "SELECT DISTINCT measurement_technique FROM experiment "
-                                "WHERE study_accession = :sa AND measurement_technique IS NOT NULL"
-                            ),
-                            {"sa": sdy_accession},
-                        )).fetchall()
-                        sdy_assay_methods = [r[0] for r in sdy_assay_rows if r[0]]
-                        await _sync_study(sdy_accession, log_sections)
-
-                        _sdy_filters: list[dict] = []
-                        if sdy_question.strip():
-                            prompt = f"Study: {sdy_accession}\n{sdy_question}"
-                            _sdy_filters, _ = await analyze_descriptions(prompt)
 
                         log_sections.append(
                             f"--- Step 2: SDY → Paper ---\n"
-                            f"study_accession: {sdy_accession} → pubmed_id: {sdy_pubmed_id}\n"
-                            f"filters found: {len(_sdy_filters)}"
+                            f"study_accession: {sdy_accession} → pubmed_id: {sdy_pubmed_id}"
                         )
-
-                        if _sdy_filters:
-                            async def _task_sdy_claims() -> list[dict]:
-                                step1_json = await parse_paper_claims_step1_only(
-                                    sdy_paper_text, sdy_accession, sdy_assay_methods, pmcid=sdy_pubmed_id
-                                )
-                                return [
-                                    {"claim_id": k, "claim_text": v.get("claim", ""), "sources": v.get("sources", [])}
-                                    for k, v in step1_json.items()
-                                    if k.startswith("claim_")
-                                ]
-
-                            async def _task_sdy_subjects() -> list[dict]:
-                                gqs = await resolve_and_build_queries(_sdy_filters, sdy_accession, async_session)
-                                exec_log: list[str] = []
-                                return await _execute_all_queries(gqs, async_session, exec_log)
-
-                            sdy_claims, sdy_subjects = await asyncio.gather(
-                                _task_sdy_claims(), _task_sdy_subjects()
-                            )
-                            _write_workflow_log(log_sections)
-                            return {
-                                "study_accession": sdy_accession,
-                                "paper_claims": sdy_claims,
-                                "subject_results": sdy_subjects,
-                            }
-                        else:
-                            result = await _run_full_paper_analysis(
-                                sdy_paper_text, sdy_accession, sdy_assay_methods, sdy_pubmed_id, log_sections
-                            )
-                            _write_workflow_log(log_sections)
-                            return result
+                        return await _run_paper_pipeline(
+                            sdy_paper_text, sdy_pubmed_id, sdy_accession,
+                            session, sdy_question or None, log_sections
+                        )
                     else:
                         raise ValueError(
                             f"Study {sdy_accession} was not found in ImmPort. "
                             "Please check the study accession and try again."
                         )
                 else:
-                    raise ValueError(
-                        "Please include a paper source in your question. Supported formats:\n"
-                        "• Paper URL: https://pmc.ncbi.nlm.nih.gov/articles/PMC7665312/\n"
-                        "• PubMed ID: PMID:32788292\n"
-                        "• PMC ID: PMC7665312\n"
-                        "• ImmPort study ID: SDY1669"
-                    )
+                    return {
+                        "type": "clarification",
+                        "question": (
+                            "Which paper would you like me to analyze? Please include paper in one of these format:\n"
+                            "• Paper URL: https://pmc.ncbi.nlm.nih.gov/articles/PMC7665312/\n"
+                            "• PubMed ID: PMID:32788292\n"
+                            "• PMC ID: PMC7665312\n"
+                            "• ImmPort study ID: SDY1669"
+                        ),
+                    }
 
         description_analysis, raw_llm = await analyze_descriptions(
             f"Study: {study_accession}\n{question}" if study_accession else question
@@ -707,76 +784,7 @@ async def run_agent_from_paper(pdf_bytes: bytes, filename: str, session: AsyncSe
         f"pubmed_id: {pubmed_id} → study_accession: {study_accession}"
     )
 
-    # ── 4. Assay methods ─────────────────────────────────────────────────────
-    assay_rows = (await session.execute(
-        text(
-            "SELECT DISTINCT measurement_technique FROM experiment "
-            "WHERE study_accession = :sa AND measurement_technique IS NOT NULL"
-        ),
-        {"sa": study_accession},
-    )).fetchall()
-    assay_methods: list[str] = [r[0] for r in assay_rows if r[0]]
-    log_sections.append(
-        f"--- Step 4: Assay Methods ---\n"
-        f"study_accession: {study_accession}\n"
-        f"assay_methods: {assay_methods}"
+    # ── 4. Run shared pipeline (sync, assay extraction, filter extraction, claims/subjects) ──────
+    return await _run_paper_pipeline(
+        paper_text, pubmed_id, study_accession, session, question, log_sections
     )
-
-    # ── 5. Study sync ────────────────────────────────────────────────────────
-    await _sync_study(study_accession, log_sections)
-
-    # ── 6. Try to extract filters from question ───────────────────────────────
-    _pdf_filters: list[dict] = []
-    if question and question.strip():
-        prompt = f"Study: {study_accession}\n{question}"
-        _pdf_filters, _ = await analyze_descriptions(prompt)
-        log_sections.append(
-            f"--- Step 6: Question Filter Extraction ---\n"
-            f"question: {question}\n"
-            f"filters found: {len(_pdf_filters)}"
-        )
-
-    if _pdf_filters:
-        # Parallel: step-1 claims + subject query from filters
-        async def _task_paper_claims() -> list[dict]:
-            step1_json = await parse_paper_claims_step1_only(
-                paper_text, study_accession, assay_methods, pmcid=pubmed_id
-            )
-            return [
-                {
-                    "claim_id": key,
-                    "claim_text": val.get("claim", ""),
-                    "sources": val.get("sources", []),
-                }
-                for key, val in step1_json.items()
-                if key.startswith("claim_")
-            ]
-
-        async def _task_question_subjects() -> list[dict]:
-            group_queries = await resolve_and_build_queries(
-                _pdf_filters, study_accession, async_session
-            )
-            exec_log: list[str] = []
-            return await _execute_all_queries(group_queries, async_session, exec_log)
-
-        paper_claims, subject_results = await asyncio.gather(
-            _task_paper_claims(), _task_question_subjects()
-        )
-        log_sections.append(
-            f"--- Step 6 Results ---\n"
-            f"Paper claims: {len(paper_claims)}, Subject groups: {len(subject_results)}"
-        )
-        _write_workflow_log(log_sections)
-        return {
-            "study_accession": study_accession,
-            "paper_claims": paper_claims,
-            "subject_results": subject_results,
-        }
-
-    # ── 7. No filters (or no question) → full deep claim analysis ────────────
-    log_sections.append("--- Step 7: Full Deep Analysis (no filters in question) ---")
-    result = await _run_full_paper_analysis(
-        paper_text, study_accession, assay_methods, pubmed_id, log_sections
-    )
-    _write_workflow_log(log_sections)
-    return result
