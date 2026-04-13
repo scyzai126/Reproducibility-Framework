@@ -26,97 +26,89 @@ async def run(claim_path: Path, study_accession: str, output_path: Path):
 
     raw = json.loads(claim_path.read_text(encoding="utf-8"))
 
-    # Build claim text lookup and collect all groups
-    claim_text = {k: v.get("claim", "") for k, v in raw.items()}
-    all_groups = []
+    # Fields that are metadata/internal, not query filters
+    _SKIP_FIELDS = {"group_id", "study_accession", "sample_size", "comparison"}
+
+    results = {}
+
     for claim_key, claim_data in raw.items():
+        claim_text = claim_data.get("claim", "")
+        comparison_strategy = claim_data.get("comparison_strategy") or ""
+        groups = []
         for group in claim_data.get("groups", []):
             group = dict(group)
             group["study_accession"] = study_accession
-            group["_claim_key"] = claim_key
-            group["_uid"] = f"{claim_key}__g{group['group_id']}"
-            # Make group_id unique across claims so resolver can distinguish them
-            group["group_id"] = group["_uid"]
-            all_groups.append(group)
+            group["study_design"] = comparison_strategy
+            groups.append(group)
 
-    print(f"Resolving {len(all_groups)} groups for {study_accession}...")
-    group_queries = await resolve_and_build_queries(all_groups, study_accession, immport_session)
+        if not groups:
+            results[claim_key] = {
+                "claim": claim_text,
+                "comparison_strategy": comparison_strategy,
+                "comparison": claim_data.get("comparison", []),
+                "groups": [],
+            }
+            continue
 
-    # Build a lookup from uid → original group
-    group_by_uid = {g["_uid"]: g for g in all_groups}
+        print(f"Resolving {len(groups)} groups for {claim_key} ({study_accession})...")
+        # Process per-claim with claim_text, matching orchestrator behavior
+        group_queries = await resolve_and_build_queries(groups, study_accession, immport_session, claim_text=claim_text)
 
-    # Fields that are metadata/internal, not query filters
-    _SKIP_FIELDS = {"group_id", "study_accession", "_claim_key", "_uid", "sample_size", "comparison"}
-
-    results = {}
-    for gq in group_queries:
-        params = gq["params"]
-        uid = gq["group_id"]  # now contains the uid string
-        orig = group_by_uid.get(uid, {})
-        claim_key = orig.get("_claim_key")
-        group_id = orig.get("_uid", "").split("__g")[-1]  # restore original numeric group_id
-
-        # All non-null original group fields used as filter inputs
-        input_filters = {
-            k: v for k, v in orig.items()
-            if k not in _SKIP_FIELDS and v not in (None, "", [])
+        results[claim_key] = {
+            "claim": claim_text,
+            "comparison_strategy": comparison_strategy,
+            "comparison": claim_data.get("comparison", []),
+            "groups": [],
         }
-        # Resolved SQL params (what actually went into the WHERE clause)
-        resolved_params = {k: v for k, v in params.items() if v and k != "study_accession"}
-        # Add planned_visit_accession from resolution log if resolved
-        pv_res = gq.get("resolution", {}).get("planned_visit")
-        if pv_res and "planned_visit_accession" not in resolved_params:
-            resolved_params["planned_visit_accession"] = pv_res.get("accession")
 
-        # Always include tissue_type + matched_col from resolution log
-        tissue_res = gq.get("resolution", {}).get("tissue_type")
-        if tissue_res:
-            resolved_params["tissue_type"] = tissue_res.get("value")
-            resolved_params["tissue_matched_col"] = tissue_res.get("matched_column")
-        elif orig.get("tissue_type"):
-            resolved_params["tissue_type"] = None
-            resolved_params["tissue_matched_col"] = None
+        for gq, orig in zip(group_queries, groups):
+            params = gq["params"]
+            group_id = str(orig.get("group_id"))
 
-        try:
-            async with immport_session() as s:
-                rows = await _execute_group_query(s, gq["sql"], params)
-            subjects = [
-                f"{r.get('subject_accession', '')};{r.get('biosample_accession', '')};{r.get('expsample_accession', '')}"
-                for r in rows
-            ]
-            unique_subjects = len({r.get("subject_accession") for r in rows if r.get("subject_accession")})
-            print(f"  Group {group_id}: {len(rows)} rows, {unique_subjects} unique subjects")
-            results.setdefault(claim_key, {
-                "claim": claim_text.get(claim_key, ""),
-                "comparison_strategy": raw.get(claim_key, {}).get("comparison_strategy"),
-                "comparison": raw.get(claim_key, {}).get("comparison", []),
-                "groups": [],
-            })
-            results[claim_key]["groups"].append({
-                "group_id": group_id,
-                "input_filters": input_filters,
-                "resolved_params": resolved_params,
-                "subjects": subjects,
-                "experiment_count": len(rows),
-                "subject_count": unique_subjects,
-            })
-        except Exception as exc:
-            print(f"  Group {group_id}: ERROR - {exc}")
-            results.setdefault(claim_key, {
-                "claim": claim_text.get(claim_key, ""),
-                "comparison_strategy": raw.get(claim_key, {}).get("comparison_strategy"),
-                "comparison": raw.get(claim_key, {}).get("comparison", []),
-                "groups": [],
-            })
-            results[claim_key]["groups"].append({
-                "group_id": group_id,
-                "input_filters": input_filters,
-                "resolved_params": {},
-                "subjects": [],
-                "experiment_count": 0,
-                "subject_count": 0,
-                "error": str(exc),
-            })
+            input_filters = {
+                k: v for k, v in orig.items()
+                if k not in _SKIP_FIELDS and v not in (None, "", [])
+            }
+            resolved_params = {k: v for k, v in params.items() if v and k != "study_accession"}
+            pv_res = gq.get("resolution", {}).get("planned_visit")
+            if pv_res and "planned_visit_accession" not in resolved_params:
+                resolved_params["planned_visit_accession"] = pv_res.get("accession")
+            tissue_res = gq.get("resolution", {}).get("tissue_type")
+            if tissue_res:
+                resolved_params["tissue_type"] = tissue_res.get("value")
+                resolved_params["tissue_matched_col"] = tissue_res.get("matched_column")
+            elif orig.get("tissue_type"):
+                resolved_params["tissue_type"] = None
+                resolved_params["tissue_matched_col"] = None
+
+            try:
+                async with immport_session() as s:
+                    rows = await _execute_group_query(s, gq["sql"], params)
+                subjects = [
+                    f"{r.get('subject_accession', '')};{r.get('biosample_accession', '')};{r.get('expsample_accession', '')}"
+                    for r in rows
+                ]
+                unique_subjects = len({r.get("subject_accession") for r in rows if r.get("subject_accession")})
+                print(f"  Group {group_id}: {len(rows)} rows, {unique_subjects} unique subjects")
+                results[claim_key]["groups"].append({
+                    "group_id": group_id,
+                    "input_filters": input_filters,
+                    "resolved_params": resolved_params,
+                    "subjects": subjects,
+                    "experiment_count": len(rows),
+                    "subject_count": unique_subjects,
+                })
+            except Exception as exc:
+                print(f"  Group {group_id}: ERROR - {exc}")
+                results[claim_key]["groups"].append({
+                    "group_id": group_id,
+                    "input_filters": input_filters,
+                    "resolved_params": {},
+                    "subjects": [],
+                    "experiment_count": 0,
+                    "subject_count": 0,
+                    "error": str(exc),
+                })
 
     output = {"study_accession": study_accession, "results": list(results.values())}
     output_path.parent.mkdir(parents=True, exist_ok=True)
