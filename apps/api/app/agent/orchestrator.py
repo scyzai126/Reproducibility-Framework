@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.agent.assay_resolver import get_study_assay_methods
 from app.agent.claim_parser import fetch_paper_content_async, parse_paper_claims_from_text, parse_paper_claims_step1_only, parse_paper_claims_noimmport
-from app.agent.ncbi_utils import pmid_to_pmc_url
+from app.agent.ncbi_utils import pmid_to_pmc_url, pmc_to_pmid
 from app.agent.description_analyzer import analyze_claims_batch, analyze_descriptions
 from app.agent.file_reader import read_file
 from app.agent.paper_reader import extract_pdf_text, extract_pubmed_id_from_filename
@@ -455,12 +455,8 @@ async def _run_full_paper_analysis(
     log_sections: list[str],
 ) -> dict:
     """Full two-step claim extraction + DB queries for every claim."""
-    if pubmed_id in _paper_claims_cache:
-        # Both step1 + step2 in memory — skip everything
-        logger.info("Memory-cache hit (step1+step2) for pubmed_id=%s", pubmed_id)
-        step2_json = _paper_claims_cache[pubmed_id]
-    elif (disk2 := _load_disk_cache(pubmed_id, "groups")) is not None:
-        # step2 on disk — restore both caches, skip LLM entirely
+    if (disk2 := _load_disk_cache(pubmed_id, "groups")) is not None:
+        # Disk cache hit — authoritative, populate memory cache from disk
         logger.info("Disk-cache hit (step2) for pubmed_id=%s", pubmed_id)
         step2_json = disk2
         _paper_claims_cache[pubmed_id] = step2_json
@@ -468,6 +464,10 @@ async def _run_full_paper_analysis(
             disk1 = _load_disk_cache(pubmed_id, "claims")
             if disk1 is not None:
                 _paper_step1_cache[pubmed_id] = disk1
+    elif pubmed_id in _paper_claims_cache:
+        # Memory-only hit (disk was missing — e.g. disk write failed earlier)
+        logger.info("Memory-cache hit (step1+step2) for pubmed_id=%s", pubmed_id)
+        step2_json = _paper_claims_cache[pubmed_id]
     elif pubmed_id in _paper_step1_cache:
         # Step1 in memory — skip step1, run step2 only
         logger.info("Memory-cache hit (step1 only) for pubmed_id=%s — running step2", pubmed_id)
@@ -780,8 +780,23 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
         else:
             # Try to extract pubmed_id + URL from the question
             pmc_id, paper_url, question = _extract_pubmed_id_from_text(file_content)
-            # Bare PMID (e.g. "PMID:32788292") has no URL yet — convert via NCBI
+            # Bare PMID (e.g. "PMID:32788292") has no URL yet — check cache first
             if pmc_id and not paper_url:
+                # pmc_id is the PubMed ID here — check disk cache before any network call
+                if (_load_disk_cache(pmc_id, "groups") is not None or
+                        pmc_id in _paper_claims_cache):
+                    row = (await session.execute(
+                        text("SELECT study_accession FROM study_pubmed WHERE pubmed_id = :pid LIMIT 1"),
+                        {"pid": pmc_id},
+                    )).fetchone()
+                    if row:
+                        log_sections.append(
+                            f"--- Step 2: PMID cache hit ---\n"
+                            f"pubmed_id: {pmc_id} → study_accession: {row[0]}"
+                        )
+                        return await _run_paper_pipeline(
+                            "", pmc_id, row[0], session, question or None, log_sections
+                        )
                 paper_url = await pmid_to_pmc_url(pmc_id)
                 if not paper_url:
                     raise ValueError(
@@ -789,9 +804,28 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
                         "Please provide the full PMC URL instead."
                     )
             if pmc_id and paper_url:
-                # Fetch paper XML once — get text + real PubMed ID (PMC ID ≠ PubMed ID)
+                # pmc_id is the PMC numeric ID — resolve pubmed_id cheaply before fetching
+                resolved_pubmed_id = await pmc_to_pmid(pmc_id)
+                if resolved_pubmed_id and (
+                    _load_disk_cache(resolved_pubmed_id, "groups") is not None or
+                    resolved_pubmed_id in _paper_claims_cache
+                ):
+                    row = (await session.execute(
+                        text("SELECT study_accession FROM study_pubmed WHERE pubmed_id = :pid LIMIT 1"),
+                        {"pid": resolved_pubmed_id},
+                    )).fetchone()
+                    if row:
+                        log_sections.append(
+                            f"--- Step 2: PMC URL cache hit ---\n"
+                            f"pmc_id: {pmc_id} → pubmed_id: {resolved_pubmed_id} → study_accession: {row[0]}"
+                        )
+                        return await _run_paper_pipeline(
+                            "", resolved_pubmed_id, row[0], session, question or None, log_sections
+                        )
+
+                # Cache miss — fetch full paper XML
                 fetched_paper_text, pubmed_id_from_paper = await fetch_paper_content_async(paper_url)
-                pubmed_id = pubmed_id_from_paper or pmc_id
+                pubmed_id = pubmed_id_from_paper or resolved_pubmed_id or pmc_id
                 row = (await session.execute(
                     text("SELECT study_accession FROM study_pubmed WHERE pubmed_id = :pid LIMIT 1"),
                     {"pid": pubmed_id},
@@ -837,6 +871,19 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
                     )).fetchone()
                     if sdy_row:
                         sdy_pubmed_id = str(sdy_row[0])
+
+                        # Check cache before any network calls
+                        if (_load_disk_cache(sdy_pubmed_id, "groups") is not None or
+                                sdy_pubmed_id in _paper_claims_cache):
+                            log_sections.append(
+                                f"--- Step 2: SDY cache hit ---\n"
+                                f"study_accession: {sdy_accession} → pubmed_id: {sdy_pubmed_id}"
+                            )
+                            return await _run_paper_pipeline(
+                                "", sdy_pubmed_id, sdy_accession,
+                                session, sdy_question or None, log_sections
+                            )
+
                         sdy_paper_url = await pmid_to_pmc_url(sdy_pubmed_id)
                         if not sdy_paper_url:
                             raise ValueError(
