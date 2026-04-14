@@ -40,6 +40,25 @@ _paper_claims_cache: dict[str, dict] = {}  # pubmed_id → step2_json (full anal
 
 _DISK_CACHE_DIR = Path(__file__).resolve().parents[4] / "data" / "cache" / "paper_claims"
 
+_DEDUP_SKIP = {"group_id", "study_accession", "study_design"}
+
+
+def _dedup_groups(groups: list[dict]) -> list[dict]:
+    """Remove duplicate groups where all scientific filter fields are identical."""
+    seen: list[dict] = []
+    for g in groups:
+        normalized = {k: v for k, v in g.items() if k not in _DEDUP_SKIP}
+        if normalized not in seen:
+            seen.append(normalized)
+    if len(seen) == len(groups):
+        return groups
+    # Reassign group_ids and restore metadata from first occurrence of each unique group
+    result = []
+    for i, normalized in enumerate(seen):
+        original = next(g for g in groups if {k: v for k, v in g.items() if k not in _DEDUP_SKIP} == normalized)
+        result.append({**original, "group_id": i})
+    return result
+
 
 def _load_disk_cache(pubmed_id: str, step: str) -> dict | None:
     path = _DISK_CACHE_DIR / pubmed_id / f"{step}.json"
@@ -140,14 +159,72 @@ async def _execute_all_queries(
 
     def _build_resolvers(gq: dict) -> dict:
         params = gq["params"]
-        resolvers = {k: v for k, v in params.items() if v and k != "study_accession"}
-        # Replace experiment_accession with the human-readable assay method
-        exp_res = gq.get("resolution", {}).get("experiment", {})
-        if exp_res.get("assay_method"):
-            resolvers.pop("experiment_accession", None)
+        keywords = gq.get("keywords", {}) or {}
+        resolution = gq.get("resolution", {}) or {}
+        resolvers: dict[str, str] = {}
+
+        # Prefer readable keywords from groups.json / LLM output, but only
+        # for fields that successfully resolved to accessions.
+        arm_res = resolution.get("arm", {}) or {}
+        if keywords.get("cohort") and arm_res.get("accession"):
+            resolvers["cohort"] = keywords["cohort"]
+        elif arm_res.get("accession"):
+            resolvers["arm"] = arm_res["accession"]
+        elif params.get("arm_accession"):
+            resolvers["arm"] = params["arm_accession"]
+
+        exp_res = resolution.get("experiment", {}) or {}
+        if keywords.get("assay_method") and exp_res.get("accession"):
+            resolvers["assay_method"] = keywords["assay_method"]
+        elif exp_res.get("accession"):
+            resolvers["experiment"] = exp_res["accession"]
+
+        pv_res = resolution.get("planned_visit", {}) or {}
+        if keywords.get("time_point") and pv_res.get("accession"):
+            resolvers["time_point"] = keywords["time_point"]
+        elif pv_res.get("accession"):
+            resolvers["planned_visit"] = pv_res["accession"]
+
+        if keywords.get("disease_stage"):
+            resolvers["disease_stage"] = keywords["disease_stage"]
+        elif keywords.get("disease"):
+            resolvers["disease"] = keywords["disease"]
+
+        if keywords.get("tissue_type"):
+            resolvers["tissue_type"] = keywords["tissue_type"]
+
+        if keywords.get("age"):
+            resolvers["age"] = str(keywords["age"])
+        if keywords.get("gender"):
+            resolvers["gender"] = keywords["gender"]
+
+        # Backfill from resolved values where keyword is absent.
+        if exp_res.get("assay_method") and not resolvers.get("assay_method"):
             resolvers["assay_method"] = exp_res["assay_method"]
-        if gq.get("planned_visit_name"):
+
+        disease_stage_res = resolution.get("disease_stage", {})
+        if disease_stage_res.get("value") and not resolvers.get("disease_stage"):
+            resolvers["disease_stage"] = disease_stage_res["value"]
+
+        disease_res = resolution.get("disease", {})
+        if disease_res.get("value") and not resolvers.get("disease"):
+            resolvers["disease"] = disease_res["value"]
+
+        tissue_res = resolution.get("tissue_type", {})
+        if tissue_res.get("value") and not resolvers.get("tissue_type"):
+            resolvers["tissue_type"] = tissue_res["value"]
+
+        if gq.get("planned_visit_name") and pv_res.get("accession") and not resolvers.get("time_point"):
             resolvers["time_point"] = gq["planned_visit_name"]
+
+        # Last fallback: IDs only when no readable alternative exists.
+        if params.get("experiment_accession") and exp_res.get("accession") and not resolvers.get("assay_method"):
+            resolvers["experiment"] = params["experiment_accession"]
+        if params.get("planned_visit_accession") and pv_res.get("accession") and not resolvers.get("time_point"):
+            resolvers["planned_visit"] = params["planned_visit_accession"]
+        if params.get("arm_accession") and arm_res.get("accession") and not (resolvers.get("cohort") or resolvers.get("arm")):
+            resolvers["arm"] = params["arm_accession"]
+
         return resolvers
 
     async def _run_one(gq) -> tuple[dict, str]:
@@ -156,16 +233,19 @@ async def _execute_all_queries(
             async with session_factory() as s:
                 rows = await _execute_group_query(s, gq["sql"], params)
             subject_ids = [row.get("subject_accession", "") for row in rows]
-            logger.info("Group %s: found %d subjects", gq["group_id"], len(rows))
+            logger.info("Group %s: found %d samples", gq["group_id"], len(rows))
             resolvers = _build_resolvers(gq)
             return (
                 {
                     "group_id": gq["group_id"],
                     "resolvers": resolvers,
                     "comparison": gq.get("comparison", []),
+                    # Canonical key used by response schema + UI.
                     "subjects": rows,
+                    # Backward-compat for cached/output consumers that still read "samples".
+                    "samples": rows,
                 },
-                f"Group {gq['group_id']}: {len(rows)} subjects found\n"
+                f"Group {gq['group_id']}: {len(rows)} samples found\n"
                 f"  Resolvers: {json.dumps(resolvers)}\n"
                 f"  Subject IDs: {json.dumps(subject_ids)}",
             )
@@ -178,6 +258,7 @@ async def _execute_all_queries(
                     "resolvers": resolvers,
                     "comparison": gq.get("comparison", []),
                     "subjects": [],
+                    "samples": [],
                     "error": str(exc),
                 },
                 f"Group {gq['group_id']}: ERROR - {exc}\n"
@@ -186,9 +267,13 @@ async def _execute_all_queries(
 
     pairs = await asyncio.gather(*[_run_one(gq) for gq in group_queries])
     subject_results = []
+    seen_resolvers: list[dict] = []
     for result, log_line in pairs:
-        subject_results.append(result)
-        log_lines.append(log_line)
+        if result["resolvers"] not in seen_resolvers:
+            seen_resolvers.append(result["resolvers"])
+            subject_results.append(result)
+        else:
+            log_lines.append(f"Group {result['group_id']}: skipped (duplicate resolvers)")
     return subject_results
 
 
@@ -402,12 +487,13 @@ async def _run_full_paper_analysis(
             "id": num,
             "claim_text": val.get("claim", ""),
             "source": sources[0] if sources else {},
+            "comparison": val.get("comparison", []),
         })
         comparison_strategy = val.get("comparison_strategy") or val.get("study_design") or ""
         groups = [
             {**g, "study_design": comparison_strategy} for g in val.get("groups", [])
         ]
-        batch_analysis[str(num)] = groups
+        batch_analysis[str(num)] = _dedup_groups(groups)
 
     log_sections.append(
         f"--- Full Claim Extraction ---\n"
@@ -425,6 +511,7 @@ async def _run_full_paper_analysis(
                     "claim_id": claim_id,
                     "claim_text": claim.get("claim_text", ""),
                     "source": claim.get("source", {}),
+                    "comparison": claim.get("comparison", []),
                     "subject_results": [],
                 }, local_logs
 
@@ -436,6 +523,7 @@ async def _run_full_paper_analysis(
                     "claim_text": claim.get("claim_text", ""),
                     "source": claim.get("source", {}),
                     "study_design": comparison_strategy or None,
+                    "comparison": claim.get("comparison", []),
                     "subject_results": [],
                 }, local_logs
 
@@ -452,6 +540,19 @@ async def _run_full_paper_analysis(
             exec_log: list[str] = [f"--- Claim {claim_id}: Query Execution ---"]
             subject_results = await _execute_all_queries(group_queries, async_session, exec_log)
             logger.info("Claim %s: execute_all_queries took %.2fs", claim_id, time.time() - t2)
+
+            # If multiple groups were defined but none resolved to distinct DB identifiers,
+            # the group classification is wrong — drop the claim.
+            if len(group_queries) > 1 and len(subject_results) <= 1:
+                reason = (
+                    f"Claim {claim_id} dropped: {len(group_queries)} groups defined "
+                    f"but none resolved to distinct DB identifiers (all groups collapsed to the same resolvers). "
+                    f"Group cohorts: {[g.get('cohort') or g.get('disease') for g in claim_analysis]}"
+                )
+                local_logs.append(f"--- Claim {claim_id}: DROPPED ---\n{reason}")
+                logger.warning(reason)
+                return {"claim_id": claim_id, "claim_text": claim.get("claim_text", ""), "source": claim.get("source", {}), "subject_results": []}, local_logs
+
             for i, sr in enumerate(subject_results):
                 sr["group_id"] = i
             local_logs.append("\n".join(exec_log))
@@ -461,6 +562,7 @@ async def _run_full_paper_analysis(
                 "claim_text": claim.get("claim_text", ""),
                 "source": claim.get("source", {}),
                 "study_design": claim_analysis[0].get("study_design") if claim_analysis else None,
+                "comparison": claim.get("comparison", []),
                 "subject_results": subject_results,
             }, local_logs
         except Exception as exc:
@@ -482,8 +584,11 @@ async def _run_full_paper_analysis(
 
     claims_results = [
         r for r in claims_results
-        if any(len(sr.get("subjects", [])) > 0 for sr in r.get("subject_results", []))
+        if any(len(sr.get("subjects", sr.get("samples", []))) > 0 for sr in r.get("subject_results", []))
     ]
+
+    for i, r in enumerate(claims_results):
+        r["claim_id"] = i + 1
 
     return {"study_accession": study_accession, "claims": claims_results}
 
@@ -596,7 +701,7 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
 
         claims_results = [
             r for r in claims_results
-            if any(len(sr.get("subjects", [])) > 0 for sr in r.get("subject_results", []))
+            if any(len(sr.get("subjects", sr.get("samples", []))) > 0 for sr in r.get("subject_results", []))
         ]
 
         _write_workflow_log(log_sections)
@@ -823,7 +928,7 @@ async def run_agent_from_paper(pdf_bytes: bytes, filename: str, session: AsyncSe
         f"pubmed_id: {pubmed_id} → study_accession: {study_accession}"
     )
 
-    # ── 4. Run shared pipeline (sync, assay extraction, filter extraction, claims/subjects) ──────
+    # ── 4. Run shared pipeline (sync, assay extraction, filter extraction, claims/samples) ──────
     return await _run_paper_pipeline(
         paper_text, pubmed_id, study_accession, session, question, log_sections
     )
