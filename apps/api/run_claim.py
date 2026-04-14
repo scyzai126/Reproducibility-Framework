@@ -11,6 +11,9 @@ from sqlalchemy import text
 
 IMMPORT_URL = "mysql+aiomysql://cs2635:Edic-123@localhost:3306/immport_dr62"
 
+_SCRIPT_DIR = Path(__file__).resolve().parent
+_DATA_DIR = _SCRIPT_DIR.parent.parent / "data"
+
 engine = create_async_engine(IMMPORT_URL, echo=False)
 immport_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
@@ -28,6 +31,7 @@ async def run(claim_path: Path, study_accession: str, output_path: Path):
 
     # Fields that are metadata/internal, not query filters
     _SKIP_FIELDS = {"group_id", "study_accession", "sample_size", "comparison"}
+    _DEDUP_SKIP = {"group_id", "study_accession", "study_design"}
 
     results = {}
 
@@ -40,6 +44,18 @@ async def run(claim_path: Path, study_accession: str, output_path: Path):
             group["study_accession"] = study_accession
             group["study_design"] = comparison_strategy
             groups.append(group)
+
+        # Deduplicate groups with identical scientific filter fields
+        seen: list[dict] = []
+        deduped = []
+        for g in groups:
+            normalized = {k: v for k, v in g.items() if k not in _DEDUP_SKIP}
+            if normalized not in seen:
+                seen.append(normalized)
+                deduped.append({**g, "group_id": len(deduped)})
+        if len(deduped) < len(groups):
+            print(f"  {claim_key}: deduplicated {len(groups)} → {len(deduped)} groups")
+        groups = deduped
 
         if not groups:
             results[claim_key] = {
@@ -118,12 +134,12 @@ async def run(claim_path: Path, study_accession: str, output_path: Path):
 
 async def main():
     jobs = [
-        ("claims/SDY1393_PMC9924941/claims_LLM_SDY1393_HailongEdit.json", "SDY1393", "data/generated/outputIDs/SDY1393_subject_ids.json"),
-        ("claims/SDY1264_PMC4049462/claims_LLM_SDY1264_HailongEdit.json", "SDY1264", "data/generated/outputIDs/SDY1264_subject_ids.json"),
-        ("exampleClaims/SDY1669_PMC7665312/claims_LLM_SDY1669.json", "SDY1669", "../../data/generated/outputIDs/SDY1669_subject_ids.json"),
+        (_SCRIPT_DIR / "claims/SDY1393_PMC9924941/claims_LLM_SDY1393_HailongEdit.json", "SDY1393", _DATA_DIR / "generated/outputIDs/SDY1393_subject_ids.json"),
+        (_SCRIPT_DIR / "claims/SDY1264_PMC4049462/claims_LLM_SDY1264_HailongEdit.json", "SDY1264", _DATA_DIR / "generated/outputIDs/SDY1264_subject_ids.json"),
+        (_SCRIPT_DIR / "exampleClaims/SDY1669_PMC7665312/claims_LLM_SDY1669.json", "SDY1669", _DATA_DIR / "generated/outputIDs/SDY1669_subject_ids.json"),
     ]
     for claim_file, study, out_file in jobs:
-        await run(Path(claim_file), study, Path(out_file))
+        await run(claim_file, study, out_file)
     await engine.dispose()
 
 if __name__ == "__main__":

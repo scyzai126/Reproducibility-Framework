@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { AgentResponse, SubjectResult, ClaimResult, PaperClaim, ChatMessage } from '@/lib/types';
+import { AgentResponse, SubjectResult, ClaimResult, Comparison, PaperClaim, ChatMessage } from '@/lib/types';
 
 interface Props {
   message: ChatMessage;
@@ -107,12 +107,20 @@ function AssistantMessage({ message }: Props) {
   );
 }
 
+function formatBadgeValue(label: string, value: string): string {
+  if (label === 'time point') {
+    const range = value.match(/^(\d+(?:\.\d+)?)days<time<(\d+(?:\.\d+)?)days$/);
+    if (range) return `day ${range[1]} – day ${range[2]}`;
+  }
+  return value;
+}
+
 function Badge({ label, value }: { label: string; value: string }) {
   if (!value) return null;
   return (
     <span className="inline-flex items-center gap-1 text-xs bg-gray-100 text-gray-600 rounded-md px-2 py-0.5">
       <span className="text-gray-400">{label}</span>
-      <span className="font-medium text-gray-700 font-mono">{value}</span>
+      <span className="font-medium text-gray-700 font-mono">{formatBadgeValue(label, value)}</span>
     </span>
   );
 }
@@ -169,7 +177,7 @@ function GroupCard({ group, index }: { group: SubjectResult; index: number }) {
               </tr>
             </thead>
             <tbody>
-              {group.subjects.map((s, i) => (
+              {(group.subjects ?? []).map((s, i) => (
                 <tr key={i} className={`border-b border-gray-50 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
                   <td className="px-4 py-2 text-gray-300">{i + 1}</td>
                   <td className="px-4 py-2 font-mono text-blue-600">{s.subject_accession}</td>
@@ -269,6 +277,16 @@ function ClaimCard({ claim }: { claim: ClaimResult }) {
           {claim.subject_results.length === 0 && (
             <div className="text-xs text-gray-400 italic px-1">No groups found</div>
           )}
+          {(claim.comparison ?? []).length > 0 && (
+            <div className="pt-1 flex flex-wrap gap-1.5">
+              <span className="text-xs text-gray-400 self-center">Comparisons:</span>
+              {(claim.comparison as Comparison[]).map((c, i) => (
+                <span key={i} className="text-xs bg-violet-50 text-violet-700 border border-violet-200 rounded px-2 py-0.5 font-mono">
+                  {c.contrast[0]} vs {c.contrast[1]}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -280,8 +298,9 @@ function ResultsDisplay({ result }: { result: AgentResponse }) {
   const [showRaw, setShowRaw] = useState(false);
   const json = JSON.stringify(result, null, 2);
 
-  const isPaperQuestion = result.paper_claims && result.paper_claims.length > 0;
-  const isClaims = !isPaperQuestion && result.claims && result.claims.length > 0;
+  const isNoImmport = result.type === 'no_immport';
+  const isPaperQuestion = !isNoImmport && result.paper_claims && result.paper_claims.length > 0;
+  const isClaims = !isNoImmport && !isPaperQuestion && result.claims && result.claims.length > 0;
 
   const totalSubjects = isClaims
     ? result.claims.reduce((n, c) => n + c.subject_results.reduce((m, g) => m + (g.subjects?.length ?? 0), 0), 0)
@@ -299,48 +318,71 @@ function ResultsDisplay({ result }: { result: AgentResponse }) {
 
   return (
     <div className="text-sm space-y-3">
-      {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-2">
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-gray-500">Study</span>
-          <span className="text-blue-600 font-mono bg-blue-50 px-1.5 py-0.5 rounded text-xs">
-            {result.study_accession}
-          </span>
-          <span className="text-gray-300">·</span>
-          {isPaperQuestion && (
-            <>
-              <span className="text-gray-500">{result.paper_claims.length} paper claims</span>
-              <span className="text-gray-300">·</span>
-            </>
-          )}
-          {isClaims && (
-            <>
-              <span className="text-gray-500">{result.claims.length} claims</span>
-              <span className="text-gray-300">·</span>
-            </>
-          )}
-          <span className="text-gray-500">{groupCount} groups</span>
-          <span className="text-gray-300">·</span>
-          <span className="text-gray-500">{totalSubjects} total subjects</span>
+      {/* No-ImmPort notice */}
+      {isNoImmport && (
+        <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 flex items-start gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 mt-0.5 text-amber-500">
+            <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+          <div>
+            <p className="text-xs font-medium text-amber-700">This paper is not in ImmPort</p>
+            <p className="text-xs text-amber-600 mt-0.5">Showing extracted claims only — no subject IDs available.</p>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <button
-            onClick={() => setShowRaw((v) => !v)}
-            className="text-xs text-gray-400 hover:text-gray-700 border border-gray-200 hover:border-gray-400 rounded px-2 py-1 transition-colors"
-          >
-            {showRaw ? 'Hide JSON' : 'View JSON'}
-          </button>
-          <button
-            onClick={handleCopy}
-            className="text-xs text-gray-400 hover:text-gray-700 border border-gray-200 hover:border-gray-400 rounded px-2 py-1 transition-colors"
-          >
-            {copied ? '✓ Copied' : 'Copy JSON'}
-          </button>
-        </div>
-      </div>
+      )}
 
-      {/* Cards */}
-      {!showRaw && (
+      {/* Header */}
+      {!isNoImmport && (
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-gray-500">Study</span>
+            <span className="text-blue-600 font-mono bg-blue-50 px-1.5 py-0.5 rounded text-xs">
+              {result.study_accession}
+            </span>
+            <span className="text-gray-300">·</span>
+            {isPaperQuestion && (
+              <>
+                <span className="text-gray-500">{result.paper_claims.length} paper claims</span>
+                <span className="text-gray-300">·</span>
+              </>
+            )}
+            {isClaims && (
+              <>
+                <span className="text-gray-500">{result.claims.length} claims</span>
+                <span className="text-gray-300">·</span>
+              </>
+            )}
+            <span className="text-gray-500">{groupCount} groups</span>
+            <span className="text-gray-300">·</span>
+            <span className="text-gray-500">{totalSubjects} total subjects</span>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setShowRaw((v) => !v)}
+              className="text-xs text-gray-400 hover:text-gray-700 border border-gray-200 hover:border-gray-400 rounded px-2 py-1 transition-colors"
+            >
+              {showRaw ? 'Hide JSON' : 'View JSON'}
+            </button>
+            <button
+              onClick={handleCopy}
+              className="text-xs text-gray-400 hover:text-gray-700 border border-gray-200 hover:border-gray-400 rounded px-2 py-1 transition-colors"
+            >
+              {copied ? '✓ Copied' : 'Copy JSON'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* No-ImmPort: claim sentences only */}
+      {isNoImmport && !showRaw && (
+        <div className="space-y-2">
+          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">{result.paper_claims.length} Claims</p>
+          {result.paper_claims.map((c, i) => <PaperClaimCard key={i} claim={c} index={i} />)}
+        </div>
+      )}
+
+      {/* Normal cards */}
+      {!isNoImmport && !showRaw && (
         <div className="space-y-2">
           {isPaperQuestion ? (
             <>
@@ -357,6 +399,18 @@ function ResultsDisplay({ result }: { result: AgentResponse }) {
             ? result.claims.map((claim, i) => <ClaimCard key={i} claim={claim} />)
             : result.subject_results.map((group, i) => <GroupCard key={i} group={group} index={i} />)
           }
+        </div>
+      )}
+
+      {/* No-ImmPort copy button */}
+      {isNoImmport && (
+        <div className="flex gap-2">
+          <button onClick={() => setShowRaw((v) => !v)} className="text-xs text-gray-400 hover:text-gray-700 border border-gray-200 hover:border-gray-400 rounded px-2 py-1 transition-colors">
+            {showRaw ? 'Hide JSON' : 'View JSON'}
+          </button>
+          <button onClick={handleCopy} className="text-xs text-gray-400 hover:text-gray-700 border border-gray-200 hover:border-gray-400 rounded px-2 py-1 transition-colors">
+            {copied ? '✓ Copied' : 'Copy JSON'}
+          </button>
         </div>
       )}
 

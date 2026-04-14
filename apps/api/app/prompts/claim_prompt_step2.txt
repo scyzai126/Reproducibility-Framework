@@ -8,14 +8,14 @@ You are a biomedical research analyst. Given the following claims extracted from
 For each claim, first classify its **comparison_strategy**, then use that classification to decide how many groups to emit. group_id restarts from 0 for each claim.
 
 **comparison_strategy** — choose one based on the claim sentence:
-- `longitudinal`: same subjects measured at multiple explicit time points → one group per time point. Each group must have a distinct `time_point`. Do NOT use this if different subjects happen to be sampled at different days — only use it when the same cohort is measured at multiple defined timepoints.
+- `longitudinal`: same samples measured at multiple explicit time points → one group per time point. Each group must have a distinct `time_point`. Do NOT use this if different samples happen to be sampled at different days — only use it when the same cohort is measured at multiple defined timepoints.
 - `case_control`: distinct disease vs healthy (or disease A vs disease B) → one group per condition
-- `cohort`: distinct population cohorts compared at a single time point (e.g., geographic groups, age strata, occupational groups) → one group per cohort. **Do NOT use cohort if the claim compares the same subjects at different time points — use longitudinal instead.**
-- `clinical_trial`: subjects enrolled in different intervention or treatment arms → one group per arm; set cohort to the arm/treatment label
+- `cohort`: distinct population cohorts compared at a **single** time point (e.g., geographic groups, age strata, occupational groups) → one group per cohort.
+- `cross_sectional_longitudinal`: distinct population cohorts each measured at **multiple** explicit time points → emit K × T groups (one per cohort-timepoint combination). Assign each group both its `cohort` and `time_point`. Emit one comparison object per population pair per timepoint — do NOT emit inter-timepoint contrasts within the same cohort. Use this when the claim names 2+ distinct populations AND 2+ explicit timepoints.
+- `clinical_trial`: samples enrolled in different intervention or treatment arms → one group per arm; set cohort to the arm/treatment label
 - `none`: assay reported but no comparison stated, or grouping is unclear → one group, comparison=[]
 
-**cross_sectional_longitudinal grouping rule:**
-When the claim names K distinct populations and T explicit time points, emit K × T groups. Assign each group both its `cohort` (or `disease`) and its `time_point`. Then emit one comparison object per (population pair) per time point. Do NOT emit inter-timepoint contrasts (e.g., day 0 vs day 2 within the same cohort) — only cross-sectional contrasts within each timepoint.
+**Measurement-level comparisons do NOT create multiple groups.** If the claim compares different antigens, viral variants, analytes, or assay targets measured on the same samples (e.g., "responses against B.1.351 were lower than against WA1", "IgG was higher than IgM"), use `none` with a single group.
 
 **Source ordering rule:** In the `sources` array, always place Results-section text entries first, followed by Methods-section text entries, then figure and table references. This ensures the primary evidence appears at `sources[0]`.
 
@@ -77,7 +77,7 @@ Use [] if the claim has no comparison or grouping is unclear.
 }
 ```
 
-**Example — longitudinal (Olink, SDY2189, 31 subjects):**
+**Example — longitudinal (Olink, SDY2189, 31 samples):**
 ```json
 {
   "claim_1": {

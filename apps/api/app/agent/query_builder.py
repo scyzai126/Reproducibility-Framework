@@ -276,9 +276,45 @@ async def get_assay_method_for_experiment(
 async def resolve_planned_visit_accession(
     session: AsyncSession, time_point: str, study_accession: str,
     claim_text: str | None = None,
-) -> tuple[str, str] | None:
-    """Resolve a time point string → planned_visit_accession."""
-    return await _resolve_accession(session, time_point, study_accession, _PLANNED_VISIT_CONFIG, claim_text=claim_text)
+) -> list[tuple[str, str]] | None:
+    """Resolve a time point string → list of (planned_visit_accession, method) tuples.
+
+    For range format "Xdays<time<Ydays" returns all visits whose min_start_day
+    falls in [X, Y]. For exact time points returns a single-element list.
+    """
+    if not time_point:
+        return None
+
+    # Range format: "0days<time<10days"
+    range_m = re.match(r'^(\d+(?:\.\d+)?)days<time<(\d+(?:\.\d+)?)days$', time_point.strip())
+    if range_m:
+        low, high = float(range_m.group(1)), float(range_m.group(2))
+        result = await session.execute(
+            text(
+                "SELECT planned_visit_accession, name, min_start_day "
+                "FROM planned_visit WHERE study_accession = :sa"
+            ),
+            {"sa": study_accession},
+        )
+        rows = [dict(zip(result.keys(), row)) for row in result.fetchall()]
+        matches = [
+            r for r in rows
+            if r.get("min_start_day") is not None and low <= float(r["min_start_day"]) <= high
+        ]
+        if not matches:
+            logger.warning("No planned visits found in range %s for study %s", time_point, study_accession)
+            return None
+        logger.info(
+            "Range %s matched %d planned visits for study %s",
+            time_point, len(matches), study_accession,
+        )
+        return [(r["planned_visit_accession"], "range") for r in matches]
+
+    # Exact match via standard two-step resolver
+    result = await _resolve_accession(session, time_point, study_accession, _PLANNED_VISIT_CONFIG, claim_text=claim_text)
+    if result is None:
+        return None
+    return [result]
 
 
 async def resolve_tissue_type(
@@ -741,28 +777,54 @@ async def _resolve_group(
         group["tissue_type"] = ""
 
     if pv_result:
-        pv_acc, method = pv_result
-        group["planned_visit_accession"] = pv_acc
-        resolution_log["planned_visit"] = {"accession": pv_acc, "method": method}
-        logger.info("Resolved time_point %r → planned_visit_accession %s for group %s", time_point, pv_acc, group_id)
+        pv_accessions = pv_result  # list[tuple[str, str]]
+        resolution_log["planned_visit"] = {
+            "accessions": [a for a, _ in pv_accessions],
+            "method": pv_accessions[0][1],
+        }
+        logger.info(
+            "Resolved time_point %r → %d planned_visit(s) for group %s",
+            time_point, len(pv_accessions), group_id,
+        )
     elif time_point:
         logger.warning("Could not resolve time_point %r for group %s — no planned_visit filter applied", time_point, group_id)
+        pv_accessions = []
+    else:
+        pv_accessions = []
 
-    # ── Build single query ────────────────────────────────────────────────────
-    sql, params = _build_query(group)
-    logger.info(
-        "Built query for group %s:\n  SQL: %s\n  Params: %s",
-        group_id, sql, params,
-    )
-    return [{
-        "group_id": group_id or 0,
-        "sql": sql,
-        "params": params,
-        "resolution": resolution_log,
-        "planned_visit_name": time_point,
-        "age": age,
-        "comparison": comparison,
-    }]
+    # ── Build one query per planned visit (or one query if no planned visit) ──
+    def _make_query_dict(pv_acc: str | None) -> dict:
+        g = dict(group)
+        if pv_acc:
+            g["planned_visit_accession"] = pv_acc
+        sql, params = _build_query(g)
+        logger.info(
+            "Built query for group %s (pv=%s):\n  SQL: %s\n  Params: %s",
+            group_id, pv_acc, sql, params,
+        )
+        return {
+            "group_id": group_id or 0,
+            "sql": sql,
+            "params": params,
+            "resolution": resolution_log,
+            "keywords": {
+                "cohort": cohort or "",
+                "assay_method": assay_method or "",
+                "time_point": time_point or "",
+                "disease": disease or "",
+                "disease_stage": disease_stage or "",
+                "tissue_type": tissue_type or "",
+                "age": age or "",
+                "gender": (group.get("gender") or ""),
+            },
+            "planned_visit_name": pv_acc or time_point,
+            "age": age,
+            "comparison": comparison,
+        }
+
+    if pv_accessions:
+        return [_make_query_dict(pv_acc) for pv_acc, _ in pv_accessions]
+    return [_make_query_dict(None)]
 
 
 
@@ -899,9 +961,13 @@ async def resolve_and_build_queries(
         else:
             group["tissue_type"] = ""
         if pv_result:
-            pv_acc, method = pv_result
-            group["planned_visit_accession"] = pv_acc
-            resolution_log["planned_visit"] = {"accession": pv_acc, "method": method}
+            pv_accessions = pv_result  # list[tuple[str, str]]
+            resolution_log["planned_visit"] = {
+                "accessions": [a for a, _ in pv_accessions],
+                "method": pv_accessions[0][1],
+            }
+        else:
+            pv_accessions = []
 
         age_min, age_max = _parse_age_range(age)
         if age_min is not None:
@@ -911,16 +977,34 @@ async def resolve_and_build_queries(
             group["age_max"] = age_max
             resolution_log["age_max"] = {"value": age_max, "method": "parsed"}
 
-        sql, params = _build_query(group)
-        return [{
-            "group_id": group_id or 0,
-            "sql": sql,
-            "params": params,
-            "resolution": resolution_log,
-            "planned_visit_name": time_point,
-            "age": age,
-            "comparison": comparison,
-        }]
+        def _make_query_dict(pv_acc: str | None) -> dict:
+            g = dict(group)
+            if pv_acc:
+                g["planned_visit_accession"] = pv_acc
+            sql, params = _build_query(g)
+            return {
+                "group_id": group_id or 0,
+                "sql": sql,
+                "params": params,
+                "resolution": resolution_log,
+                "keywords": {
+                    "cohort": cohort or "",
+                    "assay_method": assay_method or "",
+                    "time_point": time_point or "",
+                    "disease": disease or "",
+                    "disease_stage": disease_stage or "",
+                    "tissue_type": tissue_type or "",
+                    "age": age or "",
+                    "gender": (group.get("gender") or ""),
+                },
+                "planned_visit_name": pv_acc or time_point,
+                "age": age,
+                "comparison": comparison,
+            }
+
+        if pv_accessions:
+            return [_make_query_dict(pv_acc) for pv_acc, _ in pv_accessions]
+        return [_make_query_dict(None)]
 
     nested = await asyncio.gather(*[
         _resolve_group_cached(group)

@@ -18,6 +18,7 @@ class ClaimResult(BaseModel):
     claim_text: str = ""
     source: dict = {}
     study_design: str | None = None
+    comparison: list = []
     subject_results: list[SubjectResult] = []
 
 

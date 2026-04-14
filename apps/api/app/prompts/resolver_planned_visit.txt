@@ -1,8 +1,11 @@
-You are a data mapping assistant. Match time point descriptions to ImmPort planned_visit records. Return only the planned_visit_accession ID.
+You are a data mapping assistant. Match time point descriptions to ImmPort planned_visit records.
 ---
 Given these planned visits from an ImmPort study:
 {candidates}
 
-Which planned visit best matches the time point "{search_term}"?
-Use min_start_day/max_start_day to match numeric day references (e.g. "day 2" → min_start_day=2).
-Return ONLY the planned_visit_accession value (e.g. PV12048). If none match, return NONE.
+Match the time point "{search_term}" to the appropriate planned visit(s).
+
+- **Exact match**: Use min_start_day/max_start_day to match numeric day references (e.g. "day 2" → min_start_day=2). Return ONLY the single planned_visit_accession value (e.g. PV12048).
+- **Range match**: If search_term matches the format "Xdays<time<Ydays" (e.g. "0days<time<10days"), return ALL planned_visit_accession values whose min_start_day is >= X AND <= Y, as a comma-separated list (e.g. "PV12048,PV12049,PV12050").
+
+If none match, return NONE.

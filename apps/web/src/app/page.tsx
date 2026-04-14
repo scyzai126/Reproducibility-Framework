@@ -257,9 +257,9 @@ export default function Home() {
               <p className="text-xs text-gray-400 uppercase tracking-wide mb-3">Example questions</p>
               <div className="grid grid-cols-1 gap-2">
                 {[
-                  'Identify all claims in https://pmc.ncbi.nlm.nih.gov/articles/PMC8761119 and the corresponding subjects for each claim.',
-                  'In paper PMID:32788292, identify all healthy subjects whose plasma samples were analyzed using Olink proteomics.',
-                  'In study SDY1393, identify all subjects whose platelet-rich plasma samples were analyzed using Bulk RNA-seq at Day 0 post-vaccination.',
+                  'In paper PMID:32788292,extract all assay-based claims with supporting evidence snippets.',
+                  'From https://pmc.ncbi.nlm.nih.gov/articles/PMC8761119, identify all subjects with whole blood samples analyzed by Bulk RNA-seq between day 0 and day 21.',
+                  'Identify all claims from study SDY1393 and return the matched ImmPort samples for each comparison group.',
                 ].map((q) => (
                   <button
                     key={q}

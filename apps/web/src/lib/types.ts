@@ -18,11 +18,17 @@ export interface SubjectResult {
   error?: string;
 }
 
+export interface Comparison {
+  contrast: [number, number];
+  finding: string;
+}
+
 export interface ClaimResult {
   claim_id: number;
   claim_text: string;
   source: Record<string, unknown>;
   study_design?: string;
+  comparison: Comparison[];
   subject_results: SubjectResult[];
   error?: string;
 }

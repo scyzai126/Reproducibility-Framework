@@ -9,7 +9,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.agent.assay_resolver import get_study_assay_methods
-from app.agent.claim_parser import fetch_paper_content_async, parse_paper_claims_from_text, parse_paper_claims_step1_only
+from app.agent.claim_parser import fetch_paper_content_async, parse_paper_claims_from_text, parse_paper_claims_step1_only, parse_paper_claims_noimmport
 from app.agent.ncbi_utils import pmid_to_pmc_url
 from app.agent.description_analyzer import analyze_claims_batch, analyze_descriptions
 from app.agent.file_reader import read_file
@@ -180,10 +180,11 @@ async def _execute_all_queries(
             resolvers["experiment"] = exp_res["accession"]
 
         pv_res = resolution.get("planned_visit", {}) or {}
-        if keywords.get("time_point") and pv_res.get("accession"):
+        _pv_resolved = pv_res.get("accession") or pv_res.get("accessions")
+        if keywords.get("time_point") and _pv_resolved:
             resolvers["time_point"] = keywords["time_point"]
-        elif pv_res.get("accession"):
-            resolvers["planned_visit"] = pv_res["accession"]
+        elif _pv_resolved:
+            resolvers["planned_visit"] = pv_res.get("accession") or str(pv_res.get("accessions"))
 
         if keywords.get("disease_stage"):
             resolvers["disease_stage"] = keywords["disease_stage"]
@@ -214,13 +215,13 @@ async def _execute_all_queries(
         if tissue_res.get("value") and not resolvers.get("tissue_type"):
             resolvers["tissue_type"] = tissue_res["value"]
 
-        if gq.get("planned_visit_name") and pv_res.get("accession") and not resolvers.get("time_point"):
+        if gq.get("planned_visit_name") and _pv_resolved and not resolvers.get("time_point"):
             resolvers["time_point"] = gq["planned_visit_name"]
 
         # Last fallback: IDs only when no readable alternative exists.
         if params.get("experiment_accession") and exp_res.get("accession") and not resolvers.get("assay_method"):
             resolvers["experiment"] = params["experiment_accession"]
-        if params.get("planned_visit_accession") and pv_res.get("accession") and not resolvers.get("time_point"):
+        if params.get("planned_visit_accession") and _pv_resolved and not resolvers.get("time_point"):
             resolvers["planned_visit"] = params["planned_visit_accession"]
         if params.get("arm_accession") and arm_res.get("accession") and not (resolvers.get("cohort") or resolvers.get("arm")):
             resolvers["arm"] = params["arm_accession"]
@@ -266,9 +267,31 @@ async def _execute_all_queries(
             )
 
     pairs = await asyncio.gather(*[_run_one(gq) for gq in group_queries])
+
+    # Step 1: merge subjects from queries that share a group_id (time-range expansion
+    # produces one query per planned visit, all with the same group_id).
+    merged_by_gid: dict[int, dict] = {}
+    for result, log_line in pairs:
+        gid = result["group_id"]
+        if gid not in merged_by_gid:
+            merged_by_gid[gid] = result
+        else:
+            existing = merged_by_gid[gid]
+            seen_accs = {s.get("subject_accession") for s in existing["subjects"]}
+            new_rows = [s for s in result["subjects"] if s.get("subject_accession") not in seen_accs]
+            if new_rows:
+                existing["subjects"] = existing["subjects"] + new_rows
+                existing["samples"] = existing["subjects"]
+            log_lines.append(
+                f"Group {gid}: merged {len(new_rows)} additional subjects "
+                f"from planned_visit {result['resolvers'].get('time_point', '?')}"
+            )
+
+    # Step 2: dedup truly duplicate groups (different group_ids that resolved to
+    # identical DB criteria — e.g. two LLM groups describing the same cohort).
     subject_results = []
     seen_resolvers: list[dict] = []
-    for result, log_line in pairs:
+    for result in merged_by_gid.values():
         if result["resolvers"] not in seen_resolvers:
             seen_resolvers.append(result["resolvers"])
             subject_results.append(result)
@@ -780,10 +803,21 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
                 )
 
                 if not study_accession:
-                    raise ValueError(
-                        f"This paper (PubMed ID: {pubmed_id}) is not linked to any study in ImmPort. "
-                        "Only papers associated with ImmPort studies can be analyzed."
+                    logger.info("PubMed ID %s not in ImmPort — running no-ImmPort claim extraction", pubmed_id)
+                    log_sections.append(
+                        f"--- No ImmPort Match ---\n"
+                        f"PubMed ID {pubmed_id} is not linked to any ImmPort study. "
+                        f"Running claim extraction without subject ID lookup."
                     )
+                    paper_claims = await parse_paper_claims_noimmport(fetched_paper_text, paper_url)
+                    _write_workflow_log(log_sections)
+                    return {
+                        "type": "no_immport",
+                        "study_accession": "",
+                        "paper_claims": paper_claims,
+                        "subject_results": [],
+                        "claims": [],
+                    }
 
                 # ── Paper URL path: always do claim analysis ─────────────────
                 if study_accession:

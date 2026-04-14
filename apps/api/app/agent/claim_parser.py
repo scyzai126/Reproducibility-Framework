@@ -161,7 +161,7 @@ async def _run_two_step_pipeline(
             ],
             temperature=0,
         )
-        raw1 = _strip_fences(resp1.choices[0].message.content.strip())
+        raw1 = _strip_fences((resp1.choices[0].message.content or "").strip())
         step1_json: dict = json.loads(raw1)
         logger.info("Step 1 complete: assays=%s, claims=%d", assay_methods, len(step1_json))
 
@@ -188,7 +188,7 @@ async def _run_two_step_pipeline(
             messages=[{"role": "user", "content": prompt}],
             temperature=0,
         )
-        raw = _strip_fences(resp.choices[0].message.content.strip())
+        raw = _strip_fences((resp.choices[0].message.content or "").strip())
         result: dict = json.loads(raw)
         # Merge step1 fields into step2 output
         val = result.get(key, {})
@@ -248,10 +248,37 @@ async def parse_paper_claims_step1_only(
         ],
         temperature=0,
     )
-    raw = _strip_fences(resp.choices[0].message.content.strip())
+    raw = _strip_fences((resp.choices[0].message.content or "").strip())
     step1_json: dict = json.loads(raw)
     logger.info("Step 1 complete: %d claims", len([k for k in step1_json if k.startswith("claim_")]))
     return step1_json
+
+
+async def parse_paper_claims_noimmport(paper_text: str, paper_url: str) -> list[dict]:
+    """Extract claim sentences from a paper not linked to any ImmPort study.
+
+    Uses a prompt that infers assay types directly from the paper — no assay list needed.
+    Returns a list of {"claim_id": str, "claim_text": str, "sources": [...]} dicts.
+    """
+    client = _get_client()
+    prompt = _load_prompt("claim_prompt_noimmport.txt").replace("{paper_url}", paper_url)
+    logger.info("No-ImmPort path: extracting claims from paper %s", paper_url)
+    resp = await client.chat.completions.create(
+        model=settings.OPENAI_MODEL,
+        messages=[
+            {"role": "system", "content": prompt},
+            {"role": "user", "content": paper_text},
+        ],
+        temperature=0,
+    )
+    raw = _strip_fences((resp.choices[0].message.content or "").strip())
+    step1_json: dict = json.loads(raw)
+    logger.info("No-ImmPort step 1 complete: %d claims", len([k for k in step1_json if k.startswith("claim_")]))
+    return [
+        {"claim_id": key, "claim_text": val.get("claim", ""), "sources": val.get("sources", [])}
+        for key, val in step1_json.items()
+        if key.startswith("claim_")
+    ]
 
 
 async def parse_paper_claims_from_text(
