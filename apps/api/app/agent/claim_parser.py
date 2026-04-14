@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 from openai import AsyncOpenAI
 
 from app.config import settings
+from app.agent.jats_parser import MAX_PAPER_CHARS, _clean_text, parse_jats_xml
 
 
 def _find_repo_root() -> Path:
@@ -68,6 +69,7 @@ def _load_prompt(filename: str) -> str:
     return (_PROMPTS_DIR / filename).read_text(encoding="utf-8").strip()
 
 
+
 def _fetch_paper_content(url: str) -> tuple[str, str | None]:
     """Fetch full article text and PubMed ID from PMC via NCBI E-utilities API.
 
@@ -81,7 +83,7 @@ def _fetch_paper_content(url: str) -> tuple[str, str | None]:
     )
     resp = requests.get(api_url, timeout=30)
     resp.raise_for_status()
-    soup = BeautifulSoup(resp.text, "lxml")
+    soup = BeautifulSoup(resp.text, "xml")
 
     # Extract PubMed ID from XML metadata
     pubmed_id: str | None = None
@@ -89,8 +91,11 @@ def _fetch_paper_content(url: str) -> tuple[str, str | None]:
     if tag:
         pubmed_id = tag.get_text(strip=True)
 
-    text = soup.get_text(separator=" ", strip=True)
-    return text[:120000], pubmed_id
+    structured_text = parse_jats_xml(resp.text)
+    if not structured_text:
+        # Fallback for malformed or non-standard XML.
+        structured_text = _clean_text(soup.get_text(separator=" ", strip=True))[:MAX_PAPER_CHARS]
+    return structured_text, pubmed_id
 
 
 def _fetch_paper_text(url: str) -> str:

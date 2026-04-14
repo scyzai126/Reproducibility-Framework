@@ -31,7 +31,7 @@ Rules:
 
 Claim template: "[Assay] analysis of [tissue/sample type] from [N description] [timeframe/conditions] showed [key finding(s)]."
 
-One claim per assay by default. Split into multiple claims only when the same assay is applied to a different sample type OR addresses a clearly distinct biological question. Do NOT split for different comparisons or timepoints — aggregate those into one claim.
+**One claim per assay — strictly enforced.** Each assay in assay_methods produces exactly one claim capturing the primary/main finding reported for that assay. Do not aggregate secondary findings — pick the most prominent result and write one claim for it. Never emit more than one claim per assay.
 
 Sentence count: prefer one sentence. Use two only if a single sentence would exceed ~50 words. Never more than two sentences per claim.
 

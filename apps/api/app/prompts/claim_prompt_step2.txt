@@ -8,11 +8,10 @@ You are a biomedical research analyst. Given the following claims extracted from
 For each claim, first classify its **comparison_strategy**, then use that classification to decide how many groups to emit. group_id restarts from 0 for each claim.
 
 **comparison_strategy** — choose one based on the claim sentence:
-- `longitudinal`: same subjects (one population) measured at multiple time points → one group per time point; set disease=null
+- `longitudinal`: same subjects measured at multiple explicit time points → one group per time point. Each group must have a distinct `time_point`. Do NOT use this if different subjects happen to be sampled at different days — only use it when the same cohort is measured at multiple defined timepoints.
 - `case_control`: distinct disease vs healthy (or disease A vs disease B) → one group per condition
-- `severity`: same disease stratified by severity level → one group per level (mild/moderate/severe/ICU) + healthy control if present
-- `cross_sectional`: distinct populations compared at a single time point (or time point not mentioned) → one group per population
-- `cross_sectional_longitudinal`: distinct populations compared at multiple explicit time points → one group per (population × time point) combination; comparisons are between populations within each time point
+- `cohort`: distinct population cohorts compared at a single time point (e.g., geographic groups, age strata, occupational groups) → one group per cohort. **Do NOT use cohort if the claim compares the same subjects at different time points — use longitudinal instead.**
+- `clinical_trial`: subjects enrolled in different intervention or treatment arms → one group per arm; set cohort to the arm/treatment label
 - `none`: assay reported but no comparison stated, or grouping is unclear → one group, comparison=[]
 
 **cross_sectional_longitudinal grouping rule:**
@@ -32,7 +31,14 @@ Emit `comparison_strategy` as the first field in each claim object, before `grou
 - group_id: integer, unique within this claim, starting from 0
 - study_accession: only if an ImmPort accession (SDY####) appears verbatim in the paper
 - sample_size: only if the paper states a count for this specific group; do not split a total or derive by subtraction
-- disease, disease_stage: only if the paper explicitly names the condition or severity for this group
+- disease: the condition or health status of the group (e.g., `"COVID-19"`, `"healthy"`, `"influenza"`). **ALWAYS use this field for disease names and healthy status — never put a disease name or "healthy" into `disease_stage`.**
+- disease_stage: ONLY for severity sub-classifications within a disease (e.g., `"mild"`, `"severe"`, `"ICU"`, `"critical"`). **If `comparison_strategy` is `case_control`, always set `disease_stage` to null for every group — no exceptions.** Only populate `disease_stage` when the comparison_strategy is `severity`.
+
+  ❌ WRONG: `"disease": null, "disease_stage": "COVID-19"`
+  ✅ CORRECT: `"disease": "COVID-19", "disease_stage": null`
+
+  ❌ WRONG: `"disease": null, "disease_stage": "healthy"`
+  ✅ CORRECT: `"disease": "healthy", "disease_stage": null`
 - cohort: only if the paper names a cohort or geographic location for this group
 - gender: only if stated for this group specifically; do not copy from another group or infer from a demographics table that does not break down by group
 - age: only if stated for this group specifically; same rule as gender
@@ -57,7 +63,7 @@ Use [] if the claim has no comparison or grouping is unclear.
       {"type": "figure", "ref": "Figure 2A"},
       {"type": "table", "ref": "Table 1"}
     ],
-    "comparison_strategy": "<longitudinal|case_control|severity|cross_sectional|none>",
+    "comparison_strategy": "<longitudinal|case_control|cohort|clinical_trial|none>",
     "groups": [ {group object}, ... ],
     "comparison": [ {"contrast": [0, 1], "finding": "..."}, ... ]
   },
@@ -84,35 +90,35 @@ Use [] if the claim has no comparison or grouping is unclear.
     "comparison_strategy": "longitudinal",
     "groups": [
       {"group_id": 0, "study_accession": "SDY2189", "sample_size": 31, "disease": null, "disease_stage": null, "cohort": null, "assay_method": "Olink", "tissue_type": "plasma", "gender": null, "age": null, "time_point": "day 0"},
-      {"group_id": 1, "study_accession": "SDY2189", "sample_size": 31, "disease": null, "disease_stage": null, "cohort": null, "assay_method": "Olink", "tissue_type": "plasma", "gender": null, "age": null, "time_point": "day 1"}
+      {"group_id": 1, "study_accession": "SDY2189", "sample_size": 31, "disease": null, "disease_stage": null, "cohort": null, "assay_method": "Olink", "tissue_type": "plasma", "gender": null, "age": null, "time_point": "day 1"},
+      {"group_id": 2, "study_accession": "SDY2189", "sample_size": 31, "disease": null, "disease_stage": null, "cohort": null, "assay_method": "Olink", "tissue_type": "plasma", "gender": null, "age": null, "time_point": "day 2"},
+      {"group_id": 3, "study_accession": "SDY2189", "sample_size": 31, "disease": null, "disease_stage": null, "cohort": null, "assay_method": "Olink", "tissue_type": "plasma", "gender": null, "age": null, "time_point": "day 22"}
     ],
     "comparison": [
-      {"contrast": [0, 1], "finding": "IFNγ and CXCL10 significantly increased on days 1-2 vs day 0"}
+      {"contrast": [0, 1], "finding": "IFNγ and CXCL10 significantly increased on days 1-2 vs day 0"},
+      {"contrast": [0, 2], "finding": "IFNγ and CXCL10 significantly increased on days 1-2 vs day 0"},
+      {"contrast": [0, 3], "finding": "IFNγ and CXCL10 significantly increased on days 1-2 vs day 0"}
     ]
   }
 }
 ```
 
-**Example — severity (Flow Cytometry, SDY5678, COVID-19):**
+**Example — case_control (Q-PCR, SDY1669, healthy vs COVID-19 severity groups):**
 ```json
 {
   "claim_1": {
-    "claim": "Flow Cytometry analysis of PBMCs from 60 COVID-19 patients (20 healthy, 20 mild, 20 severe) showed that CD8+ T cell exhaustion markers were progressively elevated with disease severity.",
+    "claim": "Q-PCR analysis of plasma from the Atlanta cohort (n = 18 healthy and 51 infected samples) showed that severe and ICU COVID-19 patients had significantly higher bacterial DNA, measured as bacterial 16S rRNA gene product, than healthy controls.",
     "sources": [
-      {"type": "text", "section": "Methods", "quote": "PBMCs were collected from 20 healthy donors, 20 mild, and 20 severe COVID-19 patients"},
-      {"type": "figure", "ref": "Figure 4C"},
-      {"type": "table", "ref": "Table 2"}
+      {"type": "text", "section": "Results", "quote": "Severe and ICU COVID-19 patients had significantly higher bacterial DNA than healthy controls"},
+      {"type": "text", "section": "Methods", "quote": "n = 18 healthy and 51 infected samples from the Atlanta cohort"}
     ],
-    "comparison_strategy": "severity",
+    "comparison_strategy": "case_control",
     "groups": [
-      {"group_id": 0, "study_accession": "SDY5678", "sample_size": 20, "disease": "healthy", "disease_stage": "healthy", "cohort": null, "assay_method": "Flow Cytometry", "tissue_type": "PBMC", "gender": null, "age": null, "time_point": null},
-      {"group_id": 1, "study_accession": "SDY5678", "sample_size": 20, "disease": "COVID-19", "disease_stage": "mild", "cohort": null, "assay_method": "Flow Cytometry", "tissue_type": "PBMC", "gender": null, "age": null, "time_point": null},
-      {"group_id": 2, "study_accession": "SDY5678", "sample_size": 20, "disease": "COVID-19", "disease_stage": "severe", "cohort": null, "assay_method": "Flow Cytometry", "tissue_type": "PBMC", "gender": null, "age": null, "time_point": null}
+      {"group_id": 0, "study_accession": "SDY1669", "sample_size": 18, "disease": "healthy", "disease_stage": null, "cohort": "Atlanta cohort", "assay_method": "Q-PCR", "tissue_type": "plasma", "gender": null, "age": null, "time_point": null},
+      {"group_id": 1, "study_accession": "SDY1669", "sample_size": null, "disease": "COVID-19", "disease_stage": null, "cohort": "Atlanta cohort", "assay_method": "Q-PCR", "tissue_type": "plasma", "gender": null, "age": null, "time_point": null}
     ],
     "comparison": [
-      {"contrast": [0, 1], "finding": "lower CD8+ T cell exhaustion markers in healthy vs mild"},
-      {"contrast": [0, 2], "finding": "lower CD8+ T cell exhaustion markers in healthy vs severe"},
-      {"contrast": [1, 2], "finding": "lower CD8+ T cell exhaustion markers in mild vs severe"}
+      {"contrast": [0, 1], "finding": "severe and ICU COVID-19 patients had significantly higher bacterial DNA than healthy controls"}
     ]
   }
 }

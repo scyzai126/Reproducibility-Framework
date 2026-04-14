@@ -8,6 +8,7 @@ from pathlib import Path
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.agent.assay_resolver import get_study_assay_methods
 from app.agent.claim_parser import fetch_paper_content_async, parse_paper_claims_from_text, parse_paper_claims_step1_only
 from app.agent.ncbi_utils import pmid_to_pmc_url
 from app.agent.description_analyzer import analyze_claims_batch, analyze_descriptions
@@ -37,23 +38,25 @@ _FILTER_FIELDS = {"disease", "disease_stage", "cohort", "assay_method",
 _paper_step1_cache: dict[str, dict] = {}   # pubmed_id → step1_json
 _paper_claims_cache: dict[str, dict] = {}  # pubmed_id → step2_json (full analysis)
 
-_EXAMPLE_CLAIMS_DIR = Path(__file__).resolve().parent.parent.parent / "exampleClaims"
+_DISK_CACHE_DIR = Path(__file__).resolve().parents[4] / "data" / "cache" / "paper_claims"
 
 
-def _load_example_claims(study_accession: str) -> tuple[dict, dict] | None:
-    """Return (step1_json, step2_json) from exampleClaims/ for known studies, or None."""
-    if not _EXAMPLE_CLAIMS_DIR.exists():
-        return None
-    for subdir in _EXAMPLE_CLAIMS_DIR.iterdir():
-        if subdir.is_dir() and subdir.name.startswith(study_accession + "_"):
-            step1_path = subdir / "step1.json"
-            step2_files = list(subdir.glob("claims_LLM_*.json"))
-            if step1_path.exists() and step2_files:
-                step1 = json.loads(step1_path.read_text(encoding="utf-8"))
-                step2 = json.loads(step2_files[0].read_text(encoding="utf-8"))
-                logger.info("Loaded example claims for %s from %s", study_accession, subdir.name)
-                return step1, step2
+def _load_disk_cache(pubmed_id: str, step: str) -> dict | None:
+    path = _DISK_CACHE_DIR / pubmed_id / f"{step}.json"
+    if path.exists():
+        try:
+            return json.loads(path.read_text(encoding="utf-8"))
+        except Exception:
+            logger.warning("Corrupt disk cache at %s — ignoring", path)
     return None
+
+
+def _save_disk_cache(pubmed_id: str, step: str, data: dict) -> None:
+    path = _DISK_CACHE_DIR / pubmed_id / f"{step}.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(data, indent=2), encoding="utf-8")
+    logger.info("Disk cache written: %s", path)
+
 
 
 
@@ -68,41 +71,6 @@ _URL_PATTERNS = [
 
 
 
-async def _get_study_assay_methods(session: AsyncSession, study_accession: str) -> list[str]:
-    """Return study assay labels with RNA-seq name fallback for multi-row studies.
-
-    If a study has more than one experiment row with measurement_technique
-    'RNA sequencing', we use each row's `name` as the assay label for those rows.
-    Otherwise we use measurement_technique.
-    """
-    result = await session.execute(
-        text(
-            "SELECT measurement_technique, name "
-            "FROM experiment "
-            "WHERE study_accession = :sa AND measurement_technique IS NOT NULL"
-        ),
-        {"sa": study_accession},
-    )
-    rows = result.fetchall()
-
-    def _is_rna_seq(mt: str | None) -> bool:
-        return bool(mt and mt.strip().lower() == "rna sequencing")
-
-    rna_seq_count = sum(1 for mt, _ in rows if _is_rna_seq(mt))
-    use_rna_names = rna_seq_count > 1
-
-    assay_methods: list[str] = []
-    seen: set[str] = set()
-    for measurement_technique, name in rows:
-        mt = (measurement_technique or "").strip()
-        nm = (name or "").strip()
-        if not mt:
-            continue
-        assay = nm if (use_rna_names and _is_rna_seq(mt) and nm) else mt
-        if assay not in seen:
-            seen.add(assay)
-            assay_methods.append(assay)
-    return assay_methods
 
 
 def _extract_pubmed_id_from_text(message: str) -> tuple[str | None, str | None, str]:
@@ -236,6 +204,18 @@ def _log_queries(group_queries: list[dict]) -> str:
     return "\n".join(lines)
 
 
+def _save_output(result: dict) -> None:
+    """Write agent result to data/generated/outputIDs/{study_accession}_subject_ids_LLM.json."""
+    study_accession = result.get("study_accession", "").strip()
+    if not study_accession:
+        return
+    out_dir = Path(__file__).resolve().parent.parent.parent.parent.parent / "data" / "generated" / "outputIDs"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out_file = out_dir / f"{study_accession}_subject_ids_LLM.json"
+    out_file.write_text(json.dumps(result, indent=2), encoding="utf-8")
+    logger.info("Saved output to %s", out_file)
+
+
 def _write_workflow_log(log_sections: list[str]) -> None:
     """Write accumulated workflow log sections to logs/agent_run.log."""
     log_dir = Path(__file__).resolve().parent.parent.parent / "logs"
@@ -286,7 +266,7 @@ async def _run_paper_pipeline(
       3b. No filters → full step-2 deep claim analysis
     """
     await _sync_study(study_accession, log_sections)
-    assay_methods = await _get_study_assay_methods(session, study_accession)
+    assay_methods = await get_study_assay_methods(session, study_accession)
     log_sections.append(
         f"--- Assay Methods ---\n"
         f"study_accession: {study_accession}\n"
@@ -310,17 +290,19 @@ async def _run_paper_pipeline(
     if _filters:
         # Parallel: step-1 claims listing + subject query from filters
         async def _task_claims() -> list[dict]:
-            example = _load_example_claims(study_accession)
-            if example is not None:
-                step1_json, _ = example
-            elif pubmed_id in _paper_step1_cache:
-                logger.info("Step1 cache hit for pubmed_id=%s", pubmed_id)
+            if pubmed_id in _paper_step1_cache:
+                logger.info("Step1 memory-cache hit for pubmed_id=%s", pubmed_id)
                 step1_json = _paper_step1_cache[pubmed_id]
+            elif (disk := _load_disk_cache(pubmed_id, "claims")) is not None:
+                logger.info("Step1 disk-cache hit for pubmed_id=%s", pubmed_id)
+                step1_json = disk
+                _paper_step1_cache[pubmed_id] = step1_json
             else:
                 step1_json = await parse_paper_claims_step1_only(
                     paper_text, study_accession, assay_methods
                 )
                 _paper_step1_cache[pubmed_id] = step1_json
+                _save_disk_cache(pubmed_id, "claims", step1_json)
                 logger.info("Cached step1 claims for pubmed_id=%s", pubmed_id)
             return [
                 {"claim_id": key, "claim_text": val.get("claim", ""), "sources": val.get("sources", [])}
@@ -339,11 +321,13 @@ async def _run_paper_pipeline(
             f"Paper claims: {len(paper_claims)}, Subject groups: {len(subject_results)}"
         )
         _write_workflow_log(log_sections)
-        return {
+        result = {
             "study_accession": study_accession,
             "paper_claims": paper_claims,
             "subject_results": subject_results,
         }
+        _save_output(result)
+        return result
 
     # No filters → full deep claim analysis
     log_sections.append("--- Full Deep Analysis (no filters in question) ---")
@@ -351,6 +335,7 @@ async def _run_paper_pipeline(
         paper_text, study_accession, assay_methods, pubmed_id, log_sections
     )
     _write_workflow_log(log_sections)
+    _save_output(result)
     return result
 
 
@@ -362,30 +347,48 @@ async def _run_full_paper_analysis(
     log_sections: list[str],
 ) -> dict:
     """Full two-step claim extraction + DB queries for every claim."""
-    example = _load_example_claims(study_accession)
-    if example is not None:
-        # Pre-computed example claims — skip LLM entirely
-        step1_json, step2_json = example
-    elif pubmed_id in _paper_claims_cache:
-        # Both step1 + step2 cached — skip everything
-        logger.info("Cache hit (step1+step2) for pubmed_id=%s — skipping both LLM steps", pubmed_id)
+    if pubmed_id in _paper_claims_cache:
+        # Both step1 + step2 in memory — skip everything
+        logger.info("Memory-cache hit (step1+step2) for pubmed_id=%s", pubmed_id)
         step2_json = _paper_claims_cache[pubmed_id]
+    elif (disk2 := _load_disk_cache(pubmed_id, "groups")) is not None:
+        # step2 on disk — restore both caches, skip LLM entirely
+        logger.info("Disk-cache hit (step2) for pubmed_id=%s", pubmed_id)
+        step2_json = disk2
+        _paper_claims_cache[pubmed_id] = step2_json
+        if pubmed_id not in _paper_step1_cache:
+            disk1 = _load_disk_cache(pubmed_id, "claims")
+            if disk1 is not None:
+                _paper_step1_cache[pubmed_id] = disk1
     elif pubmed_id in _paper_step1_cache:
-        # Step1 cached — skip step1, run step2 only
-        logger.info("Cache hit (step1 only) for pubmed_id=%s — skipping step1, running step2", pubmed_id)
+        # Step1 in memory — skip step1, run step2 only
+        logger.info("Memory-cache hit (step1 only) for pubmed_id=%s — running step2", pubmed_id)
         _, step2_json = await parse_paper_claims_from_text(
             paper_text, study_accession, assay_methods,
             cached_step1=_paper_step1_cache[pubmed_id]
         )
         _paper_claims_cache[pubmed_id] = step2_json
+        _save_disk_cache(pubmed_id, "groups", step2_json)
+    elif (disk1 := _load_disk_cache(pubmed_id, "claims")) is not None:
+        # Step1 on disk — skip step1, run step2 only
+        logger.info("Disk-cache hit (step1 only) for pubmed_id=%s — running step2", pubmed_id)
+        _paper_step1_cache[pubmed_id] = disk1
+        _, step2_json = await parse_paper_claims_from_text(
+            paper_text, study_accession, assay_methods,
+            cached_step1=disk1
+        )
+        _paper_claims_cache[pubmed_id] = step2_json
+        _save_disk_cache(pubmed_id, "groups", step2_json)
     else:
-        # No cache — run both steps, populate both caches
+        # No cache anywhere — run both steps, persist everything
         step1_json, step2_json = await parse_paper_claims_from_text(
             paper_text, study_accession, assay_methods
         )
         _paper_step1_cache[pubmed_id] = step1_json
         _paper_claims_cache[pubmed_id] = step2_json
-        logger.info("Cached step1+step2 for pubmed_id=%s", pubmed_id)
+        _save_disk_cache(pubmed_id, "claims", step1_json)
+        _save_disk_cache(pubmed_id, "groups", step2_json)
+        logger.info("Cached step1+step2 (memory+disk) for pubmed_id=%s", pubmed_id)
 
     claims: list[dict] = []
     batch_analysis: dict[str, list[dict]] = {}
@@ -422,6 +425,17 @@ async def _run_full_paper_analysis(
                     "claim_id": claim_id,
                     "claim_text": claim.get("claim_text", ""),
                     "source": claim.get("source", {}),
+                    "subject_results": [],
+                }, local_logs
+
+            comparison_strategy = (claim_analysis[0].get("study_design") or "") if claim_analysis else ""
+            if not comparison_strategy or comparison_strategy.lower() == "none":
+                local_logs.append(f"--- Claim {claim_id}: comparison_strategy='{comparison_strategy}' — skipping resolver and SQL.")
+                return {
+                    "claim_id": claim_id,
+                    "claim_text": claim.get("claim_text", ""),
+                    "source": claim.get("source", {}),
+                    "study_design": comparison_strategy or None,
                     "subject_results": [],
                 }, local_logs
 
@@ -465,6 +479,11 @@ async def _run_full_paper_analysis(
     for result, logs in pairs:
         claims_results.append(result)
         log_sections.extend(logs)
+
+    claims_results = [
+        r for r in claims_results
+        if any(len(sr.get("subjects", [])) > 0 for sr in r.get("subject_results", []))
+    ]
 
     return {"study_accession": study_accession, "claims": claims_results}
 
@@ -521,6 +540,17 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
                     return {"claim_id": claim_id, "claim_text": claim.get("claim_text", ""),
                             "source": claim.get("source", {}), "subject_results": []}, local_logs
 
+                comparison_strategy = (claim_analysis[0].get("study_design") or "") if claim_analysis else ""
+                if not comparison_strategy or comparison_strategy.lower() == "none":
+                    local_logs.append(f"--- Claim {claim_id}: comparison_strategy='{comparison_strategy}' — skipping resolver and SQL.")
+                    return {
+                        "claim_id": claim_id,
+                        "claim_text": claim.get("claim_text", ""),
+                        "source": claim.get("source", {}),
+                        "study_design": comparison_strategy or None,
+                        "subject_results": [],
+                    }, local_logs
+
                 local_logs.append(
                     f"--- Claim {claim_id}: Analysis ---\n"
                     f"{json.dumps(claim_analysis, indent=2)}"
@@ -564,11 +594,18 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
             claims_results.append(result)
             log_sections.extend(logs)
 
+        claims_results = [
+            r for r in claims_results
+            if any(len(sr.get("subjects", [])) > 0 for sr in r.get("subject_results", []))
+        ]
+
         _write_workflow_log(log_sections)
-        return {
+        result = {
             "study_accession": study_accession or "",
             "claims": claims_results,
         }
+        _save_output(result)
+        return result
 
     # ── Legacy signature JSON (old format) ───────────────────────────────────
     description_analysis: list[dict] = []
@@ -720,10 +757,12 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
     log_sections.append("\n".join(exec_log))
 
     _write_workflow_log(log_sections)
-    return {
+    result = {
         "study_accession": study_accession or "",
         "subject_results": subject_results,
     }
+    _save_output(result)
+    return result
 
 
 async def run_agent(file_path: str, session: AsyncSession) -> dict:

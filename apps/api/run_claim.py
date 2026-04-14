@@ -120,7 +120,7 @@ async def main():
     jobs = [
         ("claims/SDY1393_PMC9924941/claims_LLM_SDY1393_HailongEdit.json", "SDY1393", "data/generated/outputIDs/SDY1393_subject_ids.json"),
         ("claims/SDY1264_PMC4049462/claims_LLM_SDY1264_HailongEdit.json", "SDY1264", "data/generated/outputIDs/SDY1264_subject_ids.json"),
-        ("claims/SDY1669_PMC7665312/claims_LLM_SDY1669.json", "SDY1669", "data/generated/outputIDs/SDY1669_subject_ids.json"),
+        ("exampleClaims/SDY1669_PMC7665312/claims_LLM_SDY1669.json", "SDY1669", "../../data/generated/outputIDs/SDY1669_subject_ids.json"),
     ]
     for claim_file, study, out_file in jobs:
         await run(Path(claim_file), study, Path(out_file))

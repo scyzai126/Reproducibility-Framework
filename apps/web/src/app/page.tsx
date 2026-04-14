@@ -259,6 +259,7 @@ export default function Home() {
                 {[
                   'Identify all claims in https://pmc.ncbi.nlm.nih.gov/articles/PMC8761119 and the corresponding subjects for each claim.',
                   'In paper PMID:32788292, identify all healthy subjects whose plasma samples were analyzed using Olink proteomics.',
+                  'In study SDY1393, identify all subjects whose platelet-rich plasma samples were analyzed using Bulk RNA-seq at Day 0 post-vaccination.',
                 ].map((q) => (
                   <button
                     key={q}
