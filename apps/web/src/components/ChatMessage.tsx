@@ -39,7 +39,7 @@ const WORKFLOW_STEPS = [
   { label: 'Fetching full paper text from PubMed/PMC',               delay: 1500 },
   { label: 'Extracting claims and participant groups',                delay: 3000 },
   { label: 'Syncing study data from ImmPort',                        delay: 4500 },
-  { label: 'Resolving terms to ImmPort accessions', delay: 6000 },
+  { label: 'Resolving terms to ImmPort accessions',                  delay: 6000 },
   { label: 'Querying matched subjects from the database',            delay: 7500 },
   { label: 'Generating the final report',                            delay: 9500 },
 ];

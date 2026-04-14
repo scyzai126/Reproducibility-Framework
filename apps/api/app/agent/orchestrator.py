@@ -60,8 +60,8 @@ def _dedup_groups(groups: list[dict]) -> list[dict]:
     return result
 
 
-def _load_disk_cache(pubmed_id: str, step: str) -> dict | None:
-    path = _DISK_CACHE_DIR / pubmed_id / f"{step}.json"
+def _load_disk_cache(pubmed_id: str | int, step: str) -> dict | None:
+    path = _DISK_CACHE_DIR / str(pubmed_id) / f"{step}.json"
     if path.exists():
         try:
             return json.loads(path.read_text(encoding="utf-8"))
@@ -70,8 +70,8 @@ def _load_disk_cache(pubmed_id: str, step: str) -> dict | None:
     return None
 
 
-def _save_disk_cache(pubmed_id: str, step: str, data: dict) -> None:
-    path = _DISK_CACHE_DIR / pubmed_id / f"{step}.json"
+def _save_disk_cache(pubmed_id: str | int, step: str, data: dict) -> None:
+    path = _DISK_CACHE_DIR / str(pubmed_id) / f"{step}.json"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, indent=2), encoding="utf-8")
     logger.info("Disk cache written: %s", path)
