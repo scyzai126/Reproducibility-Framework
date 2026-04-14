@@ -1,0 +1,490 @@
+{
+  "claim_1": {
+    "claim": "ELISA analysis of serum from 56 healthy volunteers after primary vaccination (day 0) and secondary vaccination (day 21) showed anti-spike IgG binding antibody responses were induced after the first dose and boosted significantly after the second dose.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Primary vaccination induced binding antibody and neutralizing antibody responses in all but three individuals; these responses were boosted significantly after the secondary vaccination ( Fig. 1a , b , Extended Data Fig. 1b \u2013 d )."
+      },
+      {
+        "type": "text",
+        "section": "Methods",
+        "quote": "Here we used systems tools to analyse immune responses in 56 volunteers ( Extended Data Table 1 ) who received two doses of BNT162b2 ( Extended Data Fig. 1a )."
+      },
+      {
+        "type": "figure",
+        "ref": "Fig. 1a"
+      }
+    ],
+    "comparison_strategy": "longitudinal",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": 56,
+        "disease": "healthy",
+        "disease_stage": null,
+        "cohort": null,
+        "assay_method": "ELISA",
+        "tissue_type": "serum",
+        "gender": null,
+        "age": null,
+        "time_point": "day 0"
+      },
+      {
+        "group_id": 1,
+        "study_accession": null,
+        "sample_size": 56,
+        "disease": "healthy",
+        "disease_stage": null,
+        "cohort": null,
+        "assay_method": "ELISA",
+        "tissue_type": "serum",
+        "gender": null,
+        "age": null,
+        "time_point": "day 21"
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "anti-spike IgG binding antibody responses were induced after the first dose and boosted significantly after the second dose"
+      }
+    ]
+  },
+  "claim_2": {
+    "claim": "Bulk RNAseq analysis of whole blood from 31 participants showed secondary vaccination (day 21) generated a greater transcriptional response than primary vaccination (day 0), with nearly a fourfold increase in differentially expressed genes at day 22 versus day 1 and induction of antiviral, interferon, dendritic cell activation, Toll-like receptor signalling, monocyte and neutrophil modules after the boost.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Secondary vaccination generated a greater transcriptional response (as has previously been seen in a recent study of adjuvanted hepatitis B vaccine 17 ), with nearly a fourfold increase of differentially expressed genes at day 22 as compared to day 1 ( Fig. 3a ); this is consistent with the increased markers of innate immunity detected by both CyTOF and Olink ( Fig. 2 )."
+      },
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Gene-set enrichment analysis (GSEA) revealed that both doses of BNT162b2 stimulated antiviral and interferon response modules 18 ( Fig. 3b ). However, the booster immunization led to a broader innate response. In addition to the induction of antiviral pathways, secondary vaccination led to increases in signatures of dendritic cell activation and the upregulation of Toll-like receptor signalling, monocyte and neutrophil modules on days 22 and 23 ( Fig. 3b , Extended Data Fig. 8c , d )."
+      },
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Next, we performed bulk mRNA sequencing of whole blood from 31 participants."
+      },
+      {
+        "type": "figure",
+        "ref": "Fig. 3a"
+      },
+      {
+        "type": "figure",
+        "ref": "Fig. 3b"
+      }
+    ],
+    "comparison_strategy": "longitudinal",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": 31,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": null,
+        "assay_method": "Bulk RNAseq",
+        "tissue_type": "whole blood",
+        "gender": null,
+        "age": null,
+        "time_point": "day 0"
+      },
+      {
+        "group_id": 1,
+        "study_accession": null,
+        "sample_size": 31,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": null,
+        "assay_method": "Bulk RNAseq",
+        "tissue_type": "whole blood",
+        "gender": null,
+        "age": null,
+        "time_point": "day 1"
+      },
+      {
+        "group_id": 2,
+        "study_accession": null,
+        "sample_size": 31,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": null,
+        "assay_method": "Bulk RNAseq",
+        "tissue_type": "whole blood",
+        "gender": null,
+        "age": null,
+        "time_point": "day 21"
+      },
+      {
+        "group_id": 3,
+        "study_accession": null,
+        "sample_size": 31,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": null,
+        "assay_method": "Bulk RNAseq",
+        "tissue_type": "whole blood",
+        "gender": null,
+        "age": null,
+        "time_point": "day 22"
+      },
+      {
+        "group_id": 4,
+        "study_accession": null,
+        "sample_size": 31,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": null,
+        "assay_method": "Bulk RNAseq",
+        "tissue_type": "whole blood",
+        "gender": null,
+        "age": null,
+        "time_point": "day 23"
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          1,
+          3
+        ],
+        "finding": "secondary vaccination generated a greater transcriptional response than primary vaccination, with nearly a fourfold increase in differentially expressed genes at day 22 versus day 1"
+      },
+      {
+        "contrast": [
+          1,
+          3
+        ],
+        "finding": "both doses stimulated antiviral and interferon response modules, but the booster led to a broader innate response"
+      },
+      {
+        "contrast": [
+          1,
+          3
+        ],
+        "finding": "secondary vaccination induced signatures of dendritic cell activation and upregulated Toll-like receptor signalling, monocyte and neutrophil modules at day 22"
+      },
+      {
+        "contrast": [
+          1,
+          4
+        ],
+        "finding": "secondary vaccination induced signatures of dendritic cell activation and upregulated Toll-like receptor signalling, monocyte and neutrophil modules at day 23"
+      }
+    ]
+  },
+  "claim_3": {
+    "claim": "CITEseq assay analysis of 45 PBMC samples from 6 individuals showed that one day after secondary vaccination (day 22), cluster C8 emerged and increased about 100-fold versus one day after primary vaccination (day 1), with expression of interferon-stimulated genes WARS, GBP1, IFI30 and IFITM3 and reduced AP-1 transcription factors FOS and JUN.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "We performed cellular indexing of transcriptomes and epitopes by sequencing (CITE-seq) of 45 peripheral blood mononuclear cell (PBMC) samples from 6 individuals ( Extended Data Fig. 1a ) to disentangle these two effects and to examine transcriptional changes at the single-cell level."
+      },
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Notably, cluster C8 (which expressed CD14 , VCAN , CD1C , FCGR1A and CD274 mRNA or protein) emerged on day 22, one day after secondary vaccination ( Fig. 4b ). These cells uniquely expressed interferon-stimulated genes, including WARS (also known as WARS1 ), GBP1 , IFI30 and IFITM3 ( Extended Data Fig. 9d ), and constituted about 0.01% of the Lin \u2212 HLA-DR + population on day 1 after primary vaccination but increased almost 100-fold to about 1% one day after secondary vaccination ( Fig. 4c )."
+      },
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "In addition to expressing higher interferon-stimulated genes as compared to their parent clusters, they had a reduced expression of the AP-1 transcription factors FOS and JUN ( Fig. 4f )."
+      },
+      {
+        "type": "figure",
+        "ref": "Fig. 4b"
+      },
+      {
+        "type": "figure",
+        "ref": "Fig. 4c"
+      }
+    ],
+    "comparison_strategy": "longitudinal",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": null,
+        "assay_method": "CITEseq assay",
+        "tissue_type": "PBMC",
+        "gender": null,
+        "age": null,
+        "time_point": "day 1"
+      },
+      {
+        "group_id": 1,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": null,
+        "assay_method": "CITEseq assay",
+        "tissue_type": "PBMC",
+        "gender": null,
+        "age": null,
+        "time_point": "day 22"
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "Cluster C8 emerged at day 22 and increased about 100-fold versus day 1, with expression of interferon-stimulated genes WARS, GBP1, IFI30 and IFITM3 and reduced AP-1 transcription factors FOS and JUN."
+      }
+    ]
+  },
+  "claim_4": {
+    "claim": "CyTOF analysis of whole blood from 27 individuals showed inflammatory intermediate monocytes (CD14+ CD16+ monocytes) increased significantly two days after primary vaccination (day 2) and were substantially higher two days after secondary vaccination (day 23).",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "We first assessed whole-blood samples of 27 individuals using cytometry by time of flight (CyTOF)."
+      },
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "The frequency of intermediate monocytes (CD14 + CD16 + monocytes) increased significantly two days after the primary vaccination, and was substantially higher two days after the secondary vaccination ( Fig. 2b , Extended Data Figs. 5d , 6 )."
+      },
+      {
+        "type": "figure",
+        "ref": "Fig. 2b"
+      }
+    ],
+    "comparison_strategy": "longitudinal",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": 27,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": null,
+        "assay_method": "CyTOF",
+        "tissue_type": "whole blood",
+        "gender": null,
+        "age": null,
+        "time_point": "day 2"
+      },
+      {
+        "group_id": 1,
+        "study_accession": null,
+        "sample_size": 27,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": null,
+        "assay_method": "CyTOF",
+        "tissue_type": "whole blood",
+        "gender": null,
+        "age": null,
+        "time_point": "day 23"
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "inflammatory intermediate monocytes (CD14+ CD16+ monocytes) were substantially higher at day 23 than at day 2"
+      }
+    ]
+  },
+  "claim_5": {
+    "claim": "Flow Cytometry analysis of blood PBMCs from 38 individuals showed spike-specific polyfunctional CD4 and CD8 T cell responses were more readily detectable seven days after secondary immunization (day 28) than at earlier time points.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Vaccination also stimulated spike-specific T cell responses, which were more readily detectable seven days after the secondary immunization ( Fig. 1d , e , Extended Data Fig. 2a \u2013 e )."
+      },
+      {
+        "type": "text",
+        "section": "Methods",
+        "quote": "Antigen-specific T cell responses were measured using the intracellular cytokine staining assay as previously described 35 ."
+      },
+      {
+        "type": "figure",
+        "ref": "Fig. 1d"
+      },
+      {
+        "type": "figure",
+        "ref": "Fig. 1e"
+      }
+    ],
+    "comparison_strategy": "none",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": 38,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": null,
+        "assay_method": "Flow Cytometry",
+        "tissue_type": "blood PBMCs",
+        "gender": null,
+        "age": null,
+        "time_point": "day 28"
+      }
+    ],
+    "comparison": []
+  },
+  "claim_6": {
+    "claim": "Neutralizing Antibody Titer Assay analysis of serum from 30 participants showed day-42 neutralizing antibody responses against the B.1.351 variant were about tenfold lower than against the wild-type WA1 strain after secondary vaccination (day 21).",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "BNT162b2 vaccination also induced a neutralizing antibody response against the B.1.351 variant of concern, albeit at a tenfold-lower magnitude than against the wild-type WA1/2020 (WA1) strain ( Fig. 1c , Extended Data Fig. 1f ), consistent with previous studies 11 ."
+      },
+      {
+        "type": "text",
+        "section": "Figure legend",
+        "quote": "Fig. 1 | BNT162b2 vaccination induces robust antibody and T cell responses. a , b , Serum anti-S IgG titres ( a ) (half-maximal effective concentration (EC 50 )) and live-virus neutralizing antibody titres ( b ) (half-maximal inhibitory concentration (IC 50 )), measured by enzyme-linked immunosorbent assay and focus reduction neutralization titre assays, respectively. c , Live-virus neutralizing antibody response against the wild-type (WA1) or B.1.351 variant measured in day-42 sera. Each dot represents a participant ( n = 56 ( a , b ), 30 ( c ) and 38 ( d , e ))."
+      },
+      {
+        "type": "figure",
+        "ref": "Fig. 1c"
+      }
+    ],
+    "comparison_strategy": "none",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": 30,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": null,
+        "assay_method": "Neutralizing Antibody Titer Assay",
+        "tissue_type": "serum",
+        "gender": null,
+        "age": null,
+        "time_point": "day 42"
+      }
+    ],
+    "comparison": []
+  },
+  "claim_7": {
+    "claim": "Olink assay analysis of plasma from 31 vaccinated individuals showed IFN\u03b3 and CXCL10 increased significantly on days 1 and 2 after primary vaccination (day 1 and day 2) and increased even further after secondary immunization (day 21), with plasma IFN\u03b3 11.3-fold higher at day 22 than at day 1.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "To further investigate this phenomenon, we measured plasma cytokines in 31 vaccinated individuals using Olink ( https://www.olink.com/products/target/inflammation/ )."
+      },
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Of the 67 cytokines detected, the concentration of 2 cytokines (IFN\u03b3 and CXCL10) were increased significantly on days 1 and 2 after primary vaccination ( Fig. 2e left). Similar to our observations on intermediate monocytes and pSTAT1 and pSTAT3, the concentrations of these cytokines were increased even further after the secondary immunization ( Fig. 2e right)."
+      },
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "The concentration of plasma IFN\u03b3 was 11.3-fold higher at day 22 relative to day 1 ( Fig. 2f )."
+      },
+      {
+        "type": "figure",
+        "ref": "Fig. 2e"
+      },
+      {
+        "type": "figure",
+        "ref": "Fig. 2f"
+      }
+    ],
+    "comparison_strategy": "longitudinal",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": 31,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": null,
+        "assay_method": "Olink assay",
+        "tissue_type": "plasma",
+        "gender": null,
+        "age": null,
+        "time_point": "day 1"
+      },
+      {
+        "group_id": 1,
+        "study_accession": null,
+        "sample_size": 31,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": null,
+        "assay_method": "Olink assay",
+        "tissue_type": "plasma",
+        "gender": null,
+        "age": null,
+        "time_point": "day 2"
+      },
+      {
+        "group_id": 2,
+        "study_accession": null,
+        "sample_size": 31,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": null,
+        "assay_method": "Olink assay",
+        "tissue_type": "plasma",
+        "gender": null,
+        "age": null,
+        "time_point": "day 21"
+      },
+      {
+        "group_id": 3,
+        "study_accession": null,
+        "sample_size": 31,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": null,
+        "assay_method": "Olink assay",
+        "tissue_type": "plasma",
+        "gender": null,
+        "age": null,
+        "time_point": "day 22"
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "IFN\u03b3 and CXCL10 were significantly increased at day 2 compared with day 1 after primary vaccination"
+      },
+      {
+        "contrast": [
+          0,
+          2
+        ],
+        "finding": "IFN\u03b3 and CXCL10 increased even further after secondary immunization at day 21 relative to day 1"
+      },
+      {
+        "contrast": [
+          0,
+          3
+        ],
+        "finding": "plasma IFN\u03b3 was 11.3-fold higher at day 22 than at day 1"
+      }
+    ]
+  }
+}
