@@ -2,7 +2,7 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from app.agent.orchestrator import _get_study_assay_methods
+from app.agent.assay_resolver import get_study_assay_methods as _get_study_assay_methods
 
 
 def _mock_sql_result(rows: list[tuple[str, str | None]]):

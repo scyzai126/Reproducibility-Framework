@@ -253,12 +253,18 @@ class TestRunAgentFromTextNoPaperSource:
                 await run_agent_from_text("PMID:99999999 find healthy subjects", _mock_session())
 
     @pytest.mark.asyncio
-    async def test_pmid_not_linked_to_immport_study_raises(self):
+    async def test_pmid_not_linked_to_immport_returns_no_immport(self):
+        """Papers not in ImmPort return a no_immport response with extracted claims instead of raising."""
         from app.agent.orchestrator import run_agent_from_text
         from app.agent.ncbi_utils import _pmc_url_cache
         _pmc_url_cache.clear()
 
+        fake_claims = [{"claim_id": "claim_1", "claim_text": "Some finding.", "sources": []}]
         with patch("app.agent.orchestrator.pmid_to_pmc_url", return_value="https://pmc.ncbi.nlm.nih.gov/articles/PMC7665312/"), \
-             patch("app.agent.orchestrator.fetch_paper_content_async", return_value=("paper text", "32788292")):
-            with pytest.raises(ValueError, match="not linked to any study in ImmPort"):
-                await run_agent_from_text("PMID:32788292 find healthy subjects", _mock_session(fetchone_value=None))
+             patch("app.agent.orchestrator.fetch_paper_content_async", return_value=("paper text", "32788292")), \
+             patch("app.agent.orchestrator.parse_paper_claims_noimmport", return_value=fake_claims):
+            result = await run_agent_from_text("PMID:32788292 find healthy subjects", _mock_session(fetchone_value=None))
+
+        assert result["type"] == "no_immport"
+        assert result["paper_claims"] == fake_claims
+        assert result["subject_results"] == []

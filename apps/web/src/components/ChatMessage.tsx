@@ -237,6 +237,32 @@ function PaperClaimCard({ claim, index }: { claim: PaperClaim; index: number }) 
   );
 }
 
+function ComparisonPill({ comparison }: { comparison: Comparison }) {
+  const [open, setOpen] = useState(false);
+  const [a, b] = comparison.contrast;
+
+  return (
+    <div className="inline-block">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        title="View finding"
+        className={`text-xs border rounded px-2 py-0.5 font-mono transition-colors ${
+          open
+            ? 'bg-violet-200 text-violet-800 border-violet-300'
+            : 'bg-violet-50 text-violet-700 border-violet-200 hover:bg-violet-100'
+        }`}
+      >
+        {a} vs {b}
+      </button>
+      {open && comparison.finding && (
+        <div className="mt-1.5 px-3 py-2 rounded-lg bg-violet-50 border border-violet-200 text-xs text-gray-700 leading-relaxed">
+          {comparison.finding}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ClaimCard({ claim }: { claim: ClaimResult }) {
   const [expanded, setExpanded] = useState(true);
   const totalSubjects = claim.subject_results.reduce((n, g) => n + (g.subjects?.length ?? 0), 0);
@@ -279,11 +305,9 @@ function ClaimCard({ claim }: { claim: ClaimResult }) {
           )}
           {(claim.comparison ?? []).length > 0 && (
             <div className="pt-1 flex flex-wrap gap-1.5">
-              <span className="text-xs text-gray-400 self-center">Comparisons:</span>
+              <span className="text-xs text-gray-400 self-start mt-0.5">Comparisons:</span>
               {(claim.comparison as Comparison[]).map((c, i) => (
-                <span key={i} className="text-xs bg-violet-50 text-violet-700 border border-violet-200 rounded px-2 py-0.5 font-mono">
-                  {c.contrast[0]} vs {c.contrast[1]}
-                </span>
+                <ComparisonPill key={i} comparison={c} />
               ))}
             </div>
           )}
@@ -325,8 +349,8 @@ function ResultsDisplay({ result }: { result: AgentResponse }) {
             <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
           </svg>
           <div>
-            <p className="text-xs font-medium text-amber-700">This paper is not in ImmPort</p>
-            <p className="text-xs text-amber-600 mt-0.5">Showing extracted claims only — no subject IDs available.</p>
+            <p className="text-xs font-medium text-amber-700">This paper is not associated with any dataset in ImmPort</p>
+            <p className="text-xs text-amber-600 mt-0.5">Claims have been extracted from the paper, but no subject-level data is available for matching.</p>
           </div>
         </div>
       )}
