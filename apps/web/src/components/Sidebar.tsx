@@ -86,7 +86,7 @@ export default function Sidebar({ sessions, currentId, isOpen, onToggle, onNewCh
       </div>
 
       <div className="p-3 border-t border-gray-200">
-        <p className="text-xs text-gray-400 text-center">ClaimRepro</p>
+        <p className="text-xs text-gray-400 text-center">An AI-powered reproducibility framework for systems immunology</p>
       </div>
     </aside>
   );

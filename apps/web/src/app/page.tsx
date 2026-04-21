@@ -20,9 +20,9 @@ export default function Home() {
   // so it can be prepended to the user's follow-up reply.
   const [pendingQuestion, setPendingQuestion] = useState<string | null>(null);
 
-  // Default sidebar open only on wider screens (after hydration)
+  // Sidebar always collapsed by default
   useEffect(() => {
-    setSidebarOpen(window.innerWidth >= 768);
+    setSidebarOpen(false);
   }, []);
   const [prefillText, setPrefillText] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -231,11 +231,11 @@ export default function Home() {
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {messages.length === 0 ? (
           /* Welcome screen */
-          <div className="flex-1 flex flex-col items-center justify-center px-4 relative">
+          <div className="flex-1 flex flex-col min-h-0 overflow-y-auto">
             {/* Mobile hamburger */}
             <button
               onClick={() => setSidebarOpen(true)}
-              className="absolute top-4 left-4 md:hidden p-2 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+              className="absolute top-4 left-4 md:hidden p-2 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors z-10"
               title="Open menu"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -244,37 +244,54 @@ export default function Home() {
                 <line x1="3" y1="18" x2="21" y2="18" />
               </svg>
             </button>
-            <div className="w-14 h-14 rounded-full bg-emerald-600 flex items-center justify-center text-white text-xl font-bold mb-5">
-              AI
-            </div>
-            <h1 className="text-3xl font-semibold text-gray-800 mb-2">ClaimRepro</h1>
-            <p className="text-gray-500 text-base mb-8">
-              Ask questions about a study you're interested in
-            </p>
 
-            {/* Example questions */}
-            <div className="w-full max-w-2xl mb-6">
-              <p className="text-xs text-gray-400 uppercase tracking-wide mb-3">Example questions</p>
-              <div className="grid grid-cols-1 gap-2">
-                {[
-                  'In paper PMID:32788292,extract all assay-based claims with supporting evidence snippets.',
-                  'From https://pmc.ncbi.nlm.nih.gov/articles/PMC8761119, identify all subjects with whole blood samples analyzed by Bulk RNA-seq between day 0 and day 21.',
-                  'Identify all claims from study SDY1393 and return the matched ImmPort samples for each comparison group.',
-                ].map((q) => (
-                  <button
-                    key={q}
-                    onClick={() => setPrefillText(q)}
-                    disabled={isAnalyzing}
-                    className="text-left px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-600 hover:border-emerald-400 hover:text-emerald-700 hover:bg-emerald-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed select-text break-words whitespace-normal"
-                  >
-                    {q}
-                  </button>
-                ))}
+            {/* Hero */}
+            <div className="flex-1 flex flex-col items-center justify-center px-6 pt-16 pb-6">
+              <div className="w-full max-w-3xl">
+
+                {/* Title badge + subtitle */}
+                <div className="text-center mb-10">
+                  <div className="flex justify-center mb-4">
+                    <span className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-5 py-2">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block flex-shrink-0" />
+                      An AI-powered Reproducibility Framework for Systems Immunology
+                    </span>
+                  </div>
+                  <p className="text-gray-500 text-sm max-w-lg mx-auto leading-relaxed">
+                    Automatically extract scientific claims from papers and verify them by re-analyzing the study&apos;s own data in ImmPort.
+                  </p>
+                </div>
+
+                {/* Example cards */}
+                <div className="mb-6">
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Try an example</p>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2 items-stretch">
+                    {[
+                      { icon: '🔬', label: 'By PubMed ID', q: 'In paper PMID:32788292, extract all assay-based claims with supporting evidence snippets.' },
+                      { icon: '🔗', label: 'By PMC URL', q: 'Find all subjects with whole blood Bulk RNA-seq samples collected between day 0 and day 21 in paper https://pmc.ncbi.nlm.nih.gov/articles/PMC8761119.' },
+                      { icon: '🗂', label: 'By study ID', q: 'Identify all claims from study SDY1393 and return the matched ImmPort samples for each comparison group.' },
+                    ].map(({ icon, label, q }) => (
+                      <button
+                        key={q}
+                        onClick={() => setPrefillText(q)}
+                        disabled={isAnalyzing}
+                        className="group text-left px-4 py-3 rounded-xl border border-gray-200 bg-white hover:border-emerald-400 hover:bg-emerald-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex flex-col"
+                      >
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-base">{icon}</span>
+                          <span className="text-xs font-semibold text-gray-400 group-hover:text-emerald-600 uppercase tracking-wide">{label}</span>
+                        </div>
+                        <p className="text-xs text-gray-600 group-hover:text-emerald-800 leading-relaxed break-words flex-1">{q}</p>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Input */}
+                <div className="shadow-sm rounded-2xl">
+                  <ChatInput onFileUpload={handleFileUpload} onTextSubmit={handleTextMessage} disabled={isAnalyzing} prefill={prefillText} />
+                </div>
               </div>
-            </div>
-
-            <div className="w-full max-w-2xl">
-              <ChatInput onFileUpload={handleFileUpload} onTextSubmit={handleTextMessage} disabled={isAnalyzing} prefill={prefillText} />
             </div>
           </div>
         ) : (
@@ -314,6 +331,13 @@ export default function Home() {
               </div>
             </div>
           </>
+        )}
+        {messages.length === 0 && (
+          <footer className="flex-shrink-0 border-t border-gray-100 px-6 py-4">
+            <p className="max-w-4xl mx-auto text-xs text-gray-400 leading-relaxed">
+              * This prototype uses an LLM-based claim extraction agent to read a manuscript, identify its biological claims, and translate each claim into a defined comparison between participant groups. The system maps key study attributes — cohort, assay, tissue, disease, and time point — to ImmPort metadata to identify the subjects and samples corresponding to each comparison group. Ongoing work is focused on performing the analytical comparisons to determine whether the reported findings can be reproduced.
+            </p>
+          </footer>
         )}
       </main>
     </div>

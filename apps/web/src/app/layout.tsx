@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'ClaimRepro',
+  title: 'An AI-powered reproducibility framework for systems immunology',
   description: 'Reproduce and verify scientific claims against immunology study data',
 };
 

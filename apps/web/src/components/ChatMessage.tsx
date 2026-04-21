@@ -256,7 +256,7 @@ function ComparisonPill({ comparison }: { comparison: Comparison }) {
       </button>
       {open && comparison.finding && (
         <div className="mt-1.5 px-3 py-2 rounded-lg bg-violet-50 border border-violet-200 text-xs text-gray-700 leading-relaxed">
-          {comparison.finding}
+          <span className="font-semibold text-violet-700">Result: </span>{comparison.finding}
         </div>
       )}
     </div>
