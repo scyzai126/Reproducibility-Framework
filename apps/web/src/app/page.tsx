@@ -246,26 +246,29 @@ export default function Home() {
             </button>
 
             {/* Hero */}
-            <div className="flex-1 flex flex-col items-center justify-center px-6 pt-16 pb-6">
-              <div className="w-full max-w-3xl">
+            <div className="flex-1 flex flex-col items-center justify-center px-6 py-12">
+              <div className="w-full max-w-2xl">
 
-                {/* Title badge + subtitle */}
+                {/* Title + subtitle */}
                 <div className="text-center mb-10">
-                  <div className="flex justify-center mb-4">
-                    <span className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-5 py-2">
-                      <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block flex-shrink-0" />
-                      An AI-powered Reproducibility Framework for Systems Immunology
-                    </span>
+                  <div className="inline-block bg-emerald-50 border border-emerald-200 px-6 py-4 rounded-2xl mb-3 text-center">
+                    <p className="text-xl font-bold text-emerald-900 leading-snug">An AI-powered Reproducibility Framework</p>
+                    <p className="text-sm font-medium text-emerald-600 mt-1">for Systems Immunology</p>
                   </div>
-                  <p className="text-gray-500 text-sm max-w-lg mx-auto leading-relaxed">
+                  <p className="text-gray-400 text-sm max-w-md mx-auto leading-relaxed">
                     Automatically extract scientific claims from papers and verify them by re-analyzing the study&apos;s own data in ImmPort.
                   </p>
                 </div>
 
+                {/* Input — primary CTA */}
+                <div className="mb-8 ring-1 ring-gray-200 rounded-2xl shadow-sm">
+                  <ChatInput onFileUpload={handleFileUpload} onTextSubmit={handleTextMessage} disabled={isAnalyzing} prefill={prefillText} />
+                </div>
+
                 {/* Example cards */}
-                <div className="mb-6">
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Try an example</p>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2 items-stretch">
+                <div>
+                  <p className="text-xs font-medium text-gray-400 uppercase tracking-widest mb-3 text-center">Try an example</p>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-stretch">
                     {[
                       { icon: '🔬', label: 'By PubMed ID', q: 'In paper PMID:32788292, extract all assay-based claims with supporting evidence snippets.' },
                       { icon: '🔗', label: 'By PMC URL', q: 'Find all subjects with whole blood Bulk RNA-seq samples collected between day 0 and day 21 in paper https://pmc.ncbi.nlm.nih.gov/articles/PMC8761119.' },
@@ -275,22 +278,18 @@ export default function Home() {
                         key={q}
                         onClick={() => setPrefillText(q)}
                         disabled={isAnalyzing}
-                        className="group text-left px-4 py-3 rounded-xl border border-gray-200 bg-white hover:border-emerald-400 hover:bg-emerald-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex flex-col"
+                        className="group text-left px-4 py-4 rounded-xl border border-gray-200 bg-gray-50 hover:border-emerald-400 hover:bg-emerald-50 hover:shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed flex flex-col gap-2"
                       >
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className="text-base">{icon}</span>
-                          <span className="text-xs font-semibold text-gray-400 group-hover:text-emerald-600 uppercase tracking-wide">{label}</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm">{icon}</span>
+                          <span className="text-xs font-semibold text-gray-500 group-hover:text-emerald-700 uppercase tracking-wide">{label}</span>
                         </div>
-                        <p className="text-xs text-gray-600 group-hover:text-emerald-800 leading-relaxed break-words flex-1">{q}</p>
+                        <p className="text-xs text-gray-500 group-hover:text-emerald-900 leading-relaxed break-words flex-1">{q}</p>
                       </button>
                     ))}
                   </div>
                 </div>
 
-                {/* Input */}
-                <div className="shadow-sm rounded-2xl">
-                  <ChatInput onFileUpload={handleFileUpload} onTextSubmit={handleTextMessage} disabled={isAnalyzing} prefill={prefillText} />
-                </div>
               </div>
             </div>
           </div>

@@ -126,7 +126,7 @@ export default function ChatInput({ onFileUpload, onTextSubmit, disabled, prefil
               ? 'Analyzing…'
               : selectedFile
               ? 'Optional: ask a question about this paper…'
-              : 'Paste a paper URL, PubMed ID, study accession and ask a question…'
+              : 'Enter a paper URL, PMID, or study accession to get started…'
           }
           className="flex-1 bg-transparent outline-none text-gray-800 placeholder-gray-400 text-sm resize-none overflow-hidden leading-6 disabled:cursor-default"
           style={{ minHeight: '24px', maxHeight: '200px' }}
