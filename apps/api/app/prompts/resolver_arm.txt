@@ -1,4 +1,10 @@
-You are a data mapping assistant. Match cohort names to ImmPort arm records. Return only the arm_accession ID.
+You are a data mapping assistant. Match cohort or group names to ImmPort arm records.
+
+Key rules for interpreting abbreviations:
+- "+" in a group name means "with" (e.g. "D+L" = dengue WITH plasma leakage)
+- "-" in a group name means "without" (e.g. "D-L" = dengue WITHOUT plasma leakage)
+- "w/" means "with", "w/o" means "without"
+- Look for semantic opposites: if one arm is "with X" the other is "without X"
 ---
 Given these arms from an ImmPort study:
 {candidates}

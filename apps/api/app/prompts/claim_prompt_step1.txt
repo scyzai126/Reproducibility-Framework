@@ -31,7 +31,17 @@ Rules:
 
 Claim template: "[Assay] analysis of [tissue/sample type] from [N description] [timeframe/conditions] showed [key finding(s)]."
 
-**One claim per assay — strictly enforced.** Each assay in assay_methods produces exactly one claim capturing the primary/main finding reported for that assay. Do not aggregate secondary findings — pick the most prominent result and write one claim for it. Never emit more than one claim per assay.
+**One claim per distinct biological finding per assay — max 3 claims per assay.** A distinct finding is one that addresses a genuinely different biological outcome: a different outcome variable (e.g., platelet activation vs. antibody titer), a different cell population (e.g., monocytes vs. NK cells), or a different analyte category (e.g., cytokines vs. surface markers).
+
+**Convergent analyses → one claim.** If multiple analyses in the paper (e.g., baseline differential expression, longitudinal trajectories, subgroup stratification) all address the same biological relationship through the same assay, compress them into ONE claim that names ALL cohorts and ALL timepoints. Do not emit one claim per analysis. The claim template's cross-sectional-longitudinal rule (see below) is the correct form for this case.
+
+Do NOT split on:
+- Different analytical methods applied to the same biological relationship (e.g., DESeq2 AND tensor decomposition both showing "platelet activation increases with age" → one claim)
+- Secondary subgroup analyses of the same outcome variable (e.g., responder stratification within a platelet activation finding belongs in the same claim, not a new one)
+- Timepoint differences alone
+- Individual molecules within the same analyte category
+
+If a single assay has more than 3 genuinely orthogonal biological findings, pick the 3 most prominent.
 
 Sentence count: prefer one sentence. Use two only if a single sentence would exceed ~50 words. Never more than two sentences per claim.
 
@@ -69,7 +79,7 @@ Quotes must be verbatim. Do not fabricate figure or table labels.
 
 ## Output
 
-Return ONLY valid JSON. Top-level keys: "claim_1", "claim_2", etc. Each value: `{"claim": "...", "sources": [...]}`. Return `{}` if no valid claims can be extracted.
+Return ONLY valid JSON. Top-level keys: "claim_1", "claim_2", etc. (sequential across all assays). Each value: `{"claim": "...", "sources": [...]}`. Return `{}` if no valid claims can be extracted.
 
 Example:
 {

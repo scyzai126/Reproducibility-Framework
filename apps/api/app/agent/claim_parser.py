@@ -1,16 +1,13 @@
 import asyncio
 import json
 import logging
-import re
 from pathlib import Path
 
 import openpyxl
-import requests
-from bs4 import BeautifulSoup
 from openai import AsyncOpenAI
 
 from app.config import settings
-from app.agent.jats_parser import MAX_PAPER_CHARS, _clean_text, parse_jats_xml
+from app.agent.paper_fetcher import fetch_paper_content_bundle, fetch_paper_content_bundle_async
 
 
 def _find_repo_root() -> Path:
@@ -22,13 +19,6 @@ def _find_repo_root() -> Path:
 
 _REPO_ROOT = _find_repo_root()
 _XLSX_PATH = _REPO_ROOT / "data" / "studyid_pmcid.xlsx"
-
-
-def _extract_pmcid(url: str) -> str:
-    """Extract PMC ID from a PubMed Central URL, e.g. PMC4049462."""
-    match = re.search(r"(PMC\d+)", url, re.IGNORECASE)
-    return match.group(1).upper() if match else "UNKNOWN"
-
 
 logger = logging.getLogger(__name__)
 
@@ -68,47 +58,26 @@ def _get_client() -> AsyncOpenAI:
 def _load_prompt(filename: str) -> str:
     return (_PROMPTS_DIR / filename).read_text(encoding="utf-8").strip()
 
+def _fetch_paper_text(url: str) -> str:
+    """Fetch full article text only (legacy helper)."""
+    return fetch_paper_content_bundle(url)["paper_text"]
 
 
 def _fetch_paper_content(url: str) -> tuple[str, str | None]:
-    """Fetch full article text and PubMed ID from PMC via NCBI E-utilities API.
-
-    Returns (paper_text, pubmed_id).
-    pubmed_id is parsed from <article-id pub-id-type="pmid"> in the XML response.
-    """
-    pmcid = _extract_pmcid(url)
-    api_url = (
-        f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
-        f"?db=pmc&id={pmcid}&rettype=full&retmode=xml"
-    )
-    resp = requests.get(api_url, timeout=30)
-    resp.raise_for_status()
-    soup = BeautifulSoup(resp.text, "xml")
-
-    # Extract PubMed ID from XML metadata
-    pubmed_id: str | None = None
-    tag = soup.find("article-id", {"pub-id-type": "pmid"})
-    if tag:
-        pubmed_id = tag.get_text(strip=True)
-
-    structured_text = parse_jats_xml(resp.text)
-    if not structured_text:
-        # Fallback for malformed or non-standard XML.
-        structured_text = _clean_text(soup.get_text(separator=" ", strip=True))[:MAX_PAPER_CHARS]
-    return structured_text, pubmed_id
-
-
-def _fetch_paper_text(url: str) -> str:
-    """Fetch full article text only (legacy helper)."""
-    text, _ = _fetch_paper_content(url)
-    return text
+    """Legacy helper returning rendered paper text plus PubMed ID."""
+    bundle = fetch_paper_content_bundle(url)
+    return bundle["paper_text"], bundle["pubmed_id"]
 
 
 async def fetch_paper_content_async(url: str) -> tuple[str, str | None]:
     """Async wrapper — returns (paper_text, pubmed_id)."""
-    import asyncio
-    loop = asyncio.get_event_loop()
-    return await loop.run_in_executor(None, _fetch_paper_content, url)
+    bundle = await fetch_paper_content_bundle_async(url)
+    return bundle["paper_text"], bundle["pubmed_id"]
+
+
+async def fetch_paper_bundle_async(url: str) -> dict:
+    """Expose structured PMC paper content for callers that need section JSON."""
+    return await fetch_paper_content_bundle_async(url)
 
 
 async def fetch_paper_text_async(url: str) -> str:

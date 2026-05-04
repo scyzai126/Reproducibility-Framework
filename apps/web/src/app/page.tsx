@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Sidebar from '@/components/Sidebar';
 import ChatMessageComponent from '@/components/ChatMessage';
 import ChatInput from '@/components/ChatInput';
-import { runAgentUpload, runAgentText } from '@/lib/api';
+import { runAgentText } from '@/lib/api';
 import type { ChatMessage, ChatSession } from '@/lib/types';
 
 const STORAGE_KEY = 'chat_sessions';
@@ -130,82 +130,6 @@ export default function Home() {
     }
   };
 
-  const handleFileUpload = async (file: File, question?: string) => {
-    const userMsgId = crypto.randomUUID();
-    const assistantMsgId = crypto.randomUUID();
-
-    // For pasted JSON (virtual file named input.json), store text as content
-    const isPasted = file.name === 'input.json';
-    const pastedText = isPasted ? await file.text() : '';
-
-    const userMsg: ChatMessage = {
-      id: userMsgId,
-      role: 'user',
-      content: question || pastedText,
-      filename: file.name,
-      timestamp: new Date().toISOString(),
-    };
-
-    const loadingMsg: ChatMessage = {
-      id: assistantMsgId,
-      role: 'assistant',
-      content: '',
-      timestamp: new Date().toISOString(),
-      isLoading: true,
-    };
-
-    const withLoading = [...messages, userMsg, loadingMsg];
-    setMessages(withLoading);
-    setIsAnalyzing(true);
-    setPrefillText('');
-
-    try {
-      const [result] = await Promise.all([
-        runAgentUpload(file, question),
-        new Promise((r) => setTimeout(r, 8000)),
-      ]);
-
-      const finalMessages = withLoading.map((m) =>
-        m.id === assistantMsgId ? { ...m, isLoading: false, result } : m
-      );
-      setMessages(finalMessages);
-
-      const sessionTitle = file.name.replace(/\.json$/i, '');
-      let updatedSessions: ChatSession[];
-
-      if (currentSessionId) {
-        updatedSessions = sessions.map((s) =>
-          s.id === currentSessionId ? { ...s, messages: finalMessages } : s
-        );
-      } else {
-        const newId = crypto.randomUUID();
-        const newSession: ChatSession = {
-          id: newId,
-          title: sessionTitle,
-          messages: finalMessages,
-          createdAt: new Date().toISOString(),
-        };
-        updatedSessions = [newSession, ...sessions];
-        setCurrentSessionId(newId);
-      }
-
-      persistSessions(updatedSessions);
-    } catch (err) {
-      const errorMessages = withLoading.map((m) =>
-        m.id === assistantMsgId
-          ? {
-              ...m,
-              isLoading: false,
-              error: err instanceof Error ? err.message : String(err),
-            }
-          : m
-      );
-      setMessages(errorMessages);
-    } finally {
-      setIsAnalyzing(false);
-    }
-  };
-
   return (
     <div className="flex h-screen bg-white text-gray-900 overflow-hidden">
       {/* Mobile overlay — closes sidebar when tapping outside */}
@@ -262,7 +186,7 @@ export default function Home() {
 
                 {/* Input — primary CTA */}
                 <div className="mb-8 ring-1 ring-gray-200 rounded-2xl shadow-sm">
-                  <ChatInput onFileUpload={handleFileUpload} onTextSubmit={handleTextMessage} disabled={isAnalyzing} prefill={prefillText} />
+                  <ChatInput onTextSubmit={handleTextMessage} disabled={isAnalyzing} prefill={prefillText} />
                 </div>
 
                 {/* Example cards */}
@@ -323,10 +247,7 @@ export default function Home() {
             {/* Input bar */}
             <div className="flex-shrink-0 px-4 pb-6">
               <div className="max-w-3xl mx-auto">
-                <ChatInput onFileUpload={handleFileUpload} onTextSubmit={handleTextMessage} disabled={isAnalyzing} prefill={prefillText} />
-                <p className="text-center text-xs text-gray-400 mt-2">
-                  Upload another file to run a new analysis
-                </p>
+                <ChatInput onTextSubmit={handleTextMessage} disabled={isAnalyzing} prefill={prefillText} />
               </div>
             </div>
           </>

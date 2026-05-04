@@ -1,29 +1,44 @@
 {
   "claim_1": {
-    "claim": "RNA sequencing analysis of CD4+ CD8+ double-positive T cells from 88 dengue patients showed 20 differentially expressed genes between CD4+ CD8+ DP and CD8+ SP cells, with similar expression profiles in patients with and without plasma leakage.",
+    "claim": "RNA sequencing analysis of sorted PBMC T-cell subsets from acute DENV infection samples collected at diagnosis/admission a median of 4 days after fever onset showed that CD4+CD8+ double-positive T cells co-clustered with CD8+ single-positive T cells rather than CD4+ single-positive T cells, with 20 differentially expressed genes between CD4+CD8+ and CD8+ cells versus 109 between CD4+CD8+ and CD4+ cells (significant DE defined as adjusted p<0.05 and absolute log2 fold-change >2).",
     "sources": [
       {
         "type": "text",
         "section": "Results",
-        "quote": "Overall, there were 20 DE genes (absolute log 2 fold change (FC) > 2, and adjusted p -value (false discovery rate, FDR) < 0.05) identified between CD4 + CD8 + DP and CD8 + SP T cells."
+        "quote": "As shown in Figure 2 A, at the transcriptomic level, CD4 + CD8 + DP T cells were well resolved from CD4 + SP T cells but co-clustered with CD8 + SP T cells."
       },
       {
         "type": "text",
         "section": "Results",
-        "quote": "CD4 + CD8 + DP T cells isolated from both D+L and D-L groups displayed very similar gene expression profiles and clustered closely to one another based on UMAP analysis."
+        "quote": "Overall, there were 20 DE genes (absolute log 2 fold change (FC) > 2, and adjusted p -value (false discovery rate, FDR) < 0.05) identified between CD4 + CD8 + DP and CD8 + SP T cells ( Figure 2 B,C, Table 3 ) compared to 109 DE genes identified between CD4 + CD8 + DP and CD4 + SP T cells ( Figure S2 and Table S2 )."
+      },
+      {
+        "type": "text",
+        "section": "Methods",
+        "quote": "The blood samples from patients with acute dengue virus (DENV) infection were collected upon diagnosis or admission with a median of 4 days after onset of fever (interquartile range (IQR): 4.0–6.0 days)"
+      },
+      {
+        "type": "text",
+        "section": "Methods",
+        "quote": "Subsequently, live CD4 + single positive (SP) (CD14 − CD19 − CD56 − CD3 + CD4 + CD8 − ), CD8 + SP (CD14 − CD19 − CD56 − CD3 + CD4 − CD8 + ), and CD4 + CD8 + DP (CD14 − CD19 − CD56 − CD3 + CD4 + CD8 + ) cells were sorted"
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 2A"
       }
     ],
-    "comparison_strategy": "cross_sectional",
+    "comparison_strategy": "subgroup",
     "groups": [
       {
         "group_id": 0,
         "study_accession": null,
         "sample_size": null,
-        "disease": null,
-        "disease_stage": null,
-        "cohort": "CD4+ CD8+ DP",
+        "disease": "DENV infection",
+        "disease_stage": "acute",
+        "cohort": null,
         "assay_method": "RNA sequencing",
-        "tissue_type": "PBMC",
+        "tissue_type": "sorted PBMC T-cell subsets",
+        "cell_type": "CD4+CD8+ double-positive T cells",
         "gender": null,
         "age": null,
         "time_point": null
@@ -32,11 +47,26 @@
         "group_id": 1,
         "study_accession": null,
         "sample_size": null,
-        "disease": null,
-        "disease_stage": null,
-        "cohort": "CD8+ SP",
+        "disease": "DENV infection",
+        "disease_stage": "acute",
+        "cohort": null,
         "assay_method": "RNA sequencing",
-        "tissue_type": "PBMC",
+        "tissue_type": "sorted PBMC T-cell subsets",
+        "cell_type": "CD8+ single-positive T cells",
+        "gender": null,
+        "age": null,
+        "time_point": null
+      },
+      {
+        "group_id": 2,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": "DENV infection",
+        "disease_stage": "acute",
+        "cohort": null,
+        "assay_method": "RNA sequencing",
+        "tissue_type": "sorted PBMC T-cell subsets",
+        "cell_type": "CD4+ single-positive T cells",
         "gender": null,
         "age": null,
         "time_point": null
@@ -44,11 +74,160 @@
     ],
     "comparison": [
       {
-        "contrast": [
-          0,
-          1
-        ],
-        "finding": "20 differentially expressed genes between CD4+ CD8+ DP and CD8+ SP cells"
+        "contrast": [0, 1],
+        "finding": "CD4+CD8+ double-positive T cells co-clustered with CD8+ single-positive T cells and had 20 differentially expressed genes between the two populations (adjusted p<0.05, absolute log2 fold-change >2)."
+      },
+      {
+        "contrast": [0, 2],
+        "finding": "CD4+CD8+ double-positive T cells were well resolved from CD4+ single-positive T cells and had 109 differentially expressed genes between the two populations (adjusted p<0.05, absolute log2 fold-change >2)."
+      }
+    ]
+  },
+  "claim_2": {
+    "claim": "RNA sequencing analysis of sorted CD4+CD8+ double-positive and CD8+ single-positive T cells from acute DENV infection samples collected at diagnosis/admission a median of 4 days after fever onset showed higher expression in CD4+CD8+ cells of TNFRSF4, CCR4, and NCF1 and lower expression of PTPRK, CA6, S100B, ZNF433, DSEL, MMP28, SPINK2, NT5E, MXRA8, FBLN2, CNN3, PRCD, NOG, GIPC3, REG4, and SDK2, with enrichment of cell surface receptor signaling pathway and selective expression of chemokine receptors during T-cell polarization.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Compared to CD8 + SP T cells, we mainly observed in CD4 + CD8 + DP T cells a higher expression of genes involved in T-cell activation ( TNFRSF4 , Tumor necrosis factor receptor superfamily member 4 or OX40), immune cell recruitment ( CCR4 , C-C chemokine receptor type 4), and oxygen dependent phagocytosis ( NCF1 , Neutrophil cytosol factor 1)."
+      },
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Significantly down-regulated DE genes in CD4 + CD8 + DP T cells ( Figure 2 B,C) included PTPRK (Receptor-type tyrosine-protein phosphatase kappa), CA6 (Carbonic anhydrase 6), S100B (S100 Calcium-Binding Protein B), ZNF433 (Zinc finger protein 433), DSEL (Dermatan-sulfate epimerase-like protein), MMP28 (Matrix metalloproteinase-28), SPINK2 (Serine protease inhibitor Kazal-type 2), NT5E (5′-nucleotidase), MXRA8 (Matrix remodeling-associated protein 8), FBLN2 (Fibulin-2), CNN3 (Calponin-3), PRCD (Photoreceptor disk component), NOG (Noggin), GIPC3 (PDZ domain-containing protein), REG4 (Regenerating islet-derived protein 4), and SDK2 (Protein sidekick-2)"
+      },
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "The functional pathway enrichment analysis using g:Profiler revealed that those DE genes were enriched in two pathways involved in cell surface receptor signaling pathway ( CD4, TNFRSF4, CCR4, NT5E, MXRA8, PTPRK ) and selective expression of chemokine receptors during T-cell polarization ( CD4, CCR4 ) ( Figure 2 D)."
+      },
+      {
+        "type": "text",
+        "section": "Methods",
+        "quote": "The blood samples from patients with acute dengue virus (DENV) infection were collected upon diagnosis or admission with a median of 4 days after onset of fever (interquartile range (IQR): 4.0–6.0 days)"
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 2D"
+      },
+      {
+        "type": "table",
+        "ref": "Table 3"
+      }
+    ],
+    "comparison_strategy": "subgroup",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": "DENV infection",
+        "disease_stage": "acute",
+        "cohort": null,
+        "assay_method": "RNA sequencing",
+        "tissue_type": "sorted PBMC T-cell subsets",
+        "cell_type": "CD4+CD8+ double-positive T cells",
+        "gender": null,
+        "age": null,
+        "time_point": null
+      },
+      {
+        "group_id": 1,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": "DENV infection",
+        "disease_stage": "acute",
+        "cohort": null,
+        "assay_method": "RNA sequencing",
+        "tissue_type": "sorted PBMC T-cell subsets",
+        "cell_type": "CD8+ single-positive T cells",
+        "gender": null,
+        "age": null,
+        "time_point": null
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [0, 1],
+        "finding": "CD4+CD8+ double-positive T cells showed higher expression of TNFRSF4, CCR4, and NCF1 than CD8+ single-positive T cells"
+      },
+      {
+        "contrast": [0, 1],
+        "finding": "CD4+CD8+ double-positive T cells showed lower expression of PTPRK, CA6, S100B, ZNF433, DSEL, MMP28, SPINK2, NT5E, MXRA8, FBLN2, CNN3, PRCD, NOG, GIPC3, REG4, and SDK2 than CD8+ single-positive T cells"
+      },
+      {
+        "contrast": [0, 1],
+        "finding": "Differentially expressed genes between CD4+CD8+ double-positive and CD8+ single-positive T cells were enriched in cell surface receptor signaling pathway and selective expression of chemokine receptors during T-cell polarization"
+      }
+    ]
+  },
+  "claim_3": {
+    "claim": "RNA sequencing analysis of sorted CD4+CD8+ double-positive T cells from acute DENV infection samples collected during the acute febrile phase before plasma leakage was clinically or radiologically detectable showed similar transcriptomic profiles in patients who later developed plasma leakage versus those who did not, with only five significant differentially expressed genes: downregulated DNAJB1, NR4A2, B3GNT7, and SLC45A1 and upregulated ABO in the plasma leakage group.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "CD4 + CD8 + DP T cells isolated from both D+L and D-L groups displayed very similar gene expression profiles and clustered closely to one another based on UMAP analysis ( Figure 3 A)."
+      },
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Only five significant DE genes were identified ( Figure 3 B,C), which included in D+L group the down-regulated genes DNAJB1 (DnaJ homolog subfamily B member 1), NR4A2 (Nuclear receptor subfamily 4 group A member 2), B3GNT7 (UDP-GlcNAc:betaGal beta-1,3-N-acetylglucosaminyltransferase), and SLC45A1 (Proton-associated sugar transporter A) involved in gene expression and post-translational protein modification as well as the up-regulated gene ABO (Histo-blood group ABO system transferase) gene ( Table 4 )."
+      },
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "It is important to emphasize that the samples studied corresponded to blood draws obtained before any plasma leakage was detectable clinically or radiologically."
+      },
+      {
+        "type": "text",
+        "section": "Methods",
+        "quote": "All blood samples were taken and sent for blood tests (shown in Table 1 ) during the acute febrile phase of DENV infection with a median of 5.0 (IQR: 4.0–6.0) days from fever onset in the D-L group and a median of 4.0 (IQR: 4.0–6.0) days from fever onset in the D+L group."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 3A"
+      },
+      {
+        "type": "table",
+        "ref": "Table 4"
+      }
+    ],
+    "comparison_strategy": "subgroup",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": "DENV infection",
+        "disease_stage": "acute",
+        "cohort": null,
+        "assay_method": "RNA sequencing",
+        "tissue_type": "sorted CD4+CD8+ double-positive T cells",
+        "cell_type": "CD4+CD8+ double-positive T cells",
+        "gender": null,
+        "age": null,
+        "time_point": null
+      },
+      {
+        "group_id": 1,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": "DENV infection",
+        "disease_stage": "acute",
+        "cohort": null,
+        "assay_method": "RNA sequencing",
+        "tissue_type": "sorted CD4+CD8+ double-positive T cells",
+        "cell_type": "CD4+CD8+ double-positive T cells",
+        "gender": null,
+        "age": null,
+        "time_point": null
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [0, 1],
+        "finding": "Patients who later developed plasma leakage versus those who did not had very similar transcriptomic profiles in sorted CD4+CD8+ double-positive T cells, with only five significant differentially expressed genes; in the plasma leakage group DNAJB1, NR4A2, B3GNT7, and SLC45A1 were downregulated and ABO was upregulated."
       }
     ]
   }

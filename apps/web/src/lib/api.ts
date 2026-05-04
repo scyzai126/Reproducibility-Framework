@@ -2,7 +2,6 @@ import type { AgentResponse } from './types';
 
 const BASE = '/backend';
 const CHAT_TIMEOUT_MS = 120_000;
-const PAPER_TIMEOUT_MS = 420_000;
 
 async function parseErrorDetail(res: Response): Promise<string> {
   const contentType = res.headers.get('content-type') || '';
@@ -34,25 +33,6 @@ async function fetchWithTimeout(
   } finally {
     clearTimeout(timer);
   }
-}
-
-export async function runAgentUpload(file: File, question?: string): Promise<AgentResponse> {
-  const formData = new FormData();
-  formData.append('file', file);
-  if (question && question.trim()) {
-    formData.append('question', question.trim());
-  }
-
-  const res = await fetchWithTimeout(`${BASE}/agent/run-paper`, {
-    method: 'POST',
-    body: formData,
-  }, PAPER_TIMEOUT_MS);
-
-  if (!res.ok) {
-    throw new Error(await parseErrorDetail(res));
-  }
-
-  return res.json() as Promise<AgentResponse>;
 }
 
 export async function runAgentText(message: string): Promise<AgentResponse> {

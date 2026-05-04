@@ -1,0 +1,107 @@
+{
+  "claim_1": {
+    "claim": "RNA sequencing analysis of CD8+ T cells from 40 hospitalized dengue patients showed distinct transcriptomic profiles between early (4-7 days post fever onset) and late (8+ days post fever onset) phases, but no differences based on disease severity (DF vs DHF).",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "In the next series of experiments, we explored the signatures associated with the DENV-specific CD8+ IFNγ+ response in early (4-7 days PFO) versus late (8+ days PFO) samples, reflective of acute and convalescent phase samples."
+      },
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "A total of 352 genes were differentially expressed, with 167 genes upregulated in the early response and 185 genes upregulated in the late response (Figure 4a,b). "
+      }
+    ],
+    "comparison_strategy": "longitudinal",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": null,
+        "assay_method": "RNA sequencing",
+        "tissue_type": "PBMC",
+        "cell_type": "CD8+ IFNγ+ T cells",
+        "gender": null,
+        "age": null,
+        "time_point": "4-7 days post fever onset"
+      },
+      {
+        "group_id": 1,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": null,
+        "assay_method": "RNA sequencing",
+        "tissue_type": "PBMC",
+        "cell_type": "CD8+ IFNγ+ T cells",
+        "gender": null,
+        "age": null,
+        "time_point": "8+ days post fever onset"
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "A total of 352 genes were differentially expressed, with 167 genes upregulated in the early response and 185 genes upregulated in the late response (Figure 4a,b)."
+      }
+    ]
+  },
+  "claim_2": {
+    "claim": "RNA sequencing analysis of DENV-specific CD8+ T cells between IFN-γ+ CD8+ T cells and IFNγ− CD8+ T cells.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "a total of 1806 DE genes were identified, based on the log2 fold change (LFC) > 1.5 or <−1.5 and with p adjusted value (padj) < 0.05."
+      }
+    ],
+    "comparison_strategy": "cross-sectional",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": null,
+        "assay_method": "RNA sequencing",
+        "tissue_type": "PBMC",
+        "cell_type": "CD8+ IFNγ+ T cells",
+        "gender": null,
+        "age": null,
+        "time_point": null
+      },
+      {
+        "group_id": 1,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": null,
+        "assay_method": "RNA sequencing",
+        "tissue_type": "PBMC",
+        "cell_type": "CD8+ IFNγ- T cells",
+        "gender": null,
+        "age": null,
+        "time_point": null
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "a total of 1806 DE genes were identified, based on the log2 fold change (LFC) > 1.5 or <−1.5 and with p adjusted value (padj) < 0.05"
+      }
+    ]
+  }
+}

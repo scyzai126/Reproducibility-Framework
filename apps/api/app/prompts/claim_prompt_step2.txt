@@ -8,12 +8,13 @@ You are a biomedical research analyst. Given the following claims extracted from
 For each claim, first classify its **comparison_strategy**, then use that classification to decide how many groups to emit. group_id restarts from 0 for each claim.
 
 **comparison_strategy** — choose one based on the claim sentence:
-- `longitudinal`: same samples measured at multiple explicit time points → one group per time point. Each group must have a distinct `time_point`. Do NOT use this if different samples happen to be sampled at different days — only use it when the same cohort is measured at multiple defined timepoints.
-- `case_control`: distinct disease vs healthy (or disease A vs disease B) → one group per condition
-- `cohort`: distinct population cohorts compared at a **single** time point (e.g., geographic groups, age strata, occupational groups) → one group per cohort.
-- `cross_sectional_longitudinal`: distinct population cohorts each measured at **multiple** explicit time points → emit K × T groups (one per cohort-timepoint combination). Assign each group both its `cohort` and `time_point`. Emit one comparison object per population pair per timepoint — do NOT emit inter-timepoint contrasts within the same cohort. Use this when the claim names 2+ distinct populations AND 2+ explicit timepoints.
-- `clinical_trial`: samples enrolled in different intervention or treatment arms → one group per arm; set cohort to the arm/treatment label
-- `none`: assay reported but no comparison stated, or grouping is unclear → one group, comparison=[]
+- `case_control`: distinct condition groups compared at one matched context, usually disease vs healthy or disease A vs disease B → one group per condition
+- `cohort`: distinct non-disease population groups compared at one time point, such as age strata, geography, or exposure class → one group per cohort
+- `paired_longitudinal`: same subjects or samples measured across explicit time points → one group per time point. Each group must have a distinct `time_point`. Do NOT use this if different samples merely happen to be sampled on different days.
+- `arm_based`: distinct intervention, treatment, exposure, or protocol arms compared → one group per arm. Use this whether or not the study is a formal clinical trial.
+- `subgroup`: groups formed by stratifying one broader cohort, such as responder vs non-responder, sex, severity, or biomarker-high vs biomarker-low → one group per subgroup
+- `multi_factor`: groups are defined by 2 or more explicit grouping axes and need cross-product emission, such as cohort × time_point, arm × time_point, or disease × responder_status. Emit one group per unique combination of axes. Only emit comparisons that are explicitly supported by the claim; do not invent all possible contrasts.
+- `none`: no clear comparison is stated or the grouping cannot be grounded → one group, comparison=[]
 
 **Measurement-level comparisons do NOT create multiple groups.** If the claim compares different antigens, viral variants, analytes, or assay targets measured on the same samples (e.g., "responses against B.1.351 were lower than against WA1", "IgG was higher than IgM"), use `none` with a single group.
 
@@ -32,13 +33,14 @@ Emit `comparison_strategy` as the first field in each claim object, before `grou
 - study_accession: only if an ImmPort accession (SDY####) appears verbatim in the paper
 - sample_size: only if the paper states a count for this specific group; do not split a total or derive by subtraction
 - disease: the condition or health status of the group (e.g., `"COVID-19"`, `"healthy"`, `"influenza"`). **ALWAYS use this field for disease names and healthy status — never put a disease name or "healthy" into `disease_stage`.**
-- disease_stage: ONLY for severity sub-classifications within a disease (e.g., `"mild"`, `"severe"`, `"ICU"`, `"critical"`). **If `comparison_strategy` is `case_control`, always set `disease_stage` to null for every group — no exceptions.** Only populate `disease_stage` when the comparison_strategy is `severity`.
+- disease_stage: ONLY for severity or stage sub-classifications within a disease (e.g., `"mild"`, `"severe"`, `"ICU"`, `"critical"`, `"acute"`, `"convalescent"`). **If `comparison_strategy` is `case_control`, always set `disease_stage` to null for every group unless the claim explicitly compares disease stages as the group-defining split.** Most disease stage contrasts belong under `subgroup`, not `case_control`.
 
   ❌ WRONG: `"disease": null, "disease_stage": "COVID-19"`
   ✅ CORRECT: `"disease": "COVID-19", "disease_stage": null`
 
   ❌ WRONG: `"disease": null, "disease_stage": "healthy"`
   ✅ CORRECT: `"disease": "healthy", "disease_stage": null`
+- cell_type: the specific cell population analyzed (e.g., `"CD8+ T cells"`, `"B cells"`, `"monocytes"`, `"NK cells"`). Populate when the paper explicitly names a cell type or subset for this group. If the tissue_type already captures the cell type (e.g., tissue_type = "CD8+ T cells"), copy it here as well. Null if no specific cell type is named.
 - cohort: only if the paper names a cohort or geographic location for this group
 - gender: only if stated for this group specifically; do not copy from another group or infer from a demographics table that does not break down by group
 - age: only if stated for this group specifically; same rule as gender
@@ -63,8 +65,8 @@ Use [] if the claim has no comparison or grouping is unclear.
       {"type": "figure", "ref": "Figure 2A"},
       {"type": "table", "ref": "Table 1"}
     ],
-    "comparison_strategy": "<longitudinal|case_control|cohort|clinical_trial|none>",
-    "groups": [ {group object}, ... ],
+    "comparison_strategy": "<case_control|cohort|paired_longitudinal|arm_based|subgroup|multi_factor|none>",
+    "groups": [ {group object with: group_id, study_accession, sample_size, disease, disease_stage, cohort, assay_method, tissue_type, cell_type, gender, age, time_point}, ... ],
     "comparison": [ {"contrast": [0, 1], "finding": "..."}, ... ]
   },
   "claim_2": {
@@ -77,7 +79,7 @@ Use [] if the claim has no comparison or grouping is unclear.
 }
 ```
 
-**Example — longitudinal (Olink, SDY2189, 31 samples):**
+**Example — paired_longitudinal (Olink, SDY2189, 31 samples):**
 ```json
 {
   "claim_1": {
@@ -87,12 +89,12 @@ Use [] if the claim has no comparison or grouping is unclear.
       {"type": "text", "section": "Methods", "quote": "The second vaccination was administered on day 21."},
       {"type": "figure", "ref": "Figure 3B"}
     ],
-    "comparison_strategy": "longitudinal",
+    "comparison_strategy": "paired_longitudinal",
     "groups": [
-      {"group_id": 0, "study_accession": "SDY2189", "sample_size": 31, "disease": null, "disease_stage": null, "cohort": null, "assay_method": "Olink", "tissue_type": "plasma", "gender": null, "age": null, "time_point": "day 0"},
-      {"group_id": 1, "study_accession": "SDY2189", "sample_size": 31, "disease": null, "disease_stage": null, "cohort": null, "assay_method": "Olink", "tissue_type": "plasma", "gender": null, "age": null, "time_point": "day 1"},
-      {"group_id": 2, "study_accession": "SDY2189", "sample_size": 31, "disease": null, "disease_stage": null, "cohort": null, "assay_method": "Olink", "tissue_type": "plasma", "gender": null, "age": null, "time_point": "day 2"},
-      {"group_id": 3, "study_accession": "SDY2189", "sample_size": 31, "disease": null, "disease_stage": null, "cohort": null, "assay_method": "Olink", "tissue_type": "plasma", "gender": null, "age": null, "time_point": "day 22"}
+      {"group_id": 0, "study_accession": "SDY2189", "sample_size": 31, "disease": null, "disease_stage": null, "cohort": null, "assay_method": "Olink", "tissue_type": "plasma", "cell_type": null, "gender": null, "age": null, "time_point": "day 0"},
+      {"group_id": 1, "study_accession": "SDY2189", "sample_size": 31, "disease": null, "disease_stage": null, "cohort": null, "assay_method": "Olink", "tissue_type": "plasma", "cell_type": null, "gender": null, "age": null, "time_point": "day 1"},
+      {"group_id": 2, "study_accession": "SDY2189", "sample_size": 31, "disease": null, "disease_stage": null, "cohort": null, "assay_method": "Olink", "tissue_type": "plasma", "cell_type": null, "gender": null, "age": null, "time_point": "day 2"},
+      {"group_id": 3, "study_accession": "SDY2189", "sample_size": 31, "disease": null, "disease_stage": null, "cohort": null, "assay_method": "Olink", "tissue_type": "plasma", "cell_type": null, "gender": null, "age": null, "time_point": "day 22"}
     ],
     "comparison": [
       {"contrast": [0, 1], "finding": "IFNγ and CXCL10 significantly increased on days 1-2 vs day 0"},
@@ -114,8 +116,8 @@ Use [] if the claim has no comparison or grouping is unclear.
     ],
     "comparison_strategy": "case_control",
     "groups": [
-      {"group_id": 0, "study_accession": "SDY1669", "sample_size": 18, "disease": "healthy", "disease_stage": null, "cohort": "Atlanta cohort", "assay_method": "Q-PCR", "tissue_type": "plasma", "gender": null, "age": null, "time_point": null},
-      {"group_id": 1, "study_accession": "SDY1669", "sample_size": null, "disease": "COVID-19", "disease_stage": null, "cohort": "Atlanta cohort", "assay_method": "Q-PCR", "tissue_type": "plasma", "gender": null, "age": null, "time_point": null}
+      {"group_id": 0, "study_accession": "SDY1669", "sample_size": 18, "disease": "healthy", "disease_stage": null, "cohort": "Atlanta cohort", "assay_method": "Q-PCR", "tissue_type": "plasma", "cell_type": null, "gender": null, "age": null, "time_point": null},
+      {"group_id": 1, "study_accession": "SDY1669", "sample_size": null, "disease": "COVID-19", "disease_stage": null, "cohort": "Atlanta cohort", "assay_method": "Q-PCR", "tissue_type": "plasma", "cell_type": null, "gender": null, "age": null, "time_point": null}
     ],
     "comparison": [
       {"contrast": [0, 1], "finding": "severe and ICU COVID-19 patients had significantly higher bacterial DNA than healthy controls"}
@@ -124,7 +126,7 @@ Use [] if the claim has no comparison or grouping is unclear.
 }
 ```
 
-**Example — cross_sectional_longitudinal (Bulk RNA-seq, SDY1393, 3 cohorts × 3 timepoints):**
+**Example — multi_factor (Bulk RNA-seq, SDY1393, 3 cohorts × 3 timepoints):**
 ```json
 {
   "claim_2": {
@@ -132,17 +134,17 @@ Use [] if the claim has no comparison or grouping is unclear.
     "sources": [
       {"type": "text", "section": "Results", "quote": "We isolated platelet-rich plasma (PRP) from blood samples of participants obtained prior to vaccination (Day 0) and at Days 2, 7, and 28 post-vaccine for isolation of RNA and elucidation of the platelet transcriptome via RNA-seq."}
     ],
-    "comparison_strategy": "cross_sectional_longitudinal",
+    "comparison_strategy": "multi_factor",
     "groups": [
-      {"group_id": 0, "study_accession": "SDY1393", "sample_size": null, "disease": null, "disease_stage": null, "cohort": "young adults", "assay_method": "Bulk RNA-seq", "tissue_type": "platelet-rich plasma", "gender": null, "age": null, "time_point": "day 0"},
-      {"group_id": 1, "study_accession": "SDY1393", "sample_size": null, "disease": null, "disease_stage": null, "cohort": "older community-dwelling adults", "assay_method": "Bulk RNA-seq", "tissue_type": "platelet-rich plasma", "gender": null, "age": null, "time_point": "day 0"},
-      {"group_id": 2, "study_accession": "SDY1393", "sample_size": null, "disease": null, "disease_stage": null, "cohort": "older SNF-resident adults", "assay_method": "Bulk RNA-seq", "tissue_type": "platelet-rich plasma", "gender": null, "age": null, "time_point": "day 0"},
-      {"group_id": 3, "study_accession": "SDY1393", "sample_size": null, "disease": null, "disease_stage": null, "cohort": "young adults", "assay_method": "Bulk RNA-seq", "tissue_type": "platelet-rich plasma", "gender": null, "age": null, "time_point": "day 2"},
-      {"group_id": 4, "study_accession": "SDY1393", "sample_size": null, "disease": null, "disease_stage": null, "cohort": "older community-dwelling adults", "assay_method": "Bulk RNA-seq", "tissue_type": "platelet-rich plasma", "gender": null, "age": null, "time_point": "day 2"},
-      {"group_id": 5, "study_accession": "SDY1393", "sample_size": null, "disease": null, "disease_stage": null, "cohort": "older SNF-resident adults", "assay_method": "Bulk RNA-seq", "tissue_type": "platelet-rich plasma", "gender": null, "age": null, "time_point": "day 2"},
-      {"group_id": 6, "study_accession": "SDY1393", "sample_size": null, "disease": null, "disease_stage": null, "cohort": "young adults", "assay_method": "Bulk RNA-seq", "tissue_type": "platelet-rich plasma", "gender": null, "age": null, "time_point": "day 7"},
-      {"group_id": 7, "study_accession": "SDY1393", "sample_size": null, "disease": null, "disease_stage": null, "cohort": "older community-dwelling adults", "assay_method": "Bulk RNA-seq", "tissue_type": "platelet-rich plasma", "gender": null, "age": null, "time_point": "day 7"},
-      {"group_id": 8, "study_accession": "SDY1393", "sample_size": null, "disease": null, "disease_stage": null, "cohort": "older SNF-resident adults", "assay_method": "Bulk RNA-seq", "tissue_type": "platelet-rich plasma", "gender": null, "age": null, "time_point": "day 7"}
+      {"group_id": 0, "study_accession": "SDY1393", "sample_size": null, "disease": null, "disease_stage": null, "cohort": "young adults", "assay_method": "Bulk RNA-seq", "tissue_type": "platelet-rich plasma", "cell_type": null, "gender": null, "age": null, "time_point": "day 0"},
+      {"group_id": 1, "study_accession": "SDY1393", "sample_size": null, "disease": null, "disease_stage": null, "cohort": "older community-dwelling adults", "assay_method": "Bulk RNA-seq", "tissue_type": "platelet-rich plasma", "cell_type": null, "gender": null, "age": null, "time_point": "day 0"},
+      {"group_id": 2, "study_accession": "SDY1393", "sample_size": null, "disease": null, "disease_stage": null, "cohort": "older SNF-resident adults", "assay_method": "Bulk RNA-seq", "tissue_type": "platelet-rich plasma", "cell_type": null, "gender": null, "age": null, "time_point": "day 0"},
+      {"group_id": 3, "study_accession": "SDY1393", "sample_size": null, "disease": null, "disease_stage": null, "cohort": "young adults", "assay_method": "Bulk RNA-seq", "tissue_type": "platelet-rich plasma", "cell_type": null, "gender": null, "age": null, "time_point": "day 2"},
+      {"group_id": 4, "study_accession": "SDY1393", "sample_size": null, "disease": null, "disease_stage": null, "cohort": "older community-dwelling adults", "assay_method": "Bulk RNA-seq", "tissue_type": "platelet-rich plasma", "cell_type": null, "gender": null, "age": null, "time_point": "day 2"},
+      {"group_id": 5, "study_accession": "SDY1393", "sample_size": null, "disease": null, "disease_stage": null, "cohort": "older SNF-resident adults", "assay_method": "Bulk RNA-seq", "tissue_type": "platelet-rich plasma", "cell_type": null, "gender": null, "age": null, "time_point": "day 2"},
+      {"group_id": 6, "study_accession": "SDY1393", "sample_size": null, "disease": null, "disease_stage": null, "cohort": "young adults", "assay_method": "Bulk RNA-seq", "tissue_type": "platelet-rich plasma", "cell_type": null, "gender": null, "age": null, "time_point": "day 7"},
+      {"group_id": 7, "study_accession": "SDY1393", "sample_size": null, "disease": null, "disease_stage": null, "cohort": "older community-dwelling adults", "assay_method": "Bulk RNA-seq", "tissue_type": "platelet-rich plasma", "cell_type": null, "gender": null, "age": null, "time_point": "day 7"},
+      {"group_id": 8, "study_accession": "SDY1393", "sample_size": null, "disease": null, "disease_stage": null, "cohort": "older SNF-resident adults", "assay_method": "Bulk RNA-seq", "tissue_type": "platelet-rich plasma", "cell_type": null, "gender": null, "age": null, "time_point": "day 7"}
     ],
     "comparison": [
       {"contrast": [0, 1], "finding": "age-associated increase in platelet activation RNAs and mitochondrial genes at day 0"},

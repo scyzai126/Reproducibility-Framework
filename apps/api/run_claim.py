@@ -137,6 +137,7 @@ async def main():
         (_SCRIPT_DIR / "claims/SDY1393_PMC9924941/claims_LLM_SDY1393_HailongEdit.json", "SDY1393", _DATA_DIR / "generated/outputIDs/SDY1393_subject_ids.json"),
         (_SCRIPT_DIR / "claims/SDY1264_PMC4049462/claims_LLM_SDY1264_HailongEdit.json", "SDY1264", _DATA_DIR / "generated/outputIDs/SDY1264_subject_ids.json"),
         (_SCRIPT_DIR / "exampleClaims/SDY1669_PMC7665312/claims_LLM_SDY1669.json", "SDY1669", _DATA_DIR / "generated/outputIDs/SDY1669_subject_ids.json"),
+        (_DATA_DIR / "claims/validated_claims/claims_LLM_SDY1708_HailongEdit.json", "SDY1708", _DATA_DIR / "generated/outputIDs/SDY1708_subject_ids.json"),
     ]
     for claim_file, study, out_file in jobs:
         await run(claim_file, study, out_file)
