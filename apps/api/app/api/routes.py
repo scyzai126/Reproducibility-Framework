@@ -41,8 +41,8 @@ async def agent_parse_paper(
         return ParsePaperResponse(
             study_accession=request.study_accession,
             assay_methods=assay_methods,
-            claims_sentence=step1,
-            claims_group=step2,
+            claims=step1,
+            groups=step2,
         )
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))

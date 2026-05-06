@@ -133,11 +133,13 @@ async def run(claim_path: Path, study_accession: str, output_path: Path):
 
 
 async def main():
+    _VC = _DATA_DIR / "claims/validated_claims"
     jobs = [
-        (_SCRIPT_DIR / "claims/SDY1393_PMC9924941/claims_LLM_SDY1393_HailongEdit.json", "SDY1393", _DATA_DIR / "generated/outputIDs/SDY1393_subject_ids.json"),
-        (_SCRIPT_DIR / "claims/SDY1264_PMC4049462/claims_LLM_SDY1264_HailongEdit.json", "SDY1264", _DATA_DIR / "generated/outputIDs/SDY1264_subject_ids.json"),
-        (_SCRIPT_DIR / "exampleClaims/SDY1669_PMC7665312/claims_LLM_SDY1669.json", "SDY1669", _DATA_DIR / "generated/outputIDs/SDY1669_subject_ids.json"),
-        (_DATA_DIR / "claims/validated_claims/claims_LLM_SDY1708_HailongEdit.json", "SDY1708", _DATA_DIR / "generated/outputIDs/SDY1708_subject_ids.json"),
+        (_VC / "claims_LLM_SDY1373_AS.json",        "SDY1373", _DATA_DIR / "generated/outputIDs/SDY1373_subject_ids.json"),
+        (_VC / "claims_LLM_SDY1288_ASedit.json",    "SDY1288", _DATA_DIR / "generated/outputIDs/SDY1288_subject_ids.json"),
+        (_VC / "claims_LLM_SDY1708_HailongEdit.json","SDY1708", _DATA_DIR / "generated/outputIDs/SDY1708_subject_ids.json"),
+        (_VC / "claims_LLM_SDY1991_HailongEdit.json","SDY1991", _DATA_DIR / "generated/outputIDs/SDY1991_subject_ids.json"),
+        (_VC / "claims_LLM_SDY1995_HailongEdit.json","SDY1995", _DATA_DIR / "generated/outputIDs/SDY1995_subject_ids.json"),
     ]
     for claim_file, study, out_file in jobs:
         await run(claim_file, study, out_file)

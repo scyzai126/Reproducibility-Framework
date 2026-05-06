@@ -1,0 +1,94 @@
+{
+  "claim_1": {
+    "claim": "Bulk RNA-seq analysis of whole blood from 18 healthy rVSV-ZEBOV vaccine recipients on days 0, 1, 3, and 7 after vaccination showed that the strongest transcriptional response occurred on day 1, with 10,123 genes significantly differentially expressed compared with day 0; among the day 1 genes with the largest fold changes was CXCL10, the gene encoding IP-10.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Differential gene expression from the day 0 baseline was investigated gene-wise using the voom/limma method. The highest number of differentially expressed genes was observed on day 1 after vaccination, with 10,123 genes being significantly differentially expressed compared with day 0."
+      },
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Among the 10,123 differentially expressed genes on day 1 overall (both dose groups combined), the 10 genes with the largest fold changes included CXCL10, the gene encoding for IP-10."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 5A"
+      },
+      {
+        "type": "table",
+        "ref": "Table 2"
+      }
+    ],
+    "comparison_strategy": "longitudinal",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": 18,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": null,
+        "assay_method": "Bulk RNA-seq",
+        "tissue_type": "whole blood",
+        "gender": null,
+        "age": null,
+        "time_point": "day 0"
+      },
+      {
+        "group_id": 1,
+        "study_accession": null,
+        "sample_size": 18,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": null,
+        "assay_method": "Bulk RNA-seq",
+        "tissue_type": "whole blood",
+        "gender": null,
+        "age": null,
+        "time_point": "day 1"
+      },
+      {
+        "group_id": 2,
+        "study_accession": null,
+        "sample_size": 18,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": null,
+        "assay_method": "Bulk RNA-seq",
+        "tissue_type": "whole blood",
+        "gender": null,
+        "age": null,
+        "time_point": "day 3"
+      },
+      {
+        "group_id": 3,
+        "study_accession": null,
+        "sample_size": 18,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": null,
+        "assay_method": "Bulk RNA-seq",
+        "tissue_type": "whole blood",
+        "gender": null,
+        "age": null,
+        "time_point": "day 7"
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [0, 1],
+        "finding": "Day 1 showed the highest number of significantly differentially expressed genes compared with day 0, with 10,123 genes differentially expressed; CXCL10, encoding IP-10, was among the 10 genes with the largest fold changes."
+      },
+      {
+        "contrast": [0, 2],
+        "finding": "Day 3 was analyzed as a post-vaccination timepoint compared with day 0 baseline. The highest number of differentially expressed genes occurred on day 1."
+      },
+      {
+        "contrast": [0, 3],
+        "finding": "Day 7 was analyzed as a post-vaccination timepoint compared with day 0 baseline. The day 7 vs day 0 comparison showed fewer differentially expressed genes as compared to day 1."
+      }
+    ]
+  }
+}

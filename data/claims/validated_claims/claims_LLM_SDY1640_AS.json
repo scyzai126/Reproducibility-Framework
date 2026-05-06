@@ -1,0 +1,142 @@
+{"claim_1": {
+  "claim": "Flow cytometry AIM analysis of PBMCs from 10 recovered COVID-19 patients and 11 SARS-CoV-2-unexposed donors, using stimulation with a SARS-CoV-2 spike megapool, showed that SARS-CoV-2 spike-specific CD4+ T cell responses were detected in 100% of COVID-19 cases when comparing recovered COVID-19 patients versus unexposed donors.",
+  "sources": [
+    {
+      "type": "text",
+      "section": "Results",
+      "quote": "SARS-CoV-2 spike-specific CD4+ T cell responses (OX40+CD137+) were detected in 100% of COVID-19 cases (p < 0.0001 versus unexposed donors spike MP, Figures 2A and 2B.  p = 0.002 versus DMSO control, Figure 2C)."
+    }
+  ],
+  "comparison_strategy": "case_control",
+  "groups": [
+    {
+      "group_id": 0,
+      "assay_method": "Flow cytometry AIM",
+      "tissue_type": "PBMC",
+      "sample_size": 10,
+      "disease": "COVID-19",
+      "disease_stage": null,
+      "cohort": "COVID-19",
+      "gender": null,
+      "age": null,
+      "time_point": null
+    },
+    {
+      "group_id": 1,
+      "assay_method": "Flow cytometry AIM",
+      "tissue_type": "PBMC",
+      "sample_size": 11,
+      "disease": "healthy",
+      "disease_stage": null,
+      "cohort": "SARS-CoV-2 unexposed donors",
+      "gender": null,
+      "age": null,
+      "time_point": null
+    }
+  ],
+  "comparison": [
+    {
+      "contrast": [0, 1],
+      "finding": "SARS-CoV-2 spike-specific CD4+ T cell responses were detected in 100% of COVID-19 cases"
+    },
+    {
+      "contrast": [0, 1],
+      "finding": "CD4+ T cell responses to the remainder of the SARS-CoV-2 orfeome were detected in 100% of COVID-19 cases"
+    }
+  ]
+},
+
+  "claim_2": {
+  "claim": "ELISA analysis of plasma from convalescent COVID-19 patients showed that all COVID-19 cases were IgG positive, and anti-RBD IgM and IgA were also detected in the large majority of cases.",
+  "sources": [
+    {
+      "type": "text",
+      "section": "Results",
+      "quote": "All cases were IgG positive; anti-RBD IgM and IgA was also detected in the large majority of cases."
+    }
+  ],
+  "comparison_strategy": "case_control",
+  "groups": [
+    {
+      "group_id": 0,
+      "assay_method": "ELISA",
+      "tissue_type": "plasma",
+      "sample_size": 20,
+      "disease": "COVID-19",
+      "disease_stage": "convalescent",
+      "cohort": "COVID-19",
+      "gender": null,
+      "age": null,
+      "time_point": null
+    },
+   {
+        "group_id": 1,
+        "assay_method": "ELISA",
+        "tissue_type": "plasma",
+        "sample_size": 20,
+        "disease": "healthy",
+        "disease_stage": null,
+        "cohort": "SARS-CoV-2 unexposed donors",
+        "gender": null,
+        "age": null,
+        "time_point": null
+   }
+  ],
+  "comparison": [
+    {
+      "contrast": [
+        0,
+        1
+      ],
+      "finding": "All COVID-19 cases were IgG positive, and anti-RBD IgM and IgA were detected in the large majority of cases"
+    }
+  ]
+  },
+
+  "claim_3": {
+  "claim": "Flow cytometry ICS analysis using intracellular cytokine staining of PBMCs from recovered COVID-19 patients and SARS-CoV-2-unexposed donors showed that IFNγ+ SARS-CoV-2-specific CD8+ T cells were detected in the majority of COVID-19 cases, with most IFNγ+ cells co-expressing granzyme B and a substantial fraction expressing TNF but not IL-10.",
+  "sources": [
+    {
+      "type": "text",
+      "section": "Results",
+      "quote": "Independently, ICS assays detected IFNγ+ SARS-CoV-2−specific CD8+ T cells in the majority of COVID-19 cases (Fig. 3C-D). The majority of IFNγ+ cells co-expressed granzyme B (Fig. 3D-E). A substantial fraction of the IFNγ+ cells expressed TNF, but not IL-10 (Fig. 3D)."
+    }
+  ],
+  "comparison_strategy": "case_control",
+  "groups": [
+    {
+      "group_id": 0,
+      "assay_method": "Flow Cytometry ICS",
+      "tissue_type": "PBMC",
+      "sample_size": 10,
+      "disease": "COVID-19",
+      "disease_stage": null,
+      "cohort": "COVID-19",
+      "gender": null,
+      "age": null,
+      "time_point": null
+    },
+    {
+      "group_id": 1,
+      "assay_method": "Flow Cytometry ICS",
+      "tissue_type": "PBMC",
+      "sample_size": 11,
+      "disease": "healthy",
+      "disease_stage": null,
+      "cohort": "SARS-CoV-2 unexposed donors",
+      "gender": null,
+      "age": null,
+      "time_point": null
+    }
+  ],
+  "comparison": [
+    {
+      "contrast": [
+        0,
+        1
+      ],
+      "finding": "IFNγ+ SARS-CoV-2-specific CD8+ T cells were detected in the majority of COVID-19 cases; most IFNγ+ cells co-expressed granzyme B, and a substantial fraction expressed TNF but not IL-10"
+    }
+  ]
+}
+}
