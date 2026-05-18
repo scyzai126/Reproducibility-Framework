@@ -61,6 +61,16 @@ _FUNCTIONAL_MARKER_RE = re.compile(
 )
 
 
+def _split_multi_tissue(tissue_type: str) -> list[str]:
+    """Split a comma/semicolon/and-separated tissue string into individual tokens.
+
+    Returns a list with a single element when the string contains no separator,
+    so callers can use len() > 1 to detect the multi-tissue case.
+    """
+    tokens = re.split(r'\s*[,;]\s*|\s+and\s+', tissue_type, flags=re.I)
+    return [t.strip() for t in tokens if t.strip()]
+
+
 def _extract_functional_marker(cell_type: str) -> str | None:
     """Return the first functional marker token (e.g. 'IFNγ+') from a cell_type string."""
     m = _FUNCTIONAL_MARKER_RE.search(cell_type)
@@ -551,6 +561,28 @@ async def resolve_tissue_and_cell_type(
     """
     tissue_pat = f"%{tissue_type}%"
     cell_pat = f"%{cell_type}%"
+
+    # Early check: if the study has no subtype data at all, skip all subtype
+    # strategies and resolve tissue_type alone.
+    subtype_count_res = await session.execute(
+        text(
+            "SELECT COUNT(*) FROM biosample "
+            "WHERE study_accession = :sa AND subtype IS NOT NULL"
+        ),
+        {"sa": study_accession},
+    )
+    has_subtypes = (subtype_count_res.scalar() or 0) > 0
+    if not has_subtypes:
+        logger.info(
+            "cell_type dropped: study %s has no subtype data — resolving tissue_type only",
+            study_accession,
+        )
+        tissue_result = await resolve_tissue_type(session, tissue_type, study_accession, claim_text=claim_text)
+        if tissue_result:
+            val, method, col = tissue_result
+            key = "type_value" if col == "type" else "subtype_value"
+            return {key: val, "method": method, "cell_type_dropped_reason": "no subtype data in study"}
+        return None
 
     # Strategy 1: both columns simultaneously
     count_res = await session.execute(
@@ -1523,6 +1555,23 @@ async def resolve_and_build_queries(
         time_point   = group.pop("time_point", None) or ""
         age          = group.get("age")
         comparison   = group.get("comparison") or []
+
+        # Fan out multi-tissue groups: resolve each token independently and union.
+        # time_point was already popped, so pass it back explicitly for each sub-group.
+        tissue_tokens = _split_multi_tissue(tissue_type)
+        if len(tissue_tokens) > 1:
+            logger.info(
+                "Multi-tissue group %s: fanning out into %d sub-groups: %s",
+                group_id, len(tissue_tokens), tissue_tokens,
+            )
+            sub_results = await asyncio.gather(*[
+                _resolve_group_cached({**group, "tissue_type": token, "time_point": time_point})
+                for token in tissue_tokens
+            ])
+            for token, sub_list in zip(tissue_tokens, sub_results):
+                for qd in sub_list:
+                    qd.setdefault("tissue_token", token)
+            return [qd for sub_list in sub_results for qd in sub_list]
 
         # Split cohort on commas or "and" so "D+L group, D-L group" resolves both arms.
         cohort_parts = (

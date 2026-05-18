@@ -33,6 +33,33 @@ class ParsePaperResponse(BaseModel):
     groups: dict = {}
 
 
+class RunClaimsRequest(BaseModel):
+    study_accession: str
+
+
+class RunClaimsGroupResult(BaseModel):
+    group_id: str
+    input_filters: dict = {}
+    resolved_params: dict = {}
+    subjects: list[str] = []
+    experiment_count: int = 0
+    subject_count: int = 0
+    error: str | None = None
+
+
+class RunClaimsClaimResult(BaseModel):
+    claim: str = ""
+    comparison_strategy: str = ""
+    comparison: list = []
+    groups: list[RunClaimsGroupResult] = []
+
+
+class RunClaimsResponse(BaseModel):
+    study_accession: str
+    output_path: str
+    results: list[RunClaimsClaimResult] = []
+
+
 class AgentResponse(BaseModel):
     study_accession: str = ""
     # Populated for claims-based JSON (new format)

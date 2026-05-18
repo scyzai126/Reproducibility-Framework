@@ -3,6 +3,7 @@
 import asyncio
 import json
 import sys
+from collections import defaultdict
 from pathlib import Path
 
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
@@ -24,8 +25,11 @@ async def _execute_group_query(session: AsyncSession, sql: str, params: dict) ->
     return [dict(zip(columns, row)) for row in result.fetchall()]
 
 
-async def run(claim_path: Path, study_accession: str, output_path: Path):
+async def run(claim_path: Path, study_accession: str, output_path: Path, session_factory=None):
     from app.agent.query_builder import resolve_and_build_queries
+
+    if session_factory is None:
+        session_factory = immport_session
 
     raw = json.loads(claim_path.read_text(encoding="utf-8"))
 
@@ -68,7 +72,7 @@ async def run(claim_path: Path, study_accession: str, output_path: Path):
 
         print(f"Resolving {len(groups)} groups for {claim_key} ({study_accession})...")
         # Process per-claim with claim_text, matching orchestrator behavior
-        group_queries = await resolve_and_build_queries(groups, study_accession, immport_session, claim_text=claim_text)
+        group_queries = await resolve_and_build_queries(groups, study_accession, session_factory, claim_text=claim_text)
 
         results[claim_key] = {
             "claim": claim_text,
@@ -77,45 +81,55 @@ async def run(claim_path: Path, study_accession: str, output_path: Path):
             "groups": [],
         }
 
-        for gq, orig in zip(group_queries, groups):
-            params = gq["params"]
+        # Group query dicts by group_id — multi-tissue fan-out produces multiple
+        # query dicts per original group, all sharing the same group_id.
+        orig_by_id = {str(g["group_id"]): g for g in groups}
+        gqs_by_id: dict[str, list] = defaultdict(list)
+        for gq in group_queries:
+            gqs_by_id[str(gq["group_id"])].append(gq)
+
+        for orig in groups:
             group_id = str(orig.get("group_id"))
+            gqs = gqs_by_id.get(group_id, [])
 
             input_filters = {
                 k: v for k, v in orig.items()
                 if k not in _SKIP_FIELDS and v not in (None, "", [])
             }
+
+            # Use the first query dict for resolved_params (representative)
+            first_gq = gqs[0] if gqs else {}
+            params = first_gq.get("params", {})
             resolved_params = {k: v for k, v in params.items() if v and k != "study_accession"}
-            pv_res = gq.get("resolution", {}).get("planned_visit")
+            pv_res = first_gq.get("resolution", {}).get("planned_visit")
             if pv_res and "planned_visit_accession" not in resolved_params:
                 resolved_params["planned_visit_accession"] = pv_res.get("accession")
-            tissue_res = gq.get("resolution", {}).get("tissue_type")
+            tissue_res = first_gq.get("resolution", {}).get("tissue_type")
             if tissue_res:
                 resolved_params["tissue_type"] = tissue_res.get("value")
                 resolved_params["tissue_matched_col"] = tissue_res.get("matched_column")
             elif orig.get("tissue_type"):
                 resolved_params["tissue_type"] = None
                 resolved_params["tissue_matched_col"] = None
+            # Surface all tissue tokens when multi-tissue fan-out occurred
+            tissue_tokens = [gq.get("tissue_token") for gq in gqs if gq.get("tissue_token")]
+            if len(tissue_tokens) > 1:
+                resolved_params["tissue_tokens"] = tissue_tokens
 
-            try:
-                async with immport_session() as s:
-                    rows = await _execute_group_query(s, gq["sql"], params)
-                subjects = [
-                    f"{r.get('subject_accession', '')};{r.get('biosample_accession', '')};{r.get('expsample_accession', '')}"
-                    for r in rows
-                ]
-                unique_subjects = len({r.get("subject_accession") for r in rows if r.get("subject_accession")})
-                print(f"  Group {group_id}: {len(rows)} rows, {unique_subjects} unique subjects")
-                results[claim_key]["groups"].append({
-                    "group_id": group_id,
-                    "input_filters": input_filters,
-                    "resolved_params": resolved_params,
-                    "subjects": subjects,
-                    "experiment_count": len(rows),
-                    "subject_count": unique_subjects,
-                })
-            except Exception as exc:
-                print(f"  Group {group_id}: ERROR - {exc}")
+            # Execute all sub-queries and union rows across tissue tokens
+            all_rows: list[dict] = []
+            error: str | None = None
+            for gq in gqs:
+                try:
+                    async with session_factory() as s:
+                        rows = await _execute_group_query(s, gq["sql"], gq["params"])
+                    all_rows.extend(rows)
+                except Exception as exc:
+                    print(f"  Group {group_id}: ERROR - {exc}")
+                    error = str(exc)
+                    break
+
+            if error:
                 results[claim_key]["groups"].append({
                     "group_id": group_id,
                     "input_filters": input_filters,
@@ -123,7 +137,23 @@ async def run(claim_path: Path, study_accession: str, output_path: Path):
                     "subjects": [],
                     "experiment_count": 0,
                     "subject_count": 0,
-                    "error": str(exc),
+                    "error": error,
+                })
+            else:
+                subjects = [
+                    f"{r.get('subject_accession', '')};{r.get('biosample_accession', '')};{r.get('expsample_accession', '')}"
+                    for r in all_rows
+                ]
+                unique_subjects = len({r.get("subject_accession") for r in all_rows if r.get("subject_accession")})
+                sub_note = f" ({len(gqs)} tissue sub-queries)" if len(gqs) > 1 else ""
+                print(f"  Group {group_id}: {len(all_rows)} rows, {unique_subjects} unique subjects{sub_note}")
+                results[claim_key]["groups"].append({
+                    "group_id": group_id,
+                    "input_filters": input_filters,
+                    "resolved_params": resolved_params,
+                    "subjects": subjects,
+                    "experiment_count": len(all_rows),
+                    "subject_count": unique_subjects,
                 })
 
     output = {"study_accession": study_accession, "results": list(results.values())}
@@ -140,6 +170,8 @@ async def main():
         (_VC / "claims_LLM_SDY1708_HailongEdit.json","SDY1708", _DATA_DIR / "generated/outputIDs/SDY1708_subject_ids.json"),
         (_VC / "claims_LLM_SDY1991_HailongEdit.json","SDY1991", _DATA_DIR / "generated/outputIDs/SDY1991_subject_ids.json"),
         (_VC / "claims_LLM_SDY1995_HailongEdit.json","SDY1995", _DATA_DIR / "generated/outputIDs/SDY1995_subject_ids.json"),
+        (_VC / "claims_LLM_SDY1654_AS.json",        "SDY1654", _DATA_DIR / "generated/outputIDs/SDY1654_subject_ids.json"),
+        (_VC / "claims_LLM_SDY1393_HailongEdit.json","SDY1393", _DATA_DIR / "generated/outputIDs/SDY1393_subject_ids.json"),
     ]
     for claim_file, study, out_file in jobs:
         await run(claim_file, study, out_file)

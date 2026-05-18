@@ -245,6 +245,7 @@ async def _execute_all_queries(
                     "subjects": rows,
                     # Backward-compat for cached/output consumers that still read "samples".
                     "samples": rows,
+                    "tissue_token": gq.get("tissue_token"),
                 },
                 f"Group {gq['group_id']}: {len(rows)} samples found\n"
                 f"  Resolvers: {json.dumps(resolvers)}\n"
@@ -268,8 +269,9 @@ async def _execute_all_queries(
 
     pairs = await asyncio.gather(*[_run_one(gq) for gq in group_queries])
 
-    # Step 1: merge subjects from queries that share a group_id (time-range expansion
-    # produces one query per planned visit, all with the same group_id).
+    # Step 1: merge subjects from queries that share a group_id.
+    # Both time-range expansion (one query per planned visit) and multi-tissue
+    # fan-out (one query per tissue token) produce multiple dicts per group_id.
     merged_by_gid: dict[int, dict] = {}
     for result, log_line in pairs:
         gid = result["group_id"]
@@ -282,9 +284,13 @@ async def _execute_all_queries(
             if new_rows:
                 existing["subjects"] = existing["subjects"] + new_rows
                 existing["samples"] = existing["subjects"]
+            source = (
+                f"tissue '{result.get('tissue_token')}'"
+                if result.get("tissue_token")
+                else f"planned_visit {result['resolvers'].get('time_point', '?')}"
+            )
             log_lines.append(
-                f"Group {gid}: merged {len(new_rows)} additional subjects "
-                f"from planned_visit {result['resolvers'].get('time_point', '?')}"
+                f"Group {gid}: merged {len(new_rows)} additional subjects from {source}"
             )
 
     # Step 2: dedup truly duplicate groups (different group_ids that resolved to
@@ -566,9 +572,12 @@ async def _run_full_paper_analysis(
 
             # If multiple groups were defined but none resolved to distinct DB identifiers,
             # the group classification is wrong — drop the claim.
-            if len(group_queries) > 1 and len(subject_results) <= 1:
+            # Use distinct group_ids (not raw query count) so multi-tissue fan-out
+            # doesn't falsely inflate the query count for a single-group claim.
+            distinct_group_ids = len({gq["group_id"] for gq in group_queries})
+            if distinct_group_ids > 1 and len(subject_results) <= 1:
                 reason = (
-                    f"Claim {claim_id} dropped: {len(group_queries)} groups defined "
+                    f"Claim {claim_id} dropped: {distinct_group_ids} groups defined "
                     f"but none resolved to distinct DB identifiers (all groups collapsed to the same resolvers). "
                     f"Group cohorts: {[g.get('cohort') or g.get('disease') for g in claim_analysis]}"
                 )
