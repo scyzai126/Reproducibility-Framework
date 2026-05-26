@@ -1,0 +1,50 @@
+{
+  "claim_1": {
+    "claim": "LC-MS metabolomics analysis of plasma from 33 healthy adults (16 young age 21-30, 17 older age ≥65) at Day 0 (pre-vaccination), Day 2 (post-vaccination), Day 7 (post-vaccination), and Day 28 (post-vaccination) showed age-dependent metabolic signatures with young high responders exhibiting increased tryptophan metabolites (L-tryptophan, 5-Hydroxy-L-tryptophan, indoleacetic acid) and decreased polyunsaturated fatty acids at Day 28 (post-vaccination), while older high responders showed increased fatty acid synthesis and cholesteryl esters across post-vaccination timepoints.",
+    "sources": [
+      {"type": "text", "section": "Results", "quote": "Age was the largest contributor to variation in metabolite profiles, whereas gender, response to vaccine, or time point had less pronounced effects"},
+      {"type": "text", "section": "Results", "quote": "In young HRs L-tryptophan, 5-Hydroxy-L-tryptophan, and indoleacetic acid were increased after vaccination at Day 28"},
+      {"type": "text", "section": "Results", "quote": "Older HRs showed increased cholesteryl esters after vaccination"},
+      {"type": "figure", "ref": "Figure 1c"},
+      {"type": "figure", "ref": "Figure 3b"},
+      {"type": "figure", "ref": "Figure 4c"},
+      {"type": "text", "section": "Data Availability Statement", "quote": "Metabolomics data are available at ImmPort(immport.org) under accession number SDY1968"}
+    ],
+    "comparison_strategy": "longitudinal",
+    "groups": [
+      {"group_id": 0, "study_accession": "SDY1968", "sample_size": 33, "disease": null, "disease_stage": null, "cohort": "Yale School of Medicine, New Haven, Connecticut, USA", "assay_method": "LC-MS metabolomics", "tissue_type": "plasma", "gender": null, "age": null, "time_point": "day 0"},
+      {"group_id": 1, "study_accession": "SDY1968", "sample_size": 33, "disease": null, "disease_stage": null, "cohort": "Yale School of Medicine, New Haven, Connecticut, USA", "assay_method": "LC-MS metabolomics", "tissue_type": "plasma", "gender": null, "age": null, "time_point": "day 2"},
+      {"group_id": 2, "study_accession": "SDY1968", "sample_size": 33, "disease": null, "disease_stage": null, "cohort": "Yale School of Medicine, New Haven, Connecticut, USA", "assay_method": "LC-MS metabolomics", "tissue_type": "plasma", "gender": null, "age": null, "time_point": "day 7"},
+      {"group_id": 3, "study_accession": "SDY1968", "sample_size": 33, "disease": null, "disease_stage": null, "cohort": "Yale School of Medicine, New Haven, Connecticut, USA", "assay_method": "LC-MS metabolomics", "tissue_type": "plasma", "gender": null, "age": null, "time_point": "day 28"}
+    ],
+    "comparison": [
+      {"contrast": [0, 1], "finding": "purine metabolism pathway metabolites significantly increased after vaccination, particularly strong among older subjects"},
+      {"contrast": [0, 2], "finding": "secondary bile acids and glycolysis intermediates showed age-dependent changes at Day 7"},
+      {"contrast": [0, 3], "finding": "young high responders showed increased tryptophan metabolites and decreased PUFAs at Day 28, while older high responders showed increased cholesteryl esters"}
+    ]
+  },
+  "claim_2": {
+    "claim": "Illumina beadChips microarray analysis of PBMC from 33 healthy adults (16 young age 21-30, 17 older age ≥65) at Day 0 (pre-vaccination), Day 2 (post-vaccination), Day 7 (post-vaccination), and Day 28 (post-vaccination) showed that young high responders had early upregulation of dendritic cell activation and type I interferon response genes at Day 2 (post-vaccination) and B cell memory genes at Day 7 (post-vaccination), while older high responders exhibited attenuated transcriptional induction and older low responders promoted late NK and T cell-based responses.",
+    "sources": [
+      {"type": "text", "section": "Results", "quote": "Young HR showed upregulation of genes involved in dendritic cell activation, type I interferon response, and viral sensing and immunity at Day 2 post-vaccination"},
+      {"type": "text", "section": "Results", "quote": "Young HR also showed upregulation of genes involved in B cell memory B at Day 7"},
+      {"type": "text", "section": "Results", "quote": "Older HR had overall less induction of BTMs compared to young HR"},
+      {"type": "text", "section": "Results", "quote": "Older LR seem to promote a late NK and T cell-based response"},
+      {"type": "figure", "ref": "Figure S5a"},
+      {"type": "figure", "ref": "Figure S5b"},
+      {"type": "text", "section": "Methods", "quote": "Transcriptomic data from the same cohort were downloaded from GSE59654"}
+    ],
+    "comparison_strategy": "longitudinal",
+    "groups": [
+      {"group_id": 0, "study_accession": "SDY1968", "sample_size": 33, "disease": null, "disease_stage": null, "cohort": "Yale School of Medicine, New Haven, Connecticut, USA", "assay_method": "Illumina beadChips microarray", "tissue_type": "PBMC", "gender": null, "age": null, "time_point": "day 0"},
+      {"group_id": 1, "study_accession": "SDY1968", "sample_size": 29, "disease": null, "disease_stage": null, "cohort": "Yale School of Medicine, New Haven, Connecticut, USA", "assay_method": "Illumina beadChips microarray", "tissue_type": "PBMC", "gender": null, "age": null, "time_point": "day 2"},
+      {"group_id": 2, "study_accession": "SDY1968", "sample_size": 33, "disease": null, "disease_stage": null, "cohort": "Yale School of Medicine, New Haven, Connecticut, USA", "assay_method": "Illumina beadChips microarray", "tissue_type": "PBMC", "gender": null, "age": null, "time_point": "day 7"},
+      {"group_id": 3, "study_accession": "SDY1968", "sample_size": 31, "disease": null, "disease_stage": null, "cohort": "Yale School of Medicine, New Haven, Connecticut, USA", "assay_method": "Illumina beadChips microarray", "tissue_type": "PBMC", "gender": null, "age": null, "time_point": "day 28"}
+    ],
+    "comparison": [
+      {"contrast": [0, 1], "finding": "young high responders showed upregulation of dendritic cell activation and type I interferon response genes at Day 2"},
+      {"contrast": [0, 2], "finding": "young high responders showed upregulation of B cell memory genes at Day 7"},
+      {"contrast": [0, 3], "finding": "older high responders exhibited attenuated transcriptional induction compared to young high responders; older low responders promoted late NK and T cell-based responses"}
+    ]
+  }
+}

@@ -1124,7 +1124,21 @@ async def run_agent_from_paper(pdf_bytes: bytes, filename: str, session: AsyncSe
         {"pid": pubmed_id},
     )).fetchone()
     if not row:
-        raise ValueError(f"No study found in study_pubmed for pubmed_id='{pubmed_id}'.")
+        logger.info("PubMed ID %s not in ImmPort — running no-ImmPort claim extraction from PDF", pubmed_id)
+        log_sections.append(
+            f"--- Step 3: No ImmPort Match ---\n"
+            f"PubMed ID {pubmed_id} is not linked to any ImmPort study. "
+            f"Running claim extraction without subject ID lookup."
+        )
+        paper_claims = await parse_paper_claims_noimmport(paper_text, filename)
+        _write_workflow_log(log_sections)
+        return {
+            "type": "no_immport",
+            "study_accession": "",
+            "paper_claims": paper_claims,
+            "subject_results": [],
+            "claims": [],
+        }
     study_accession: str = row[0]
     log_sections.append(
         f"--- Step 3: Study Lookup ---\n"
