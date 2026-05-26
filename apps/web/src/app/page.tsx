@@ -271,7 +271,7 @@ export default function Home() {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-stretch">
                     {[
                       { icon: '🔬', label: 'By PubMed ID', q: 'In paper PMID:32788292, extract all assay-based claims with supporting evidence snippets.' },
-                      { icon: '🔗', label: 'By PMC URL', q: 'Find all subjects with whole blood Bulk RNA-seq samples collected between day 0 and day 21 in paper https://pmc.ncbi.nlm.nih.gov/articles/PMC8761119.' },
+                      { icon: '🔗', label: 'By PMC URL', q: 'Analyze this paper https://pmc.ncbi.nlm.nih.gov/articles/PMC8761119 and check its data completeness in IMMPORT' },
                       { icon: '🗂', label: 'By study ID', q: 'Identify all claims from study SDY1393 and return the matched ImmPort samples for each comparison group.' },
                     ].map(({ icon, label, q }) => (
                       <button

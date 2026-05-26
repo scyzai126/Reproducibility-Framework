@@ -1,0 +1,180 @@
+{
+  "claim_1": {
+    "claim": "Transcription profiling by array analysis of blood samples from 18 high-responders across three influenza vaccination studies at pre-vaccination and day 7 post-vaccination showed 62 blood transcription modules were significantly altered after vaccination at a Benjamani-Hochberg FDR cutoff of 5%.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "To define these response gene sets, QuSAGE meta-analysis was used to compare day 7 post-vaccination with pre-vaccination transcriptional profiles in HR subjects across all three studies. This analysis identified 62 response gene sets with a Benjamani-Hochberg false discovery rate (FDR) cutoff of 5%."
+      },
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "GSE59635 (SDY63) included 7 young subjects (3 LR and 4 HR); GSE59654 (SDY404) contained 13 young subjects (7 LR and 6 HR); GSE59743 (SDY400) had 15 young subjects (7 LR and 8 HR)."
+      }
+    ],
+    "comparison_strategy": "paired_longitudinal",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": 18,
+        "disease": "influenza",
+        "disease_stage": null,
+        "cohort": null,
+        "assay_method": "Transcription profiling by array",
+        "tissue_type": "blood samples",
+        "cell_type": null,
+        "gender": null,
+        "age": null,
+        "time_point": "day 0"
+      },
+      {
+        "group_id": 1,
+        "study_accession": null,
+        "sample_size": 18,
+        "disease": "influenza",
+        "disease_stage": null,
+        "cohort": null,
+        "assay_method": "Transcription profiling by array",
+        "tissue_type": "blood samples",
+        "cell_type": null,
+        "gender": null,
+        "age": null,
+        "time_point": "day 7"
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "62 blood transcription modules were significantly altered at day 7 post-vaccination versus pre-vaccination in high-responders across three influenza vaccination studies at a Benjamani-Hochberg FDR cutoff of 5%"
+      }
+    ]
+  },
+  "claim_2": {
+    "claim": "Transcription profiling by array analysis of blood samples from 35 young adults across SDY63, SDY404, and SDY400 at pre-vaccination and day 7 post-vaccination showed 11 gene sets were associated with successful antibody responses, including greater up-regulation of plasma cells, immunoglobulins (M156.1) in high-responders versus low-responders, at a two-sided 15% FDR cutoff.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "The goal of the analysis was to detect gene sets associated with successful (i.e., high) antibody responses using the transcriptional response data measured from blood samples taken pre- and 7 days post-vaccination."
+      },
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "As expected from the known biology, \"plasma cells, immunoglobulins (M156.1)\" was one of top-ranked gene sets from QuSAGE meta-analysis ( Fig 2 ), and was significantly more up-regulated (day 7 vs. pre-vaccination) in HR compared to LR. In total, QuSAGE meta-analysis identified 11 gene sets associated with a successful antibody response ( Table 2 )."
+      },
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Statistical significance of the meta-analysis was calculated by testing whether the central tendency of the final PDF is zero using a two-sided test with 15% FDR cutoff."
+      },
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "GSE59635 (SDY63) included 7 young subjects (3 LR and 4 HR); GSE59654 (SDY404) contained 13 young subjects (7 LR and 6 HR); GSE59743 (SDY400) had 15 young subjects (7 LR and 8 HR)."
+      },
+      {
+        "type": "figure",
+        "ref": "Fig 2"
+      },
+      {
+        "type": "table",
+        "ref": "Table 2"
+      }
+    ],
+    "comparison_strategy": "subgroup",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": null,
+        "assay_method": "Transcription profiling by array",
+        "tissue_type": "blood samples",
+        "cell_type": null,
+        "gender": null,
+        "age": "young adults",
+        "time_point": null
+      },
+      {
+        "group_id": 1,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": null,
+        "assay_method": "Transcription profiling by array",
+        "tissue_type": "blood samples",
+        "cell_type": null,
+        "gender": null,
+        "age": "young adults",
+        "time_point": null
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "high-responders showed greater up-regulation of plasma cells, immunoglobulins (M156.1) (day 7 vs. pre-vaccination) than low-responders; 11 gene sets were associated with successful antibody responses at a two-sided 15% FDR cutoff"
+      }
+    ]
+  },
+  "claim_3": {
+    "claim": "Hemagglutination Inhibition analysis of pre-vaccination and day 28 post-vaccination samples from the three influenza vaccination studies classified subjects as high-responders or low-responders based on adjusted maximum fold change (adjMFC) antibody responses.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Subjects were categorized as high-responders (HR) and low-responders (LR) based on their adjusted maximum fold change (adjMFC) from hemagglutination inhibition assay (HAI) measurements taken pre- and 28 days post-vaccination [ 22 ]."
+      }
+    ],
+    "comparison_strategy": "subgroup",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": "influenza",
+        "disease_stage": null,
+        "cohort": null,
+        "assay_method": "Hemagglutination Inhibition",
+        "tissue_type": "serum",
+        "cell_type": null,
+        "gender": null,
+        "age": null,
+        "time_point": null
+      },
+      {
+        "group_id": 1,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": "influenza",
+        "disease_stage": null,
+        "cohort": null,
+        "assay_method": "Hemagglutination Inhibition",
+        "tissue_type": "serum",
+        "cell_type": null,
+        "gender": null,
+        "age": null,
+        "time_point": null
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "subjects were classified as high-responders or low-responders based on adjusted maximum fold change (adjMFC) antibody responses from pre-vaccination and day 28 post-vaccination HAI measurements"
+      }
+    ]
+  }
+}

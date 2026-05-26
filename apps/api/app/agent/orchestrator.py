@@ -381,7 +381,8 @@ def _build_data_gaps(
         cohort = keywords.get("cohort", "")
         time_point = keywords.get("time_point", "")
 
-        reason_parts = [f"ImmPort contains no {assay} data" if assay else "ImmPort contains no data"]
+        assay_label = f"'{assay}' ({exp_acc})" if assay else exp_acc
+        reason_parts = [f"The {assay_label} assay exists in ImmPort but has no subjects or samples linked to it"]
         if cohort:
             reason_parts.append(f"for the {cohort} cohort")
         if time_point:
