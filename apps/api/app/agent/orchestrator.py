@@ -230,6 +230,20 @@ async def _execute_all_queries(
         return resolvers
 
     async def _run_one(gq) -> tuple[dict, str]:
+        if gq.get("skipped"):
+            return (
+                {
+                    "group_id": gq["group_id"],
+                    "resolvers": {"assay_method": gq.get("keywords", {}).get("assay_method", "")},
+                    "comparison": gq.get("comparison", []),
+                    "subjects": [],
+                    "samples": [],
+                    "skipped": True,
+                    "error": "Assay method not found in ImmPort for this study — group skipped",
+                },
+                f"Group {gq['group_id']}: skipped (assay not resolved in ImmPort)",
+            )
+
         params = gq["params"]
         try:
             async with session_factory() as s:
@@ -339,23 +353,92 @@ def _write_workflow_log(log_sections: list[str]) -> None:
     logger.info("Workflow log written to %s", log_file)
 
 
+def _build_data_gaps(
+    subject_results: list[dict],
+    group_queries: list[dict],
+    failed_group_ids: set,
+) -> list[dict]:
+    """Identify groups where all fields resolved but the DB returned 0 subjects."""
+    gq_by_id = {gq["group_id"]: gq for gq in group_queries}
+    gaps: list[dict] = []
+    for sr in subject_results:
+        if sr.get("skipped"):
+            continue
+        if len(sr.get("subjects", [])) > 0:
+            continue
+        if sr["group_id"] in failed_group_ids:
+            continue
+        gq = gq_by_id.get(sr["group_id"])
+        if not gq:
+            continue
+        resolution = gq.get("resolution", {}) or {}
+        if not (resolution.get("arm") or resolution.get("experiment")):
+            continue
+        keywords = gq.get("keywords", {}) or {}
+        arm_acc = (resolution.get("arm") or {}).get("accession", "")
+        exp_acc = (resolution.get("experiment") or {}).get("accession", "")
+        assay = keywords.get("assay_method") or (resolution.get("experiment") or {}).get("assay_method", "")
+        cohort = keywords.get("cohort", "")
+        time_point = keywords.get("time_point", "")
+
+        reason_parts = [f"ImmPort contains no {assay} data" if assay else "ImmPort contains no data"]
+        if cohort:
+            reason_parts.append(f"for the {cohort} cohort")
+        if time_point:
+            reason_parts.append(f"at {time_point}")
+        reason = " ".join(reason_parts)
+
+        gaps.append({
+            "group_id": sr["group_id"],
+            "cohort": cohort,
+            "assay_method": assay,
+            "time_point": time_point,
+            "arm_accession": arm_acc,
+            "experiment_accession": exp_acc,
+            "reason": reason,
+        })
+    return gaps
+
+
 def _build_completeness_report(study_accession: str, claims_results: list[dict]) -> dict:
-    """Build a completeness report from resolution_failures attached to each claim result."""
-    claims_with_failures = []
+    """Build a completeness report from resolution_failures and data_gaps per claim."""
+    claims_with_issues: list[dict] = []
     for r in claims_results:
         failures = r.get("resolution_failures") or []
-        if failures:
-            claims_with_failures.append({
+        data_gaps = r.get("data_gaps") or []
+        if not failures and not data_gaps:
+            continue
+
+        # Promote assay_method failures to claim level — all groups share the same assay
+        claim_failures: list[dict] = []
+        seen_assay_values: set[str] = set()
+        filtered_groups: list[dict] = []
+
+        for group in failures:
+            non_assay = [f for f in group.get("failures", []) if f["field"] != "assay_method"]
+            for f in group.get("failures", []):
+                if f["field"] == "assay_method" and f["original_value"] not in seen_assay_values:
+                    seen_assay_values.add(f["original_value"])
+                    claim_failures.append(f)
+            if non_assay:
+                filtered_groups.append({**group, "failures": non_assay})
+
+        if claim_failures or filtered_groups or data_gaps:
+            claims_with_issues.append({
                 "claim_id": r.get("claim_id"),
                 "claim_text": r.get("claim_text", ""),
-                "groups": failures,
+                "source": r.get("source", {}),
+                "sources": r.get("sources", []),
+                "claim_failures": claim_failures,
+                "groups": filtered_groups,
+                "data_gaps": data_gaps,
             })
     return {
         "study_accession": study_accession,
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "total_claims": len(claims_results),
-        "claims_with_failures": len(claims_with_failures),
-        "claims": claims_with_failures,
+        "claims_with_failures": len(claims_with_issues),
+        "claims": claims_with_issues,
     }
 
 
@@ -373,15 +456,21 @@ def _build_completeness_summary(report: dict) -> dict:
     from collections import Counter
     field_counter: Counter = Counter()
     failed_groups = 0
+    data_gap_groups = 0
     for claim in report.get("claims", []):
+        # Claim-level failures (e.g. assay_method) count once per claim
+        for f in claim.get("claim_failures", []):
+            field_counter[f["field"]] += 1
         for group in claim.get("groups", []):
             failed_groups += 1
             for f in group.get("failures", []):
                 field_counter[f["field"]] += 1
+        data_gap_groups += len(claim.get("data_gaps", []))
     return {
         "total_claims": report.get("total_claims", 0),
         "claims_with_failures": report.get("claims_with_failures", 0),
         "failed_groups": failed_groups,
+        "data_gap_groups": data_gap_groups,
         "failed_fields": [
             {"field": field, "count": cnt}
             for field, cnt in field_counter.most_common()
@@ -561,6 +650,7 @@ async def _run_full_paper_analysis(
             "id": num,
             "claim_text": val.get("claim", ""),
             "source": sources[0] if sources else {},
+            "sources": sources,
             "comparison": val.get("comparison", []),
         })
         comparison_strategy = val.get("comparison_strategy") or val.get("study_design") or ""
@@ -584,7 +674,7 @@ async def _run_full_paper_analysis(
                 return {
                     "claim_id": claim_id,
                     "claim_text": claim.get("claim_text", ""),
-                    "source": claim.get("source", {}),
+                    "source": claim.get("source", {}), "sources": claim.get("sources", []),
                     "comparison": claim.get("comparison", []),
                     "subject_results": [],
                 }, local_logs
@@ -595,7 +685,7 @@ async def _run_full_paper_analysis(
                 return {
                     "claim_id": claim_id,
                     "claim_text": claim.get("claim_text", ""),
-                    "source": claim.get("source", {}),
+                    "source": claim.get("source", {}), "sources": claim.get("sources", []),
                     "study_design": comparison_strategy or None,
                     "comparison": claim.get("comparison", []),
                     "subject_results": [],
@@ -630,20 +720,24 @@ async def _run_full_paper_analysis(
                 )
                 local_logs.append(f"--- Claim {claim_id}: DROPPED ---\n{reason}")
                 logger.warning(reason)
-                return {"claim_id": claim_id, "claim_text": claim.get("claim_text", ""), "source": claim.get("source", {}), "subject_results": [], "resolution_failures": claim_group_failures}, local_logs
+                return {"claim_id": claim_id, "claim_text": claim.get("claim_text", ""), "source": claim.get("source", {}), "sources": claim.get("sources", []), "subject_results": [], "resolution_failures": claim_group_failures}, local_logs
 
             for i, sr in enumerate(subject_results):
                 sr["group_id"] = i
             local_logs.append("\n".join(exec_log))
 
+            failed_group_ids = {g["group_id"] for g in claim_group_failures}
+            claim_data_gaps = _build_data_gaps(subject_results, group_queries, failed_group_ids)
+
             return {
                 "claim_id": claim_id,
                 "claim_text": claim.get("claim_text", ""),
-                "source": claim.get("source", {}),
+                "source": claim.get("source", {}), "sources": claim.get("sources", []),
                 "study_design": claim_analysis[0].get("study_design") if claim_analysis else None,
                 "comparison": claim.get("comparison", []),
                 "subject_results": subject_results,
                 "resolution_failures": claim_group_failures,
+                "data_gaps": claim_data_gaps,
             }, local_logs
         except Exception as exc:
             logger.error("Claim %s failed: %s", claim_id, exc)
@@ -651,7 +745,7 @@ async def _run_full_paper_analysis(
             return {
                 "claim_id": claim_id,
                 "claim_text": claim.get("claim_text", ""),
-                "source": claim.get("source", {}),
+                "source": claim.get("source", {}), "sources": claim.get("sources", []),
                 "subject_results": [],
                 "error": str(exc),
             }, local_logs
@@ -667,6 +761,7 @@ async def _run_full_paper_analysis(
     completeness = _build_completeness_summary(_completeness_report)
     for r in claims_results:
         r.pop("resolution_failures", None)
+        r.pop("data_gaps", None)
 
     claims_results = [
         r for r in claims_results
@@ -729,7 +824,7 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
                         f"LLM returned no groups — skipping."
                     )
                     return {"claim_id": claim_id, "claim_text": claim.get("claim_text", ""),
-                            "source": claim.get("source", {}), "subject_results": []}, local_logs
+                            "source": claim.get("source", {}), "sources": claim.get("sources", []), "subject_results": []}, local_logs
 
                 comparison_strategy = (claim_analysis[0].get("study_design") or "") if claim_analysis else ""
                 if not comparison_strategy or comparison_strategy.lower() == "none":
@@ -737,7 +832,7 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
                     return {
                         "claim_id": claim_id,
                         "claim_text": claim.get("claim_text", ""),
-                        "source": claim.get("source", {}),
+                        "source": claim.get("source", {}), "sources": claim.get("sources", []),
                         "study_design": comparison_strategy or None,
                         "subject_results": [],
                     }, local_logs
@@ -768,20 +863,24 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
                     sr["group_id"] = i
                 local_logs.append("\n".join(exec_log))
 
+                failed_group_ids = {g["group_id"] for g in claim_group_failures}
+                claim_data_gaps = _build_data_gaps(subject_results, group_queries, failed_group_ids)
+
                 return {
                     "claim_id": claim_id,
                     "claim_text": claim.get("claim_text", ""),
-                    "source": claim.get("source", {}),
+                    "source": claim.get("source", {}), "sources": claim.get("sources", []),
                     "study_design": claim_analysis[0].get("study_design") if claim_analysis else None,
                     "subject_results": subject_results,
                     "resolution_failures": claim_group_failures,
+                    "data_gaps": claim_data_gaps,
                 }, local_logs
 
             except Exception as exc:
                 logger.error("Claim %s failed: %s", claim_id, exc)
                 local_logs.append(f"--- Claim {claim_id}: ERROR ---\n{exc}")
                 return {"claim_id": claim_id, "claim_text": claim.get("claim_text", ""),
-                        "source": claim.get("source", {}), "subject_results": [],
+                        "source": claim.get("source", {}), "sources": claim.get("sources", []), "subject_results": [],
                         "error": str(exc)}, local_logs
 
         pairs = await asyncio.gather(*[_process_one_claim(c) for c in claims])
@@ -796,6 +895,7 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
         completeness = _build_completeness_summary(_completeness_report)
         for r in claims_results:
             r.pop("resolution_failures", None)
+            r.pop("data_gaps", None)
 
         claims_results = [
             r for r in claims_results

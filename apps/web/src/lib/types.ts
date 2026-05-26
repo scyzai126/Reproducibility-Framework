@@ -15,6 +15,7 @@ export interface SubjectResult {
   resolvers: Record<string, string>;
   comparison: unknown[];
   subjects: Subject[];
+  skipped?: boolean;
   error?: string;
 }
 
@@ -39,6 +40,59 @@ export interface PaperClaim {
   sources: Array<{ type: string; section?: string; quote?: string; ref?: string }>;
 }
 
+export interface FailedFieldCount {
+  field: string;
+  count: number;
+}
+
+export interface CompletnessSummary {
+  total_claims: number;
+  claims_with_failures: number;
+  failed_groups: number;
+  data_gap_groups?: number;
+  failed_fields: FailedFieldCount[];
+}
+
+export interface DataGap {
+  group_id: number;
+  cohort?: string;
+  assay_method?: string;
+  time_point?: string;
+  arm_accession?: string;
+  experiment_accession?: string;
+  reason: string;
+}
+
+export interface ResolutionFailure {
+  field: string;
+  original_value: string;
+  tried: string;
+  result: string;
+  immport_candidates?: Record<string, string>[];
+}
+
+export interface GroupFailures {
+  group_id: number;
+  failures: ResolutionFailure[];
+}
+
+export interface ClaimSource {
+  section?: string;
+  quote?: string;
+  ref?: string;
+  [key: string]: unknown;
+}
+
+export interface ClaimFailures {
+  claim_id: number | null;
+  claim_text: string;
+  source?: ClaimSource;
+  sources?: ClaimSource[];
+  claim_failures?: ResolutionFailure[];
+  groups: GroupFailures[];
+  data_gaps?: DataGap[];
+}
+
 export interface AgentResponse {
   study_accession: string;
   // PDF + question path: step-1 claim sentences
@@ -50,6 +104,8 @@ export interface AgentResponse {
   // Clarification request from backend
   type?: string;
   question?: string;
+  // ImmPort field resolution completeness
+  completeness?: CompletnessSummary;
 }
 
 export interface ChatMessage {
