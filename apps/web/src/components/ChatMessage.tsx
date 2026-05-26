@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { AgentResponse, SubjectResult, ClaimResult, Comparison, PaperClaim, ChatMessage } from '@/lib/types';
+import { AgentResponse, SubjectResult, ClaimResult, Comparison, PaperClaim, ChatMessage, ClaimFailures } from '@/lib/types';
+import CompletenessReport from '@/components/CompletenessReport';
 
 interface Props {
   message: ChatMessage;
@@ -140,9 +141,9 @@ function GroupCard({ group, index }: { group: SubjectResult; index: number }) {
           <div className="flex items-center gap-2 flex-wrap">
             <span className="font-medium text-gray-800 text-sm">Group {index}</span>
             <span className={`text-xs font-medium ${
-              group.error ? 'text-red-500' : count > 0 ? 'text-emerald-600' : 'text-gray-400'
+              group.skipped ? 'text-amber-500' : group.error ? 'text-red-500' : count > 0 ? 'text-emerald-600' : 'text-gray-400'
             }`}>
-              {group.error ? 'error' : `${count} subject${count !== 1 ? 's' : ''}`}
+              {group.skipped ? 'skipped' : group.error ? 'error' : `${count} subject${count !== 1 ? 's' : ''}`}
             </span>
           </div>
           <div className="flex flex-wrap gap-1.5 mt-2">
@@ -161,7 +162,10 @@ function GroupCard({ group, index }: { group: SubjectResult; index: number }) {
         </svg>
       </button>
 
-      {expanded && group.error && (
+      {expanded && group.skipped && (
+        <div className="px-4 py-3 text-xs text-amber-600 bg-amber-50">{group.error}</div>
+      )}
+      {expanded && group.error && !group.skipped && (
         <div className="px-4 py-3 text-xs text-red-500 bg-red-50">{group.error}</div>
       )}
 
@@ -320,11 +324,15 @@ function ClaimCard({ claim }: { claim: ClaimResult }) {
 function ResultsDisplay({ result }: { result: AgentResponse }) {
   const [copied, setCopied] = useState(false);
   const [showRaw, setShowRaw] = useState(false);
-  const json = JSON.stringify(result, null, 2);
+  const [activeTab, setActiveTab] = useState<'results' | 'completeness'>('results');
+  const [claimFailures, setClaimFailures] = useState<ClaimFailures[]>([]);
 
+  const json = JSON.stringify(result, null, 2);
   const isNoImmport = result.type === 'no_immport';
   const isPaperQuestion = !isNoImmport && result.paper_claims && result.paper_claims.length > 0;
   const isClaims = !isNoImmport && !isPaperQuestion && result.claims && result.claims.length > 0;
+  const hasCompleteness = !!result.completeness;
+  const failureCount = result.completeness?.claims_with_failures ?? 0;
 
   const totalSubjects = isClaims
     ? result.claims.reduce((n, c) => n + c.subject_results.reduce((m, g) => m + (g.subjects?.length ?? 0), 0), 0)
@@ -333,6 +341,14 @@ function ResultsDisplay({ result }: { result: AgentResponse }) {
   const groupCount = isClaims
     ? result.claims.reduce((n, c) => n + c.subject_results.length, 0)
     : result.subject_results.length;
+
+  useEffect(() => {
+    if (activeTab !== 'completeness' || !hasCompleteness) return;
+    fetch('/backend/agent/completeness-report')
+      .then(r => r.ok ? r.json() : null)
+      .then(data => { if (data?.claims) setClaimFailures(data.claims); })
+      .catch(() => {});
+  }, [activeTab, hasCompleteness]);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(json);
@@ -397,18 +413,57 @@ function ResultsDisplay({ result }: { result: AgentResponse }) {
         </div>
       )}
 
-      {/* No-ImmPort: claim sentences only */}
-      {isNoImmport && !showRaw && (
-        <div className="space-y-2">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">{result.paper_claims.length} Claims</p>
-          {result.paper_claims.map((c, i) => <PaperClaimCard key={i} claim={c} index={i} />)}
+      {/* Tab switcher — only when completeness data is present */}
+      {!isNoImmport && hasCompleteness && (
+        <div className="flex gap-1 border-b border-gray-200 -mb-1">
+          <button
+            onClick={() => setActiveTab('results')}
+            className={`px-3 py-1.5 text-xs font-medium border-b-2 -mb-px transition-colors ${
+              activeTab === 'results'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-400 hover:text-gray-600'
+            }`}
+          >
+            Results
+          </button>
+          <button
+            onClick={() => setActiveTab('completeness')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border-b-2 -mb-px transition-colors ${
+              activeTab === 'completeness'
+                ? 'border-amber-500 text-amber-600'
+                : 'border-transparent text-gray-400 hover:text-gray-600'
+            }`}
+          >
+            Completeness
+            {failureCount > 0 ? (
+              <span className="bg-amber-100 text-amber-700 rounded-full px-1.5 py-px text-[10px] font-semibold leading-none">
+                {failureCount}
+              </span>
+            ) : (
+              <span className="bg-emerald-100 text-emerald-600 rounded-full px-1 py-px leading-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              </span>
+            )}
+          </button>
         </div>
       )}
 
-      {/* Normal cards */}
-      {!isNoImmport && !showRaw && (
+      {/* Completeness tab */}
+      {!isNoImmport && hasCompleteness && activeTab === 'completeness' && (
+        <CompletenessReport summary={result.completeness!} claimFailures={claimFailures} />
+      )}
+
+      {/* Results tab (or default when no completeness data) */}
+      {(isNoImmport || !hasCompleteness || activeTab === 'results') && !showRaw && (
         <div className="space-y-2">
-          {isPaperQuestion ? (
+          {isNoImmport ? (
+            <>
+              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">{result.paper_claims.length} Claims</p>
+              {result.paper_claims.map((c, i) => <PaperClaimCard key={i} claim={c} index={i} />)}
+            </>
+          ) : isPaperQuestion ? (
             <>
               <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Paper Claims</p>
               {result.paper_claims.map((c, i) => <PaperClaimCard key={i} claim={c} index={i} />)}

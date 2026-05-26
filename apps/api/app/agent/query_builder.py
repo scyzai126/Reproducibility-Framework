@@ -854,6 +854,8 @@ async def resolve_and_build_queries(
     # Cache: (resolver_fn, search_term) → asyncio.Task so concurrent groups
     # that share the same term wait on the same underlying coroutine.
     _cache: dict[tuple, asyncio.Task] = {}
+    # Cache for ImmPort candidate lists, fetched lazily on resolution failure.
+    _candidates_cache: dict[str, list[dict]] = {}
 
     def _cached(resolver_fn, search_term, *args):
         """Return a Task for resolver_fn(search_term, *args), reusing if already started."""
@@ -861,6 +863,19 @@ async def resolve_and_build_queries(
         if key not in _cache:
             _cache[key] = asyncio.ensure_future(resolver_fn(*args, search_term, study_accession))
         return _cache[key]
+
+    async def _fetch_candidates(table: str, cols: str) -> list[dict]:
+        """Return all rows for the study from table, cached per table name."""
+        if table not in _candidates_cache:
+            async with session_factory() as s:
+                result = await s.execute(
+                    text(f"SELECT {cols} FROM {table} WHERE study_accession = :sa"),
+                    {"sa": study_accession},
+                )
+                _candidates_cache[table] = [
+                    dict(zip(result.keys(), row)) for row in result.fetchall()
+                ]
+        return _candidates_cache[table]
 
     async def _resolve_group_cached(group: dict) -> list[dict]:
         """Like _resolve_group but delegates to cached tasks for each resolver."""
@@ -925,36 +940,70 @@ async def resolve_and_build_queries(
                 _cache[key] = asyncio.ensure_future(coro_fn())
             return _cache[key]
 
-        arm_result, exp_result, cond_result, tissue_result, pv_result = await asyncio.gather(
+        # Phase 1: resolve experiment first — it gates all other resolvers.
+        # If the assay is absent from ImmPort there is nothing to query.
+        exp_result = await _get_or_create(exp_key, _exp)
+
+        if not exp_result and assay_method and study_accession:
+            exp_candidates = await _fetch_candidates(
+                "experiment", "experiment_accession, name, measurement_technique"
+            )
+            return [{
+                "group_id": group_id or 0,
+                "sql": "",
+                "params": {},
+                "resolution": {},
+                "resolution_failures": [{
+                    "field": "assay_method",
+                    "original_value": assay_method,
+                    "tried": "SQL LIKE on experiment(name, measurement_technique), then LLM fallback over all experiments",
+                    "result": "not_resolved",
+                    "immport_candidates": exp_candidates,
+                }],
+                "keywords": {
+                    "cohort": cohort or "",
+                    "assay_method": assay_method or "",
+                    "time_point": time_point or "",
+                    "disease": disease or "",
+                    "disease_stage": disease_stage or "",
+                    "tissue_type": tissue_type or "",
+                    "age": age or "",
+                    "gender": (group.get("gender") or ""),
+                },
+                "planned_visit_name": time_point,
+                "age": age,
+                "comparison": comparison,
+                "skipped": True,
+                "skip_reason": "assay_not_resolved",
+            }]
+
+        # Phase 2: assay resolved — proceed with remaining resolvers concurrently
+        arm_result, cond_result, tissue_result, pv_result = await asyncio.gather(
             _get_or_create(arm_key,  _arm),
-            _get_or_create(exp_key,  _exp),
             _get_or_create(cond_key, _cond),
             _get_or_create(tis_key,  _tissue),
             _get_or_create(pv_key,   _pv),
         )
+
+        # exp_result is guaranteed truthy here
+        exp_acc, method = exp_result
+        group["experiment_accession"] = exp_acc
+        resolution_log["experiment"] = {"accession": exp_acc, "method": method, "assay_method": assay_method}
 
         if arm_result:
             arm_acc, method = arm_result
             group["arm_accession"] = arm_acc
             resolution_log["arm"] = {"accession": arm_acc, "method": method}
         elif cohort and study_accession:
+            arm_candidates = await _fetch_candidates(
+                "arm_or_cohort", "arm_accession, name, description"
+            )
             resolution_failures.append({
                 "field": "cohort",
                 "original_value": cohort,
                 "tried": "SQL LIKE on arm_or_cohort(name, description), then LLM fallback over all study arms",
                 "result": "not_resolved",
-            })
-
-        if exp_result:
-            exp_acc, method = exp_result
-            group["experiment_accession"] = exp_acc
-            resolution_log["experiment"] = {"accession": exp_acc, "method": method, "assay_method": assay_method}
-        elif assay_method and study_accession:
-            resolution_failures.append({
-                "field": "assay_method",
-                "original_value": assay_method,
-                "tried": "SQL LIKE on experiment(name, measurement_technique), then LLM fallback over all experiments",
-                "result": "not_resolved",
+                "immport_candidates": arm_candidates,
             })
 
         if cond_result:
@@ -994,13 +1043,6 @@ async def resolve_and_build_queries(
             resolution_log["tissue_type"] = {"value": resolved_tissue, "method": method, "matched_column": matched_col}
         else:
             group["tissue_type"] = ""
-            if tissue_type and study_accession:
-                resolution_failures.append({
-                    "field": "tissue_type",
-                    "original_value": tissue_type,
-                    "tried": "SQL LIKE on biosample(type), then biosample(subtype), then LLM fallback over all type/subtype values",
-                    "result": "not_resolved",
-                })
 
         if pv_result:
             pv_accessions = pv_result  # list[tuple[str, str]]

@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import JSONResponse, PlainTextResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.agent.claim_parser import get_assay_methods, get_paper_url, parse_paper_claims
@@ -87,3 +87,13 @@ async def get_log():
     if not log_file.exists():
         return ""
     return log_file.read_text(encoding="utf-8")
+
+
+@router.get("/completeness-report")
+async def get_completeness_report():
+    """Return the completeness report from the most recent agent run."""
+    report_file = Path(__file__).resolve().parent.parent.parent / "logs" / "completeness_report.json"
+    if not report_file.exists():
+        raise HTTPException(status_code=404, detail="No completeness report found. Run an analysis first.")
+    import json
+    return JSONResponse(content=json.loads(report_file.read_text(encoding="utf-8")))
