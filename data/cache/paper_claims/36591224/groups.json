@@ -1,0 +1,283 @@
+{
+  "claim_1": {
+    "claim": "RNAseq1 analysis of whole blood from 11 RAS-immunized participants across repeated immunizations showed large vaccine-induced transcriptional changes relative to the most recent immunization timepoint, with genes increased in the two weeks after the first immunization enriched for interferon, oxidative phosphorylation, and erythroid cell BTMs, and over 1,000 DEGs decreased after the second immunization (day 35).",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Vaccine-induced DEGs were identified as those significantly changed in expression in blood relative to the most recent previous immunization. Vaccine-induced DEGs were identified (FDR < 0.05) at the majority of timepoints across the entire course of immunizations ( Figure 2A ; Datafile S1 ), averaging 471 DEGs at each timepoint for a total of 4112 unique DEGs across all times. Most strikingly, we observed large numbers of genes decreased in expression after the second immunization with over 1,000 DEGs identified at 3 of 4 associated time intervals."
+      },
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Genes increased in expression in the two weeks after the first immunization were enriched for interferon, oxidative phosphorylation and erythroid cell BTMs."
+      },
+      {
+        "type": "text",
+        "section": "Methods",
+        "quote": "Whole blood RNAseq was performed as previously described ( 13 ) on 11 IMRAS Cohort 1 RAS vaccinees."
+      },
+      {
+        "type": "text",
+        "section": "Methods",
+        "quote": "Samples from four timepoints (day 0, 35, 119, 140) were sequenced on Illumina (San Diego, CA) Hiseq2000 sequencers using 75 base-pair (bp) paired-end reads."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 2A"
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 2B"
+      }
+    ],
+    "comparison_strategy": "longitudinal",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": 11,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "IMRAS Cohort 1",
+        "assay_method": "RNAseq1",
+        "tissue_type": "whole blood",
+        "gender": null,
+        "age": null,
+        "time_point": "day 0"
+      },
+      {
+        "group_id": 1,
+        "study_accession": null,
+        "sample_size": 11,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "IMRAS Cohort 1",
+        "assay_method": "RNAseq1",
+        "tissue_type": "whole blood",
+        "gender": null,
+        "age": null,
+        "time_point": "day 35"
+      },
+      {
+        "group_id": 2,
+        "study_accession": null,
+        "sample_size": 11,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "IMRAS Cohort 1",
+        "assay_method": "RNAseq1",
+        "tissue_type": "whole blood",
+        "gender": null,
+        "age": null,
+        "time_point": "day 119"
+      },
+      {
+        "group_id": 3,
+        "study_accession": null,
+        "sample_size": 11,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "IMRAS Cohort 1",
+        "assay_method": "RNAseq1",
+        "tissue_type": "whole blood",
+        "gender": null,
+        "age": null,
+        "time_point": "day 140"
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "Relative to the most recent previous immunization timepoint, genes increased in the two weeks after the first immunization were enriched for interferon, oxidative phosphorylation, and erythroid cell BTMs."
+      },
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "After the second immunization (day 35), over 1,000 DEGs were decreased in expression at 3 of 4 associated time intervals."
+      }
+    ]
+  },
+  "claim_2": {
+    "claim": "RNAseq2 analysis of whole blood from 11 RAS-immunized participants showed 21 genes were significantly associated with protection, including type I interferon-responsive genes EPSTI1, IFI44L, IFI6, ISG15, LY6E, and RSAD2, with non-protected individuals showing high sustained expression after the first immunization and protected individuals showing stronger increases after immunizations 2-5.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "We also found 21 genes significantly associated with protection when considering all timepoints together ( Figure 2C )."
+      },
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "The 21 protection-associated genes significantly overlapped (FDR-adjusted hypergeometric p = 3 x 10 -8 ) with a single BTM: six protection-associated genes (EPSTI1, IFI44L, IFI6, ISG15, LY6E, RSAD2) are members of BTM M8.3 representing Type I Interferon responsive genes."
+      },
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "These genes were also increased in expression immediately post-immunization, but whereas non-protected individuals had high and sustained increased expression of these genes after the first immunization, protected individuals had stronger increases after the remaining 4 immunizations ( Figure 2C )."
+      },
+      {
+        "type": "text",
+        "section": "Methods",
+        "quote": "Whole blood RNAseq was performed as previously described ( 13 ) on 11 IMRAS Cohort 1 RAS vaccinees."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 2C"
+      }
+    ],
+    "comparison_strategy": "cohort",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "protected",
+        "assay_method": "RNAseq2",
+        "tissue_type": "whole blood",
+        "gender": null,
+        "age": null,
+        "time_point": null
+      },
+      {
+        "group_id": 1,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "non-protected",
+        "assay_method": "RNAseq2",
+        "tissue_type": "whole blood",
+        "gender": null,
+        "age": null,
+        "time_point": null
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "21 genes were significantly associated with protection, including type I interferon-responsive genes EPSTI1, IFI44L, IFI6, ISG15, LY6E, and RSAD2; non-protected individuals showed high sustained expression after the first immunization, whereas protected individuals showed stronger increases after immunizations 2-5."
+      }
+    ]
+  },
+  "claim_3": {
+    "claim": "RNAseq3 analysis of whole blood from 11 RAS-immunized participants showed protection-associated BTMs were generally reduced in protected versus non-protected individuals 1-3 days after each immunization, while interferon and prostanoid BTMs were increased in protected participants immediately after immunizations 2-5 but not after the first immunization.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Focusing on protection-associated BTMs, we saw more consistent patterns after each immunization. The majority of protection-associated processes comprised BTMs annotated as associated with specific immune cell types (adaptive and innate immune cells), cytokines, erythroid cell, and inflammation and proliferation (protein synthesis/phosphorylation/modification) that were consistently reduced in protected individuals relative to non-protected individuals 1-3 days after each immunization ( Figure 3B )."
+      },
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Interferon and prostanoid BTMs were increased in protected participants immediately after immunizations 2-5, but not after the first immunization."
+      },
+      {
+        "type": "text",
+        "section": "Methods",
+        "quote": "Whole blood RNAseq was performed as previously described ( 13 ) on 11 IMRAS Cohort 1 RAS vaccinees."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 3B"
+      }
+    ],
+    "comparison_strategy": "cohort",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "protected",
+        "assay_method": "RNAseq3",
+        "tissue_type": "whole blood",
+        "gender": null,
+        "age": null,
+        "time_point": null
+      },
+      {
+        "group_id": 1,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "non-protected",
+        "assay_method": "RNAseq3",
+        "tissue_type": "whole blood",
+        "gender": null,
+        "age": null,
+        "time_point": null
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "protection-associated BTMs, including BTMs associated with adaptive and innate immune cells, cytokines, erythroid cell, and inflammation and proliferation (protein synthesis/phosphorylation/modification), were generally reduced in protected versus non-protected individuals 1-3 days after each immunization"
+      },
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "interferon and prostanoid BTMs were increased in protected participants immediately after immunizations 2-5, but not after the first immunization"
+      }
+    ]
+  },
+  "claim_4": {
+    "claim": "RNAseq4 analysis of whole blood matched with PBMC phenotypes from 11 RAS-immunized participants showed interferon BTM expression was positively correlated with monocyte abundance, including CD16hi, CD272-, and CD38hiCD163+ CD14+ monocytes and CD38+CD32+ non-classical monocytes, with broader non-classical monocyte and CD1c+ CD40+ DC correlations emerging after immunization 3 compared with immunization 1.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Several monocyte subsets were significantly (FDR < 0.05) and strongly positively correlated (Spearman\u2019s \u03c1 > 0.5) with Interferon BTM expression, specifically the CD16hi, CD272- and CD38hiCD163+ subsets of CD14+ monocytes, and CD38+CD32+ NC monocytes ( Figure 6C )."
+      },
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "After immunization 1 (day 0-28) specifically, 2 CD14+ monocyte subsets were significantly positively correlated with interferon BTM expression. In contrast only 1 NC monocyte subset and no CD1c+ DCs ( Table 2 ) were correlated with interferon BTMs. This changed after immunization 3, when 9 NC monocyte subsets, including total NC monocyte counts, were significantly correlated with interferon along with 3 CD14+ monocyte subsets and one CD1c+ DC subset (the protection associated CD1c+ CD40+ DC subset)."
+      },
+      {
+        "type": "text",
+        "section": "Methods",
+        "quote": "To identify correlates of vaccination and protection, we performed detailed systems immunology longitudinal profiling of the entire trial time course including whole blood transcriptomics, detailed PBMC cell phenotyping and serum antigen array profiling of 11 IMRAS radiation-attenuated sporozoite (RAS) vaccinees at up to 21 timepoints each."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 6C"
+      }
+    ],
+    "comparison_strategy": "none",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": 11,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "RAS-immunized participants",
+        "assay_method": "RNAseq4",
+        "tissue_type": "whole blood",
+        "gender": null,
+        "age": null,
+        "time_point": null
+      }
+    ],
+    "comparison": []
+  }
+}
