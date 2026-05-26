@@ -5,6 +5,18 @@ class TextRequest(BaseModel):
     message: str
 
 
+class FailedFieldCount(BaseModel):
+    field: str
+    count: int
+
+
+class CompletnessSummary(BaseModel):
+    total_claims: int = 0
+    claims_with_failures: int = 0
+    failed_groups: int = 0
+    failed_fields: list[FailedFieldCount] = []
+
+
 class SubjectResult(BaseModel):
     group_id: int = 0
     resolvers: dict = {}
@@ -44,3 +56,5 @@ class AgentResponse(BaseModel):
     # Populated when the backend needs more information from the user
     type: str | None = None
     question: str | None = None
+    # ImmPort field resolution completeness summary
+    completeness: CompletnessSummary | None = None

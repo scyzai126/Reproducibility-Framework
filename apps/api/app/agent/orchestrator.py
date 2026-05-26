@@ -3,6 +3,7 @@ import json
 import logging
 import re
 import time
+from datetime import datetime, timezone
 from pathlib import Path
 
 from sqlalchemy import text
@@ -338,6 +339,56 @@ def _write_workflow_log(log_sections: list[str]) -> None:
     logger.info("Workflow log written to %s", log_file)
 
 
+def _build_completeness_report(study_accession: str, claims_results: list[dict]) -> dict:
+    """Build a completeness report from resolution_failures attached to each claim result."""
+    claims_with_failures = []
+    for r in claims_results:
+        failures = r.get("resolution_failures") or []
+        if failures:
+            claims_with_failures.append({
+                "claim_id": r.get("claim_id"),
+                "claim_text": r.get("claim_text", ""),
+                "groups": failures,
+            })
+    return {
+        "study_accession": study_accession,
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "total_claims": len(claims_results),
+        "claims_with_failures": len(claims_with_failures),
+        "claims": claims_with_failures,
+    }
+
+
+def _write_completeness_log(report: dict) -> None:
+    """Write the completeness report to logs/completeness_report.json."""
+    log_dir = Path(__file__).resolve().parent.parent.parent / "logs"
+    log_dir.mkdir(exist_ok=True)
+    log_file = log_dir / "completeness_report.json"
+    log_file.write_text(json.dumps(report, indent=2), encoding="utf-8")
+    logger.info("Completeness report written to %s", log_file)
+
+
+def _build_completeness_summary(report: dict) -> dict:
+    """Derive a flat summary from a completeness report (for the API response)."""
+    from collections import Counter
+    field_counter: Counter = Counter()
+    failed_groups = 0
+    for claim in report.get("claims", []):
+        for group in claim.get("groups", []):
+            failed_groups += 1
+            for f in group.get("failures", []):
+                field_counter[f["field"]] += 1
+    return {
+        "total_claims": report.get("total_claims", 0),
+        "claims_with_failures": report.get("claims_with_failures", 0),
+        "failed_groups": failed_groups,
+        "failed_fields": [
+            {"field": field, "count": cnt}
+            for field, cnt in field_counter.most_common()
+        ],
+    }
+
+
 async def _sync_study(study_accession: str, log_sections: list[str]) -> None:
     """Ensure study is present in local DB; append sync log entry."""
     syncer = StudySyncer()
@@ -558,6 +609,11 @@ async def _run_full_paper_analysis(
             group_queries = await resolve_and_build_queries(claim_analysis, study_accession, async_session, claim_text=claim.get("claim_text"))
             logger.info("Claim %s: resolve_and_build_queries took %.2fs", claim_id, time.time() - t1)
             local_logs.append(_log_queries(group_queries))
+            claim_group_failures = [
+                {"group_id": gq["group_id"], "failures": gq["resolution_failures"]}
+                for gq in group_queries
+                if gq.get("resolution_failures")
+            ]
 
             t2 = time.time()
             exec_log: list[str] = [f"--- Claim {claim_id}: Query Execution ---"]
@@ -574,7 +630,7 @@ async def _run_full_paper_analysis(
                 )
                 local_logs.append(f"--- Claim {claim_id}: DROPPED ---\n{reason}")
                 logger.warning(reason)
-                return {"claim_id": claim_id, "claim_text": claim.get("claim_text", ""), "source": claim.get("source", {}), "subject_results": []}, local_logs
+                return {"claim_id": claim_id, "claim_text": claim.get("claim_text", ""), "source": claim.get("source", {}), "subject_results": [], "resolution_failures": claim_group_failures}, local_logs
 
             for i, sr in enumerate(subject_results):
                 sr["group_id"] = i
@@ -587,6 +643,7 @@ async def _run_full_paper_analysis(
                 "study_design": claim_analysis[0].get("study_design") if claim_analysis else None,
                 "comparison": claim.get("comparison", []),
                 "subject_results": subject_results,
+                "resolution_failures": claim_group_failures,
             }, local_logs
         except Exception as exc:
             logger.error("Claim %s failed: %s", claim_id, exc)
@@ -605,6 +662,12 @@ async def _run_full_paper_analysis(
         claims_results.append(result)
         log_sections.extend(logs)
 
+    _completeness_report = _build_completeness_report(study_accession, claims_results)
+    _write_completeness_log(_completeness_report)
+    completeness = _build_completeness_summary(_completeness_report)
+    for r in claims_results:
+        r.pop("resolution_failures", None)
+
     claims_results = [
         r for r in claims_results
         if any(len(sr.get("subjects", sr.get("samples", []))) > 0 for sr in r.get("subject_results", []))
@@ -613,7 +676,7 @@ async def _run_full_paper_analysis(
     for i, r in enumerate(claims_results):
         r["claim_id"] = i + 1
 
-    return {"study_accession": study_accession, "claims": claims_results}
+    return {"study_accession": study_accession, "claims": claims_results, "completeness": completeness}
 
 
 async def _run_agent_core(file_content: str, session: AsyncSession, study_accession_hint: str | None = None) -> dict:
@@ -691,6 +754,11 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
                 )
                 logger.info("Claim %s: resolve_and_build_queries took %.2fs", claim_id, time.time() - t1)
                 local_logs.append(_log_queries(group_queries))
+                claim_group_failures = [
+                    {"group_id": gq["group_id"], "failures": gq["resolution_failures"]}
+                    for gq in group_queries
+                    if gq.get("resolution_failures")
+                ]
 
                 t2 = time.time()
                 exec_log: list[str] = [f"--- Claim {claim_id}: Query Execution ---"]
@@ -706,6 +774,7 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
                     "source": claim.get("source", {}),
                     "study_design": claim_analysis[0].get("study_design") if claim_analysis else None,
                     "subject_results": subject_results,
+                    "resolution_failures": claim_group_failures,
                 }, local_logs
 
             except Exception as exc:
@@ -722,6 +791,12 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
             claims_results.append(result)
             log_sections.extend(logs)
 
+        _completeness_report = _build_completeness_report(study_accession or "", claims_results)
+        _write_completeness_log(_completeness_report)
+        completeness = _build_completeness_summary(_completeness_report)
+        for r in claims_results:
+            r.pop("resolution_failures", None)
+
         claims_results = [
             r for r in claims_results
             if any(len(sr.get("subjects", sr.get("samples", []))) > 0 for sr in r.get("subject_results", []))
@@ -731,6 +806,7 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
         result = {
             "study_accession": study_accession or "",
             "claims": claims_results,
+            "completeness": completeness,
         }
         _save_output(result)
         return result

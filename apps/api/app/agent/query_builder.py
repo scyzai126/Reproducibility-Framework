@@ -867,6 +867,7 @@ async def resolve_and_build_queries(
         group = dict(group)
         group_id = group.get("group_id")
         resolution_log: dict = {}
+        resolution_failures: list[dict] = []
 
         cohort       = group.get("cohort", "") or ""
         assay_method = group.get("assay_method", "") or ""
@@ -936,10 +937,26 @@ async def resolve_and_build_queries(
             arm_acc, method = arm_result
             group["arm_accession"] = arm_acc
             resolution_log["arm"] = {"accession": arm_acc, "method": method}
+        elif cohort and study_accession:
+            resolution_failures.append({
+                "field": "cohort",
+                "original_value": cohort,
+                "tried": "SQL LIKE on arm_or_cohort(name, description), then LLM fallback over all study arms",
+                "result": "not_resolved",
+            })
+
         if exp_result:
             exp_acc, method = exp_result
             group["experiment_accession"] = exp_acc
             resolution_log["experiment"] = {"accession": exp_acc, "method": method, "assay_method": assay_method}
+        elif assay_method and study_accession:
+            resolution_failures.append({
+                "field": "assay_method",
+                "original_value": assay_method,
+                "tried": "SQL LIKE on experiment(name, measurement_technique), then LLM fallback over all experiments",
+                "result": "not_resolved",
+            })
+
         if cond_result:
             canonical, method = cond_result
             if disease_stage:
@@ -951,8 +968,25 @@ async def resolve_and_build_queries(
                 resolution_log["disease"] = {"value": canonical, "method": method}
         else:
             group["disease"] = ""
+            if study_design != "longitudinal" and study_accession:
+                if disease_stage:
+                    resolution_failures.append({
+                        "field": "disease_stage",
+                        "original_value": disease_stage,
+                        "tried": "SQL LIKE on subject_data_view(disease_stage_preferred), then LLM fallback",
+                        "result": "not_resolved",
+                    })
+                elif disease:
+                    resolution_failures.append({
+                        "field": "disease",
+                        "original_value": disease,
+                        "tried": "SQL LIKE on subject_data_view(condition), then LLM fallback",
+                        "result": "not_resolved",
+                    })
+
         if study_accession:
             group["study_accession"] = study_accession
+
         if tissue_result:
             resolved_tissue, method, matched_col = tissue_result
             group["tissue_type"] = resolved_tissue
@@ -960,6 +994,14 @@ async def resolve_and_build_queries(
             resolution_log["tissue_type"] = {"value": resolved_tissue, "method": method, "matched_column": matched_col}
         else:
             group["tissue_type"] = ""
+            if tissue_type and study_accession:
+                resolution_failures.append({
+                    "field": "tissue_type",
+                    "original_value": tissue_type,
+                    "tried": "SQL LIKE on biosample(type), then biosample(subtype), then LLM fallback over all type/subtype values",
+                    "result": "not_resolved",
+                })
+
         if pv_result:
             pv_accessions = pv_result  # list[tuple[str, str]]
             resolution_log["planned_visit"] = {
@@ -968,6 +1010,13 @@ async def resolve_and_build_queries(
             }
         else:
             pv_accessions = []
+            if time_point and study_accession:
+                resolution_failures.append({
+                    "field": "time_point",
+                    "original_value": time_point,
+                    "tried": "range parse (Xdays<time<Ydays), then SQL LIKE on planned_visit(name), then LLM fallback",
+                    "result": "not_resolved",
+                })
 
         age_min, age_max = _parse_age_range(age)
         if age_min is not None:
@@ -987,6 +1036,7 @@ async def resolve_and_build_queries(
                 "sql": sql,
                 "params": params,
                 "resolution": resolution_log,
+                "resolution_failures": resolution_failures,
                 "keywords": {
                     "cohort": cohort or "",
                     "assay_method": assay_method or "",
