@@ -34,12 +34,7 @@ logger = logging.getLogger(__name__)
 _FILTER_FIELDS = {"disease", "disease_stage", "cohort", "assay_method",
                   "tissue_type", "gender", "age", "time_point", "study_design"}
 
-# Cache keyed by pubmed_id for the expensive LLM claim extraction steps.
-# Different questions about the same paper skip re-parsing the paper entirely.
-_paper_step1_cache: dict[str, dict] = {}   # pubmed_id → step1_json
-_paper_claims_cache: dict[str, dict] = {}  # pubmed_id → step2_json (full analysis)
-
-_DISK_CACHE_DIR = Path(__file__).resolve().parents[4] / "data" / "cache" / "paper_claims"
+_DISK_CACHE_DIR = Path(__file__).resolve().parents[4] / "data" / "ValidatedPapersCache" / "paper_claims"
 
 _DEDUP_SKIP = {"group_id", "study_accession", "study_design"}
 
@@ -522,37 +517,19 @@ async def _run_paper_pipeline(
         f"assay_methods: {assay_methods}"
     )
 
-    # Extract filters from the question
+    # Filter extraction from question is disabled for now
     _filters: list[dict] = []
-    if question and question.strip():
-        prompt = f"Study: {study_accession}\n{question}"
-        _raw_filters, _ = await analyze_descriptions(prompt)
-        _filters = [
-            f for f in _raw_filters
-            if any(f.get(field) for field in _FILTER_FIELDS) or f.get("comparison")
-        ]
-        log_sections.append(
-            f"--- Filter Extraction ---\n"
-            f"filters found: {len(_filters)} (raw: {len(_raw_filters)})"
-        )
 
     if _filters:
         # Parallel: step-1 claims listing + subject query from filters
         async def _task_claims() -> list[dict]:
-            if pubmed_id in _paper_step1_cache:
-                logger.info("Step1 memory-cache hit for pubmed_id=%s", pubmed_id)
-                step1_json = _paper_step1_cache[pubmed_id]
-            elif (disk := _load_disk_cache(pubmed_id, "claims")) is not None:
+            if (disk := _load_disk_cache(pubmed_id, "claims")) is not None:
                 logger.info("Step1 disk-cache hit for pubmed_id=%s", pubmed_id)
                 step1_json = disk
-                _paper_step1_cache[pubmed_id] = step1_json
             else:
                 step1_json = await parse_paper_claims_step1_only(
                     paper_text, study_accession, assay_methods
                 )
-                _paper_step1_cache[pubmed_id] = step1_json
-                _save_disk_cache(pubmed_id, "claims", step1_json)
-                logger.info("Cached step1 claims for pubmed_id=%s", pubmed_id)
             return [
                 {"claim_id": key, "claim_text": val.get("claim", ""), "sources": val.get("sources", [])}
                 for key, val in step1_json.items()
@@ -597,47 +574,20 @@ async def _run_full_paper_analysis(
 ) -> dict:
     """Full two-step claim extraction + DB queries for every claim."""
     if (disk2 := _load_disk_cache(pubmed_id, "groups")) is not None:
-        # Disk cache hit — authoritative, populate memory cache from disk
         logger.info("Disk-cache hit (step2) for pubmed_id=%s", pubmed_id)
         step2_json = disk2
-        _paper_claims_cache[pubmed_id] = step2_json
-        if pubmed_id not in _paper_step1_cache:
-            disk1 = _load_disk_cache(pubmed_id, "claims")
-            if disk1 is not None:
-                _paper_step1_cache[pubmed_id] = disk1
-    elif pubmed_id in _paper_claims_cache:
-        # Memory-only hit (disk was missing — e.g. disk write failed earlier)
-        logger.info("Memory-cache hit (step1+step2) for pubmed_id=%s", pubmed_id)
-        step2_json = _paper_claims_cache[pubmed_id]
-    elif pubmed_id in _paper_step1_cache:
-        # Step1 in memory — skip step1, run step2 only
-        logger.info("Memory-cache hit (step1 only) for pubmed_id=%s — running step2", pubmed_id)
-        _, step2_json = await parse_paper_claims_from_text(
-            paper_text, study_accession, assay_methods,
-            cached_step1=_paper_step1_cache[pubmed_id]
-        )
-        _paper_claims_cache[pubmed_id] = step2_json
-        _save_disk_cache(pubmed_id, "groups", step2_json)
     elif (disk1 := _load_disk_cache(pubmed_id, "claims")) is not None:
         # Step1 on disk — skip step1, run step2 only
         logger.info("Disk-cache hit (step1 only) for pubmed_id=%s — running step2", pubmed_id)
-        _paper_step1_cache[pubmed_id] = disk1
         _, step2_json = await parse_paper_claims_from_text(
             paper_text, study_accession, assay_methods,
             cached_step1=disk1
         )
-        _paper_claims_cache[pubmed_id] = step2_json
-        _save_disk_cache(pubmed_id, "groups", step2_json)
     else:
-        # No cache anywhere — run both steps, persist everything
+        # No cache — run both steps fresh, no persistence
         step1_json, step2_json = await parse_paper_claims_from_text(
             paper_text, study_accession, assay_methods
         )
-        _paper_step1_cache[pubmed_id] = step1_json
-        _paper_claims_cache[pubmed_id] = step2_json
-        _save_disk_cache(pubmed_id, "claims", step1_json)
-        _save_disk_cache(pubmed_id, "groups", step2_json)
-        logger.info("Cached step1+step2 (memory+disk) for pubmed_id=%s", pubmed_id)
 
     claims: list[dict] = []
     batch_analysis: dict[str, list[dict]] = {}
@@ -960,8 +910,7 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
             # Bare PMID (e.g. "PMID:32788292") has no URL yet — check cache first
             if pmc_id and not paper_url:
                 # pmc_id is the PubMed ID here — check disk cache before any network call
-                if (_load_disk_cache(pmc_id, "groups") is not None or
-                        pmc_id in _paper_claims_cache):
+                if _load_disk_cache(pmc_id, "groups") is not None:
                     row = (await session.execute(
                         text("SELECT study_accession FROM study_pubmed WHERE pubmed_id = :pid LIMIT 1"),
                         {"pid": pmc_id},
@@ -983,10 +932,7 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
             if pmc_id and paper_url:
                 # pmc_id is the PMC numeric ID — resolve pubmed_id cheaply before fetching
                 resolved_pubmed_id = await pmc_to_pmid(pmc_id)
-                if resolved_pubmed_id and (
-                    _load_disk_cache(resolved_pubmed_id, "groups") is not None or
-                    resolved_pubmed_id in _paper_claims_cache
-                ):
+                if resolved_pubmed_id and _load_disk_cache(resolved_pubmed_id, "groups") is not None:
                     row = (await session.execute(
                         text("SELECT study_accession FROM study_pubmed WHERE pubmed_id = :pid LIMIT 1"),
                         {"pid": resolved_pubmed_id},
@@ -1050,8 +996,7 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
                         sdy_pubmed_id = str(sdy_row[0])
 
                         # Check cache before any network calls
-                        if (_load_disk_cache(sdy_pubmed_id, "groups") is not None or
-                                sdy_pubmed_id in _paper_claims_cache):
+                        if _load_disk_cache(sdy_pubmed_id, "groups") is not None:
                             log_sections.append(
                                 f"--- Step 2: SDY cache hit ---\n"
                                 f"study_accession: {sdy_accession} → pubmed_id: {sdy_pubmed_id}"

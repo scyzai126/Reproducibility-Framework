@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse, PlainTextResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.agent.claim_parser import get_assay_methods, get_paper_url, parse_paper_claims
-from app.agent.orchestrator import run_agent_from_paper, run_agent_from_text, _paper_step1_cache, _paper_claims_cache
+from app.agent.orchestrator import run_agent_from_paper, run_agent_from_text
 from app.database import get_session
 from app.schemas import AgentResponse, ParsePaperRequest, ParsePaperResponse, TextRequest
 
@@ -75,9 +75,7 @@ async def agent_parse_paper(
 
 @router.post("/cache/clear")
 async def clear_cache():
-    """Clear the in-memory paper claims cache."""
-    _paper_step1_cache.clear()
-    _paper_claims_cache.clear()
+    """No-op: in-memory cache has been removed; disk cache is managed manually."""
     return {"cleared": True}
 
 
