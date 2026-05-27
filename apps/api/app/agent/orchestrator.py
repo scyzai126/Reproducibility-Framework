@@ -596,6 +596,9 @@ async def _run_full_paper_analysis(
             num = int(key.split("_")[1])
         except (IndexError, ValueError):
             continue
+        if not isinstance(val, dict):
+            logger.warning("Skipping malformed cache entry %r (not a dict)", key)
+            continue
         sources = val.get("sources") or []
         claims.append({
             "id": num,

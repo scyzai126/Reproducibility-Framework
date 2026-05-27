@@ -10,6 +10,12 @@ import type { ChatMessage, ChatSession } from '@/lib/types';
 const STORAGE_KEY = 'chat_sessions';
 const MAX_SESSIONS = 20;
 
+const CACHED_PMIDS = [
+  '19029902','28137280','28854372','30111633','30150281','31624246',
+  '32005538','32059780','32473127','32717743','32788292','34128959',
+  '34252919','35062294','35455361','36656789',
+];
+
 export default function Home() {
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
@@ -225,6 +231,8 @@ export default function Home() {
           onToggle={() => setSidebarOpen((v) => !v)}
           onNewChat={() => { handleNewChat(); setSidebarOpen(false); }}
           onSelectSession={(id) => { handleSelectSession(id); if (window.innerWidth < 768) setSidebarOpen(false); }}
+          cachedPmids={CACHED_PMIDS}
+          onSelectPaper={(pmid) => { handleNewChat(); setPrefillText(`Analyze paper PMID:${pmid}`); if (window.innerWidth < 768) setSidebarOpen(false); }}
         />
       </div>
 

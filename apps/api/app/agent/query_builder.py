@@ -20,6 +20,33 @@ from app.config import settings
 logger = logging.getLogger(__name__)
 
 _PROMPTS_DIR = Path(__file__).resolve().parent.parent / "prompts"
+
+# ---------------------------------------------------------------------------
+# Functional marker extraction
+# ---------------------------------------------------------------------------
+
+_MARKER_RE = re.compile(
+    r'\b(IFN[γgΓG]|TNF[αaΑ]|IL-?\d+[a-zA-Z]?|MIP-1[αβab]|GM-CSF|perforin|granzyme\s*[A-Za-z]?)\s*([+\-])',
+    re.IGNORECASE,
+)
+_GREEK_NORMALIZE = str.maketrans({"γ": "g", "Γ": "g", "α": "a", "Α": "a", "β": "b", "Β": "b"})
+
+
+def _extract_functional_marker(cell_type: str) -> tuple[str, str]:
+    """Strip a functional marker (e.g. IFNγ-) from a cell type string.
+
+    Returns (cleaned_cell_type, normalized_marker) where normalized_marker is
+    ASCII-normalized for DB LIKE matching (γ→g, α→a, β→b).  marker is '' if
+    no functional marker is found.
+    """
+    m = _MARKER_RE.search(cell_type)
+    if not m:
+        return cell_type, ""
+    marker_raw = m.group(0).strip()
+    marker_normalized = marker_raw.translate(_GREEK_NORMALIZE)
+    cleaned = (cell_type[: m.start()] + cell_type[m.end() :]).strip()
+    cleaned = re.sub(r"\s+", " ", cleaned)
+    return cleaned, marker_normalized
 _prompt_cache: dict[str, tuple[str, str]] = {}
 
 _openai_client: AsyncOpenAI | None = None
@@ -273,6 +300,60 @@ async def get_assay_method_for_experiment(
     return row[0] if row and row[0] else None
 
 
+def _parse_day_range(time_point: str) -> tuple[float, float] | None:
+    """Extract (low, high) day bounds from natural language time point phrases.
+
+    Returns None if no numeric range pattern is found.
+    high=9999 represents open-ended upper bounds (e.g. "8+ days").
+
+    Handles:
+      "4-7 days post fever onset"  → (4, 7)
+      "day 4-7"                    → (4, 7)
+      "8+ days"                    → (8, 9999)
+      ">= 8 days"                  → (8, 9999)
+      "< 14 days"                  → (0, 14)
+      "within 10 days"             → (0, 10)
+    """
+    s = time_point.strip()
+
+    # "X-Y days" or "X–Y days" anywhere in the phrase
+    m = re.search(r'(\d+(?:\.\d+)?)\s*[-–]\s*(\d+(?:\.\d+)?)\s*day', s, re.I)
+    if m:
+        return float(m.group(1)), float(m.group(2))
+
+    # "day(s) X-Y" or "day(s) X–Y"
+    m = re.search(r'days?\s+(\d+(?:\.\d+)?)\s*[-–]\s*(\d+(?:\.\d+)?)', s, re.I)
+    if m:
+        return float(m.group(1)), float(m.group(2))
+
+    # "X+ days" — open-ended lower bound
+    m = re.search(r'(\d+(?:\.\d+)?)\s*\+\s*day', s, re.I)
+    if m:
+        return float(m.group(1)), 9999.0
+
+    # ">= X days" or "> X days" or "≥ X days"
+    m = re.search(r'[>≥]=?\s*(\d+(?:\.\d+)?)\s*day', s, re.I)
+    if m:
+        return float(m.group(1)), 9999.0
+
+    # "X or more days"
+    m = re.search(r'(\d+(?:\.\d+)?)\s+or\s+more\s+day', s, re.I)
+    if m:
+        return float(m.group(1)), 9999.0
+
+    # "<= X days" or "< X days" or "≤ X days"
+    m = re.search(r'[<≤]=?\s*(\d+(?:\.\d+)?)\s*day', s, re.I)
+    if m:
+        return 0.0, float(m.group(1))
+
+    # "within X days"
+    m = re.search(r'within\s+(\d+(?:\.\d+)?)\s*day', s, re.I)
+    if m:
+        return 0.0, float(m.group(1))
+
+    return None
+
+
 async def resolve_planned_visit_accession(
     session: AsyncSession, time_point: str, study_accession: str,
     claim_text: str | None = None,
@@ -285,13 +366,10 @@ async def resolve_planned_visit_accession(
     if not time_point:
         return None
 
-    # Range format: "0days<time<10days"
-    range_m = re.match(r'^(\d+(?:\.\d+)?)days<time<(\d+(?:\.\d+)?)days$', time_point.strip())
-    if range_m:
-        low, high = float(range_m.group(1)), float(range_m.group(2))
+    async def _range_query(low: float, high: float) -> list[tuple[str, str]] | None:
         result = await session.execute(
             text(
-                "SELECT planned_visit_accession, name, min_start_day "
+                "SELECT planned_visit_accession, name, min_start_day, max_start_day "
                 "FROM planned_visit WHERE study_accession = :sa"
             ),
             {"sa": study_accession},
@@ -299,18 +377,44 @@ async def resolve_planned_visit_accession(
         rows = [dict(zip(result.keys(), row)) for row in result.fetchall()]
         matches = [
             r for r in rows
-            if r.get("min_start_day") is not None and low <= float(r["min_start_day"]) <= high
+            if r.get("min_start_day") is not None
+            # Standard range overlap: visit window [min, max] overlaps search window [low, high]
+            and float(r["min_start_day"]) <= high
+            and float(r.get("max_start_day") or r["min_start_day"]) >= low
         ]
         if not matches:
-            logger.warning("No planned visits found in range %s for study %s", time_point, study_accession)
             return None
-        logger.info(
-            "Range %s matched %d planned visits for study %s",
-            time_point, len(matches), study_accession,
-        )
         return [(r["planned_visit_accession"], "range") for r in matches]
 
-    # Exact match via standard two-step resolver
+    # Step 1: strict internal range format "Xdays<time<Ydays"
+    range_m = re.match(r'^(\d+(?:\.\d+)?)days<time<(\d+(?:\.\d+)?)days$', time_point.strip())
+    if range_m:
+        low, high = float(range_m.group(1)), float(range_m.group(2))
+        matches = await _range_query(low, high)
+        if matches:
+            logger.info("Range %s matched %d planned visits for study %s", time_point, len(matches), study_accession)
+            return matches
+        logger.warning("No planned visits found in range %s for study %s", time_point, study_accession)
+        return None
+
+    # Step 2: natural language range (e.g. "4-7 days post fever onset", "8+ days")
+    nl_range = _parse_day_range(time_point)
+    if nl_range:
+        low, high = nl_range
+        matches = await _range_query(low, high)
+        if matches:
+            logger.info(
+                "Natural language range %r → [%g, %g] matched %d planned visits for study %s",
+                time_point, low, high, len(matches), study_accession,
+            )
+            return matches
+        logger.warning(
+            "Natural language range %r → [%g, %g] matched no planned visits for study %s — falling through to LIKE/LLM",
+            time_point, low, high, study_accession,
+        )
+        # Fall through: range extracted but no visit in that window — try LIKE/LLM
+
+    # Step 3: exact match via SQL LIKE → LLM fallback
     result = await _resolve_accession(session, time_point, study_accession, _PLANNED_VISIT_CONFIG, claim_text=claim_text)
     if result is None:
         return None
@@ -364,17 +468,18 @@ async def resolve_tissue_type(
     logger.info("SQL subtype match returned %d rows for %r; falling back to LLM", len(rows), tissue_type)
     all_result = await session.execute(
         text(
-            "SELECT DISTINCT type, subtype FROM biosample "
+            "SELECT DISTINCT type, subtype, description FROM biosample "
             "WHERE study_accession = :sa AND (type IS NOT NULL OR subtype IS NOT NULL)"
         ),
         {"sa": study_accession},
     )
     candidates = []
     for row in all_result.fetchall():
+        desc = row[2] or ""
         if row[0]:
-            candidates.append({"value": row[0], "col": "type"})
+            candidates.append({"value": row[0], "col": "type", "description": desc})
         if row[1]:
-            candidates.append({"value": row[1], "col": "subtype"})
+            candidates.append({"value": row[1], "col": "subtype", "description": desc})
     # deduplicate
     seen = set()
     candidates = [c for c in candidates if (c["value"], c["col"]) not in seen and not seen.add((c["value"], c["col"]))]
@@ -411,6 +516,128 @@ async def resolve_tissue_type(
 
     logger.info("Tissue type resolved via LLM (%s): %r → %r", col, tissue_type, value)
     return (value, "LLM", col)
+
+
+async def _study_has_subtype(session: AsyncSession, study_accession: str) -> bool:
+    """Return True if any biosample row for the study has a non-null subtype."""
+    result = await session.execute(
+        text(
+            "SELECT 1 FROM biosample WHERE study_accession = :sa "
+            "AND subtype IS NOT NULL LIMIT 1"
+        ),
+        {"sa": study_accession},
+    )
+    return result.fetchone() is not None
+
+
+async def resolve_cell_type(
+    session: AsyncSession,
+    tissue_type: str,
+    cell_type: str,
+    study_accession: str,
+    claim_text: str | None = None,
+) -> tuple[str | None, str | None, str, str] | None:
+    """Resolve a (tissue_type, cell_type) pair against biosample using four strategies.
+
+    Returns (type_val, subtype_val, method, functional_marker) or None.
+    type_val   → filter on sdv.tissue_type   (biosample.type)
+    subtype_val → filter on sdv.tissue_subtype (biosample.subtype)
+    functional_marker → ASCII-normalized marker (e.g. "IFNg-") for description LIKE filter; "" if none.
+
+    Strategies tried in order:
+      SQL_two_col   — type LIKE tissue AND subtype LIKE cell (exact 1+1 match)
+      SQL_cell_as_type — cell_type directly against biosample.type
+      SQL_split     — resolve tissue_type first, then cell_type against subtype
+      fallback_cell — resolve cell_type alone via resolve_tissue_type()
+    Early bail-out when the study has no subtype data: resolve tissue_type only.
+    """
+    if not study_accession:
+        return None
+
+    # Strip functional markers before any SQL/LLM matching
+    cleaned_cell, functional_marker = _extract_functional_marker(cell_type) if cell_type else ("", "")
+
+    # Early bail-out: study has no subtype data — resolve tissue_type only
+    has_sub = await _study_has_subtype(session, study_accession)
+    if not has_sub:
+        fallback_term = tissue_type or cleaned_cell
+        if not fallback_term:
+            return None
+        result = await resolve_tissue_type(session, fallback_term, study_accession, claim_text=claim_text)
+        if result:
+            val, method, matched_col = result
+            type_val = val if matched_col == "type" else None
+            subtype_val = val if matched_col == "subtype" else None
+            logger.info("Cell type resolved (tissue_only, no subtype in study): %r/%r → %r", tissue_type, cell_type, val)
+            return (type_val, subtype_val, "tissue_only", functional_marker)
+        return None
+
+    # ── Strategy 1: two-column SQL match ─────────────────────────────────────
+    if tissue_type and cleaned_cell:
+        result = await session.execute(
+            text(
+                "SELECT DISTINCT type, subtype FROM biosample "
+                "WHERE study_accession = :sa "
+                "AND type LIKE :tp AND subtype LIKE :cp "
+                "AND type IS NOT NULL AND subtype IS NOT NULL"
+            ),
+            {"sa": study_accession, "tp": f"%{tissue_type}%", "cp": f"%{cleaned_cell}%"},
+        )
+        rows = result.fetchall()
+        distinct_types = {r[0] for r in rows if r[0]}
+        distinct_subs = {r[1] for r in rows if r[1]}
+        if len(distinct_types) == 1 and len(distinct_subs) == 1:
+            tv, sv = next(iter(distinct_types)), next(iter(distinct_subs))
+            logger.info("Cell type resolved via SQL_two_col: (%r, %r) → (%r, %r)", tissue_type, cell_type, tv, sv)
+            return (tv, sv, "SQL_two_col", functional_marker)
+
+    # ── Strategy 2: cell_type as type ────────────────────────────────────────
+    if cleaned_cell:
+        result = await session.execute(
+            text(
+                "SELECT DISTINCT type FROM biosample "
+                "WHERE study_accession = :sa AND type LIKE :cp AND type IS NOT NULL"
+            ),
+            {"sa": study_accession, "cp": f"%{cleaned_cell}%"},
+        )
+        rows = [r[0] for r in result.fetchall() if r[0]]
+        if len(rows) == 1:
+            logger.info("Cell type resolved via SQL_cell_as_type: %r → type=%r", cell_type, rows[0])
+            return (rows[0], None, "SQL_cell_as_type", functional_marker)
+
+    # ── Strategy 3: split resolve ─────────────────────────────────────────────
+    if tissue_type and cleaned_cell:
+        tis_result = await resolve_tissue_type(session, tissue_type, study_accession, claim_text=claim_text)
+        if tis_result and tis_result[2] == "type":
+            type_val = tis_result[0]
+            sub_result = await session.execute(
+                text(
+                    "SELECT DISTINCT subtype FROM biosample "
+                    "WHERE study_accession = :sa AND type = :tv "
+                    "AND subtype LIKE :cp AND subtype IS NOT NULL"
+                ),
+                {"sa": study_accession, "tv": type_val, "cp": f"%{cleaned_cell}%"},
+            )
+            sub_rows = [r[0] for r in sub_result.fetchall() if r[0]]
+            if len(sub_rows) == 1:
+                logger.info("Cell type resolved via SQL_split: (%r, %r) → (%r, %r)", tissue_type, cell_type, type_val, sub_rows[0])
+                return (type_val, sub_rows[0], "SQL_split", functional_marker)
+            # Subtype ambiguous — return tissue-only
+            logger.info("SQL_split: subtype ambiguous (%d rows) for %r under type=%r; using tissue-only", len(sub_rows), cell_type, type_val)
+            return (type_val, None, "SQL_split_tissue_only", functional_marker)
+
+    # ── Strategy 4: cell_type alone fallback ──────────────────────────────────
+    fallback_term = cleaned_cell or tissue_type
+    if fallback_term:
+        result = await resolve_tissue_type(session, fallback_term, study_accession, claim_text=claim_text)
+        if result:
+            val, method, matched_col = result
+            type_val = val if matched_col == "type" else None
+            subtype_val = val if matched_col == "subtype" else None
+            logger.info("Cell type resolved via fallback_cell: %r → (%r, %r)", cell_type, type_val, subtype_val)
+            return (type_val, subtype_val, f"fallback_cell_{method}", functional_marker)
+
+    return None
 
 
 async def resolve_condition(
@@ -470,17 +697,21 @@ async def resolve_condition(
 async def resolve_disease_stage(
     session: AsyncSession, condition: str, study_accession: str,
     claim_text: str | None = None,
-) -> tuple[str, str] | None:
-    """Resolve a severity label → canonical disease_stage_preferred value in subject_data_view.
+) -> tuple[str, str, str] | None:
+    """Resolve a severity label → (value, method, field) where field is
+    'disease_stage' (filter on disease_stage_preferred) or 'arm_accession'
+    (filter on arm_accession — used when severity is encoded in arm names).
 
-    Used for severity study designs instead of resolve_condition.
-    Step 1: LIKE search on disease_stage_preferred for this study.
-    Step 2: LLM fallback using all distinct disease_stage values for the study.
+    Step 1: LIKE search on disease_stage_preferred.
+    Step 2: LIKE search on arm_or_cohort name/description.
+    Step 3: LLM fallback over all distinct disease_stage_preferred values.
     """
     if not condition or not study_accession:
         return None
 
-    # Step 1: LIKE match directly on the view
+    pattern = f"%{condition}%"
+
+    # Step 1: LIKE match on disease_stage_preferred
     result = await session.execute(
         text(
             "SELECT DISTINCT disease_stage_preferred FROM subject_data_view "
@@ -488,37 +719,108 @@ async def resolve_disease_stage(
             "AND disease_stage_preferred LIKE :pattern "
             "AND disease_stage_preferred IS NOT NULL"
         ),
-        {"sa": study_accession, "pattern": f"%{condition}%"},
+        {"sa": study_accession, "pattern": pattern},
     )
     rows = [r[0] for r in result.fetchall() if r[0]]
 
     if len(rows) == 1:
-        logger.info("Disease stage resolved via SQL: %r → %r", condition, rows[0])
-        return (rows[0], "SQL")
+        logger.info("Disease stage resolved via SQL (disease_stage_preferred): %r → %r", condition, rows[0])
+        return (rows[0], "SQL", "disease_stage")
 
-    # Step 2: LLM fallback
+    # Step 2: LIKE match on arm name/description — some studies encode severity
+    # in arm names (e.g. "Severe COVID-19") rather than disease_stage_preferred.
     logger.info(
-        "SQL disease_stage match returned %d rows for %r; falling back to LLM",
+        "SQL disease_stage_preferred match returned %d rows for %r; trying arm names",
         len(rows), condition,
     )
-    all_result = await session.execute(
+    arm_result = await session.execute(
+        text(
+            "SELECT arm_accession, name FROM arm_or_cohort "
+            "WHERE study_accession = :sa "
+            "AND (name LIKE :pattern OR description LIKE :pattern)"
+        ),
+        {"sa": study_accession, "pattern": pattern},
+    )
+    arm_rows = [dict(zip(arm_result.keys(), row)) for row in arm_result.fetchall()]
+
+    if len(arm_rows) == 1:
+        acc = arm_rows[0]["arm_accession"]
+        logger.info("Disease stage resolved via arm name fuzzy match: %r → %s (%s)", condition, acc, arm_rows[0]["name"])
+        return (acc, "SQL", "arm_accession")
+
+    # Step 3: LLM fallback — combined disease_stage_preferred + arm name candidates.
+    # Prompt instructs the LLM to try disease_stage first, then arm names.
+    logger.info(
+        "Arm name match returned %d rows for %r; falling back to LLM with combined candidates",
+        len(arm_rows), condition,
+    )
+    ds_result = await session.execute(
         text(
             "SELECT DISTINCT disease_stage_preferred FROM subject_data_view "
             "WHERE study_accession = :sa AND disease_stage_preferred IS NOT NULL"
         ),
         {"sa": study_accession},
     )
-    all_candidates = [
-        {"disease_stage_preferred": r[0]} for r in all_result.fetchall() if r[0]
+    ds_candidates = [
+        {"value": r[0], "field": "disease_stage"}
+        for r in ds_result.fetchall() if r[0]
     ]
+    all_arms_result = await session.execute(
+        text(
+            "SELECT arm_accession, name FROM arm_or_cohort "
+            "WHERE study_accession = :sa"
+        ),
+        {"sa": study_accession},
+    )
+    arm_candidates = [
+        {"value": row[0], "name": row[1], "field": "arm_accession"}
+        for row in all_arms_result.fetchall() if row[0]
+    ]
+    combined = ds_candidates + arm_candidates
 
-    if not all_candidates:
-        logger.warning("No disease_stage_preferred values found for study %s", study_accession)
+    if not combined:
+        logger.warning("No disease_stage or arm candidates found for study %s", study_accession)
         return None
 
-    resolved = await _llm_resolve(condition, all_candidates, _DISEASE_STAGE_LLM_CONFIG, claim_text=claim_text)
-    if resolved:
-        return (resolved, "LLM")
+    system_prompt, user_template = _load_resolver_prompt("disease_stage")
+    prompt = user_template.format(candidates=json.dumps(combined, indent=2), search_term=condition)
+    if claim_text:
+        prompt += f"\n\nOriginal claim for context:\n{claim_text}"
+
+    client = _get_openai_client()
+    response = await client.chat.completions.create(
+        model=settings.OPENAI_MODEL,
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": prompt},
+        ],
+        temperature=0,
+    )
+    answer = response.choices[0].message.content.strip()
+    logger.info("LLM disease_stage resolution: %r → %r", condition, answer)
+
+    if answer.upper() == "NONE" or "|" not in answer:
+        return None
+
+    value, _, field = answer.partition("|")
+    value = value.strip()
+    field = field.strip()
+
+    if field not in ("disease_stage", "arm_accession"):
+        logger.warning("LLM returned unexpected field %r for disease_stage resolution of %r", field, condition)
+        return None
+
+    valid_values = {c["value"] for c in combined}
+    if value in valid_values:
+        return (value, "LLM", field)
+
+    # Try to extract a valid value from a verbose response
+    for v in valid_values:
+        if v in answer:
+            matched_field = next((c["field"] for c in combined if c["value"] == v), field)
+            return (v, "LLM", matched_field)
+
+    logger.warning("LLM returned unrecognized value %r for disease_stage resolution of %r", value, condition)
     return None
 
 
@@ -608,12 +910,23 @@ def _build_query(group: dict) -> tuple[str, dict]:
             where_clauses.append(f"sdv.{col} <= :{param_key}")
             params[param_key] = value
 
-    # tissue_type: column depends on which biosample column matched during resolution
-    tissue_val = group.get("tissue_type") or ""
-    if tissue_val:
-        sdv_col = "tissue_subtype" if group.get("tissue_matched_col") == "subtype" else "tissue_type"
-        where_clauses.append(f"sdv.{sdv_col} = :tissue_type")
-        params["tissue_type"] = tissue_val
+    # biosample type/subtype/description from multi-strategy cell type resolution
+    bio_type = group.get("bio_type") or ""
+    bio_subtype = group.get("bio_subtype") or ""
+    bio_marker = group.get("bio_description_marker") or ""
+    if bio_type:
+        where_clauses.append("sdv.tissue_type = :bio_type")
+        params["bio_type"] = bio_type
+    if bio_subtype:
+        where_clauses.append("sdv.tissue_subtype = :bio_subtype")
+        params["bio_subtype"] = bio_subtype
+    if bio_marker:
+        where_clauses.append(
+            "EXISTS (SELECT 1 FROM biosample b "
+            "WHERE b.biosample_accession = sdv.biosample_accession "
+            "AND b.description LIKE :bio_marker)"
+        )
+        params["bio_marker"] = f"%{bio_marker}%"
 
     sql = (
         "SELECT DISTINCT\n"
@@ -719,14 +1032,28 @@ async def _resolve_group(
             if study_design == "severity" and disease_stage:
                 return await resolve_disease_stage(s, disease_stage, study_accession, claim_text=claim_text)
             if disease:
-                return await resolve_condition(s, disease, study_accession, claim_text=claim_text)
-            return None
+                result = await resolve_condition(s, disease, study_accession, claim_text=claim_text)
+                if result is None:
+                    return None
+                val, method = result
+                return (val, method, "disease")
+        return None
+
+    cell_type = group.get("cell_type", "") or ""
 
     async def _tissue():
-        if not (tissue_type and study_accession):
+        if not (study_accession and (tissue_type or cell_type)):
             return None
         async with session_factory() as s:
-            return await resolve_tissue_type(s, tissue_type, study_accession, claim_text=claim_text)
+            if cell_type:
+                return await resolve_cell_type(s, tissue_type, cell_type, study_accession, claim_text=claim_text)
+            result = await resolve_tissue_type(s, tissue_type, study_accession, claim_text=claim_text)
+            if result:
+                val, method, matched_col = result
+                type_val = val if matched_col == "type" else None
+                subtype_val = val if matched_col == "subtype" else None
+                return (type_val, subtype_val, method, "")
+            return None
 
     async def _pv():
         if not (time_point and study_accession):
@@ -751,8 +1078,14 @@ async def _resolve_group(
         logger.info("Resolved assay_method %r → experiment_accession %s for group %s", assay_method, exp_acc, group_id)
 
     if cond_result:
-        canonical, method = cond_result
-        if disease_stage:
+        canonical, method, field = cond_result
+        if field == "arm_accession":
+            group["arm_accession"] = canonical
+            group["disease_stage"] = ""
+            group["disease"] = ""
+            resolution_log["arm"] = {"accession": canonical, "method": method}
+            logger.info("Resolved disease_stage %r → arm_accession %s for group %s (arm fallback)", disease_stage, canonical, group_id)
+        elif field == "disease_stage":
             group["disease_stage"] = canonical
             group["disease"] = ""
             resolution_log["disease_stage"] = {"value": canonical, "method": method}
@@ -763,18 +1096,24 @@ async def _resolve_group(
             logger.info("Resolved disease %r → %r for group %s", disease, canonical, group_id)
     else:
         group["disease"] = ""
+        group["disease_stage"] = ""
 
     if study_accession:
         group["study_accession"] = study_accession
 
     if tissue_result:
-        resolved_tissue, method, matched_col = tissue_result
-        group["tissue_type"] = resolved_tissue
-        group["tissue_matched_col"] = matched_col
-        resolution_log["tissue_type"] = {"value": resolved_tissue, "method": method, "matched_column": matched_col}
-        logger.info("Resolved tissue_type %r → %r (column: %s) for group %s", tissue_type, resolved_tissue, matched_col, group_id)
+        type_val, subtype_val, method, functional_marker = tissue_result
+        group["bio_type"] = type_val or ""
+        group["bio_subtype"] = subtype_val or ""
+        group["bio_description_marker"] = functional_marker or ""
+        resolution_log["tissue_type"] = {
+            "type_value": type_val, "subtype_value": subtype_val,
+            "method": method, "functional_marker": functional_marker,
+        }
     else:
-        group["tissue_type"] = ""
+        group["bio_type"] = ""
+        group["bio_subtype"] = ""
+        group["bio_description_marker"] = ""
 
     if pv_result:
         pv_accessions = pv_result  # list[tuple[str, str]]
@@ -889,6 +1228,7 @@ async def resolve_and_build_queries(
         disease      = group.get("disease", "") or ""
         disease_stage = group.get("disease_stage", "") or ""
         tissue_type  = group.get("tissue_type", "") or ""
+        cell_type    = group.get("cell_type", "") or ""
         study_design = group.get("study_design", "")
         time_point   = group.pop("time_point", None) or ""
         age          = group.get("age")
@@ -913,14 +1253,26 @@ async def resolve_and_build_queries(
                 if study_design == "severity" and disease_stage:
                     return await resolve_disease_stage(s, disease_stage, study_accession, claim_text=claim_text)
                 if disease:
-                    return await resolve_condition(s, disease, study_accession, claim_text=claim_text)
+                    result = await resolve_condition(s, disease, study_accession, claim_text=claim_text)
+                    if result is None:
+                        return None
+                    val, method = result
+                    return (val, method, "disease")
             return None
 
         async def _tissue():
-            if not (tissue_type and study_accession):
+            if not (study_accession and (tissue_type or cell_type)):
                 return None
             async with session_factory() as s:
-                return await resolve_tissue_type(s, tissue_type, study_accession, claim_text=claim_text)
+                if cell_type:
+                    return await resolve_cell_type(s, tissue_type, cell_type, study_accession, claim_text=claim_text)
+                result = await resolve_tissue_type(s, tissue_type, study_accession, claim_text=claim_text)
+                if result:
+                    val, method, matched_col = result
+                    type_val = val if matched_col == "type" else None
+                    subtype_val = val if matched_col == "subtype" else None
+                    return (type_val, subtype_val, method, "")
+                return None
 
         async def _pv():
             if not (time_point and study_accession):
@@ -932,7 +1284,7 @@ async def resolve_and_build_queries(
         arm_key  = ("arm",  cohort)
         exp_key  = ("exp",  assay_method)
         cond_key = ("cond", disease_stage if study_design == "severity" else disease, study_design)
-        tis_key  = ("tis",  tissue_type)
+        tis_key  = ("tis",  tissue_type, cell_type)
         pv_key   = ("pv",   time_point, study_design)
 
         def _get_or_create(key, coro_fn):
@@ -967,6 +1319,7 @@ async def resolve_and_build_queries(
                     "disease": disease or "",
                     "disease_stage": disease_stage or "",
                     "tissue_type": tissue_type or "",
+                    "cell_type": cell_type or "",
                     "age": age or "",
                     "gender": (group.get("gender") or ""),
                 },
@@ -1007,8 +1360,13 @@ async def resolve_and_build_queries(
             })
 
         if cond_result:
-            canonical, method = cond_result
-            if disease_stage:
+            canonical, method, field = cond_result
+            if field == "arm_accession":
+                group["arm_accession"] = canonical
+                group["disease_stage"] = ""
+                group["disease"] = ""
+                resolution_log["arm"] = {"accession": canonical, "method": method}
+            elif field == "disease_stage":
                 group["disease_stage"] = canonical
                 group["disease"] = ""
                 resolution_log["disease_stage"] = {"value": canonical, "method": method}
@@ -1017,12 +1375,13 @@ async def resolve_and_build_queries(
                 resolution_log["disease"] = {"value": canonical, "method": method}
         else:
             group["disease"] = ""
+            group["disease_stage"] = ""  # clear so the unresolved value is never used as a literal exact-match filter
             if study_design != "longitudinal" and study_accession:
                 if disease_stage:
                     resolution_failures.append({
                         "field": "disease_stage",
                         "original_value": disease_stage,
-                        "tried": "SQL LIKE on subject_data_view(disease_stage_preferred), then LLM fallback",
+                        "tried": "SQL LIKE on subject_data_view(disease_stage_preferred), then SQL LIKE on arm_or_cohort(name, description), then LLM fallback",
                         "result": "not_resolved",
                     })
                 elif disease:
@@ -1037,12 +1396,24 @@ async def resolve_and_build_queries(
             group["study_accession"] = study_accession
 
         if tissue_result:
-            resolved_tissue, method, matched_col = tissue_result
-            group["tissue_type"] = resolved_tissue
-            group["tissue_matched_col"] = matched_col
-            resolution_log["tissue_type"] = {"value": resolved_tissue, "method": method, "matched_column": matched_col}
+            type_val, subtype_val, method, functional_marker = tissue_result
+            group["bio_type"] = type_val or ""
+            group["bio_subtype"] = subtype_val or ""
+            group["bio_description_marker"] = functional_marker or ""
+            resolution_log["tissue_type"] = {
+                "type_value": type_val,
+                "subtype_value": subtype_val,
+                "method": method,
+                "functional_marker": functional_marker,
+            }
+            logger.info(
+                "Resolved cell type for group %s: type=%r subtype=%r marker=%r (method=%s)",
+                group_id, type_val, subtype_val, functional_marker, method,
+            )
         else:
-            group["tissue_type"] = ""
+            group["bio_type"] = ""
+            group["bio_subtype"] = ""
+            group["bio_description_marker"] = ""
 
         if pv_result:
             pv_accessions = pv_result  # list[tuple[str, str]]
@@ -1086,6 +1457,7 @@ async def resolve_and_build_queries(
                     "disease": disease or "",
                     "disease_stage": disease_stage or "",
                     "tissue_type": tissue_type or "",
+                    "cell_type": cell_type or "",
                     "age": age or "",
                     "gender": (group.get("gender") or ""),
                 },

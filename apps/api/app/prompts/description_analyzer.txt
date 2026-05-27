@@ -18,12 +18,13 @@ The number of output groups depends on study_design:
 - disease_stage: severity or stage of the disease for this group (e.g., "moderate", "severe", "ICU"). Use null if no severity/stage is mentioned or if the group is healthy/longitudinal.
 - cohort: cohort name or geographic location
 - assay_method: experimental method or assay used
-- tissue_type: actual sample type processed. Use the most specific liquid fraction or cell preparation — never use generic terms like "blood" or "blood sample". Rules:
-    - Olink / proteomics / cytokine assays on blood → "plasma" (Olink measures proteins in plasma, not whole blood)
+- tissue_type: the bulk sample material processed (e.g. "PBMC", "plasma", "whole blood", "serum"). Never use generic terms like "blood" or "blood sample". Rules:
+    - Olink / proteomics / cytokine assays on blood → "plasma"
     - CyTOF / flow cytometry / CITEseq / scRNA-seq on blood → "PBMC"
     - Bulk RNA-seq on blood → "whole blood"
     - Serology / antibody assays → "serum" or "plasma"
     - If the paper says "blood samples" with no further detail, infer from the assay: Olink → "plasma", single-cell → "PBMC"
+- cell_type: specific cell subset or population sorted/gated from the tissue sample (e.g. "CD8+ T cells", "CD4+ T cells", "NK cells", "B cells", "monocytes"). Include functional markers in this field (e.g. "CD8+ IFNγ- T cells", "CD4+ TNFα+ T cells"). Use null if no cell subset is mentioned or if tissue_type already captures the full specificity (e.g. tissue_type="plasma" has no meaningful cell_type).
 - gender: sex/gender (e.g., "male", "female") — null if not mentioned
 - age: age range of samples in this group as a filterable string — null if not mentioned. Use formats: "18-65" (range), "65+" (minimum), "<18" (maximum), "45" (exact). Do NOT use "median X" or descriptive text.
 - time_point: a single time point string for this group (e.g., "day 0", "day 22"). For time ranges (e.g., "from day 0 to day 10", "days 0–10", "within the first 2 weeks"), use the format "0days<time<10days" (e.g., "0days<time<10days"). Use null if not a longitudinal study or no time point applies.
@@ -34,7 +35,7 @@ The number of output groups depends on study_design:
   Include a comparison whenever the claim states a statistical test, fold-change, or directional difference between two groups (e.g. "significantly upregulated in X vs Y", "differences between groups measured by …"). Use [] only when no comparison is stated at all.
 - study_design: one of "longitudinal", "case_control", "severity", "cross_sectional", "cohort", or null if the claim contains no immune signature statement.
 
-Return a JSON array of objects, one per group, each with: group_id, study_accession, sample_size, disease, disease_stage, cohort, assay_method, tissue_type, gender, age, time_point, comparison, study_design.
+Return a JSON array of objects, one per group, each with: group_id, study_accession, sample_size, disease, disease_stage, cohort, assay_method, tissue_type, cell_type, gender, age, time_point, comparison, study_design.
 
 ---
 
@@ -52,6 +53,7 @@ Example output:
     "cohort": null,
     "assay_method": "Olink",
     "tissue_type": "plasma",
+    "cell_type": null,
     "gender": null,
     "age": null,
     "time_point": "day 0",
@@ -70,6 +72,7 @@ Example output:
     "cohort": null,
     "assay_method": "Olink",
     "tissue_type": "plasma",
+    "cell_type": null,
     "gender": null,
     "age": null,
     "time_point": "day 1",
@@ -87,6 +90,7 @@ Example output:
     "cohort": null,
     "assay_method": "Olink",
     "tissue_type": "plasma",
+    "cell_type": null,
     "gender": null,
     "age": null,
     "time_point": "day 2",
@@ -104,6 +108,7 @@ Example output:
     "cohort": null,
     "assay_method": "Olink",
     "tissue_type": "plasma",
+    "cell_type": null,
     "gender": null,
     "age": null,
     "time_point": "day 21",
@@ -122,6 +127,7 @@ Example output:
     "cohort": null,
     "assay_method": "Olink",
     "tissue_type": "plasma",
+    "cell_type": null,
     "gender": null,
     "age": null,
     "time_point": "day 22",
@@ -149,6 +155,7 @@ Example output:
     "cohort": null,
     "assay_method": "Olink",
     "tissue_type": "plasma",
+    "cell_type": null,
     "gender": null,
     "age": null,
     "time_point": null,
@@ -166,6 +173,7 @@ Example output:
     "cohort": null,
     "assay_method": "Olink",
     "tissue_type": "plasma",
+    "cell_type": null,
     "gender": null,
     "age": null,
     "time_point": null,
@@ -183,6 +191,7 @@ Example output:
     "cohort": null,
     "assay_method": "Olink",
     "tissue_type": "plasma",
+    "cell_type": null,
     "gender": null,
     "age": null,
     "time_point": null,
@@ -200,6 +209,7 @@ Example output:
     "cohort": null,
     "assay_method": "Olink",
     "tissue_type": "plasma",
+    "cell_type": null,
     "gender": null,
     "age": null,
     "time_point": null,
@@ -226,6 +236,7 @@ Example output:
     "cohort": null,
     "assay_method": "CyTOF",
     "tissue_type": "PBMC",
+    "cell_type": null,
     "gender": "female",
     "age": null,
     "time_point": null,
@@ -243,6 +254,7 @@ Example output:
     "cohort": null,
     "assay_method": "Olink",
     "tissue_type": "plasma",
+    "cell_type": null,
     "gender": null,
     "age": null,
     "time_point": null,
@@ -269,6 +281,7 @@ Example output:
     "cohort": null,
     "assay_method": null,
     "tissue_type": null,
+    "cell_type": null,
     "gender": "Female",
     "age": null,
     "time_point": null,

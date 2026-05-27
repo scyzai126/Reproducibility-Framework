@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { ChatSession } from '@/lib/types';
 
 interface Props {
@@ -9,9 +10,13 @@ interface Props {
   onToggle: () => void;
   onNewChat: () => void;
   onSelectSession: (id: string) => void;
+  cachedPmids: string[];
+  onSelectPaper: (pmid: string) => void;
 }
 
-export default function Sidebar({ sessions, currentId, isOpen, onToggle, onNewChat, onSelectSession }: Props) {
+export default function Sidebar({ sessions, currentId, isOpen, onToggle, onNewChat, onSelectSession, cachedPmids, onSelectPaper }: Props) {
+  const [papersExpanded, setPapersExpanded] = useState(true);
+  const [historyExpanded, setHistoryExpanded] = useState(true);
   const formatDate = (iso: string) => {
     const d = new Date(iso);
     return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -62,27 +67,82 @@ export default function Sidebar({ sessions, currentId, isOpen, onToggle, onNewCh
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-2 py-2">
-        {sessions.length === 0 ? (
-          <p className="text-gray-400 text-xs px-3 py-4">No sessions yet</p>
-        ) : (
-          <div className="space-y-0.5">
-            {sessions.map((session) => (
-              <button
-                key={session.id}
-                onClick={() => onSelectSession(session.id)}
-                className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors ${
-                  session.id === currentId
-                    ? 'bg-gray-200 text-gray-900'
-                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                }`}
-              >
-                <div className="truncate font-medium text-gray-800">{session.title}</div>
-                <div className="text-xs text-gray-400 mt-0.5">{formatDate(session.createdAt)}</div>
-              </button>
-            ))}
-          </div>
-        )}
+      {/* Scrollable body containing both sections */}
+      <div className="flex-1 overflow-y-auto min-h-0">
+
+        {/* Cached papers section */}
+        <div className="border-b border-gray-200">
+          <button
+            onClick={() => setPapersExpanded((v) => !v)}
+            className="w-full flex items-center justify-between px-3 py-2.5 text-xs font-medium text-gray-500 hover:bg-gray-100 transition-colors"
+          >
+            <span className="flex items-center gap-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+              </svg>
+              Cached Papers ({cachedPmids.length})
+            </span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+              className={`transition-transform ${papersExpanded ? 'rotate-180' : ''}`}>
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </button>
+          {papersExpanded && (
+            <div className="px-2 pb-2 space-y-0.5">
+              {cachedPmids.map((pmid) => (
+                <button
+                  key={pmid}
+                  onClick={() => onSelectPaper(pmid)}
+                  className="w-full text-left px-3 py-1.5 rounded-lg text-xs font-mono text-gray-600 hover:bg-emerald-50 hover:text-emerald-800 transition-colors"
+                >
+                  PMID:{pmid}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Chat history section */}
+        <div>
+          <button
+            onClick={() => setHistoryExpanded((v) => !v)}
+            className="w-full flex items-center justify-between px-3 py-2.5 text-xs font-medium text-gray-500 hover:bg-gray-100 transition-colors"
+          >
+            <span className="flex items-center gap-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+              </svg>
+              Chat History
+            </span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+              className={`transition-transform ${historyExpanded ? 'rotate-180' : ''}`}>
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </button>
+          {historyExpanded && (
+            <div className="px-2 pb-2 space-y-0.5">
+              {sessions.length === 0 ? (
+                <p className="text-gray-400 text-xs px-3 py-4">No sessions yet</p>
+              ) : (
+                sessions.map((session) => (
+                  <button
+                    key={session.id}
+                    onClick={() => onSelectSession(session.id)}
+                    className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors ${
+                      session.id === currentId
+                        ? 'bg-gray-200 text-gray-900'
+                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                    }`}
+                  >
+                    <div className="truncate font-medium text-gray-800">{session.title}</div>
+                    <div className="text-xs text-gray-400 mt-0.5">{formatDate(session.createdAt)}</div>
+                  </button>
+                ))
+              )}
+            </div>
+          )}
+        </div>
+
       </div>
 
       <div className="p-3 border-t border-gray-200">

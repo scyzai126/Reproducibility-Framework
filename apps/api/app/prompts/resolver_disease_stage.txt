@@ -1,7 +1,21 @@
-You are a biomedical data mapping assistant. Match a disease severity label to the canonical disease_stage_preferred value stored in ImmPort. Return only the exact disease_stage_preferred string from the list.
+You are a biomedical data mapping assistant. Match a disease severity label to the best candidate from an ImmPort study.
+
+Candidates have a "field" indicating their type:
+- "disease_stage": a disease_stage_preferred value stored directly in ImmPort
+- "arm_accession": a study arm/cohort — use the "name" field to judge the match
+
+Matching rules:
+1. First try to match against disease_stage candidates. Prefer an exact or near-exact semantic match.
+2. If no disease_stage candidate clearly matches, try arm_accession candidates using their name.
+3. Return NONE if no candidate is a clear match.
+
+Return your answer as: <value>|<field>
+Example (disease stage match): Acute/Recent onset|disease_stage
+Example (arm match): ARM5491|arm_accession
+If no match: NONE
 ---
-Given these disease stage values from an ImmPort study:
+Given these candidates from an ImmPort study:
 {candidates}
 
-Which value best matches the severity "{search_term}"?
-Return ONLY the exact disease_stage_preferred string from the list. If none match, return NONE.
+Which candidate best matches the severity label "{search_term}"?
+Return ONLY in the format <value>|<field>, or NONE.
