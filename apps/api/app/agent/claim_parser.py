@@ -13,6 +13,11 @@ from app.config import settings
 from app.agent.jats_parser import MAX_PAPER_CHARS, _clean_text, parse_jats_xml
 
 
+class PaperNotAvailableError(Exception):
+    """Raised when a paper is not available as open-access XML from NCBI."""
+    pass
+
+
 def _find_repo_root() -> Path:
     for parent in Path(__file__).resolve().parents:
         if (parent / ".git").exists():
@@ -75,15 +80,48 @@ def _fetch_paper_content(url: str) -> tuple[str, str | None]:
 
     Returns (paper_text, pubmed_id).
     pubmed_id is parsed from <article-id pub-id-type="pmid"> in the XML response.
+    Raises PaperNotAvailableError if the paper is not available as open-access XML.
     """
     pmcid = _extract_pmcid(url)
     api_url = (
         f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
         f"?db=pmc&id={pmcid}&rettype=full&retmode=xml"
     )
-    resp = requests.get(api_url, timeout=30)
-    resp.raise_for_status()
+    try:
+        resp = requests.get(api_url, timeout=30)
+        resp.raise_for_status()
+    except requests.HTTPError as exc:
+        raise PaperNotAvailableError(
+            f"Paper {pmcid} is not available as open-access XML "
+            f"(HTTP {exc.response.status_code if exc.response is not None else 'error'}). "
+            "Please upload the PDF to continue."
+        ) from exc
+
     soup = BeautifulSoup(resp.text, "xml")
+
+    # NCBI returns HTTP 200 with an <ERROR> element for papers not in PMC open access
+    error_tag = soup.find("ERROR")
+    if error_tag:
+        raise PaperNotAvailableError(
+            f"Paper {pmcid} is not available in PubMed Central open access: "
+            f"{error_tag.get_text(strip=True)}. Please upload the PDF to continue."
+        )
+
+    # Some publishers allow PMC hosting but restrict bulk XML downloads.
+    # NCBI returns HTTP 200 with a comment and abstract-only XML in that case.
+    if "does not allow downloading" in resp.text or "does not allow bulk downloading" in resp.text:
+        raise PaperNotAvailableError(
+            f"Paper {pmcid} is available on the PMC website but the publisher restricts "
+            "bulk XML downloads. Please upload the PDF to continue."
+        )
+
+    # Detect abstract-only XML: article has no <body> element.
+    article = soup.find("article")
+    if article and not article.find("body"):
+        raise PaperNotAvailableError(
+            f"Paper {pmcid} returned abstract-only XML (no full text available via API). "
+            "Please upload the PDF to continue."
+        )
 
     # Extract PubMed ID from XML metadata
     pubmed_id: str | None = None
