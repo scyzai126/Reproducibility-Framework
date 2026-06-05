@@ -101,11 +101,14 @@ export interface AgentResponse {
   subject_results: SubjectResult[];
   // PDF-only path
   claims: ClaimResult[];
-  // Clarification request from backend
+  // Clarification request or pdf_upload_required from backend
   type?: string;
   question?: string;
+  pubmed_id?: string;
   // ImmPort field resolution completeness
   completeness?: CompletnessSummary;
+  // Multi-paper response: one entry per paper when a study maps to multiple papers
+  papers?: AgentResponse[];
 }
 
 export interface ChatMessage {

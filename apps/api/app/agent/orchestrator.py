@@ -10,7 +10,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.agent.assay_resolver import get_study_assay_methods
-from app.agent.claim_parser import fetch_paper_content_async, parse_paper_claims_from_text, parse_paper_claims_step1_only, parse_paper_claims_noimmport
+from app.agent.claim_parser import fetch_paper_content_async, parse_paper_claims_from_text, parse_paper_claims_step1_only, parse_paper_claims_noimmport, PaperNotAvailableError
 from app.agent.ncbi_utils import pmid_to_pmc_url, pmc_to_pmid
 from app.agent.description_analyzer import analyze_claims_batch, analyze_descriptions
 from app.agent.file_reader import read_file
@@ -928,10 +928,11 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
                         )
                 paper_url = await pmid_to_pmc_url(pmc_id)
                 if not paper_url:
-                    raise ValueError(
-                        f"PubMed ID {pmc_id} has no open-access PMC article. "
-                        "Please provide the full PMC URL instead."
-                    )
+                    return {
+                        "type": "pdf_upload_required",
+                        "study_accession": "",
+                        "pubmed_id": pmc_id,
+                    }
             if pmc_id and paper_url:
                 # pmc_id is the PMC numeric ID — resolve pubmed_id cheaply before fetching
                 resolved_pubmed_id = await pmc_to_pmid(pmc_id)
@@ -950,7 +951,19 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
                         )
 
                 # Cache miss — fetch full paper XML
-                fetched_paper_text, pubmed_id_from_paper = await fetch_paper_content_async(paper_url)
+                try:
+                    fetched_paper_text, pubmed_id_from_paper = await fetch_paper_content_async(paper_url)
+                except PaperNotAvailableError:
+                    fallback_pid = resolved_pubmed_id or pmc_id
+                    sdy_row = (await session.execute(
+                        text("SELECT study_accession FROM study_pubmed WHERE pubmed_id = :pid LIMIT 1"),
+                        {"pid": fallback_pid},
+                    )).fetchone()
+                    return {
+                        "type": "pdf_upload_required",
+                        "study_accession": sdy_row[0] if sdy_row else "",
+                        "pubmed_id": fallback_pid,
+                    }
                 pubmed_id = pubmed_id_from_paper or resolved_pubmed_id or pmc_id
                 row = (await session.execute(
                     text("SELECT study_accession FROM study_pubmed WHERE pubmed_id = :pid LIMIT 1"),
@@ -986,45 +999,69 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
                         session, question or None, log_sections
                     )
             else:
-                # Check for SDY accession → look up pubmed_id → fetch paper → claim analysis
+                # Check for SDY accession → look up all pubmed_ids → fetch each paper → claim analysis
                 sdy_match = re.search(r"\bSDY\d+\b", file_content, re.I)
                 if sdy_match:
                     sdy_accession = sdy_match.group(0).upper()
                     sdy_question = re.sub(r"\bSDY\d+\b", "", file_content, flags=re.I).strip()
-                    sdy_row = (await session.execute(
-                        text("SELECT pubmed_id FROM study_pubmed WHERE study_accession = :sa LIMIT 1"),
+                    sdy_rows = (await session.execute(
+                        text("SELECT pubmed_id FROM study_pubmed WHERE study_accession = :sa"),
                         {"sa": sdy_accession},
-                    )).fetchone()
-                    if sdy_row:
-                        sdy_pubmed_id = str(sdy_row[0])
+                    )).fetchall()
+                    if sdy_rows:
+                        sdy_pubmed_ids = [str(r[0]) for r in sdy_rows]
+                        paper_results = []
 
-                        # Check cache before any network calls
-                        if _load_disk_cache(sdy_pubmed_id, "groups") is not None:
-                            log_sections.append(
-                                f"--- Step 2: SDY cache hit ---\n"
+                        for sdy_pubmed_id in sdy_pubmed_ids:
+                            paper_log = list(log_sections)
+
+                            # Check cache before any network calls
+                            if _load_disk_cache(sdy_pubmed_id, "groups") is not None:
+                                paper_log.append(
+                                    f"--- Step 2: SDY cache hit ---\n"
+                                    f"study_accession: {sdy_accession} → pubmed_id: {sdy_pubmed_id}"
+                                )
+                                result = await _run_paper_pipeline(
+                                    "", sdy_pubmed_id, sdy_accession,
+                                    session, sdy_question or None, paper_log
+                                )
+                                result["pubmed_id"] = sdy_pubmed_id
+                                paper_results.append(result)
+                                continue
+
+                            sdy_paper_url = await pmid_to_pmc_url(sdy_pubmed_id)
+                            if not sdy_paper_url:
+                                paper_results.append({
+                                    "type": "pdf_upload_required",
+                                    "study_accession": sdy_accession,
+                                    "pubmed_id": sdy_pubmed_id,
+                                })
+                                continue
+                            try:
+                                sdy_paper_text, _ = await fetch_paper_content_async(sdy_paper_url)
+                            except PaperNotAvailableError:
+                                paper_results.append({
+                                    "type": "pdf_upload_required",
+                                    "study_accession": sdy_accession,
+                                    "pubmed_id": sdy_pubmed_id,
+                                })
+                                continue
+
+                            paper_log.append(
+                                f"--- Step 2: SDY → Paper ---\n"
                                 f"study_accession: {sdy_accession} → pubmed_id: {sdy_pubmed_id}"
                             )
-                            return await _run_paper_pipeline(
-                                "", sdy_pubmed_id, sdy_accession,
-                                session, sdy_question or None, log_sections
+                            result = await _run_paper_pipeline(
+                                sdy_paper_text, sdy_pubmed_id, sdy_accession,
+                                session, sdy_question or None, paper_log
                             )
+                            result["pubmed_id"] = sdy_pubmed_id
+                            paper_results.append(result)
 
-                        sdy_paper_url = await pmid_to_pmc_url(sdy_pubmed_id)
-                        if not sdy_paper_url:
-                            raise ValueError(
-                                f"Study {sdy_accession} (PubMed ID: {sdy_pubmed_id}) has no open-access PMC article. "
-                                "Cannot fetch paper for claim analysis."
-                            )
-                        sdy_paper_text, _ = await fetch_paper_content_async(sdy_paper_url)
-
-                        log_sections.append(
-                            f"--- Step 2: SDY → Paper ---\n"
-                            f"study_accession: {sdy_accession} → pubmed_id: {sdy_pubmed_id}"
-                        )
-                        return await _run_paper_pipeline(
-                            sdy_paper_text, sdy_pubmed_id, sdy_accession,
-                            session, sdy_question or None, log_sections
-                        )
+                        # Single paper → return as before; multiple → return list
+                        if len(paper_results) == 1:
+                            return paper_results[0]
+                        return {"type": "multi_paper", "papers": paper_results}
                     else:
                         raise ValueError(
                             f"Study {sdy_accession} was not found in ImmPort. "

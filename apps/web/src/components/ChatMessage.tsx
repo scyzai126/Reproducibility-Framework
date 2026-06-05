@@ -100,6 +100,53 @@ function AssistantMessage({ message }: Props) {
           </div>
         ) : message.result?.type === 'clarification' ? (
           <p className="text-sm text-gray-700 whitespace-pre-line">{message.result.question}</p>
+        ) : message.result?.type === 'pdf_upload_required' ? (
+          <div className="rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 space-y-2">
+            <div className="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 text-blue-500">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/>
+              </svg>
+              <p className="text-sm font-medium text-blue-700">PDF upload required</p>
+            </div>
+            <p className="text-xs text-blue-600 leading-relaxed">
+              This paper is not available as open-access XML in PubMed Central.
+              Please upload the PDF using the paperclip button below to continue analysis.
+            </p>
+            {message.result.pubmed_id && (
+              <p className="text-xs text-blue-500 font-mono bg-blue-100 rounded px-2 py-1 inline-block">
+                Rename the file to: PMID{message.result.pubmed_id}.pdf
+              </p>
+            )}
+            {message.result.study_accession && (
+              <p className="text-xs text-blue-400">
+                Study: <span className="font-mono">{message.result.study_accession}</span>
+              </p>
+            )}
+          </div>
+        ) : message.result?.type === 'multi_paper' ? (
+          <div className="space-y-4">
+            <p className="text-xs text-gray-500 font-medium">
+              {message.result.papers?.length} papers found for this study
+            </p>
+            {message.result.papers?.map((paper, i) => (
+              <div key={i} className="border border-gray-200 rounded-xl overflow-hidden">
+                <div className="bg-gray-50 px-4 py-2 border-b border-gray-200">
+                  <span className="text-xs font-semibold text-gray-600">
+                    Paper {i + 1}{paper.pubmed_id ? ` — PMID ${paper.pubmed_id}` : ''}
+                  </span>
+                </div>
+                <div className="p-3">
+                  {paper.type === 'pdf_upload_required' ? (
+                    <p className="text-xs text-blue-600">
+                      PDF upload required — rename to PMID{paper.pubmed_id}.pdf
+                    </p>
+                  ) : (
+                    <ResultsDisplay result={paper} />
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
         ) : message.result ? (
           <ResultsDisplay result={message.result} />
         ) : null}
