@@ -1,6 +1,34 @@
 import pytest
 
-from app.agent.query_builder import build_subject_queries
+from app.agent.query_builder import build_subject_queries, _split_multi_tissue, _apply_placement_result
+
+
+# --- _split_multi_tissue tests ---
+
+
+def test_split_single_tissue():
+    assert _split_multi_tissue("PBMC") == ["PBMC"]
+
+
+def test_split_comma():
+    assert _split_multi_tissue("PBMC, bone marrow") == ["PBMC", "bone marrow"]
+
+
+def test_split_semicolon():
+    assert _split_multi_tissue("PBMC; T cells") == ["PBMC", "T cells"]
+
+
+def test_split_and():
+    assert _split_multi_tissue("PBMC and bone marrow") == ["PBMC", "bone marrow"]
+
+
+def test_split_mixed_and_trailing_and():
+    assert _split_multi_tissue("PBMC, bone marrow, and liver") == ["PBMC", "bone marrow", "liver"]
+
+
+def test_split_empty():
+    assert _split_multi_tissue("") == []
+    assert _split_multi_tissue(None) == []
 
 
 # --- build_subject_queries tests ---
@@ -233,3 +261,118 @@ def test_build_query_no_experiment_filter_when_missing():
 
     assert "experiment_accession" not in params
     assert "sdv.`condition` = :disease" in sql
+
+
+# --- Multi-cohort arm resolution tests ---
+
+
+def test_build_query_multi_arm_in_clause():
+    """arm_accessions list → IN (:arm_0, :arm_1) clause; no eq filter alongside it."""
+    result = build_subject_queries([{
+        "group_id": 1,
+        "study_accession": "SDY1",
+        "arm_accessions": ["ARM1", "ARM2"],
+        "experiment_accession": "EXP1",
+    }])
+    sql = result[0]["sql"]
+    params = result[0]["params"]
+
+    assert "sdv.arm_accession IN (:arm_0, :arm_1)" in sql
+    assert params["arm_0"] == "ARM1"
+    assert params["arm_1"] == "ARM2"
+    assert "arm_accession = :arm_accession" not in sql
+
+
+def test_build_query_single_arm_still_eq():
+    """Single arm_accession still uses = not IN."""
+    result = build_subject_queries([{
+        "group_id": 1,
+        "study_accession": "SDY1",
+        "arm_accession": "ARM1",
+        "experiment_accession": "EXP1",
+    }])
+    sql = result[0]["sql"]
+
+    assert "sdv.arm_accession = :arm_accession" in sql
+    assert " IN " not in sql
+
+
+# --- Placement dict / study_time_collected tests ---
+
+
+def test_build_query_study_time_collected_range():
+    result = build_subject_queries([{
+        "group_id": 1,
+        "study_accession": "SDY1",
+        "experiment_accession": "EXP1",
+        "bio_time_min": 0.0,
+        "bio_time_max": 7.0,
+    }])
+    sql, params = result[0]["sql"], result[0]["params"]
+    assert "study_time_collected >= :bio_time_min" in sql
+    assert "study_time_collected <= :bio_time_max" in sql
+    assert params["bio_time_min"] == 0.0
+    assert params["bio_time_max"] == 7.0
+
+
+def test_build_query_study_time_collected_min_only():
+    result = build_subject_queries([{
+        "group_id": 1,
+        "study_accession": "SDY1",
+        "experiment_accession": "EXP1",
+        "bio_time_min": 3.0,
+    }])
+    sql = result[0]["sql"]
+    assert "study_time_collected >= :bio_time_min" in sql
+    assert "bio_time_max" not in sql
+
+
+def test_apply_placement_result_disease_stage():
+    group, log = {}, {}
+    pv = _apply_placement_result(group, log, {"field": "disease_stage", "value": "Severe", "method": "SQL"})
+    assert pv == []
+    assert group["disease_stage"] == "Severe"
+    assert group["disease"] == ""
+    assert log["disease_stage"] == {"value": "Severe", "method": "SQL"}
+
+
+def test_apply_placement_result_disease():
+    group, log = {}, {}
+    pv = _apply_placement_result(group, log, {"field": "disease", "value": "COVID-19", "method": "SQL"})
+    assert pv == []
+    assert group["disease"] == "COVID-19"
+
+
+def test_apply_placement_result_planned_visit():
+    group, log = {}, {}
+    pv = _apply_placement_result(group, log, {
+        "field": "planned_visit_accession", "value": ["PV1", "PV2"], "method": "range",
+    })
+    assert pv == [("PV1", "range"), ("PV2", "range")]
+    assert log["planned_visit"]["accessions"] == ["PV1", "PV2"]
+    assert "planned_visit_accession" not in group
+
+
+def test_apply_placement_result_time_collected():
+    group, log = {}, {}
+    _apply_placement_result(group, log, {
+        "field": "study_time_collected", "value": {"min": 0.0, "max": 7.0}, "method": "range",
+    })
+    assert group["bio_time_min"] == 0.0
+    assert group["bio_time_max"] == 7.0
+    assert log["study_time_collected"]["range"] == {"min": 0.0, "max": 7.0}
+
+
+def test_apply_placement_result_arm():
+    group, log = {"disease_stage": "x", "disease": "y"}, {}
+    _apply_placement_result(group, log, {"field": "arm_accession", "value": "ARM1", "method": "SQL"})
+    assert group["arm_accession"] == "ARM1"
+    assert "disease_stage" not in group
+    assert "disease" not in group
+
+
+def test_apply_placement_result_sdv_scan():
+    group, log = {}, {}
+    _apply_placement_result(group, log, {"field": "exposure_process", "value": "Vaccination", "method": "scan"})
+    assert group["exposure_process"] == "Vaccination"
+    assert log["exposure_process"] == {"value": "Vaccination", "method": "scan"}

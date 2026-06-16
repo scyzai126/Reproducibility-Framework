@@ -31,6 +31,20 @@ _MARKER_RE = re.compile(
 )
 _GREEK_NORMALIZE = str.maketrans({"γ": "g", "Γ": "g", "α": "a", "Α": "a", "β": "b", "Β": "b"})
 
+_MULTI_TISSUE_SEP = re.compile(r'\s*(?:,|;|\band\b)\s*', re.IGNORECASE)
+
+
+def _split_multi_tissue(tissue_type: str) -> list[str]:
+    """Split a tissue_type string on commas, semicolons, or 'and'.
+
+    Returns a list of stripped, non-empty tokens. Returns a 1-element list
+    when no separator is found so callers can always iterate uniformly.
+    """
+    if not tissue_type:
+        return []
+    tokens = [t.strip() for t in _MULTI_TISSUE_SEP.split(tissue_type)]
+    return [t for t in tokens if t]
+
 
 def _extract_functional_marker(cell_type: str) -> tuple[str, str]:
     """Strip a functional marker (e.g. IFNγ-) from a cell type string.
@@ -824,6 +838,241 @@ async def resolve_disease_stage(
     return None
 
 
+# Categorical SDV columns tried when disease_stage doesn't match its primary location.
+_SDV_SCAN_COLS: list[str] = ["exposure_process"]
+
+
+async def resolve_disease_stage_placement(
+    session: AsyncSession, condition: str, study_accession: str,
+    claim_text: str | None = None,
+) -> dict | None:
+    """Resolve a severity/condition label → placement dict saying where it belongs.
+
+    Tries five strategies in order; returns the first hit.
+
+    Step 1  LIKE on disease_stage_preferred          → field "disease_stage"
+    Step 2  LIKE on subject_data_view.condition       → field "disease"
+    Step 3  planned_visit name LIKE / LLM             → field "planned_visit_accession"
+    Step 4  arm_or_cohort name LIKE (single hit)      → field "arm_accession"
+    Step 5  Broad SDV column scan (_SDV_SCAN_COLS)    → field <col>
+    LLM fallback over combined disease_stage + arm candidates (last resort)
+    """
+    if not condition or not study_accession:
+        return None
+
+    pattern = f"%{condition}%"
+
+    # Step 1: disease_stage_preferred
+    result = await session.execute(
+        text(
+            "SELECT DISTINCT disease_stage_preferred FROM subject_data_view "
+            "WHERE study_accession = :sa "
+            "AND disease_stage_preferred LIKE :pattern AND disease_stage_preferred IS NOT NULL"
+        ),
+        {"sa": study_accession, "pattern": pattern},
+    )
+    rows = [r[0] for r in result.fetchall() if r[0]]
+    if len(rows) == 1:
+        logger.info("DS-placement step1 (disease_stage_preferred): %r → %r", condition, rows[0])
+        return {"field": "disease_stage", "value": rows[0], "method": "SQL"}
+
+    # Step 2: condition column
+    result = await session.execute(
+        text(
+            "SELECT DISTINCT `condition` FROM subject_data_view "
+            "WHERE study_accession = :sa "
+            "AND `condition` LIKE :pattern AND `condition` IS NOT NULL"
+        ),
+        {"sa": study_accession, "pattern": pattern},
+    )
+    rows = [r[0] for r in result.fetchall() if r[0]]
+    if len(rows) == 1:
+        logger.info("DS-placement step2 (condition): %r → %r", condition, rows[0])
+        return {"field": "disease", "value": rows[0], "method": "SQL"}
+
+    # Step 3: planned_visit name
+    pv_result = await resolve_planned_visit_accession(session, condition, study_accession, claim_text=claim_text)
+    if pv_result:
+        pv_accs = [acc for acc, _ in pv_result]
+        method = pv_result[0][1]
+        logger.info("DS-placement step3 (planned_visit): %r → %s", condition, pv_accs)
+        return {"field": "planned_visit_accession", "value": pv_accs, "method": method}
+
+    # Step 4: arm name LIKE (single hit)
+    arm_result = await session.execute(
+        text(
+            "SELECT arm_accession, name FROM arm_or_cohort "
+            "WHERE study_accession = :sa "
+            "AND (name LIKE :pattern OR description LIKE :pattern)"
+        ),
+        {"sa": study_accession, "pattern": pattern},
+    )
+    arm_rows = [dict(zip(arm_result.keys(), row)) for row in arm_result.fetchall()]
+    if len(arm_rows) == 1:
+        acc = arm_rows[0]["arm_accession"]
+        logger.info("DS-placement step4 (arm name): %r → %s (%s)", condition, acc, arm_rows[0]["name"])
+        return {"field": "arm_accession", "value": acc, "method": "SQL"}
+
+    # Step 5: broad SDV scan
+    for col in _SDV_SCAN_COLS:
+        result = await session.execute(
+            text(
+                f"SELECT DISTINCT {col} FROM subject_data_view "
+                f"WHERE study_accession = :sa AND {col} LIKE :pattern AND {col} IS NOT NULL"
+            ),
+            {"sa": study_accession, "pattern": pattern},
+        )
+        rows = [r[0] for r in result.fetchall() if r[0]]
+        if len(rows) == 1:
+            logger.info("DS-placement step5 (scan %s): %r → %r", col, condition, rows[0])
+            return {"field": col, "value": rows[0], "method": "scan"}
+
+    # LLM fallback over combined disease_stage + arm candidates
+    ds_result = await session.execute(
+        text(
+            "SELECT DISTINCT disease_stage_preferred FROM subject_data_view "
+            "WHERE study_accession = :sa AND disease_stage_preferred IS NOT NULL"
+        ),
+        {"sa": study_accession},
+    )
+    ds_candidates = [{"value": r[0], "field": "disease_stage"} for r in ds_result.fetchall() if r[0]]
+    all_arms = await session.execute(
+        text("SELECT arm_accession, name FROM arm_or_cohort WHERE study_accession = :sa"),
+        {"sa": study_accession},
+    )
+    arm_candidates = [{"value": r[0], "name": r[1], "field": "arm_accession"} for r in all_arms.fetchall() if r[0]]
+    combined = ds_candidates + arm_candidates
+    if not combined:
+        logger.warning("DS-placement: no candidates for study %s", study_accession)
+        return None
+
+    system_prompt, user_template = _load_resolver_prompt("disease_stage")
+    prompt = user_template.format(candidates=json.dumps(combined, indent=2), search_term=condition)
+    if claim_text:
+        prompt += f"\n\nOriginal claim for context:\n{claim_text}"
+    client = _get_openai_client()
+    response = await client.chat.completions.create(
+        model=settings.OPENAI_MODEL,
+        messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": prompt}],
+        temperature=0,
+    )
+    answer = response.choices[0].message.content.strip()
+    logger.info("DS-placement LLM: %r → %r", condition, answer)
+    if answer.upper() == "NONE" or "|" not in answer:
+        return None
+    llm_value, _, llm_field = answer.partition("|")
+    llm_value, llm_field = llm_value.strip(), llm_field.strip()
+    if llm_field not in ("disease_stage", "arm_accession"):
+        logger.warning("DS-placement LLM returned unexpected field %r", llm_field)
+        return None
+    valid_ids = {c["value"] for c in combined}
+    resolved = llm_value if llm_value in valid_ids else next((v for v in valid_ids if v in answer), None)
+    if resolved:
+        return {"field": llm_field, "value": resolved, "method": "LLM"}
+    return None
+
+
+async def resolve_time_point_placement(
+    session: AsyncSession, time_point: str, study_accession: str,
+    claim_text: str | None = None,
+) -> dict | None:
+    """Resolve a time_point string → placement dict.
+
+    Step 1  Existing planned_visit resolution (range + LIKE + LLM)
+               → field "planned_visit_accession", value list[str]
+    Step 2  biosample.study_time_collected range fallback
+               → field "study_time_collected", value {"min": float, "max": float}
+    Step 3  arm_accession fallback — LIKE on arm_or_cohort name
+               → field "arm_accession", value str
+    """
+    if not time_point or not study_accession:
+        return None
+
+    # Step 1: existing planned_visit logic
+    pv_result = await resolve_planned_visit_accession(session, time_point, study_accession, claim_text=claim_text)
+    if pv_result:
+        pv_accs = [acc for acc, _ in pv_result]
+        method = pv_result[0][1]
+        logger.info("TP-placement step1 (planned_visit): %r → %s", time_point, pv_accs)
+        return {"field": "planned_visit_accession", "value": pv_accs, "method": method}
+
+    # Step 2: study_time_collected range on biosample
+    day_range = _parse_day_range(time_point)
+    if day_range:
+        low, high = day_range
+        exists = await session.execute(
+            text(
+                "SELECT 1 FROM biosample "
+                "WHERE study_accession = :sa "
+                "AND study_time_collected >= :low AND study_time_collected <= :high LIMIT 1"
+            ),
+            {"sa": study_accession, "low": low, "high": high},
+        )
+        if exists.fetchone():
+            logger.info(
+                "TP-placement step2 (study_time_collected): %r → [%g, %g]", time_point, low, high
+            )
+            return {"field": "study_time_collected", "value": {"min": low, "max": high}, "method": "range"}
+
+    # Step 3: arm_accession fallback
+    pattern = f"%{time_point}%"
+    arm_result = await session.execute(
+        text(
+            "SELECT arm_accession, name FROM arm_or_cohort "
+            "WHERE study_accession = :sa AND name LIKE :pattern"
+        ),
+        {"sa": study_accession, "pattern": pattern},
+    )
+    arm_rows = [dict(zip(arm_result.keys(), r)) for r in arm_result.fetchall()]
+    if len(arm_rows) == 1:
+        acc = arm_rows[0]["arm_accession"]
+        logger.info("TP-placement step3 (arm name): %r → %s", time_point, acc)
+        return {"field": "arm_accession", "value": acc, "method": "arm_name"}
+
+    return None
+
+
+def _apply_placement_result(
+    group: dict, resolution_log: dict, placement: dict,
+) -> list[tuple[str, str]]:
+    """Route a placement dict to the right group field.
+
+    Returns a list of (pv_accession, method) tuples when the placement targets
+    planned_visit_accession (to drive query fan-out); empty list otherwise.
+    """
+    field = placement["field"]
+    value = placement["value"]
+    method = placement["method"]
+
+    if field == "planned_visit_accession":
+        pv_list = [(acc, method) for acc in value]
+        resolution_log["planned_visit"] = {"accessions": value, "method": method}
+        return pv_list
+
+    if field == "arm_accession":
+        group["arm_accession"] = value
+        group.pop("disease_stage", None)
+        group.pop("disease", None)
+        resolution_log["arm"] = {"accession": value, "method": method}
+    elif field == "disease_stage":
+        group["disease_stage"] = value
+        group["disease"] = ""
+        resolution_log["disease_stage"] = {"value": value, "method": method}
+    elif field == "disease":
+        group["disease"] = value
+        resolution_log["disease"] = {"value": value, "method": method}
+    elif field == "study_time_collected":
+        group["bio_time_min"] = value["min"]
+        group["bio_time_max"] = value["max"]
+        resolution_log["study_time_collected"] = {"range": value, "method": method}
+    else:
+        # Broad SDV scan result (e.g. exposure_process)
+        group[field] = value
+        resolution_log[field] = {"value": value, "method": method}
+
+    return []
+
+
 async def fetch_planned_visits(session: AsyncSession, study_accession: str) -> list[dict]:
     """Fetch all planned_visit rows for a study from the DB."""
     result = await session.execute(
@@ -879,6 +1128,15 @@ def _build_query(group: dict) -> tuple[str, dict]:
         where_clauses.append("sdv.study_accession = :study_accession")
         params["study_accession"] = study_accession
 
+    # Multi-arm: arm_accessions (list) → IN (...) clause.
+    # Single arm stays in VIEW_FILTERS as an eq filter below.
+    arm_accessions = group.get("arm_accessions") or []
+    if arm_accessions:
+        placeholders = ", ".join(f":arm_{i}" for i in range(len(arm_accessions)))
+        where_clauses.append(f"sdv.arm_accession IN ({placeholders})")
+        for i, acc in enumerate(arm_accessions):
+            params[f"arm_{i}"] = acc
+
     # remaining filters from the registry
     for spec in VIEW_FILTERS:
         value = group.get(spec["field"]) or ""
@@ -927,6 +1185,23 @@ def _build_query(group: dict) -> tuple[str, dict]:
             "AND b.description LIKE :bio_marker)"
         )
         params["bio_marker"] = f"%{bio_marker}%"
+
+    # study_time_collected range — biosample EXISTS subquery
+    bio_time_min = group.get("bio_time_min")
+    bio_time_max = group.get("bio_time_max")
+    if bio_time_min is not None or bio_time_max is not None:
+        time_conds = []
+        if bio_time_min is not None:
+            time_conds.append("b.study_time_collected >= :bio_time_min")
+            params["bio_time_min"] = bio_time_min
+        if bio_time_max is not None:
+            time_conds.append("b.study_time_collected <= :bio_time_max")
+            params["bio_time_max"] = bio_time_max
+        where_clauses.append(
+            "EXISTS (SELECT 1 FROM biosample b "
+            "WHERE b.biosample_accession = sdv.biosample_accession "
+            f"AND {' AND '.join(time_conds)})"
+        )
 
     sql = (
         "SELECT DISTINCT\n"
@@ -1234,11 +1509,36 @@ async def resolve_and_build_queries(
         age          = group.get("age")
         comparison   = group.get("comparison") or []
 
+        # Multi-tissue fan-out: split "PBMC, bone marrow" → one sub-group per token.
+        # Sub-groups share the same group_id so _execute_all_queries unions their subjects.
+        tissue_tokens = _split_multi_tissue(tissue_type)
+        if len(tissue_tokens) > 1:
+            logger.info("Group %s: multi-tissue fan-out → %s", group_id, tissue_tokens)
+            sub_groups = []
+            for token in tissue_tokens:
+                g = dict(group)
+                g["tissue_type"] = token
+                if time_point:
+                    g["time_point"] = time_point
+                sub_groups.append(g)
+            nested = await asyncio.gather(*[_resolve_group_cached(g) for g in sub_groups])
+            return [item for sub in nested for item in sub]
+
         async def _arm():
             if not (cohort and study_accession):
                 return None
-            async with session_factory() as s:
-                return await resolve_arm_accession(s, cohort, study_accession, claim_text=claim_text)
+            tokens = _split_multi_tissue(cohort)
+            if len(tokens) <= 1:
+                async with session_factory() as s:
+                    return await resolve_arm_accession(s, cohort, study_accession, claim_text=claim_text)
+            # Multi-cohort: resolve each token independently in parallel.
+            # Returns list[tuple] so the caller can distinguish from a single-arm (acc, method) tuple.
+            async def _resolve_one(token: str):
+                async with session_factory() as s:
+                    return await resolve_arm_accession(s, token, study_accession, claim_text=claim_text)
+            results = await asyncio.gather(*[_resolve_one(t) for t in tokens])
+            resolved = [r for r in results if r]
+            return resolved if resolved else None
 
         async def _exp():
             if not (assay_method and study_accession):
@@ -1249,16 +1549,11 @@ async def resolve_and_build_queries(
         async def _cond():
             if study_design == "longitudinal" or not study_accession:
                 return None
+            search_term = disease_stage or disease
+            if not search_term:
+                return None
             async with session_factory() as s:
-                if study_design == "severity" and disease_stage:
-                    return await resolve_disease_stage(s, disease_stage, study_accession, claim_text=claim_text)
-                if disease:
-                    result = await resolve_condition(s, disease, study_accession, claim_text=claim_text)
-                    if result is None:
-                        return None
-                    val, method = result
-                    return (val, method, "disease")
-            return None
+                return await resolve_disease_stage_placement(s, search_term, study_accession, claim_text=claim_text)
 
         async def _tissue():
             if not (study_accession and (tissue_type or cell_type)):
@@ -1278,12 +1573,12 @@ async def resolve_and_build_queries(
             if not (time_point and study_accession):
                 return None
             async with session_factory() as s:
-                return await resolve_planned_visit_accession(s, time_point, study_accession, claim_text=claim_text)
+                return await resolve_time_point_placement(s, time_point, study_accession, claim_text=claim_text)
 
         # Use cached tasks for arm, experiment, condition, tissue (commonly shared across groups)
         arm_key  = ("arm",  cohort)
         exp_key  = ("exp",  assay_method)
-        cond_key = ("cond", disease_stage if study_design == "severity" else disease, study_design)
+        cond_key = ("cond", disease_stage or disease, study_design)
         tis_key  = ("tis",  tissue_type, cell_type)
         pv_key   = ("pv",   time_point, study_design)
 
@@ -1344,9 +1639,26 @@ async def resolve_and_build_queries(
         resolution_log["experiment"] = {"accession": exp_acc, "method": method, "assay_method": assay_method}
 
         if arm_result:
-            arm_acc, method = arm_result
-            group["arm_accession"] = arm_acc
-            resolution_log["arm"] = {"accession": arm_acc, "method": method}
+            if isinstance(arm_result, list):
+                # Multi-cohort: list of (acc, method) tuples, one per resolved token
+                if len(arm_result) >= 2:
+                    group["arm_accessions"] = [acc for acc, _ in arm_result]
+                    resolution_log["arm"] = {
+                        "accessions": group["arm_accessions"],
+                        "method": arm_result[0][1],
+                    }
+                    logger.info(
+                        "Group %s: multi-cohort resolved %d arms → %s",
+                        group_id, len(arm_result), group["arm_accessions"],
+                    )
+                else:
+                    arm_acc, method = arm_result[0]
+                    group["arm_accession"] = arm_acc
+                    resolution_log["arm"] = {"accession": arm_acc, "method": method}
+            else:
+                arm_acc, method = arm_result
+                group["arm_accession"] = arm_acc
+                resolution_log["arm"] = {"accession": arm_acc, "method": method}
         elif cohort and study_accession:
             arm_candidates = await _fetch_candidates(
                 "arm_or_cohort", "arm_accession, name, description"
@@ -1359,36 +1671,19 @@ async def resolve_and_build_queries(
                 "immport_candidates": arm_candidates,
             })
 
+        extra_pv_from_cond: list[tuple[str, str]] = []
         if cond_result:
-            canonical, method, field = cond_result
-            if field == "arm_accession":
-                group["arm_accession"] = canonical
-                group["disease_stage"] = ""
-                group["disease"] = ""
-                resolution_log["arm"] = {"accession": canonical, "method": method}
-            elif field == "disease_stage":
-                group["disease_stage"] = canonical
-                group["disease"] = ""
-                resolution_log["disease_stage"] = {"value": canonical, "method": method}
-            else:
-                group["disease"] = canonical
-                resolution_log["disease"] = {"value": canonical, "method": method}
+            extra_pv_from_cond = _apply_placement_result(group, resolution_log, cond_result)
         else:
             group["disease"] = ""
             group["disease_stage"] = ""  # clear so the unresolved value is never used as a literal exact-match filter
             if study_design != "longitudinal" and study_accession:
-                if disease_stage:
+                search_term = disease_stage or disease
+                if search_term:
                     resolution_failures.append({
-                        "field": "disease_stage",
-                        "original_value": disease_stage,
-                        "tried": "SQL LIKE on subject_data_view(disease_stage_preferred), then SQL LIKE on arm_or_cohort(name, description), then LLM fallback",
-                        "result": "not_resolved",
-                    })
-                elif disease:
-                    resolution_failures.append({
-                        "field": "disease",
-                        "original_value": disease,
-                        "tried": "SQL LIKE on subject_data_view(condition), then LLM fallback",
+                        "field": "disease_stage" if disease_stage else "disease",
+                        "original_value": search_term,
+                        "tried": "DS-placement: disease_stage_preferred, condition, planned_visit, arm name, SDV scan, LLM",
                         "result": "not_resolved",
                     })
 
@@ -1416,20 +1711,21 @@ async def resolve_and_build_queries(
             group["bio_description_marker"] = ""
 
         if pv_result:
-            pv_accessions = pv_result  # list[tuple[str, str]]
-            resolution_log["planned_visit"] = {
-                "accessions": [a for a, _ in pv_accessions],
-                "method": pv_accessions[0][1],
-            }
+            pv_accessions = _apply_placement_result(group, resolution_log, pv_result)
         else:
             pv_accessions = []
             if time_point and study_accession:
                 resolution_failures.append({
                     "field": "time_point",
                     "original_value": time_point,
-                    "tried": "range parse (Xdays<time<Ydays), then SQL LIKE on planned_visit(name), then LLM fallback",
+                    "tried": "TP-placement: planned_visit (range+LIKE+LLM), study_time_collected range, arm name",
                     "result": "not_resolved",
                 })
+
+        # Merge any PVs produced by cond resolution (disease_stage drifted into time_point slot)
+        if extra_pv_from_cond:
+            seen_pv = {acc for acc, _ in pv_accessions}
+            pv_accessions += [(a, m) for a, m in extra_pv_from_cond if a not in seen_pv]
 
         age_min, age_max = _parse_age_range(age)
         if age_min is not None:
