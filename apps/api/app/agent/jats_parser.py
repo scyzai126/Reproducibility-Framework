@@ -7,9 +7,127 @@ from lxml import etree
 
 MAX_PAPER_CHARS = 120000
 
+_EXCLUDED_CONTAINER_TAGS = {"ref-list", "supplementary-material"}
+_EXCLUDED_EXACT_SECTION_LABELS = {
+    "access options",
+    "acknowledgement",
+    "acknowledgements",
+    "acknowledgment",
+    "acknowledgments",
+    "affiliations",
+    "article metrics",
+    "author contributions",
+    "author contribution statement",
+    "authors contributions",
+    "background",
+    "bibliography",
+    "citation",
+    "citation list",
+    "citations",
+    "code availability",
+    "competing interest",
+    "competing interests",
+    "competing financial interests",
+    "conclusion",
+    "conclusions",
+    "concluding remarks",
+    "conflict of interest",
+    "conflicts of interest",
+    "consent for publication",
+    "consent to participate",
+    "contributions",
+    "correspondence",
+    "correspondence and requests for materials",
+    "corresponding author",
+    "data and materials availability",
+    "data availability",
+    "data sharing statement",
+    "declaration of interests",
+    "disclosure statement",
+    "discussion",
+    "discussion and conclusions",
+    "discussions",
+    "endnotes",
+    "ethical approval",
+    "introduction",
+    "intro",
+    "ethics approval",
+    "ethics declarations",
+    "footnotes",
+    "financial support",
+    "funding",
+    "funding information",
+    "grant support",
+    "literature cited",
+    "metrics",
+    "publisher note",
+    "publisher notes",
+    "publisher s note",
+    "reference",
+    "reference list",
+    "references",
+    "similar articles",
+    "software availability",
+    "sources",
+    "summary and conclusions",
+    "supplemental information",
+    "supplementary material",
+    "supplementary materials",
+    "supplementary information",
+    "supplementary data",
+    "supporting information",
+    "works cited",
+}
+_EXCLUDED_SECTION_PHRASES = {
+    "additional file",
+    "additional information",
+    "author contribution",
+    "authors contribution",
+    "author information",
+    "availability of code",
+    "availability of data",
+    "availability of data and materials",
+    "cite this article",
+    "competing financial interests",
+    "correspondence and requests",
+    "declaration of competing interest",
+    "declaration of interests",
+    "declarations of interest",
+    "ethics declarations",
+    "list of references",
+    "notes and references",
+    "publisher s note",
+    "rights and permissions",
+}
+
 
 def _clean_text(text: str) -> str:
     return re.sub(r"\s+", " ", text or "").strip()
+
+
+def _normalize_label(text: str) -> str:
+    return re.sub(r"[^a-z0-9]+", " ", _clean_text(text).lower()).strip()
+
+
+def _is_excluded_section_label(text: str) -> bool:
+    label = _normalize_label(text)
+    if not label:
+        return False
+    if "result" in label and "discussion" in label:
+        return False
+    if label in _EXCLUDED_EXACT_SECTION_LABELS:
+        return True
+    if "supplementary" in label or "supplemental" in label or "supporting information" in label:
+        return True
+    if label.startswith(("discussion", "conclusion", "references", "introduction")):
+        return True
+    if "data" in label and "availability" in label:
+        return True
+    if "code" in label and "availability" in label:
+        return True
+    if label.startswith("additional file"):
+        return True
+    return any(phrase in label for phrase in _EXCLUDED_SECTION_PHRASES)
 
 
 def _strip_extended_data_refs(text: str) -> str:
@@ -19,12 +137,6 @@ def _strip_extended_data_refs(text: str) -> str:
     return re.sub(r"\s+", " ", text).strip()
 
 
-def _is_dedicated_section_header(title: str, canon: str) -> bool:
-    """True only when a title is a short standalone section label (e.g. 'Results',
-    'METHODS'), not a long descriptive sentence that merely contains a keyword
-    (e.g. 'COVID-19 results in functional impairment of blood myeloid cells')."""
-    return len((title or "").split()) <= 4 and _canonical_section(title) == canon
-
 
 def _canonical_section(title: str) -> Optional[str]:
     t = (title or "").strip().lower()
@@ -32,14 +144,14 @@ def _canonical_section(title: str) -> Optional[str]:
         return "abstract"
     if "introduction" in t or t == "background":
         return "introduction"
+    if "supplementary" in t or "supplemental" in t or "supporting information" in t:
+        return "supplementary"
     if "result" in t or "finding" in t:
         return "results"
     if "method" in t or "materials" in t or "procedure" in t or "experimental" in t or "study design" in t:
         return "methods"
     if "discussion" in t or "conclusion" in t:
         return "discussion"
-    if "supplementary" in t or "supplemental" in t or "supporting information" in t:
-        return "supplementary"
     if t in {"references", "reference", "bibliography", "literature cited",
              "cited literature", "works cited", "citations", "citation list",
              "reference list", "list of references", "sources",
@@ -93,6 +205,34 @@ def _nearest_ancestor(node, names: Union[str, set[str]]):
 
 def _has_ancestor(node, names: Union[str, set[str]]) -> bool:
     return _nearest_ancestor(node, names) is not None
+
+
+def _section_header(sec) -> str:
+    title_tag = _direct_child(sec, "title")
+    sec_title = _text_content(title_tag)
+    sec_type = sec.get("sec-type") or ""
+    return sec_title or sec_type or "Section"
+
+
+def _is_excluded_sec(sec) -> bool:
+    title_tag = _direct_child(sec, "title")
+    sec_title = _text_content(title_tag)
+    sec_type = sec.get("sec-type") or ""
+    return (
+        _is_excluded_section_label(sec_title)
+        or _is_excluded_section_label(sec_type)
+    )
+
+
+def _is_in_excluded_container(node) -> bool:
+    current = node
+    while current is not None:
+        if _is_named(current, _EXCLUDED_CONTAINER_TAGS):
+            return True
+        if _is_named(current, "sec") and _is_excluded_sec(current):
+            return True
+        current = current.getparent()
+    return False
 
 
 def _table_body_text(table_wrap) -> str:
@@ -197,14 +337,25 @@ def parse_jats_xml(xml_text: str) -> str:
             section_records.append((order, "abstract", "Abstract", "\n".join(para)))
             order += 1
 
-    # Walk all sections in document order across the entire paper.
-    body_sections: list = _descendants(root, "sec")
+    # Walk article body/back sections in document order. Abstract sections are
+    # handled above, so collecting from these containers avoids duplicating
+    # structured abstract subsections as regular body sections.
+    section_containers = _descendants(root, "body") + _descendants(root, "back")
+    body_sections = [
+        sec
+        for container in section_containers
+        for sec in _descendants(container, "sec")
+    ]
 
     for sec in body_sections:
-        title_tag = _direct_child(sec, "title")
-        sec_title = _text_content(title_tag)
+        if _has_ancestor(sec, "abstract"):
+            continue
+        if _is_in_excluded_container(sec):
+            continue
+
+        header = _section_header(sec)
+        sec_title = _text_content(_direct_child(sec, "title"))
         sec_type = sec.get("sec-type") or ""
-        header = sec_title or sec_type or "Section"
 
         # Determine canonical section type; if unrecognized, inherit from the
         # nearest ancestor <sec> so subsections of Results/Methods are included.
@@ -222,13 +373,8 @@ def parse_jats_xml(xml_text: str) -> str:
                     canon = anc_canon
                     break
                 ancestor = ancestor.getparent()
-        if canon is None and _nearest_ancestor(sec, "sec") is None:
-            # Some journals (notably Science) do not wrap main findings in a
-            # parent "Results" section; instead each result heading is a
-            # top-level body <sec> with generic sec-types like "subjects" or
-            # "other1". Treat these as Results unless the title matched a more
-            # specific canonical section above.
-            canon = "results"
+        if canon is None:
+            canon = "other"
 
         paragraphs: list[str] = []
         for p in _descendants(sec, "p"):
@@ -241,40 +387,18 @@ def parse_jats_xml(xml_text: str) -> str:
             if txt:
                 paragraphs.append(txt)
         if not paragraphs:
-            # Keep header-only entries for recognized sections so e.g. "Results"
-            # appears as a label even when all content lives in child subsections.
-            if canon in {"abstract", "results", "methods"}:
+            # Keep header-only entries so parent section labels are preserved
+            # when all content lives in child subsections.
+            if _direct_child(sec, "sec") is not None or canon in {"abstract", "results", "methods"}:
                 section_records.append((order, canon, str(header), ""))
                 order += 1
             continue
         section_records.append((order, canon, str(header), "\n".join(paragraphs)))
         order += 1
 
-    # Reorder: key narrative sections first, then all others by document order.
-    preferred = ["abstract", "introduction", "results", "methods", "discussion"]
-    ordered_sections: list[tuple[int, str, str, str]] = []
-    used: set[int] = set()
-    for key in preferred:
-        for rec in section_records:
-            if rec[1] == key:
-                ordered_sections.append(rec)
-                used.add(id(rec))
-    for rec in section_records:
-        if id(rec) not in used:
-            ordered_sections.append(rec)
-
     section_blocks: list[str] = []
-    seen_section_bodies: set[str] = set()
-    has_results = False
-    for _, canon, header, body in ordered_sections:
-        normalized = _clean_text(body)
-        if normalized in seen_section_bodies:
-            continue
-        if normalized:
-            seen_section_bodies.add(normalized)
+    for _, canon, header, body in section_records:
         section_blocks.append(f"## {header}\n{body}".rstrip())
-        if canon == "results":
-            has_results = True
 
     # ── Figures ──────────────────────────────────────────────────────────────
     fig_blocks: list[str] = []
@@ -293,6 +417,8 @@ def parse_jats_xml(xml_text: str) -> str:
         fig_blocks.append("\n".join(lines))
 
     for fig in _descendants(root, "fig"):
+        if _is_in_excluded_container(fig):
+            continue
         label_tag = _first_descendant(fig, "label")
         label = _text_content(label_tag) if label_tag is not None else "Figure"
         if "extended data" in label.lower():
@@ -300,23 +426,13 @@ def parse_jats_xml(xml_text: str) -> str:
         cap_title, cap_body = _extract_figure_caption_parts(fig)
         _append_fig_block(label, cap_title, cap_body)
 
-    # Supplementary materials with captions (not already inside a <fig>).
-    for supp in _descendants(root, "supplementary-material"):
-        if _has_ancestor(supp, "fig"):
-            continue
-        label_tag = _first_descendant(supp, "label")
-        label = _text_content(label_tag) if label_tag is not None else "Supplementary"
-        cap_title, cap_body = _extract_figure_caption_parts(supp)
-        if cap_title or cap_body:
-            _append_fig_block(label, cap_title, cap_body)
-
-    has_figures = bool(fig_blocks)
-
     # ── Tables ───────────────────────────────────────────────────────────────
     tbl_blocks: list[str] = []
     seen_tbl: set = set()
 
     for wrap in _descendants(root, "table-wrap"):
+        if _is_in_excluded_container(wrap):
+            continue
         label_tag = _first_descendant(wrap, "label")
         label = _text_content(label_tag) if label_tag is not None else "Table"
         cap_title, cap_body = _extract_figure_caption_parts(wrap)
@@ -333,110 +449,6 @@ def parse_jats_xml(xml_text: str) -> str:
         if table_body:
             lines.append(f"  Body: {table_body}")
         tbl_blocks.append("\n".join(lines))
-
-    # ── Fallback ─────────────────────────────────────────────────────────────
-    # Trigger fallback if any of results, methods, or figures are missing.
-    # Strip references, supplementary, discussion, acknowledgments, and
-    # introduction before sending the remaining full text to the LLM.
-    has_dedicated_results = any(
-        rec[1] == "results" and _is_dedicated_section_header(rec[2], "results")
-        for rec in section_records
-    )
-    has_dedicated_methods = any(
-        rec[1] == "methods" and _is_dedicated_section_header(rec[2], "methods")
-        for rec in section_records
-    )
-    if not has_dedicated_results or not has_dedicated_methods or not has_figures:
-        _FALLBACK_EXCLUDED_CANON = {
-            "references", "supplementary", "discussion", "introduction",
-        }
-        fallback_blocks: list[str] = []
-
-        # Abstract from article-meta (outside body).
-        # If the abstract has labeled subsections (structured abstract), emit each
-        # with its title so the LLM gets Context / Objective / Methods / Results headers.
-        for abstract in _primary_abstracts(root):
-            secs = _descendants(abstract, "sec")
-            if secs:
-                for sec in secs:
-                    title_tag = _direct_child(sec, "title")
-                    sec_title = _text_content(title_tag)
-                    paras = [_text_content(p) for p in _descendants(sec, "p")]
-                    paras = [p for p in paras if p]
-                    if paras:
-                        header = sec_title or "Abstract"
-                        fallback_blocks.append(f"## {header}\n" + "\n".join(paras))
-            else:
-                para = [_text_content(p) for p in _descendants(abstract, "p")]
-                para = [p for p in para if p]
-                if not para:
-                    raw = _text_content(abstract)
-                    if raw:
-                        para = [raw]
-                if para:
-                    fallback_blocks.append("## Abstract\n" + "\n".join(para))
-
-        # Walk all body <sec> nodes, emit ## Title + paragraphs.
-        # Skip: <sec> inside <abstract> (already handled above), excluded canon types,
-        # and children of already-excluded sections.
-        excluded_ids: set = set()
-        for sec in _descendants(root, "sec"):
-            # Skip abstract subsections — abstract is handled separately above.
-            if _has_ancestor(sec, "abstract"):
-                continue
-            # Skip if an ancestor section was excluded.
-            if any(id(sec) == eid for eid in excluded_ids):
-                continue
-            node = sec.getparent()
-            skip = False
-            while node is not None:
-                if id(node) in excluded_ids:
-                    skip = True
-                    break
-                node = node.getparent()
-            if skip:
-                continue
-
-            title_tag = _direct_child(sec, "title")
-            sec_title = _text_content(title_tag)
-            sec_type = sec.get("sec-type") or ""
-            canon = _canonical_section(sec_title) or _canonical_section(sec_type)
-            if canon in _FALLBACK_EXCLUDED_CANON:
-                excluded_ids.add(id(sec))
-                continue
-
-            paragraphs = []
-            for p in _descendants(sec, "p"):
-                if _has_ancestor(p, {"fig", "table-wrap"}):
-                    continue
-                if _nearest_ancestor(p, "sec") is not sec:
-                    continue
-                txt = _strip_extended_data_refs(_text_content(p))
-                if txt:
-                    paragraphs.append(txt)
-            if paragraphs:
-                header = sec_title or sec_type or "Section"
-                fallback_blocks.append(f"## {header}\n" + "\n".join(paragraphs))
-
-        # Figures (skip Extended Data figures).
-        fig_lines = []
-        for fig in _descendants(root, "fig"):
-            label_tag = _first_descendant(fig, "label")
-            label = _text_content(label_tag) if label_tag is not None else "Figure"
-            if "extended data" in label.lower():
-                continue
-            cap_title, cap_body = _extract_figure_caption_parts(fig)
-            if label or cap_title or cap_body:
-                lines = [f"[{label}]"]
-                if cap_title:
-                    lines.append(f"  Title: {cap_title}")
-                if cap_body:
-                    lines.append(f"  Caption: {cap_body}")
-                fig_lines.append("\n".join(lines))
-        if fig_lines:
-            fallback_blocks.append("--- Figures ---\n" + "\n\n".join(fig_lines))
-
-        return _truncate_blocks(fallback_blocks, MAX_PAPER_CHARS)
 
     blocks = list(section_blocks)
     if fig_blocks:

@@ -133,6 +133,24 @@ def _fetch_paper_content(url: str) -> tuple[str, str | None]:
     if not structured_text:
         # Fallback for malformed or non-standard XML.
         structured_text = _clean_text(soup.get_text(separator=" ", strip=True))[:MAX_PAPER_CHARS]
+
+    # Detect abstract-only content: body tag exists but no results/methods sections
+    # were parsed — the publisher provides metadata XML only.
+    section_headers = [
+        line[3:].strip().lower()
+        for line in structured_text.splitlines()
+        if line.startswith("## ")
+    ]
+    has_body_content = any(
+        any(kw in h for kw in ("result", "finding", "method", "material", "procedure"))
+        for h in section_headers
+    )
+    if section_headers and not has_body_content:
+        raise PaperNotAvailableError(
+            f"Paper {pmcid} returned abstract-only content (no results or methods sections found). "
+            "Please upload the PDF to continue."
+        )
+
     return structured_text, pubmed_id
 
 
@@ -181,8 +199,7 @@ async def _run_two_step_pipeline(
 
     assay_list = ", ".join(assay_methods) if assay_methods else "CITE-seq, Bulk RNA-seq, CyTOF, Flow Cytometry, Olink, Q-PCR, ELISA"
     step1_system = (
-        _load_prompt("claim_prompt_step1.txt")
-        .replace("{paper_url}", study_accession)
+        _load_prompt("extract_claims.txt")
         .replace("{assay_methods}", assay_list)
     )
 
@@ -206,7 +223,7 @@ async def _run_two_step_pipeline(
     n_claims = len([k for k in step1_json if k.startswith("claim_")])
 
     # ── Step 2: structure each claim in parallel ──────────────────────────────
-    step2_prompt_template = _load_prompt("claim_prompt_step2.txt")
+    step2_prompt_template = _load_prompt("classify_groups.txt")
     claim_keys = [k for k in step1_json if k.startswith("claim_")]
 
     def _sort_sources(sources: list) -> list:
@@ -273,8 +290,7 @@ async def parse_paper_claims_step1_only(
     client = _get_client()
     assay_list = ", ".join(assay_methods) if assay_methods else "CITE-seq, Bulk RNA-seq, CyTOF, Flow Cytometry, Olink, Q-PCR, ELISA"
     step1_system = (
-        _load_prompt("claim_prompt_step1.txt")
-        .replace("{paper_url}", study_accession)
+        _load_prompt("extract_claims.txt")
         .replace("{assay_methods}", assay_list)
     )
     logger.info("Step 1 only: extracting claims for study %s", study_accession)

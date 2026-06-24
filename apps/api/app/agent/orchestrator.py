@@ -69,7 +69,7 @@ def _load_disk_cache(pubmed_id: str | int, step: str) -> dict | None:
 def _save_disk_cache(pubmed_id: str | int, step: str, data: dict) -> None:
     path = _DISK_CACHE_DIR / str(pubmed_id) / f"{step}.json"
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data, indent=2), encoding="utf-8")
+    path.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
     logger.info("Disk cache written: %s", path)
 
 
@@ -330,7 +330,7 @@ def _save_output(result: dict) -> None:
     out_dir = Path(__file__).resolve().parent.parent.parent.parent.parent / "data" / "generated" / "outputIDs"
     out_dir.mkdir(parents=True, exist_ok=True)
     out_file = out_dir / f"{study_accession}_subject_ids_LLM.json"
-    out_file.write_text(json.dumps(result, indent=2), encoding="utf-8")
+    out_file.write_text(json.dumps(result, indent=2, ensure_ascii=False), encoding="utf-8")
     logger.info("Saved output to %s", out_file)
 
 
@@ -500,6 +500,7 @@ async def _run_paper_pipeline(
     session: AsyncSession,
     question: str | None,
     log_sections: list[str],
+    step1_claims: dict | None = None,
 ) -> dict:
     """Shared pipeline after paper text + study are resolved.
 
@@ -558,7 +559,8 @@ async def _run_paper_pipeline(
     # No filters → full deep claim analysis
     log_sections.append("--- Full Deep Analysis (no filters in question) ---")
     result = await _run_full_paper_analysis(
-        paper_text, study_accession, assay_methods, pubmed_id, log_sections
+        paper_text, study_accession, assay_methods, pubmed_id, log_sections,
+        step1_claims=step1_claims,
     )
     _write_workflow_log(log_sections)
     _save_output(result)
@@ -571,11 +573,19 @@ async def _run_full_paper_analysis(
     assay_methods: list[str],
     pubmed_id: str,
     log_sections: list[str],
+    step1_claims: dict | None = None,
 ) -> dict:
     """Full two-step claim extraction + DB queries for every claim."""
     if (disk2 := _load_disk_cache(pubmed_id, "groups")) is not None:
         logger.info("Disk-cache hit (step2) for pubmed_id=%s", pubmed_id)
         step2_json = disk2
+    elif step1_claims is not None:
+        # Vision-extracted step1 provided — skip step1, run step2 only
+        logger.info("Using vision step1 claims for pubmed_id=%s — running step2 only", pubmed_id)
+        _, step2_json = await parse_paper_claims_from_text(
+            paper_text, study_accession, assay_methods,
+            cached_step1=step1_claims,
+        )
     elif (disk1 := _load_disk_cache(pubmed_id, "claims")) is not None:
         # Step1 on disk — skip step1, run step2 only
         logger.info("Disk-cache hit (step1 only) for pubmed_id=%s — running step2", pubmed_id)
@@ -1124,12 +1134,91 @@ async def run_agent_from_text(message: str, session: AsyncSession, study_accessi
     return await _run_agent_core(message, session, study_accession_hint=study_accession_hint)
 
 
-async def run_agent_from_paper(pdf_bytes: bytes, filename: str, session: AsyncSession, question: str | None = None) -> dict:
+async def run_agent_from_pdf_vision(
+    pdf_bytes: bytes,
+    pubmed_id: str,
+    session: AsyncSession,
+    question: str | None = None,
+) -> dict:
+    """Entry point for PDF vision workflow: render PDF pages as images, extract claims
+    via GPT-4o vision (step 1), then run step 2 structuring and DB queries.
+
+    pubmed_id must be provided explicitly — it cannot be inferred from images.
+    """
+    from openai import AsyncOpenAI
+    from app.agent.pdf_vision import extract_claims_from_pdf_images
+    from app.config import settings
+
+    log_sections: list[str] = []
+
+    # ── Step 1: vision extraction ─────────────────────────────────────────────
+    client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+    logger.info("Vision pipeline: extracting claims from PDF (pubmed_id=%s)", pubmed_id)
+    assays, step1_claims = await extract_claims_from_pdf_images(pdf_bytes, client)
+    n_claims = len([k for k in step1_claims if k.startswith("claim_")])
+    log_sections.append(
+        f"--- Step 1: Vision Extraction ---\n"
+        f"pubmed_id: {pubmed_id}\n"
+        f"Assays: {list(assays.keys())}\n"
+        f"Claims extracted: {n_claims}"
+    )
+    logger.info("Vision step1 complete: %d claims, assays=%s", n_claims, list(assays.keys()))
+
+    # ── Step 2: study lookup ──────────────────────────────────────────────────
+    row = (await session.execute(
+        text("SELECT study_accession FROM study_pubmed WHERE pubmed_id = :pid LIMIT 1"),
+        {"pid": pubmed_id},
+    )).fetchone()
+
+    if not row:
+        logger.info("PubMed ID %s not in ImmPort — returning vision claims only", pubmed_id)
+        log_sections.append(
+            f"--- Step 2: No ImmPort Match ---\n"
+            f"PubMed ID {pubmed_id} is not linked to any ImmPort study."
+        )
+        paper_claims = [
+            {"claim_id": key, "claim_text": val.get("claim", ""), "sources": val.get("sources", [])}
+            for key, val in step1_claims.items()
+            if key.startswith("claim_")
+        ]
+        _write_workflow_log(log_sections)
+        return {
+            "type": "no_immport",
+            "study_accession": "",
+            "paper_claims": paper_claims,
+            "claims": [],
+        }
+
+    study_accession: str = row[0]
+    log_sections.append(
+        f"--- Step 2: Study Lookup ---\n"
+        f"pubmed_id: {pubmed_id} → study_accession: {study_accession}"
+    )
+
+    # ── Step 3–N: shared pipeline (step2 structuring + DB queries) ───────────
+    return await _run_paper_pipeline(
+        paper_text="",
+        pubmed_id=pubmed_id,
+        study_accession=study_accession,
+        session=session,
+        question=question,
+        log_sections=log_sections,
+        step1_claims=step1_claims,
+    )
+
+
+async def run_agent_from_paper(
+    pdf_bytes: bytes,
+    filename: str,
+    session: AsyncSession,
+    question: str | None = None,
+    pubmed_id: str | None = None,
+) -> dict:
     """Entry point for PDF upload: extract text, look up study, run full pipeline.
 
     Steps:
       1. Extract text from PDF bytes.
-      2. Parse PubMed ID from filename.
+      2. Parse PubMed ID from filename (or use explicit pubmed_id parameter).
       3. Look up study_accession in study_pubmed table.
       4. Fetch distinct measurement_technique values from experiment table.
       5. Sync study data to local DB if missing.
@@ -1147,11 +1236,12 @@ async def run_agent_from_paper(pdf_bytes: bytes, filename: str, session: AsyncSe
     )
 
     # ── 2. PubMed ID ─────────────────────────────────────────────────────────
-    pubmed_id = extract_pubmed_id_from_filename(filename)
+    if not pubmed_id:
+        pubmed_id = extract_pubmed_id_from_filename(filename)
     if not pubmed_id:
         raise ValueError(
             f"Could not extract a PubMed ID from the filename '{filename}'. "
-            "Please rename the file to include the PubMed ID before uploading. "
+            "Please provide the PubMed ID explicitly or rename the file to include it. "
             "Accepted formats:\n"
             "• PMID32788292.pdf\n"
             "• 32788292.pdf"
