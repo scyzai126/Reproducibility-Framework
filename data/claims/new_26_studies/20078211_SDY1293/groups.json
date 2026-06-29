@@ -1,0 +1,387 @@
+{
+  "claim_1": {
+    "claim": "Transcription profiling by array analysis of PBMCs from 43 vaccine recipients on the day of the third vaccination showed 63 inflammatory response genes were up-regulated 24 h after the third vaccination and returned toward day-of-vaccination levels by 72 h after the third vaccination compared to the day of the third vaccination.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "SAM (version 3) using the day of the third vaccination as baseline, with an FDR of 1%, was used to identify genes that exhibited a significant change in expression level at 24 h and 72 h after the third vaccination (n = 43 subjects)."
+      },
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "These genes are markedly up-regulated 24 h after vaccination; however, by 72 h after vaccination, they resolve to the levels of expression observed on the day of the third vaccination."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 1"
+      }
+    ],
+    "comparison_strategy": "longitudinal",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": 43,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": null,
+        "assay_method": "Transcription profiling by array",
+        "tissue_type": "PBMCs",
+        "gender": null,
+        "age": null,
+        "time_point": "day 0"
+      },
+      {
+        "group_id": 1,
+        "study_accession": null,
+        "sample_size": 43,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": null,
+        "assay_method": "Transcription profiling by array",
+        "tissue_type": "PBMCs",
+        "gender": null,
+        "age": null,
+        "time_point": "day 1"
+      },
+      {
+        "group_id": 2,
+        "study_accession": null,
+        "sample_size": 43,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": null,
+        "assay_method": "Transcription profiling by array",
+        "tissue_type": "PBMCs",
+        "gender": null,
+        "age": null,
+        "time_point": "day 3"
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "63 inflammatory response genes were up-regulated 24 h after the third vaccination compared to the day of the third vaccination"
+      },
+      {
+        "contrast": [
+          0,
+          2
+        ],
+        "finding": "63 inflammatory response genes returned toward day-of-vaccination levels by 72 h after the third vaccination compared to the day of the third vaccination"
+      }
+    ]
+  },
+  "claim_2": {
+    "claim": "Transcription profiling by array analysis of PBMCs from 36 baseline vaccine-naive samples, 39 vaccinated-and-challenged samples at day 5 after challenge, and 12 challenged unvaccinated controls at day 5 after challenge showed distinct global expression patterns, with vaccinated challenged volunteers separating from both baseline and challenged unvaccinated groups.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Figure 2 caption",
+        "quote": "Red spheres denote 36 RTS,S vaccine recipients at baseline before vaccination and challenge (group A). Blue spheres denote 39 volunteers who are vaccinated and then challenged (group B), and green spheres denote 12 control nonvaccinated volunteers who were challenged (group C)."
+      },
+      {
+        "type": "text",
+        "section": "Figure 2 caption",
+        "quote": "The separation of group A and group B reflects the combined effect of vaccination and challenge. The separation of group A and group C reflects the effects of challenge and challenge only. The separation of group B and group C indicates that volunteers who are vaccinated (group B) respond to challenge differently from those who are not vaccinated (group C)."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 2"
+      }
+    ],
+    "comparison_strategy": "clinical_trial",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": 36,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "baseline vaccine-naive",
+        "assay_method": "Transcription profiling by array",
+        "tissue_type": "PBMCs",
+        "gender": null,
+        "age": null,
+        "time_point": null
+      },
+      {
+        "group_id": 1,
+        "study_accession": null,
+        "sample_size": 39,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "vaccinated-and-challenged",
+        "assay_method": "Transcription profiling by array",
+        "tissue_type": "PBMCs",
+        "gender": null,
+        "age": null,
+        "time_point": "day 5"
+      },
+      {
+        "group_id": 2,
+        "study_accession": null,
+        "sample_size": 12,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "challenged unvaccinated controls",
+        "assay_method": "Transcription profiling by array",
+        "tissue_type": "PBMCs",
+        "gender": null,
+        "age": null,
+        "time_point": "day 5"
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "distinct global expression patterns separated baseline vaccine-naive samples from vaccinated-and-challenged samples, reflecting the combined effect of vaccination and challenge"
+      },
+      {
+        "contrast": [
+          0,
+          2
+        ],
+        "finding": "distinct global expression patterns separated baseline vaccine-naive samples from challenged unvaccinated controls, reflecting the effects of challenge"
+      },
+      {
+        "contrast": [
+          1,
+          2
+        ],
+        "finding": "vaccinated challenged volunteers separated from challenged unvaccinated controls, indicating that vaccinated volunteers respond to challenge differently from those who are not vaccinated"
+      }
+    ]
+  },
+  "claim_3": {
+    "claim": "Transcription profiling by array analysis of PBMCs from 39 vaccine recipients at day 5 after challenge showed a 393-gene classifier sorted protected, delayed-onset, and nonprotected outcome groups with 100% accuracy.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "PAM-R was used to identify sets of classifier genes capable of sorting samples (n = 39 subjects) into protected, not protected, and delayed onset of disease categories, on day 5 after challenge."
+      },
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Figure 3A shows the results of PAM-R for these groups."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 3A"
+      }
+    ],
+    "comparison_strategy": "cohort",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "protected",
+        "assay_method": "Transcription profiling by array",
+        "tissue_type": "PBMCs",
+        "gender": null,
+        "age": null,
+        "time_point": "day 5"
+      },
+      {
+        "group_id": 1,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "delayed-onset",
+        "assay_method": "Transcription profiling by array",
+        "tissue_type": "PBMCs",
+        "gender": null,
+        "age": null,
+        "time_point": "day 5"
+      },
+      {
+        "group_id": 2,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "nonprotected",
+        "assay_method": "Transcription profiling by array",
+        "tissue_type": "PBMCs",
+        "gender": null,
+        "age": null,
+        "time_point": "day 5"
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "a 393-gene classifier sorted protected and delayed-onset outcome groups with 100% accuracy at day 5 after challenge"
+      },
+      {
+        "contrast": [
+          0,
+          2
+        ],
+        "finding": "a 393-gene classifier sorted protected and nonprotected outcome groups with 100% accuracy at day 5 after challenge"
+      },
+      {
+        "contrast": [
+          1,
+          2
+        ],
+        "finding": "a 393-gene classifier sorted delayed-onset and nonprotected outcome groups with 100% accuracy at day 5 after challenge"
+      }
+    ]
+  },
+  "claim_4": {
+    "claim": "Transcription profiling by array analysis of PBMCs from 37 vaccine recipients 2 weeks after the third vaccination showed the proteasome degradation gene set was up-regulated in protected individuals compared to nonprotected individuals before challenge.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "High-resolution GSEA was used to identify sets of genes that were differentially expressed at 2 weeks after the third vaccination but before challenge (n = 37 subjects)."
+      },
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Figure 4A shows the enrichment of genes in the proteasome degradation pathway that are up-regulated in persons in the protected group."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 4A"
+      }
+    ],
+    "comparison_strategy": "cohort",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "protected individuals",
+        "assay_method": "Transcription profiling by array",
+        "tissue_type": "PBMCs",
+        "gender": null,
+        "age": null,
+        "time_point": null
+      },
+      {
+        "group_id": 1,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "nonprotected individuals",
+        "assay_method": "Transcription profiling by array",
+        "tissue_type": "PBMCs",
+        "gender": null,
+        "age": null,
+        "time_point": null
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "proteasome degradation gene set was up-regulated in protected individuals compared to nonprotected individuals before challenge"
+      }
+    ]
+  },
+  "claim_5": {
+    "claim": "Q-PCR analysis of PBMCs from 3 randomly chosen protected and nonprotected vaccine recipients 2 weeks after the third vaccination showed up-regulation of PSME2, PSMA4, PSMB6, and PSMB9 in protected individuals compared to nonprotected individuals.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Methods",
+        "quote": "To confirm observations from the gene chip data, TaqMan Gene Expression Assays (Applied Biosystems) were used to detect genes in the immunoproteasome pathway (PSME2, PSMB9, PSMB6, and PSMA4) in 3 randomly chosen samples from protected and nonprotected persons, at 2 weeks after the third vaccination."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 6A"
+      }
+    ],
+    "comparison_strategy": "cohort",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": 3,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "protected vaccine recipients",
+        "assay_method": "Q-PCR",
+        "tissue_type": "PBMCs",
+        "gender": null,
+        "age": null,
+        "time_point": null
+      },
+      {
+        "group_id": 1,
+        "study_accession": null,
+        "sample_size": 3,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "nonprotected vaccine recipients",
+        "assay_method": "Q-PCR",
+        "tissue_type": "PBMCs",
+        "gender": null,
+        "age": null,
+        "time_point": null
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "PSME2, PSMA4, PSMB6, and PSMB9 were up-regulated in protected individuals compared to nonprotected individuals 2 weeks after the third vaccination"
+      }
+    ]
+  },
+  "claim_6": {
+    "claim": "Q-PCR analysis of PBMCs 2 weeks after the third vaccination showed RT-PCR-based fold changes for PSME2, PSMA4, PSMB6, and PSMB9 correlated with Affymetrix GeneChip-based fold changes, with correlation coefficient r = 0.886.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "The correlation coefficient for concordance of these 2 independent techniques was r = 0.886, as shown in Figure 6B."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 6B"
+      }
+    ],
+    "comparison_strategy": "none",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": null,
+        "assay_method": "Q-PCR",
+        "tissue_type": "PBMCs",
+        "gender": null,
+        "age": null,
+        "time_point": null
+      }
+    ],
+    "comparison": []
+  }
+}

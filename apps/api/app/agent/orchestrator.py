@@ -1279,3 +1279,68 @@ async def run_agent_from_paper(
     return await _run_paper_pipeline(
         paper_text, pubmed_id, study_accession, session, question, log_sections
     )
+
+
+async def run_agent_from_pubmed_id(
+    pubmed_id: str,
+    session: AsyncSession,
+    question: str | None = None,
+) -> dict:
+    """Entry point for PubMed-ID-only requests (no PDF upload).
+
+    Fetches full-text XML from PMC, then runs the same pipeline as run_agent_from_paper.
+    Raises ValueError if the paper is not available as open-access XML on PMC.
+    """
+    from app.agent.ncbi_utils import pmid_to_pmc_url
+    from app.agent.claim_parser import fetch_paper_content_async, PaperNotAvailableError
+
+    log_sections: list[str] = []
+
+    # ── 1. Resolve PMC URL ───────────────────────────────────────────────────
+    pmc_url = await pmid_to_pmc_url(pubmed_id)
+    if not pmc_url:
+        raise ValueError(
+            f"PubMed ID {pubmed_id} has no open-access PMC record. "
+            "Please upload the PDF instead."
+        )
+    log_sections.append(f"--- Step 1: PMC URL ---\npubmed_id: {pubmed_id} → {pmc_url}")
+
+    # ── 2. Fetch paper text ──────────────────────────────────────────────────
+    try:
+        paper_text, _ = await fetch_paper_content_async(pmc_url)
+    except PaperNotAvailableError as exc:
+        raise ValueError(str(exc)) from exc
+    log_sections.append(
+        f"--- Step 2: Paper Text ---\nFetched {len(paper_text)} chars from {pmc_url}"
+    )
+
+    # ── 3. Study lookup ──────────────────────────────────────────────────────
+    row = (await session.execute(
+        text("SELECT study_accession FROM study_pubmed WHERE pubmed_id = :pid LIMIT 1"),
+        {"pid": pubmed_id},
+    )).fetchone()
+    if not row:
+        logger.info("PubMed ID %s not in ImmPort — running no-ImmPort extraction", pubmed_id)
+        log_sections.append(
+            f"--- Step 3: No ImmPort Match ---\n"
+            f"PubMed ID {pubmed_id} is not linked to any ImmPort study."
+        )
+        paper_claims = await parse_paper_claims_noimmport(paper_text, pmc_url)
+        _write_workflow_log(log_sections)
+        return {
+            "type": "no_immport",
+            "study_accession": "",
+            "paper_claims": paper_claims,
+            "subject_results": [],
+            "claims": [],
+        }
+    study_accession: str = row[0]
+    log_sections.append(
+        f"--- Step 3: Study Lookup ---\n"
+        f"pubmed_id: {pubmed_id} → study_accession: {study_accession}"
+    )
+
+    # ── 4. Run shared pipeline ───────────────────────────────────────────────
+    return await _run_paper_pipeline(
+        paper_text, pubmed_id, study_accession, session, question, log_sections
+    )

@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse, PlainTextResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.agent.claim_parser import get_assay_methods, get_paper_url, parse_paper_claims
-from app.agent.orchestrator import run_agent_from_paper, run_agent_from_pdf_vision, run_agent_from_text
+from app.agent.orchestrator import run_agent_from_paper, run_agent_from_pdf_vision, run_agent_from_pubmed_id, run_agent_from_text
 from app.database import get_session
 from app.schemas import AgentResponse, ParsePaperRequest, ParsePaperResponse, TextRequest
 
@@ -14,38 +14,43 @@ router = APIRouter(prefix="/agent", tags=["agent"])
 
 @router.post("/run-paper", response_model=AgentResponse)
 async def agent_run_paper(
-    file: UploadFile = File(...),
+    file: UploadFile | None = File(None),
     question: str | None = Form(None),
     pubmed_id: str | None = Form(None),
     use_vision: bool = Form(False),
     session: AsyncSession = Depends(get_session),
 ):
-    """Upload a PDF paper and run claim extraction.
+    """Upload a PDF paper and run claim extraction, or pass just a PubMed ID.
 
-    - `pubmed_id`: PubMed ID of the paper (required if the filename does not embed it,
-      e.g. when the file is named SDY1393.pdf rather than 36656789.pdf).
+    - `pubmed_id`: PubMed ID of the paper. Required when no file is uploaded;
+      optional when a file is uploaded (falls back to parsing the filename).
     - `use_vision`: when true, renders PDF pages as images and uses GPT-4o vision for
-      step-1 claim extraction instead of plain-text extraction.
+      step-1 claim extraction instead of plain-text extraction. Requires a file.
     - `question`: optional free-text question; if omitted, full claim analysis runs.
     """
-    pdf_bytes = await file.read()
     try:
-        if use_vision:
+        if file is None:
             if not pubmed_id:
-                from app.agent.paper_reader import extract_pubmed_id_from_filename
-                pubmed_id = extract_pubmed_id_from_filename(file.filename or "")
-            if not pubmed_id:
-                raise ValueError(
-                    "pubmed_id is required for the vision pipeline. "
-                    "Pass it as a form field or embed it in the filename (e.g. 36656789.pdf)."
-                )
-            result = await run_agent_from_pdf_vision(pdf_bytes, pubmed_id, session, question=question or None)
+                raise ValueError("Provide either a PDF file or a pubmed_id.")
+            result = await run_agent_from_pubmed_id(pubmed_id, session, question=question or None)
         else:
-            result = await run_agent_from_paper(
-                pdf_bytes, file.filename or "", session,
-                question=question or None,
-                pubmed_id=pubmed_id or None,
-            )
+            pdf_bytes = await file.read()
+            if use_vision:
+                if not pubmed_id:
+                    from app.agent.paper_reader import extract_pubmed_id_from_filename
+                    pubmed_id = extract_pubmed_id_from_filename(file.filename or "")
+                if not pubmed_id:
+                    raise ValueError(
+                        "pubmed_id is required for the vision pipeline. "
+                        "Pass it as a form field or embed it in the filename (e.g. 36656789.pdf)."
+                    )
+                result = await run_agent_from_pdf_vision(pdf_bytes, pubmed_id, session, question=question or None)
+            else:
+                result = await run_agent_from_paper(
+                    pdf_bytes, file.filename or "", session,
+                    question=question or None,
+                    pubmed_id=pubmed_id or None,
+                )
         return AgentResponse(**result)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
