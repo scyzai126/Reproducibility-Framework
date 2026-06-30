@@ -53,7 +53,12 @@ In both cases:
 
 If an assay does not match any rule above, use the name stated in the paper verbatim.
 
-Build an internal assay registry from this phase: `{canonical_name: {sample_type, readouts}}`. Use this registry in Phase 2.
+Build an internal assay registry from this phase. For each assay record:
+- `original_name`: the exact wording used in the paper (e.g., "FACS", "qRT-PCR", "single-cell RNA sequencing")
+- `normalized_name`: the canonical name from the normalization table above (or the verbatim paper name if no rule applies)
+- `sample_type` and `readouts` as described above
+
+Use the canonical (normalized) name as the registry key. Use this registry in Phase 2.
 
 ---
 
@@ -143,7 +148,7 @@ Quotes must be verbatim. Do not fabricate figure or table labels.
 
 Return ONLY valid JSON with two sections:
 
-1. **`"assays"`** — the registry built in Phase 1. Keys are canonical assay names; values have `"sample_type"` and `"readouts"`.
+1. **`"assays"`** — the registry built in Phase 1. Keys are canonical (normalized) assay names; values have `"original_name"`, `"normalized_name"`, `"sample_type"`, and `"readouts"`.
 2. **`"claim_1"`, `"claim_2"`, …** — one entry per claim as described above.
 
 Return `{"assays": {}}` if no assays or claims can be extracted.
@@ -151,8 +156,8 @@ Return `{"assays": {}}` if no assays or claims can be extracted.
 Example:
 {
   "assays": {
-    "CyTOF": {"sample_type": "PBMCs", "readouts": "cell-type frequencies, signaling markers"},
-    "Flow Cytometry": {"sample_type": "PBMCs", "readouts": "intracellular cytokine production"}
+    "CyTOF": {"original_name": "mass cytometry", "normalized_name": "CyTOF", "sample_type": "PBMCs", "readouts": "cell-type frequencies, signaling markers"},
+    "Flow Cytometry": {"original_name": "FACS", "normalized_name": "Flow Cytometry", "sample_type": "PBMCs", "readouts": "intracellular cytokine production"}
   },
   "claim_1": {
     "claim": "CyTOF analysis of PBMCs from 27 vaccinated individuals showed intermediate monocyte frequencies increased 2 days after the first vaccination (day 2) and again 2 days after the second vaccination (day 23) compared to baseline (day 0).",

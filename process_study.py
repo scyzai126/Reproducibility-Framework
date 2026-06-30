@@ -237,8 +237,9 @@ async def _process_paper(study_id: str, pmid: str, debug: bool = False, direct_u
     )
     raw1 = _strip_fences((resp1.choices[0].message.content or "").strip())
     step1 = json.loads(raw1)
-    assays = enrich_assays_with_obi(step1.pop("assays", {}))
+    assays = step1.pop("assays", {})
     claims = {k: v for k, v in step1.items() if k.startswith("claim_")}
+    assays = enrich_assays_with_obi(assays)
     (paper_dir / "assays.json").write_text(json.dumps(assays, indent=2, ensure_ascii=False))
     (paper_dir / "claims.json").write_text(json.dumps(claims, indent=2, ensure_ascii=False))
     print(f"[{tag}] Step 1: {len(assays)} assays → {paper_dir.name}/assays.json")
