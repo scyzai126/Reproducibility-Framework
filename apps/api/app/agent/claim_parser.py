@@ -54,10 +54,6 @@ def get_paper_url(study_accession: str) -> str:
     return _load_xlsx_row(study_accession)["PMCID"]
 
 
-def get_assay_methods(study_accession: str) -> list[str]:
-    """Return assay methods for a study from the ASSAY METHODS column in studyid_pmcid.xlsx."""
-    raw = _load_xlsx_row(study_accession).get("ASSAY METHODS") or ""
-    return [a.strip() for a in raw.split(",") if a.strip()]
 
 _PROMPTS_DIR = Path(__file__).resolve().parent.parent / "prompts"
 _openai_client: AsyncOpenAI | None = None
@@ -184,12 +180,11 @@ def _strip_fences(raw: str) -> str:
 async def _run_two_step_pipeline(
     paper_text: str,
     study_accession: str,
-    assay_methods: list[str],
     step1_override: dict | None = None,
 ) -> tuple[dict, dict]:
     """Core two-step LLM pipeline given already-fetched paper text.
 
-    Step 1: extract assay-specific claims from paper text.
+    Step 1: extract assay-specific claims from paper text (assay discovery is self-contained).
     Step 2: structure claims into groups + comparisons.
 
     Returns:
@@ -197,11 +192,7 @@ async def _run_two_step_pipeline(
     """
     client = _get_client()
 
-    assay_list = ", ".join(assay_methods) if assay_methods else "CITE-seq, Bulk RNA-seq, CyTOF, Flow Cytometry, Olink, Q-PCR, ELISA"
-    step1_system = (
-        _load_prompt("extract_claims.txt")
-        .replace("{assay_methods}", assay_list)
-    )
+    step1_system = _load_prompt("extract_claims.txt")
 
     if step1_override is not None:
         step1_json = step1_override
@@ -218,7 +209,7 @@ async def _run_two_step_pipeline(
         )
         raw1 = _strip_fences((resp1.choices[0].message.content or "").strip())
         step1_json: dict = json.loads(raw1)
-        logger.info("Step 1 complete: assays=%s, claims=%d", assay_methods, len(step1_json))
+        logger.info("Step 1 complete: %d claims", len(step1_json))
 
     n_claims = len([k for k in step1_json if k.startswith("claim_")])
 
@@ -265,7 +256,7 @@ async def _run_two_step_pipeline(
     return step1_json, step2_json
 
 
-async def parse_paper_claims(paper_url: str, study_accession: str, assay_methods: list[str]) -> tuple[dict, dict]:
+async def parse_paper_claims(paper_url: str, study_accession: str) -> tuple[dict, dict]:
     """Fetch paper text from PMC URL then run the two-step LLM pipeline.
 
     Returns:
@@ -275,24 +266,19 @@ async def parse_paper_claims(paper_url: str, study_accession: str, assay_methods
     paper_text = _fetch_paper_text(paper_url)
     logger.info("Fetched %d chars", len(paper_text))
 
-    return await _run_two_step_pipeline(paper_text, study_accession, assay_methods)
+    return await _run_two_step_pipeline(paper_text, study_accession)
 
 
 async def parse_paper_claims_step1_only(
     paper_text: str,
     study_accession: str,
-    assay_methods: list[str],
 ) -> dict:
     """Run only step 1 of the pipeline: extract claim sentences from the paper.
 
     Returns step1_json: {"claim_1": {"claim": "...", "sources": [...]}, ...}
     """
     client = _get_client()
-    assay_list = ", ".join(assay_methods) if assay_methods else "CITE-seq, Bulk RNA-seq, CyTOF, Flow Cytometry, Olink, Q-PCR, ELISA"
-    step1_system = (
-        _load_prompt("extract_claims.txt")
-        .replace("{assay_methods}", assay_list)
-    )
+    step1_system = _load_prompt("extract_claims.txt")
     logger.info("Step 1 only: extracting claims for study %s", study_accession)
     resp = await client.chat.completions.create(
         model=settings.OPENAI_MODEL,
@@ -338,7 +324,6 @@ async def parse_paper_claims_noimmport(paper_text: str, paper_url: str) -> list[
 async def parse_paper_claims_from_text(
     paper_text: str,
     study_accession: str,
-    assay_methods: list[str],
     cached_step1: dict | None = None,
 ) -> tuple[dict, dict]:
     """Run the two-step LLM pipeline on already-extracted paper text.
@@ -350,8 +335,8 @@ async def parse_paper_claims_from_text(
     if cached_step1 is not None:
         logger.info("Skipping step 1 (using cached result), running step 2 only for %s", study_accession)
         _, step2_json = await _run_two_step_pipeline(
-            "", study_accession, [], step1_override=cached_step1
+            "", study_accession, step1_override=cached_step1
         )
         return cached_step1, step2_json
 
-    return await _run_two_step_pipeline(paper_text, study_accession, assay_methods)
+    return await _run_two_step_pipeline(paper_text, study_accession)

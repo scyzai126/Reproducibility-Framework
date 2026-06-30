@@ -9,7 +9,7 @@ from pathlib import Path
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.agent.assay_resolver import get_study_assay_methods
+
 from app.agent.claim_parser import fetch_paper_content_async, parse_paper_claims_from_text, parse_paper_claims_step1_only, parse_paper_claims_noimmport, PaperNotAvailableError
 from app.agent.ncbi_utils import pmid_to_pmc_url, pmc_to_pmid
 from app.agent.description_analyzer import analyze_claims_batch, analyze_descriptions
@@ -511,12 +511,6 @@ async def _run_paper_pipeline(
       3b. No filters → full step-2 deep claim analysis
     """
     await _sync_study(study_accession, log_sections)
-    assay_methods = await get_study_assay_methods(session, study_accession)
-    log_sections.append(
-        f"--- Assay Methods ---\n"
-        f"study_accession: {study_accession}\n"
-        f"assay_methods: {assay_methods}"
-    )
 
     # Filter extraction from question is disabled for now
     _filters: list[dict] = []
@@ -529,7 +523,7 @@ async def _run_paper_pipeline(
                 step1_json = disk
             else:
                 step1_json = await parse_paper_claims_step1_only(
-                    paper_text, study_accession, assay_methods
+                    paper_text, study_accession
                 )
             return [
                 {"claim_id": key, "claim_text": val.get("claim", ""), "sources": val.get("sources", [])}
@@ -559,7 +553,7 @@ async def _run_paper_pipeline(
     # No filters → full deep claim analysis
     log_sections.append("--- Full Deep Analysis (no filters in question) ---")
     result = await _run_full_paper_analysis(
-        paper_text, study_accession, assay_methods, pubmed_id, log_sections,
+        paper_text, study_accession, pubmed_id, log_sections,
         step1_claims=step1_claims,
     )
     _write_workflow_log(log_sections)
@@ -570,7 +564,6 @@ async def _run_paper_pipeline(
 async def _run_full_paper_analysis(
     paper_text: str,
     study_accession: str,
-    assay_methods: list[str],
     pubmed_id: str,
     log_sections: list[str],
     step1_claims: dict | None = None,
@@ -583,20 +576,20 @@ async def _run_full_paper_analysis(
         # Vision-extracted step1 provided — skip step1, run step2 only
         logger.info("Using vision step1 claims for pubmed_id=%s — running step2 only", pubmed_id)
         _, step2_json = await parse_paper_claims_from_text(
-            paper_text, study_accession, assay_methods,
+            paper_text, study_accession,
             cached_step1=step1_claims,
         )
     elif (disk1 := _load_disk_cache(pubmed_id, "claims")) is not None:
         # Step1 on disk — skip step1, run step2 only
         logger.info("Disk-cache hit (step1 only) for pubmed_id=%s — running step2", pubmed_id)
         _, step2_json = await parse_paper_claims_from_text(
-            paper_text, study_accession, assay_methods,
+            paper_text, study_accession,
             cached_step1=disk1
         )
     else:
-        # No cache — run both steps fresh, no persistence
+        # No cache — run both steps fresh
         step1_json, step2_json = await parse_paper_claims_from_text(
-            paper_text, study_accession, assay_methods
+            paper_text, study_accession
         )
 
     claims: list[dict] = []

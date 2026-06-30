@@ -27,6 +27,7 @@ from app.agent.claim_parser import (
     _load_prompt,
     _strip_fences,
 )
+from app.agent.assay_obi_mapper import enrich_assays_with_obi
 from app.agent.paper_reader import extract_pdf_text
 
 REPO_ROOT = Path(__file__).parent
@@ -236,7 +237,7 @@ async def _process_paper(study_id: str, pmid: str, debug: bool = False, direct_u
     )
     raw1 = _strip_fences((resp1.choices[0].message.content or "").strip())
     step1 = json.loads(raw1)
-    assays = step1.pop("assays", {})
+    assays = enrich_assays_with_obi(step1.pop("assays", {}))
     claims = {k: v for k, v in step1.items() if k.startswith("claim_")}
     (paper_dir / "assays.json").write_text(json.dumps(assays, indent=2, ensure_ascii=False))
     (paper_dir / "claims.json").write_text(json.dumps(claims, indent=2, ensure_ascii=False))

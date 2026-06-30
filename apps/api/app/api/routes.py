@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from fastapi.responses import JSONResponse, PlainTextResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.agent.claim_parser import get_assay_methods, get_paper_url, parse_paper_claims
+from app.agent.claim_parser import get_paper_url, parse_paper_claims
 from app.agent.orchestrator import run_agent_from_paper, run_agent_from_pdf_vision, run_agent_from_pubmed_id, run_agent_from_text
 from app.database import get_session
 from app.schemas import AgentResponse, ParsePaperRequest, ParsePaperResponse, TextRequest
@@ -85,11 +85,9 @@ async def agent_parse_paper(
 ):
     try:
         paper_url = get_paper_url(request.study_accession)
-        assay_methods = get_assay_methods(request.study_accession)
-        step1, step2 = await parse_paper_claims(paper_url, request.study_accession, assay_methods)
+        step1, step2 = await parse_paper_claims(paper_url, request.study_accession)
         return ParsePaperResponse(
             study_accession=request.study_accession,
-            assay_methods=assay_methods,
             claims_sentence=step1,
             claims_group=step2,
         )

@@ -40,7 +40,6 @@ class ParsePaperRequest(BaseModel):
 
 class ParsePaperResponse(BaseModel):
     study_accession: str
-    assay_methods: list[str] = []
     claims_sentence: dict = {}
     claims_group: dict = {}
 
