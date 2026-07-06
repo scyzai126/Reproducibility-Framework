@@ -569,28 +569,32 @@ async def _run_full_paper_analysis(
     step1_claims: dict | None = None,
 ) -> dict:
     """Full two-step claim extraction + DB queries for every claim."""
+    assay_registry: dict = {}
     if (disk2 := _load_disk_cache(pubmed_id, "groups")) is not None:
         logger.info("Disk-cache hit (step2) for pubmed_id=%s", pubmed_id)
         step2_json = disk2
     elif step1_claims is not None:
         # Vision-extracted step1 provided — skip step1, run step2 only
         logger.info("Using vision step1 claims for pubmed_id=%s — running step2 only", pubmed_id)
-        _, step2_json = await parse_paper_claims_from_text(
+        step1_json, step2_json = await parse_paper_claims_from_text(
             paper_text, study_accession,
             cached_step1=step1_claims,
         )
+        assay_registry = step1_json.get("assays", {})
     elif (disk1 := _load_disk_cache(pubmed_id, "claims")) is not None:
         # Step1 on disk — skip step1, run step2 only
         logger.info("Disk-cache hit (step1 only) for pubmed_id=%s — running step2", pubmed_id)
-        _, step2_json = await parse_paper_claims_from_text(
+        step1_json, step2_json = await parse_paper_claims_from_text(
             paper_text, study_accession,
             cached_step1=disk1
         )
+        assay_registry = disk1.get("assays", {})
     else:
         # No cache — run both steps fresh
         step1_json, step2_json = await parse_paper_claims_from_text(
             paper_text, study_accession
         )
+        assay_registry = step1_json.get("assays", {})
 
     claims: list[dict] = []
     batch_analysis: dict[str, list[dict]] = {}
@@ -653,7 +657,7 @@ async def _run_full_paper_analysis(
                 f"{json.dumps(claim_analysis, indent=2)}"
             )
             t1 = time.time()
-            group_queries = await resolve_and_build_queries(claim_analysis, study_accession, async_session, claim_text=claim.get("claim_text"))
+            group_queries = await resolve_and_build_queries(claim_analysis, study_accession, async_session, claim_text=claim.get("claim_text"), assay_registry=assay_registry)
             logger.info("Claim %s: resolve_and_build_queries took %.2fs", claim_id, time.time() - t1)
             local_logs.append(_log_queries(group_queries))
             claim_group_failures = [

@@ -1,7 +1,18 @@
-You are a data mapping assistant. Match assay method names to ImmPort experiment records. Return only the experiment_accession ID.
+You are a biomedical data mapping assistant. Your task is to match an assay described in a scientific paper to the best-matching experiment record in the ImmPort database.
 ---
-Given these experiments from an ImmPort study:
+The ImmPort study contains these experiments (each has an accession, a name, and a measurement technique):
 {candidates}
 
-Which experiment best matches the assay method "{search_term}"?
-Return ONLY the experiment_accession value (e.g. EXP12345). If none match, return NONE.
+The paper describes this assay:
+- Name as written in the paper (original): {original_name}
+- Canonical/normalized name: {search_term}
+- What it measures (readouts): {readouts}
+
+Instructions:
+- Use all three pieces of assay information together to find the best match.
+- The ImmPort "measurement_technique" field is the most important — it corresponds to the assay type.
+- The ImmPort "name" field often contains the study ID and a short label; use it as secondary evidence.
+- If multiple experiments use the same measurement technique, prefer the one whose name is most specific to the assay described.
+- If no experiment is a reasonable match, return NONE.
+
+Return ONLY the experiment_accession value (e.g. EXP12345) or NONE. No explanation.

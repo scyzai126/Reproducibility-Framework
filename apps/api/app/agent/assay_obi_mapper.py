@@ -1,9 +1,9 @@
 """Map extracted assay names to OBI ontology terms.
 
 Matching chain (stops at first hit):
-  1. Exact match on original_name   → confidence: high
-  2. Exact match on normalized_name → confidence: medium
-  3. Embedding top-10 + LLM pick    → confidence: low  (fallback)
+  1. Exact match on original_name   → resource: exact_original,  confidence: "high"
+  2. Exact match on normalized_name → resource: exact_normalized, confidence: "high"
+  3. Embedding top-10 + LLM pick    → resource: embedding_llm,   confidence: <similarity float>
 """
 
 from __future__ import annotations
@@ -125,9 +125,8 @@ def _llm_pick(assay_name: str, candidates: list[dict[str, Any]]) -> dict[str, An
     return {
         "obi_id": chosen["id"],
         "obi_label": chosen["label"],
-        "obi_match_type": "embedding_llm",
-        "confidence": "low",
-        "similarity": chosen["similarity"],
+        "resource": "embedding_llm",
+        "confidence": chosen["similarity"],
     }
 
 
@@ -147,14 +146,14 @@ def map_assay_to_obi(original_name: str, normalized_name: str) -> dict[str, Any]
     # Step 1 — exact on original
     result = lookup.get(original_name.strip().lower())
     if result:
-        return {**result, "obi_match_type": "original", "confidence": "high"}
+        return {**result, "resource": "exact_original", "confidence": "high"}
 
     # Step 2 — exact on normalized
     norm = normalized_name.strip().lower()
     if norm and norm != original_name.strip().lower():
         result = lookup.get(norm)
         if result:
-            return {**result, "obi_match_type": "normalized", "confidence": "medium"}
+            return {**result, "resource": "exact_normalized", "confidence": "high"}
 
     # Step 3 — embedding top-10 candidates, LLM picks best
     return _embedding_llm_match(normalized_name.strip())
@@ -168,15 +167,18 @@ def enrich_assays_with_obi(assays: dict[str, Any]) -> dict[str, dict[str, Any]]:
         original = entry.get("original_name") or canonical
         normalized = entry.get("normalized_name") or canonical
 
+        # Always write these so the output file is self-contained
+        entry["original_name"] = original
+        entry["normalized_name"] = normalized
+
         mapped = map_assay_to_obi(original, normalized)
         if mapped:
             entry.update(mapped)
         else:
             entry.setdefault("obi_id", None)
             entry.setdefault("obi_label", None)
-            entry.setdefault("obi_match_type", "unresolved")
-            entry.setdefault("confidence", "low")
-            entry.setdefault("similarity", None)
+            entry.setdefault("resource", "unresolved")
+            entry.setdefault("confidence", None)
 
         enriched[canonical] = entry
     return enriched

@@ -32,20 +32,18 @@ def process_study(study_dir: Path) -> None:
 
     enriched = enrich_assays_with_obi(assays)
 
-    counts = {"high": 0, "medium": 0, "low": 0, "unresolved": 0}
+    counts = {"exact": 0, "embedding": 0, "unresolved": 0}
     for v in enriched.values():
-        match_type = v.get("obi_match_type", "unresolved")
-        if match_type == "original":
-            counts["high"] += 1
-        elif match_type == "normalized":
-            counts["medium"] += 1
-        elif match_type == "embedding_llm":
-            counts["low"] += 1
+        resource = v.get("resource", "unresolved")
+        if resource in ("exact_original", "exact_normalized"):
+            counts["exact"] += 1
+        elif resource == "embedding_llm":
+            counts["embedding"] += 1
         else:
             counts["unresolved"] += 1
 
     out_path.write_text(json.dumps(enriched, indent=2, ensure_ascii=False))
-    print(f"high={counts['high']} medium={counts['medium']} low={counts['low']} unresolved={counts['unresolved']} → assay_OBI.json")
+    print(f"exact={counts['exact']} embedding={counts['embedding']} unresolved={counts['unresolved']} → assay_OBI.json")
 
 
 def main() -> None:

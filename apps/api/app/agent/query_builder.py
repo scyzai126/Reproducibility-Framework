@@ -295,11 +295,91 @@ async def resolve_arm_accession(
 
 
 async def resolve_experiment_accession(
-    session: AsyncSession, assay_method: str, study_accession: str,
+    session: AsyncSession,
+    assay_method: str,
+    study_accession: str,
     claim_text: str | None = None,
+    original_name: str = "",
+    readouts: str = "",
 ) -> tuple[str, str] | None:
-    """Resolve an assay method → experiment_accession."""
-    return await _resolve_accession(session, assay_method, study_accession, _EXPERIMENT_CONFIG, claim_text=claim_text)
+    """Resolve an assay method → experiment_accession.
+
+    SQL step tries canonical name then original_name (if different).
+    If both miss, one LLM call is made with canonical name, original name,
+    and readouts all included for richer context.
+    """
+    if not assay_method or not study_accession:
+        return None
+
+    config = _EXPERIMENT_CONFIG
+    table = config["table"]
+    id_col = config["id_col"]
+    search_cols = config["search_cols"]
+    all_cols = config["all_cols"]
+
+    # SQL step — try canonical name, then original_name
+    seen: set[str] = set()
+    for term in [assay_method, original_name]:
+        if not term or term.lower() in seen:
+            continue
+        seen.add(term.lower())
+        like_clauses = " OR ".join(f"{col} LIKE :pattern" for col in search_cols)
+        result = await session.execute(
+            text(
+                f"SELECT {all_cols} FROM {table} "
+                f"WHERE ({like_clauses}) AND study_accession = :study_accession"
+            ),
+            {"pattern": f"%{term}%", "study_accession": study_accession},
+        )
+        rows = [dict(zip(result.keys(), row)) for row in result.fetchall()]
+        if len(rows) == 1:
+            accession = rows[0][id_col]
+            logger.info("experiment resolved via SQL (%r): %r → %s", term, assay_method, accession)
+            return (accession, "SQL")
+        logger.info("SQL match for %r returned %d rows — trying next term", term, len(rows))
+
+    # LLM fallback — one call with all available context
+    all_result = await session.execute(
+        text(f"SELECT {all_cols} FROM {table} WHERE study_accession = :study_accession"),
+        {"study_accession": study_accession},
+    )
+    all_candidates = [dict(zip(all_result.keys(), row)) for row in all_result.fetchall()]
+    if not all_candidates:
+        logger.warning("No experiment rows found for study %s", study_accession)
+        return None
+
+    system_prompt, user_template = _load_resolver_prompt(config["prompt_name"])
+    prompt = user_template.format(
+        candidates=json.dumps(all_candidates, indent=2),
+        search_term=assay_method,
+        original_name=original_name or assay_method,
+        readouts=readouts or "",
+    )
+    if claim_text:
+        prompt += f"\n\nOriginal claim for context:\n{claim_text}"
+
+    client = _get_openai_client()
+    response = await client.chat.completions.create(
+        model=settings.OPENAI_MODEL,
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": prompt},
+        ],
+        temperature=0,
+    )
+    answer = (response.choices[0].message.content or "").strip()
+    logger.info("LLM experiment resolution: %r → %r", assay_method, answer)
+
+    if answer.upper() == "NONE":
+        return None
+    valid_ids = {c[id_col] for c in all_candidates}
+    if answer in valid_ids:
+        return (answer, "LLM")
+    for candidate_id in valid_ids:
+        if candidate_id in answer:
+            return (candidate_id, "LLM")
+    logger.warning("LLM returned unrecognized experiment_accession: %r", answer)
+    return None
 
 
 async def get_assay_method_for_experiment(
@@ -1447,6 +1527,7 @@ async def resolve_and_build_queries(
     study_accession: str | None,
     session_factory,
     claim_text: str | None = None,
+    assay_registry: dict | None = None,
 ) -> list[dict]:
     """Resolve accessions and build SQL queries for all participant groups.
 
@@ -1543,8 +1624,14 @@ async def resolve_and_build_queries(
         async def _exp():
             if not (assay_method and study_accession):
                 return None
+            registry_entry = ((assay_registry or {}).get(assay_method) or {})
             async with session_factory() as s:
-                return await resolve_experiment_accession(s, assay_method, study_accession, claim_text=claim_text)
+                return await resolve_experiment_accession(
+                    s, assay_method, study_accession,
+                    claim_text=claim_text,
+                    original_name=registry_entry.get("original_name", ""),
+                    readouts=registry_entry.get("readouts", ""),
+                )
 
         async def _cond():
             if study_design == "longitudinal" or not study_accession:
