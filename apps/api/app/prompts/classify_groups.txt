@@ -11,7 +11,7 @@ For each claim, first classify its **comparison_strategy**, then use that classi
 - `longitudinal`: same samples measured at multiple explicit time points → one group per time point. Each group must have a distinct `time_point`. Do NOT use this if different samples happen to be sampled at different days — only use it when the same cohort is measured at multiple defined timepoints.
 - `case_control`: distinct disease vs healthy (or disease A vs disease B) → one group per condition
 - `cohort`: distinct population cohorts compared at a **single** time point (e.g., geographic groups, age strata, occupational groups) → one group per cohort.
-- `cross_sectional_longitudinal`: distinct population cohorts each measured at **multiple** explicit time points → emit K × T groups (one per cohort-timepoint combination). Assign each group both its `cohort` and `time_point`. Emit one comparison object per population pair per timepoint — do NOT emit inter-timepoint contrasts within the same cohort. Use this when the claim names 2+ distinct populations AND 2+ explicit timepoints.
+- `cross_sectional_longitudinal`: distinct population cohorts each measured at **multiple** explicit time points → emit K × T groups (one per cohort-timepoint combination). Assign each group both its `cohort` and `time_point`. Use this when the claim names 2+ distinct populations AND 2+ explicit timepoints. Emit one comparison object per population pair per timepoint whenever the claim/source states a cross-cohort difference. Additionally, emit inter-timepoint contrasts within the same cohort (e.g., day 0 vs. day 7) whenever the claim/source also states a within-cohort temporal trajectory (e.g., "increased by day X", "peaked at day Y", "remained above baseline at day Z") — do not drop these just because a cross-cohort contrast is also present. Only omit inter-timepoint contrasts when the claim states no temporal trend within a cohort, just a cohort-vs-cohort difference at each matching timepoint.
 - `clinical_trial`: samples enrolled in different intervention or treatment arms → one group per arm; set cohort to the arm/treatment label
 - `none`: assay reported but no comparison stated, or grouping is unclear → one group, comparison=[]
 
@@ -51,6 +51,17 @@ Emit `comparison_strategy` as the first field in each claim object, before `grou
 - finding: description of the biological result for that contrast; if the claim names specific genes, proteins, cell types, or molecular signatures, include those names here — do not replace them with a general category label
 
 Use [] if the claim has no comparison or grouping is unclear.
+
+**Longitudinal contrast selection:** For `longitudinal` and `cross_sectional_longitudinal` claims, do not assume every later timepoint is automatically contrasted against the day-0 baseline — that is the most common pattern (especially in vaccination studies), but it is only a tendency, not a rule. Base each `contrast` pair strictly on what the claim sentence and its source quote actually state or imply was compared. If the paper instead compares two non-baseline timepoints to each other (e.g., "declined from day 30 to day 180" with no stated day-0 comparison), emit that pair instead of defaulting to day 0. Do not fabricate a day-0 contrast that isn't supported by the text.
+
+**Peak/trough trajectory contrasts:** If the claim itself states a peak, trough, nadir, or other explicit trajectory shape (e.g., "peaked at day X", "declined by day Y", "rose then fell") across **3 or more** ordered timepoint groups, do not emit a single baseline-vs-peak (or baseline-vs-trough) contrast — a peak/trough is established by the shape of the whole trajectory, not by one jump from baseline. Instead emit one contrast per **consecutive** pair of adjacent timepoints spanning the full ordered sequence of groups (day 0→day 7, day 7→day 30, day 30→day 180, day 180→day 750, etc.). Give each contrast a `finding` describing that step's direction (e.g., "increased from day 0 to day 7", "further increased from day 7 to day 30, reaching the peak", "declined from day 30 to day 180", "remained above baseline at day 750"). This only applies when 3+ ordered timepoint groups exist for the claim; with exactly 2 timepoint groups, emit the single [0, 1] contrast as usual.
+- Example: claim = "...showed that the polysaccharide-specific IgG binding antibody response peaked at day 30 compared to baseline (day 0)." with groups at day 0, 7, 30, 180, 750 (group_ids 0–4) → comparison = `[{"contrast": [0,1], "finding": "IgG response increased from day 0 to day 7"}, {"contrast": [1,2], "finding": "IgG response further increased from day 7 to day 30, reaching the peak"}, {"contrast": [2,3], "finding": "IgG response declined from day 30 to day 180"}, {"contrast": [3,4], "finding": "IgG response remained above baseline through day 750"}]` — NOT a single `{"contrast": [0,2], "finding": "peaked at day 30 compared to baseline"}`.
+
+**Default longitudinal contrasts — baseline vs. each later timepoint, not chained:** For a `longitudinal` claim that reports a response "induced," "elevated," "detected," or otherwise present "compared to baseline (day 0)" *without* the claim itself naming a peak/trough/decline shape (that is the narrower case above), emit one contrast per later timepoint **against day 0**, not sequential/adjacent pairs. Every later group is being evaluated against the same pre-vaccination reference, so contrast day 0 vs. each of the other groups independently (0 vs 1, 0 vs 2, 0 vs 3, 0 vs 4, ...), not 0 vs 1, 1 vs 2, 2 vs 3, ....
+- Example: claim = "...showed that MPSV4 induced robust polysaccharide-specific IgG binding antibody responses against serogroups A and C compared to baseline (day 0)." with groups at day 0, 7, 30, 180, 750 (group_ids 0–4) → comparison = `[{"contrast": [0,1], "finding": "IgG response induced by day 7 relative to baseline"}, {"contrast": [0,2], "finding": "IgG response induced by day 30 relative to baseline"}, {"contrast": [0,3], "finding": "IgG response induced by day 180 relative to baseline"}, {"contrast": [0,4], "finding": "IgG response induced by day 750 relative to baseline"}]` — NOT sequential adjacent-day pairs, since the claim states no rise/peak/decline shape, only "induced ... compared to baseline."
+
+**Implicit day-0 baseline for antibody-response correlation claims:** If the claim states that an assay value measured at a single **post-vaccination** day (e.g., "at day 7 after vaccination") correlated with an antibody-related outcome (IgG titer, neutralizing antibody titer, seroconversion, "antibody response"), and no explicit day is given for that antibody outcome, classify as `longitudinal` and emit two groups: an implicit `day 0` baseline group plus the stated day, both sharing the claim's assay_method/tissue_type/cohort. Emit one `comparison` entry with `contrast: [0, 1]` describing the correlation. This reflects the immunology convention that an antibody "response" is inherently measured relative to a pre-vaccination baseline, even when the sentence only names the later day.
+Do NOT apply this when the stated day is already `day 0` (no earlier baseline exists to add), or when the correlate is not antibody-related (e.g., correlated with a gene module, cell-subset frequency, or another cellular readout) — those stay `none` with a single group.
 
 **Output format:**
 ```json
@@ -102,6 +113,28 @@ Use [] if the claim has no comparison or grouping is unclear.
   }
 }
 ```
+
+**Example — longitudinal (implicit day-0 baseline for antibody-response correlation, Flow cytometry, SDY1260):**
+```json
+{
+  "claim_8": {
+    "claim": "Flow cytometry analysis of whole blood from MCV4 vaccinees showed that the percentage of total ASCs in the blood at day 7 after vaccination (day 7) strongly correlated with serum anti-DT IgG.",
+    "sources": [
+      {"type": "text", "section": "Results", "quote": "Indeed, the percentage of total ASCs in the blood at day 7 after MCV4 vaccination strongly correlated with the serum anti-DT IgG (Fig. 1g), and not with the anti-polysaccharide IgG response (data not shown)."},
+      {"type": "figure", "ref": "Figure 1g"}
+    ],
+    "comparison_strategy": "longitudinal",
+    "groups": [
+      {"group_id": 0, "study_accession": null, "sample_size": null, "disease": null, "disease_stage": null, "cohort": "MCV4 vaccinees", "assay_method": "Flow cytometry", "tissue_type": "whole blood", "gender": null, "age": null, "time_point": "day 0"},
+      {"group_id": 1, "study_accession": null, "sample_size": null, "disease": null, "disease_stage": null, "cohort": "MCV4 vaccinees", "assay_method": "Flow cytometry", "tissue_type": "whole blood", "gender": null, "age": null, "time_point": "day 7"}
+    ],
+    "comparison": [
+      {"contrast": [0, 1], "finding": "the percentage of total ASCs in the blood at day 7 strongly correlated with serum anti-DT IgG"}
+    ]
+  }
+}
+```
+The claim sentence names only "day 7," but since the correlate is an antibody titer (anti-DT IgG) and no other day is stated for it, an implicit `day 0` baseline group is added per the rule above. Contrast this with a claim like "TLR1 mRNA on day of vaccination (day 0) correlated with ELISpot AUC immunogenicity" — there the stated day is already `day 0`, so no baseline exists to add and it stays `none` with a single group.
 
 **Example — case_control (Q-PCR, SDY1669, healthy vs COVID-19 severity groups):**
 ```json
