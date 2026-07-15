@@ -4,7 +4,7 @@ rendering) and let the API's own PDF handling do the reading.
 Two-step extraction:
     1. extract_assays_from_pdf_direct  - assay discovery only (extract_assays_pdf.txt)
     2. extract_claims_from_pdf_direct  - claim extraction given a known assay
-       registry (extract_claims pdf.txt)
+       registry (extract_claims_pdf.txt)
 """
 
 import base64
@@ -55,7 +55,7 @@ async def extract_claims_from_pdf_direct(
     pdf_bytes: bytes, filename: str, assays: dict, client: AsyncOpenAI
 ) -> tuple[dict, list]:
     """Send raw PDF bytes + a pre-built assay registry to the model and extract claims."""
-    template = _load_prompt("extract_claims pdf.txt")
+    template = _load_prompt("extract_claims_pdf.txt")
     system_prompt = template.replace("{assays}", json.dumps(assays, indent=2, ensure_ascii=False))
 
     resp = await client.chat.completions.create(

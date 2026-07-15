@@ -16,7 +16,6 @@ import openpyxl
 sys.path.insert(0, str(Path(__file__).parent / "apps" / "api"))
 
 from app.agent.claim_parser import _get_client, _load_prompt, _strip_fences
-from app.agent.assay_obi_mapper import enrich_assays_with_obi
 from app.agent.pdf_vision import extract_claims_from_pdf_images
 from app.config import settings
 
@@ -127,7 +126,6 @@ async def main() -> None:
 
     print(f"[{args.study}] Sending to vision model ({settings.OPENAI_MODEL})…")
     assays, claims = await extract_claims_from_pdf_images(pdf_bytes, client)
-    assays = enrich_assays_with_obi(assays)
 
     (out_dir / "assays.json").write_text(json.dumps(assays, indent=2, ensure_ascii=False))
     print(f"[{args.study}] {len(assays)} assays → {out_dir.name}/assays.json")

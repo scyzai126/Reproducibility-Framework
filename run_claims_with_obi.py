@@ -1,7 +1,7 @@
 """Run claim extraction against a PDF using extract_claims pdf_noassay.txt, fed
 with a pre-built assay registry mapped to OBI ontology terms (assays_OBI.json).
 
-Each output claim carries an "assay" object {original_name, obi_id, obi_label}
+Each output claim carries an "assay" object {name_in_paper, obi_id, obi_label}
 naming the registry entry it belongs to.
 
 Usage:
@@ -32,7 +32,7 @@ def _build_registry_for_prompt(assays_obi: dict) -> dict:
     registry = {}
     for name, v in assays_obi.items():
         registry[name] = {
-            "original_name": v.get("original_name") or name,
+            "name_in_paper": v.get("name_in_paper") or name,
             "obi_id": v.get("obi_id"),
             "obi_label": v.get("obi_label"),
         }

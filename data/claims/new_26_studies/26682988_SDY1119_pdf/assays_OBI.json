@@ -1,0 +1,90 @@
+{
+  "microarray": {
+    "original_name": "microarray",
+    "aliases": [
+      "RNA Isolation and Microarray Analysis",
+      "microarray analyses",
+      "Microarray experiments",
+      "Human U133 Plus 2.0 Arrays",
+      "transcriptomic profiling",
+      "gene expression profiles"
+    ],
+    "sample_type": "PBMCs",
+    "readouts": "gene expression profiles, transcriptional signatures",
+    "evidence_location": {
+      "type": "text",
+      "section": "Methods",
+      "quote": "RNA Isolation and Microarray Analysis Total RNA from PBMCs (~1.5 × 10^6 cells) was purified using Trizol (Invitrogen, Life Technologies Corporation) according to the manufacturer’s instructions. Samples were checked for purity and hybridized on Human U133 Plus 2.0 Arrays (Affymetrix)."
+    },
+    "confidence": "high",
+    "claim_role": "primary",
+    "normalized_name": "microarray",
+    "obi_id": "OBI:0001985",
+    "obi_label": "microarray assay",
+    "resource": "exact_original"
+  },
+  "Flow Cytometry Analysis": {
+    "original_name": "Flow Cytometry Analysis",
+    "aliases": [
+      "flow cytometry",
+      "FACS",
+      "fluorescence-activated cell sorting (FACS)",
+      "Flow cytometry and miRNA expression data were obtained for vaccinees from 2010 season"
+    ],
+    "sample_type": "PBMCs",
+    "readouts": "NK cell frequencies and subsets, monocyte subsets, CD69 activation, CCR5 expression, CD86 expression, geometric mean fluorescence intensity (MFI)",
+    "evidence_location": {
+      "type": "text",
+      "section": "Methods",
+      "quote": "Flow Cytometry Analysis 2–3 × 10^6 PBMCs were thawed and stained with live/dead marker (Alexa Fluor 430, Life Technologies) to exclude dead cells. Cells were then stained with an appropriate antibody cocktail. Cells were washed, fixed, and analyzed on the LSRII flow cytometer (BD)."
+    },
+    "confidence": 0.7496,
+    "claim_role": "validation",
+    "normalized_name": "Flow Cytometry Analysis",
+    "obi_id": "OBI:0000916",
+    "obi_label": "flow cytometry assay",
+    "resource": "embedding_llm"
+  },
+  "hemagglutination-inhibition (HAI) antibody titer assays": {
+    "original_name": "hemagglutination-inhibition (HAI) antibody titer assays",
+    "aliases": [
+      "HAI assays",
+      "HAI titer assays",
+      "plasma antibody responses",
+      "antibody titers"
+    ],
+    "sample_type": "plasma",
+    "readouts": "influenza antibody titers, fold change from baseline, seroconversion/high versus low responder classification, day 180 persistence of antibody response",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "We evaluated the plasma antibody responses of all vaccinated individuals via hemagglutination-inhibition (HAI) antibody titer assays."
+    },
+    "confidence": 0.7811,
+    "claim_role": "outcome_variable",
+    "normalized_name": "hemagglutination-inhibition (HAI) antibody titer assays",
+    "obi_id": "OBI:0000875",
+    "obi_label": "viral hemagglutination inhibition assay",
+    "resource": "embedding_llm"
+  },
+  "miRNA expression profiling": {
+    "original_name": "miRNA expression profiling",
+    "aliases": [
+      "miRNA profiling",
+      "miRNA expression data",
+      "miRNA expression profiles"
+    ],
+    "sample_type": "PBMCs",
+    "readouts": "expression profiles of 672 human miRNAs, differentially expressed miRNAs, miRNAs correlated with HAI response",
+    "evidence_location": {
+      "type": "figure",
+      "ref": "Figure 7"
+    },
+    "confidence": 0.7868,
+    "claim_role": "primary",
+    "normalized_name": "miRNA expression profiling",
+    "obi_id": "OBI:0001926",
+    "obi_label": "microRNA profiling assay",
+    "resource": "embedding_llm"
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "microarray": {
+    "name_in_paper": "microarray",
+    "aliases": [
+      "Microarray Analysis",
+      "microarray analyses",
+      "Human U133 Plus 2.0 Arrays",
+      "transcriptomic profiling",
+      "gene expression profiles"
+    ],
+    "sample_type": "PBMCs",
+    "readouts": "gene expression profiles; differentially expressed genes; blood transcription module activity/enrichment scores",
+    "analysis_methods": [
+      "RMA normalization",
+      "gene set enrichment analysis (GSEA)",
+      "single-sample GSEA (ssGSEA)",
+      "DAMIP",
+      "artificial neural network classifier",
+      "differential expression analysis",
+      "weighted correlation network analysis (WGCNA)",
+      "deconvolution analysis"
+    ],
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "BTMs related to the induction of interferons as well as the activation of dendritic cells were enriched on days 1 and 3 after TIV vaccination, whereas modules related to T cells at these time points were negatively associated with the antibody response."
+    },
+    "confidence": 0.98,
+    "claim_role": "primary"
+  },
+  "hemagglutination-inhibition (HAI) antibody titer assays": {
+    "name_in_paper": "hemagglutination-inhibition (HAI) antibody titer assays",
+    "aliases": [
+      "HAI assays",
+      "HAI antibody titer assays"
+    ],
+    "sample_type": "plasma",
+    "readouts": "influenza antibody titers; fold change in HAI titer; seroconversion/high versus low responder status; day 180 persistence of antibody response",
+    "analysis_methods": [
+      "Pearson correlation",
+      "linear regression"
+    ],
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "In the 2010 and 2011 seasons, in which elderly subjects were included, antibody responses showed a significant decrease with age."
+    },
+    "confidence": 0.97,
+    "claim_role": "outcome_variable"
+  },
+  "Flow Cytometry Analysis": {
+    "name_in_paper": "Flow Cytometry Analysis",
+    "aliases": [
+      "flow cytometry",
+      "FACS",
+      "fluorescence-activated cell sorting (FACS) measurements"
+    ],
+    "sample_type": "PBMCs",
+    "readouts": "frequencies of total NK cells, NK cell subsets, monocyte subsets; CD69, CCR5, and CD86 staining/activation levels; geometric mean fluorescence intensity (MFI)",
+    "analysis_methods": [],
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Our analysis showed that proportions of total NK cells in elderly subjects were higher than those of young subjects at baseline as well as at all the time points studied (days 0–14)."
+    },
+    "confidence": 0.96,
+    "claim_role": "validation"
+  },
+  "miRNA expression profiling": {
+    "name_in_paper": "miRNA expression profiling",
+    "aliases": [
+      "miRNA profiling",
+      "miRNA expression profiles"
+    ],
+    "sample_type": "PBMCs",
+    "readouts": "expression profiles of 672 human miRNAs; differentially expressed miRNAs; miRNAs correlated with antibody response",
+    "analysis_methods": [
+      "paired t test",
+      "Pearson correlation",
+      "single-sample GSEA (ssGSEA)",
+      "TargetScan integration"
+    ],
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "We saw a significant difference in the miRNA profiles between these two groups."
+    },
+    "confidence": 0.95,
+    "claim_role": "primary"
+  }
+}

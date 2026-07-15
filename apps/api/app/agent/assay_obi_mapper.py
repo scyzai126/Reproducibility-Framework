@@ -1,7 +1,7 @@
 """Map extracted assay names to OBI ontology terms.
 
 Matching chain (stops at first hit):
-  1. Exact match on original_name   → resource: exact_original,  confidence: "high"
+  1. Exact match on name_in_paper   → resource: exact_original,  confidence: "high"
   2. Exact match on normalized_name → resource: exact_normalized, confidence: "high"
   3. Embedding top-10 + LLM pick    → resource: embedding_llm,   confidence: <similarity float>
 """
@@ -170,7 +170,7 @@ def _embedding_llm_match(
 # ── Public API ────────────────────────────────────────────────────────────────
 
 def map_assay_to_obi(
-    original_name: str,
+    name_in_paper: str,
     normalized_name: str = "",
     terms_path: Path = _OBI_TERMS_PATH,
     sample_type: str = "",
@@ -189,19 +189,19 @@ def map_assay_to_obi(
     lookup = _build_lookup(terms_path)
 
     # Step 1 — exact on original
-    result = lookup.get(original_name.strip().lower())
+    result = lookup.get(name_in_paper.strip().lower())
     if result:
         return {**result, "resource": "exact_original", "confidence": "high"}
 
     # Step 2 — exact on normalized
     norm = normalized_name.strip().lower()
-    if norm and norm != original_name.strip().lower():
+    if norm and norm != name_in_paper.strip().lower():
         result = lookup.get(norm)
         if result:
             return {**result, "resource": "exact_normalized", "confidence": "high"}
 
     # Step 3 — embedding top-10 candidates (restricted to terms_path's vocabulary), LLM picks best
-    query = normalized_name.strip() or original_name.strip()
+    query = normalized_name.strip() or name_in_paper.strip()
     allowed_ids = _term_ids(terms_path)
     return _embedding_llm_match(query, allowed_ids=allowed_ids, sample_type=sample_type, readouts=readouts)
 
@@ -213,11 +213,11 @@ def enrich_assays_with_obi(
     enriched: dict[str, dict[str, Any]] = {}
     for canonical, value in assays.items():
         entry: dict[str, Any] = dict(value) if isinstance(value, dict) else {"description": value}
-        original = entry.get("original_name") or canonical
+        original = entry.get("name_in_paper") or canonical
         normalized = entry.get("normalized_name") or canonical
 
         # Always write these so the output file is self-contained
-        entry["original_name"] = original
+        entry["name_in_paper"] = original
         entry["normalized_name"] = normalized
 
         sample_type = str(entry.get("sample_type") or "")

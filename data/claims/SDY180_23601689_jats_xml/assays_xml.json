@@ -1,0 +1,114 @@
+{
+  "microarray": {
+    "name_in_paper": "microarray",
+    "aliases": [
+      "Microarray Assay",
+      "whole-genome transcriptional profiles",
+      "whole-genome arrays"
+    ],
+    "sample_type": "whole blood",
+    "readouts": "global transcript abundance, gene expression profiles, module-level expression changes",
+    "analysis_methods": [
+      "modular repertoire analysis",
+      "pathway analysis",
+      "correlation analysis with antibody titers",
+      "linear mixed model (LMM) differential expression testing"
+    ],
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Whole-genome transcriptional profiles were generated at each time point from the first cohort of volunteers (n = 6 subjects/ group; 162 samples in total). Specific time points where significant differences were found in comparison to baseline for each group (false discovery rate [FDR] = 0.10) were identified."
+    },
+    "confidence": 0.98,
+    "claim_role": "primary"
+  },
+  "flow cytometry": {
+    "name_in_paper": "flow cytometry",
+    "aliases": [
+      "polychromatic flow cytometry",
+      "multi-parameter flow cytometry"
+    ],
+    "sample_type": "whole blood",
+    "readouts": "absolute numbers and frequencies of B cells, plasmablasts and plasma cells",
+    "analysis_methods": [
+      "linear mixed model (LMM) analyses"
+    ],
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Plasmablasts were identified by polychromatic flow cytometry in whole blood samples as CD19 +/lo CD20 − CD27 + CD38 hi plasmablasts and plasma cells."
+    },
+    "confidence": 0.97,
+    "claim_role": "validation"
+  },
+  "hemagglutinin inhibition assay": {
+    "name_in_paper": "hemagglutinin inhibition assay",
+    "aliases": [
+      "HAI titers",
+      "hemagglutinin inhibition"
+    ],
+    "sample_type": "serum",
+    "readouts": "influenza neutralizing antibody titers against vaccine strains",
+    "analysis_methods": [
+      "Spearman correlation analysis with day 7 modular transcriptional data"
+    ],
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Some day 7 modules correlating to levels of antibodies were similar to those found in the pneumococcal vaccine group (M4.11 and M4.10) ( Figure 7B ) with B Brisbane showing the strongest positive correlation with M4.11 and an increase in HAI titers (r = 0.77)."
+    },
+    "confidence": 0.95,
+    "claim_role": "outcome_variable"
+  },
+  "virus-neutralization assay": {
+    "name_in_paper": "virus-neutralization assay",
+    "aliases": [
+      "virus neutralization [VN]",
+      "Virus-Neutralization Assays"
+    ],
+    "sample_type": "serum",
+    "readouts": "influenza virus neutralizing antibody titers",
+    "analysis_methods": [
+      "Spearman correlation analysis with day 7 modular transcriptional data"
+    ],
+    "evidence_location": {
+      "type": "figure",
+      "ref": "Figure 7B"
+    },
+    "confidence": 0.94,
+    "claim_role": "outcome_variable"
+  },
+  "commercial immunoassays": {
+    "name_in_paper": "commercial immunoassays",
+    "aliases": [],
+    "sample_type": "serum",
+    "readouts": "antibody responses to 14 pneumococcal polysaccharides",
+    "analysis_methods": [
+      "Spearman correlation analysis with day 7 modular transcriptional data"
+    ],
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "The strongest correlations were observed between day 7 modular transcriptional data and serology results in the pneumococcal vaccine group."
+    },
+    "confidence": 0.45,
+    "claim_role": "outcome_variable"
+  },
+  "Multiplex 42-human cytokine and chemokine panel": {
+    "name_in_paper": "Multiplex 42-human cytokine and chemokine panel",
+    "aliases": [
+      "Multiplex Cytokine Analysis",
+      "Luminex Technology"
+    ],
+    "sample_type": "serum",
+    "readouts": "cytokine and chemokine concentrations, including CXCL10 (IP-10)",
+    "analysis_methods": [],
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Furthermore, serum levels of the IFN-inducible chemokine CXCL10 (IP-10) were also found to increase significantly on day 1 after influenza vaccination (p < 0.01; Figure S4 )."
+    },
+    "confidence": 0.88,
+    "claim_role": "validation"
+  }
+}

@@ -1629,7 +1629,7 @@ async def resolve_and_build_queries(
                 return await resolve_experiment_accession(
                     s, assay_method, study_accession,
                     claim_text=claim_text,
-                    original_name=registry_entry.get("original_name", ""),
+                    original_name=registry_entry.get("name_in_paper", ""),
                     readouts=registry_entry.get("readouts", ""),
                 )
 

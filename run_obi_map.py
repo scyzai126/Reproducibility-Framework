@@ -1,6 +1,6 @@
 """Map a study's assays.json to OBI ontology terms using a given standard vocabulary.
 
-Matching chain (stops at first hit): exact match on original_name, exact match on
+Matching chain (stops at first hit): exact match on name_in_paper, exact match on
 normalized_name, then embedding top-10 + LLM pick — restricted to the vocabulary
 in --terms.
 
