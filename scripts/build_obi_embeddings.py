@@ -1,7 +1,7 @@
 """Build and cache embeddings for all OBI assay terms.
 
-Reads  : data/obi_assay_terms.json
-Writes : data/obi_assay_embeddings.json
+Reads  : .claude/skills/extract-assay-methods/references/obi_assay_terms.json
+Writes : .claude/skills/extract-assay-methods/references/obi_assay_embeddings.json
 
 Each entry in the output:
   {
@@ -23,8 +23,9 @@ from pathlib import Path
 from openai import OpenAI
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-OBI_TERMS_PATH = REPO_ROOT / "data" / "obi_assay_terms.json"
-OUTPUT_PATH = REPO_ROOT / "data" / "obi_assay_embeddings.json"
+OBI_REFERENCES_DIR = REPO_ROOT / ".claude" / "skills" / "extract-assay-methods" / "references"
+OBI_TERMS_PATH = OBI_REFERENCES_DIR / "obi_assay_terms.json"
+OUTPUT_PATH = OBI_REFERENCES_DIR / "obi_assay_embeddings.json"
 
 EMBED_MODEL = "text-embedding-3-small"
 BATCH_SIZE = 100  # texts per API call

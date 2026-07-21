@@ -5,10 +5,10 @@ normalized_name, then embedding top-10 + LLM pick — restricted to the vocabula
 in --terms.
 
 Usage:
-    python run_obi_map.py <study_dir> [--terms data/obi_immuno_assay_terms.json]
+    python scripts/run_obi_map.py <study_dir> [--terms data/obi_immuno_assay_terms.json]
 
 Example:
-    python run_obi_map.py data/claims/new_26_studies/23601689_SDY180_pdf \\
+    python scripts/run_obi_map.py data/claims/new_26_studies/23601689_SDY180_pdf \\
         --terms data/obi_immuno_assay_terms.json
 
 Reads  : <study_dir>/assays.json
@@ -20,12 +20,12 @@ import json
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent / "apps" / "api"))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "apps" / "api"))
 
 from app.agent.assay_obi_mapper import enrich_assays_with_obi
 
-REPO_ROOT = Path(__file__).parent
-DEFAULT_TERMS = REPO_ROOT / "data" / "obi_assay_terms.json"
+REPO_ROOT = Path(__file__).resolve().parent.parent
+DEFAULT_TERMS = REPO_ROOT / ".claude" / "skills" / "extract-assay-methods" / "references" / "obi_assay_terms.json"
 
 
 def main() -> None:

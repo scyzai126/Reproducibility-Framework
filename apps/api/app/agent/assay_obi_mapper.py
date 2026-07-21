@@ -18,8 +18,9 @@ import numpy as np
 from openai import OpenAI
 
 _REPO_ROOT = Path(__file__).resolve().parents[4]
-_OBI_TERMS_PATH = _REPO_ROOT / "data" / "obi_assay_terms.json"
-_EMBEDDINGS_PATH = _REPO_ROOT / "data" / "obi_assay_embeddings.json"
+_OBI_REFERENCES_DIR = _REPO_ROOT / ".claude" / "skills" / "extract-assay-methods" / "references"
+_OBI_TERMS_PATH = _OBI_REFERENCES_DIR / "obi_assay_terms.json"
+_EMBEDDINGS_PATH = _OBI_REFERENCES_DIR / "obi_assay_embeddings.json"
 _PROMPTS_DIR = _REPO_ROOT / "apps" / "api" / "app" / "prompts"
 
 EMBED_MODEL = "text-embedding-3-small"
