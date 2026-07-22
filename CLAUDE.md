@@ -125,3 +125,42 @@ The UI renders this as a formatted JSON block in the assistant chat bubble.
 ### LLM prompt
 
 The description analyzer system prompt lives in `apps/api/app/prompts/description_analyzer.txt` (not inline). Modify it there to change how groups are parsed from paper text.
+
+## Repository Guidelines for Claude Code
+
+### Scope & File Modifications
+- **Minimize Scope:** Modify *only* the specific files explicitly requested or required to complete the task.
+- **Do Not Touch:** Do not modify configuration files, build scripts, or unrelated module files unless specifically asked.
+- **Refactoring Boundary:** Do not perform general refactoring, code formatting, or style cleanup outside the target lines/files of the current issue.
+- **Diff Check:** Before completing a prompt, list all changed files and confirm no extraneous edits were introduced.
+
+### Testing
+- **New Feature → New Test:** When adding a new module or feature under `apps/api/app/agent/`, add a corresponding `apps/api/tests/test_*.py` covering its core logic.
+- **Run Before Completing:** Before finishing a prompt that touched backend code, run `pytest` (from `apps/api/`) and confirm the suite passes. If a failure is pre-existing and unrelated to the current change, call it out explicitly rather than silently leaving it red.
+- **Keep Tests in Sync:** If a refactor renames or removes a module, update or remove the tests that import it in the same change — don't leave a test importing a deleted module.
+
+### Paper / LLM Runs (cost control)
+- **No unprompted paper runs:** When a piece of work is finished, do NOT test it by running the pipeline on a new PDF paper unless the user explicitly asks. LLM calls over a full paper are expensive — finish with unit tests and a summary instead, and let the user decide when to spend a real paper run.
+- **One LLM step at a time:** When the user does ask to test with a PDF, run only the single LLM call that step involves (e.g. just assay extraction) and then stop and report. Do NOT chain into the following calls (claim extraction, reconciliation, OBI mapping, group classification) unless the user explicitly tells you to continue.
+
+## Repo / Git Etiquette
+
+### Branch Strategy
+- **Never commit directly to main** unless the user asks or for small changes
+- Use feature branches for all work
+- Descriptive branch names: `feature/transcript-selector`, `fix/gemini-timeout`
+
+### Commit Practices
+- Commit frequently as you work
+- Write clear, descriptive commit messages
+- Keep commits focused on single changes
+
+### Issue Tracking
+- Create GitHub issues for all planned features
+- Reference issues in commit messages when applicable
+- Use issues to track bugs and enhancements
+
+### Worktrees
+- Native Claude Code worktrees live in `.claude/worktrees/` (used by `EnterWorktree`)
+- Legacy feature worktrees may exist in `.trees/` (gitignored)
+- When a branch is in a worktree, work directly in the worktree path instead of `git checkout`
