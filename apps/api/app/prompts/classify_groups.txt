@@ -11,11 +11,20 @@ For each claim, first classify its **comparison_strategy**, then use that classi
 - `longitudinal`: same samples measured at multiple explicit time points → one group per time point. Each group must have a distinct `time_point`. Do NOT use this if different samples happen to be sampled at different days — only use it when the same cohort is measured at multiple defined timepoints.
 - `case_control`: distinct disease vs healthy (or disease A vs disease B) → one group per condition
 - `cohort`: distinct population cohorts compared at a **single** time point (e.g., geographic groups, age strata, occupational groups) → one group per cohort.
-- `cross_sectional_longitudinal`: distinct population cohorts each measured at **multiple** explicit time points → emit K × T groups (one per cohort-timepoint combination). Assign each group both its `cohort` and `time_point`. Use this when the claim names 2+ distinct populations AND 2+ explicit timepoints. Emit one comparison object per population pair per timepoint whenever the claim/source states a cross-cohort difference. Additionally, emit inter-timepoint contrasts within the same cohort (e.g., day 0 vs. day 7) whenever the claim/source also states a within-cohort temporal trajectory (e.g., "increased by day X", "peaked at day Y", "remained above baseline at day Z") — do not drop these just because a cross-cohort contrast is also present. Only omit inter-timepoint contrasts when the claim states no temporal trend within a cohort, just a cohort-vs-cohort difference at each matching timepoint.
+- `cross_sectional_longitudinal`: distinct population cohorts each measured at **multiple** explicit time points → emit K × T groups (one per cohort-timepoint combination). Assign each group both its `cohort` and `time_point`. Use this when the claim names 2+ distinct populations AND 2+ explicit timepoints. Emit one comparison object per population pair per timepoint whenever the claim/source states a cross-cohort difference. Additionally, emit inter-timepoint contrasts within the same cohort (e.g., day 0 vs. day 7) whenever the claim/source also states a within-cohort temporal trajectory (e.g., "increased by day X", "peaked at day Y", "remained above baseline at day Z") — do not drop these just because a cross-cohort contrast is also present. If that within-cohort trajectory names a winning timepoint ("peaked at day Y", "most prominently on day X"), follow the extremum rule below: fan the named cohort's timepoints against its own baseline and add a `ranking` restricted to that one cohort. Only omit inter-timepoint contrasts when the claim states no temporal trend within a cohort, just a cohort-vs-cohort difference at each matching timepoint.
 - `clinical_trial`: samples enrolled in different intervention or treatment arms → one group per arm; set cohort to the arm/treatment label
+- `correlation`: the claim states a correlation/dependency/association between two variables measured by **different assays** (not one assay's value vs. an antibody titer stated at a single day — see the implicit-day-0-baseline rule below for that narrower case) → emit exactly two groups, one per assay/variable actually named, each with its own real `assay_method`/`tissue_type`. Set `time_point` to the stated day for whichever variable has one; use `null` for a variable that is itself a derived/multi-timepoint metric (e.g., a persistence residual spanning two later days). Do not fabricate a day-0 or any other baseline group. Emit one `comparison` entry describing the correlation.
+- `response_stratified`: subjects split by their own outcome/response status (responders vs. non-responders, high vs. low responders, transient vs. durable responders) → one group per response stratum. See the dedicated rule below.
 - `none`: assay reported but no comparison stated, or grouping is unclear → one group, comparison=[]
 
 **Measurement-level comparisons do NOT create multiple groups.** If the claim compares different antigens, viral variants, analytes, or assay targets measured on the same samples (e.g., "responses against B.1.351 were lower than against WA1", "IgG was higher than IgM"), use `none` with a single group.
+
+**Responder-status comparisons — use `response_stratified`.** If the claim's comparison is between subjects classified by their own outcome/response status rather than by an objective demographic, disease, cohort, or timepoint variable — e.g., "responders" vs. "non-responders", "transient/temporary responders" vs. "durable/permanent responders", "high responders" vs. "low responders", "higher antibody response" vs. "lower antibody response" — classify the claim as `response_stratified` and emit one group per response stratum. Group membership here is defined by the very measurement being analyzed rather than by an independent grouping variable, so these strata will not correspond to any arm or cohort recorded in the study database; capture them as descriptive labels. Do not drop the claim, and do not collapse it into a `none` claim with a single group.
+- cohort: fold the response stratum together with the study population into a single string — the same way the year/season rule below folds two dimensions into one cohort. Example: `"MCV4 vaccinees — responders"` / `"MCV4 vaccinees — non-responders"`, not a bare `"responders"`. If the claim names no population, the bare stratum label alone is fine.
+- disease and disease_stage: both null. A response stratum is not a disease or a severity sub-classification — never put `"non-responder"`, `"low responder"`, or similar into `disease_stage`.
+- time_point: keep the day stated in the claim (many of these are day-3 or day-7 readouts), following the same extraction rule as every other strategy. If the claim states no day, leave it null — do not add an implicit day-0 baseline group.
+- assay_method and tissue_type: mandatory as always.
+- comparison: one entry per stratum pair, with the finding as the claim states it.
 
 **Source ordering rule:** In the `sources` array, always place Results-section text entries first, followed by Methods-section text entries, then figure and table references. This ensures the primary evidence appears at `sources[0]`.
 
@@ -39,7 +48,10 @@ Emit `comparison_strategy` as the first field in each claim object, before `grou
 
   ❌ WRONG: `"disease": null, "disease_stage": "healthy"`
   ✅ CORRECT: `"disease": "healthy", "disease_stage": null`
-- cohort: only if the paper names a cohort or geographic location for this group
+- cohort: only if the paper names a cohort or geographic location for this group. **Restricting year/season stays part of cohort, even alongside another dimension:** if the claim scopes a group's population to a specific year, season, or enrollment wave *and* the group is also differentiated along another dimension (age, disease, named subgroup, etc.), fold **both** the year/season and the other dimension into a single `cohort` string — never drop the year/season restriction just because another dimension is also present, since that silently broadens the group beyond what the claim actually describes. Only use the year/season alone as `cohort` when it is itself the *sole* dimension distinguishing the groups in the claim (no other differentiating dimension present).
+
+  ❌ WRONG (drops the season restriction): claim states "...a subset of 2010-season young and elderly subjects..." → `"cohort": "young subjects"` / `"cohort": "elderly subjects"`
+  ✅ CORRECT: `"cohort": "2010 season young subjects"` / `"cohort": "2010 season elderly subjects"`
 - gender: only if stated for this group specifically; do not copy from another group or infer from a demographics table that does not break down by group
 - age: only if stated for this group specifically; same rule as gender
 - time_point: the absolute day extracted from the parenthetical in the claim (e.g., "after secondary vaccination (day 21)" → "day 21"; "days 1 and 2 after primary vaccination (day 1-2)" → split into two groups, "day 1" and "day 2"). Always use the bare absolute day form: "day 0", "day 1", "day 21", etc. — never use the relative phrase. If a claim names a range or list of days (e.g., "day 1-2", "days 1 and 2"), emit one group per day.
@@ -52,16 +64,48 @@ Emit `comparison_strategy` as the first field in each claim object, before `grou
 
 Use [] if the claim has no comparison or grouping is unclear.
 
-**Longitudinal contrast selection:** For `longitudinal` and `cross_sectional_longitudinal` claims, do not assume every later timepoint is automatically contrasted against the day-0 baseline — that is the most common pattern (especially in vaccination studies), but it is only a tendency, not a rule. Base each `contrast` pair strictly on what the claim sentence and its source quote actually state or imply was compared. If the paper instead compares two non-baseline timepoints to each other (e.g., "declined from day 30 to day 180" with no stated day-0 comparison), emit that pair instead of defaulting to day 0. Do not fabricate a day-0 contrast that isn't supported by the text.
+**ranking** is a second top-level field on the claim object, used only for claims that assert a **superlative** — that one timepoint (or group) is the largest/smallest of several. A pairwise `contrast` cannot express "of these three changes, the day-1 one is the biggest," so the ranking is stated separately. It is an array of ranking objects, each with:
+- type: `"argmax"` (largest/highest/most) or `"argmin"` (smallest/lowest/least)
+- scope: `"contrast"` when what is ranked is a *change* between two timepoints (e.g., "the maximum expression **change**"); `"group"` when what is ranked is a *level* measured at each group (e.g., "day 14 had the **greatest number** of genes with maximum expression values")
+- metric: what is being ranked, in the paper's own terms
+- over: the candidate set. When scope is `"contrast"`, these are **0-based indices into this claim's `comparison` array**. When scope is `"group"`, these are **`group_id`s**. Must list every candidate the superlative is claimed over — at least 2.
+- winner: the single element of `over` the claim says wins. Must appear in `over`.
+- finding: the superlative as the claim states it
 
-**Peak/trough trajectory contrasts:** If the claim itself states a peak, trough, nadir, or other explicit trajectory shape (e.g., "peaked at day X", "declined by day Y", "rose then fell") across **3 or more** ordered timepoint groups, do not emit a single baseline-vs-peak (or baseline-vs-trough) contrast — a peak/trough is established by the shape of the whole trajectory, not by one jump from baseline. Instead emit one contrast per **consecutive** pair of adjacent timepoints spanning the full ordered sequence of groups (day 0→day 7, day 7→day 30, day 30→day 180, day 180→day 750, etc.). Give each contrast a `finding` describing that step's direction (e.g., "increased from day 0 to day 7", "further increased from day 7 to day 30, reaching the peak", "declined from day 30 to day 180", "remained above baseline at day 750"). This only applies when 3+ ordered timepoint groups exist for the claim; with exactly 2 timepoint groups, emit the single [0, 1] contrast as usual.
-- Example: claim = "...showed that the polysaccharide-specific IgG binding antibody response peaked at day 30 compared to baseline (day 0)." with groups at day 0, 7, 30, 180, 750 (group_ids 0–4) → comparison = `[{"contrast": [0,1], "finding": "IgG response increased from day 0 to day 7"}, {"contrast": [1,2], "finding": "IgG response further increased from day 7 to day 30, reaching the peak"}, {"contrast": [2,3], "finding": "IgG response declined from day 30 to day 180"}, {"contrast": [3,4], "finding": "IgG response remained above baseline through day 750"}]` — NOT a single `{"contrast": [0,2], "finding": "peaked at day 30 compared to baseline"}`.
+Omit `ranking` entirely (or use []) when the claim states no superlative. Most claims have none.
 
-**Default longitudinal contrasts — baseline vs. each later timepoint, not chained:** For a `longitudinal` claim that reports a response "induced," "elevated," "detected," or otherwise present "compared to baseline (day 0)" *without* the claim itself naming a peak/trough/decline shape (that is the narrower case above), emit one contrast per later timepoint **against day 0**, not sequential/adjacent pairs. Every later group is being evaluated against the same pre-vaccination reference, so contrast day 0 vs. each of the other groups independently (0 vs 1, 0 vs 2, 0 vs 3, 0 vs 4, ...), not 0 vs 1, 1 vs 2, 2 vs 3, ....
+**Which contrast pattern to use — decide this first for any claim with 3+ timepoint groups:**
+
+| The claim says… | Contrasts to emit | ranking |
+|---|---|---|
+| A superlative that **names the winning timepoint** — "maximum on day 1", "peaked at day 30", "most prominently on day 1", "greatest at day 14" | baseline vs. **each** later timepoint (0v1, 0v2, 0v3, …) | **yes** — one entry naming the winner |
+| A change **between two named timepoints** — "declined from day 30 to day 180", "plateaued after day 14", "remained stable between X and Y" | exactly the pair(s) the claim names (adjacent/segment) | no |
+| An effect vs. baseline with **no shape and no winner** — "induced", "elevated", "detected … compared to baseline (day 0)" | baseline vs. each later timepoint (0v1, 0v2, 0v3, …) | no |
+
+Rows 1 and 3 emit the same contrasts and differ only in whether a `ranking` is added. Row 2 is the only case that stays narrow. Wording like "rose then fell" that describes direction but **names no winning day** is row 2, not row 1.
+
+**Longitudinal contrast selection:** For `longitudinal` and `cross_sectional_longitudinal` claims, do not assume every later timepoint is automatically contrasted against the day-0 baseline — that is the most common pattern (especially in vaccination studies), but it is only a tendency, not a rule. Base each `contrast` pair strictly on what the claim sentence and its source quote actually state or imply was compared. If the paper instead compares two non-baseline timepoints to each other (e.g., "declined from day 30 to day 180" with no stated day-0 comparison), emit that pair instead of defaulting to day 0. Do not fabricate a day-0 contrast that isn't supported by the text — neither an invented biological result nor a neutral placeholder entry.
+
+**Extremum / superlative contrasts (row 1 of the table above):** If the claim states that some quantity was at its **maximum or minimum at a named timepoint** across **3 or more** ordered timepoint groups, do NOT emit a single baseline-vs-winner contrast. A superlative is a statement about *all* the candidates, and it cannot be checked unless every candidate is present. Trigger vocabulary includes: **maximum, largest, greatest, highest, lowest, smallest, peak / peaked, most prominently, least prominently, most strongly, nadir, trough, earliest, first**.
+- Emit **baseline vs. each later timepoint** (0 vs 1, 0 vs 2, 0 vs 3, …) — one contrast per candidate timepoint, all sharing the same reference. Give each `finding` the quantity at that timepoint relative to baseline; do not editorialise about which one won (that belongs in `ranking`).
+- Then emit **exactly one `ranking` entry** with `scope: "contrast"`, `over` listing the indices of those contrasts, and `winner` set to the index of the contrast at the timepoint the claim names.
+- Use `scope: "group"` instead when the ranked quantity is a *level* at each timepoint rather than a change from baseline (e.g., "day 14 had the greatest number of genes with maximum expression values"); then `over` holds `group_id`s.
+- For `cross_sectional_longitudinal`, restrict both the contrast fan and the `over` set to the **single cohort the superlative is about**. Never rank across cohorts and timepoints at once — emit the cross-cohort contrasts separately, as usual, with no ranking.
+- This only applies when 3+ ordered timepoint groups exist. With exactly 2 timepoint groups there is nothing to rank: emit the single [0, 1] contrast and no `ranking`.
+- Example: claim = "...showed that the polysaccharide-specific IgG binding antibody response peaked at day 30 compared to baseline (day 0)." with groups at day 0, 7, 30, 180, 750 (group_ids 0–4) → comparison = `[{"contrast": [0,1], "finding": "IgG response at day 7 relative to baseline"}, {"contrast": [0,2], "finding": "IgG response at day 30 relative to baseline"}, {"contrast": [0,3], "finding": "IgG response at day 180 relative to baseline"}, {"contrast": [0,4], "finding": "IgG response at day 750 relative to baseline"}]` and ranking = `[{"type": "argmax", "scope": "contrast", "metric": "polysaccharide-specific IgG binding antibody response relative to baseline", "over": [0,1,2,3], "winner": 1, "finding": "the IgG response peaked at day 30"}]` — NOT a single `{"contrast": [0,2], "finding": "peaked at day 30 compared to baseline"}`, and NOT a chain of adjacent-day pairs.
+
+**Adjacent / segment contrasts (row 2 of the table above):** If the claim's assertion is about the change **between two specific timepoints it names** — "declined from day X to day Y", "plateaued after day X", "remained stable/unchanged between X and Y", "further increased from X to Y", "returned to baseline by day Y" — emit **exactly the pair(s) the claim names** and nothing else. Do not fan out from baseline, and do not emit a `ranking`: the claim asserts the direction of one step, not that any step was the biggest.
+- Example: claim = "...showed that HAI titers generally plateaued after day 14 compared to the earlier post-vaccination rise." with groups at day 0, 14, 28 (group_ids 0–2) → comparison = `[{"contrast": [0,1], "finding": "HAI titers rose from baseline by day 14"}, {"contrast": [1,2], "finding": "HAI titers plateaued between day 14 and day 28"}]`, ranking omitted. A baseline fan would put day 28 against day 0, which does not test "plateaued" at all.
+
+**Default longitudinal contrasts — baseline vs. each later timepoint, not chained (row 3 of the table above):** For a `longitudinal` claim that reports a response "induced," "elevated," "detected," or otherwise present "compared to baseline (day 0)" *without* the claim naming a winning timepoint (row 1) and without naming a specific pair of timepoints to compare (row 2), emit one contrast per later timepoint **against day 0**, not sequential/adjacent pairs. Emit no `ranking`. Every later group is being evaluated against the same pre-vaccination reference, so contrast day 0 vs. each of the other groups independently (0 vs 1, 0 vs 2, 0 vs 3, 0 vs 4, ...), not 0 vs 1, 1 vs 2, 2 vs 3, ....
 - Example: claim = "...showed that MPSV4 induced robust polysaccharide-specific IgG binding antibody responses against serogroups A and C compared to baseline (day 0)." with groups at day 0, 7, 30, 180, 750 (group_ids 0–4) → comparison = `[{"contrast": [0,1], "finding": "IgG response induced by day 7 relative to baseline"}, {"contrast": [0,2], "finding": "IgG response induced by day 30 relative to baseline"}, {"contrast": [0,3], "finding": "IgG response induced by day 180 relative to baseline"}, {"contrast": [0,4], "finding": "IgG response induced by day 750 relative to baseline"}]` — NOT sequential adjacent-day pairs, since the claim states no rise/peak/decline shape, only "induced ... compared to baseline."
 
-**Implicit day-0 baseline for antibody-response correlation claims:** If the claim states that an assay value measured at a single **post-vaccination** day (e.g., "at day 7 after vaccination") correlated with an antibody-related outcome (IgG titer, neutralizing antibody titer, seroconversion, "antibody response"), and no explicit day is given for that antibody outcome, classify as `longitudinal` and emit two groups: an implicit `day 0` baseline group plus the stated day, both sharing the claim's assay_method/tissue_type/cohort. Emit one `comparison` entry with `contrast: [0, 1]` describing the correlation. This reflects the immunology convention that an antibody "response" is inherently measured relative to a pre-vaccination baseline, even when the sentence only names the later day.
-Do NOT apply this when the stated day is already `day 0` (no earlier baseline exists to add), or when the correlate is not antibody-related (e.g., correlated with a gene module, cell-subset frequency, or another cellular readout) — those stay `none` with a single group.
+**Implicit day-0 baseline for antibody-response correlation claims:** If the claim states that a **single assay's** value measured at a single **post-vaccination** day (e.g., "at day 7 after vaccination") correlated with an antibody-related outcome (IgG titer, neutralizing antibody titer, seroconversion, "antibody response") reported by that same assay or with no assay named for the antibody side, and no explicit day is given for that antibody outcome, classify as `longitudinal` and emit two groups: an implicit `day 0` baseline group plus the stated day, both sharing the claim's assay_method/tissue_type/cohort. Emit one `comparison` entry with `contrast: [0, 1]` describing the correlation. This reflects the immunology convention that an antibody "response" is inherently measured relative to a pre-vaccination baseline, even when the sentence only names the later day.
+Do NOT apply this when: the stated day is already `day 0` (no earlier baseline exists to add); the correlate is not antibody-related (e.g., correlated with a gene module, cell-subset frequency, or another cellular readout) — those stay `none` with a single group; or the antibody-related outcome is itself attributed to a **named, different assay**, or is a metric derived from two non-baseline timepoints (e.g., a "D180/D28 residual" or other persistence/fold-change score) — those use `correlation` (see above) with two real groups, not a fabricated day-0 group.
+
+**Never add unstated day-0 contrasts:** Do not pair a day-0 group with every other group just because a baseline group exists. A day-0 contrast belongs in `comparison` only when the claim sentence or its source quote actually states or implies that comparison. If the claim only supports a day-30-vs-day-180 comparison, emit only that pair and leave the day-0 group uncontrasted — a group with no entry in `comparison` is a valid and expected outcome.
+- Example: claim = "...showed that the antibody titer declined from day 30 to day 180." with groups at day 0, day 30, day 180 (group_ids 0–2) → `comparison = [{"contrast": [1,2], "finding": "antibody titer declined from day 30 to day 180"}]`. Group 0 stays in `groups` (baseline was sampled) but appears in no contrast, because the source text never compared it to anything.
+- **Exception — superlative claims (row 1 of the table).** When the claim names a maximum or minimum across timepoints, the full baseline fan **is** stated by the claim: asserting "day 1 was the maximum" asserts something about day 3 and day 14 too, so every candidate timepoint must appear in `comparison` for the `ranking` to mean anything. Emit the whole fan there. This exception does not extend to row 2 (segment) or to claims with no superlative — those stay strict.
 
 **Output format:**
 ```json
@@ -74,9 +118,10 @@ Do NOT apply this when the stated day is already `day 0` (no earlier baseline ex
       {"type": "figure", "ref": "Figure 2A"},
       {"type": "table", "ref": "Table 1"}
     ],
-    "comparison_strategy": "<longitudinal|case_control|cohort|clinical_trial|none>",
+    "comparison_strategy": "<longitudinal|case_control|cohort|cross_sectional_longitudinal|clinical_trial|correlation|response_stratified|none>",
     "groups": [ {group object}, ... ],
-    "comparison": [ {"contrast": [0, 1], "finding": "..."}, ... ]
+    "comparison": [ {"contrast": [0, 1], "finding": "..."}, ... ],
+    "ranking": [ {"type": "argmax", "scope": "contrast", "metric": "...", "over": [0, 1, 2], "winner": 0, "finding": "..."} ]
   },
   "claim_2": {
     "claim": "<sentence from Step 1>",
@@ -87,8 +132,9 @@ Do NOT apply this when the stated day is already `day 0` (no earlier baseline ex
   }
 }
 ```
+`ranking` is optional — omit the key entirely on claims that state no superlative, as in `claim_2` above.
 
-**Example — longitudinal (Olink, SDY2189, 31 samples):**
+**Example — longitudinal with a superlative (Olink, SDY2189, 31 samples).** The claim names a winning timepoint ("peaking at day 22"), so this is row 1: baseline fan **plus** a `ranking`.
 ```json
 {
   "claim_1": {
@@ -106,13 +152,46 @@ Do NOT apply this when the stated day is already `day 0` (no earlier baseline ex
       {"group_id": 3, "study_accession": "SDY2189", "sample_size": 31, "disease": null, "disease_stage": null, "cohort": null, "assay_method": "Olink", "tissue_type": "plasma", "gender": null, "age": null, "time_point": "day 22"}
     ],
     "comparison": [
-      {"contrast": [0, 1], "finding": "IFNγ and CXCL10 significantly increased on days 1-2 vs day 0"},
-      {"contrast": [0, 2], "finding": "IFNγ and CXCL10 significantly increased on days 1-2 vs day 0"},
-      {"contrast": [0, 3], "finding": "IFNγ and CXCL10 significantly increased on days 1-2 vs day 0"}
+      {"contrast": [0, 1], "finding": "IFNγ and CXCL10 levels at day 1 relative to day 0"},
+      {"contrast": [0, 2], "finding": "IFNγ and CXCL10 levels at day 2 relative to day 0"},
+      {"contrast": [0, 3], "finding": "IFNγ and CXCL10 levels at day 22 relative to day 0"}
+    ],
+    "ranking": [
+      {"type": "argmax", "scope": "contrast", "metric": "IFNγ and CXCL10 elevation relative to day 0", "over": [0, 1, 2], "winner": 2, "finding": "IFNγ and CXCL10 peaked at day 22 after secondary immunization"}
     ]
   }
 }
 ```
+`over` holds **indices into `comparison`**, not group_ids: index 2 is the `[0, 3]` contrast, i.e. day 22. The per-contrast `findings` stay neutral — which one won is stated once, in `ranking`.
+
+**Example — extremum with both scopes (Microarray, SDY1276, day 0/1/3/14).** One Results sentence carries two different superlatives: a maximum *change* (ranked over contrasts) and a greatest *count* at a timepoint (ranked over groups). Both go in `ranking`.
+```json
+{
+  "claim_1": {
+    "claim": "Microarray analysis of peripheral blood cells from 92 healthy male adults at baseline (day 0) and days 1, 3, and 14 after influenza vaccination (day 0) showed that the maximum gene expression change occurred on day 1 compared to baseline (day 0).",
+    "sources": [
+      {"type": "text", "section": "Results", "quote": "The maximum expression change occurred on day 1, while day 14 had the greatest number of genes with maximum expression values."}
+    ],
+    "comparison_strategy": "longitudinal",
+    "groups": [
+      {"group_id": 0, "study_accession": null, "sample_size": 92, "disease": "healthy", "disease_stage": null, "cohort": null, "assay_method": "Microarray", "tissue_type": "peripheral blood cells", "gender": "male", "age": null, "time_point": "day 0"},
+      {"group_id": 1, "study_accession": null, "sample_size": 92, "disease": "healthy", "disease_stage": null, "cohort": null, "assay_method": "Microarray", "tissue_type": "peripheral blood cells", "gender": "male", "age": null, "time_point": "day 1"},
+      {"group_id": 2, "study_accession": null, "sample_size": 92, "disease": "healthy", "disease_stage": null, "cohort": null, "assay_method": "Microarray", "tissue_type": "peripheral blood cells", "gender": "male", "age": null, "time_point": "day 3"},
+      {"group_id": 3, "study_accession": null, "sample_size": 92, "disease": "healthy", "disease_stage": null, "cohort": null, "assay_method": "Microarray", "tissue_type": "peripheral blood cells", "gender": "male", "age": null, "time_point": "day 14"}
+    ],
+    "comparison": [
+      {"contrast": [0, 1], "finding": "gene expression change at day 1 relative to baseline"},
+      {"contrast": [0, 2], "finding": "gene expression change at day 3 relative to baseline"},
+      {"contrast": [0, 3], "finding": "gene expression change at day 14 relative to baseline"}
+    ],
+    "ranking": [
+      {"type": "argmax", "scope": "contrast", "metric": "magnitude of gene expression change relative to baseline", "over": [0, 1, 2], "winner": 0, "finding": "the maximum expression change occurred on day 1"},
+      {"type": "argmax", "scope": "group", "metric": "number of genes reaching their maximum expression value", "over": [1, 2, 3], "winner": 3, "finding": "day 14 had the greatest number of genes with maximum expression values"}
+    ]
+  }
+}
+```
+The first entry ranks *changes*, so `scope` is `"contrast"` and `over` indexes `comparison`. The second ranks a *count measured at each timepoint* — not a change from baseline — so `scope` is `"group"` and `over` holds `group_id`s (day 0 is excluded because the claim compares only post-vaccination days). Without the day-3 and day-14 contrasts present, neither superlative could be checked.
 
 **Example — longitudinal (implicit day-0 baseline for antibody-response correlation, Flow cytometry, SDY1260):**
 ```json
@@ -191,5 +270,49 @@ The claim sentence names only "day 7," but since the correlate is an antibody ti
   }
 }
 ```
+Only the cross-cohort contrasts the claim actually states are emitted, at each of the three timepoints. No within-cohort day-0-vs-day-2 or day-0-vs-day-7 pairs are added: the claim describes an age-associated difference between cohorts, not a temporal trajectory within any one cohort.
+
+**Example — correlation (Microarray vs. HAI, SDY1119, cross-assay correlation):**
+```json
+{
+  "claim_31": {
+    "claim": "Microarray analysis of PBMCs from vaccinees, using gene set enrichment analysis (GSEA), showed that day 7 expression of T-cell-related modules was negatively associated with the hemagglutination-inhibition (HAI) day 180/day 28 antibody titer residual, indicating that increased T-cell responses may result in more transient HAI antibody responses.",
+    "sources": [
+      {"type": "text", "section": "Results", "quote": "In addition, the day 7 expression of a number of T-cell-related modules was negatively associated with the D180/D28 residual, indicating that increased T cell responses might potentially result in more transient antibody responses (Figure 6F)."},
+      {"type": "figure", "ref": "Figure 6F"}
+    ],
+    "comparison_strategy": "correlation",
+    "groups": [
+      {"group_id": 0, "study_accession": null, "sample_size": null, "disease": null, "disease_stage": null, "cohort": "vaccinees", "assay_method": "Microarray", "tissue_type": "PBMCs", "gender": null, "age": null, "time_point": "day 7"},
+      {"group_id": 1, "study_accession": null, "sample_size": null, "disease": null, "disease_stage": null, "cohort": "vaccinees", "assay_method": "Hemagglutination inhibition (HAI)", "tissue_type": "serum", "gender": null, "age": null, "time_point": null}
+    ],
+    "comparison": [
+      {"contrast": [0, 1], "finding": "day 7 T-cell-related module expression (microarray) was negatively associated with the HAI day 180/day 28 antibody titer residual"}
+    ]
+  }
+}
+```
+No day-0 group is fabricated: group 1's `time_point` is `null` because the HAI residual is a derived value computed from day 28 and day 180 data, not a single-day measurement. Contrast this with the ASC%/anti-DT IgG example above — there the antibody side is a same-day titer with no assay of its own named, so the narrower implicit-day-0-baseline rule applies instead of `correlation`.
+
+**Example — response_stratified (DNA microarray, SDY1260, high vs. low anti-polysaccharide responders):**
+```json
+{
+  "claim_29": {
+    "claim": "DNA microarray analysis of blood transcriptomes from MPSV4 and MCV4 polysaccharide responders at day 3, using blood transcription modules, showed that higher anti-polysaccharide antibody responses were associated with modules linked to antigen presenting cells and their activation, complement, and proinflammatory cytokines compared to lower antibody responses.",
+    "sources": [
+      {"type": "text", "section": "Results", "quote": "Higher anti-polysaccharide antibody responses were associated with modules linked to antigen presenting cells and their activation, complement, and proinflammatory cytokines."}
+    ],
+    "comparison_strategy": "response_stratified",
+    "groups": [
+      {"group_id": 0, "study_accession": null, "sample_size": null, "disease": null, "disease_stage": null, "cohort": "MPSV4 and MCV4 vaccinees — higher anti-polysaccharide antibody responders", "assay_method": "DNA microarray", "tissue_type": "whole blood", "gender": null, "age": null, "time_point": "day 3"},
+      {"group_id": 1, "study_accession": null, "sample_size": null, "disease": null, "disease_stage": null, "cohort": "MPSV4 and MCV4 vaccinees — lower anti-polysaccharide antibody responders", "assay_method": "DNA microarray", "tissue_type": "whole blood", "gender": null, "age": null, "time_point": "day 3"}
+    ],
+    "comparison": [
+      {"contrast": [0, 1], "finding": "higher anti-polysaccharide antibody responses were associated with modules linked to antigen presenting cells and their activation, complement, and proinflammatory cytokines"}
+    ]
+  }
+}
+```
+Both groups keep the stated `day 3` and share the same assay and tissue — the only thing separating them is the response stratum, which lives entirely in `cohort`. `disease_stage` stays null even though "lower responder" reads like a severity label. No day-0 baseline group is added.
 
 Return ONLY valid JSON — no markdown, no explanation.

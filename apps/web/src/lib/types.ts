@@ -24,12 +24,25 @@ export interface Comparison {
   finding: string;
 }
 
+// Superlative assertion over several contrasts or groups ("the maximum change
+// occurred on day 1"). `over`/`winner` index into `comparison` when scope is
+// 'contrast', and hold group_ids when scope is 'group'.
+export interface Ranking {
+  type: 'argmax' | 'argmin';
+  scope: 'contrast' | 'group';
+  metric: string;
+  over: number[];
+  winner: number;
+  finding: string;
+}
+
 export interface ClaimResult {
   claim_id: number;
   claim_text: string;
   source: Record<string, unknown>;
   study_design?: string;
   comparison: Comparison[];
+  ranking?: Ranking[];
   subject_results: SubjectResult[];
   error?: string;
 }

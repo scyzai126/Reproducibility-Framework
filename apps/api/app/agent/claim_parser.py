@@ -169,6 +169,91 @@ async def fetch_paper_text_async(url: str) -> str:
     return text
 
 
+_RANKING_TYPES = {"argmax", "argmin"}
+_RANKING_SCOPES = {"contrast", "group"}
+
+# Superlative wording that should have produced a `ranking` entry. Used only to
+# log a warning when the model emitted none — never to synthesize one.
+_SUPERLATIVE_RE = re.compile(
+    r"\b(maximum|maximal|largest|greatest|highest|lowest|smallest|minimum|minimal"
+    r"|peak(?:ed|s)?|nadir|trough|earliest|most prominent(?:ly)?|least prominent(?:ly)?"
+    r"|most strongly)\b",
+    re.I,
+)
+
+
+def _validate_ranking(key: str, val: dict) -> None:
+    """Drop malformed `ranking` entries from a structured claim, in place.
+
+    A ranking entry is only useful if every candidate it ranks over actually
+    exists, so entries with dangling references are discarded rather than
+    passed downstream where they would silently mis-address a contrast or group.
+    """
+    ranking = val.get("ranking")
+    if ranking is None:
+        if _SUPERLATIVE_RE.search(val.get("claim", "") or ""):
+            logger.warning(
+                "%s: claim states a superlative but no `ranking` was emitted", key
+            )
+        return
+
+    if not isinstance(ranking, list):
+        logger.warning("%s: `ranking` is %s, not a list — dropping", key, type(ranking).__name__)
+        val.pop("ranking", None)
+        return
+
+    n_contrasts = len(val.get("comparison") or [])
+    group_ids = {
+        g.get("group_id")
+        for g in (val.get("groups") or [])
+        if isinstance(g, dict)
+    }
+
+    kept: list[dict] = []
+    for entry in ranking:
+        if not isinstance(entry, dict):
+            logger.warning("%s: dropping non-object ranking entry %r", key, entry)
+            continue
+
+        scope = entry.get("scope")
+        if entry.get("type") not in _RANKING_TYPES or scope not in _RANKING_SCOPES:
+            logger.warning(
+                "%s: dropping ranking entry with type=%r scope=%r",
+                key, entry.get("type"), scope,
+            )
+            continue
+
+        over = entry.get("over")
+        if not isinstance(over, list) or len(over) < 2:
+            logger.warning(
+                "%s: dropping ranking entry — `over` needs 2+ candidates, got %r", key, over
+            )
+            continue
+
+        valid = set(range(n_contrasts)) if scope == "contrast" else group_ids
+        dangling = [o for o in over if o not in valid]
+        if dangling:
+            logger.warning(
+                "%s: dropping ranking entry — %s reference(s) %r not in %s",
+                key, scope, dangling, sorted(valid),
+            )
+            continue
+
+        if entry.get("winner") not in over:
+            logger.warning(
+                "%s: dropping ranking entry — winner %r is not among `over` %r",
+                key, entry.get("winner"), over,
+            )
+            continue
+
+        kept.append(entry)
+
+    if kept:
+        val["ranking"] = kept
+    else:
+        val.pop("ranking", None)
+
+
 def _strip_fences(raw: str) -> str:
     if raw.startswith("```"):
         raw = raw.split("\n", 1)[1] if "\n" in raw else raw[3:]
@@ -246,6 +331,7 @@ async def _run_two_step_pipeline(
         if "sources" in val:
             val["sources"] = _sort_sources(val["sources"])
         val.pop("result_quotes", None)
+        _validate_ranking(key, val)
         return key, val
 
     logger.info("Step 2: structuring %d claims in parallel", n_claims)

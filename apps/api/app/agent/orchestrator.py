@@ -73,6 +73,22 @@ def _save_disk_cache(pubmed_id: str | int, step: str, data: dict) -> None:
     logger.info("Disk cache written: %s", path)
 
 
+_PDF_DIR = Path(__file__).resolve().parents[4] / "data" / "pdf"
+
+
+def _find_local_pdf(study_accession: str, pubmed_id: str) -> Path | None:
+    """Look for an already-downloaded PDF matching this study+paper under data/pdf/
+    (searched recursively, case-insensitively — filenames follow the convention
+    "{study_accession}_{pubmed_id}.pdf", e.g. data/pdf/26papers/SDY1119_26682988.pdf)."""
+    if not _PDF_DIR.exists():
+        return None
+    target = f"{study_accession}_{pubmed_id}.pdf".lower()
+    for candidate in _PDF_DIR.rglob("*.pdf"):
+        if candidate.name.lower() == target:
+            return candidate
+    return None
+
+
 
 
 _URL_PATTERNS = [
@@ -163,6 +179,11 @@ async def _execute_all_queries(
         # for fields that successfully resolved to accessions.
         arm_res = resolution.get("arm", {}) or {}
         if keywords.get("cohort") and arm_res.get("accession"):
+            resolvers["cohort"] = keywords["cohort"]
+        elif gq.get("study_design") == "response_stratified" and keywords.get("cohort"):
+            # No arm backs a response stratum, but the label has to stay in the resolver
+            # set: the strata query identical DB criteria, so without it the dedup below
+            # would collapse "responders" and "non-responders" into a single group.
             resolvers["cohort"] = keywords["cohort"]
         elif arm_res.get("accession"):
             resolvers["arm"] = arm_res["accession"]
@@ -501,6 +522,7 @@ async def _run_paper_pipeline(
     question: str | None,
     log_sections: list[str],
     step1_claims: dict | None = None,
+    skip_cache: bool = False,
 ) -> dict:
     """Shared pipeline after paper text + study are resolved.
 
@@ -509,6 +531,9 @@ async def _run_paper_pipeline(
       2. Extract filters from question (if any)
       3a. Filters found → parallel: step-1 claims + subject query
       3b. No filters → full step-2 deep claim analysis
+
+    skip_cache: bypass the pubmed_id-keyed disk cache in _run_full_paper_analysis
+    (used by the local-PDF path, which always wants a fresh run).
     """
     await _sync_study(study_accession, log_sections)
 
@@ -555,6 +580,7 @@ async def _run_paper_pipeline(
     result = await _run_full_paper_analysis(
         paper_text, study_accession, pubmed_id, log_sections,
         step1_claims=step1_claims,
+        skip_cache=skip_cache,
     )
     _write_workflow_log(log_sections)
     _save_output(result)
@@ -567,21 +593,27 @@ async def _run_full_paper_analysis(
     pubmed_id: str,
     log_sections: list[str],
     step1_claims: dict | None = None,
+    skip_cache: bool = False,
 ) -> dict:
-    """Full two-step claim extraction + DB queries for every claim."""
+    """Full two-step claim extraction + DB queries for every claim.
+
+    skip_cache: bypass the pubmed_id-keyed disk cache entirely — used by the
+    local-PDF path, which always wants a fresh parallel-extraction run rather than
+    silently reusing a cache entry that may be from a different pipeline.
+    """
     assay_registry: dict = {}
-    if (disk2 := _load_disk_cache(pubmed_id, "groups")) is not None:
+    if not skip_cache and (disk2 := _load_disk_cache(pubmed_id, "groups")) is not None:
         logger.info("Disk-cache hit (step2) for pubmed_id=%s", pubmed_id)
         step2_json = disk2
     elif step1_claims is not None:
-        # Vision-extracted step1 provided — skip step1, run step2 only
-        logger.info("Using vision step1 claims for pubmed_id=%s — running step2 only", pubmed_id)
+        # Vision-extracted or PDF-direct step1 provided — skip step1, run step2 only
+        logger.info("Using provided step1 claims for pubmed_id=%s — running step2 only", pubmed_id)
         step1_json, step2_json = await parse_paper_claims_from_text(
             paper_text, study_accession,
             cached_step1=step1_claims,
         )
         assay_registry = step1_json.get("assays", {})
-    elif (disk1 := _load_disk_cache(pubmed_id, "claims")) is not None:
+    elif not skip_cache and (disk1 := _load_disk_cache(pubmed_id, "claims")) is not None:
         # Step1 on disk — skip step1, run step2 only
         logger.info("Disk-cache hit (step1 only) for pubmed_id=%s — running step2", pubmed_id)
         step1_json, step2_json = await parse_paper_claims_from_text(
@@ -613,6 +645,7 @@ async def _run_full_paper_analysis(
             "source": sources[0] if sources else {},
             "sources": sources,
             "comparison": val.get("comparison", []),
+            "ranking": val.get("ranking", []),
         })
         comparison_strategy = val.get("comparison_strategy") or val.get("study_design") or ""
         groups = [
@@ -637,6 +670,7 @@ async def _run_full_paper_analysis(
                     "claim_text": claim.get("claim_text", ""),
                     "source": claim.get("source", {}), "sources": claim.get("sources", []),
                     "comparison": claim.get("comparison", []),
+                    "ranking": claim.get("ranking", []),
                     "subject_results": [],
                 }, local_logs
 
@@ -649,6 +683,7 @@ async def _run_full_paper_analysis(
                     "source": claim.get("source", {}), "sources": claim.get("sources", []),
                     "study_design": comparison_strategy or None,
                     "comparison": claim.get("comparison", []),
+                    "ranking": claim.get("ranking", []),
                     "subject_results": [],
                 }, local_logs
 
@@ -673,7 +708,13 @@ async def _run_full_paper_analysis(
 
             # If multiple groups were defined but none resolved to distinct DB identifiers,
             # the group classification is wrong — drop the claim.
-            if len(group_queries) > 1 and len(subject_results) <= 1:
+            # response_stratified is exempt: its groups differ only by an outcome label the
+            # database cannot express, so they are *expected* to share the same resolvers.
+            if (
+                len(group_queries) > 1
+                and len(subject_results) <= 1
+                and comparison_strategy.lower() != "response_stratified"
+            ):
                 reason = (
                     f"Claim {claim_id} dropped: {len(group_queries)} groups defined "
                     f"but none resolved to distinct DB identifiers (all groups collapsed to the same resolvers). "
@@ -696,6 +737,7 @@ async def _run_full_paper_analysis(
                 "source": claim.get("source", {}), "sources": claim.get("sources", []),
                 "study_design": claim_analysis[0].get("study_design") if claim_analysis else None,
                 "comparison": claim.get("comparison", []),
+                "ranking": claim.get("ranking", []),
                 "subject_results": subject_results,
                 "resolution_failures": claim_group_failures,
                 "data_gaps": claim_data_gaps,
@@ -1021,6 +1063,33 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
 
                         for sdy_pubmed_id in sdy_pubmed_ids:
                             paper_log = list(log_sections)
+
+                            # Local PDF already on disk → parallel PDF-direct assay+claim
+                            # extraction instead of fetching JATS XML from PMC. Always a
+                            # fresh run (skip_cache=True) — not wired to the disk cache yet.
+                            local_pdf = _find_local_pdf(sdy_accession, sdy_pubmed_id)
+                            if local_pdf is not None:
+                                from openai import AsyncOpenAI
+                                from app.agent.pdf_direct import extract_step1_from_pdf_direct
+                                from app.config import settings
+
+                                paper_log.append(
+                                    f"--- Step 2: SDY → local PDF ---\n"
+                                    f"study_accession: {sdy_accession} → pubmed_id: {sdy_pubmed_id} → {local_pdf}"
+                                )
+                                pdf_bytes = local_pdf.read_bytes()
+                                pdf_client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+                                step1_claims = await extract_step1_from_pdf_direct(
+                                    pdf_bytes, local_pdf.name, pdf_client
+                                )
+                                result = await _run_paper_pipeline(
+                                    "", sdy_pubmed_id, sdy_accession,
+                                    session, sdy_question or None, paper_log,
+                                    step1_claims=step1_claims, skip_cache=True,
+                                )
+                                result["pubmed_id"] = sdy_pubmed_id
+                                paper_results.append(result)
+                                continue
 
                             # Check cache before any network calls
                             if _load_disk_cache(sdy_pubmed_id, "groups") is not None:

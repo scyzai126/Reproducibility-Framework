@@ -407,6 +407,7 @@ def _parse_day_range(time_point: str) -> tuple[float, float] | None:
       ">= 8 days"                  → (8, 9999)
       "< 14 days"                  → (0, 14)
       "within 10 days"             → (0, 10)
+      "day 7"                      → (7, 7)     single day, incl. "day -7"
     """
     s = time_point.strip()
 
@@ -445,6 +446,17 @@ def _parse_day_range(time_point: str) -> tuple[float, float] | None:
     if m:
         return 0.0, float(m.group(1))
 
+    # Bare single day: "day 7", "day 0", "day -7". This is the canonical form
+    # classify_groups.txt emits, so it must reach the numeric day columns —
+    # without it a bare day falls through to name LIKE/LLM only, and when those
+    # miss, the group is built with no time filter at all and every timepoint
+    # group collapses to the same subject set.
+    # Anchored and checked last so no range phrase above can reach it.
+    m = re.fullmatch(r'days?\s*(-?\d+(?:\.\d+)?)', s, re.I)
+    if m:
+        day = float(m.group(1))
+        return day, day
+
     return None
 
 
@@ -478,6 +490,13 @@ async def resolve_planned_visit_accession(
         ]
         if not matches:
             return None
+        # Searching a single day: prefer visits starting exactly on it. Without this
+        # a bare "day 1" also matches every wide-window visit that merely spans it
+        # (e.g. a day 0-14 visit), and each match fans out into its own query.
+        if low == high:
+            exact = [r for r in matches if float(r["min_start_day"]) == low]
+            if exact:
+                matches = exact
         return [(r["planned_visit_accession"], "range") for r in matches]
 
     # Step 1: strict internal range format "Xdays<time<Ydays"
@@ -1369,6 +1388,11 @@ async def _resolve_group(
     # Each resolver gets its own session — a single AsyncSession wraps one
     # connection and cannot handle concurrent execute() calls.
     async def _arm():
+        # response_stratified cohorts ("... — responders" / "... — non-responders") are
+        # outcome labels, not study arms: no arm_or_cohort row can match them, and the
+        # LLM fallback would pick an arbitrary arm — the same one for every stratum.
+        if study_design == "response_stratified":
+            return None
         if not (cohort and study_accession):
             return None
         async with session_factory() as s:
@@ -1514,6 +1538,7 @@ async def _resolve_group(
             "planned_visit_name": pv_acc or time_point,
             "age": age,
             "comparison": comparison,
+            "study_design": study_design,
         }
 
     if pv_accessions:
@@ -1606,6 +1631,9 @@ async def resolve_and_build_queries(
             return [item for sub in nested for item in sub]
 
         async def _arm():
+            # See _resolve_group._arm: response strata are outcome labels, not study arms.
+            if study_design == "response_stratified":
+                return None
             if not (cohort and study_accession):
                 return None
             tokens = _split_multi_tissue(cohort)
@@ -1708,6 +1736,7 @@ async def resolve_and_build_queries(
                 "planned_visit_name": time_point,
                 "age": age,
                 "comparison": comparison,
+                "study_design": study_design,
                 "skipped": True,
                 "skip_reason": "assay_not_resolved",
             }]
@@ -1746,7 +1775,9 @@ async def resolve_and_build_queries(
                 arm_acc, method = arm_result
                 group["arm_accession"] = arm_acc
                 resolution_log["arm"] = {"accession": arm_acc, "method": method}
-        elif cohort and study_accession:
+        elif cohort and study_accession and study_design != "response_stratified":
+            # response_stratified skips arm resolution by design, so an unresolved cohort
+            # is expected there and must not be reported as a resolution failure.
             arm_candidates = await _fetch_candidates(
                 "arm_or_cohort", "arm_accession, name, description"
             )
@@ -1847,6 +1878,7 @@ async def resolve_and_build_queries(
                 "planned_visit_name": pv_acc or time_point,
                 "age": age,
                 "comparison": comparison,
+                "study_design": study_design,
             }
 
         if pv_accessions:
