@@ -1,8 +1,8 @@
 """Extract claims from a local PDF using GPT-4o vision (no PMC parsing).
 
 Usage:
-  python run_pdf_vision.py --pdf data/papers_pdf/SDY1669.pdf --study SDY1669
-  python run_pdf_vision.py --pdf data/papers_pdf/SDY1669.pdf --study SDY1669 --pmid 33637673
+  python scripts/run_pdf_vision.py --pdf data/papers_pdf/SDY1669.pdf --study SDY1669
+  python scripts/run_pdf_vision.py --pdf data/papers_pdf/SDY1669.pdf --study SDY1669 --pmid 33637673
 """
 import argparse
 import asyncio
@@ -13,7 +13,7 @@ from pathlib import Path
 
 import openpyxl
 
-sys.path.insert(0, str(Path(__file__).parent / "apps" / "api"))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "apps" / "api"))
 
 from app.agent.claim_parser import _get_client, _load_prompt, _strip_fences
 from app.agent.pdf_vision import extract_claims_from_pdf_images

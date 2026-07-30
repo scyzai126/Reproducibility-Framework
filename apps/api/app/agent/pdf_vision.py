@@ -242,18 +242,17 @@ async def extract_assays_from_jats_xml(
 async def extract_claims_from_jats_xml(
     paper_text: str,
     pdf_bytes: bytes,
-    assays: dict,
     client: AsyncOpenAI,
     model: str = settings.OPENAI_MODEL,
 ) -> tuple[dict, list]:
-    """Claim extraction via extract_claims_XML.txt: JATS-parsed text + figure/table page
-    images, given a pre-built (e.g. OBI-mapped) assay registry from a prior discovery step.
+    """Claim extraction via extract_claims_xml.txt: JATS-parsed text + figure/table page
+    images. Extracted independently — each claim self-names its own assay; it does not
+    see the assay registry from extract_assays_from_jats_xml.
 
     Returns:
         (claims, abstract_unmatched_findings) — same contract as extract_claims_from_pdf_direct.
     """
-    template = (_PROMPTS_DIR / "extract_claims_XML.txt").read_text(encoding="utf-8").strip()
-    system_prompt = template.replace("{assays}", json.dumps(assays, indent=2, ensure_ascii=False))
+    system_prompt = (_PROMPTS_DIR / "extract_claims_xml.txt").read_text(encoding="utf-8").strip()
     content = _jats_and_figures_content(paper_text, pdf_bytes)
 
     resp = await client.chat.completions.create(

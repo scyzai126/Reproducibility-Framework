@@ -2,7 +2,7 @@
 claims_noassay.json file, producing groups.json.
 
 Usage:
-    python run_groups_noassay.py <claims_json_path> <out_dir>
+    python scripts/run_groups_noassay.py <claims_json_path> <out_dir>
 """
 
 import asyncio
@@ -10,7 +10,7 @@ import json
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent / "apps" / "api"))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "apps" / "api"))
 
 from app.agent.claim_parser import _get_client, _load_prompt, _strip_fences
 from app.config import settings
@@ -53,6 +53,6 @@ async def main(claims_path: Path, out_dir: Path) -> None:
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
-        print("Usage: python run_groups_noassay.py <claims_json_path> <out_dir>")
+        print("Usage: python scripts/run_groups_noassay.py <claims_json_path> <out_dir>")
         sys.exit(1)
     asyncio.run(main(Path(sys.argv[1]), Path(sys.argv[2])))

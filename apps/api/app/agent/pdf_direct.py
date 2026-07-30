@@ -1,18 +1,22 @@
 """PDF-direct pipeline: send raw PDF bytes straight to the model (no local page
 rendering) and let the API's own PDF handling do the reading.
 
-Two-step extraction:
-    1. extract_assays_from_pdf_direct  - assay discovery only (extract_assays_pdf.txt)
-    2. extract_claims_from_pdf_direct  - claim extraction given a known assay
-       registry (extract_claims_pdf.txt)
+Independent extraction (run concurrently, reconciled afterward by
+app.agent.assay_claim_linker):
+    1. extract_assays_from_pdf_direct  - assay discovery (extract_assays_pdf.txt)
+    2. extract_claims_from_pdf_direct  - claim extraction (extract_claims_pdf.txt),
+       self-names its own assay per claim, does not see the assay registry
 """
 
+import asyncio
 import base64
 import json
 
 from openai import AsyncOpenAI
 
 from app.config import settings
+from app.agent.assay_claim_linker import reconcile_claims_with_assays
+from app.agent.assay_obi_mapper import enrich_assays_with_obi
 from app.agent.claim_parser import _load_prompt, _strip_fences
 
 
@@ -52,11 +56,11 @@ async def extract_assays_from_pdf_direct(pdf_bytes: bytes, filename: str, client
 
 
 async def extract_claims_from_pdf_direct(
-    pdf_bytes: bytes, filename: str, assays: dict, client: AsyncOpenAI
+    pdf_bytes: bytes, filename: str, client: AsyncOpenAI
 ) -> tuple[dict, list]:
-    """Send raw PDF bytes + a pre-built assay registry to the model and extract claims."""
-    template = _load_prompt("extract_claims_pdf.txt")
-    system_prompt = template.replace("{assays}", json.dumps(assays, indent=2, ensure_ascii=False))
+    """Send raw PDF bytes to the model and extract claims independently — each claim
+    self-names its own assay; it does not see the assay registry from step 1."""
+    system_prompt = _load_prompt("extract_claims_pdf.txt")
 
     resp = await client.chat.completions.create(
         model=settings.OPENAI_MODEL,
@@ -78,3 +82,37 @@ async def extract_claims_from_pdf_direct(
     abstract_unmatched = result.pop("abstract_unmatched_findings", [])
     claims = {k: v for k, v in result.items() if k.startswith("claim_")}
     return claims, abstract_unmatched
+
+
+async def extract_step1_from_pdf_direct(pdf_bytes: bytes, filename: str, client: AsyncOpenAI) -> dict:
+    """Run the full parallel assay+claim extraction pipeline against a PDF and return a
+    step1_json-shaped dict — {"assays": {...}, "claim_1": {"claim": ..., "sources": [...]},
+    ...} — suitable for injection as `step1_claims`/`cached_step1` into the shared
+    _run_paper_pipeline -> parse_paper_claims_from_text machinery (same contract as
+    extract_claims_from_pdf_images' output for the vision pipeline).
+
+    Runs assay discovery and claim extraction concurrently (independent passes),
+    reconciles them (exact/alias match, then a paper-grounded validation call for the
+    rest), and OBI-enriches the final registry — see app.agent.assay_claim_linker.
+    """
+    assays, (claims, _abstract_unmatched) = await asyncio.gather(
+        extract_assays_from_pdf_direct(pdf_bytes, filename, client),
+        extract_claims_from_pdf_direct(pdf_bytes, filename, client),
+    )
+
+    paper_content = [
+        _pdf_file_content(pdf_bytes, filename),
+        {"type": "text", "text": "Validate the candidate assay-claim pairings against this paper as instructed."},
+    ]
+    resolved, merged_assays, _invalid_claims = await reconcile_claims_with_assays(
+        claims, assays, paper_content, client
+    )
+
+    final_assays = enrich_assays_with_obi(merged_assays)
+
+    step1_json: dict = {"assays": final_assays}
+    for claim_key, registry_key in resolved.items():
+        claim = claims[claim_key]
+        step1_json[claim_key] = {"claim": claim.get("claim", ""), "sources": claim.get("sources", [])}
+
+    return step1_json

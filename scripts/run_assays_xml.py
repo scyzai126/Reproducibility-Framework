@@ -2,10 +2,10 @@
 containing each figure/table, attached as images.
 
 Usage:
-    python run_assays_xml.py <jats_text_path> <pdf_path> <out_path>
+    python scripts/run_assays_xml.py <jats_text_path> <pdf_path> <out_path>
 
 Example:
-    python run_assays_xml.py \\
+    python scripts/run_assays_xml.py \\
         data/claims/SDY1119_26682988_jats_figures/jats_text.txt \\
         data/pdf/26papers/SDY1119_26682988.pdf \\
         data/claims/SDY1119_26682988_jats_xml/assays_xml.json
@@ -16,7 +16,7 @@ import json
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent / "apps" / "api"))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "apps" / "api"))
 
 from app.agent.claim_parser import _get_client
 from app.agent.pdf_vision import extract_assays_from_jats_xml
@@ -41,6 +41,6 @@ async def main(jats_text_path: Path, pdf_path: Path, out_path: Path) -> None:
 
 if __name__ == "__main__":
     if len(sys.argv) != 4:
-        print("Usage: python run_assays_xml.py <jats_text_path> <pdf_path> <out_path>")
+        print("Usage: python scripts/run_assays_xml.py <jats_text_path> <pdf_path> <out_path>")
         sys.exit(1)
     asyncio.run(main(Path(sys.argv[1]), Path(sys.argv[2]), Path(sys.argv[3])))

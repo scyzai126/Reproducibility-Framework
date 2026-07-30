@@ -3,8 +3,8 @@ with rendered PDF pages for each figure (so the model can read plot/chart conten
 figure captions alone don't capture).
 
 Usage:
-  python run_jats_figures.py --pdf data/pdf/SDY1669.pdf --study SDY1669
-  python run_jats_figures.py --pdf data/pdf/SDY1669.pdf --study SDY1669 --pmid 33637673
+  python scripts/run_jats_figures.py --pdf data/pdf/SDY1669.pdf --study SDY1669
+  python scripts/run_jats_figures.py --pdf data/pdf/SDY1669.pdf --study SDY1669 --pmid 33637673
 """
 import argparse
 import asyncio
@@ -15,7 +15,7 @@ from pathlib import Path
 
 import openpyxl
 
-sys.path.insert(0, str(Path(__file__).parent / "apps" / "api"))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "apps" / "api"))
 
 from app.agent.claim_parser import (
     PaperNotAvailableError,

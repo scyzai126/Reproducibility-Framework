@@ -1,10 +1,10 @@
 """Run the PDF vision pipeline on a local PDF file.
 
 Usage:
-    python run_vision_paper.py <pdf_path> <pubmed_id> <study_id>
+    python scripts/run_vision_paper.py <pdf_path> <pubmed_id> <study_id>
 
 Example:
-    python run_vision_paper.py data/pdf/SDY1119_26682988.pdf 26682988 SDY1119
+    python scripts/run_vision_paper.py data/pdf/SDY1119_26682988.pdf 26682988 SDY1119
 
 Output files are written to:
     data/claims/new_26_studies/<pubmed_id>_<study_id>/
@@ -18,7 +18,7 @@ import json
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent / "apps" / "api"))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "apps" / "api"))
 
 from openai import AsyncOpenAI
 from app.agent.pdf_vision import extract_claims_from_pdf_images
@@ -84,6 +84,6 @@ async def main(pdf_path: Path, pubmed_id: str, study_id: str) -> None:
 
 if __name__ == "__main__":
     if len(sys.argv) != 4:
-        print("Usage: python run_vision_paper.py <pdf_path> <pubmed_id> <study_id>")
+        print("Usage: python scripts/run_vision_paper.py <pdf_path> <pubmed_id> <study_id>")
         sys.exit(1)
     asyncio.run(main(Path(sys.argv[1]), sys.argv[2], sys.argv[3]))
