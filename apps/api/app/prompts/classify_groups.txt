@@ -19,6 +19,8 @@ For each claim, first classify its **comparison_strategy**, then use that classi
 
 **Measurement-level comparisons do NOT create multiple groups.** If the claim compares different antigens, viral variants, analytes, or assay targets measured on the same samples (e.g., "responses against B.1.351 were lower than against WA1", "IgG was higher than IgM"), use `none` with a single group.
 
+This applies **only when the targets are compared to each other**. A claim in which several targets are each compared to the same baseline, timepoint, or control group is a normal longitudinal / case_control / cohort claim — classify it by its groups as usual — **even when those targets moved in opposite directions**. "NK-cell modules increased and B-cell modules decreased with age on day 7 compared to younger subjects" compares each module family to the *younger* group, not to each other, so it is a `cohort` claim with two groups; it is not a measurement-level comparison. Do not fall back to `none` merely because one claim sentence names both an increase and a decrease.
+
 **Responder-status comparisons — use `response_stratified`.** If the claim's comparison is between subjects classified by their own outcome/response status rather than by an objective demographic, disease, cohort, or timepoint variable — e.g., "responders" vs. "non-responders", "transient/temporary responders" vs. "durable/permanent responders", "high responders" vs. "low responders", "higher antibody response" vs. "lower antibody response" — classify the claim as `response_stratified` and emit one group per response stratum. Group membership here is defined by the very measurement being analyzed rather than by an independent grouping variable, so these strata will not correspond to any arm or cohort recorded in the study database; capture them as descriptive labels. Do not drop the claim, and do not collapse it into a `none` claim with a single group.
 - cohort: fold the response stratum together with the study population into a single string — the same way the year/season rule below folds two dimensions into one cohort. Example: `"MCV4 vaccinees — responders"` / `"MCV4 vaccinees — non-responders"`, not a bare `"responders"`. If the claim names no population, the bare stratum label alone is fine.
 - disease and disease_stage: both null. A response stratum is not a disease or a severity sub-classification — never put `"non-responder"`, `"low responder"`, or similar into `disease_stage`.
@@ -26,7 +28,7 @@ For each claim, first classify its **comparison_strategy**, then use that classi
 - assay_method and tissue_type: mandatory as always.
 - comparison: one entry per stratum pair, with the finding as the claim states it.
 
-**Source ordering rule:** In the `sources` array, always place Results-section text entries first, followed by Methods-section text entries, then figure and table references. This ensures the primary evidence appears at `sources[0]`.
+**Source ordering rule:** In the `sources` array, always place Results-section text entries first, then figure/table caption text entries, then bare figure and table references. This ensures the primary evidence appears at `sources[0]`. (Older claims may also carry Methods-section text entries; order those with the caption entries, ahead of the bare references.)
 
 Emit `comparison_strategy` as the first field in each claim object, before `groups`. This classification drives all grouping decisions below.
 

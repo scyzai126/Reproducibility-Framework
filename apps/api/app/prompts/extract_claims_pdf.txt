@@ -9,17 +9,30 @@ Scan **Results sections**, **main-text figure captions**, and **main-text table 
 
 ### Reading strategy
 
-Scan in this order:
+Work through the paper in this order. Steps 1–2 are the primary extraction pass; step 3 runs only after every claim is final.
 
-1. **Results/Figures/Tables claim pass — primary extraction**
-   Independently scan the Results sections, main-text figure captions/panels, and main-text table bodies. Extract the major findings that have direct Results/Figure/Table support, for every assay you encounter along the way.
+1. **Integrated text–figure extraction — read prose, panel, and legend together before drafting.**
+   When a Results passage cites a main-text figure or table, do not draft from the prose and enrich afterwards. Read all three first, each for what it is best at:
+   - **Results prose** — the authors' stated interpretation: what they claim the data show. An assertion is a relationship, effect, direction of change, comparison, correlation, or dependency they state outright — see the Claim definition below.
+   - **The panel or table itself** — the underlying data evidence: axis labels, group labels, timepoints, plotted comparisons, significance markers, reported values.
+   - **The legend or caption** — the definitions: what each group, timepoint, metric, and statistical test actually is, plus any panel-specific qualifier. Cite the legend as its own source (see Source types below).
+
+   Then **enumerate every distinct assertion this combined evidence supports, and only then draft claims.** Do not stop at the first assertion tied to a panel — one panel routinely carries several.
+
+   "Distinct" means exactly what it means in Claim grouping below: two assertions are distinct only if rules 2 and 3 would make them separate claims. Enumerate candidates first, then apply those merge rules — do not manufacture distinctions the rules would collapse.
+
+   If a Results assertion has no main-text figure or table behind it, cite the Results quote alone and move on. Never invent or guess a panel label.
+
+   **Figures and tables are evidence for author-stated assertions, not independent sources of claims.** Do not extract a finding that exists only in the panel — in plotted data, bar heights, axis labels, error bars, or table cells — and that the authors never put into words. If neither the Results prose nor the figure/table legend states it, it is data, not a claim the paper makes: leave it out. A legend that states the finding outright does count as the authors stating it — see the Grounding gate below.
+
+2. **Consult Methods only for contextual metadata** — assay name, sample/tissue type, dosing or visit schedule, and analysis method. Methods never supplies the biological finding itself, and is not a citable source (see Sources below).
 
    Do not use the Abstract to decide which findings deserve claims.
    Do not require a final claim to match an Abstract finding.
    Do not omit a Results-supported finding because it is absent from the Abstract.
 
 
-2. **Abstract audit pass — after final claims**
+3. **Abstract audit pass — after final claims**
    After drafting final claims, read the Abstract and list its main biological findings internally. For each Abstract finding, check whether it is supported by Results/main-text Figure/main-text Table evidence and already covered by a final claim.
 
    If an Abstract finding has no Results/Figure/Table support, put it in `abstract_unmatched_findings`.
@@ -60,10 +73,10 @@ Only omit the comparison clause when no baseline, prior timepoint, or contrastin
 **Claim grouping — one assertion per claim, not one claim per sentence:** A claim's unit is a single reported *assertion* (a specific relationship or effect: an effect's presence/induction, the timing of a peak/change, a magnitude difference, a duration difference, a direction of correlation, a dependency, etc.) about a single *subject* (one group on its own, or one explicit pairwise comparison between two named groups), applied to one or more named *targets* (the specific gene, module, cell subset, analyte, serogroup, etc. being measured) that share that same assertion. Apply these rules, in order:
 
 1. **Split bundled single-arm statements by group only when the paper explicitly attributes the finding to each group or provides group-specific evidence.** If a sentence reports the same kind of finding for two or more groups (e.g., "both vaccine A and vaccine B induced X"), emit one claim per group rather than one combined claim.
-2. **One executable assertion per claim.** Each claim must represent one reproducible assertion defined by one outcome or outcome set, one comparison structure, one relationship or direction, and one temporal scope. Split a passage when the comparison groups, comparison dimension, outcome metric, direction, time point, assay, or statistical relationship differs (e.g., do not chain "induced a response" + "peaked at day X" + "greater magnitude" + "greater duration" into one claim). A different named outcome/target alone — same comparison group, direction, timepoint, assay, and metric — is not a split trigger; see rule 3 for when multiple outcomes merge into one outcome set.
+2. **One executable assertion per claim.** Each claim must represent one reproducible assertion defined by one outcome or outcome set, one comparison structure, one statistical relationship, and one temporal scope. Split a passage when the comparison groups, comparison dimension, outcome metric, time point, assay, or statistical relationship differs (e.g., do not chain "induced a response" + "peaked at day X" + "greater magnitude" + "greater duration" into one claim). A different named outcome/target alone — same comparison group, timepoint, assay, and metric — is not a split trigger, and neither is a difference in which *direction* each target moved; see rule 3 for when multiple outcomes merge into one outcome set.
 3. **Merge multiple targets only when all of the following are true — otherwise, split them:**
    - They share the same comparison group(s).
-   - They report the same direction or relationship (e.g., both "increased," both "elevated").
+   - Targets may differ in the **direction** of their change — one claim may cover both what went up and what went down — as long as each target's own direction is stated explicitly in the merged claim (e.g., "NK-cell modules increased and B-cell modules decreased with age on days 3 and 7"). Never collapse opposite directions into a vague summary such as "were altered", "changed", or "differed": which target moved which way must remain recoverable from the claim sentence alone. This mirrors the timepoint bullet below — heterogeneity is allowed precisely because it is spelled out.
    - They fall within the same overall timepoint or comparison window — individual targets may be reported at different specific timepoints within that window, as long as each target's own timepoint is stated in the merged claim (e.g., NK-cell-related modules at days 3 and 7, monocyte-related modules at day 7, both within the same days 3–7 post-vaccination window).
    - They use the same assay or analysis.
    - They use the same measurement type and metric.
@@ -82,15 +95,18 @@ Only omit the comparison clause when no baseline, prior timepoint, or contrastin
 - WRONG (under-split): "Olink analysis of plasma showed IL-6 and MCP-3 were elevated in COVID-19 compared to healthy, with a larger increase in IL-6 than MCP-3." — this chains two assertion types (elevation vs magnitude-of-difference-between-analytes) into one claim; should be two claims.
 - RIGHT (merge, per rule 3): "Olink analysis of plasma showed IL-6 and MCP-3 were elevated in COVID-19 compared to healthy." — one assertion (elevation), two targets of the same kind → stays merged.
 
-- WRONG (over-split by target category): splitting "Natural killer (NK) cell-related modules showed increased expression with age on both day 3 and day 7 after vaccination, and several monocyte modules showed increased expression with age on day 7" into one claim for NK modules and a separate claim for monocyte modules — both report the identical assertion (increased with age) and differ only in module category, not in relationship, direction, or comparison group.
+- WRONG (over-split by target category): splitting "Natural killer (NK) cell-related modules showed increased expression with age on both day 3 and day 7 after vaccination, and several monocyte modules showed increased expression with age on day 7" into one claim for NK modules and a separate claim for monocyte modules — both report the identical assertion (increased with age) and differ only in module category, not in assertion type, metric, or comparison group.
 - RIGHT (merge, per rule 3): "Microarray analysis of PBMCs, using gene set enrichment analysis (GSEA), showed that NK-cell-related modules (days 3 and 7) and monocyte-related modules (day 7) increased with age after vaccination compared to younger subjects." — one assertion (increased with age), multiple targets across categories → stays merged, each target's own timepoint retained.
 
-- RIGHT (merge, per rule 3): "Serum IL-6, TNF-α, and IL-1β concentrations were higher on day 1 than at baseline." — same comparison group, same direction (higher), same timepoint (day 1 vs. baseline), same assay, same metric (concentration), reported as one collective finding → stays merged as one claim covering all three cytokines.
+- RIGHT (merge, per rule 3 — opposite directions): "Microarray analysis of PBMCs, using gene set enrichment analysis (GSEA), showed that NK-cell-related modules increased and B-cell modules decreased with age on days 3 and 7 after vaccination compared to younger subjects." — the two target families moved in opposite directions, but they share the comparison group, timepoint window, assay, and metric, and the paper reports them as one age-associated signature. Each family's own direction is named, so nothing is lost by merging.
+- WRONG (split by direction alone): emitting that NK-module increase and that B-cell-module decrease as two separate claims. Direction on its own is not a split trigger — split only if some *other* criterion also differs (assay, metric, comparison group, timepoint window). A differential-expression signature ("702 genes upregulated and 381 downregulated between the two cell subsets") is likewise one result, not two.
+
+- RIGHT (merge, per rule 3): "Serum IL-6, TNF-α, and IL-1β concentrations were higher on day 1 than at baseline." — same comparison group, same timepoint (day 1 vs. baseline), same assay, same metric (concentration), reported as one collective finding → stays merged as one claim covering all three cytokines.
 
 - WRONG (over-merge risk): merging "IL-6 increased on day 1, whereas TNF-α remained elevated through day 7" into one claim — IL-6's finding is confined to day 1 while TNF-α's spans a different duration (through day 7); this is not the same overall timepoint/window with different specific timepoints (compare the NK/monocyte example above) — it is a different duration, a new assertion type, not merely a different target.
 - RIGHT (split, per rule 3): claim_1: "...showed IL-6 concentration increased on day 1 relative to baseline." claim_2: "...showed TNF-α concentration remained elevated through day 7 relative to baseline."
 
-- WRONG (over-merge risk): merging "NK-cell frequency and antibody titer increased after vaccination" into one claim — same comparison group, direction, and timepoint, but NK-cell frequency and antibody titer come from different assays (e.g., flow cytometry vs. HAI/ELISA) and different measurement types/metrics — fails the same-assay and same-metric bullets even though the rest match.
+- WRONG (over-merge risk): merging "NK-cell frequency and antibody titer increased after vaccination" into one claim — same comparison group and timepoint, but NK-cell frequency and antibody titer come from different assays (e.g., flow cytometry vs. HAI/ELISA) and different measurement types/metrics — fails the same-assay and same-metric bullets even though the rest match.
 - RIGHT (split, per rule 3): claim_1: "Flow cytometry analysis ... showed NK-cell frequency increased after vaccination compared to baseline." claim_2: "[serology assay] analysis ... showed antibody titer increased after vaccination compared to baseline."
 
 **Final de-duplication pass:** Before finalizing output, compare every claim's `sources` against every other claim's. If two claims cite the identical Results quote or the identical figure/table ref, they describe the same evidence — merge them into a single claim, using whichever assay name is more specific/directly used in that source, even if you initially drafted them under differently-worded assay names.
@@ -139,14 +155,21 @@ Only omit parentheticals if no absolute day anchor can be found anywhere in the 
 
 For each claim include a `sources` array with the minimal set of entries needed to justify the biological finding. Draw sources only from Results text, main-text figures, and main-text tables — do not cite Methods sections, the Abstract, Introduction, Discussion, References, or Supplementary Material.
 
-**Grounding gate:** Only emit a claim if you can point to at least one allowed source that directly supports it. Prefer a verbatim text quote from Results whenever the finding is stated in prose. Use a `figure` or `table` reference without a quote only when the finding is not stated in body text and appears solely in a main-text figure panel, main-text figure legend, or main-text table cell — not as a substitute for transcribing an available quote. If neither exists, do not write the claim.
+**Grounding gate:** Only emit a claim if the authors state the finding **in words**, and you can quote that statement verbatim. Two places count: Results prose, and a main-text figure/table legend or caption. Prefer the Results quote when the finding is stated in prose; use a legend quote when the authors stated it only there.
+
+A bare `figure`/`table` reference may accompany a claim as a pointer to the underlying data, but it can **never be a claim's only support**. A finding visible solely in the plotted data — bar heights, axis values, error bars, table cells — that the authors never put into words is data, not a claim the paper makes. Leave it out rather than writing it up.
 
 **Supplement filter:** Do not cite supplementary figures/tables, and do not use supplement-only details to complete a claim. If an otherwise useful Results quote also mentions supplementary evidence, include only the part of the finding supported by the Results quote or a main-text figure/table. Exclude findings whose only direct support is labeled "Supplementary", "Extended Data", "Appendix", or similar.
 
 Source types:
-- `{"type": "text", "section": "<section>", "quote": "<verbatim excerpt>"}`
-- `{"type": "figure", "ref": "Figure 2A"}`
+- `{"type": "text", "section": "Results", "quote": "<verbatim excerpt>"}` — body prose
+- `{"type": "text", "section": "Figure 2 caption", "quote": "<verbatim excerpt>"}` — figure legend/caption text (or `"Table 1 caption"`)
+- `{"type": "figure", "ref": "Figure 2A"}` — pointer to the panel
 - `{"type": "table", "ref": "Table 1"}`
+
+**`section` must be exactly `"Results"`** for any prose drawn from the Results section, whatever thematic subsection it sits under. Do not write the subsection heading, a numbered variant (`Results 2.2`), or a `Results - <subtitle>` form. A downstream step sorts on this value to locate each claim's primary evidence, and it recognizes only the literal string.
+
+**Caption sources accompany the panel ref, they do not replace it.** When step 3 pulls detail from a legend, emit both entries: the `text` entry carrying the verbatim caption excerpt, and the bare `figure`/`table` entry pointing at the panel. The quote carries the evidence; the ref carries the pointer. Name the caption section `"Figure N caption"` — not "legend", not "Fig. N" — so the form stays consistent.
 
 Quotes must be verbatim. Do not fabricate figure or table labels.
 
