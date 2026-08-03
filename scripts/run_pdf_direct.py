@@ -31,6 +31,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "apps" / "api"))
 from app.agent.assay_claim_linker import reconcile_claims_with_assays
 from app.agent.assay_obi_mapper import enrich_assays_with_obi
 from app.agent.claim_parser import _get_client, _load_prompt, _strip_fences
+from app.agent.claim_validator import build_report, validate_groups_file
 from app.agent.pdf_direct import (
     _pdf_file_content,
     extract_assays_from_pdf_direct,
@@ -101,11 +102,9 @@ async def main(pdf_path: Path, out_dir: Path) -> None:
     (out_dir / "assays.json").write_text(json.dumps(merged_assays, indent=2, ensure_ascii=False), encoding="utf-8")
     print("  saved assays.json")
 
-    print("Enriching final assay registry with OBI terms...")
-    final_assays = enrich_assays_with_obi(merged_assays)
-    (out_dir / "assays_OBI.json").write_text(json.dumps(final_assays, indent=2, ensure_ascii=False), encoding="utf-8")
-    print("  saved assays_OBI.json")
-
+    # Persist the extraction output before OBI enrichment: everything above this
+    # point costs several full-paper LLM calls, so a failure in the (cheaper,
+    # independent) OBI step must not discard it.
     (out_dir / "claims.json").write_text(json.dumps(final_claims, indent=2, ensure_ascii=False), encoding="utf-8")
     print("  saved claims.json")
 
@@ -123,9 +122,26 @@ async def main(pdf_path: Path, out_dir: Path) -> None:
     elif unmatched_path.exists():
         unmatched_path.unlink()
 
+    print("Enriching final assay registry with OBI terms...")
+    final_assays = enrich_assays_with_obi(merged_assays)
+    (out_dir / "assays_OBI.json").write_text(json.dumps(final_assays, indent=2, ensure_ascii=False), encoding="utf-8")
+    print("  saved assays_OBI.json")
+
     groups = await run_group_step(final_claims, client)
     (out_dir / "groups.json").write_text(json.dumps(groups, indent=2, ensure_ascii=False), encoding="utf-8")
     print("  saved groups.json")
+
+    # Runs last, on output that is already persisted: the judge is an audit, so a failure
+    # here must not cost any of the extraction above it.
+    report = build_report(await validate_groups_file(groups, client))
+    (out_dir / "claims_validation.json").write_text(
+        json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
+    summary = report["summary"]
+    print(
+        f"  saved claims_validation.json - {summary['accurate']}/{summary['total']} accurate, "
+        f"{summary['needs_revision']} need revision, {summary['errors']} errors"
+    )
 
     print(f"\nDone. Files written to {out_dir}")
 
