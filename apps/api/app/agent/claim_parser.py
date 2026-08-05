@@ -70,6 +70,29 @@ def _load_prompt(filename: str) -> str:
     return (_PROMPTS_DIR / filename).read_text(encoding="utf-8").strip()
 
 
+CLAIM_TYPES_PLACEHOLDER = "{claim_types}"
+
+
+def load_prompt_with_claim_types(filename: str) -> str:
+    """Load a prompt, substituting the claim_type vocabulary for its placeholder.
+
+    The vocabulary lives in its own file (claim_types.txt) so a type can be added or
+    reworded without touching the prompts that consume it — the extractor that assigns a
+    claim_type and the judge that audits it must read the same list, or the judge starts
+    failing claims for using a type it has never heard of.
+
+    Substitution failure is loud on purpose: an unsubstituted template would still be a
+    valid prompt, and the model would silently answer without the vocabulary.
+    """
+    template = _load_prompt(filename)
+    if CLAIM_TYPES_PLACEHOLDER not in template:
+        raise ValueError(
+            f"{filename} is missing the {CLAIM_TYPES_PLACEHOLDER} placeholder; "
+            "claim_type vocabulary would not be injected."
+        )
+    return template.replace(CLAIM_TYPES_PLACEHOLDER, _load_prompt("claim_types.txt"))
+
+
 
 def _fetch_paper_content(url: str) -> tuple[str, str | None]:
     """Fetch full article text and PubMed ID from PMC via NCBI E-utilities API.

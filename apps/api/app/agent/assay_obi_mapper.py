@@ -17,6 +17,8 @@ from typing import Any
 import numpy as np
 from openai import OpenAI
 
+from app.config import settings
+
 _REPO_ROOT = Path(__file__).resolve().parents[4]
 _OBI_REFERENCES_DIR = _REPO_ROOT / ".claude" / "skills" / "extract-assay-methods" / "references"
 _OBI_TERMS_PATH = _OBI_REFERENCES_DIR / "obi_assay_terms.json"
@@ -79,7 +81,7 @@ def _load_embeddings() -> tuple[list[dict], np.ndarray]:
 
 
 def _embed_query(text: str) -> np.ndarray:
-    client = OpenAI()
+    client = OpenAI(api_key=settings.OPENAI_API_KEY)
     resp = client.embeddings.create(model=EMBED_MODEL, input=[text])
     vec = np.array(resp.data[0].embedding, dtype=np.float64)
     norm = np.linalg.norm(vec)
@@ -132,7 +134,7 @@ def _llm_pick(
         .replace("{readouts}", readouts.strip() or "not specified")
     )
 
-    client = OpenAI()
+    client = OpenAI(api_key=settings.OPENAI_API_KEY)
     resp = client.chat.completions.create(
         model=LLM_MODEL,
         messages=[{"role": "user", "content": prompt}],

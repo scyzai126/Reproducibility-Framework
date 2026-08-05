@@ -1,0 +1,56 @@
+**Claim type — label the assertion.** Every claim carries a `claim_type`: exactly one value from the closed vocabulary below, describing what *kind* of assertion the claim makes. Never invent a value, never emit an array, never leave it null.
+
+| `claim_type` | asserts | cues |
+|---|---|---|
+| `induction_vs_reference` | the measured quantity changes relative to a stated reference — baseline, pre-treatment, or control | induced, elevated, increased, decreased, upregulated, downregulated, detected *(against a reference)* |
+| `group_difference` | the quantity differs between two distinct populations at a matched timepoint | higher in A than B, lower in A than B, differed between, age-associated increase, enriched in |
+| `extremum` | one timepoint **or one group** is the largest/smallest of three or more candidates. **The cues below are necessary, not sufficient — see "A superlative needs a candidate set" below.** | peaked, maximum, greatest, largest, smallest, highest, lowest, earliest, nadir, most prominently, most strongly |
+| `trajectory_segment` | the shape or persistence of the time course — how it moves between named points, or how long it lasts | declined from X to Y, plateaued after X, remained stable between X and Y, remained above baseline for, persisted to, returned to baseline by, waned, transient, durable |
+| `magnitude_comparison` | **second-order** — the *size* of an already-established effect differs between subjects | greater magnitude, larger response than, greater increase, much greater expansion, larger number of |
+| `association` | a directional association between two named measured variables | correlated with, positively/negatively associated with, varied with, r = |
+| `prediction` | a model, signature, or classifier predicts an outcome, reported with a performance metric | predicted, classified, predictive of, accuracy, AUC, ROC, cross-validation, discriminated |
+| `dependency` | one variable is required by, regulated by, or abrogated by another — typically shown by experimental intervention | dependent on, required for, abrogated by, depletion, knockout, neutralizing antibody, blockade, abolished, *(stimulated vs. unstimulated)* |
+| `null_result` | an explicit **absence** of difference, effect, or association | no significant difference, not associated, similar between, did not change, was not predictive, without reaching statistical significance, **but not X**, **whereas … did not**, except in |
+| `descriptive` | a state or composition with **no comparison**, or a statement about a measure's *spread* rather than its level | wide variation, N of M were, could be sorted into, was used to define, low within-subject variability, stable within individuals, inter- vs intra-subject variation, wide baseline variation |
+
+**Rule 1 — one predicate or two?** When two values look applicable, ask whether they attach to **one assertion viewed two ways** or to **two assertions the sentence chained together**.
+
+*Two predicates → the claim is under-split. Split it, and give each half its own `claim_type`.* This is Claim-grouping rule 2 restated as a test you can actually apply.
+- "antibody responses peaked at day 28 and declined significantly by day 180" → `extremum` + `trajectory_segment` → two claims.
+- "elderly had higher total NK-cell proportions than young at baseline and all timepoints, with vaccination increasing NK-cell percentages in the elderly" → `group_difference` + `induction_vs_reference` → two claims.
+- "MVA85A induced high Ag85A-specific IFNγ responses peaking at day 7 and remaining significantly above baseline at week 24, with no significant difference between intradermal and intramuscular groups" → `extremum` + `trajectory_segment` + `null_result` → three claims.
+- "stable B-cell populations ID91, ID96, ID103 and ID108 predicted adjusted maximum fold-change (adjMFC) titer responses **but not** maximum fold-change (MFC)" → `prediction` + `null_result` → two claims. **A negative attached to a positive finding by "but not", "whereas … did not", or "except" is its own assertion.** It is easy to miss because the sentence reads as one clause — but the absence is exactly as reproducible as the presence, and it disappears entirely if left riding inside the positive claim.
+
+**A shared `claim_type` does not mean the assertions merge.** A differing `claim_type` is a *sufficient* trigger to split, not a necessary one. Two assertions carrying the **same** `claim_type` still split whenever any other Claim-grouping rule 2 criterion differs — comparison groups, comparison dimension, outcome metric, timepoint, assay, or statistical relationship.
+- "…SBA began to decline by day 180, yet remained substantially above baseline at day 750" → both halves are `trajectory_segment`, and they still split: the decline is measured against the day-30 peak, the persistence against the day-0 baseline, and the timepoints differ. Two claims, same type.
+- Never collapse a multi-phase time course into one claim on the grounds that every phase carries the same label.
+
+*One predicate → do not split. Resolve with the precedence ladder below.*
+- "a 494-transcript signature correlated with antibody response magnitude, classifying high and low responders with 79% cross-validation accuracy" → one predictive-performance assertion → `prediction`, not `association` as well.
+- "IL-10 production was generally not associated with influenza antibody response" → one assertion → `null_result`, not `association` as well.
+- "anti-HMGB1 reduced CXCL2 mRNA production in response to MVA85A compared to MVA stimulation alone" → the reduction *is* the perturbation result → `dependency`, not `induction_vs_reference` as well.
+
+**Rule 2 — precedence ladder.** For a genuine same-predicate tie, apply top-down and take the first match:
+
+```
+null_result > dependency > prediction > association
+            > extremum > trajectory_segment > magnitude_comparison
+            > group_difference > induction_vs_reference > descriptive
+```
+
+A stated absence outranks whatever it is an absence *of*. An experimental intervention outranks the change it produced. A model with a metric outranks the association underneath it. `descriptive` is the fallback only — reach it when nothing else applies.
+
+**Variability is not a trajectory.** A claim about how *stable* or *variable* a measure is — within-subject versus between-subject variation, reproducibility over repeated sampling — is `descriptive`, even when it spans months and even when it uses the word "compared to". It asserts something about the measure's spread, not about a time course, so it is never `trajectory_segment`. Reserve `trajectory_segment` for claims that state where a quantity *went*: rose, fell, plateaued, persisted above a reference.
+- `descriptive`: "…many B-cell subsets displayed low within-subject variability over more than two months compared to their inter-subject variability."
+- `trajectory_segment`: "…the response remained substantially above baseline at day 750."
+
+**A superlative needs a candidate set.** Before labelling a claim `extremum`, name the candidates it ranks over. There must be **three or more**, and each must be recoverable from the claim sentence itself. If you cannot list them, the cue word is not asserting a superlative and `extremum` does not apply — pick the type that describes what the sentence actually asserts.
+- **Two candidates is not an extremum.** A quantity that is highest in one of two groups is `group_difference`; highest at one of two timepoints, one of which is a baseline, is `induction_vs_reference`. Three is the threshold because a superlative is a statement about *all* the candidates.
+- **The cue is part of a metric's name.** "…positively associated with day 70 **maximum** fold-change (MFC) titer responses" — "maximum fold-change" is what the outcome variable is *called*. Nothing is being ranked. → `association`.
+- **The cue is an intensifier on an association.** "the Turquoise module was **most strongly** associated with CD14+ macrophage cells" — the assertion is the association; "most strongly" grades it. → `association`.
+- **The cue is one phase of a time course.** "IL-10 increased progressively to **highest** levels at day 28, whereas inflammatory monocyte IL-10 remained stable from days 0 to 2 before increasing" — the sentence asserts where the quantity went, not which sampled day won a ranking. → `trajectory_segment`.
+- **A genuine extremum names its candidates.** "…antibody responses peaked at day 28, measured at days 0, 7, 28 and 180" — four candidates, one winner. → `extremum`.
+
+This test runs **before** the precedence ladder, not inside it. The ladder resolves ties between types that all genuinely apply; this rule decides whether `extremum` applies at all. Without it, `extremum` outranking `trajectory_segment` would pull a time-course claim up into the wrong label on a single word.
+
+**`descriptive` is also a signal that something went wrong upstream.** If a claim describes what was measured or how a variable was defined rather than what the authors found — "…was used to define vaccine responders as subjects with any 4-fold increase in titer" — it is not a claim at all and should not have been extracted. Label it `descriptive` rather than forcing it into a comparative type, so it stays visible.

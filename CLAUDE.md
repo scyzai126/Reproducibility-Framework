@@ -142,6 +142,7 @@ The description analyzer system prompt lives in `apps/api/app/prompts/descriptio
 ### Paper / LLM Runs (cost control)
 - **No unprompted paper runs:** When a piece of work is finished, do NOT test it by running the pipeline on a new PDF paper unless the user explicitly asks. LLM calls over a full paper are expensive — finish with unit tests and a summary instead, and let the user decide when to spend a real paper run.
 - **One LLM step at a time:** When the user does ask to test with a PDF, run only the single LLM call that step involves (e.g. just assay extraction) and then stop and report. Do NOT chain into the following calls (claim extraction, reconciliation, OBI mapping, group classification) unless the user explicitly tells you to continue.
+- **Re-parsing overwrites the old result:** When the user asks to parse a paper, write the output over that paper's existing result files in place (e.g. `data/claims/<paper>/claims.json`) — do not create a timestamped/suffixed copy, a new sibling directory, or otherwise keep the previous run alongside it. Only preserve the old result if the user explicitly asks you to.
 
 ## Repo / Git Etiquette
 

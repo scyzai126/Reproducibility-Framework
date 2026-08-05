@@ -16,9 +16,11 @@ Output files:
     assays.json                     - independently-discovered, reconciled assay registry
     assays_OBI.json                 - assays.json enriched with OBI ontology mappings
     claims.json                     - independently-extracted claims, linked to assays.json
+    claim_filtered.json             - the downstream-actionable subset of claims.json (claim_filter.py)
     invalid_claims.json             - claims the validation pass rejected (only if non-empty)
     abstract_unmatched_findings.json - Abstract findings with no Results/Figure/Table support (only if non-empty)
-    groups.json                     - claims structured into groups + comparisons (classify_groups.txt)
+    claims_validation.json          - closed-book accuracy judgement over claim_filtered.json
+    groups.json                     - filtered claims structured into groups + comparisons (classify_groups.txt)
 """
 
 import asyncio
@@ -30,8 +32,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "apps" / "api"))
 
 from app.agent.assay_claim_linker import reconcile_claims_with_assays
 from app.agent.assay_obi_mapper import enrich_assays_with_obi
+from app.agent.claim_filter import DOWNSTREAM_CLAIM_TYPES, filter_claims_for_downstream
 from app.agent.claim_parser import _get_client, _load_prompt, _strip_fences
-from app.agent.claim_validator import build_report, validate_groups_file
+from app.agent.claim_validator import build_report, validate_claims_file
 from app.agent.pdf_direct import (
     _pdf_file_content,
     extract_assays_from_pdf_direct,
@@ -108,6 +111,16 @@ async def main(pdf_path: Path, out_dir: Path) -> None:
     (out_dir / "claims.json").write_text(json.dumps(final_claims, indent=2, ensure_ascii=False), encoding="utf-8")
     print("  saved claims.json")
 
+    # claims.json stays the complete extraction record; everything downstream runs on the
+    # actionable subset only, so the unreproducible types cost no further LLM calls.
+    filtered_claims, dropped = filter_claims_for_downstream(final_claims)
+    (out_dir / "claim_filtered.json").write_text(
+        json.dumps(filtered_claims, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
+    print(f"  saved claim_filtered.json ({len(filtered_claims)}/{len(final_claims)} kept)")
+    if dropped:
+        print(f"    dropped: {dict(sorted(dropped.items()))}")
+
     invalid_path = out_dir / "invalid_claims.json"
     if invalid_claims:
         invalid_path.write_text(json.dumps(invalid_claims, indent=2, ensure_ascii=False), encoding="utf-8")
@@ -127,21 +140,33 @@ async def main(pdf_path: Path, out_dir: Path) -> None:
     (out_dir / "assays_OBI.json").write_text(json.dumps(final_assays, indent=2, ensure_ascii=False), encoding="utf-8")
     print("  saved assays_OBI.json")
 
-    groups = await run_group_step(final_claims, client)
-    (out_dir / "groups.json").write_text(json.dumps(groups, indent=2, ensure_ascii=False), encoding="utf-8")
-    print("  saved groups.json")
+    if not filtered_claims:
+        # Every extraction output is already on disk. Running the group step on nothing would
+        # overwrite an existing groups.json / claims_validation.json with an empty object.
+        print(
+            "\nWARNING: no claim carried a downstream claim_type "
+            f"({', '.join(DOWNSTREAM_CLAIM_TYPES)}) - skipping the group and validation steps."
+        )
+        print(f"\nDone. Files written to {out_dir}")
+        return
 
-    # Runs last, on output that is already persisted: the judge is an audit, so a failure
-    # here must not cost any of the extraction above it.
-    report = build_report(await validate_groups_file(groups, client))
+    # Audit before structuring, not after: a claim that fails here is caught without ever
+    # paying a classify_groups call on it. Everything it reads is already persisted, so a
+    # failure in the judge cannot cost any of the extraction above it.
+    report = build_report(await validate_claims_file(filtered_claims, client))
     (out_dir / "claims_validation.json").write_text(
         json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8"
     )
     summary = report["summary"]
     print(
         f"  saved claims_validation.json - {summary['accurate']}/{summary['total']} accurate, "
-        f"{summary['needs_revision']} need revision, {summary['errors']} errors"
+        f"{summary['needs_revision']} need revision, "
+        f"{summary['inconclusive']} inconclusive, {summary['errors']} errors"
     )
+
+    groups = await run_group_step(filtered_claims, client)
+    (out_dir / "groups.json").write_text(json.dumps(groups, indent=2, ensure_ascii=False), encoding="utf-8")
+    print("  saved groups.json")
 
     print(f"\nDone. Files written to {out_dir}")
 

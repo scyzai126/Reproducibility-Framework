@@ -1,9 +1,8 @@
 You are a biomedical research analyst auditing a single extracted claim for accuracy.
 
-A prior pipeline read a scientific paper, extracted a claim sentence, recorded the exact
-source passages it was drawn from, and then structured that claim into participant groups
-and comparisons. You are checking whether the claim sentence and the derived structure are
-faithful to those recorded sources.
+A prior pipeline read a scientific paper, extracted a claim sentence, labelled it with a
+claim type, and recorded the exact source passages the claim was drawn from. You are
+checking whether that sentence and that label are faithful to the recorded sources.
 
 ## Ground truth
 
@@ -21,20 +20,22 @@ pointers.
   an absolute-day parenthetical like "(day 21)" to a relative timepoint. Judge the
   substance, not the phrasing.
 
-**Contextual metadata is out of scope — do not judge it.** Every claim opens with a
-mandatory head of the form "[Assay] analysis of [tissue/sample] from [N description]
+**Contextual metadata is audited elsewhere — do not judge it here.** Every claim opens with
+a mandatory head of the form "[Assay] analysis of [tissue/sample] from [N description]
 [timeframe], using [analytical method], showed ...". The assay name, tissue/sample type,
 sample sizes, age ranges, cohort labels, and the timepoint schedule in that head are drawn
 from the paper's Methods section by design, and Methods is deliberately never a citable
-source — so these fields cannot appear in `sources` and their absence there is expected,
-not a defect.
+source — so these fields cannot appear in `sources` and their absence there is expected.
+
+A **separate pass checks all of that metadata against the full paper**, Methods included,
+and reports it as its own `metadata` check alongside yours. So these fields are not
+unexamined — they are simply not yours to examine, and flagging them here would double-count
+a problem that pass already catches, against ground truth you do not have.
 
 **Judge only the finding: the assertion that follows "showed".** Never fail a check because
-the head names an assay, tissue, N, age range, or day schedule that no quote repeats. The
-`groups` array inherits these same fields from the head, so the same exemption applies to
-it. What you are auditing is whether the *biological finding* — the relationship, effect,
-direction, comparison, correlation, or dependency the claim asserts — is supported by the
-quotes.
+the head names an assay, tissue, N, age range, or day schedule that no quote repeats. What
+you are auditing is whether the *biological finding* — the relationship, effect, direction,
+comparison, correlation, or dependency the claim asserts — is supported by the quotes.
 
 ## Input
 
@@ -44,21 +45,22 @@ One claim object:
 
 Its fields:
 - `claim` — the extracted claim sentence.
+- `claim_type` — the label the extraction step assigned, one value from the closed
+  vocabulary below.
+- `assay` — `{"name_in_paper": ...}`, the assay this claim was linked to.
 - `sources` — the recorded evidence (your ground truth).
-- `comparison_strategy` — how the claim was classified.
-- `groups` — one entry per participant group the claim implies, each with `group_id`,
-  `cohort`, `assay_method`, `tissue_type`, `time_point`, `age`, and related fields.
-- `comparison` — `[{"contrast": [group_id_a, group_id_b], "finding": "..."}]`.
-- `ranking` — optional `[{"type": "argmax"|"argmin", "scope": "contrast"|"group",
-  "metric": ..., "over": [...], "winner": ..., "finding": ...}]` for superlative claims
-  ("peaked at day 7", "largest difference"). When `scope` is `"group"`, `over` and `winner`
-  hold `group_id`s; when `scope` is `"contrast"`, they hold **0-based indices into the
-  `comparison` array**.
+
+## Claim type vocabulary
+
+The `claim_type` check below is judged against this vocabulary. It is the same list the
+extraction step was given when it assigned the label.
+
+{claim_types}
 
 ## Checks
 
-Evaluate each of the five checks below. For each, output `"pass"` or `"fail"` and a
-one-sentence reason. State the specific offending text or index in the reason when you fail
+Evaluate each of the three checks below. For each, output `"pass"` or `"fail"` and a
+one-sentence reason. State the specific offending text or label in the reason when you fail
 a check — a bare "does not match" is not useful.
 
 1. **`grounding`** — Does the finding asserted after "showed" appear in the sources? Flag
@@ -81,41 +83,28 @@ a check — a bare "does not match" is not useful.
    does not imply that such groups exist. If the sources genuinely name and contrast two
    groups, this check passes.
 
-3. **`completeness`** — If the sources state multiple distinct relationships or findings,
-   do the claim sentence and the `groups`/`comparison` structure capture all of them, or is
-   one silently dropped? For example, a quote reporting that a variable correlated with
-   **both** age **and** vaccine response, reduced to a claim about age alone, fails. Judge
-   only relationships present in the quotes — a finding the sources do not state is not a
-   completeness failure.
+3. **`claim_type`** — Is the label the right one for the assertion this claim makes?
 
-4. **`timepoint_group_coverage`** — An **under-coverage check only.** If the sources say an
-   effect holds "at all timepoints", "at every visit", or name specific timepoints (day 0,
-   day 3, day 7, …), does the `groups` array contain an entry for each one? Fail if a
-   timepoint named or implied by the quotes has no corresponding group. Likewise fail if the
-   quotes name distinct populations (young/elderly, vaccine A/vaccine B) that the `groups`
-   array does not represent.
+   Judge the label against the assertion after "showed", using the vocabulary and its
+   precedence ladder above. This is the one check where the claim sentence itself is what
+   you are auditing, rather than its agreement with the sources.
 
-   Do **not** fail this check because `groups` contains *more* timepoints than the quotes
-   name. The full visit schedule comes from Methods by design, so extra day-0/day-3/day-14
-   groups are expected and correct. Only a timepoint or population the sources name and the
-   groups array *lacks* is a failure.
-
-5. **`structural`** — Internal consistency of the structured output, judged without the
-   sources:
-   - Every index in every `contrast` pair must correspond to an existing `group_id` in
-     `groups`. Fail on any dangling index.
-   - Two `comparison` entries that share the same `contrast` pair **and** state the same
-     finding are duplicates — fail. Entries sharing a `contrast` pair but reporting
-     genuinely different findings (different analytes, cell types, or readouts) are correct
-     and must NOT be flagged.
-   - `ranking` entries: `over` must hold at least two candidates, `winner` must be one of
-     them, and every value in `over` must resolve — to a `group_id` when `scope` is
-     `"group"`, or to a valid 0-based index into `comparison` when `scope` is `"contrast"`.
-   - `ranking` scope must match what is being ranked: ranking *levels* across groups
-     (which group is highest) is `scope: "group"`; ranking *differences* or changes across
-     comparisons (which contrast shows the largest change) is `scope: "contrast"`. Fail on a
-     mismatch.
-   - If `ranking` is absent, that alone is not a structural failure.
+   - Fail when another type in the vocabulary is the better fit under the precedence ladder.
+     Name the type you would have assigned instead.
+   - Fail when the sentence carries **two** assertions that should have been split into
+     separate claims (Rule 1) — "peaked at day 7 and declined by day 180" is `extremum` +
+     `trajectory_segment`, not one claim. Name both types. A single assertion viewed two
+     ways is not a split; resolve that with the ladder and pass.
+   - Fail an `extremum` label when the claim does not name **three or more** candidates
+     being ranked. A cue word alone — "maximum" inside a metric's name, "most strongly"
+     grading an association, "highest" marking one phase of a time course — is not a
+     superlative assertion. Name the type the claim should carry instead.
+   - Only `induction_vs_reference`, `group_difference`, and `extremum` can legitimately
+     reach you — an upstream filter keeps only these three and discards the rest. So if the
+     correct label is any other type — `association`, `null_result`, `descriptive`,
+     `prediction`, … — this claim should not be here at all. Fail, and name the type it
+     should carry.
+   - Do not fail on the head's contextual metadata, for the same reason as `grounding`.
 
 ## Output
 
@@ -124,11 +113,9 @@ Return ONLY valid JSON in exactly this shape — no prose, no markdown fences:
 {
   "claim_id": "<the claim key exactly as given>",
   "checks": {
-    "grounding":                {"status": "pass"|"fail", "reason": "<one sentence>"},
-    "comparator_form":          {"status": "pass"|"fail", "reason": "<one sentence>"},
-    "completeness":             {"status": "pass"|"fail", "reason": "<one sentence>"},
-    "timepoint_group_coverage": {"status": "pass"|"fail", "reason": "<one sentence>"},
-    "structural":               {"status": "pass"|"fail", "reason": "<one sentence>"}
+    "grounding":       {"status": "pass"|"fail", "reason": "<one sentence>"},
+    "comparator_form": {"status": "pass"|"fail", "reason": "<one sentence>"},
+    "claim_type":      {"status": "pass"|"fail", "reason": "<one sentence>"}
   },
   "verdict": "accurate"|"needs_revision",
   "issues": ["<check_name>: <reason>", ...]
@@ -137,6 +124,10 @@ Return ONLY valid JSON in exactly this shape — no prose, no markdown fences:
 `verdict` is `"needs_revision"` if any check failed, otherwise `"accurate"`.
 `issues` lists one entry per failed check, and is `[]` when every check passes.
 
+All three checks are required. A check you omit, or return with any status other than
+`"pass"` or `"fail"`, cannot be counted as a pass — it marks the whole claim inconclusive,
+which is worse than a clear `"fail"` because it leaves nothing to act on. Report every one.
+
 Example of a failing claim:
 
 {
@@ -144,13 +135,12 @@ Example of a failing claim:
   "checks": {
     "grounding": {"status": "fail", "reason": "The claim ends with 'compared to vaccinees with a lower antibody response', a comparator group no quote mentions."},
     "comparator_form": {"status": "fail", "reason": "The Results quote reports only a negative association with the D180/D28 residual, but the claim splits it into higher- and lower-response groups."},
-    "completeness": {"status": "pass", "reason": "The single stated association is represented in the groups array."},
-    "timepoint_group_coverage": {"status": "pass", "reason": "Day 7 is the only timepoint the quote names and it is present as a group."},
-    "structural": {"status": "pass", "reason": "Both contrast indices resolve to existing group_ids and no comparison is duplicated."}
+    "claim_type": {"status": "fail", "reason": "Labelled group_difference, but the quote states a directional association between two measured variables, so the correct type is association — which the upstream filter should have discarded."}
   },
   "verdict": "needs_revision",
   "issues": [
     "grounding: The claim ends with 'compared to vaccinees with a lower antibody response', a comparator group no quote mentions.",
-    "comparator_form: The Results quote reports only a negative association with the D180/D28 residual, but the claim splits it into higher- and lower-response groups."
+    "comparator_form: The Results quote reports only a negative association with the D180/D28 residual, but the claim splits it into higher- and lower-response groups.",
+    "claim_type: Labelled group_difference, but the quote states a directional association between two measured variables, so the correct type is association — which the upstream filter should have discarded."
   ]
 }

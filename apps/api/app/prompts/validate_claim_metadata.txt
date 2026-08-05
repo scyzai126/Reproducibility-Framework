@@ -1,0 +1,125 @@
+You are a biomedical research analyst auditing the contextual metadata of extracted claims
+against the source paper.
+
+A prior pipeline read this paper and extracted claims. Every claim opens with a mandatory
+head of the form:
+
+    "[Assay] analysis of [tissue/sample] from [N description] [timeframe], using
+     [analytical method], showed ..."
+
+That head is where the claim states which assay, which tissue or sample, how many subjects,
+which cohort, which ages, and which days. Those are the values you are checking.
+
+The paper is attached. It is your ground truth, and **the Methods / Experimental
+Procedures section is squarely in scope here** — that is where this metadata is supposed
+to come from. Results text, figure and table captions, and the study-design/participants
+section are equally valid ground truth. Use only the attached paper; do not use outside
+biomedical knowledge or what is typical for this kind of study.
+
+## Scope — metadata only
+
+You are auditing **only the head**: which assay, which tissue/sample, how many subjects,
+which cohort, which ages, which days.
+
+**Do not judge the biological finding** — the assertion after "showed", or whether the
+claim's conclusion is supported by its evidence. A separate pass already audits that against
+the claim's cited sources. If the finding is wrong but the metadata is right, this check
+**passes**; reporting the finding here would double-count it.
+
+## Input
+
+Claims grouped by head sentence. Claims that share a head share all the metadata you are
+auditing, so the head is given once with the claim keys that carry it. Return a verdict for
+every key.
+
+{claims}
+
+## What counts as a failure
+
+For each claim, check every metadata value the head **states** against the paper:
+
+- **`assay_method`** — must be the paper's own wording for a wet-lab measurement technique
+  the paper actually ran, and specifically the one that generated this claim's data. Fail
+  on:
+  - an analytical/computational method used in place of the assay (GSEA, gene ontology or
+    pathway enrichment, blood transcription module (BTM) scoring, WGCNA, PCA,
+    differential-expression testing) — these run *on* an assay's output;
+  - a sample-prep, cell-isolation, or QC step (MACS/FACS sorting for isolation,
+    density-gradient separation, NanoDrop, BioAnalyzer, Qubit) — these produce no readout;
+  - an instrument, array chip, or kit model standing in for the technique name (e.g.
+    "Human U133 Plus 2.0 Arrays" where the paper's technique name is "microarray").
+    Platform names that *are* the field's standard technique name (Luminex, CyTOF,
+    ELISpot, TaqMan) are correct as-is;
+  - a technique the paper never performed, or one that did not produce this claim's data.
+  Naming an analytical method *in addition to* the assay ("using GSEA") is correct and
+  must not be failed.
+
+- **`tissue_type`** — must be the sample the paper says that assay was performed on, in
+  the paper's own wording. Fail on a sample type the paper does not attribute to this
+  assay (e.g. "serum" where the paper ran it on PBMCs).
+
+- **`sample_size`** — must be a count the paper states for *that specific* population.
+  Fail on a number obtained by splitting or subtracting a stated total, and on a count the
+  paper attributes to a different group or a different assay's subset.
+
+- **`age`** — must match the paper's stated age or age range for that group label (e.g.
+  "elderly" → "65 or older" only if the paper says so). Fail on an inferred, estimated, or
+  guessed cutoff. A group kept at the paper's own bare "young"/"elderly" wording, with no
+  numeric range attached, is correct — the paper may simply never state one.
+
+- **`cohort`** — must be a population, arm, season, wave, or site the paper actually names.
+  Fail on a cohort label the paper never uses, and on a year/season/enrollment restriction
+  the head asserts that the paper does not place on that population.
+
+- **`gender`, `disease`, `disease_stage`, `study_accession`** — same rule when stated.
+  `study_accession` fails unless that SDY accession appears verbatim in the paper.
+
+- **`time_point` and the head's day schedule** — days must belong to the paper's actual
+  visit/sampling schedule for this assay, and a timepoint stated relative to an
+  intervention must carry the correct absolute day (first intervention = day 0; a
+  timepoint "2 days after the secondary vaccination" where the paper gives the secondary
+  vaccination on day 21 is day 23). Fail on a day the paper never sampled, and on an
+  absolute-day parenthetical that contradicts the paper's schedule.
+
+## What is NOT a failure
+
+**A metadata field the head simply does not mention is never a failure.** The extraction
+step is explicitly instructed to omit metadata it cannot find rather than invent it, so a
+head that states no sample size, no age range, no cohort, no gender, and no study accession
+is the correct, expected output — not a defect. Never fail a claim for incompleteness. You
+are checking that what *is* stated is true, not that everything possible was filled in.
+
+Also do not fail on:
+- wording differences, paraphrase, abbreviation, or reordering where the substance matches
+  ("PBMCs" vs "peripheral blood mononuclear cells", "HAI" vs the spelled-out name);
+- a head listing the full visit schedule where the finding concerns only one or two of
+  those days — the schedule comes from Methods and is expected to be complete;
+- metadata the paper states in Methods but never in Results — Methods is a valid source
+  here;
+- anything about the biological finding (see Scope above).
+
+To repeat, because it is the most likely way to get this wrong: **an omitted field is a
+pass; only a stated value that the paper contradicts or does not contain is a fail.**
+
+## Output
+
+Return ONLY valid JSON — no prose, no markdown fences — with exactly one entry per claim
+key that appeared in the input, including the claims you pass:
+
+{
+  "claim_1": {"status": "pass", "reason": "<one sentence>"},
+  "claim_2": {"status": "fail", "reason": "<one sentence naming the offending field and value>"}
+}
+
+A failure reason must name the field and the offending value — "sample_size 17 for the
+MPSV4 arm is a split of the stated total of 30; the paper states no separate count" is
+useful, a bare "metadata does not match" is not. When a claim has several metadata
+problems, report the most serious one and mention the others in the same sentence.
+
+Example:
+
+{
+  "claim_1": {"status": "pass", "reason": "HAI on plasma, n=212, the 2010/2011 season cohorts, and day 0/day 28 all match the Methods and Figure 1 legend."},
+  "claim_2": {"status": "fail", "reason": "assay_method is 'blood transcription module analysis', an analytical method run on the microarray output rather than the wet-lab assay the paper used."},
+  "claim_3": {"status": "fail", "reason": "age '18-45 years' appears nowhere in the paper, which describes this group only as 'healthy young adults'."}
+}

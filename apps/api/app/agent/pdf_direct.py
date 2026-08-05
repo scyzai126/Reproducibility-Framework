@@ -17,7 +17,7 @@ from openai import AsyncOpenAI
 from app.config import settings
 from app.agent.assay_claim_linker import reconcile_claims_with_assays
 from app.agent.assay_obi_mapper import enrich_assays_with_obi
-from app.agent.claim_parser import _load_prompt, _strip_fences
+from app.agent.claim_parser import _load_prompt, _strip_fences, load_prompt_with_claim_types
 
 
 def _pdf_file_content(pdf_bytes: bytes, filename: str) -> dict:
@@ -29,6 +29,15 @@ def _pdf_file_content(pdf_bytes: bytes, filename: str) -> dict:
             "file_data": f"data:application/pdf;base64,{b64}",
         },
     }
+
+
+def _build_claims_prompt() -> str:
+    """Assemble the claim-extraction prompt, injecting the claim_type vocabulary.
+
+    Shares its substitution with the accuracy judge (validate_claims.txt), which audits the
+    claim_type this prompt assigns — the two must read the same vocabulary file.
+    """
+    return load_prompt_with_claim_types("extract_claims_pdf.txt")
 
 
 async def extract_assays_from_pdf_direct(pdf_bytes: bytes, filename: str, client: AsyncOpenAI) -> dict:
@@ -60,7 +69,7 @@ async def extract_claims_from_pdf_direct(
 ) -> tuple[dict, list]:
     """Send raw PDF bytes to the model and extract claims independently — each claim
     self-names its own assay; it does not see the assay registry from step 1."""
-    system_prompt = _load_prompt("extract_claims_pdf.txt")
+    system_prompt = _build_claims_prompt()
 
     resp = await client.chat.completions.create(
         model=settings.OPENAI_MODEL,
