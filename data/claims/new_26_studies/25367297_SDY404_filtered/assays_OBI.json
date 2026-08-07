@@ -1,0 +1,65 @@
+{
+  "flow cytometry": {
+    "name_in_paper": "flow cytometry",
+    "aliases": [
+      "intracellular staining",
+      "intracellular cytokine staining",
+      "flow cytometric analyses of cytokine production",
+      "intracytoplasmic staining"
+    ],
+    "sample_type": "PBMCs",
+    "readouts": "proportions of CD14+CD16− and CD14+CD16+ monocytes; intracellular IL-6, TNF-α, and IL-10 expression as percentage of parent monocyte populations",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "We evaluated monocyte populations at each time point, and found induction of CD14+CD16+ monocytes after influenza vaccination, particularly at days 2 and 7 after vaccination, with resolution toward baseline by day 28 (Figure 1); this induction of CD14+CD16+ so-called inflammatory monocytes did not differ between young and older adults (Figure 1B)."
+    },
+    "confidence": "high",
+    "claim_role": "primary",
+    "normalized_name": "flow cytometry",
+    "obi_id": "OBI:0000916",
+    "obi_label": "flow cytometry assay",
+    "resource": "exact_original"
+  },
+  "Hemagglutination inhibition (HAI) assays": {
+    "name_in_paper": "Hemagglutination inhibition (HAI) assays",
+    "aliases": [
+      "HAI assays",
+      "HAI titer",
+      "hemagglutination inhibition titer"
+    ],
+    "sample_type": "serum",
+    "readouts": "antibody titers against each influenza vaccine strain; 4-fold titer increase used to define vaccine responders vs nonresponders",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "We subsequently classified subjects as influenza vaccine responders (defined as having any 4-fold increase in HAI titer to any of the 3 strains in the vaccine) or nonresponders (having no 4-fold increase in HAI titer to any vaccine strain); the proportions of responders and nonresponders differed between young and older adults (Supplementary Table 1)."
+    },
+    "confidence": 0.8135,
+    "claim_role": "outcome_variable",
+    "normalized_name": "Hemagglutination inhibition (HAI) assays",
+    "obi_id": "OBI:0000875",
+    "obi_label": "viral hemagglutination inhibition assay",
+    "resource": "embedding_llm"
+  },
+  "Western blot analysis": {
+    "name_in_paper": "Western blot analysis",
+    "aliases": [
+      "Western blot analyses",
+      "Western analyses"
+    ],
+    "sample_type": "PBMC lysates and purified monocyte lysates",
+    "readouts": "total and phosphorylated STAT3 (Y705, S727) and DUSP1 (S296, S359) protein levels normalized to β-actin",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "In a subset of 14 young and 14 older adults from the original cohort, we found unchanged levels of total STAT3 protein but a significant baseline increase in STAT3 Y705 and S727 phosphorylation in older compared with young subjects (Figure 4B)."
+    },
+    "confidence": 0.8581,
+    "claim_role": "validation",
+    "normalized_name": "Western blot analysis",
+    "obi_id": "OBI:0000854",
+    "obi_label": "western blot assay",
+    "resource": "embedding_llm"
+  }
+}

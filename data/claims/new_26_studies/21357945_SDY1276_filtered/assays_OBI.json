@@ -1,0 +1,66 @@
+{
+  "microarray": {
+    "name_in_paper": "microarray",
+    "aliases": [
+      "Microarray Analysis",
+      "Illumina Human HT-12v3 Expression BeadChips",
+      "global gene expression",
+      "genome-wide gene expression patterns",
+      "transcriptional response",
+      "gene expression signature"
+    ],
+    "sample_type": "peripheral blood / whole blood RNA",
+    "readouts": "genome-wide transcript expression levels; differentially expressed transcripts; gene expression signatures correlated with vaccine response",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "We identified expression changes in 4740 transcripts (Dataset 1) after imposing a FDR cutoff of 0.01 on the P value for the day effect."
+    },
+    "confidence": "high",
+    "claim_role": "primary",
+    "normalized_name": "microarray",
+    "obi_id": "OBI:0001985",
+    "obi_label": "microarray assay",
+    "resource": "exact_original"
+  },
+  "hemagglutination inhibition (HAI) tests": {
+    "name_in_paper": "hemagglutination inhibition (HAI) tests",
+    "aliases": [
+      "HAI",
+      "HAI titer"
+    ],
+    "sample_type": "serum",
+    "readouts": "influenza antibody titers against vaccine strains",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Antibody titers were measured by both hemagglutination inhibition (HAI) and neutralization assays. The titer results from these assays were strongly correlated, and the titers generally plateaued after day 14."
+    },
+    "confidence": 0.7884,
+    "claim_role": "outcome_variable",
+    "normalized_name": "hemagglutination inhibition (HAI) tests",
+    "obi_id": "OBI:0000875",
+    "obi_label": "viral hemagglutination inhibition assay",
+    "resource": "embedding_llm"
+  },
+  "neutralizing antibody tests": {
+    "name_in_paper": "neutralizing antibody tests",
+    "aliases": [
+      "neutralization assays",
+      "neutralization antibody titers"
+    ],
+    "sample_type": "serum",
+    "readouts": "neutralizing antibody titers against vaccine strains",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Antibody titers were measured by both hemagglutination inhibition (HAI) and neutralization assays. The titer results from these assays were strongly correlated, and the titers generally plateaued after day 14."
+    },
+    "confidence": 0.5704,
+    "claim_role": "outcome_variable",
+    "normalized_name": "neutralizing antibody tests",
+    "obi_id": "OBI:0000872",
+    "obi_label": "serum neutralization of viral infectivity assay",
+    "resource": "embedding_llm"
+  }
+}

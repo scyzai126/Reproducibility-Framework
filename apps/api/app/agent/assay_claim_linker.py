@@ -12,7 +12,17 @@ to a canonical, OBI-mappable registry entry:
                                     paper, for whatever didn't exact-match
   3. apply_verdicts()           - merges both into a final claim -> registry-key
                                     mapping, growing the registry for genuine misses
-                                    and excluding claims that don't hold up
+                                    and reporting claims that don't hold up
+  4. attach_assay_links()       - writes the resolved assay onto every claim
+
+Linking never deletes a claim. A claim this module cannot tie to a registry entry keeps
+its own self-reported assay name and is flagged `link_status: "unlinked"` by
+attach_assay_links, with the validator's reason attached. Whether a claim is even exposed
+to the LLM validator depends on whether its self-named assay happened to string-match the
+registry, which says nothing about the claim's quality — so a verdict from that pass is
+not a sound basis for dropping a finding. Grounding is adjudicated by the dedicated
+accuracy judge (app.agent.claim_validator, prompts/validate_claims.txt), which reports
+rather than deletes; this module stays consistent with that.
 
 Callers are responsible for OBI-enriching the merged registry (via
 app.agent.assay_obi_mapper.enrich_assays_with_obi) and attaching obi_id/obi_label to
@@ -126,16 +136,19 @@ def apply_verdicts(
     """Merge exact-match results with validation verdicts into a final resolution.
 
     Returns:
-        claim_key -> registry_key for every valid (linked or newly-added) claim
+        claim_key -> registry_key for every linked (or newly-added) claim
         assays, with any "new_assay" verdicts appended
-        invalid_claims: [{"claim_key", "claim", "reason"}] for excluded claims
+        unlinked_claims: [{"claim_key", "claim", "reason"}] for claims left unlinked
+
+    A claim in `unlinked_claims` is absent from the returned mapping but is NOT dropped:
+    attach_assay_links keeps it, flagged with the reason recorded here.
     """
     resolved: dict[str, str] = dict(exact_matches)
     merged_assays = dict(assays)
-    invalid_claims: list[dict] = []
+    unlinked_claims: list[dict] = []
 
-    def _reject(claim_key: str, reason: str) -> None:
-        invalid_claims.append({
+    def _unlink(claim_key: str, reason: str) -> None:
+        unlinked_claims.append({
             "claim_key": claim_key,
             "claim": claims.get(claim_key, {}).get("claim", ""),
             "reason": reason,
@@ -148,7 +161,7 @@ def apply_verdicts(
             if matched_assay in merged_assays:
                 resolved[claim_key] = matched_assay
             else:
-                _reject(claim_key, f"validation returned unknown matched_assay {matched_assay!r}")
+                _unlink(claim_key, f"validation returned unknown matched_assay {matched_assay!r}")
         elif kind == "new_assay":
             new_entry = verdict.get("new_assay") or {}
             registry_key = new_entry.get("name_in_paper")
@@ -156,13 +169,55 @@ def apply_verdicts(
                 merged_assays.setdefault(registry_key, new_entry)
                 resolved[claim_key] = registry_key
             else:
-                _reject(claim_key, "validation returned a new_assay verdict with no name_in_paper")
+                _unlink(claim_key, "validation returned a new_assay verdict with no name_in_paper")
         elif kind == "invalid":
-            _reject(claim_key, verdict.get("reason", "no reason given"))
+            _unlink(claim_key, verdict.get("reason", "no reason given"))
         else:
-            _reject(claim_key, f"validation returned unrecognized verdict {kind!r}")
+            _unlink(claim_key, f"validation returned unrecognized verdict {kind!r}")
 
-    return resolved, merged_assays, invalid_claims
+    return resolved, merged_assays, unlinked_claims
+
+
+UNLINKED_STATUS = "unlinked"
+
+NO_MATCH_REASON = "no registry match and no validation verdict"
+
+
+def attach_assay_links(
+    claims: dict,
+    resolved: dict[str, str],
+    merged_assays: dict,
+    unlinked_claims: list[dict],
+) -> dict:
+    """Write the resolved assay onto every claim, keeping the ones that stayed unlinked.
+
+    A linked claim's `assay` is replaced with the registry's canonical wording, so claims
+    sharing an assay agree on its name. An unlinked claim keeps the name the extraction
+    pass gave it and gains `link_status`/`link_note`, which is what makes it visible
+    downstream as unresolved rather than silently absent.
+
+    Claim order is preserved from `claims`, and only the `assay` key is touched.
+    """
+    reasons = {
+        entry.get("claim_key"): entry.get("reason", "")
+        for entry in unlinked_claims
+        if isinstance(entry, dict)
+    }
+    final: dict = {}
+    for claim_key, claim in claims.items():
+        registry_key = resolved.get(claim_key)
+        if registry_key:
+            entry = merged_assays.get(registry_key) or {}
+            claim["assay"] = {"name_in_paper": entry.get("name_in_paper", registry_key)}
+        else:
+            self_named = (claim.get("assay") or {}).get("name_in_paper", "")
+            claim["assay"] = {
+                "name_in_paper": self_named,
+                "link_status": UNLINKED_STATUS,
+                "link_note": reasons.get(claim_key) or NO_MATCH_REASON,
+            }
+        final[claim_key] = claim
+    return final
 
 
 async def reconcile_claims_with_assays(

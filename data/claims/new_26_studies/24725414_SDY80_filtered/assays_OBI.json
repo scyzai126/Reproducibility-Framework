@@ -1,0 +1,89 @@
+{
+  "microarray": {
+    "name_in_paper": "microarray",
+    "aliases": [
+      "transcriptome analyses using microarrays",
+      "Microarray",
+      "microarray data",
+      "HG 1.0 ST arrays"
+    ],
+    "sample_type": "PBMCs",
+    "readouts": "gene expression, transcript abundance, transcriptomic signatures/pathway-associated expression changes",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "we also found coherent changes in gene expression, with largely non-overlapping signatures on days 1 and 7 (Figures 3B and 3C)."
+    },
+    "confidence": "high",
+    "claim_role": "primary",
+    "normalized_name": "microarray",
+    "obi_id": "OBI:0001985",
+    "obi_label": "microarray assay",
+    "resource": "exact_original"
+  },
+  "flow cytometry": {
+    "name_in_paper": "flow cytometry",
+    "aliases": [
+      "multiple 15-color flow cytometric analyses",
+      "Flow cytometry"
+    ],
+    "sample_type": "PBMCs",
+    "readouts": "cell subpopulation frequencies across 126 PBMC subsets",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Examination of 126 PBMC subsets (Biancotto et al., 2011) (Figure S1B and Table S2) revealed a wide range of frequencies for many cell populations on day 0 (Figure S2B)."
+    },
+    "confidence": "high",
+    "claim_role": "primary",
+    "normalized_name": "flow cytometry",
+    "obi_id": "OBI:0000916",
+    "obi_label": "flow cytometry assay",
+    "resource": "exact_original"
+  },
+  "virus-neutralizing titers": {
+    "name_in_paper": "virus-neutralizing titers",
+    "aliases": [
+      "influenza-specific serum neutralization titers",
+      "MN",
+      "microneutralization assay",
+      "A/Uruguay Microneutralization Titers"
+    ],
+    "sample_type": "serum",
+    "readouts": "influenza-specific neutralization titers, day 70/day 0 fold-change in titer",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Interestingly, subjects with higher initial titers tended to have lower fold-changes."
+    },
+    "confidence": 0.665,
+    "claim_role": "outcome_variable",
+    "normalized_name": "virus-neutralizing titers",
+    "obi_id": "OBI:0000872",
+    "obi_label": "serum neutralization of viral infectivity assay",
+    "resource": "embedding_llm"
+  },
+  "ELISpot": {
+    "name_in_paper": "ELISpot",
+    "aliases": [
+      "ELISpot assays",
+      "B-EL",
+      "antibody-forming cell responses",
+      "antibody secreting cells",
+      "seasonal vaccine-specific ELISpot responses"
+    ],
+    "sample_type": "PBMCs",
+    "readouts": "frequencies of total and influenza-specific IgG/A antibody-secreting cells, memory B-cell responses",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "As expected, we observed strong, but highly variable, increases in influenza vaccine-specific IgG+ antibody secreting cells on day 7 (Figure 3A)."
+    },
+    "confidence": "high",
+    "claim_role": "validation",
+    "normalized_name": "ELISpot",
+    "obi_id": "OBI:0600031",
+    "obi_label": "enzyme-linked immunospot assay",
+    "resource": "exact_original"
+  }
+}

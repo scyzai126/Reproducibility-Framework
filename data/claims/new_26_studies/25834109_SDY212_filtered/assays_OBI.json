@@ -1,0 +1,163 @@
+{
+  "microarray": {
+    "name_in_paper": "microarray",
+    "aliases": [
+      "Whole blood microarray analysis of gene expression",
+      "gene expression",
+      "genome-wide mRNA expression",
+      "HumanHT-12v3 Expression Bead Chip"
+    ],
+    "sample_type": "whole blood",
+    "readouts": "gene expression levels, gene modules",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "At the gene expression level, the CMV effect independent of age was an up-regulation of genes associated with immune activation."
+    },
+    "confidence": "high",
+    "claim_role": "primary",
+    "normalized_name": "microarray",
+    "obi_id": "OBI:0001985",
+    "obi_label": "microarray assay",
+    "resource": "exact_original"
+  },
+  "flow cytometry": {
+    "name_in_paper": "flow cytometry",
+    "aliases": [
+      "immune cell phenotyping by multiparametric flow cytometry",
+      "Leukocyte subset frequency determination"
+    ],
+    "sample_type": "PBMCs",
+    "readouts": "leukocyte subset frequencies, including CD8+ TEM, CD8+ CD28−, CD4+ CD28− and other immune cell subsets",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "The only exceptions to this were the CD8+ effector memory (TEM) and CD8+ CD28− cell frequencies, both being positively correlated with age and CMV."
+    },
+    "confidence": "high",
+    "claim_role": "primary",
+    "normalized_name": "flow cytometry",
+    "obi_id": "OBI:0000916",
+    "obi_label": "flow cytometry assay",
+    "resource": "exact_original"
+  },
+  "phosphoflow analysis": {
+    "name_in_paper": "phosphoflow analysis",
+    "aliases": [
+      "Phosphorylation of intracellular proteins by phosphoflow analysis",
+      "high-throughput analysis of cell function by determining cellular responses to multiple cytokine stimuli"
+    ],
+    "sample_type": "PBMCs",
+    "readouts": "phosphorylation of STAT1, STAT3, STAT5, Akt and PLC-γ in immune cell subsets after cytokine or BCR stimulation",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "In particular, we found an elevation of circulating IL-13 and IFN-γ cytokines, and higher CD8+ pSTAT1 and pSTAT3 responses to IL-6 in CMV+ individuals in the younger cohort compared to the CMV− subjects (Fig. 1)."
+    },
+    "confidence": 0.6145,
+    "claim_role": "primary",
+    "normalized_name": "phosphoflow analysis",
+    "obi_id": "OBI:0002954",
+    "obi_label": "fluorescence imaging-based protein phosphorylation state assay",
+    "resource": "embedding_llm"
+  },
+  "Luminex": {
+    "name_in_paper": "Luminex",
+    "aliases": [
+      "Serum cytokine levels determination",
+      "serum cytokines and chemokines",
+      "cytokines were measured using a Luminex system"
+    ],
+    "sample_type": "serum",
+    "readouts": "cytokine and chemokine levels, including IFN-γ and IL-13",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "In particular, we found an elevation of circulating IL-13 and IFN-γ cytokines, and higher CD8+ pSTAT1 and pSTAT3 responses to IL-6 in CMV+ individuals in the younger cohort compared to the CMV− subjects (Fig. 1)."
+    },
+    "confidence": "high",
+    "claim_role": "primary",
+    "normalized_name": "Luminex",
+    "obi_id": "OBI:0000920",
+    "obi_label": "cytometric bead array assay",
+    "resource": "exact_original"
+  },
+  "hemagglutination inhibition assay": {
+    "name_in_paper": "hemagglutination inhibition assay",
+    "aliases": [
+      "HAI assay",
+      "hemagglutinin-inhibition (HAI) assay"
+    ],
+    "sample_type": "serum",
+    "readouts": "influenza antibody titers, geometric mean titer (GMT), vaccine response score (delta post-pre GMT)",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Surprisingly, in the yCMV+ group the antibody response was higher than in yCMV− subjects (P = 0.03) (Fig. 2a)."
+    },
+    "confidence": 0.7316,
+    "claim_role": "outcome_variable",
+    "normalized_name": "hemagglutination inhibition assay",
+    "obi_id": "OBI:0000875",
+    "obi_label": "viral hemagglutination inhibition assay",
+    "resource": "embedding_llm"
+  },
+  "single-nucleotide polymorphism assay": {
+    "name_in_paper": "single-nucleotide polymorphism assay",
+    "aliases": [
+      "single nucleotide polymorphism (SNP) genotyping approach",
+      "ImmunoChip",
+      "SNP genotyping assays"
+    ],
+    "sample_type": "genomic DNA",
+    "readouts": "genotypes of immune-related SNPs associated with frequency of CD4+ CD28− cells",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "We identified 35 SNPs (on chromosomes 6, 9, 12, 14, 15, 17 and 19) associated with the frequency of CD4+ CD28− cells, at a false discovery rate (FDR) lower than 5% (P < 5 × 10−6, FDR Q < 0.05) (Fig. S4)."
+    },
+    "confidence": 0.67,
+    "claim_role": "primary",
+    "normalized_name": "single-nucleotide polymorphism assay",
+    "obi_id": "OBI:0000438",
+    "obi_label": "DNA sequence variation detection assay",
+    "resource": "embedding_llm"
+  },
+  "tetramer staining": {
+    "name_in_paper": "tetramer staining",
+    "aliases": [
+      "Tetramer and Phenotypic Staining of CD8 T Cells"
+    ],
+    "sample_type": "bronchoalveolar lavage (BAL) cells",
+    "readouts": "numbers of influenza-specific CD8+ T cells recognizing NP, PA and PB1 epitopes",
+    "evidence_location": {
+      "type": "figure",
+      "ref": "Figure 3"
+    },
+    "confidence": 0.558,
+    "claim_role": "primary",
+    "normalized_name": "tetramer staining",
+    "obi_id": "OBI:1110179",
+    "obi_label": "MHC tetramer/multimer assay measuring binding of a T cell epitope:MHC:TCR complex",
+    "resource": "embedding_llm"
+  },
+  "plaque assay": {
+    "name_in_paper": "plaque assay",
+    "aliases": [
+      "Quantification of IAV in infected lung tissue"
+    ],
+    "sample_type": "infected lung tissue homogenates",
+    "readouts": "influenza viral titers in lungs (PFU/lung)",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Both in early and established latency, we observed better protection against influenza in the MCMV-infected (IAV+ MCMV+) versus the mock-infected (IAV+ MCMV−) mice at day 7 after IAV challenge as seen by the reduced influenza viral titers in the lungs (Fig. 3a and b)."
+    },
+    "confidence": 0.7689,
+    "claim_role": "outcome_variable",
+    "normalized_name": "plaque assay",
+    "obi_id": "OBI:0003798",
+    "obi_label": "viral plaque assay",
+    "resource": "embedding_llm"
+  }
+}

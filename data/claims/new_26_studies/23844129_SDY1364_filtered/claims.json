@@ -1,0 +1,458 @@
+{
+  "claim_1": {
+    "claim": "Illumina microarray analysis of PBMC from 24 BCG-primed healthy adults from the UK vaccinated with MVA85A at day 0, day 2 and day 7 post-vaccination, using Gene Set Enrichment Analysis and DAVID, showed that inflammatory response, positive regulation of the immune response, lysosome and apoptosis genes were enriched on day 2 compared to baseline (day 0).",
+    "claim_type": "induction_vs_reference",
+    "polarity": "affirm",
+    "assay": {
+      "name_in_paper": "microarray"
+    },
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Comparing two days after vaccination to baseline, 1100 genes were differentially expressed (false discovery rate <0.05). Heatmaps showing separation of individual volunteers using these genes is shown in Figure S2. Analysis of these genes using Gene Set Enrichment Analysis [31–33] (GSEA) and the Database for Annotation, Visualisation and Integrated Discovery [34] (DAVID) showed an enrichment for gene ontology (GO) terms and gene sets relating to an inflammatory response, positive regulation of the immune response, lysosome and apoptosis (Table 1)."
+      },
+      {
+        "type": "table",
+        "ref": "Table 1"
+      }
+    ]
+  },
+  "claim_2": {
+    "claim": "Illumina microarray analysis of PBMC from 24 BCG-primed healthy adults from the UK vaccinated with MVA85A at day 0, day 2 and day 7 post-vaccination showed that gene expression had returned almost completely to baseline by day 7 compared to baseline (day 0).",
+    "claim_type": "trajectory_segment",
+    "polarity": "affirm",
+    "assay": {
+      "name_in_paper": "microarray"
+    },
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "By day 7, gene expression had returned almost completely to baseline (Figure 1)."
+      },
+      {
+        "type": "text",
+        "section": "Figure 1 caption",
+        "quote": "Figure 1. Transcriptional response to MVA85A. Heat map showing changes fold change in gene expression of common genes 2 and 7 days following MVA85A vaccination. The genes are sorted into categories based on DAVID Bioinformatics Database gene descriptions. The heat map colours show the average expression across the 24 volunteers at each time point (given in days at the bottom of each column)."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 1"
+      }
+    ]
+  },
+  "claim_3": {
+    "claim": "Illumina microarray analysis of PBMC from 24 BCG-primed healthy adults from the UK vaccinated with MVA85A at day 0, day 2 and day 7 post-vaccination showed that CXCL10 (IP-10) had the greatest change in gene expression on day 2 compared to baseline (day 0).",
+    "claim_type": "extremum",
+    "polarity": "affirm",
+    "assay": {
+      "name_in_paper": "microarray"
+    },
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "The greatest change in gene expression was seen in the interferon-induced chemokine CXCL10 (IP-10) with a fold change of 8.5 on day 2 compared to day 0."
+      }
+    ]
+  },
+  "claim_4": {
+    "claim": "Illumina microarray analysis of PBMC from 24 BCG-primed healthy adults from the UK vaccinated with MVA85A showed that CTLA4, CD5, IL2RΑ (CD25), TRAT1, STAT5B, CD28, CD3D, ITK, CD2 and DNAJA3 were more highly expressed on day 2 in low responders compared to high responders.",
+    "claim_type": "group_difference",
+    "polarity": "affirm",
+    "assay": {
+      "name_in_paper": "microarray"
+    },
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Two days after vaccination, 176 genes were differentially expressed between high and low responders. This list of genes was enriched for GO terms associated with regulation of T-cell activation and co-stimulation signal (DAVID, fdr<0.05). The genes contributing to the enrichment of these clusters, which are more highly expressed in low responders, are shown in table 2."
+      },
+      {
+        "type": "text",
+        "section": "Table 2 caption",
+        "quote": "Table 2. Differentially expressed genes between high and low responders, two days after vaccination."
+      },
+      {
+        "type": "table",
+        "ref": "Table 2"
+      }
+    ]
+  },
+  "claim_5": {
+    "claim": "Flow cytometry analysis of unstimulated PBMC from high and low responders from day of vaccination (day 0) and 1 week later (day 7) showed that the CD4+ CD25+ Foxp3+ Treg population increased in low responders compared to baseline (day 0).",
+    "claim_type": "induction_vs_reference",
+    "polarity": "affirm",
+    "assay": {
+      "name_in_paper": "flow cytometry"
+    },
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "In high responders, the number of Tregs (as a percentage of CD4+ cells) remained constant pre- and post vaccination, however in low responders it increased between day 0 and day 7 (Figure 2a, p = 0.009)."
+      },
+      {
+        "type": "text",
+        "section": "Figure 2 caption",
+        "quote": "Figure 2. Low responders make a stronger regulatory response to vaccination with MVA85A. To further explore the relationship between Treg markers and IFN-γ ELISpot response identified through the microarray, flow cytometry of Treg markers was done of cells from the same volunteers taken on day of vaccination (day 0) and 1 week later (day 7). - A. mRNA levels as measured by microarray for several Treg markers show an inverse correlation with the IFN-γ ELISpot response. B. The Treg population (CD4+ CD25+ Foxp3+) is increased in low but not high responders during the first week following vaccination (paired t-test, p=0.009) C. STAT5B expression on day 0 correlates with frequency of Tregs (CD25+ Foxp3+, % CD4+) and there is a trend between expression of CTLA4 on day 2 and Tregs on day 7."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 2"
+      }
+    ]
+  },
+  "claim_6": {
+    "claim": "Flow cytometry analysis of unstimulated PBMC from high and low responders from day of vaccination (day 0) and 1 week later (day 7) showed no increase in the CD4+ CD25+ Foxp3+ Treg population in high responders compared to baseline (day 0).",
+    "claim_type": "induction_vs_reference",
+    "polarity": "null",
+    "assay": {
+      "name_in_paper": "flow cytometry"
+    },
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "In high responders, the number of Tregs (as a percentage of CD4+ cells) remained constant pre- and post vaccination, however in low responders it increased between day 0 and day 7 (Figure 2a, p = 0.009)."
+      },
+      {
+        "type": "text",
+        "section": "Figure 2 caption",
+        "quote": "Figure 2. Low responders make a stronger regulatory response to vaccination with MVA85A. To further explore the relationship between Treg markers and IFN-γ ELISpot response identified through the microarray, flow cytometry of Treg markers was done of cells from the same volunteers taken on day of vaccination (day 0) and 1 week later (day 7). - A. mRNA levels as measured by microarray for several Treg markers show an inverse correlation with the IFN-γ ELISpot response. B. The Treg population (CD4+ CD25+ Foxp3+) is increased in low but not high responders during the first week following vaccination (paired t-test, p=0.009) C. STAT5B expression on day 0 correlates with frequency of Tregs (CD25+ Foxp3+, % CD4+) and there is a trend between expression of CTLA4 on day 2 and Tregs on day 7."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 2"
+      }
+    ]
+  },
+  "claim_7": {
+    "claim": "Illumina microarray analysis of PBMC from 24 BCG-primed healthy adults from the UK vaccinated with MVA85A showed that day 0 IL2RA, STAT5B and day 2 CTLA4 mRNA levels were negatively associated with IFN-γ ELISpot response area under the curve.",
+    "claim_type": "association",
+    "polarity": "affirm",
+    "assay": {
+      "name_in_paper": "microarray"
+    },
+    "sources": [
+      {
+        "type": "text",
+        "section": "Figure 2 caption",
+        "quote": "Figure 2. Low responders make a stronger regulatory response to vaccination with MVA85A. To further explore the relationship between Treg markers and IFN-γ ELISpot response identified through the microarray, flow cytometry of Treg markers was done of cells from the same volunteers taken on day of vaccination (day 0) and 1 week later (day 7). - A. mRNA levels as measured by microarray for several Treg markers show an inverse correlation with the IFN-γ ELISpot response."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 2"
+      }
+    ]
+  },
+  "claim_8": {
+    "claim": "Illumina microarray analysis of PBMC from 24 BCG-primed healthy adults from the UK vaccinated with MVA85A showed that day 0 STAT5B mRNA expression was positively associated with the day 7 flow-cytometric frequency of CD25+ Foxp3+ Tregs among CD4+ cells.",
+    "claim_type": "association",
+    "polarity": "affirm",
+    "assay": {
+      "name_in_paper": "microarray"
+    },
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "The expression of STAT5B mRNA on day 0 correlated with the percentage of Tregs seen in PBMC on day 7 (p=0.41, r=0.047)."
+      },
+      {
+        "type": "text",
+        "section": "Figure 2 caption",
+        "quote": "Figure 2. Low responders make a stronger regulatory response to vaccination with MVA85A. To further explore the relationship between Treg markers and IFN-γ ELISpot response identified through the microarray, flow cytometry of Treg markers was done of cells from the same volunteers taken on day of vaccination (day 0) and 1 week later (day 7). - A. mRNA levels as measured by microarray for several Treg markers show an inverse correlation with the IFN-γ ELISpot response. B. The Treg population (CD4+ CD25+ Foxp3+) is increased in low but not high responders during the first week following vaccination (paired t-test, p=0.009) C. STAT5B expression on day 0 correlates with frequency of Tregs (CD25+ Foxp3+, % CD4+) and there is a trend between expression of CTLA4 on day 2 and Tregs on day 7."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 2"
+      }
+    ]
+  },
+  "claim_9": {
+    "claim": "Illumina microarray analysis of PBMC from 24 BCG-primed healthy adults from the UK vaccinated with MVA85A showed no significant association between day 2 CTLA4 mRNA expression and the day 7 flow-cytometric frequency of CD25+ Foxp3+ Tregs among CD4+ cells.",
+    "claim_type": "association",
+    "polarity": "null",
+    "assay": {
+      "name_in_paper": "microarray"
+    },
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "There was also a weak association between CTLA4 mRNA on day 2 and percentage of Tregs seen in PBMC on day 7 although the correlation did not reach significance (Figure 2b, rs = 0.39p=0.058)."
+      },
+      {
+        "type": "text",
+        "section": "Figure 2 caption",
+        "quote": "Figure 2. Low responders make a stronger regulatory response to vaccination with MVA85A. To further explore the relationship between Treg markers and IFN-γ ELISpot response identified through the microarray, flow cytometry of Treg markers was done of cells from the same volunteers taken on day of vaccination (day 0) and 1 week later (day 7). - A. mRNA levels as measured by microarray for several Treg markers show an inverse correlation with the IFN-γ ELISpot response. B. The Treg population (CD4+ CD25+ Foxp3+) is increased in low but not high responders during the first week following vaccination (paired t-test, p=0.009) C. STAT5B expression on day 0 correlates with frequency of Tregs (CD25+ Foxp3+, % CD4+) and there is a trend between expression of CTLA4 on day 2 and Tregs on day 7."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 2"
+      }
+    ]
+  },
+  "claim_10": {
+    "claim": "Illumina microarray analysis of PBMC from 24 BCG-primed healthy adults from the UK vaccinated with MVA85A on day 0 showed that a 9-gene signature comprising GAPT, ZMYND15, MGST1, CD300LF, NPL, FPR3, TLR1, TICAM2 and CD14 predicted high and low responder status with 87% cross-validation accuracy.",
+    "claim_type": "prediction",
+    "polarity": "affirm",
+    "assay": {
+      "name_in_paper": "microarray"
+    },
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "We analysed these genes using pamR (prediction analysis for microarray) [35] and identified nine genes that could classify the 24 volunteers as high or low responders with a cross validation accuracy of 87% (Figure 3a; GAPT: GRB2-binding adaptor protein, transmembrane; ZMYND15: zinc finger, MYND-type containing 15; MGST1: microsomal glutathione S-transferase 1; CD300LF: CD300 molecule-like family member f; NPL: N-acetylneuraminate pyruvate lyase; FPR3: formyl peptide receptor 3; TLR1: toll-like receptor 1 and TICAM2: toll-like receptor adaptor molecule 2)."
+      },
+      {
+        "type": "text",
+        "section": "Figure 3 caption",
+        "quote": "Figure 3. Expression of genes on day of vaccination and 2 days later can classify high and low responders. Cohorts: TB022: 24 volunteers used in the original microarray analysis. TB009: 10 volunteers from a previous trial of MVA85A who received an equivalent dose used in the qPCR validation. A. Exploratory list of 9 genes obtained from the prediction analysis done on the microarray data from TB022."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 3"
+      }
+    ]
+  },
+  "claim_11": {
+    "claim": "qPCR analysis of PBMC from 10 volunteers from a previous trial vaccinated intradermally with an equivalent dose of MVA85A on day 0 showed that TLR1, TICAM2 and CD14 expression predicted high and low responder status with 80% cross-validation accuracy.",
+    "claim_type": "prediction",
+    "polarity": "affirm",
+    "assay": {
+      "name_in_paper": "qPCR"
+    },
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Using linear discriminant analysis (LDA), the mRNA levels of TLR1, TICAM2 and CD14 on day of vaccination could classify individuals as high or low responders with a cross-validation accuracy of 80%."
+      },
+      {
+        "type": "text",
+        "section": "Figure 3 caption",
+        "quote": "Figure 3. Expression of genes on day of vaccination and 2 days later can classify high and low responders. Cohorts: TB022: 24 volunteers used in the original microarray analysis. TB009: 10 volunteers from a previous trial of MVA85A who received an equivalent dose used in the qPCR validation. B. Probability plots of linear discriminant analysis classification outcomes of high and low responders in trials TB022 and TB009 from expression of TLR1, TICAM2 and CD14 on day of vaccination."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 3"
+      }
+    ]
+  },
+  "claim_12": {
+    "claim": "Illumina microarray analysis of PBMC from 24 BCG-primed healthy adults from the UK vaccinated with MVA85A on day 0 showed that TLR1, TICAM2 and CD14 expression predicted high and low responder status with 79% cross-validation accuracy.",
+    "claim_type": "prediction",
+    "polarity": "affirm",
+    "assay": {
+      "name_in_paper": "microarray"
+    },
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Doing the same LDA analysis on the original 24 samples, using microarray values for the expression levels of the same three genes, the cross validation accuracy was 79% (Figure 3b)."
+      },
+      {
+        "type": "text",
+        "section": "Figure 3 caption",
+        "quote": "Figure 3. Expression of genes on day of vaccination and 2 days later can classify high and low responders. Cohorts: TB022: 24 volunteers used in the original microarray analysis. TB009: 10 volunteers from a previous trial of MVA85A who received an equivalent dose used in the qPCR validation. B. Probability plots of linear discriminant analysis classification outcomes of high and low responders in trials TB022 and TB009 from expression of TLR1, TICAM2 and CD14 on day of vaccination."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 3"
+      }
+    ]
+  },
+  "claim_13": {
+    "claim": "Illumina microarray analysis of PBMC from 24 BCG-primed healthy adults from the UK vaccinated with MVA85A at day 0 and day 2 showed that adding day 2 CTLA4 and IL2RA expression to day 0 TLR1, TICAM2 and CD14 refined the classification model and increased high-versus-low responder prediction accuracy compared to the 3-gene day 0 model.",
+    "claim_type": "prediction",
+    "polarity": "affirm",
+    "assay": {
+      "name_in_paper": "microarray"
+    },
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Although no discriminatory gene set was found based on gene expression 2 days after vaccination, adding CTLA4 and IL2RΑ (CD25) to the LDA model developed with the three innate sensor genes refined the model and increased its cross validation accuracy to 88% (Figure 3c, d)."
+      },
+      {
+        "type": "text",
+        "section": "Figure 3 caption",
+        "quote": "Figure 3. Expression of genes on day of vaccination and 2 days later can classify high and low responders. Cohorts: TB022: 24 volunteers used in the original microarray analysis. TB009: 10 volunteers from a previous trial of MVA85A who received an equivalent dose used in the qPCR validation. C. Probability plot of LDA classification outcome of TB022 volunteers when CTLA4 and IL2RΑ expression on day 2 are added to the model (Other genes, eg CD5 and STAT5B were removed as they did not add predictive value to the model due to co-linearity with other genes). D. Hypothesis resulting from LDA analyses."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 3"
+      }
+    ]
+  },
+  "claim_14": {
+    "claim": "qPCR analysis of PBMC from volunteers in TB022 and TB009 on day 0 showed that TLR1 mRNA expression was positively associated with IFN-γ ELISpot response area under the curve.",
+    "claim_type": "association",
+    "polarity": "affirm",
+    "assay": {
+      "name_in_paper": "qPCR"
+    },
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "The levels of TLR1 mRNA in both trials correlated with AUC (Figure 4a; p < 0.05, Spearman’s r=0.70, p<0.01, Spearman’s r=0.55 respectively)."
+      },
+      {
+        "type": "text",
+        "section": "Figure 4 caption",
+        "quote": "Figure 4. TLR1 levels on day of vaccination correlate with immunogenicity. A. Levels of TLR1 mRNA correlated with long term immunogenicity to MVA85A in TB022 (Spearman’s rank correlation). B. Levels of TLR1 mRNA correlated with long term immunogenicity to MVA85A in TB009 (Spearman’s rank correlation)."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 4"
+      }
+    ]
+  },
+  "claim_15": {
+    "claim": "Flow cytometry analysis of unstimulated day 0 PBMC from 24 BCG-primed healthy adults from the UK vaccinated with MVA85A showed that surface TLR1 mean fluorescence intensity was positively associated with IFN-γ ELISpot response area under the curve.",
+    "claim_type": "association",
+    "polarity": "affirm",
+    "assay": {
+      "name_in_paper": "flow cytometry"
+    },
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "There was a correlation between the level of TLR1 expression on day of vaccination and AUC, although the relationship was weaker at the protein level compared to the mRNA (Figure 4b,c; p<0.05, Spearman’s r=0.45)."
+      },
+      {
+        "type": "text",
+        "section": "Figure 4 caption",
+        "quote": "Figure 4. TLR1 levels on day of vaccination correlate with immunogenicity. C. Surface expression of TLR1 varies greatly between individuals. D. Median fluorescence intensity (MFI) of surface TLR1 on all live cells in unstimulated day 0 samples correlates with immunogenicity (TB022)."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 4"
+      }
+    ]
+  },
+  "claim_16": {
+    "claim": "qPCR analysis of PBMC stimulated in vitro with MVA85A showed that blocking TLR1, TLR2 or TLR6 signaling decreased CXCL2 expression compared to MVA85A stimulation without TLR-blocking antibodies.",
+    "claim_type": "dependency",
+    "polarity": "affirm",
+    "assay": {
+      "name_in_paper": "qPCR"
+    },
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Blocking signaling through all three TLRs during in vitro stimulation of PBMC with MVA85A reduces expression of CXCL2 in response to the virus (Figure 5a)."
+      },
+      {
+        "type": "text",
+        "section": "Figure 5 caption",
+        "quote": "Figure 5. Toll-like receptors and HMGB1 in the innate response to MVA85A. A. Incubating PBMC with TLR blocking antibodies decreases CXCL2 production in response to MVA85A (Mann-Witney test for all 4 comparisons 0.01<p<0.05)."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 5"
+      }
+    ]
+  },
+  "claim_17": {
+    "claim": "Western blot analysis of cell supernatants from MVA85A-stimulated cells at 4 and 6 hours showed that HMGB1 was released into the supernatant compared to unstimulated cells.",
+    "claim_type": "induction_vs_reference",
+    "polarity": "affirm",
+    "assay": {
+      "name_in_paper": "western blot"
+    },
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "HMGB1 is detectable by western blot in the supernatant of infected cells 4 and 6 hours post infection but not in the supernatant of uninfected cells after 6 hours."
+      },
+      {
+        "type": "text",
+        "section": "Figure 5 caption",
+        "quote": "Figure 5. Toll-like receptors and HMGB1 in the innate response to MVA85A. C. Western blot showing HMGB1 is released into the supernatant of MVA85A stimulated but not unstimulated cells."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 5"
+      }
+    ]
+  },
+  "claim_18": {
+    "claim": "qPCR analysis of PBMC stimulated in vitro with MVA85A showed that anti-HMGB1 antibodies decreased CXCL2 production compared to MVA85A stimulation without anti-HMGB1.",
+    "claim_type": "dependency",
+    "polarity": "affirm",
+    "assay": {
+      "name_in_paper": "qPCR"
+    },
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Furthermore, anti-HMGB1 antibodies also reduce the production of CXCL2 in cells stimulated with MVA85A (Figure 5b, c)."
+      },
+      {
+        "type": "text",
+        "section": "Figure 5 caption",
+        "quote": "Figure 5. Toll-like receptors and HMGB1 in the innate response to MVA85A. B. Anti-HMGB1 also reduces CXCL2 production in response to MVA85A stimulation (Wilcoxon paired test, p<0.05)."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 5"
+      }
+    ]
+  },
+  "claim_19": {
+    "claim": "IFN-γ ELISpot analysis of splenocytes from mice vaccinated intradermally with MVA85A and culled 7 days later showed that co-administration of anti-TLR2 reduced high responses to antigen 85A compared to MVA85A alone or MVA85A with isotype control.",
+    "claim_type": "dependency",
+    "polarity": "affirm",
+    "assay": {
+      "name_in_paper": "ex-vivo IFN-γ ELISpot"
+    },
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "The results show a decrease in high responses to antigen 85A. The mean responses are slightly lower than in the control and isotype groups however the main difference seems to be in the spread of the distribution, particularly in the lack of high responses in the group receiving anti-TLR2 antibodies with the vaccine (Figure 5d; all three groups are normally distributed by the D’Agostino and Pearson normality test, F test for differences in variance: p=0.04 between MVA85A and anti-TLR2, p=0.02 between anti-TLR2 and isotype groups)."
+      },
+      {
+        "type": "text",
+        "section": "Figure 5 caption",
+        "quote": "Figure 5. Toll-like receptors and HMGB1 in the innate response to MVA85A. D. Mixing anti-TLR2 to MVA85A when vaccinating mice reduces the spread of responses (F-test, p<0.05) but not the mean (student’s t-test, p=0.18 MVA vs anti-TLR2, p=0.12 MVA85A vs isotype control)."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 5"
+      }
+    ]
+  },
+  "claim_20": {
+    "claim": "IFN-γ ELISpot analysis of splenocytes from mice vaccinated intradermally with MVA85A and culled 7 days later showed no significant difference in mean antigen 85A responses after co-administration of anti-TLR2 compared to MVA85A alone or MVA85A with isotype control.",
+    "claim_type": "group_difference",
+    "polarity": "null",
+    "assay": {
+      "name_in_paper": "ex-vivo IFN-γ ELISpot"
+    },
+    "sources": [
+      {
+        "type": "text",
+        "section": "Figure 5 caption",
+        "quote": "Figure 5. Toll-like receptors and HMGB1 in the innate response to MVA85A. D. Mixing anti-TLR2 to MVA85A when vaccinating mice reduces the spread of responses (F-test, p<0.05) but not the mean (student’s t-test, p=0.18 MVA vs anti-TLR2, p=0.12 MVA85A vs isotype control)."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 5"
+      }
+    ]
+  }
+}

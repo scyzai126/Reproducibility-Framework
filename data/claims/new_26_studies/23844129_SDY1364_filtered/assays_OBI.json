@@ -1,0 +1,96 @@
+{
+  "microarray": {
+    "name_in_paper": "microarray",
+    "aliases": [
+      "Gene Expression Analysis",
+      "Illumina HumanHT-12 version 4 expression beadchip",
+      "Illumina microarrays"
+    ],
+    "sample_type": "PBMC",
+    "readouts": "gene expression levels, differentially expressed genes",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Comparing two days after vaccination to baseline, 1100 genes were differentially expressed (false discovery rate <0.05)."
+    },
+    "confidence": "high",
+    "claim_role": "primary",
+    "normalized_name": "microarray",
+    "obi_id": "OBI:0001985",
+    "obi_label": "microarray assay",
+    "resource": "exact_original"
+  },
+  "ex-vivo IFN-γ ELISpot": {
+    "name_in_paper": "ex-vivo IFN-γ ELISpot",
+    "aliases": [
+      "IFN-γ ELISpot",
+      "ELISpot"
+    ],
+    "sample_type": "fresh PBMC (human); splenocytes (mouse)",
+    "readouts": "antigen 85A-specific IFN-γ spot-forming cells, immunogenicity/AUC responses",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "responders based on an area under the curve analysis for IFN-γ ELISpot responses to 66 overlapping peptides covering antigen 85A"
+    },
+    "confidence": 0.7768,
+    "claim_role": "outcome_variable",
+    "normalized_name": "ex-vivo IFN-γ ELISpot",
+    "obi_id": "OBI:1110059",
+    "obi_label": "ELISPOT assay measuring epitope specific interferon-gamma production by T cells",
+    "resource": "embedding_llm"
+  },
+  "flow cytometry": {
+    "name_in_paper": "flow cytometry",
+    "aliases": [],
+    "sample_type": "unstimulated PBMC",
+    "readouts": "frequency of CD4+ CD25+ Foxp3+ Tregs; TLR1 surface expression/mean fluorescence intensity",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "In high responders, the number of Tregs (as a percentage of CD4+ cells) remained constant pre- and post vaccination, however in low responders it increased between day 0 and day 7 (Figure 2a, p = 0.009)."
+    },
+    "confidence": "high",
+    "claim_role": "validation",
+    "normalized_name": "flow cytometry",
+    "obi_id": "OBI:0000916",
+    "obi_label": "flow cytometry assay",
+    "resource": "exact_original"
+  },
+  "qPCR": {
+    "name_in_paper": "qPCR",
+    "aliases": [
+      "Quantitative PCR"
+    ],
+    "sample_type": "PBMC RNA/cDNA",
+    "readouts": "expression of selected genes including TLR1, CD14, TICAM2, CTLA4, IL2RA, CXCL2",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "We measured the expression of the nine genes by qPCR and again classified the volunteers as high or low responders based on the median AUC value for their ELISpot responses."
+    },
+    "confidence": "high",
+    "claim_role": "validation",
+    "normalized_name": "qPCR",
+    "obi_id": "OBI:0000893",
+    "obi_label": "real time polymerase chain reaction assay",
+    "resource": "exact_original"
+  },
+  "western blot": {
+    "name_in_paper": "western blot",
+    "aliases": [],
+    "sample_type": "cell culture supernatant from infected/stimulated cells",
+    "readouts": "HMGB1 protein detection in supernatant",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "HMGB1 is detectable by western blot in the supernatant of infected cells 4 and 6 hours post infection but not in the supernatant of uninfected cells after 6 hours."
+    },
+    "confidence": "high",
+    "claim_role": "validation",
+    "normalized_name": "western blot",
+    "obi_id": "OBI:0000854",
+    "obi_label": "western blot assay",
+    "resource": "exact_original"
+  }
+}

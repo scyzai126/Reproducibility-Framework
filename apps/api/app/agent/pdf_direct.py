@@ -15,7 +15,7 @@ import json
 from openai import AsyncOpenAI
 
 from app.config import settings
-from app.agent.assay_claim_linker import reconcile_claims_with_assays
+from app.agent.assay_claim_linker import attach_assay_links, reconcile_claims_with_assays
 from app.agent.assay_obi_mapper import enrich_assays_with_obi
 from app.agent.claim_parser import _load_prompt, _strip_fences, load_prompt_with_claim_types
 
@@ -113,15 +113,18 @@ async def extract_step1_from_pdf_direct(pdf_bytes: bytes, filename: str, client:
         _pdf_file_content(pdf_bytes, filename),
         {"type": "text", "text": "Validate the candidate assay-claim pairings against this paper as instructed."},
     ]
-    resolved, merged_assays, _invalid_claims = await reconcile_claims_with_assays(
+    resolved, merged_assays, unlinked_claims = await reconcile_claims_with_assays(
         claims, assays, paper_content, client
     )
 
     final_assays = enrich_assays_with_obi(merged_assays)
 
+    # Every extracted claim carries forward, including any the linker left unlinked --
+    # reconciliation resolves which assay a claim belongs to, it does not judge the claim.
+    linked = attach_assay_links(claims, resolved, merged_assays, unlinked_claims)
+
     step1_json: dict = {"assays": final_assays}
-    for claim_key, registry_key in resolved.items():
-        claim = claims[claim_key]
+    for claim_key, claim in linked.items():
         step1_json[claim_key] = {"claim": claim.get("claim", ""), "sources": claim.get("sources", [])}
 
     return step1_json
