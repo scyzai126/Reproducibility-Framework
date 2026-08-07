@@ -47,6 +47,7 @@ Its fields:
 - `claim` — the extracted claim sentence.
 - `claim_type` — the label the extraction step assigned, one value from the closed
   vocabulary below.
+- `polarity` — `affirm` or `null`: whether the paper reported the effect or its absence.
 - `assay` — `{"name_in_paper": ...}`, the assay this claim was linked to.
 - `sources` — the recorded evidence (your ground truth).
 
@@ -59,7 +60,7 @@ extraction step was given when it assigned the label.
 
 ## Checks
 
-Evaluate each of the three checks below. For each, output `"pass"` or `"fail"` and a
+Evaluate each of the four checks below. For each, output `"pass"` or `"fail"` and a
 one-sentence reason. State the specific offending text or label in the reason when you fail
 a check — a bare "does not match" is not useful.
 
@@ -101,10 +102,27 @@ a check — a bare "does not match" is not useful.
      superlative assertion. Name the type the claim should carry instead.
    - Only `induction_vs_reference`, `group_difference`, and `extremum` can legitimately
      reach you — an upstream filter keeps only these three and discards the rest. So if the
-     correct label is any other type — `association`, `null_result`, `descriptive`,
-     `prediction`, … — this claim should not be here at all. Fail, and name the type it
-     should carry.
+     correct label is any other type — `association`, `descriptive`, `prediction`, … — this
+     claim should not be here at all. Fail, and name the type it should carry.
    - Do not fail on the head's contextual metadata, for the same reason as `grounding`.
+   - Judge the type on the OPERATION only, never on whether the finding was positive or
+     negative. A claim reporting an absence keeps the type that names the operation and
+     records the absence in `polarity` — that is checked separately below, not here.
+
+4. **`polarity`** — Does `polarity` match what the sources say the paper found?
+
+   `affirm` means the paper reports the effect; `null` means it reports its absence ("no
+   significant difference", "did not correlate", "was not predictive", "whereas X did not").
+
+   - Fail when the quotes state an absence and the claim carries `affirm`, or state an
+     effect and the claim carries `null`. This is the check that catches a negative finding
+     silently written up as a positive one.
+   - Fail when the claim sentence bundles a positive finding and a stated absence together
+     ("responses rose in both arms, with no difference between them") — that is two claims
+     with different polarity, and merging them hides the absence from the reproduction step.
+   - Pass when the quotes support the polarity as given, including a legitimate `null` claim.
+     A null-polarity claim is a real, reproducible claim; never fail it for being negative.
+   - Fail when `polarity` is missing or is any value other than `affirm` or `null`.
 
 ## Output
 
@@ -115,7 +133,8 @@ Return ONLY valid JSON in exactly this shape — no prose, no markdown fences:
   "checks": {
     "grounding":       {"status": "pass"|"fail", "reason": "<one sentence>"},
     "comparator_form": {"status": "pass"|"fail", "reason": "<one sentence>"},
-    "claim_type":      {"status": "pass"|"fail", "reason": "<one sentence>"}
+    "claim_type":      {"status": "pass"|"fail", "reason": "<one sentence>"},
+    "polarity":        {"status": "pass"|"fail", "reason": "<one sentence>"}
   },
   "verdict": "accurate"|"needs_revision",
   "issues": ["<check_name>: <reason>", ...]
@@ -124,7 +143,7 @@ Return ONLY valid JSON in exactly this shape — no prose, no markdown fences:
 `verdict` is `"needs_revision"` if any check failed, otherwise `"accurate"`.
 `issues` lists one entry per failed check, and is `[]` when every check passes.
 
-All three checks are required. A check you omit, or return with any status other than
+All four checks are required. A check you omit, or return with any status other than
 `"pass"` or `"fail"`, cannot be counted as a pass — it marks the whole claim inconclusive,
 which is worse than a clear `"fail"` because it leaves nothing to act on. Report every one.
 
@@ -135,7 +154,8 @@ Example of a failing claim:
   "checks": {
     "grounding": {"status": "fail", "reason": "The claim ends with 'compared to vaccinees with a lower antibody response', a comparator group no quote mentions."},
     "comparator_form": {"status": "fail", "reason": "The Results quote reports only a negative association with the D180/D28 residual, but the claim splits it into higher- and lower-response groups."},
-    "claim_type": {"status": "fail", "reason": "Labelled group_difference, but the quote states a directional association between two measured variables, so the correct type is association — which the upstream filter should have discarded."}
+    "claim_type": {"status": "fail", "reason": "Labelled group_difference, but the quote states a directional association between two measured variables, so the correct type is association — which the upstream filter should have discarded."},
+    "polarity": {"status": "pass", "reason": "The quote reports a negative association as an effect the authors found, and the claim carries affirm."}
   },
   "verdict": "needs_revision",
   "issues": [
@@ -144,3 +164,7 @@ Example of a failing claim:
     "claim_type: Labelled group_difference, but the quote states a directional association between two measured variables, so the correct type is association — which the upstream filter should have discarded."
   ]
 }
+
+Note that `polarity: null` and a *failing* polarity check are unrelated: "negatively
+associated" is a real effect and takes `affirm`. `null` is for a finding the paper reports
+as *absent*.

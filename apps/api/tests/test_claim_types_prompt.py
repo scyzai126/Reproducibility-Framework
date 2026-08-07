@@ -22,9 +22,12 @@ CLAIM_TYPES = [
     "association",
     "prediction",
     "dependency",
-    "null_result",
     "descriptive",
 ]
+
+#: Retired: an absence is a `polarity`, not a type of its own. A claim reporting one keeps
+#: the type that names the operation, because the verifier runs it either way.
+RETIRED_CLAIM_TYPES = ["null_result"]
 
 
 def test_placeholder_is_consumed():
@@ -34,6 +37,19 @@ def test_placeholder_is_consumed():
 @pytest.mark.parametrize("claim_type", CLAIM_TYPES)
 def test_every_vocabulary_value_reaches_the_assembled_prompt(claim_type):
     assert claim_type in _build_claims_prompt()
+
+
+@pytest.mark.parametrize("claim_type", RETIRED_CLAIM_TYPES)
+def test_retired_types_are_gone_from_the_vocabulary(claim_type):
+    """A retired type left in the table would still be assignable, and the filter and the
+    judge would then disagree about what a negative finding should carry."""
+    assert claim_type not in _build_claims_prompt()
+
+
+def test_polarity_replaces_the_retired_null_result_type():
+    prompt = _build_claims_prompt()
+    assert "polarity" in prompt
+    assert "affirm" in prompt
 
 
 def test_vocabulary_is_injected_not_merely_referenced():
@@ -76,13 +92,16 @@ def test_shared_claim_type_does_not_imply_merging():
     assert "*sufficient* trigger to split, not a necessary one" in prompt
 
 
-def test_null_result_covers_embedded_negatives():
+def test_null_polarity_covers_embedded_negatives():
     """"but not X" attaches an absence to a positive finding. Observed failing in the
-    SDY80 run, where such a claim was labelled prediction and the negative vanished."""
+    SDY80 run, where such a claim was labelled prediction and the negative vanished.
+
+    The split survives the move from `null_result` to `polarity`; what changed is that both
+    halves now carry the same type and differ only in polarity."""
     prompt = _build_claims_prompt()
     assert "but not X" in prompt
     assert "whereas … did not" in prompt
-    assert "`prediction` + `null_result` → two claims" in prompt
+    assert "`prediction` (affirm) + `prediction` (null) → two claims" in prompt
 
 
 def test_variability_is_descriptive_not_trajectory():

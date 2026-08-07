@@ -7,15 +7,16 @@ paying a classify_groups call on it.
 **Closed-book pass** — the judge sees only what is already inside the claim entry: the
 claim sentence, its `claim_type` label, and the verbatim Results/caption quotes it was
 drawn from. The paper is not opened, so the `sources` array is the sole ground truth. One
-call per claim; three checks (see prompts/validate_claims.txt):
+call per claim; four checks (see prompts/validate_claims.txt):
     grounding        - every asserted fact appears in the sources
     comparator_form  - no group split invented out of a correlation
     claim_type       - the assigned label is the right one for the assertion
+    polarity         - affirm/null matches whether the sources report an effect or its absence
 
-**Metadata pass** — the three checks above deliberately ignore the contextual metadata in
+**Metadata pass** — the closed-book checks above deliberately ignore the contextual metadata in
 every claim's head ("[Assay] analysis of [tissue] from [N] ..."), because that metadata
 comes from Methods and Methods is never a citable source, so it can never appear in
-`sources`. It is audited here instead, open-book against the PDF, as a fourth `metadata`
+`sources`. It is audited here instead, open-book against the PDF, as its own `metadata`
 check (see prompts/validate_claim_metadata.txt). Claims are batched by head sentence —
 heads repeat heavily across a paper — so this costs a handful of calls, not one per claim.
 It runs only when a PDF is supplied; without one the `metadata` key is absent entirely
@@ -45,6 +46,7 @@ CLOSED_BOOK_CHECKS = (
     "grounding",
     "comparator_form",
     "claim_type",
+    "polarity",
 )
 
 METADATA_CHECK = "metadata"

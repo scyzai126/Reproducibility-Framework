@@ -2,6 +2,7 @@ from pathlib import Path
 
 from app.agent.claim_filter import (
     DOWNSTREAM_CLAIM_TYPES,
+    MISSING_POLARITY_KEY,
     MISSING_TYPE_KEY,
     filter_claims_for_downstream,
 )
@@ -9,8 +10,12 @@ from app.agent.claim_filter import (
 _REPO_ROOT = Path(__file__).resolve().parents[3]
 
 
-def _claim(claim_type: str | None) -> dict:
-    entry: dict = {"claim": f"a {claim_type} claim", "sources": [{"type": "text"}]}
+def _claim(claim_type: str | None, polarity: str = "affirm") -> dict:
+    entry: dict = {
+        "claim": f"a {claim_type} claim",
+        "sources": [{"type": "text"}],
+        "polarity": polarity,
+    }
     if claim_type is not None:
         entry["claim_type"] = claim_type
     return entry
@@ -27,16 +32,15 @@ def test_keeps_only_the_three_downstream_types():
             "association",
             "prediction",
             "dependency",
-            "null_result",
             "descriptive",
         ],
         start=1,
     )}
 
-    kept, dropped = filter_claims_for_downstream(claims)
+    kept, dropped, _ = filter_claims_for_downstream(claims)
 
     assert list(kept) == ["claim_1", "claim_2", "claim_3"]
-    assert sum(dropped.values()) == 7
+    assert sum(dropped.values()) == 6
     assert dropped["descriptive"] == 1
 
 
@@ -48,7 +52,7 @@ def test_preserves_original_keys_and_order():
         "claim_1": _claim("induction_vs_reference"),
     }
 
-    kept, _ = filter_claims_for_downstream(claims)
+    kept, _, _ = filter_claims_for_downstream(claims)
 
     assert list(kept) == ["claim_9", "claim_5", "claim_1"]
 
@@ -57,11 +61,12 @@ def test_claim_values_pass_through_verbatim():
     entry = {
         "claim": "IFNγ responses increased at day 7 relative to baseline.",
         "claim_type": "induction_vs_reference",
+        "polarity": "affirm",
         "assay": {"name_in_paper": "ELISpot assays"},
         "sources": [{"type": "text", "section": "Results", "quote": "..."}],
     }
 
-    kept, _ = filter_claims_for_downstream({"claim_1": entry})
+    kept, _, _ = filter_claims_for_downstream({"claim_1": entry})
 
     assert kept["claim_1"] == entry
     assert kept["claim_1"] is entry
@@ -76,15 +81,40 @@ def test_missing_and_invented_types_are_dropped_and_tallied():
         "claim_5": _claim("group_difference"),
     }
 
-    kept, dropped = filter_claims_for_downstream(claims)
+    kept, dropped, _ = filter_claims_for_downstream(claims)
 
     assert list(kept) == ["claim_5"]
     assert dropped[MISSING_TYPE_KEY] == 3
     assert dropped["group_comparison_over_time"] == 1
 
 
+def test_null_polarity_claims_carry_forward_and_are_tallied():
+    """A stated absence is reproducible — the verifier runs the same operation, only the
+    expected answer flips — so it is kept, not filtered out with the unusable types."""
+    claims = {
+        "claim_1": _claim("group_difference", polarity="null"),
+        "claim_2": _claim("induction_vs_reference", polarity="affirm"),
+        "claim_3": _claim("extremum", polarity="null"),
+        "claim_4": _claim("association", polarity="null"),
+    }
+
+    kept, dropped, kept_polarity = filter_claims_for_downstream(claims)
+
+    assert list(kept) == ["claim_1", "claim_2", "claim_3"]
+    assert kept_polarity == {"null": 2, "affirm": 1}
+    assert dropped == {"association": 1}
+
+
+def test_missing_polarity_is_tallied_rather_than_assumed():
+    claims = {"claim_1": {"claim": "no polarity key", "claim_type": "extremum"}}
+
+    _, _, kept_polarity = filter_claims_for_downstream(claims)
+
+    assert kept_polarity == {MISSING_POLARITY_KEY: 1}
+
+
 def test_empty_input():
-    assert filter_claims_for_downstream({}) == ({}, {})
+    assert filter_claims_for_downstream({}) == ({}, {}, {})
 
 
 def test_downstream_types_exist_in_the_prompt_vocabulary():

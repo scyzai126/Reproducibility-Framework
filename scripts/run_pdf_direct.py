@@ -113,13 +113,15 @@ async def main(pdf_path: Path, out_dir: Path) -> None:
 
     # claims.json stays the complete extraction record; everything downstream runs on the
     # actionable subset only, so the unreproducible types cost no further LLM calls.
-    filtered_claims, dropped = filter_claims_for_downstream(final_claims)
+    filtered_claims, dropped, kept_polarity = filter_claims_for_downstream(final_claims)
     (out_dir / "claim_filtered.json").write_text(
         json.dumps(filtered_claims, indent=2, ensure_ascii=False), encoding="utf-8"
     )
     print(f"  saved claim_filtered.json ({len(filtered_claims)}/{len(final_claims)} kept)")
     if dropped:
         print(f"    dropped: {dict(sorted(dropped.items()))}")
+    if kept_polarity:
+        print(f"    polarity: {dict(sorted(kept_polarity.items()))}")
 
     invalid_path = out_dir / "invalid_claims.json"
     if invalid_claims:

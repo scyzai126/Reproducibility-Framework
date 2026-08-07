@@ -30,7 +30,7 @@ def main(study_dir: Path) -> None:
         sys.exit(1)
 
     claims = json.loads(claims_path.read_text(encoding="utf-8"))
-    filtered, dropped = filter_claims_for_downstream(claims)
+    filtered, dropped, kept_polarity = filter_claims_for_downstream(claims)
 
     out_path = study_dir / "claim_filtered.json"
     out_path.write_text(json.dumps(filtered, indent=2, ensure_ascii=False), encoding="utf-8")
@@ -39,6 +39,8 @@ def main(study_dir: Path) -> None:
     if dropped:
         for claim_type, count in sorted(dropped.items(), key=lambda kv: (-kv[1], kv[0])):
             print(f"  dropped {count:>3}  {claim_type}")
+    for polarity, count in sorted(kept_polarity.items(), key=lambda kv: (-kv[1], kv[0])):
+        print(f"  kept    {count:>3}  polarity {polarity}")
     print(f"  saved {out_path}")
 
 

@@ -10,16 +10,30 @@
 | `association` | a directional association between two named measured variables | correlated with, positively/negatively associated with, varied with, r = |
 | `prediction` | a model, signature, or classifier predicts an outcome, reported with a performance metric | predicted, classified, predictive of, accuracy, AUC, ROC, cross-validation, discriminated |
 | `dependency` | one variable is required by, regulated by, or abrogated by another — typically shown by experimental intervention | dependent on, required for, abrogated by, depletion, knockout, neutralizing antibody, blockade, abolished, *(stimulated vs. unstimulated)* |
-| `null_result` | an explicit **absence** of difference, effect, or association | no significant difference, not associated, similar between, did not change, was not predictive, without reaching statistical significance, **but not X**, **whereas … did not**, except in |
 | `descriptive` | a state or composition with **no comparison**, or a statement about a measure's *spread* rather than its level | wide variation, N of M were, could be sorted into, was used to define, low within-subject variability, stable within individuals, inter- vs intra-subject variation, wide baseline variation |
+
+**An absence is not a type — it is a polarity.** A claim also carries `polarity`: `affirm` when the paper
+reports the effect, `null` when it reports its absence (*no significant difference, not associated, similar
+between, did not change, was not predictive, without reaching statistical significance, **but not X**,
+**whereas … did not**, except in*).
+
+A null result **keeps the `claim_type` that names the operation**, because the verifier runs the same
+operation either way — only the expected answer flips.
+- "IL-10 production was generally not associated with influenza antibody response" → `association` + `polarity: null`.
+- "no significant difference between the intradermal and intramuscular groups" → `group_difference` + `polarity: null`.
+- "the signature was not predictive of maximum fold-change (MFC)" → `prediction` + `polarity: null`.
+
+Typing an absence as its own kind of claim throws away the operation, which is the one thing a reproduction
+step needs. Never reach for `descriptive` because a finding is negative, and never let a stated absence ride
+along inside a positive claim — see Rule 1.
 
 **Rule 1 — one predicate or two?** When two values look applicable, ask whether they attach to **one assertion viewed two ways** or to **two assertions the sentence chained together**.
 
 *Two predicates → the claim is under-split. Split it, and give each half its own `claim_type`.* This is Claim-grouping rule 2 restated as a test you can actually apply.
 - "antibody responses peaked at day 28 and declined significantly by day 180" → `extremum` + `trajectory_segment` → two claims.
 - "elderly had higher total NK-cell proportions than young at baseline and all timepoints, with vaccination increasing NK-cell percentages in the elderly" → `group_difference` + `induction_vs_reference` → two claims.
-- "MVA85A induced high Ag85A-specific IFNγ responses peaking at day 7 and remaining significantly above baseline at week 24, with no significant difference between intradermal and intramuscular groups" → `extremum` + `trajectory_segment` + `null_result` → three claims.
-- "stable B-cell populations ID91, ID96, ID103 and ID108 predicted adjusted maximum fold-change (adjMFC) titer responses **but not** maximum fold-change (MFC)" → `prediction` + `null_result` → two claims. **A negative attached to a positive finding by "but not", "whereas … did not", or "except" is its own assertion.** It is easy to miss because the sentence reads as one clause — but the absence is exactly as reproducible as the presence, and it disappears entirely if left riding inside the positive claim.
+- "MVA85A induced high Ag85A-specific IFNγ responses peaking at day 7 and remaining significantly above baseline at week 24, with no significant difference between intradermal and intramuscular groups" → `extremum` + `trajectory_segment` + a null-polarity `group_difference` → three claims.
+- "stable B-cell populations ID91, ID96, ID103 and ID108 predicted adjusted maximum fold-change (adjMFC) titer responses **but not** maximum fold-change (MFC)" → `prediction` (affirm) + `prediction` (null) → two claims. **A negative attached to a positive finding by "but not", "whereas … did not", or "except" is its own assertion.** It is easy to miss because the sentence reads as one clause — but the absence is exactly as reproducible as the presence, and it disappears entirely if left riding inside the positive claim. Note both halves take the same `claim_type` and differ only in `polarity`: the operation is identical, only the outcome differs.
 
 **A shared `claim_type` does not mean the assertions merge.** A differing `claim_type` is a *sufficient* trigger to split, not a necessary one. Two assertions carrying the **same** `claim_type` still split whenever any other Claim-grouping rule 2 criterion differs — comparison groups, comparison dimension, outcome metric, timepoint, assay, or statistical relationship.
 - "…SBA began to decline by day 180, yet remained substantially above baseline at day 750" → both halves are `trajectory_segment`, and they still split: the decline is measured against the day-30 peak, the persistence against the day-0 baseline, and the timepoints differ. Two claims, same type.
@@ -27,18 +41,20 @@
 
 *One predicate → do not split. Resolve with the precedence ladder below.*
 - "a 494-transcript signature correlated with antibody response magnitude, classifying high and low responders with 79% cross-validation accuracy" → one predictive-performance assertion → `prediction`, not `association` as well.
-- "IL-10 production was generally not associated with influenza antibody response" → one assertion → `null_result`, not `association` as well.
+- "IL-10 production was generally not associated with influenza antibody response" → one assertion → `association` + `polarity: null`. The absence does not change which operation is run.
 - "anti-HMGB1 reduced CXCL2 mRNA production in response to MVA85A compared to MVA stimulation alone" → the reduction *is* the perturbation result → `dependency`, not `induction_vs_reference` as well.
 
 **Rule 2 — precedence ladder.** For a genuine same-predicate tie, apply top-down and take the first match:
 
 ```
-null_result > dependency > prediction > association
-            > extremum > trajectory_segment > magnitude_comparison
-            > group_difference > induction_vs_reference > descriptive
+dependency > prediction > association
+           > extremum > trajectory_segment > magnitude_comparison
+           > group_difference > induction_vs_reference > descriptive
 ```
 
-A stated absence outranks whatever it is an absence *of*. An experimental intervention outranks the change it produced. A model with a metric outranks the association underneath it. `descriptive` is the fallback only — reach it when nothing else applies.
+An experimental intervention outranks the change it produced. A model with a metric outranks the association underneath it. `descriptive` is the fallback only — reach it when nothing else applies.
+
+**Polarity is decided separately and never enters the ladder.** Settle the type by asking which operation the verifier runs, then set `polarity` by asking whether the paper reports that operation finding something or finding nothing. A negative finding does not move a claim down the ladder, and it never lands on `descriptive`.
 
 **Variability is not a trajectory.** A claim about how *stable* or *variable* a measure is — within-subject versus between-subject variation, reproducibility over repeated sampling — is `descriptive`, even when it spans months and even when it uses the word "compared to". It asserts something about the measure's spread, not about a time course, so it is never `trajectory_segment`. Reserve `trajectory_segment` for claims that state where a quantity *went*: rose, fell, plateaued, persisted above a reference.
 - `descriptive`: "…many B-cell subsets displayed low within-subject variability over more than two months compared to their inter-subject variability."
