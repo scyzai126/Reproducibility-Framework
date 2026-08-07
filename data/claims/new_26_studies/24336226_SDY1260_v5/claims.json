@@ -1,0 +1,2499 @@
+{
+  "claim_1": {
+    "claim": "Polysaccharide-specific total IgG binding antibody responses against serogroups A and C peaked at day 30 in MCV4 vaccinees and at day 180 in MPSV4 vaccinees.",
+    "claim_type": "extremum",
+    "polarity": "affirm",
+    "measured": "polysaccharide-specific total IgG binding antibody response against serogroups A and C",
+    "operation": null,
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "MCV4 vaccinees",
+          "definition": "healthy young adults immunized with MCV4"
+        },
+        {
+          "label": "MPSV4 vaccinees",
+          "definition": "healthy young adults immunized with MPSV4"
+        }
+      ],
+      "reference": "candidate set",
+      "covariate": null,
+      "conjunction": null
+    },
+    "targets": [
+      "serogroup A",
+      "serogroup C"
+    ],
+    "timepoints": [
+      "day 30",
+      "day 180"
+    ],
+    "candidate_set": "days 0, 7, 30, 180 and 750 post-vaccination",
+    "parent_claims": [],
+    "assay": "ELISA",
+    "sample_type": "serum",
+    "cohort_n": "MCV4 n=17; MPSV4 n=13",
+    "timeframe": "days 0, 7, 30, 180 and 750 post-vaccination",
+    "method": "all plots show mean values; error bars as s.e.m.",
+    "quote": "Both vaccines induced robust polysaccharide-specific IgG binding antibody responses against serogroups A and C, as measured by ELISA. These responses peaked at day 30 (MCV4) or day 180 (MPSV4) (Fig. 1a).",
+    "unspecified": [
+      "whether the peak was evaluated separately for serogroup A and serogroup C or on a combined measure"
+    ],
+    "data_derived_part": "panel 1a total IgG measurements over time in the two vaccine groups",
+    "imported_inputs": [],
+    "scope_changes": [
+      "measured: polysaccharide-specific IgG binding antibody response against serogroups A and C -> polysaccharide-specific total IgG binding antibody response against serogroups A and C",
+      "method: null -> all plots show mean values; error bars as s.e.m."
+    ],
+    "figure_omissions": [],
+    "method_added": [
+      "panel identifier: total IgG measured in (a)",
+      "all plots show mean values",
+      "error bars as s.e.m."
+    ],
+    "provenance_audit": {
+      "claim": "Polysaccharide-specific total IgG binding antibody responses against serogroups A and C peaked at day 30 in MCV4 vaccinees and at day 180 in MPSV4 vaccinees.",
+      "audited": true,
+      "data_derived_part": "total IgG measurements for serogroups A and C in panel (a), over time in MCV4 and MPSV4 vaccinees",
+      "imported_part": null,
+      "imported_source": null,
+      "action": "keep"
+    },
+    "panel": "Figure 1"
+  },
+  "claim_2": {
+    "claim": "The magnitude and duration of the polysaccharide-specific total IgG response was greater in MPSV4 than in MCV4.",
+    "claim_type": "group_difference",
+    "polarity": "affirm",
+    "measured": "magnitude and duration of the polysaccharide-specific total IgG response",
+    "operation": null,
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "MPSV4 vaccinees",
+          "definition": "healthy young adults immunized with MPSV4"
+        },
+        {
+          "label": "MCV4 vaccinees",
+          "definition": "healthy young adults immunized with a single dose of MCV4"
+        }
+      ],
+      "reference": "comparator population",
+      "covariate": null,
+      "conjunction": null
+    },
+    "targets": [
+      "polysaccharide-specific total IgG"
+    ],
+    "timepoints": [],
+    "candidate_set": null,
+    "parent_claims": [],
+    "assay": "ELISA",
+    "sample_type": "serum",
+    "cohort_n": "MCV4 n=17; MPSV4 n=13",
+    "timeframe": "days 0, 7, 30, 180 and 750 post-vaccination",
+    "method": "unpaired t-test for comparisons between vaccine groups; all plots show mean values; error bars as s.e.m.",
+    "quote": "The magnitude and duration of the polysaccharide-specific IgG response was greater with MPSV4 compared to a single dose of MCV4 (Fig. 1a).",
+    "unspecified": [
+      "timepoint(s) or summary metric used for magnitude and duration"
+    ],
+    "data_derived_part": "panel 1a total IgG measurements comparing MPSV4 and MCV4 over time",
+    "imported_inputs": [],
+    "scope_changes": [
+      "measured: magnitude and duration of the polysaccharide-specific IgG response -> magnitude and duration of the polysaccharide-specific total IgG response",
+      "method: null -> unpaired t-test for comparisons between vaccine groups; all plots show mean values; error bars as s.e.m."
+    ],
+    "figure_omissions": [],
+    "method_added": [
+      "panel identifier: total IgG measured in (a)",
+      "unpaired t-test was used for comparisons between vaccine groups",
+      "all plots show mean values",
+      "error bars as s.e.m."
+    ],
+    "provenance_audit": {
+      "claim": "The magnitude and duration of the polysaccharide-specific total IgG response was greater in MPSV4 than in MCV4.",
+      "audited": true,
+      "data_derived_part": "total IgG measurements for serogroups A and C in panel (a), comparing MPSV4 and MCV4 over time",
+      "imported_part": null,
+      "imported_source": null,
+      "action": "keep"
+    },
+    "panel": "Figure 1"
+  },
+  "claim_3": {
+    "claim": "MPSV4 and MCV4 induced polysaccharide-specific IgM antibody titers that continued to rise until at least day 30.",
+    "claim_type": "trajectory_segment",
+    "polarity": "affirm",
+    "measured": "polysaccharide-specific IgM antibody titer",
+    "operation": null,
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "MPSV4 and MCV4 vaccinees",
+          "definition": "healthy young adults immunized with MPSV4 or MCV4"
+        }
+      ],
+      "reference": null,
+      "covariate": null,
+      "conjunction": "all"
+    },
+    "targets": [
+      "serogroup A",
+      "serogroup C"
+    ],
+    "timepoints": [
+      "day 30"
+    ],
+    "candidate_set": null,
+    "parent_claims": [],
+    "assay": "ELISA",
+    "sample_type": "serum",
+    "cohort_n": "MCV4 n=17; MPSV4 n=13",
+    "timeframe": "days 0, 7 and 30 post-vaccination",
+    "method": "all plots show mean values; error bars as s.e.m.",
+    "quote": "Both MPSV4 and MCV4 induced polysaccharide-specific IgG2 and IgG1 antibody responses (Fig. 1b), as well as specific IgM antibody titers, which continued to rise until at least day 30 (Fig. 1c).",
+    "unspecified": [
+      "starting timepoint of the rise",
+      "whether quantified separately for each vaccine group"
+    ],
+    "data_derived_part": "panel 1c IgM measurements over time in the two vaccine groups",
+    "imported_inputs": [],
+    "scope_changes": [
+      "targets: polysaccharide-specific IgM -> serogroup A and serogroup C",
+      "method: null -> all plots show mean values; error bars as s.e.m."
+    ],
+    "figure_omissions": [],
+    "method_added": [
+      "panel identifier: IgM measured in (c)",
+      "serogroups A and C were measured",
+      "all plots show mean values",
+      "error bars as s.e.m."
+    ],
+    "provenance_audit": {
+      "claim": "MPSV4 and MCV4 induced polysaccharide-specific IgM antibody titers that continued to rise until at least day 30.",
+      "audited": true,
+      "data_derived_part": "IgM measurements for serogroups A and C in panel (c), over time in MPSV4 and MCV4 vaccinees",
+      "imported_part": null,
+      "imported_source": null,
+      "action": "keep"
+    },
+    "panel": "Figure 1"
+  },
+  "claim_4": {
+    "claim": "Two years after immunization, the polysaccharide-specific total IgG response induced by MPSV4 was still significant.",
+    "claim_type": "induction_vs_reference",
+    "polarity": "affirm",
+    "measured": "polysaccharide-specific total IgG response induced by MPSV4 at two years after immunization",
+    "operation": null,
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "MPSV4 vaccinees",
+          "definition": "healthy young adults immunized with MPSV4"
+        }
+      ],
+      "reference": "baseline",
+      "covariate": null,
+      "conjunction": null
+    },
+    "targets": [
+      "serogroup A",
+      "serogroup C"
+    ],
+    "timepoints": [
+      "day 750"
+    ],
+    "candidate_set": null,
+    "parent_claims": [],
+    "assay": "ELISA",
+    "sample_type": "serum",
+    "cohort_n": "n=13",
+    "timeframe": "day 750 post-vaccination",
+    "method": "paired t-test for comparisons to baseline within a group; all plots show mean values; error bars as s.e.m.",
+    "quote": "Two years after immunization, there was still a significant concentration of polysaccharide-specific IgG response induced by MPSV4, whereas the response induced by the primary dose of MCV4 had declined, although it stayed substantially above baseline (Fig. 1a).",
+    "unspecified": [],
+    "data_derived_part": "panel 1a total IgG measurements in MPSV4 vaccinees at day 750 relative to baseline",
+    "imported_inputs": [],
+    "scope_changes": [
+      "claim_type: descriptive -> induction_vs_reference",
+      "contrast.reference: null -> baseline",
+      "measured: polysaccharide-specific IgG response induced by MPSV4 at two years after immunization -> polysaccharide-specific total IgG response induced by MPSV4 at two years after immunization",
+      "timepoints: two years after immunization -> day 750",
+      "method: null -> paired t-test for comparisons to baseline within a group; all plots show mean values; error bars as s.e.m."
+    ],
+    "figure_omissions": [],
+    "method_added": [
+      "panel identifier: total IgG measured in (a)",
+      "serogroups A and C were measured",
+      "paired t-test was used for comparisons to baseline within a group",
+      "all plots show mean values",
+      "error bars as s.e.m."
+    ],
+    "provenance_audit": {
+      "claim": "Two years after immunization, the polysaccharide-specific total IgG response induced by MPSV4 was still significant.",
+      "audited": true,
+      "data_derived_part": "total IgG measurements for serogroups A and C in panel (a), including day 750 versus baseline within MPSV4",
+      "imported_part": null,
+      "imported_source": null,
+      "action": "keep"
+    },
+    "panel": "Figure 1"
+  },
+  "claim_5": {
+    "claim": "At two years after immunization, the polysaccharide-specific total IgG response induced by the primary dose of MCV4 stayed substantially above baseline.",
+    "claim_type": "induction_vs_reference",
+    "polarity": "affirm",
+    "measured": "polysaccharide-specific total IgG response induced by the primary dose of MCV4",
+    "operation": null,
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "MCV4 vaccinees",
+          "definition": "healthy young adults immunized with the primary dose of MCV4"
+        }
+      ],
+      "reference": "baseline",
+      "covariate": null,
+      "conjunction": null
+    },
+    "targets": [
+      "serogroup A",
+      "serogroup C"
+    ],
+    "timepoints": [
+      "day 750"
+    ],
+    "candidate_set": null,
+    "parent_claims": [],
+    "assay": "ELISA",
+    "sample_type": "serum",
+    "cohort_n": "n=17",
+    "timeframe": "day 750 post-vaccination",
+    "method": "paired t-test for comparisons to baseline within a group; all plots show mean values; error bars as s.e.m.",
+    "quote": "Two years after immunization, there was still a significant concentration of polysaccharide-specific IgG response induced by MPSV4, whereas the response induced by the primary dose of MCV4 had declined, although it stayed substantially above baseline (Fig. 1a).",
+    "unspecified": [],
+    "data_derived_part": "panel 1a total IgG measurements in MCV4 vaccinees at day 750 relative to baseline",
+    "imported_inputs": [],
+    "scope_changes": [
+      "measured: polysaccharide-specific IgG response induced by the primary dose of MCV4 -> polysaccharide-specific total IgG response induced by the primary dose of MCV4",
+      "timepoints: two years after immunization -> day 750",
+      "method: null -> paired t-test for comparisons to baseline within a group; all plots show mean values; error bars as s.e.m."
+    ],
+    "figure_omissions": [],
+    "method_added": [
+      "panel identifier: total IgG measured in (a)",
+      "serogroups A and C were measured",
+      "paired t-test was used for comparisons to baseline within a group",
+      "all plots show mean values",
+      "error bars as s.e.m."
+    ],
+    "provenance_audit": {
+      "claim": "At two years after immunization, the polysaccharide-specific total IgG response induced by the primary dose of MCV4 stayed substantially above baseline.",
+      "audited": true,
+      "data_derived_part": "total IgG measurements for serogroups A and C in panel (a), including day 750 versus baseline within MCV4",
+      "imported_part": null,
+      "imported_source": null,
+      "action": "keep"
+    },
+    "panel": "Figure 1"
+  },
+  "claim_6": {
+    "claim": "In MPSV4 and MCV4 vaccinees, serum bactericidal activity against serogroups A and C was detectable as early as day 7, peaked at day 30, began to decline by day 180, and remained substantially above baseline at day 750.",
+    "claim_type": "trajectory_segment",
+    "polarity": "affirm",
+    "measured": "serum bactericidal activity",
+    "operation": null,
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "MPSV4 and MCV4 vaccinees",
+          "definition": "healthy young adults immunized with MPSV4 or MCV4"
+        }
+      ],
+      "reference": "baseline",
+      "covariate": null,
+      "conjunction": "all"
+    },
+    "targets": [
+      "serogroup A",
+      "serogroup C"
+    ],
+    "timepoints": [
+      "day 7",
+      "day 30",
+      "day 180",
+      "day 750"
+    ],
+    "candidate_set": null,
+    "parent_claims": [],
+    "assay": "SBA",
+    "sample_type": "serum",
+    "cohort_n": "MCV4 n=17; MPSV4 n=13",
+    "timeframe": "days 0, 7, 30, 180 and year 2 (day 750) post-vaccination",
+    "method": "all plots show mean values; error bars as s.e.m.",
+    "quote": "Both vaccines induced a rapid increase in serum bactericidal activity (SBA), which was detectable as early as day 7, peaked at day 30, began to decline by day 180, yet remained substantially above baseline at day 750 (Fig. 1d).",
+    "unspecified": [
+      "whether the trajectory was assessed separately for each vaccine group"
+    ],
+    "data_derived_part": "panel 1d SBA measurements over time in the two vaccine groups",
+    "imported_inputs": [],
+    "scope_changes": [
+      "targets: SBA -> serogroup A and serogroup C",
+      "method: null -> all plots show mean values; error bars as s.e.m."
+    ],
+    "figure_omissions": [],
+    "method_added": [
+      "panel identifier: SBA titers measured in (d)",
+      "serogroups A and C were measured",
+      "all plots show mean values",
+      "error bars as s.e.m."
+    ],
+    "provenance_audit": {
+      "claim": "In MPSV4 and MCV4 vaccinees, serum bactericidal activity against serogroups A and C was detectable as early as day 7, peaked at day 30, began to decline by day 180, and remained substantially above baseline at day 750.",
+      "audited": true,
+      "data_derived_part": "SBA titer measurements for serogroups A and C in panel (d), over time in MPSV4 and MCV4 vaccinees",
+      "imported_part": null,
+      "imported_source": null,
+      "action": "keep"
+    },
+    "panel": "Figure 1"
+  },
+  "claim_7": {
+    "claim": "There was no difference between MPSV4 and MCV4 in the proportion of vaccinees maintaining an SBA titer of 1:8 or higher two years after inoculation.",
+    "claim_type": "group_difference",
+    "polarity": "null",
+    "measured": "proportion of vaccinees with SBA titer of 1:8 or higher",
+    "operation": null,
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "MPSV4 vaccinees",
+          "definition": "healthy young adults immunized with MPSV4"
+        },
+        {
+          "label": "MCV4 vaccinees",
+          "definition": "healthy young adults immunized with MCV4"
+        }
+      ],
+      "reference": "comparator population",
+      "covariate": null,
+      "conjunction": null
+    },
+    "targets": [
+      "SBA >= 1:8"
+    ],
+    "timepoints": [
+      "day 750"
+    ],
+    "candidate_set": null,
+    "parent_claims": [],
+    "assay": "SBA",
+    "sample_type": "serum",
+    "cohort_n": "MCV4 n=17; MPSV4 n=13",
+    "timeframe": "year 2 (day 750) post-vaccination",
+    "method": "unpaired t-test for comparisons between vaccine groups; all plots show mean values; error bars as s.e.m.",
+    "quote": "An SBA titer of 1:8 or higher, a correlate of protective immunity 22, was maintained in the majority of MPSV4 and MCV4 vaccinees two years after inoculation, with no difference observed between the two vaccine groups (Fig. 1d).",
+    "unspecified": [],
+    "data_derived_part": "panel 1d comparison between vaccine groups at day 750 for maintenance of SBA titer threshold",
+    "imported_inputs": [],
+    "scope_changes": [
+      "timepoints: two years after inoculation -> day 750",
+      "method: null -> unpaired t-test for comparisons between vaccine groups; all plots show mean values; error bars as s.e.m."
+    ],
+    "figure_omissions": [],
+    "method_added": [
+      "panel identifier: SBA titers measured in (d)",
+      "unpaired t-test was used for comparisons between vaccine groups",
+      "all plots show mean values",
+      "error bars as s.e.m."
+    ],
+    "provenance_audit": {
+      "claim": "There was no difference between MPSV4 and MCV4 in the proportion of vaccinees maintaining an SBA titer of 1:8 or higher two years after inoculation.",
+      "audited": true,
+      "data_derived_part": "SBA titer measurements in panel (d), including comparison between vaccine groups at day 750",
+      "imported_part": "the designation of SBA titer 1:8 or higher as a correlate of protective immunity",
+      "imported_source": "citation 22",
+      "action": "narrow_to_data_derived_part"
+    },
+    "panel": "Figure 1"
+  },
+  "claim_8": {
+    "claim": "MCV4 elicited a strong anti-diphtheria toxoid IgG response at days 7 and 30.",
+    "claim_type": "induction_vs_reference",
+    "polarity": "affirm",
+    "measured": "anti-diphtheria toxoid IgG response",
+    "operation": null,
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "MCV4 vaccinees",
+          "definition": "healthy young adults immunized with MCV4"
+        }
+      ],
+      "reference": "baseline",
+      "covariate": null,
+      "conjunction": "all"
+    },
+    "targets": [
+      "anti-diphtheria toxoid IgG"
+    ],
+    "timepoints": [
+      "day 7",
+      "day 30"
+    ],
+    "candidate_set": null,
+    "parent_claims": [],
+    "assay": "Luminex",
+    "sample_type": "serum",
+    "cohort_n": "n=17",
+    "timeframe": "days 0, 7 and 30 post-vaccination",
+    "method": "paired t-test for comparisons to baseline within a group; all plots show mean values; error bars as s.e.m.",
+    "quote": "MCV4, which contains the diphtheria toxoid (DT) protein as a conjugate, elicited a strong anti-DT IgG response at days 7 and 30, whereas MPSV4 containing polysaccharide alone did not (Fig. 1e).",
+    "unspecified": [],
+    "data_derived_part": "panel 1e anti-diphtheria toxoid IgG measurements in MCV4 vaccinees relative to baseline",
+    "imported_inputs": [],
+    "scope_changes": [
+      "contrast.reference: null -> baseline",
+      "measured: anti-DT IgG response -> anti-diphtheria toxoid IgG response",
+      "targets: anti-DT IgG -> anti-diphtheria toxoid IgG",
+      "method: null -> paired t-test for comparisons to baseline within a group; all plots show mean values; error bars as s.e.m."
+    ],
+    "figure_omissions": [],
+    "method_added": [
+      "panel identifier: diphtheria toxoid IgG measured in (e)",
+      "paired t-test was used for comparisons to baseline within a group",
+      "all plots show mean values",
+      "error bars as s.e.m."
+    ],
+    "provenance_audit": {
+      "claim": "MCV4 elicited a strong anti-diphtheria toxoid IgG response at days 7 and 30.",
+      "audited": true,
+      "data_derived_part": "anti-diphtheria toxoid IgG measurements in panel (e) for MCV4 vaccinees",
+      "imported_part": null,
+      "imported_source": null,
+      "action": "keep"
+    },
+    "panel": "Figure 1"
+  },
+  "claim_9": {
+    "claim": "MPSV4 did not elicit an anti-diphtheria toxoid IgG response at days 7 and 30.",
+    "claim_type": "induction_vs_reference",
+    "polarity": "null",
+    "measured": "anti-diphtheria toxoid IgG response",
+    "operation": null,
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "MPSV4 vaccinees",
+          "definition": "healthy young adults immunized with MPSV4"
+        }
+      ],
+      "reference": "baseline",
+      "covariate": null,
+      "conjunction": "all"
+    },
+    "targets": [
+      "anti-diphtheria toxoid IgG"
+    ],
+    "timepoints": [
+      "day 7",
+      "day 30"
+    ],
+    "candidate_set": null,
+    "parent_claims": [],
+    "assay": "Luminex",
+    "sample_type": "serum",
+    "cohort_n": "n=13",
+    "timeframe": "days 0, 7 and 30 post-vaccination",
+    "method": "paired t-test for comparisons to baseline within a group; all plots show mean values; error bars as s.e.m.",
+    "quote": "MCV4, which contains the diphtheria toxoid (DT) protein as a conjugate, elicited a strong anti-DT IgG response at days 7 and 30, whereas MPSV4 containing polysaccharide alone did not (Fig. 1e).",
+    "unspecified": [],
+    "data_derived_part": "panel 1e anti-diphtheria toxoid IgG measurements in MPSV4 vaccinees relative to baseline",
+    "imported_inputs": [],
+    "scope_changes": [
+      "contrast.reference: null -> baseline",
+      "measured: anti-DT IgG response -> anti-diphtheria toxoid IgG response",
+      "targets: anti-DT IgG -> anti-diphtheria toxoid IgG",
+      "method: null -> paired t-test for comparisons to baseline within a group; all plots show mean values; error bars as s.e.m."
+    ],
+    "figure_omissions": [],
+    "method_added": [
+      "panel identifier: diphtheria toxoid IgG measured in (e)",
+      "paired t-test was used for comparisons to baseline within a group",
+      "all plots show mean values",
+      "error bars as s.e.m."
+    ],
+    "provenance_audit": {
+      "claim": "MPSV4 did not elicit an anti-diphtheria toxoid IgG response at days 7 and 30.",
+      "audited": true,
+      "data_derived_part": "anti-diphtheria toxoid IgG measurements in panel (e) for MPSV4 vaccinees",
+      "imported_part": null,
+      "imported_source": null,
+      "action": "keep"
+    },
+    "panel": "Figure 1"
+  },
+  "claim_10": {
+    "claim": "In both vaccine groups, antibody secreting cells selected as CD3− CD20− CD38hi CD27hi CD19+ cells peaked at day 7.",
+    "claim_type": "extremum",
+    "polarity": "affirm",
+    "measured": "number of peripheral blood antibody secreting cells",
+    "operation": null,
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "MPSV4 and MCV4 vaccinees",
+          "definition": "healthy young adults immunized with MPSV4 or MCV4"
+        }
+      ],
+      "reference": "candidate set",
+      "covariate": null,
+      "conjunction": "all"
+    },
+    "targets": [
+      "ASCs (CD3− CD20− CD38hi CD27hi CD19+ cells)"
+    ],
+    "timepoints": [
+      "day 7"
+    ],
+    "candidate_set": "measured post-vaccination timepoints for ASC assessment",
+    "parent_claims": [],
+    "assay": "flow cytometry",
+    "sample_type": "blood",
+    "cohort_n": "MCV4 n=17; MPSV4 n=13",
+    "timeframe": null,
+    "method": "ASCs selected as CD3− CD20− CD38hi CD27hi CD19+ cells; all plots show mean values; error bars as s.e.m.",
+    "quote": "The number of peripheral blood antibody secreting cells (ASCs) induced by vaccination was assessed. The ASCs showed a peak at day 7 in both vaccines (Fig. 1f).",
+    "unspecified": [
+      "full candidate timepoint set for ASC assessment"
+    ],
+    "data_derived_part": "panel 1f flow-cytometric ASC counts over time in the two vaccine groups",
+    "imported_inputs": [],
+    "scope_changes": [
+      "targets: ASCs -> ASCs (CD3− CD20− CD38hi CD27hi CD19+ cells)",
+      "method: null -> ASCs selected as CD3− CD20− CD38hi CD27hi CD19+ cells; all plots show mean values; error bars as s.e.m."
+    ],
+    "figure_omissions": [],
+    "method_added": [
+      "identifier: ASCs = CD3− CD20− CD38hi CD27hi CD19+ cells",
+      "all plots show mean values",
+      "error bars as s.e.m."
+    ],
+    "provenance_audit": {
+      "claim": "In both vaccine groups, antibody secreting cells selected as CD3− CD20− CD38hi CD27hi CD19+ cells peaked at day 7.",
+      "audited": true,
+      "data_derived_part": "ASC measurements in panel (f), with ASCs selected as CD3− CD20− CD38hi CD27hi CD19+ cells, over time in both vaccine groups",
+      "imported_part": null,
+      "imported_source": null,
+      "action": "keep"
+    },
+    "panel": "Figure 1"
+  },
+  "claim_11": {
+    "claim": "The magnitude of the ASC response was lower in MPSV4 than in MCV4.",
+    "claim_type": "group_difference",
+    "polarity": "affirm",
+    "measured": "magnitude of the antibody secreting cell response",
+    "operation": null,
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "MPSV4 vaccinees",
+          "definition": "healthy young adults immunized with MPSV4"
+        },
+        {
+          "label": "MCV4 vaccinees",
+          "definition": "healthy young adults immunized with MCV4"
+        }
+      ],
+      "reference": "comparator population",
+      "covariate": null,
+      "conjunction": null
+    },
+    "targets": [
+      "ASCs (CD3− CD20− CD38hi CD27hi CD19+ cells)"
+    ],
+    "timepoints": [],
+    "candidate_set": null,
+    "parent_claims": [],
+    "assay": "flow cytometry",
+    "sample_type": "blood",
+    "cohort_n": "MCV4 n=17; MPSV4 n=13",
+    "timeframe": null,
+    "method": "ASCs selected as CD3− CD20− CD38hi CD27hi CD19+ cells; unpaired t-test for comparisons between vaccine groups; all plots show mean values; error bars as s.e.m.",
+    "quote": "Surprisingly, even though a greater polysaccharide-specific antibody response was induced by MPSV4 (Fig. 1a, d), the magnitude of the ASC response induced by MPSV4 was lower than that induced by MCV4 (Fig. 1f).",
+    "unspecified": [
+      "timepoint of the ASC comparison"
+    ],
+    "data_derived_part": "panel 1f comparison of flow-cytometric ASC response magnitude between vaccine groups",
+    "imported_inputs": [],
+    "scope_changes": [
+      "targets: ASCs -> ASCs (CD3− CD20− CD38hi CD27hi CD19+ cells)",
+      "method: null -> ASCs selected as CD3− CD20− CD38hi CD27hi CD19+ cells; unpaired t-test for comparisons between vaccine groups; all plots show mean values; error bars as s.e.m."
+    ],
+    "figure_omissions": [],
+    "method_added": [
+      "identifier: ASCs = CD3− CD20− CD38hi CD27hi CD19+ cells",
+      "unpaired t-test was used for comparisons between vaccine groups",
+      "all plots show mean values",
+      "error bars as s.e.m."
+    ],
+    "provenance_audit": {
+      "claim": "The magnitude of the ASC response was lower in MPSV4 than in MCV4.",
+      "audited": true,
+      "data_derived_part": "ASC measurements in panel (f), comparing response magnitude between MPSV4 and MCV4",
+      "imported_part": null,
+      "imported_source": null,
+      "action": "keep"
+    },
+    "panel": "Figure 1"
+  },
+  "claim_12": {
+    "claim": "In MCV4 vaccinees, the number of ASCs at day 7 positively correlated with diphtheria toxoid-specific serum IgG at day 7.",
+    "claim_type": "association",
+    "polarity": "affirm",
+    "measured": "number of ASCs at day 7",
+    "operation": "Pearson correlation",
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "MCV4 vaccinees",
+          "definition": "healthy young adults immunized with MCV4"
+        }
+      ],
+      "reference": null,
+      "covariate": "diphtheria toxoid-specific serum IgG at day 7",
+      "conjunction": null
+    },
+    "targets": [
+      "ASCs (CD3− CD20− CD38hi CD27hi CD19+ cells)",
+      "diphtheria toxoid-specific serum IgG"
+    ],
+    "timepoints": [
+      "day 7"
+    ],
+    "candidate_set": null,
+    "parent_claims": [],
+    "assay": "flow cytometry",
+    "sample_type": "blood",
+    "cohort_n": "n=17",
+    "timeframe": "day 7 post-vaccination",
+    "method": "ASCs selected as CD3− CD20− CD38hi CD27hi CD19+ cells; Pearson’s correlation; all plots show mean values; error bars as s.e.m.",
+    "quote": "Indeed, the percentage of total ASCs in the blood at day 7 after MCV4 vaccination strongly correlated with the serum anti-DT IgG (Fig. 1g), and not with the anti-polysaccharide IgG response (data not shown).",
+    "unspecified": [],
+    "data_derived_part": "panel 1g correlation between day 7 ASC count and day 7 diphtheria toxoid-specific serum IgG",
+    "imported_inputs": [],
+    "scope_changes": [
+      "claim: In MCV4 vaccinees, the percentage of total ASCs in the blood at day 7 strongly correlated with serum anti-DT IgG. -> In MCV4 vaccinees, the number of ASCs at day 7 positively correlated with diphtheria toxoid-specific serum IgG at day 7.",
+      "measured: percentage of total ASCs in blood at day 7 -> number of ASCs at day 7",
+      "operation: correlation -> Pearson correlation",
+      "contrast.covariate: serum anti-DT IgG -> diphtheria toxoid-specific serum IgG at day 7",
+      "targets: total ASCs, anti-DT IgG -> ASCs (CD3− CD20− CD38hi CD27hi CD19+ cells), diphtheria toxoid-specific serum IgG",
+      "method: null -> ASCs selected as CD3− CD20− CD38hi CD27hi CD19+ cells; Pearson’s correlation; all plots show mean values; error bars as s.e.m."
+    ],
+    "figure_omissions": [],
+    "method_added": [
+      "quote: prose -> legend",
+      "identifier: ASCs = CD3− CD20− CD38hi CD27hi CD19+ cells",
+      "Pearson’s correlation was used in (g)",
+      "legend states 'the number of ASCs at day 7 correlated with diphtheria toxoid-specific serum IgG at day 7'",
+      "all plots show mean values",
+      "error bars as s.e.m."
+    ],
+    "provenance_audit": {
+      "claim": "In MCV4 vaccinees, the number of ASCs at day 7 positively correlated with diphtheria toxoid-specific serum IgG at day 7.",
+      "audited": true,
+      "data_derived_part": "panel (g) correlation between number of ASCs at day 7 and diphtheria toxoid-specific serum IgG at day 7 in MCV4 vaccinees",
+      "imported_part": null,
+      "imported_source": null,
+      "action": "keep"
+    },
+    "panel": "Figure 1"
+  },
+  "claim_13": {
+    "claim": "At day 7 post-vaccination, 1,150 differentially expressed genes were identified in MCV4 vaccinees compared to baseline.",
+    "claim_type": "induction_vs_reference",
+    "polarity": "affirm",
+    "measured": "number of differentially expressed genes",
+    "operation": "differential expression analysis",
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "MCV4 vaccinees",
+          "definition": "healthy adult volunteers randomized to receive MCV4"
+        }
+      ],
+      "reference": "baseline",
+      "covariate": null,
+      "conjunction": null
+    },
+    "targets": [
+      "DEGs"
+    ],
+    "timepoints": [
+      "day 7"
+    ],
+    "candidate_set": null,
+    "parent_claims": [],
+    "assay": "DNA microarray",
+    "sample_type": "PBMC",
+    "cohort_n": "n=17",
+    "timeframe": "days 0, 3, and 7 post-vaccination",
+    "method": "differential expression analysis using paired t-test; DEGs defined as p < 0.001 in volcano plots",
+    "quote": "At day 7 post-vaccination, we identified 1,150 differentially expressed genes (DEGs) in MCV4 vaccinees (Fig. 2a).",
+    "unspecified": [],
+    "data_derived_part": "DEG calls and DEG counts for each vaccine and time point in Figure 2a volcano plots",
+    "imported_inputs": [],
+    "scope_changes": [
+      "claim_type: descriptive -> induction_vs_reference",
+      "contrast.reference: null -> baseline",
+      "method: differential expression analysis -> differential expression analysis using paired t-test; DEGs defined as p < 0.001 in volcano plots"
+    ],
+    "figure_omissions": [],
+    "method_added": [
+      "paired t-test",
+      "comparison: day 7 compared to baseline",
+      "DEG threshold: p < 0.001",
+      "display encoding: red dots in volcano plots show DEGs",
+      "display encoding: numbers in volcano plots give the numbers of DEGs"
+    ],
+    "provenance_audit": {
+      "claim": "At day 7 post-vaccination, 1,150 differentially expressed genes were identified in MCV4 vaccinees compared to baseline.",
+      "audited": true,
+      "data_derived_part": "Differential expression analysis results and DEG count shown in Figure 2a volcano plots for MCV4 day 7 versus baseline.",
+      "imported_part": null,
+      "imported_source": null,
+      "action": "keep"
+    },
+    "panel": "Figure 2"
+  },
+  "claim_14": {
+    "claim": "Only a small number of differentially expressed genes were identified at day 3 post-vaccination compared to baseline for both MPSV4 and MCV4, and at day 7 compared to baseline for MPSV4.",
+    "claim_type": "induction_vs_reference",
+    "polarity": "affirm",
+    "measured": "number of differentially expressed genes",
+    "operation": "differential expression analysis",
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "MPSV4 vaccinees",
+          "definition": "healthy adult volunteers randomized to receive MPSV4"
+        },
+        {
+          "label": "MCV4 vaccinees",
+          "definition": "healthy adult volunteers randomized to receive MCV4"
+        }
+      ],
+      "reference": "baseline",
+      "covariate": null,
+      "conjunction": "any"
+    },
+    "targets": [
+      "DEGs"
+    ],
+    "timepoints": [
+      "day 3",
+      "day 7"
+    ],
+    "candidate_set": null,
+    "parent_claims": [],
+    "assay": "DNA microarray",
+    "sample_type": "PBMC",
+    "cohort_n": "n=13 MPSV4; n=17 MCV4",
+    "timeframe": "days 0, 3, and 7 post-vaccination",
+    "method": "differential expression analysis using paired t-test; DEGs defined as p < 0.001 in volcano plots",
+    "quote": "However, only a small number of DEGs were identified at day 3 post-vaccination for both MPSV4 and MCV4, and at day 7 for MPSV4 (Fig. 2a).",
+    "unspecified": [
+      "exact DEG counts",
+      "which subject group corresponds to each listed timepoint in a machine-readable pairing"
+    ],
+    "data_derived_part": "DEG calls and DEG counts for each vaccine and time point in Figure 2a volcano plots",
+    "imported_inputs": [],
+    "scope_changes": [
+      "claim_type: descriptive -> induction_vs_reference",
+      "contrast.reference: null -> baseline",
+      "method: differential expression analysis -> differential expression analysis using paired t-test; DEGs defined as p < 0.001 in volcano plots"
+    ],
+    "figure_omissions": [],
+    "method_added": [
+      "paired t-test",
+      "comparison: day 3 compared to baseline",
+      "comparison: day 7 compared to baseline",
+      "DEG threshold: p < 0.001",
+      "display encoding: red dots in volcano plots show DEGs",
+      "display encoding: numbers in volcano plots give the numbers of DEGs"
+    ],
+    "provenance_audit": {
+      "claim": "Only a small number of differentially expressed genes were identified at day 3 post-vaccination compared to baseline for both MPSV4 and MCV4, and at day 7 compared to baseline for MPSV4.",
+      "audited": true,
+      "data_derived_part": "Differential expression analysis results and DEG counts shown in Figure 2a volcano plots for MPSV4 and MCV4 at day 3 versus baseline, and for MPSV4 at day 7 versus baseline.",
+      "imported_part": null,
+      "imported_source": null,
+      "action": "keep"
+    },
+    "panel": "Figure 2"
+  },
+  "claim_15": {
+    "claim": "Several B cell genes, including TNFRSF17, were up-regulated at day 7 in MCV4 vaccinees.",
+    "claim_type": "induction_vs_reference",
+    "polarity": "affirm",
+    "measured": "differential gene expression of B cell genes",
+    "operation": "differential expression analysis of DEGs",
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "MCV4 vaccinees",
+          "definition": "healthy adult volunteers vaccinated with MCV4"
+        }
+      ],
+      "reference": null,
+      "covariate": null,
+      "conjunction": "any"
+    },
+    "targets": [
+      "TNFRSF17"
+    ],
+    "timepoints": [
+      "day 7"
+    ],
+    "candidate_set": null,
+    "parent_claims": [],
+    "assay": "DNA microarray",
+    "sample_type": "PBMC",
+    "cohort_n": "n=17",
+    "timeframe": "days 0, 3, 7, 14, 30, 180 and 750 post-vaccination",
+    "method": "differential expression analysis of DEGs",
+    "quote": "Several B cell genes were up-regulated at day 7 in MCV4 and TIV vaccinees (Fig. 3b), including TNFRSF17, a B cell differentiation gene that is predictive of antibody responses to the YF-17D and TIV vaccines 4, 6.",
+    "unspecified": [
+      "reference comparator for up-regulated at day 7",
+      "full list of B cell genes asserted here beyond TNFRSF17",
+      "statistical test details for this specific comparison"
+    ],
+    "data_derived_part": "selected DEGs involved in B cell development shown in Fig. 3b",
+    "imported_inputs": [],
+    "scope_changes": [
+      "scope confirmed by legend: Fig. 3b shows selected DEGs involved in B cell development and innate immunity"
+    ],
+    "figure_omissions": [
+      "Fig. 3b shows selected DEGs, not the full DEG set"
+    ],
+    "method_added": [
+      "panel scope: selected DEGs involved in B cell development"
+    ],
+    "provenance_audit": {
+      "claim": "Several B cell genes, including TNFRSF17, were up-regulated at day 7 in MCV4 vaccinees.",
+      "audited": true,
+      "data_derived_part": "Selected DEGs involved in B cell development shown in Fig. 3b, including TNFRSF17.",
+      "imported_part": null,
+      "imported_source": null,
+      "action": "keep"
+    },
+    "panel": "Figure 3"
+  },
+  "claim_16": {
+    "claim": "Genes associated with innate immunity and interferon responses, including OAS1, OAS2, STAT1, STAT2 and TRIM22, were up-regulated at day 3 post-vaccination with live attenuated virus vaccines.",
+    "claim_type": "induction_vs_reference",
+    "polarity": "affirm",
+    "measured": "differential gene expression of innate immunity and interferon response genes",
+    "operation": "differential expression analysis of DEGs",
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "live attenuated virus vaccine recipients",
+          "definition": "vaccinees in the live attenuated virus vaccine datasets"
+        }
+      ],
+      "reference": null,
+      "covariate": null,
+      "conjunction": "any"
+    },
+    "targets": [
+      "OAS1",
+      "OAS2",
+      "STAT1",
+      "STAT2",
+      "TRIM22"
+    ],
+    "timepoints": [
+      "day 3"
+    ],
+    "candidate_set": null,
+    "parent_claims": [],
+    "assay": "DNA microarray",
+    "sample_type": "PBMC",
+    "cohort_n": null,
+    "timeframe": null,
+    "method": "differential expression analysis of DEGs",
+    "quote": "Genes associated with innate immunity and interferon responses, such as OAS1, OAS2, STAT1, STAT2 and TRIM22 were up-regulated at day 3 post-vaccination with live attenuated virus vaccines (Fig. 3b).",
+    "unspecified": [
+      "which live attenuated virus vaccine cohorts were included",
+      "reference comparator for up-regulated at day 3",
+      "cohort sizes for the live attenuated virus vaccine datasets",
+      "absolute study-day schedules for the external vaccine datasets"
+    ],
+    "data_derived_part": "selected DEGs involved in innate immunity shown in Fig. 3b",
+    "imported_inputs": [],
+    "scope_changes": [
+      "scope confirmed by legend: Fig. 3b shows selected DEGs involved in B cell development and innate immunity"
+    ],
+    "figure_omissions": [
+      "Fig. 3b shows selected DEGs, not the full DEG set"
+    ],
+    "method_added": [
+      "panel scope: selected DEGs involved in innate immunity"
+    ],
+    "provenance_audit": {
+      "claim": "Genes associated with innate immunity and interferon responses, including OAS1, OAS2, STAT1, STAT2 and TRIM22, were up-regulated at day 3 post-vaccination with live attenuated virus vaccines.",
+      "audited": true,
+      "data_derived_part": "Selected DEGs involved in innate immunity shown in Fig. 3b, including OAS1, OAS2, STAT1, STAT2 and TRIM22.",
+      "imported_part": null,
+      "imported_source": null,
+      "action": "keep"
+    },
+    "panel": "Figure 3"
+  },
+  "claim_17": {
+    "claim": "The network of 1255 genes common to 4+ vaccines is highly enriched for leukocyte differentiation and B cell activation.",
+    "claim_type": "set_enrichment",
+    "polarity": "affirm",
+    "measured": "enrichment of immunological-related processes in the network of 1255 genes common to 4+ vaccines",
+    "operation": "Gene Ontology enrichment test",
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "genes common to 4+ vaccines",
+          "definition": "the network of 1255 genes common to 4 or more vaccines"
+        }
+      ],
+      "reference": "candidate set",
+      "covariate": null,
+      "conjunction": "all"
+    },
+    "targets": [
+      "1255-gene common network"
+    ],
+    "timepoints": [],
+    "candidate_set": "leukocyte differentiation; B cell activation",
+    "parent_claims": [],
+    "assay": "DNA microarray",
+    "sample_type": "PBMC",
+    "cohort_n": null,
+    "timeframe": null,
+    "method": "Gene Ontology enrichment test; interactome/bibliome integrative approach; Gene Ontology categories related to immune system",
+    "quote": "The network of 1255 genes common to 4+ vaccines (Supplementary Fig. 4c) is highly enriched for a number of immunological-related processes, such as leukocyte differentiation and B cell activation (Fig. 3c, Supplementary Fig. 4f).",
+    "unspecified": [
+      "background gene universe for enrichment",
+      "full list of enriched processes",
+      "statistical threshold for this specific enrichment",
+      "cohort sizes for the non-MCV4 vaccine datasets"
+    ],
+    "data_derived_part": "enrichment of DEGs plus linker genes shared by four or more vaccines for Gene Ontology categories in Fig. 3c",
+    "imported_inputs": [
+      "interactome/bibliome network inputs",
+      "Gene Ontology category definitions"
+    ],
+    "scope_changes": [
+      "method scope narrowed by legend: enriched genes are 'the DEGs plus linker genes identified by our interactome/bibliome integrative approach and shared by four or more vaccines'",
+      "scope confirmed by legend: Fig. 3c is limited to genes shared by four or more vaccines"
+    ],
+    "figure_omissions": [
+      "The genes found in 'immune system development' are shown in Supplementary Fig. 4f, not in Fig. 3c"
+    ],
+    "method_added": [
+      "panel scope: DEGs plus linker genes identified by our interactome/bibliome integrative approach and shared by four or more vaccines",
+      "candidate set source: Gene Ontology categories related to immune system"
+    ],
+    "provenance_audit": {
+      "claim": "The network of 1255 genes common to 4+ vaccines is highly enriched for leukocyte differentiation and B cell activation.",
+      "audited": true,
+      "data_derived_part": "Enrichment computed in Fig. 3c for the DEGs plus linker genes shared by four or more vaccines.",
+      "imported_part": "Linker genes identified by an interactome/bibliome integrative approach, and Gene Ontology category definitions including leukocyte differentiation and B cell activation.",
+      "imported_source": "interactome/bibliome integrative approach; Gene Ontology",
+      "action": "narrow_to_data_derived_part"
+    },
+    "panel": "Figure 3"
+  },
+  "claim_18": {
+    "claim": "BTMs showed superior sensitivity, assessed by t-score, compared to canonical pathways in class comparison using MCV4 transcriptomic data at D3/0.",
+    "claim_type": "magnitude_comparison",
+    "polarity": "affirm",
+    "measured": "sensitivity assessed by t-score",
+    "operation": "class comparison benchmarking",
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "MCV4 transcriptomic data",
+          "definition": "MCV4 transcriptomic data used for the class comparison example"
+        }
+      ],
+      "reference": null,
+      "covariate": null,
+      "conjunction": null
+    },
+    "targets": [
+      "BTMs",
+      "canonical pathways"
+    ],
+    "timepoints": [
+      "D3/0"
+    ],
+    "candidate_set": null,
+    "parent_claims": [
+      "BTM sensitivity in the MCV4 D3/0 class comparison",
+      "canonical pathway sensitivity in the MCV4 D3/0 class comparison"
+    ],
+    "assay": "DNA microarray",
+    "sample_type": "PBMC",
+    "cohort_n": "MCV4 n=17; MPSV4 n=13",
+    "timeframe": "day 3/day 0 post-vaccination ratio",
+    "method": "t-score class comparison on module activity score",
+    "quote": "BTMs show superior sensitivity (assessed by t-score) compared to canonical pathways in class comparison.",
+    "unspecified": [
+      "validation scheme",
+      "exact comparator classes in the class comparison"
+    ],
+    "data_derived_part": "comparison of BTM versus canonical pathway sensitivity in the MCV4 D3/0 example panel",
+    "imported_inputs": [
+      "canonical pathway definitions"
+    ],
+    "scope_changes": [
+      "claim: BTM modules showed superior discriminative performance compared to canonical pathways in the vaccine datasets and additional test datasets. -> BTMs showed superior sensitivity, assessed by t-score, compared to canonical pathways in class comparison using MCV4 transcriptomic data at D3/0.",
+      "measured: discriminative power -> sensitivity assessed by t-score",
+      "operation: t-test benchmarking -> class comparison benchmarking",
+      "timepoints: [] -> [\"D3/0\"]",
+      "timeframe: days 0, 3, 7, 14, 30, 180 and 750 post-vaccination -> day 3/day 0 post-vaccination ratio",
+      "contrast.subject_groups: vaccine datasets and additional test datasets -> MCV4 transcriptomic data",
+      "quote: prose -> legend"
+    ],
+    "figure_omissions": [
+      "Additional examples can be found in Supplementary Fig. 9."
+    ],
+    "method_added": [
+      "t-score assesses sensitivity",
+      "MCV4 transcriptomic data at D3/0 are used as example"
+    ],
+    "provenance_audit": {
+      "claim": "BTMs showed superior sensitivity, assessed by t-score, compared to canonical pathways in class comparison using MCV4 transcriptomic data at D3/0.",
+      "audited": true,
+      "data_derived_part": "t-score-based sensitivity comparison in the MCV4 D3/0 example",
+      "imported_part": "canonical pathways",
+      "imported_source": "canonical pathway definitions",
+      "action": "narrow_to_data_derived_part"
+    },
+    "panel": "Figure 4"
+  },
+  "claim_19": {
+    "claim": "In D3/0 MCV4 transcriptome data, each BTM collapsed to a single activity score as the mean value of all member genes had Pearson correlation to antibody data across all subjects that could be distinguished from random data generated by permutations of module gene memberships and sample labels.",
+    "claim_type": "association",
+    "polarity": "affirm",
+    "measured": "Pearson correlation of BTM activity scores to antibody data relative to a permutation-derived random distribution",
+    "operation": "Pearson correlation against permutation null distribution",
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "MCV4 transcriptome data",
+          "definition": "MCV4 transcriptome data used for the D3/0 antibody-correlation analysis"
+        }
+      ],
+      "reference": "random data generated by permutations of module gene memberships and sample labels",
+      "covariate": "antibody data",
+      "conjunction": null
+    },
+    "targets": [
+      "BTMs"
+    ],
+    "timepoints": [
+      "D3/0"
+    ],
+    "candidate_set": null,
+    "parent_claims": [],
+    "assay": "DNA microarray",
+    "sample_type": "PBMC",
+    "cohort_n": "MCV4 n=17; MPSV4 n=13",
+    "timeframe": "day 3/day 0 post-vaccination ratio",
+    "method": "module activity score (mean value of all member genes) with Pearson correlation across all subjects and permutation null distribution",
+    "quote": "Assessing the statistical significance of BTM correlation to antibody data. Each module is collapsed to a single activity score (mean value of all member genes), and Pearson correlation to antibody data is calculated across all subjects (red bars). The gray area is the distribution of random data generated by permutations of module gene memberships and sample labels. Data shown is the D3/0 MCV4 transcriptome data.",
+    "unspecified": [
+      "direction of correlation",
+      "specific antibody metric",
+      "statistical threshold"
+    ],
+    "data_derived_part": "Pearson correlations of BTM activity scores to antibody data and their comparison to the permutation-derived null distribution in the D3/0 MCV4 panel",
+    "imported_inputs": [],
+    "scope_changes": [
+      "claim: BTM modules can be distinguished from random data in correlations to antibody data. -> In D3/0 MCV4 transcriptome data, each BTM collapsed to a single activity score as the mean value of all member genes had Pearson correlation to antibody data across all subjects that could be distinguished from random data generated by permutations of module gene memberships and sample labels.",
+      "targets: [\"BTM modules\", \"random data\"] -> [\"BTMs\"]",
+      "timepoints: [] -> [\"D3/0\"]",
+      "timeframe: days 0, 3, 7, 14, 30, 180 and 750 post-vaccination -> day 3/day 0 post-vaccination ratio",
+      "contrast.subject_groups: antibody correlation analysis datasets -> MCV4 transcriptome data",
+      "contrast.reference: null -> random data generated by permutations of module gene memberships and sample labels",
+      "quote: prose -> legend"
+    ],
+    "figure_omissions": [],
+    "method_added": [
+      "each module is collapsed to a single activity score",
+      "activity score is the mean value of all member genes",
+      "Pearson correlation is calculated across all subjects",
+      "display encoding: red bars are Pearson correlations to antibody data",
+      "display encoding: gray area is the distribution of random data",
+      "random data generated by permutations of module gene memberships and sample labels"
+    ],
+    "provenance_audit": {
+      "claim": "In D3/0 MCV4 transcriptome data, each BTM collapsed to a single activity score as the mean value of all member genes had Pearson correlation to antibody data across all subjects that could be distinguished from random data generated by permutations of module gene memberships and sample labels.",
+      "audited": true,
+      "data_derived_part": "module activity scores, Pearson correlations to antibody data across subjects, and permutation-derived random distribution in the D3/0 MCV4 transcriptome data",
+      "imported_part": null,
+      "imported_source": null,
+      "action": "keep"
+    },
+    "panel": "Figure 4"
+  },
+  "claim_20": {
+    "claim": "Activity of BTM module M156.1 (Plasma cells-Immunoglobulin) correlated with later antibody response (MCV4-DT).",
+    "claim_type": "association",
+    "polarity": "affirm",
+    "measured": "module M156.1 activity and later antibody response (MCV4-DT)",
+    "operation": "correlation",
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "MCV4-DT",
+          "definition": "MCV4 vaccine recipients analyzed for later diphtheria toxoid antibody response"
+        }
+      ],
+      "reference": null,
+      "covariate": "later antibody response (MCV4-DT)",
+      "conjunction": null
+    },
+    "targets": [
+      "BTM module M156.1 (Plasma cells-Immunoglobulin)"
+    ],
+    "timepoints": [],
+    "candidate_set": null,
+    "parent_claims": [],
+    "assay": "DNA microarray",
+    "sample_type": "PBMC",
+    "cohort_n": "n=17",
+    "timeframe": null,
+    "method": "module activity score correlation",
+    "quote": "Correlation of module M156.1 activity and later antibody response (MCV4-DT).",
+    "unspecified": [
+      "direction of correlation",
+      "exact module activity timepoint",
+      "exact later antibody response timepoint",
+      "correlation statistic"
+    ],
+    "data_derived_part": "correlation between module M156.1 activity and later antibody response in the MCV4-DT panel",
+    "imported_inputs": [
+      "BTM module M156.1 membership"
+    ],
+    "scope_changes": [
+      "claim: Day 7 Plasma cells-Immunoglobulin module activity in MCV4 was well correlated to later DT-specific IgG response. -> Activity of BTM module M156.1 (Plasma cells-Immunoglobulin) correlated with later antibody response (MCV4-DT).",
+      "targets: [\"Plasma cells-Immunoglobulin module\"] -> [\"BTM module M156.1 (Plasma cells-Immunoglobulin)\"]",
+      "timepoints: [\"day 7\"] -> []",
+      "measured: Plasma cells-Immunoglobulin module activity score at day 7 and later DT-specific IgG response -> module M156.1 activity and later antibody response (MCV4-DT)",
+      "operation: Pearson correlation -> correlation",
+      "timeframe: day 7 post-vaccination; later DT-specific IgG response at unspecified later day -> null",
+      "quote: prose -> legend"
+    ],
+    "figure_omissions": [],
+    "method_added": [
+      "identifier: Plasma cells-Immunoglobulin module = M156.1",
+      "later antibody response is labeled MCV4-DT"
+    ],
+    "provenance_audit": {
+      "claim": "Activity of BTM module M156.1 (Plasma cells-Immunoglobulin) correlated with later antibody response (MCV4-DT).",
+      "audited": true,
+      "data_derived_part": "correlation of module M156.1 activity with later antibody response (MCV4-DT)",
+      "imported_part": "BTM module M156.1 definition/name",
+      "imported_source": "blood transcription modules constructed in panel (a) / Supplementary Note",
+      "action": "narrow_to_data_derived_part"
+    },
+    "panel": "Figure 4"
+  },
+  "claim_21": {
+    "claim": "In YF-17D vaccine recipients, day 3 interferon response and cell adhesion BTM module activity was positively associated with antibody response.",
+    "claim_type": "association",
+    "polarity": "affirm",
+    "measured": "BTM module activity score correlation with antibody response",
+    "operation": "Pearson correlation with significance assessment of modules significantly correlated to the antibody response",
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "YF-17D vaccine recipients",
+          "definition": "subjects receiving YF-17D"
+        }
+      ],
+      "reference": null,
+      "covariate": "antibody response",
+      "conjunction": "all"
+    },
+    "targets": [
+      "interferon response modules",
+      "cell adhesion modules"
+    ],
+    "timepoints": [
+      "day 3"
+    ],
+    "candidate_set": null,
+    "parent_claims": [],
+    "assay": "DNA microarray",
+    "sample_type": "PBMC",
+    "cohort_n": null,
+    "timeframe": "days 0, 3, 7, 14, 30, 180 and 750 post-vaccination",
+    "method": "BTM framework; module activity scores; Pearson correlation to antibody response; circular plot with histograms of modules significantly correlated to the antibody response; heat map of Pearson correlation between module activity and antibody response",
+    "quote": "In the primary viral response (Fig. 5a, b, Supplementary Fig. 12), higher antibody response is associated with greater activity in interferon response and cell adhesion modules.",
+    "unspecified": [
+      "which antibody response metric and day anchor were used for YF-17D in this results excerpt",
+      "cohort size for YF-17D",
+      "which specific interferon response and cell adhesion module IDs were significant",
+      "significance threshold for significant modules"
+    ],
+    "data_derived_part": "Pearson correlation between BTM module activity and antibody response, with sign shown as red positive and blue negative, for the YF-17D study segment",
+    "imported_inputs": [
+      "BTM module definitions and gene memberships"
+    ],
+    "scope_changes": [],
+    "figure_omissions": [
+      "Significant modules common between vaccines are linked as in Supplementary Fig. 12b, c, d, which are not part of this panel's directly supported details for this claim",
+      "Gray links represent modules omitted in Supplementary Figure 11",
+      "An interactive version is available online"
+    ],
+    "method_added": [
+      "Pearson correlation",
+      "display encoding: red = positive correlation",
+      "display encoding: blue = negative correlation",
+      "each vaccine data set is one of six segments on the circular plot",
+      "histograms show modules significantly correlated to the antibody response",
+      "heat map shows correlation between module activity and antibody response",
+      "heat map shows correlation between module member genes and the antibody response"
+    ],
+    "provenance_audit": {
+      "claim": "In YF-17D vaccine recipients, day 3 interferon response and cell adhesion BTM module activity was positively associated with antibody response.",
+      "audited": true,
+      "data_derived_part": "Pearson correlation between module activity and antibody response in the YF-17D study, including positive correlation shown in the heat map/circular plot.",
+      "imported_part": "BTM module definitions and the functional grouping/labels \"interferon response\" and \"cell adhesion\".",
+      "imported_source": "BTM modules (named collection/resource not further specified in the legend)",
+      "action": "narrow_to_data_derived_part"
+    },
+    "panel": "Figure 5"
+  },
+  "claim_22": {
+    "claim": "In YF-17D vaccine recipients, day 3 cell division modules including PLK1 signaling events were negatively associated with antibody response.",
+    "claim_type": "association",
+    "polarity": "affirm",
+    "measured": "BTM module activity score correlation with antibody response",
+    "operation": "Pearson correlation with significance assessment of modules significantly correlated to the antibody response",
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "YF-17D vaccine recipients",
+          "definition": "subjects receiving YF-17D"
+        }
+      ],
+      "reference": null,
+      "covariate": "antibody response",
+      "conjunction": "all"
+    },
+    "targets": [
+      "cell division modules",
+      "PLK1 signaling events"
+    ],
+    "timepoints": [
+      "day 3"
+    ],
+    "candidate_set": null,
+    "parent_claims": [],
+    "assay": "DNA microarray",
+    "sample_type": "PBMC",
+    "cohort_n": null,
+    "timeframe": "days 0, 3, 7, 14, 30, 180 and 750 post-vaccination",
+    "method": "BTM framework; module activity scores; Pearson correlation to antibody response; circular plot with histograms of modules significantly correlated to the antibody response; heat map of Pearson correlation between module activity and antibody response",
+    "quote": "Inversely correlated to the antibody response are a number of cell division modules, including PLK1 signaling events.",
+    "unspecified": [
+      "which antibody response metric and day anchor were used for YF-17D in this results excerpt",
+      "cohort size for YF-17D",
+      "which specific cell division module IDs were significant",
+      "significance threshold for significant modules"
+    ],
+    "data_derived_part": "Pearson correlation between BTM module activity and antibody response, with sign shown as red positive and blue negative, for the YF-17D study segment",
+    "imported_inputs": [
+      "BTM module definitions and gene memberships"
+    ],
+    "scope_changes": [],
+    "figure_omissions": [
+      "Significant modules common between vaccines are linked as in Supplementary Fig. 12b, c, d, which are not part of this panel's directly supported details for this claim",
+      "Gray links represent modules omitted in Supplementary Figure 11",
+      "An interactive version is available online"
+    ],
+    "method_added": [
+      "Pearson correlation",
+      "display encoding: red = positive correlation",
+      "display encoding: blue = negative correlation",
+      "each vaccine data set is one of six segments on the circular plot",
+      "histograms show modules significantly correlated to the antibody response",
+      "heat map shows correlation between module activity and antibody response",
+      "heat map shows correlation between module member genes and the antibody response"
+    ],
+    "provenance_audit": {
+      "claim": "In YF-17D vaccine recipients, day 3 cell division modules including PLK1 signaling events were negatively associated with antibody response.",
+      "audited": true,
+      "data_derived_part": "Pearson correlation between module activity and antibody response in the YF-17D study, including negative correlation shown in the heat map/circular plot.",
+      "imported_part": "BTM module definitions and the functional grouping/labels \"cell division\" and \"PLK1 signaling events\".",
+      "imported_source": "BTM modules (named collection/resource not further specified in the legend)",
+      "action": "narrow_to_data_derived_part"
+    },
+    "panel": "Figure 5"
+  },
+  "claim_23": {
+    "claim": "In the anti-polysaccharide response, day 3 BTM modules associated with antigen presenting cells and their activation, complement, and proinflammatory cytokines were among the modules significantly correlated with antibody response.",
+    "claim_type": "descriptive",
+    "polarity": "affirm",
+    "measured": "set of day 3 BTM modules significantly correlated with anti-polysaccharide antibody response",
+    "operation": "identification of modules significantly correlated with antibody response from correlation profiles",
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "anti-polysaccharide response datasets",
+          "definition": "MPSV4 and MCV4 anti-PS analyses"
+        }
+      ],
+      "reference": null,
+      "covariate": null,
+      "conjunction": null
+    },
+    "targets": [
+      "antigen presenting cell modules",
+      "activation modules",
+      "complement modules",
+      "proinflammatory cytokine modules"
+    ],
+    "timepoints": [
+      "day 3"
+    ],
+    "candidate_set": null,
+    "parent_claims": [],
+    "assay": "DNA microarray",
+    "sample_type": "PBMC",
+    "cohort_n": "MPSV4 n=13; MCV4 n=17",
+    "timeframe": "days 0, 3, 7, 14, 30, 180 and 750 post-vaccination",
+    "method": "BTM framework; module activity scores; circular plot with histograms of modules significantly correlated to the antibody response; heat map of Pearson correlation between module activity and antibody response",
+    "quote": "The anti-polysaccharide response at day 3 (Fig. 5a, top; Supplementary Fig. 12) contains a number of modules associated with antigen presenting cells and their activation, as well as complement and proinflammatory cytokines (Fig. 5b).",
+    "unspecified": [
+      "whether inclusion required positive correlation only or any significant correlation",
+      "which exact module IDs were included",
+      "exact anti-polysaccharide antibody metric and day anchor",
+      "significance threshold for significant modules"
+    ],
+    "data_derived_part": "The selected set of BTM modules significantly correlated with antibody response in the anti-polysaccharide study segments",
+    "imported_inputs": [
+      "BTM module definitions and gene memberships",
+      "module functional labels such as antigen presenting cells, complement, and proinflammatory cytokines"
+    ],
+    "scope_changes": [
+      "measured: set of day 3 BTM modules correlated with anti-polysaccharide antibody response -> set of day 3 BTM modules significantly correlated with anti-polysaccharide antibody response",
+      "operation: identification of correlated modules from correlation profiles -> identification of modules significantly correlated with antibody response from correlation profiles"
+    ],
+    "figure_omissions": [
+      "Significant modules common between vaccines are linked as in Supplementary Fig. 12b, c, d, which are not part of this panel's directly supported details for this claim",
+      "Gray links represent modules omitted in Supplementary Figure 11",
+      "An interactive version is available online"
+    ],
+    "method_added": [
+      "histograms show modules significantly correlated to the antibody response",
+      "Pearson correlation",
+      "each vaccine data set is one of six segments on the circular plot",
+      "display encoding: red = positive correlation",
+      "display encoding: blue = negative correlation",
+      "heat map shows correlation between module activity and antibody response",
+      "heat map shows correlation between module member genes and the antibody response"
+    ],
+    "provenance_audit": {
+      "claim": "In the anti-polysaccharide response, day 3 BTM modules associated with antigen presenting cells and their activation, complement, and proinflammatory cytokines were among the modules significantly correlated with antibody response.",
+      "audited": true,
+      "data_derived_part": "Which modules were significantly correlated with antibody response in the anti-polysaccharide datasets.",
+      "imported_part": "BTM module definitions and the functional annotations/labels \"antigen presenting cells,\" \"activation,\" \"complement,\" and \"proinflammatory cytokines\".",
+      "imported_source": "BTM modules (named collection/resource not further specified in the legend)",
+      "action": "narrow_to_data_derived_part"
+    },
+    "panel": "Figure 5"
+  },
+  "claim_24": {
+    "claim": "In both MCV4 and MPSV4 recipients, the day 3 DC surface signature module was correlated with anti-polysaccharide IgG.",
+    "claim_type": "association",
+    "polarity": "affirm",
+    "measured": "DC surface signature module activity score correlation with anti-polysaccharide IgG",
+    "operation": "Pearson correlation",
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "MCV4 and MPSV4 vaccine recipients",
+          "definition": "subjects receiving MCV4 or MPSV4"
+        }
+      ],
+      "reference": null,
+      "covariate": "anti-polysaccharide IgG",
+      "conjunction": "all"
+    },
+    "targets": [
+      "DC surface signature module"
+    ],
+    "timepoints": [
+      "day 3"
+    ],
+    "candidate_set": null,
+    "parent_claims": [],
+    "assay": "DNA microarray",
+    "sample_type": "PBMC",
+    "cohort_n": "MPSV4 n=13; MCV4 n=17",
+    "timeframe": "days 0, 3, 7, 14, 30, 180 and 750 post-vaccination",
+    "method": "BTM framework; module activity scores; Pearson correlation to antibody response; heat map of Pearson correlation between module activity and antibody response",
+    "quote": "The correlation of DC surface signature module to anti-polysaccharide IgG in both MCV4 and MPSV4 is shown (Supplementary Fig. 14b).",
+    "unspecified": [
+      "direction is implied by context but not stated explicitly in this sentence",
+      "exact anti-polysaccharide IgG metric and day anchor",
+      "exact module ID/name for the DC surface signature module beyond this label",
+      "significance status or threshold for this specific module in the cited supplementary panel"
+    ],
+    "data_derived_part": "Pearson correlation between DC surface signature BTM module activity and anti-polysaccharide IgG in the MCV4 and MPSV4 studies",
+    "imported_inputs": [
+      "BTM module definitions and gene memberships"
+    ],
+    "scope_changes": [
+      "claim: In both MCV4 and MPSV4 recipients, the day 3 DC surface signature module was positively correlated with anti-polysaccharide IgG. -> In both MCV4 and MPSV4 recipients, the day 3 DC surface signature module was correlated with anti-polysaccharide IgG."
+    ],
+    "figure_omissions": [
+      "This finding is cited to Supplementary Fig. 14b rather than stated in the main Figure 5 legend"
+    ],
+    "method_added": [
+      "Pearson correlation",
+      "heat map shows correlation between module activity and antibody response",
+      "heat map shows correlation between module member genes and the antibody response"
+    ],
+    "provenance_audit": {
+      "claim": "In both MCV4 and MPSV4 recipients, the day 3 DC surface signature module was correlated with anti-polysaccharide IgG.",
+      "audited": true,
+      "data_derived_part": "Pearson correlation between module activity and anti-polysaccharide IgG in the MCV4 and MPSV4 studies.",
+      "imported_part": "The identity/definition of the \"DC surface signature\" BTM module.",
+      "imported_source": "BTM modules (named collection/resource not further specified in the legend)",
+      "action": "narrow_to_data_derived_part"
+    },
+    "panel": "Figure 5"
+  },
+  "claim_25": {
+    "claim": "In both TIV and MCV4 recipients, day 7 plasma and memory B cell module activity was positively associated with antibody response.",
+    "claim_type": "association",
+    "polarity": "affirm",
+    "measured": "plasma and memory B cell BTM module activity score correlation with antibody response",
+    "operation": "Pearson correlation",
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "TIV and MCV4 vaccine recipients",
+          "definition": "subjects receiving TIV or MCV4"
+        }
+      ],
+      "reference": null,
+      "covariate": "antibody response",
+      "conjunction": "all"
+    },
+    "targets": [
+      "plasma B cell modules",
+      "memory B cell modules"
+    ],
+    "timepoints": [
+      "day 7"
+    ],
+    "candidate_set": null,
+    "parent_claims": [],
+    "assay": "DNA microarray",
+    "sample_type": "PBMC",
+    "cohort_n": "MCV4 n=17",
+    "timeframe": "days 0, 3, 7, 14, 30, 180 and 750 post-vaccination",
+    "method": "BTM framework; module activity scores; Pearson correlation to antibody response; heat map of Pearson correlation between module activity and antibody response",
+    "quote": "Plasma and memory B cell modules at day 7 are indeed positively correlated with the antibody response in both vaccines (Supplementary Fig. 18).",
+    "unspecified": [
+      "cohort size for TIV",
+      "which antibody response metric was used for TIV",
+      "which antibody response metric was used for MCV4 in this sentence",
+      "exact module IDs for plasma and memory B cell modules",
+      "significance status or threshold for these modules in the cited supplementary panel"
+    ],
+    "data_derived_part": "Pearson correlation between plasma and memory B cell BTM module activity and antibody response in the TIV and MCV4 studies",
+    "imported_inputs": [
+      "BTM module definitions and gene memberships"
+    ],
+    "scope_changes": [],
+    "figure_omissions": [
+      "This finding is cited to Supplementary Fig. 18 rather than stated in the main Figure 5 legend"
+    ],
+    "method_added": [
+      "Pearson correlation",
+      "heat map shows correlation between module activity and antibody response",
+      "heat map shows correlation between module member genes and the antibody response"
+    ],
+    "provenance_audit": {
+      "claim": "In both TIV and MCV4 recipients, day 7 plasma and memory B cell module activity was positively associated with antibody response.",
+      "audited": true,
+      "data_derived_part": "Pearson correlation between module activity and antibody response in the TIV and MCV4 studies, including positive correlation.",
+      "imported_part": "BTM module definitions and the functional grouping/labels \"plasma B cell\" and \"memory B cell\".",
+      "imported_source": "BTM modules (named collection/resource not further specified in the legend)",
+      "action": "narrow_to_data_derived_part"
+    },
+    "panel": "Figure 5"
+  },
+  "claim_26": {
+    "claim": "In human myeloid DC and monocyte derived DC in vitro, MPSV4 induced secretion of IL-6 protein; the same result was observed for TNF and IL-12p40 levels.",
+    "claim_type": "induction_vs_reference",
+    "polarity": "affirm",
+    "measured": "cytokine secretion",
+    "operation": null,
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "human myeloid DC stimulated with MPSV4",
+          "definition": "human myeloid DC stimulated with MPSV4 in vitro"
+        },
+        {
+          "label": "human monocyte derived DC stimulated with MPSV4",
+          "definition": "human monocyte derived DC stimulated with MPSV4 in vitro"
+        }
+      ],
+      "reference": "unstimulated",
+      "covariate": null,
+      "conjunction": "all"
+    },
+    "targets": [
+      "IL-6 protein",
+      "TNF",
+      "IL-12p40"
+    ],
+    "timepoints": [
+      "24 h"
+    ],
+    "candidate_set": null,
+    "parent_claims": [],
+    "assay": null,
+    "sample_type": null,
+    "cohort_n": null,
+    "timeframe": "24 h after in vitro stimulation",
+    "method": "mean values of independent replicates shown; error bars as s.e.m.",
+    "quote": "Up-regulation of co-stimulatory molecules and secretion of IL-6, TNF and IL-12p40 was detected in human DCs stimulated by MPSV4 (Fig. 6a).",
+    "unspecified": [
+      "assay",
+      "sample_type",
+      "statistical operation for panel a",
+      "unstimulated comparator explicitly stated in legend"
+    ],
+    "data_derived_part": "cytokine induction by MPSV4 in human myeloid DC and monocyte derived DC",
+    "imported_inputs": [],
+    "scope_changes": [
+      "claim: In human DCs, MPSV4 stimulation increased co-stimulatory molecules and increased secretion of IL-6, TNF, and IL-12p40. -> In human myeloid DC and monocyte derived DC in vitro, MPSV4 induced secretion of IL-6 protein; the same result was observed for TNF and IL-12p40 levels.",
+      "targets: IL-6, TNF, IL-12p40 -> IL-6 protein, TNF, IL-12p40",
+      "subject_groups: human DCs stimulated by MPSV4 -> human myeloid DC stimulated with MPSV4; human monocyte derived DC stimulated with MPSV4",
+      "timepoints: [] -> [24 h]",
+      "timeframe: null -> 24 h after in vitro stimulation"
+    ],
+    "figure_omissions": [
+      "Secreted IL-6 protein levels are shown but the same result was observed for TNF and IL-12p40 levels."
+    ],
+    "method_added": [
+      "4 independent replicates for human myeloid DC",
+      "6 independent replicates for monocyte derived DC",
+      "mean values of independent replicates are shown",
+      "error bars as s.e.m.",
+      "displayed analyte: secreted IL-6 protein levels",
+      "same result was observed for TNF and IL-12p40 levels"
+    ],
+    "provenance_audit": {
+      "claim": "In human myeloid DC and monocyte derived DC in vitro, MPSV4 induced secretion of IL-6 protein; the same result was observed for TNF and IL-12p40 levels.",
+      "audited": true,
+      "data_derived_part": "Induction of cytokines by MPSV4 in human myeloid DC and monocyte derived DC, including shown secreted IL-6 protein levels and stated same result for TNF and IL-12p40.",
+      "imported_part": null,
+      "imported_source": null,
+      "action": "keep"
+    },
+    "panel": "Figure 6"
+  },
+  "claim_27": {
+    "claim": "In mouse splenic CD11c+ DCs stimulated in vitro for 24 h, MPSV4 stimulation was dependent on Myd88, Trif, Tlr4 and Asc.",
+    "claim_type": "dependency",
+    "polarity": "affirm",
+    "measured": "MPSV4 stimulation response in DCs",
+    "operation": null,
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "mouse splenic CD11c+ DCs",
+          "definition": "CD11c+ DCs isolated by MACS from spleens of C57BL/6 mice (WT) or various knock-out mice and stimulated with MPSV4 in vitro"
+        }
+      ],
+      "reference": "WT",
+      "covariate": null,
+      "conjunction": "all"
+    },
+    "targets": [
+      "Myd88",
+      "Trif",
+      "Tlr4",
+      "Asc"
+    ],
+    "timepoints": [
+      "24 h"
+    ],
+    "candidate_set": null,
+    "parent_claims": [],
+    "assay": null,
+    "sample_type": "spleens",
+    "cohort_n": null,
+    "timeframe": "24 h after in vitro stimulation",
+    "method": "unpaired t-test comparing WT vs. KO; *p<0.05, ***p<0.0001; mean values and s.e.m. from technical replicates; one representative experiment shown",
+    "quote": "Using these cells from the appropriate knockout mice, we demonstrated that DC maturation induced by MPSV4 is dependent on Myd88, Trif and Tlr4, as well as inflammasome activation (Fig. 6b, Supplementary Fig. 16).",
+    "unspecified": [
+      "assay",
+      "exact maturation/activation readout",
+      "how MPSV4 stimulation response was quantified"
+    ],
+    "data_derived_part": "comparison of MPSV4-stimulated WT versus knockout mouse splenic CD11c+ DC responses",
+    "imported_inputs": [],
+    "scope_changes": [
+      "targets: Myd88, Trif, Tlr4, inflammasome activation -> Myd88, Trif, Tlr4, Asc",
+      "contrast.reference: null -> WT",
+      "sample_type: null -> spleens",
+      "timepoints: [] -> [24 h]",
+      "timeframe: null -> 24 h after in vitro stimulation"
+    ],
+    "figure_omissions": [
+      "One representative experiment is shown."
+    ],
+    "method_added": [
+      "identifier: inflammasome activation = Asc knockouts",
+      "CD11c+ DCs were isolated by MACS from spleens of C57BL/6 mice (WT) or various knock-out mice",
+      "stimulated for 24 h",
+      "unpaired t-test was used to compare WT vs. KO",
+      "*p<0.05",
+      "***p<0.0001",
+      "four independent replicates were performed for Myd88, Trif and Tlr4 knockouts",
+      "six independent replicates were performed for Asc knockouts",
+      "mean values and s.e.m. from technical replicates"
+    ],
+    "provenance_audit": {
+      "claim": "In mouse splenic CD11c+ DCs stimulated in vitro for 24 h, MPSV4 stimulation was dependent on Myd88, Trif, Tlr4 and Asc.",
+      "audited": true,
+      "data_derived_part": "Comparison of MPSV4-stimulated WT versus knockout mouse splenic CD11c+ DC responses showing dependence on Myd88, Trif, Tlr4 and Asc.",
+      "imported_part": null,
+      "imported_source": null,
+      "action": "keep"
+    },
+    "panel": "Figure 6"
+  },
+  "claim_28": {
+    "claim": "MCV4 induced robust polysaccharide-specific IgG binding antibody responses against serogroups A and C.",
+    "claim_type": "induction_vs_reference",
+    "polarity": "affirm",
+    "measured": "polysaccharide-specific IgG binding antibody response against meningococcal serogroups A and C",
+    "operation": null,
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "MCV4 vaccinees",
+          "definition": "healthy young adults vaccinated with MCV4"
+        }
+      ],
+      "reference": "baseline",
+      "covariate": null,
+      "conjunction": "all"
+    },
+    "targets": [
+      "serogroup A",
+      "serogroup C"
+    ],
+    "timepoints": [],
+    "candidate_set": null,
+    "parent_claims": [],
+    "assay": "ELISA",
+    "sample_type": "Plasma samples",
+    "cohort_n": "n=17",
+    "timeframe": "days 0, 7, 30, 180 and 750 post-vaccination",
+    "method": null,
+    "quote": "Both vaccines induced robust polysaccharide-specific IgG binding antibody responses against serogroups A and C, as measured by ELISA.",
+    "unspecified": [
+      "specific post-vaccination timepoint(s) at which induction was established",
+      "statistical operation"
+    ],
+    "data_derived_part": "ELISA-measured antibody responses in plasma samples",
+    "imported_inputs": [],
+    "scope_changes": [
+      "sample_type: serum -> Plasma samples"
+    ],
+    "figure_omissions": [],
+    "method_added": [
+      "sample source: Plasma samples were used for the remaining assays"
+    ],
+    "provenance_audit": {
+      "claim": "MCV4 induced robust polysaccharide-specific IgG binding antibody responses against serogroups A and C.",
+      "audited": true,
+      "data_derived_part": "ELISA-measured antibody responses in plasma samples",
+      "imported_part": null,
+      "imported_source": null,
+      "action": "keep"
+    },
+    "panel": "Table 1"
+  },
+  "claim_29": {
+    "claim": "MPSV4 induced robust polysaccharide-specific IgG binding antibody responses against serogroups A and C.",
+    "claim_type": "induction_vs_reference",
+    "polarity": "affirm",
+    "measured": "polysaccharide-specific IgG binding antibody response against meningococcal serogroups A and C",
+    "operation": null,
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "MPSV4 vaccinees",
+          "definition": "healthy young adults vaccinated with MPSV4"
+        }
+      ],
+      "reference": "baseline",
+      "covariate": null,
+      "conjunction": "all"
+    },
+    "targets": [
+      "serogroup A",
+      "serogroup C"
+    ],
+    "timepoints": [],
+    "candidate_set": null,
+    "parent_claims": [],
+    "assay": "ELISA",
+    "sample_type": "Plasma samples",
+    "cohort_n": "n=13",
+    "timeframe": "days 0, 7, 30, 180 and 750 post-vaccination",
+    "method": null,
+    "quote": "Both vaccines induced robust polysaccharide-specific IgG binding antibody responses against serogroups A and C, as measured by ELISA.",
+    "unspecified": [
+      "specific post-vaccination timepoint(s) at which induction was established",
+      "statistical operation"
+    ],
+    "data_derived_part": "ELISA-measured antibody responses in plasma samples",
+    "imported_inputs": [],
+    "scope_changes": [
+      "sample_type: serum -> Plasma samples"
+    ],
+    "figure_omissions": [],
+    "method_added": [
+      "sample source: Plasma samples were used for the remaining assays"
+    ],
+    "provenance_audit": {
+      "claim": "MPSV4 induced robust polysaccharide-specific IgG binding antibody responses against serogroups A and C.",
+      "audited": true,
+      "data_derived_part": "ELISA-measured antibody responses in plasma samples",
+      "imported_part": null,
+      "imported_source": null,
+      "action": "keep"
+    },
+    "panel": "Table 1"
+  },
+  "claim_30": {
+    "claim": "Polysaccharide-specific IgG binding antibody responses peaked at day 30 in MCV4 vaccinees among days 0, 7, 30, 180 and 750.",
+    "claim_type": "extremum",
+    "polarity": "affirm",
+    "measured": "polysaccharide-specific IgG binding antibody response",
+    "operation": null,
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "MCV4 vaccinees",
+          "definition": "healthy young adults vaccinated with MCV4"
+        }
+      ],
+      "reference": "candidate set",
+      "covariate": null,
+      "conjunction": null
+    },
+    "targets": [
+      "polysaccharide-specific IgG"
+    ],
+    "timepoints": [
+      "day 30"
+    ],
+    "candidate_set": "days 0, 7, 30, 180 and 750 post-vaccination",
+    "parent_claims": [],
+    "assay": "ELISA",
+    "sample_type": "Plasma samples",
+    "cohort_n": "n=17",
+    "timeframe": "days 0, 7, 30, 180 and 750 post-vaccination",
+    "method": null,
+    "quote": "These responses peaked at day 30 (MCV4) or day 180 (MPSV4) (Fig. 1a).",
+    "unspecified": [],
+    "data_derived_part": "ELISA-measured antibody responses in plasma samples across study days",
+    "imported_inputs": [],
+    "scope_changes": [
+      "sample_type: serum -> Plasma samples"
+    ],
+    "figure_omissions": [],
+    "method_added": [
+      "sample source: Plasma samples were used for the remaining assays"
+    ],
+    "provenance_audit": {
+      "claim": "Polysaccharide-specific IgG binding antibody responses peaked at day 30 in MCV4 vaccinees among days 0, 7, 30, 180 and 750.",
+      "audited": true,
+      "data_derived_part": "ELISA-measured antibody responses in plasma samples across study days",
+      "imported_part": null,
+      "imported_source": null,
+      "action": "keep"
+    },
+    "panel": "Table 1"
+  },
+  "claim_31": {
+    "claim": "Polysaccharide-specific IgG binding antibody responses peaked at day 180 in MPSV4 vaccinees among days 0, 7, 30, 180 and 750.",
+    "claim_type": "extremum",
+    "polarity": "affirm",
+    "measured": "polysaccharide-specific IgG binding antibody response",
+    "operation": null,
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "MPSV4 vaccinees",
+          "definition": "healthy young adults vaccinated with MPSV4"
+        }
+      ],
+      "reference": "candidate set",
+      "covariate": null,
+      "conjunction": null
+    },
+    "targets": [
+      "polysaccharide-specific IgG"
+    ],
+    "timepoints": [
+      "day 180"
+    ],
+    "candidate_set": "days 0, 7, 30, 180 and 750 post-vaccination",
+    "parent_claims": [],
+    "assay": "ELISA",
+    "sample_type": "Plasma samples",
+    "cohort_n": "n=13",
+    "timeframe": "days 0, 7, 30, 180 and 750 post-vaccination",
+    "method": null,
+    "quote": "These responses peaked at day 30 (MCV4) or day 180 (MPSV4) (Fig. 1a).",
+    "unspecified": [],
+    "data_derived_part": "ELISA-measured antibody responses in plasma samples across study days",
+    "imported_inputs": [],
+    "scope_changes": [
+      "sample_type: serum -> Plasma samples"
+    ],
+    "figure_omissions": [],
+    "method_added": [
+      "sample source: Plasma samples were used for the remaining assays"
+    ],
+    "provenance_audit": {
+      "claim": "Polysaccharide-specific IgG binding antibody responses peaked at day 180 in MPSV4 vaccinees among days 0, 7, 30, 180 and 750.",
+      "audited": true,
+      "data_derived_part": "ELISA-measured antibody responses in plasma samples across study days",
+      "imported_part": null,
+      "imported_source": null,
+      "action": "keep"
+    },
+    "panel": "Table 1"
+  },
+  "claim_32": {
+    "claim": "The magnitude of the polysaccharide-specific IgG response was greater in MPSV4 than in MCV4.",
+    "claim_type": "group_difference",
+    "polarity": "affirm",
+    "measured": "magnitude of the polysaccharide-specific IgG response",
+    "operation": null,
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "MPSV4 vaccinees",
+          "definition": "healthy young adults vaccinated with MPSV4"
+        },
+        {
+          "label": "MCV4 vaccinees",
+          "definition": "healthy young adults vaccinated with MCV4"
+        }
+      ],
+      "reference": "MCV4 vaccinees",
+      "covariate": null,
+      "conjunction": null
+    },
+    "targets": [
+      "polysaccharide-specific IgG"
+    ],
+    "timepoints": [],
+    "candidate_set": null,
+    "parent_claims": [],
+    "assay": "ELISA",
+    "sample_type": "Plasma samples",
+    "cohort_n": "n=30",
+    "timeframe": "days 0, 7, 30, 180 and 750 post-vaccination",
+    "method": null,
+    "quote": "The magnitude and duration of the polysaccharide-specific IgG response was greater with MPSV4 compared to a single dose of MCV4 (Fig. 1a).",
+    "unspecified": [
+      "timepoint or summary metric used for magnitude comparison",
+      "statistical operation"
+    ],
+    "data_derived_part": "ELISA-measured antibody responses in plasma samples",
+    "imported_inputs": [],
+    "scope_changes": [
+      "sample_type: serum -> Plasma samples"
+    ],
+    "figure_omissions": [],
+    "method_added": [
+      "sample source: Plasma samples were used for the remaining assays"
+    ],
+    "provenance_audit": {
+      "claim": "The magnitude of the polysaccharide-specific IgG response was greater in MPSV4 than in MCV4.",
+      "audited": true,
+      "data_derived_part": "ELISA-measured antibody responses in plasma samples",
+      "imported_part": null,
+      "imported_source": null,
+      "action": "keep"
+    },
+    "panel": "Table 1"
+  },
+  "claim_33": {
+    "claim": "The duration of the polysaccharide-specific IgG response was greater in MPSV4 than in MCV4.",
+    "claim_type": "group_difference",
+    "polarity": "affirm",
+    "measured": "duration of the polysaccharide-specific IgG response",
+    "operation": null,
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "MPSV4 vaccinees",
+          "definition": "healthy young adults vaccinated with MPSV4"
+        },
+        {
+          "label": "MCV4 vaccinees",
+          "definition": "healthy young adults vaccinated with MCV4"
+        }
+      ],
+      "reference": "MCV4 vaccinees",
+      "covariate": null,
+      "conjunction": null
+    },
+    "targets": [
+      "polysaccharide-specific IgG"
+    ],
+    "timepoints": [],
+    "candidate_set": null,
+    "parent_claims": [],
+    "assay": "ELISA",
+    "sample_type": "Plasma samples",
+    "cohort_n": "n=30",
+    "timeframe": "days 0, 7, 30, 180 and 750 post-vaccination",
+    "method": null,
+    "quote": "The magnitude and duration of the polysaccharide-specific IgG response was greater with MPSV4 compared to a single dose of MCV4 (Fig. 1a).",
+    "unspecified": [
+      "operational definition of duration",
+      "statistical operation"
+    ],
+    "data_derived_part": "ELISA-measured antibody responses in plasma samples",
+    "imported_inputs": [],
+    "scope_changes": [
+      "sample_type: serum -> Plasma samples"
+    ],
+    "figure_omissions": [],
+    "method_added": [
+      "sample source: Plasma samples were used for the remaining assays"
+    ],
+    "provenance_audit": {
+      "claim": "The duration of the polysaccharide-specific IgG response was greater in MPSV4 than in MCV4.",
+      "audited": true,
+      "data_derived_part": "ELISA-measured antibody responses in plasma samples",
+      "imported_part": null,
+      "imported_source": null,
+      "action": "keep"
+    },
+    "panel": "Table 1"
+  },
+  "claim_34": {
+    "claim": "MPSV4 induced polysaccharide-specific IgG2, IgG1, and IgM antibody responses.",
+    "claim_type": "induction_vs_reference",
+    "polarity": "affirm",
+    "measured": "polysaccharide-specific IgG2, IgG1, and IgM antibody responses",
+    "operation": null,
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "MPSV4 vaccinees",
+          "definition": "healthy young adults vaccinated with MPSV4"
+        }
+      ],
+      "reference": "baseline",
+      "covariate": null,
+      "conjunction": "all"
+    },
+    "targets": [
+      "IgG2",
+      "IgG1",
+      "IgM"
+    ],
+    "timepoints": [],
+    "candidate_set": null,
+    "parent_claims": [],
+    "assay": "ELISA",
+    "sample_type": "Plasma samples",
+    "cohort_n": "n=13",
+    "timeframe": "IgG1 and IgG2 at days 0, 7 and 30; IgM at days 0, 7 and 30 post-vaccination",
+    "method": null,
+    "quote": "Both MPSV4 and MCV4 induced polysaccharide-specific IgG2 and IgG1 antibody responses (Fig. 1b), as well as specific IgM antibody titers, which continued to rise until at least day 30 (Fig. 1c).",
+    "unspecified": [
+      "specific post-vaccination timepoint(s) at which induction was established",
+      "statistical operation"
+    ],
+    "data_derived_part": "ELISA-measured antibody isotype responses in plasma samples",
+    "imported_inputs": [],
+    "scope_changes": [
+      "sample_type: serum -> Plasma samples"
+    ],
+    "figure_omissions": [],
+    "method_added": [
+      "sample source: Plasma samples were used for the remaining assays"
+    ],
+    "provenance_audit": {
+      "claim": "MPSV4 induced polysaccharide-specific IgG2, IgG1, and IgM antibody responses.",
+      "audited": true,
+      "data_derived_part": "ELISA-measured antibody isotype responses in plasma samples",
+      "imported_part": null,
+      "imported_source": null,
+      "action": "keep"
+    },
+    "panel": "Table 1"
+  },
+  "claim_35": {
+    "claim": "MCV4 induced polysaccharide-specific IgG2, IgG1, and IgM antibody responses.",
+    "claim_type": "induction_vs_reference",
+    "polarity": "affirm",
+    "measured": "polysaccharide-specific IgG2, IgG1, and IgM antibody responses",
+    "operation": null,
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "MCV4 vaccinees",
+          "definition": "healthy young adults vaccinated with MCV4"
+        }
+      ],
+      "reference": "baseline",
+      "covariate": null,
+      "conjunction": "all"
+    },
+    "targets": [
+      "IgG2",
+      "IgG1",
+      "IgM"
+    ],
+    "timepoints": [],
+    "candidate_set": null,
+    "parent_claims": [],
+    "assay": "ELISA",
+    "sample_type": "Plasma samples",
+    "cohort_n": "n=17",
+    "timeframe": "IgG1 and IgG2 at days 0, 7 and 30; IgM at days 0, 7 and 30 post-vaccination",
+    "method": null,
+    "quote": "Both MPSV4 and MCV4 induced polysaccharide-specific IgG2 and IgG1 antibody responses (Fig. 1b), as well as specific IgM antibody titers, which continued to rise until at least day 30 (Fig. 1c).",
+    "unspecified": [
+      "specific post-vaccination timepoint(s) at which induction was established",
+      "statistical operation"
+    ],
+    "data_derived_part": "ELISA-measured antibody isotype responses in plasma samples",
+    "imported_inputs": [],
+    "scope_changes": [
+      "sample_type: serum -> Plasma samples"
+    ],
+    "figure_omissions": [],
+    "method_added": [
+      "sample source: Plasma samples were used for the remaining assays"
+    ],
+    "provenance_audit": {
+      "claim": "MCV4 induced polysaccharide-specific IgG2, IgG1, and IgM antibody responses.",
+      "audited": true,
+      "data_derived_part": "ELISA-measured antibody isotype responses in plasma samples",
+      "imported_part": null,
+      "imported_source": null,
+      "action": "keep"
+    },
+    "panel": "Table 1"
+  },
+  "claim_36": {
+    "claim": "In MPSV4 vaccinees, specific IgM antibody titers continued to rise until at least day 30 relative to earlier measured post-vaccination timepoints.",
+    "claim_type": "trajectory_segment",
+    "polarity": "affirm",
+    "measured": "specific IgM antibody titers",
+    "operation": null,
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "MPSV4 vaccinees",
+          "definition": "healthy young adults vaccinated with MPSV4"
+        }
+      ],
+      "reference": null,
+      "covariate": null,
+      "conjunction": null
+    },
+    "targets": [
+      "IgM"
+    ],
+    "timepoints": [
+      "day 30"
+    ],
+    "candidate_set": null,
+    "parent_claims": [],
+    "assay": "ELISA",
+    "sample_type": "Plasma samples",
+    "cohort_n": "n=13",
+    "timeframe": "days 0, 7 and 30 post-vaccination",
+    "method": null,
+    "quote": "Both MPSV4 and MCV4 induced polysaccharide-specific IgG2 and IgG1 antibody responses (Fig. 1b), as well as specific IgM antibody titers, which continued to rise until at least day 30 (Fig. 1c).",
+    "unspecified": [
+      "starting timepoint of the rising segment",
+      "reference level"
+    ],
+    "data_derived_part": "ELISA-measured IgM titers in plasma samples across study days",
+    "imported_inputs": [],
+    "scope_changes": [
+      "sample_type: serum -> Plasma samples"
+    ],
+    "figure_omissions": [],
+    "method_added": [
+      "sample source: Plasma samples were used for the remaining assays"
+    ],
+    "provenance_audit": {
+      "claim": "In MPSV4 vaccinees, specific IgM antibody titers continued to rise until at least day 30 relative to earlier measured post-vaccination timepoints.",
+      "audited": true,
+      "data_derived_part": "ELISA-measured IgM titers in plasma samples across study days",
+      "imported_part": null,
+      "imported_source": null,
+      "action": "keep"
+    },
+    "panel": "Table 1"
+  },
+  "claim_37": {
+    "claim": "In MCV4 vaccinees, specific IgM antibody titers continued to rise until at least day 30 relative to earlier measured post-vaccination timepoints.",
+    "claim_type": "trajectory_segment",
+    "polarity": "affirm",
+    "measured": "specific IgM antibody titers",
+    "operation": null,
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "MCV4 vaccinees",
+          "definition": "healthy young adults vaccinated with MCV4"
+        }
+      ],
+      "reference": null,
+      "covariate": null,
+      "conjunction": null
+    },
+    "targets": [
+      "IgM"
+    ],
+    "timepoints": [
+      "day 30"
+    ],
+    "candidate_set": null,
+    "parent_claims": [],
+    "assay": "ELISA",
+    "sample_type": "Plasma samples",
+    "cohort_n": "n=17",
+    "timeframe": "days 0, 7 and 30 post-vaccination",
+    "method": null,
+    "quote": "Both MPSV4 and MCV4 induced polysaccharide-specific IgG2 and IgG1 antibody responses (Fig. 1b), as well as specific IgM antibody titers, which continued to rise until at least day 30 (Fig. 1c).",
+    "unspecified": [
+      "starting timepoint of the rising segment",
+      "reference level"
+    ],
+    "data_derived_part": "ELISA-measured IgM titers in plasma samples across study days",
+    "imported_inputs": [],
+    "scope_changes": [
+      "sample_type: serum -> Plasma samples"
+    ],
+    "figure_omissions": [],
+    "method_added": [
+      "sample source: Plasma samples were used for the remaining assays"
+    ],
+    "provenance_audit": {
+      "claim": "In MCV4 vaccinees, specific IgM antibody titers continued to rise until at least day 30 relative to earlier measured post-vaccination timepoints.",
+      "audited": true,
+      "data_derived_part": "ELISA-measured IgM titers in plasma samples across study days",
+      "imported_part": null,
+      "imported_source": null,
+      "action": "keep"
+    },
+    "panel": "Table 1"
+  },
+  "claim_38": {
+    "claim": "Two years after immunization, polysaccharide-specific IgG response induced by MPSV4 was still significantly concentrated.",
+    "claim_type": "descriptive",
+    "polarity": "affirm",
+    "measured": "polysaccharide-specific IgG response concentration",
+    "operation": null,
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "MPSV4 vaccinees",
+          "definition": "healthy young adults vaccinated with MPSV4"
+        }
+      ],
+      "reference": null,
+      "covariate": null,
+      "conjunction": null
+    },
+    "targets": [
+      "polysaccharide-specific IgG"
+    ],
+    "timepoints": [
+      "two years after immunization",
+      "day 750"
+    ],
+    "candidate_set": null,
+    "parent_claims": [],
+    "assay": "ELISA",
+    "sample_type": "Plasma samples",
+    "cohort_n": "n=13",
+    "timeframe": "day 750 post-vaccination",
+    "method": null,
+    "quote": "Two years after immunization, there was still a significant concentration of polysaccharide-specific IgG response induced by MPSV4, whereas the response induced by the primary dose of MCV4 had declined, although it stayed substantially above baseline (Fig. 1a).",
+    "unspecified": [
+      "statistical operation",
+      "explicit comparator for 'significant concentration'"
+    ],
+    "data_derived_part": "ELISA-measured antibody responses in plasma samples at day 750",
+    "imported_inputs": [],
+    "scope_changes": [
+      "sample_type: serum -> Plasma samples"
+    ],
+    "figure_omissions": [],
+    "method_added": [
+      "sample source: Plasma samples were used for the remaining assays"
+    ],
+    "provenance_audit": {
+      "claim": "Two years after immunization, polysaccharide-specific IgG response induced by MPSV4 was still significantly concentrated.",
+      "audited": true,
+      "data_derived_part": "ELISA-measured antibody responses in plasma samples at day 750",
+      "imported_part": null,
+      "imported_source": null,
+      "action": "keep"
+    },
+    "panel": "Table 1"
+  },
+  "claim_39": {
+    "claim": "At day 750, the polysaccharide-specific IgG response induced by the primary dose of MCV4 had declined relative to an earlier post-vaccination timepoint.",
+    "claim_type": "trajectory_segment",
+    "polarity": "affirm",
+    "measured": "polysaccharide-specific IgG response",
+    "operation": null,
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "MCV4 vaccinees",
+          "definition": "healthy young adults vaccinated with MCV4"
+        }
+      ],
+      "reference": null,
+      "covariate": null,
+      "conjunction": null
+    },
+    "targets": [
+      "polysaccharide-specific IgG"
+    ],
+    "timepoints": [
+      "day 750"
+    ],
+    "candidate_set": null,
+    "parent_claims": [],
+    "assay": "ELISA",
+    "sample_type": "Plasma samples",
+    "cohort_n": "n=17",
+    "timeframe": "day 750 post-vaccination",
+    "method": null,
+    "quote": "Two years after immunization, there was still a significant concentration of polysaccharide-specific IgG response induced by MPSV4, whereas the response induced by the primary dose of MCV4 had declined, although it stayed substantially above baseline (Fig. 1a).",
+    "unspecified": [
+      "earlier timepoint used as comparator for decline",
+      "statistical operation"
+    ],
+    "data_derived_part": "ELISA-measured antibody responses in plasma samples at day 750",
+    "imported_inputs": [],
+    "scope_changes": [
+      "sample_type: serum -> Plasma samples"
+    ],
+    "figure_omissions": [],
+    "method_added": [
+      "sample source: Plasma samples were used for the remaining assays"
+    ],
+    "provenance_audit": {
+      "claim": "At day 750, the polysaccharide-specific IgG response induced by the primary dose of MCV4 had declined relative to an earlier post-vaccination timepoint.",
+      "audited": true,
+      "data_derived_part": "ELISA-measured antibody responses in plasma samples at day 750",
+      "imported_part": null,
+      "imported_source": null,
+      "action": "keep"
+    },
+    "panel": "Table 1"
+  },
+  "claim_40": {
+    "claim": "At day 750, the polysaccharide-specific IgG response induced by the primary dose of MCV4 stayed substantially above baseline.",
+    "claim_type": "trajectory_segment",
+    "polarity": "affirm",
+    "measured": "polysaccharide-specific IgG response",
+    "operation": null,
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "MCV4 vaccinees",
+          "definition": "healthy young adults vaccinated with MCV4"
+        }
+      ],
+      "reference": "baseline",
+      "covariate": null,
+      "conjunction": null
+    },
+    "targets": [
+      "polysaccharide-specific IgG"
+    ],
+    "timepoints": [
+      "day 750"
+    ],
+    "candidate_set": null,
+    "parent_claims": [],
+    "assay": "ELISA",
+    "sample_type": "Plasma samples",
+    "cohort_n": "n=17",
+    "timeframe": "day 750 post-vaccination",
+    "method": null,
+    "quote": "Two years after immunization, there was still a significant concentration of polysaccharide-specific IgG response induced by MPSV4, whereas the response induced by the primary dose of MCV4 had declined, although it stayed substantially above baseline (Fig. 1a).",
+    "unspecified": [
+      "statistical operation"
+    ],
+    "data_derived_part": "ELISA-measured antibody responses in plasma samples at day 750",
+    "imported_inputs": [],
+    "scope_changes": [
+      "sample_type: serum -> Plasma samples"
+    ],
+    "figure_omissions": [],
+    "method_added": [
+      "sample source: Plasma samples were used for the remaining assays"
+    ],
+    "provenance_audit": {
+      "claim": "At day 750, the polysaccharide-specific IgG response induced by the primary dose of MCV4 stayed substantially above baseline.",
+      "audited": true,
+      "data_derived_part": "ELISA-measured antibody responses in plasma samples at day 750",
+      "imported_part": null,
+      "imported_source": null,
+      "action": "keep"
+    },
+    "panel": "Table 1"
+  },
+  "claim_41": {
+    "claim": "At day 7 post-vaccination, 1,150 differentially expressed genes were identified in MCV4 vaccinees.",
+    "claim_type": "descriptive",
+    "polarity": "affirm",
+    "measured": "number of differentially expressed genes",
+    "operation": "differential expression analysis",
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "MCV4 vaccinees",
+          "definition": "healthy young adults vaccinated with MCV4"
+        }
+      ],
+      "reference": null,
+      "covariate": null,
+      "conjunction": null
+    },
+    "targets": [
+      "DEGs"
+    ],
+    "timepoints": [
+      "day 7"
+    ],
+    "candidate_set": null,
+    "parent_claims": [],
+    "assay": "DNA microarray",
+    "sample_type": "PBMCs",
+    "cohort_n": "n=17",
+    "timeframe": "days 0, 3 and 7 post-vaccination",
+    "method": null,
+    "quote": "At day 7 post-vaccination, we identified 1,150 differentially expressed genes (DEGs) in MCV4 vaccinees (Fig. 2a).",
+    "unspecified": [
+      "reference used to define differential expression",
+      "statistical threshold in this results text"
+    ],
+    "data_derived_part": "DNA microarray differential expression in PBMCs",
+    "imported_inputs": [],
+    "scope_changes": [
+      "sample_type: PBMC -> PBMCs"
+    ],
+    "figure_omissions": [],
+    "method_added": [
+      "sample source: PBMCs were isolated for DNA microarray analyses"
+    ],
+    "provenance_audit": {
+      "claim": "At day 7 post-vaccination, 1,150 differentially expressed genes were identified in MCV4 vaccinees.",
+      "audited": true,
+      "data_derived_part": "DNA microarray differential expression in PBMCs",
+      "imported_part": null,
+      "imported_source": null,
+      "action": "keep"
+    },
+    "panel": "Table 1"
+  },
+  "claim_42": {
+    "claim": "The XBP1 network was highly enriched for up-regulated genes at day 7 post-MCV4 vaccination.",
+    "claim_type": "set_enrichment",
+    "polarity": "affirm",
+    "measured": "enrichment of the XBP1 network among up-regulated genes",
+    "operation": null,
+    "contrast": {
+      "subject_groups": [
+        {
+          "label": "MCV4 vaccinees",
+          "definition": "healthy young adults vaccinated with MCV4"
+        }
+      ],
+      "reference": null,
+      "covariate": null,
+      "conjunction": null
+    },
+    "targets": [
+      "XBP1 network"
+    ],
+    "timepoints": [
+      "day 7"
+    ],
+    "candidate_set": null,
+    "parent_claims": [],
+    "assay": "DNA microarray",
+    "sample_type": "PBMCs",
+    "cohort_n": "n=17",
+    "timeframe": "days 0, 3 and 7 post-vaccination",
+    "method": null,
+    "quote": "This XBP1 network is also highly enriched for up-regulated genes at day 7 post-MCV4 vaccination (Supplementary Fig. 2).",
+    "unspecified": [
+      "background set for enrichment",
+      "ranking or selected gene list definition",
+      "statistical enrichment method"
+    ],
+    "data_derived_part": "enrichment of the XBP1 network among day 7 up-regulated genes from DNA microarray data in PBMCs",
+    "imported_inputs": [
+      "XBP1 network"
+    ],
+    "scope_changes": [
+      "sample_type: PBMC -> PBMCs"
+    ],
+    "figure_omissions": [],
+    "method_added": [
+      "sample source: PBMCs were isolated for DNA microarray analyses"
+    ],
+    "provenance_audit": {
+      "claim": "The XBP1 network was highly enriched for up-regulated genes at day 7 post-MCV4 vaccination.",
+      "audited": true,
+      "data_derived_part": "enrichment of the XBP1 network among day 7 up-regulated genes from DNA microarray data in PBMCs",
+      "imported_part": "XBP1 network",
+      "imported_source": "XBP1 network",
+      "action": "narrow_to_data_derived_part"
+    },
+    "panel": "Table 1"
+  }
+}
