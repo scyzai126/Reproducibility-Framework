@@ -1,0 +1,628 @@
+<?xml version="1.0"  ?><!DOCTYPE pmc-articleset PUBLIC "-//NLM//DTD ARTICLE SET 2.0//EN" "https://dtd.nlm.nih.gov/ncbi/pmc/articleset/nlm-articleset-2.0.dtd"><pmc-articleset><article article-type="research-article" xml:lang="en" dtd-version="1.4"><front><journal-meta><journal-id journal-id-type="nlm-ta">Cell</journal-id><journal-id journal-id-type="iso-abbrev">Cell</journal-id><journal-id journal-id-type="pmc-domain-id">319</journal-id><journal-id journal-id-type="pmc-domain">nihpa</journal-id><journal-id journal-id-type="nlm-id">0413066</journal-id><journal-title-group><journal-title>Cell</journal-title></journal-title-group><issn pub-type="ppub">0092-8674</issn><issn pub-type="epub">1097-4172</issn><custom-meta-group><custom-meta><meta-name>pmc-is-collection-domain</meta-name><meta-value>yes</meta-value></custom-meta><custom-meta><meta-name>pmc-collection-title</meta-name><meta-value>NIHPA Author Manuscripts</meta-value></custom-meta></custom-meta-group></journal-meta><article-meta><article-id pub-id-type="pmcid">PMC4139290</article-id><article-id pub-id-type="pmcid-ver">PMC4139290.1</article-id><article-id pub-id-type="pmcaid">4139290</article-id><article-id pub-id-type="pmcaiid">4139290</article-id><article-id pub-id-type="manuscript-id">NIHMS580872</article-id><article-id pub-id-type="pmid">24725414</article-id><article-id pub-id-type="doi">10.1016/j.cell.2014.03.031</article-id><article-id pub-id-type="manuscript-id-alternative">NIHMS580872</article-id><article-id pub-id-type="manuscript-id-alternative">NIHPA580872</article-id><article-version article-version-type="pmc-version">1</article-version><article-categories><subj-group subj-group-type="heading"><subject>Article</subject></subj-group></article-categories><title-group><article-title>Global analyses of human immune variation reveal baseline predictors of
+post-vaccination responses</article-title></title-group><contrib-group><contrib contrib-type="author"><name name-style="western"><surname>Tsang</surname><given-names initials="JS">John S.</given-names></name><xref ref-type="aff" rid="A1">1</xref><xref ref-type="aff" rid="A2">2</xref><xref ref-type="corresp" rid="CR1">%</xref></contrib><contrib contrib-type="author"><name name-style="western"><surname>Schwartzberg</surname><given-names initials="PL">Pamela L.</given-names></name><xref ref-type="aff" rid="A1">1</xref><xref ref-type="aff" rid="A3">3</xref><xref ref-type="corresp" rid="CR1">%</xref></contrib><contrib contrib-type="author"><name name-style="western"><surname>Kotliarov</surname><given-names initials="Y">Yuri</given-names></name><xref ref-type="aff" rid="A1">1</xref></contrib><contrib contrib-type="author"><name name-style="western"><surname>Biancotto</surname><given-names initials="A">Angelique</given-names></name><xref ref-type="aff" rid="A1">1</xref></contrib><contrib contrib-type="author"><name name-style="western"><surname>Xie</surname><given-names initials="Z">Zhi</given-names></name><xref ref-type="aff" rid="A1">1</xref><xref ref-type="aff" rid="A9">9</xref></contrib><contrib contrib-type="author"><name name-style="western"><surname>Germain</surname><given-names initials="RN">Ronald N.</given-names></name><xref ref-type="aff" rid="A1">1</xref><xref ref-type="aff" rid="A4">4</xref></contrib><contrib contrib-type="author"><name name-style="western"><surname>Wang</surname><given-names initials="E">Ena</given-names></name><xref ref-type="aff" rid="A1">1</xref><xref ref-type="aff" rid="A5">5</xref><xref ref-type="aff" rid="A10">10</xref></contrib><contrib contrib-type="author"><name name-style="western"><surname>Olnes</surname><given-names initials="MJ">Matthew J.</given-names></name><xref ref-type="aff" rid="A1">1</xref><xref ref-type="aff" rid="A6">6</xref></contrib><contrib contrib-type="author"><name name-style="western"><surname>Narayanan</surname><given-names initials="M">Manikandan</given-names></name><xref ref-type="aff" rid="A2">2</xref></contrib><contrib contrib-type="author"><name name-style="western"><surname>Golding</surname><given-names initials="H">Hana</given-names></name><xref ref-type="aff" rid="A7">7</xref></contrib><contrib contrib-type="author"><name name-style="western"><surname>Moir</surname><given-names initials="S">Susan</given-names></name><xref ref-type="aff" rid="A8">8</xref></contrib><contrib contrib-type="author"><name name-style="western"><surname>Dickler</surname><given-names initials="HB">Howard B.</given-names></name><xref ref-type="aff" rid="A1">1</xref></contrib><contrib contrib-type="author"><name name-style="western"><surname>Perl</surname><given-names initials="S">Shira</given-names></name><xref ref-type="aff" rid="A1">1</xref></contrib><contrib contrib-type="author"><name name-style="western"><surname>Cheung</surname><given-names initials="F">Foo</given-names></name><xref ref-type="aff" rid="A1">1</xref></contrib><contrib contrib-type="author"><collab>The Baylor HIPC Center</collab></contrib><contrib contrib-type="author"><collab>The CHI Consortium</collab></contrib></contrib-group><aff id="A1"><label>1</label> Trans-NIH Center for Human Immunology, National Institutes of
+Health (NIH), Bethesda, MD, USA, 20892</aff><aff id="A2"><label>2</label> Systems Genomics and Bioinformatics Unit, Laboratory of Systems
+Biology (LSB), National Institute of Allergy and Infectious Diseases (NIAID), NIH, Bethesda,
+MD, USA, 20892</aff><aff id="A3"><label>3</label> Genetic Disease Research Branch, National Human Genome Research
+Institute, NIH, Bethesda, MD, USA, 20892</aff><aff id="A4"><label>4</label> Lymphocyte Biology Section, LSB, NIAID, NIH, Bethesda, MD, USA,
+20892</aff><aff id="A5"><label>5</label> Department of Transfusion Medicine, Clinical Center, NIH,
+Bethesda, MD, USA, 20892</aff><aff id="A6"><label>6</label> Hematology Branch, National Heart, Lung and Blood Institute,
+NIH, Bethesda, MD, USA, 20892</aff><aff id="A7"><label>7</label> Laboratory of Retrovirus Research, US Food and Drug
+Administration, Bethesda, MD, USA, 20892</aff><aff id="A8"><label>8</label> Laboratory of Immunoregulation, NIAID, NIH, Bethesda, MD, USA,
+20892</aff><aff id="A9"><label>9</label> Presently at Zhongshan Ophthalmic Center, Sun Yat-sen
+University, Guangzhou, PRC</aff><aff id="A10"><label>10</label> Presently at Research Branch, Sidra Medical and Research
+Centre, Qatar</aff><author-notes><fn id="FN1"><p id="P1">Gerlinde Obermoser, Damien Chaussabel, Karolina Palucka, Jinguo Chen, J.
+Christopher Fuchs, Jason Ho, Surender Khurana, Lisa R. King, Marc Langweiler, Hui Liu,
+Jody Manischewitz, Zoltan Pos, Jacqueline G. Posada, Paula Schum, Rongye Shi, Janet
+Valdez, Wei Wang, Huizhi Zhou, Daniel L Kastner, Francesco M. Marincola, J. Philip
+McCoy, Giorgio Trinchieri, Neal S. Young</p></fn><corresp id="CR1"><label>%</label> Correspondence: <email>john.tsang@nih.gov</email>
+(J.S.T.) and <email>pams@nhgri.nih.gov</email> (P.L.S.)</corresp></author-notes><pub-date pub-type="ppub"><day>10</day><month>4</month><year>2014</year></pub-date><volume>157</volume><issue>2</issue><issue-id pub-id-type="pmc-issue-id">241769</issue-id><fpage>499</fpage><lpage>513</lpage><pub-history><event event-type="nihms-submitted"><date><day>05</day><month>06</month><year>2014</year></date></event><event event-type="pmc-release"><date><day>10</day><month>04</month><year>2015</year></date></event><event event-type="pmc-live"><date><day>10</day><month>04</month><year>2015</year></date></event><event event-type="pmc-released-under-embargo"><date><day>20</day><month>02</month><year>2015</year></date></event><event event-type="pmc-last-change"><date iso-8601-date="2024-06-18 16:25:13.373"><day>18</day><month>06</month><year>2024</year></date></event></pub-history><permissions><license><license-p>This file is available for text mining. It may also be used consistent with the principles of fair use under the copyright law.</license-p></license></permissions><self-uri xmlns:xlink="http://www.w3.org/1999/xlink" content-type="pmc-pdf" xlink:href="nihms-580872.pdf"/><related-article related-article-type="correction-forward" vol="158" page="226"/><abstract><p id="P2">A major goal of systems biology is the development of models that accurately
+predict responses to perturbation. Constructing such models requires collection of dense
+measurements of system states, yet transformation of data into predictive constructs
+remains a challenge. To begin to model human immunity, we analyzed immune parameters in
+depth both at baseline and in response to influenza vaccination. Peripheral blood
+mononuclear cell transcriptomes, serum titers, cell subpopulation frequencies, and B cell
+responses were assessed in 63 individuals before and after vaccination and used to develop
+a systematic framework to dissect inter- and intra-individual variation and build
+predictive models of post-vaccination antibody responses. Strikingly, independent of age
+and pre-existing antibody titers, accurate models could be constructed using
+pre-perturbation cell populations alone, which were validated using independent baseline
+time-points. Most of the parameters contributing to prediction delineated
+temporally-stable baseline differences across individuals, raising the prospect of immune
+monitoring before intervention.</p></abstract><custom-meta-group><custom-meta><meta-name>pmc-status-qastatus</meta-name><meta-value>0</meta-value></custom-meta><custom-meta><meta-name>pmc-status-live</meta-name><meta-value>yes</meta-value></custom-meta><custom-meta><meta-name>pmc-status-embargo</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-status-released</meta-name><meta-value>yes</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-open-access</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-olf</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-manuscript</meta-name><meta-value>yes</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-open-manuscript</meta-name><meta-value>yes</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-legally-suppressed</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-has-pdf</meta-name><meta-value>yes</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-has-supplement</meta-name><meta-value>yes</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-pdf-only</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-suppress-copyright</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-is-real-version</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-is-scanned-article</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-preprint</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-in-epmc</meta-name><meta-value>yes</meta-value></custom-meta></custom-meta-group></article-meta></front><body><sec sec-type="intro" id="S1"><title>Introduction</title><p id="P3">The development of accurate models that predict biological responses is one of the
+major goals of systems biology. Such models have the potential to increase our understanding
+of pathophysiology and contribute to the development of improved therapeutics (<xref rid="R26" ref-type="bibr">Kitano, 2002</xref>; <xref rid="R38" ref-type="bibr">Schadt,
+2009</xref>). The human immune system provides an excellent context for developing such
+approaches: many immune cells and molecular components are readily accessible from blood,
+permitting collection of samples from individuals across multiple time-points, followed by
+in-depth data generation and analyses (<xref rid="R8" ref-type="bibr">Davis, 2008</xref>;
+<xref rid="R35" ref-type="bibr">Pulendran et al., 2010</xref>). Furthermore, it is
+increasingly clear that the immune system and inflammation contribute not only to the
+pathogenesis of autoimmune and infectious disease, but also to cancer, cardiac disease,
+diabetes, obesity, neurodegeneration and other chronic illnesses (<xref rid="R16" ref-type="bibr">Germain and Schwartzberg, 2011</xref>). Thus, a more comprehensive and
+quantitative understanding of how immune responses are orchestrated, together with
+identification of predictive parameters of effective versus damaging responses, could have
+implications for the prevention and treatment of diverse diseases.</p><p id="P4">Building quantitative models often involves the application of perturbations to the
+system and comprehensive measurements of the initial and resulting states (<xref rid="R5" ref-type="bibr">Chuang et al., 2010</xref>). While advances in high-throughput
+technologies have made such measurements more routine, utilization of appropriate and
+ethical perturbations in humans is often a challenge. Here the immune system again offers an
+advantage as it is amenable to experimental manipulation. The inactivated influenza vaccine,
+in particular, is used routinely in healthy and ill populations (<xref rid="R10" ref-type="bibr">Fiore et al., 2009</xref>) and provides an attractive perturbation for global
+data collection and systematic modeling. Upon vaccination, the immune system responds with
+coordinated changes that reflect the activation and interaction of distinct cell populations
+and pathways, culminating in the generation of short-lived plasma cells and formation of
+germinal centers, from which high affinity long-lived antibody-producing plasma and memory B
+cells derive (<xref rid="R34" ref-type="bibr">Pulendran and Ahmed, 2011</xref>). By one week
+post-immunization, a strong but transient plasmablast response can be detected in the blood
+(<xref rid="R7" ref-type="bibr">Cox et al., 1994</xref>; <xref rid="R35" ref-type="bibr">Pulendran et al., 2010</xref>), accompanied by increased antibodies in the serum (<xref rid="R9" ref-type="bibr">de Jong et al., 2003</xref>). Accordingly, transcriptional
+profiling of peripheral blood mononuclear cells (PBMCs) revealed substantial changes on days
+1, 3, and 7 post-vaccination, reflecting both early innate immune activation and day 7
+plasmablast responses (<xref rid="R4" ref-type="bibr">Bucasas et al., 2011</xref>; <xref rid="R30" ref-type="bibr">Nakaya et al., 2011</xref>; <xref rid="R32" ref-type="bibr">Obermoser et al., 2013</xref>). Thus, influenza vaccination provides an excellent model
+of coordinated immune activity involving innate and adaptive responses.</p><p id="P5">While perturbation analysis is a cornerstone of systems biology, another critical
+factor for building models in humans is natural population variation. Differences in
+genetics and environment result in substantial diversity in molecular and cellular states
+among individuals before and after perturbation. Through correlation analysis, heterogeneity
+among individuals provides raw ingredients to infer functional relationships among system
+components—links that cannot be drawn if the parameters analyzed have insufficient
+diversity in a population. For example, inter-subject variation in PBMC gene expression
+after vaccination has helped identify post-vaccination transcript correlates for antibody
+responses to yellow fever or influenza vaccination (<xref rid="R15" ref-type="bibr">Gaucher
+et al., 2008</xref>; <xref rid="R30" ref-type="bibr">Nakaya et al., 2011</xref>; <xref rid="R36" ref-type="bibr">Querec et al., 2009</xref>). However, with the exception of age,
+how inter-subject differences at baseline contribute to outcome has not been well examined.
+A better characterization of immune variation in healthy individuals is critical not only
+for the identification of correlates and model building, but also for biomarker development,
+the definition and characterization of pathological states, and eventually, personalized
+medicine.</p><p id="P6">Here, we present a computational framework that utilizes vaccination and
+multiplexed measurements (gene expression, high density analyses of cell populations, and
+cellular and serological responses) to quantify baseline and response heterogeneity in a
+cohort of individuals, and systematically identify correlates, build predictive models of
+vaccination response quality, and infer functional connectivities in the immune system.
+Using antibody responses as an exemplar endpoint, our analyses confirmed previously reported
+post-vaccination transcriptome correlates (<xref rid="R15" ref-type="bibr">Gaucher et al.,
+2008</xref>; <xref rid="R30" ref-type="bibr">Nakaya et al., 2011</xref>; <xref rid="R36" ref-type="bibr">Querec et al., 2009</xref>). Importantly, after accounting for
+the influence of pre-existing serology, age, ancestry and gender, we have successfully
+constructed predictive models and identified correlates of antibody responses based on
+pre-vaccination parameters alone. The robustness and translational potential of these
+findings is emphasized by our demonstration that the parameters playing essential roles in
+accurate prediction were cell subsets with temporally-stable baseline values within
+individuals, raising the prospect of predicting the quality of immune responses in the
+clinic. The data and analytic framework presented provide a potential resource for studying
+human immunity in health and disease.</p></sec><sec sec-type="results" id="S2"><title>Results</title><sec id="S3"><title>In-depth analysis of human immune status before and after vaccination</title><p id="P7">As a first step towards developing a systems-level understanding of human
+immunity, we generated a database of immunological measurements using samples drawn from
+healthy volunteers before and after administration of the 2009 seasonal and pandemic H1N1
+(pH1N1) vaccines (<xref rid="R10" ref-type="bibr">Fiore et al., 2009</xref>) (Table S1 and
+<xref ref-type="fig" rid="F1">Figure 1</xref>). To facilitate the evaluation of
+intra-individual variation, two baseline blood samples were obtained: one a week before
+and the other immediately prior to vaccination. Responses were evaluated on days 1, 7, and
+70 post-vaccination, to examine innate, adaptive, and long-term responses, respectively
+(<xref ref-type="fig" rid="F1">Figure 1</xref>). Purified PBMCs and sera were frozen to
+allow subsequent assessments to be performed at the same time for a given individual,
+thereby minimizing batch effects. For the present study, assays included antibody-forming
+cell responses, influenza-specific serum neutralization titers, multiple 15-color flow
+cytometric analyses (examining 126 cell subpopulations), and transcriptome analyses using
+microarrays (<xref ref-type="fig" rid="F1">Figures 1</xref>, S1A and B). Analyses were
+performed on the 63 subjects from whom we were able to obtain samples at all scheduled
+time-points.</p></sec><sec id="S4"><title>Substantial immune baseline variations in healthy subjects</title><p id="P8">We first examined baseline variation in immune parameters. As expected for
+subjects from the general population, we found a wide range of baseline titers to the
+seasonal vaccine, with corresponding large variations in vaccine-specific memory B cell
+numbers (Figure S2A) (<xref rid="R37" ref-type="bibr">Sasaki et al., 2008</xref>). In
+contrast, most of the cohort was naïve for the pH1N1 virus based on titers, despite
+some potential cross-reactive memory B cell responses, consistent with previous
+observations (<xref rid="R20" ref-type="bibr">Hancock et al., 2009</xref>; <xref rid="R28" ref-type="bibr">Li et al., 2012</xref>).</p><p id="P9">Examination of 126 PBMC subsets (<xref rid="R2" ref-type="bibr">Biancotto et al.,
+2011</xref>) (Figure S1B and Table S2) revealed a wide range of frequencies for many
+cell populations on day 0 (Figure S2B). Cell subsets with the highest variability among
+individuals were typically characterized by expression of activation markers or cytokines,
+likely reflecting activation of cells within a broadly defined parent population. To
+exclude experimental variability as the primary source of variation, we analyzed multiple
+aliquots of a control frozen PBMC sample along with an independent group of samples over a
+two-month period. We found technical variability was minimal (average control sample
+replication R<sup>2</sup>=0.99; Figure S1B).</p><p id="P10">Aside from experimental noise, variation can be attributed to the combined
+effects of baseline differences across individuals (inter-subject baseline variation) and
+temporal changes around the baseline within subjects (intra-subject variation). We took
+advantage of our multiple baseline measurements (days -7, 0 and 70) to assess the relative
+contribution of these two types of variation for each cell subset—day70 was used as
+an additional baseline because we did not observe substantial post-vaccination changes
+except for influenza-specific antibody titers and B cell memory responses (<xref ref-type="fig" rid="F2">Figure 2A</xref> – see Methods). Among populations with
+high overall variability, many B cell subsets showed low within-subject variability (and
+therefore high temporal stability) over a period of more than two months (indicated in
+dark gray in <xref ref-type="fig" rid="F2">Figure 2A</xref>).</p><p id="P11">Transcript abundance for day 0 PBMCs also showed substantial variation (<xref ref-type="fig" rid="F2">Figure 2B</xref>), likely reflecting in part the different
+proportions of cell subsets among subjects. To better quantify this variation in a
+functional context, we developed an approach to summarize “pathway activity”
+for each subject based on whether a substantial number of genes in a given annotated
+pathway or function were expressed at different levels in the PBMC of the individual
+relative to the cohort average (see Methods). In addition to innate and adaptive immune
+pathways (Figures S2C and 2C), some metabolic pathways were also highly variable (Figure
+S2C), perhaps reflecting changes in metabolic profiles that occur in immune cells upon
+activation and differentiation (<xref rid="R17" ref-type="bibr">Gerriets and Rathmell,
+2012</xref>). Assessment of inter- vs. intra-subject variation demonstrated diverse
+patterns, with subject-to-subject baseline differences (blue bars) contributing
+substantially to the observed variability of many genes and pathways (<xref ref-type="fig" rid="F2">Figures 2B and C</xref>).</p></sec><sec id="S5"><title>Coherent changes in immune parameters post-vaccination</title><p id="P12">We next evaluated whether we could detect coherent changes (i.e., consistent
+across subjects) following vaccination. As expected, we observed strong, but highly
+variable, increases in influenza vaccine-specific IgG+ antibody secreting cells on day 7
+(<xref ref-type="fig" rid="F3">Figure 3A</xref>). As previously reported (<xref rid="R4" ref-type="bibr">Bucasas et al., 2011</xref>; <xref rid="R30" ref-type="bibr">Nakaya et al., 2011</xref>; <xref rid="R32" ref-type="bibr">Obermoser et al.,
+2013</xref>), we also found coherent changes in gene expression, with largely
+non-overlapping signatures on days 1 and 7 (<xref ref-type="fig" rid="F3">Figures 3B and
+3C</xref>). Overall, day 1 responses included pathways reflecting innate immune-cell
+activation, including Interferon-related genes, as observed by others (<xref rid="R4" ref-type="bibr">Bucasas et al., 2011</xref>; <xref rid="R30" ref-type="bibr">Nakaya et al., 2011</xref>; <xref rid="R32" ref-type="bibr">Obermoser et al.,
+2013</xref>) (<xref ref-type="fig" rid="F3">Figure 3C</xref> and Table S3). By day 7,
+adaptive pathways were more predominant, including those strongly associated with
+plasmablasts, such as “Endoplasmic Reticulum (ER) stress” and
+“N-glycan biosynthesis” (see below) (<xref rid="R14" ref-type="bibr">Gass et
+al., 2004</xref>; <xref rid="R24" ref-type="bibr">Iwakoshi et al., 2003</xref>).
+Nonetheless, transcript changes associated with adaptive responses were also observed on
+day 1, including “B cell receptor signaling”.</p><p id="P13">We were particularly interested in evaluating changes in the frequency of cell
+subsets, the majority of which have not been examined in the context of vaccination. As
+with the transcriptome, changes in subset frequencies on days 1 and 7 were largely
+non-overlapping (<xref ref-type="fig" rid="F3">Figure 3D</xref>). Again, day 1 changes
+reflected activation of innate immune cells, including CD40+ and CD86+ monocytes (ID65 and
+ID67) and IFNa+ plasmacytoid DCs (ID78), populations that have been linked to vaccination
+efficacy and responses to influenza (<xref rid="R11" ref-type="bibr">Fonteneau et al.,
+2003</xref>; <xref rid="R43" ref-type="bibr">van Duin et al., 2007</xref>). However, we
+also observed changes in adaptive cell populations, particularly those reflecting
+activation of CD8+ and CD4+ T cells, as well as both naïve and memory B cells
+(<xref rid="R25" ref-type="bibr">Kaminski et al., 2012</xref>). Day 7 responses
+primarily reflected changes in adaptive cell populations, including plasmablasts (ID87) as
+expected, but also a related CD20+ B subset that expressed CD27 and CD38 (ID96, Figure
+S3), as well as activated T cell populations. Thus, despite substantial baseline
+differences among subjects, there were clear coherent changes in cell populations and gene
+expression post-vaccination, with days 1 and 7 involving distinct cell types and
+genes.</p></sec><sec id="S6"><title>Antibody titer and cellular responses depend on pre-vaccination serological
+state</title><p id="P14">A major question in understanding human immunity is the extent to which
+responses to a perturbation are affected by pre-existing immune status. To address this
+question, we first assessed the effects of day 0 serology and memory B cell status on
+outcomes. To evaluate titer responses, we adopted the ‘fold-change from
+baseline’ metric used by the FDA and World Health Organization for the evaluation
+of vaccine efficacy (<xref ref-type="fig" rid="F4">Figures 4A</xref> and S4A). Since the
+day 70-day 0 fold-change in titer correlated with both the day 7 fold-change in titer and
+effector B cell responses, and thus reflected both short- and long-term responses (Figures
+S4B and S4C), we used day 70 titer responses as the endpoint for subsequent analyses.
+Interestingly, subjects with higher initial titers tended to have lower fold-changes.
+While not intuitively obvious, inverse correlations have been observed in other influenza
+vaccination studies (<xref rid="R4" ref-type="bibr">Bucasas et al., 2011</xref>; <xref rid="R13" ref-type="bibr">Furman et al., 2013</xref>; <xref rid="R37" ref-type="bibr">Sasaki et al., 2008</xref>).</p><p id="P15">Next we clustered subjects using a combination of six baseline parameters: the
+four normalized baseline titers to the viruses targeted by the vaccines, and the fractions
+of memory IgG+ B cells specific for the seasonal and pH1N1 vaccines (see Methods).
+Unsupervised clustering followed by robustness analysis (see Methods) revealed two
+separable groups containing 33 and 26 subjects. Group 1 individuals were generally low for
+all six parameters, whereas group 2 had mostly higher values, although less uniformly so
+for pH1N1 titers (<xref ref-type="fig" rid="F4">Figure 4B</xref>). Analyses of
+post-vaccination transcript changes revealed no significant differences between the two
+groups. However, the more naïve group exhibited significantly greater increases in
+plasmablasts (ID87) and seasonal vaccine-specific ELISpot responses on day 7 (<xref ref-type="fig" rid="F4">Figure 4C</xref>). Thus, both the plasmablast response on day 7
+and mean fold-change in titers on day 70 were inversely correlated with initial
+titers.</p></sec><sec id="S7"><title>Systematic identification of pre- and post-vaccination predictors and
+correlates</title><p id="P16">We next developed a systematic framework to take advantage of inter-subject
+baseline and response variations to build predictive models of antibody responses. Our
+approach involved delineation of the impact of intrinsic (e.g., age and gender), baseline,
+and response variables on outcome (<xref ref-type="fig" rid="F5">Figure 5A</xref>). Given
+that most studies have focused primarily on linking post-vaccination parameters to titers,
+we were especially interested in whether baseline parameters correlated with and could
+potentially predict outcome independent of age, gender, and pre-existing antibody
+titers.</p><sec id="S8"><title>Defining titer response endpoints</title><p id="P17">To account for the strong influence of baseline titer on day 70 responses, we
+devised two end-point metrics. The first, maximum fold-change (MFC), was defined as the
+maximum of the day 70 over day 0 fold-change across all viral titers, based on
+normalized values (see Methods). The second, adjusted MFC (adjMFC), removed the
+non-linear correlation between MFC and day 0 titers by first dividing the cohort into
+groups of subjects with similar day 0 titers, then adjusting the response within each
+group so that they were normalized and thus comparable (see Methods and related
+approaches (<xref rid="R4" ref-type="bibr">Bucasas et al., 2011</xref>; <xref rid="R31" ref-type="bibr">Nauta, 2011</xref>)). Finally, for each metric, we defined
+“high” and “low” responders as subjects ranked above or
+below the top or bottom 20th percentile mark of the metric, respectively. We modeled the
+maximum response (<xref rid="R30" ref-type="bibr">Nakaya et al., 2011</xref>), because
+none of the cell population and gene expression parameters we assessed targeted specific
+antigens. Thus, our goal was to determine whether models could be built to predict
+robust responses to at least one of the vaccine antigens.</p><p id="P18">Our analyses suggested baseline titer alone should be a predictor of antibody
+responses post-vaccination. However, responses were still highly variable within groups
+of individuals with similar baseline titers (<xref ref-type="fig" rid="F4">Figures
+4A</xref> and S4A). Thus, this variation (captured by adjMFC) could be utilized to
+determine baseline titer-independent correlates and predictive models. While we were
+mainly interested in adjMFC, we also analyzed MFC to assess the effects of day 0 titers
+on prediction and associated predictive parameters.</p></sec><sec id="S9"><title>Contributions of intrinsic factors</title><p id="P19">We first assessed the effects of intrinsic factors, including age, gender, and
+self-reported ancestry (<xref ref-type="fig" rid="F5">Figure 5A</xref>), by using ANOVA
+analysis on all variables simultaneously. Consistent with previous data (<xref rid="R13" ref-type="bibr">Furman et al., 2013</xref>; <xref rid="R18" ref-type="bibr">Goodwin et al., 2006</xref>; <xref rid="R19" ref-type="bibr">Gross et al.,
+1995</xref>), age was the only correlate for both metrics (<xref ref-type="fig" rid="F5">Figure 5B</xref>). As expected, initial titers were significantly correlated
+with MFC (<xref ref-type="fig" rid="F5">Figure 5B</xref>) but not with adjMFC, for which
+80% of the variance remained unexplained.</p></sec><sec id="S10"><title>Method overview for the Identification of predictors and correlates</title><p id="P20">We next conducted two types of analyses—predictive modeling and robust
+correlate identification to assess whether any baseline or post-vaccination parameters
+were associated with responses. Predictive modeling analyses pooled the high and low
+responders in our cohort and randomly divided them into non-overlapping training and
+testing sets; the former was used for building models whose predictive performance was
+then evaluated in the <italic toggle="yes">unseen</italic> testing set (see Methods). Analyses were
+repeated 5000 times using different randomly-generated sets to evaluate the robustness
+of the model construction method and to identify parameters that consistently
+contributed to prediction. When prediction was <italic toggle="yes">not</italic> possible, we also
+assessed whether we could identify parameters that consistently correlated with the
+response endpoints when different random subsets of subjects were used in the analysis
+(see Methods)—while an endpoint may have such robust correlates, these may be
+insufficient for reliable, quantitative prediction.</p><p id="P21">The first step for training predictive models involved selecting the top
+<italic toggle="yes">k</italic> parameters based on the parameters' strength of correlation with
+the endpoint in the training set; we tested multiple values of <italic toggle="yes">k</italic> (see
+below). Our criterion for assessing robust prediction was to determine whether the area
+under the Receiver Operator Characteristic curve (AUC) was above 0.5 in at least 75% of
+the 5000 iterations (0.5 is the AUC level expected by chance). To reveal which
+parameters contributed to prediction, we identified those that were 1) consistently
+ranked in the top <italic toggle="yes">k</italic> and therefore selected for model construction in a
+large number of iterations [% selected], and 2) weighted highly by the model in making
+its predictions [median weight] (see Methods).</p></sec><sec id="S11"><title>Identification of post-vaccination predictors and robust correlates</title><p id="P22">Given previous findings of post-vaccination transcript correlates with
+antibody responses (<xref rid="R30" ref-type="bibr">Nakaya et al., 2011</xref>), we
+first examined data from days 1 and 7. To ensure that correlates were independent of
+intrinsic factors, we removed age, gender, and race effects from both cell population
+and gene expression datasets via linear regression (see Methods). While models built
+using either gene expression or cell populations from day 1 were not predictive,
+“Interferon Signaling” correlated robustly with MFC (<xref ref-type="fig" rid="F5">Figure 5C</xref>). Coherent changes in Interferon associated transcripts have
+been detected on days 1 and 7 in our and other related studies (<xref rid="R4" ref-type="bibr">Bucasas et al., 2011</xref>; <xref rid="R15" ref-type="bibr">Gaucher et al.,
+2008</xref>; <xref rid="R30" ref-type="bibr">Nakaya et al., 2011</xref>; <xref rid="R32" ref-type="bibr">Obermoser et al., 2013</xref>; <xref rid="R36" ref-type="bibr">Querec et al., 2009</xref>). In contrast, highly predictive models could be
+built using day 7 data for both adjMFC and MFC (<xref ref-type="fig" rid="F5">Figures
+5D</xref>). Consistent with previous findings (<xref rid="R30" ref-type="bibr">Nakaya
+et al., 2011</xref>), MFC could be predicted using as few as 2 or 5 genes, although
+more were required for adjMFC (<xref ref-type="fig" rid="F5">Figure 5F</xref>). Notably,
+robustly correlated (<xref ref-type="fig" rid="F5">Figure 5C</xref>) and predictive
+genes (Table S4) were enriched for “ER stress”, “N-glycan
+biosynthesis” and cell cycle pathways, whose gene members correlated strongly
+with plasmablast frequencies (see below). Accordingly, plasmablasts (ID87) and the
+overlapping CD20+ subpopulation (ID96) were the dominant cellular contributors (<xref ref-type="fig" rid="F5">Figure 5E</xref>) (<xref rid="R45" ref-type="bibr">Withers et
+al., 2007</xref>).</p></sec><sec id="S12"><title>Identification of pre-vaccination predictors and correlates</title><p id="P23">We next asked whether predictive models could be built using baseline (day 0)
+parameters alone. Again, we removed age, gender, and ancestry from cell population and
+gene expression data to ensure that models and correlates we identified were independent
+of these factors (see Methods). Neither day 0 gene expression nor pathway activity
+(defined in Figure S2C) alone was predictive of either endpoint, although a number of
+robustly correlated genes and pathways could be identified (<xref ref-type="fig" rid="F6">Figure 6A</xref>). Notably, genes associated with pattern recognition and
+Interferon signaling robustly correlated to MFC, but less so to adjMFC.</p><p id="P24">We then built and tested models for MFC and adjMFC using 1) the frequency of
+126 cell populations or 2) both the cell population frequencies and the activity score
+of 183 annotated pathways (Figure S2C). Cell frequency and transcript data were
+integrated using the pathway activity score because the numbers of pathways and cell
+populations were comparable, whereas the large number of genes could overwhelm signal
+from cell populations. Notably, predictive models could be built by using cell
+populations alone (<xref ref-type="fig" rid="F6">Figure 6B</xref>)—integrating
+pathway/transcript with cell population data performed substantially worse (best median
+AUC was 0.6 vs. 0.78 using cell populations alone). Thus, day 0 cell frequencies alone
+provided the essential information for prediction.</p><p id="P25">We next identified cell populations that contributed most to prediction.
+Twelve cell populations were identified for adjMFC, including memory, naïve and
+transitional B cells, CD4 effector memory T cells, IFNα+ myeloid dendritic cells
+(mDC), and several activated T cell populations (<xref ref-type="fig" rid="F6">Figure
+6C</xref>; see Methods). Several of the B cell populations were CD38+, including
+CD20+IgD-CD27+CD38+ B cells (ID96), as well as transitional (ID91) and naïve
+(ID108) populations, and an IgD+CD27+ memory population (ID103) that has been linked to
+early production of IgM (<xref rid="R40" ref-type="bibr">Shi et al., 2003</xref>). Only
+some of these populations, primarily the T cell subsets, contributed to the prediction
+of MFC (<xref ref-type="fig" rid="F6">Figure 6C</xref>). Thus, by accounting for
+baseline serology using adjMFC, we uncovered additional baseline predictors.</p></sec><sec id="S13"><title>Temporal stability of predictive cell populations</title><p id="P26">To evaluate the temporal stability of the day 0 predictive cell populations,
+we examined their intra- vs. inter-subject variation over time (<xref ref-type="fig" rid="F2">Figure 2A</xref>). Except for ID105 (CD86+IgD+ memory B cells), all of the B
+cell and some of the CD4+ T cell (including effector memory) predictive populations were
+remarkably stable within individuals over a period of more than two months (<xref ref-type="fig" rid="F6">Figure 6D</xref>). Among these were B cell subsets that also
+exhibited some of the highest inter-subject variation among all of the cell populations
+we measured (e.g., ID103 and 91; <xref ref-type="fig" rid="F2">Figure 2A</xref>),
+suggesting these may be robust baseline markers for delineating inter-subject
+differences. These stable B-cell populations (ID91, 96, 103, 108) were all CD38+ and
+contributed to the prediction of adjMFC but not MFC. Examining the predictive cell
+populations' temporal profile further confirmed their stability and ability to separate
+the high and low responders (<xref ref-type="fig" rid="F6">Figures 6E, 6F</xref> and
+S5). This was true even for ID96, which increased coherently across subjects at day 7
+post-vaccination and returned to lower levels by day 70. Together, these results suggest
+that many of the predictive markers we uncovered reflected stable individual differences
+in baseline immune states that correlated with the capacity for robust responses to
+influenza vaccination.</p><p id="P27">Since some of the predictive populations were less temporally stable and thus
+may indicate transient events (e.g., an infection), we next assessed whether predictive
+models could be built using only the 56 most stable populations (those above the 80%
+stability mark (<xref ref-type="fig" rid="F6">Figure 6D</xref>)) as inputs to our
+5000-iteration cross-validation assessment. Even using a smaller <italic toggle="yes">k</italic> of
+10 (versus 30 previously), adjMFC could be robustly predicted (median AUC=0.78; <xref ref-type="fig" rid="F6">Figure 6G</xref>). As expected, the populations contributing
+most to adjMFC prediction were the same stable ones identified above. Thus, the less
+stable populations were not essential for adjMFC prediction. In contrast, use of the
+stable cell populations decreased the predictive performance for MFC, which remained
+flat for all values of <italic toggle="yes">k</italic>. However, if the stable populations
+<italic toggle="yes">above</italic> the 80% mark in <xref ref-type="fig" rid="F6">Figure 6D</xref>
+were omitted instead, performance remained high for MFC (median AUC=0.83 for k=10), but
+dropped substantially for adjMFC (median AUC=0.56 for k=10). Thus, the more transient
+signals provided the bulk of the predictive power for MFC, whereas that for adjMFC came
+from temporally stable parameters that may have captured the unique immune-status of
+individuals.</p><p id="P28">We further evaluated the robustness of our results by building models using
+the entire cohort's day 0 cell-population data as the training set
+(<italic toggle="yes">k</italic>=2, 5, 10, or 30), and then assessing whether these models could
+predict adjMFC using independent measurements from other baseline time-points (day -7 or
+the more temporally removed day 70). Highly accurate prediction could still be made for
+all <italic toggle="yes">k</italic>'s, e.g., AUC=0.91 and AUC=0.86 for days -7 and 70 using
+<italic toggle="yes">k</italic>=10, respectively. Thus, the predictive signals were remarkably
+stable over time.</p></sec><sec id="S14"><title>Transcriptomic signature of the predictive cell populations</title><p id="P29">To obtain functional insight into the predictors, we took advantage of our
+simultaneous assessments of cell population frequencies and the PBMC transcriptome to
+identify transcripts and associated pathways whose abundance correlated with the
+frequency of predictive cell subsets (see Methods). As expected, the two predictive and
+coherently changing cell populations from day 7 (ID87 and ID96) were linked to known
+antigen secreting cell/B cell/plasmablast-specific genes, including Ig chains, XBP1 and
+IRF4, as well as plasmablast-associated pathways such as ER stress (<xref ref-type="fig" rid="F7">Figures 7B and D</xref>). These populations were also associated with
+N-glycan biosynthesis, consistent with the highly glycosylated state of immunoglobulins
+and the requirement for proper glycosylation for plasma cell development (<xref rid="R42" ref-type="bibr">Tulp et al., 1986</xref>). Many plasmablast-correlated genes
+were also ones that changed on day 7 (<xref ref-type="fig" rid="F3">Figures 3B, C</xref>
+and <xref ref-type="fig" rid="F7">7B</xref> (marked in purple and orange)) and included
+genes found to be predictive of or correlated with response titers in previous studies
+(marked in blue; e.g., TNFRSF17) (<xref rid="R15" ref-type="bibr">Gaucher et al.,
+2008</xref>; <xref rid="R30" ref-type="bibr">Nakaya et al., 2011</xref>; <xref rid="R36" ref-type="bibr">Querec et al., 2009</xref>). Thus, our analyses suggest that
+the day 7 coherent and predictive signatures in our, as well as in previous, studies
+were likely drawn from a tight coupling between titer response and the degree of
+plasmablast expansion.</p><p id="P30">Our analyses also revealed that day 0 predictive populations were associated
+with distinct transcriptomic signatures (<xref ref-type="fig" rid="F7">Figures 7A and
+7C</xref>). Several mitochondria-related pathways were positively associated with
+ID108 (CD38+ naïve B cells) and ID91 (CD38hi transitional B cells), perhaps
+reflecting changes in bioenergetic states associated with B cell development and
+activation. ID36 (Effector memory CD4+ T cells) and ID50 (Perforin+ CD8+ cells) also
+shared signatures, suggestive of common features of activation. Of note, several innate
+pathways (PRR signaling, TREM1 signaling, and interferon-related genes) were positively
+linked to IL22+ and IL2+ CD4+ T cells (ID25 and ID26), and negatively linked to ID36 and
+ID50. The association of innate pathways with these adaptive subsets before vaccination
+suggests that activation of these pathways in these or other interacting cells may play
+important roles in determining response quality. Interestingly, ID96, a day 0 predictive
+B-cell population that also coherently increased on day 7 (<xref ref-type="fig" rid="F3">Figures 3D</xref> and <xref ref-type="fig" rid="F6">6F</xref>), showed largely
+distinct signatures on days 0 and 7 (<xref ref-type="fig" rid="F7">Figures 7A-D</xref>),
+suggesting differences in the cell population defined by those markers, or distinct
+functional interactions with other cell populations post-vaccination. Thus, by linking
+inter-subject variation in gene expression to cell subset frequencies, our approach
+reveals potential connections among components of the immune system.</p></sec></sec></sec><sec sec-type="discussion" id="S15"><title>Discussion</title><p id="P31">Using influenza vaccination as a model perturbation, we have gone beyond post-hoc
+prediction and developed a framework that transforms multi-modal data sets and natural
+population variation into predictive models that, unexpectedly, predicted serologic
+responses to influenza vaccination in our cohort using <italic toggle="yes">baseline</italic> PBMC
+subpopulation frequencies alone, independent of age, gender, initial serology, and the
+specificity of the cell populations for vaccine antigens. Notably, the essential cell
+subsets contributing to prediction were among the most stable within subjects over a
+timespan of more than 70 days. Some of these also had the highest inter-subject variation
+and thus, were likely predictive because they delineated distinct baseline immune states
+among individuals. Our findings raise the possibility of using such measures as biomarkers
+of immune response potential in the clinic.</p><p id="P32">Despite substantial inter-subject differences at baseline, we detected coherent
+changes in hundreds of transcripts post-vaccination, as seen in recent vaccine studies
+(<xref rid="R4" ref-type="bibr">Bucasas et al., 2011</xref>; <xref rid="R15" ref-type="bibr">Gaucher et al., 2008</xref>; <xref rid="R30" ref-type="bibr">Nakaya et al.,
+2011</xref>; <xref rid="R36" ref-type="bibr">Querec et al., 2009</xref>). However, we also
+detected changes in the frequencies of cell populations, many of which have not been
+examined in the context of vaccination. Some of these changes reflect expected biology, with
+innate immune activation early and adaptive changes predominating by one week
+post-vaccination. Nonetheless, the magnitude of responses was intimately linked to the
+pre-vaccination status of the individual, with lower initial titers being associated with
+larger fold-increases in serum titers and plasmablast frequencies post-vaccination. Although
+seemingly counterintuitive, such inverse correlations may reflect the current use of
+fold-change to measure vaccine responses, differences in response timing (<xref rid="R22" ref-type="bibr">Henn et al., 2013</xref>), or inhibitory responses in pre-immune
+subjects (<xref rid="R21" ref-type="bibr">He et al., 2008</xref>). Thus, initial serology is
+an important yet potentially confounding variable that should be considered when exploring
+correlates and building predictive models.</p><p id="P33">A key question is whether some of our predictors captured the memory or activation
+status of the system due to prior exposure, or whether they are indicative of the immune
+system's general propensity to respond. For example, the overall immune
+“threshold” for mounting a response may be determined by genetics and
+environmental factors such as the microbiota, contemporaneous stimulations by prevalent
+viruses such as CMV and EBV, or heterologous immunity due to degeneracy in T-cell
+recognition (<xref rid="R29" ref-type="bibr">Munz et al., 2009</xref>; <xref rid="R44" ref-type="bibr">Welsh and Selin, 2002</xref>). While it is possible that our observations were
+specific to the particular season or cohort, several lines of evidence suggest they have
+broader implications. First, the overall post-vaccination responses of our cohort were
+consistent with those observed in other influenza vaccination cohorts from different seasons
+(<xref rid="R4" ref-type="bibr">Bucasas et al., 2011</xref>; <xref rid="R13" ref-type="bibr">Furman et al., 2013</xref>; <xref rid="R30" ref-type="bibr">Nakaya et al.,
+2011</xref>; <xref rid="R32" ref-type="bibr">Obermoser et al., 2013</xref>). Second,
+validation using independent measurements from other baseline time-points (days -7 and 70)
+suggests that the essential predictive cell populations reflect <italic toggle="yes">stable</italic>
+baseline immune states as opposed to acute events. Indeed, initial analyses of four of our
+predictive B cell populations in healthy individuals from independent vaccine cohorts across
+multiple seasons (<xref rid="R32" ref-type="bibr">Obermoser et al., 2013</xref>) provides
+further support for their temporal stability (data not shown). Moreover, while the less
+stable predictive subsets (e.g., IFNα+ mDC (ID75) and CD86+IgD+ memory B cells
+(ID105)) may reflect temporary environmental effects, removing them from our data only
+affected prediction of the initial titer-dependent endpoint (MFC), but not the baseline
+serology-independent adjMFC. Supporting the idea that B cell subsets can be useful response
+predictors, a correlation between pre-vaccination levels of class-switched memory B cells
+and serological responses to vaccination has been recently shown (<xref rid="R12" ref-type="bibr">Frasca et al., 2012</xref>). Another recent study has reported genetic
+determinants of immune cell population frequencies in humans (<xref rid="R33" ref-type="bibr">Orru et al., 2013</xref>). Although B-cell subset frequencies were not examined,
+it will be of interest to assess whether genetics regulates the frequencies of our
+temporally stable, predictive populations.</p><p id="P34">By associating changes in gene expression with changes in cell population
+frequencies, we have started to explore the nature of transcriptomic changes following
+vaccination. Changes in transcript abundance in PBMCs can originate from a combination of
+alterations in gene expression within individual cell populations and changes in cell
+population frequencies. Others have started to address these issues by sorting cell subsets
+followed by expression profiling, by correlating expression changes to known patterns of
+expression in major immune cell populations, or by computational deconvolution to infer
+cell-population specific changes (<xref rid="R3" ref-type="bibr">Brandes M., 2013</xref>;
+<xref rid="R30" ref-type="bibr">Nakaya et al., 2011</xref>; <xref rid="R39" ref-type="bibr">Shen-Orr et al., 2010</xref>). Here we also found that changes in some cell
+populations were accompanied by changes in transcripts associated with the corresponding or
+related populations, such as the tight correlation between plasmablast frequencies on day
+7and plasma cell-associated genes, such as immunoglobulins, and those from ER stress, cell
+cycle, and N-glycan biosynthesis pathways. These plasmablast-correlated genes also included
+many previously associated with post-vaccination response and predictive signatures (<xref rid="R30" ref-type="bibr">Nakaya et al., 2011</xref>; <xref rid="R36" ref-type="bibr">Querec et al., 2009</xref>). Thus, our results suggest that many of these transcriptomic
+changes can be accounted for by changes in plasmablast frequencies on day 7. Combined with
+our observations that increases in plasmablasts were more prominent in subjects with low
+baseline titers, our integration of cell population, gene expression, and baseline immune
+status data reveal that a sizable component of the day 7 predictive transcriptome signature
+for MFC that we and others find is likely derived from inter-subject differences in
+pre-vaccination titers.</p><p id="P35">Unlike day 7 models, our baseline predictive models could only be built using cell
+population frequencies, suggesting that transcriptomic measurements of PBMCs were
+insufficiently sensitive to capture inter-subject differences derived from the day 0
+predictive populations, in contrast to the highly transcriptionally active plasmablasts.
+Whether expression data obtained from a simpler transcript pool, such as sorted B cell
+populations, provides better predictive power remains an important question. Correlating
+frequencies of cell populations with gene expression can also potentially reveal both the
+internal state of that cell subset as well as that of other cell populations—while
+most of our baseline predictive populations are adaptive, they are strongly correlated to
+genes and pathways with innate functions, some of which may reflect the (activation) states
+of functionally interacting cell populations. It will therefore be of interest to evaluate
+immune-activation differences (e.g., responses of PBMCs to TLR ligands) in high vs. low
+responders to vaccination. Even on day 7, where the overlapping populations ID87 and ID96
+were significantly correlated to largely the same genes and pathways, ID96 exhibited a
+stronger inverse association with several innate signaling pathways. These connections
+suggest distinct features for the CD20+ and CD20- populations of IgD-CD27+CD38+ B cells
+(<xref rid="R6" ref-type="bibr">Clutterbuck et al., 2006</xref>). Our results highlight
+the importance of evaluating and integrating multiple datasets for understanding human
+immune function.</p><p id="P36">Our data and analyses also serve as a potential resource for characterizing normal
+human immune variations and their implications for health and disease. One important goal of
+this study was to begin the building and analysis of the “normal human
+immunome” that characterizes the status of the apparently healthy immune system more
+broadly and fully than traditional assessments for future mining and reference. Such
+information would include clinical and family history, detailed cellular and molecular
+measurements of immune status, microbiome status, as well as genome-wide genotypic
+information. Through the quantification of inter- as well as intra-individual variations,
+such a resource can provide essential baseline and comparative data for analyses of immune
+system behavior after perturbation and, through computational analyses, for <italic toggle="yes">de
+novo</italic> discovery of functional connections among molecular, cellular and
+physiologic parameters of the human immune system in health or disease.</p><p id="P37">Our study highlights the importance of untangling correlation structures to
+identify the potential “root” correlates of responses as opposed to
+“passengers”. We have specifically shown that the strong effects of initial
+serology on titer outcome need to be properly modeled in order to identify whether and which
+baseline and response parameters contribute most to outcome. This may be particularly
+important in the context of influenza vaccination where partial immunity is highly
+prevalent. Our adjMFC metric helped reveal a number of temporally stable correlates not
+associated with MFC and thus may be useful in similar vaccine studies. One major constraint
+limiting predictive model construction and the discovery of novel functional relationships
+among parameters in a study like ours is statistical power, partially because the number of
+subjects, particularly the extreme responders, is far less than the thousands of parameters
+measured and the need to correct for multiple hypothesis testing. Meta-analyses across
+multiple studies will start to mitigate this issue, but requires the coordinated development
+and sharing of experimental and computational approaches in the research community to
+address issues ranging from controlling batch effects and standardizing quality control
+metrics to constructing predictive models. Achieving such integrated approaches across
+research centers will provide a major step forward in using computational approaches to
+understand the workings of the human immune system in health and disease.</p></sec><sec sec-type="methods" id="S16"><title>Experimental Procedures</title><p id="P38">For details and associated references, see Extended Experimental Procedures. <list list-type="bullet" id="L1"><list-item><p id="P39">Fasting blood samples were drawn between 8-11am from healthy volunteers on
+IRB approved protocol (09-H-0239), and processed within 30 minutes. PBMCs were
+cryopreserved or lysed and stored at -80C for subsequent RNA extraction using miRNeasy
+(Qiagen) and hybridization to HG 1.0 ST arrays (Affymetrix).</p></list-item><list-item><p id="P40">Frozen PBMCs from all time points for a subject were stained for 5 panels
+(Figure S1A) (<xref rid="R2" ref-type="bibr">Biancotto et al., 2011</xref>) using a
+common antibody mix on the same day. Cell frequencies were expressed as percent of
+parent population.</p></list-item><list-item><p id="P41">Virus-neutralizing titers (A/California/07/2009 (H1N1pdm09), H1N1
+A/Brisbane/59/07, H3N2 A/Uruguay/716/07, and B/Brisbane/60/2001) were determined
+according to (<xref rid="R20" ref-type="bibr">Hancock et al., 2009</xref>). Reported
+titers were the highest dilution that completely suppressed virus replication. Total
+and influenza-specific IgG/A frequencies of antibody-secreting cells were measured by
+ELISpot assays modified for frozen samples (<xref rid="R23" ref-type="bibr">Ho et al.,
+2011</xref>).</p></list-item><list-item><p id="P42">Microarray data were processed using APT (Affymetrix). Batch effects were
+removed using linear models in both raw and baseline subtracted data. Frequencies of
+cell populations were transformed by log<sub>10</sub> (with zero values first set to
+0.01). Samples and populations with low viability or cell numbers, respectively, were
+excluded.</p></list-item><list-item><p id="P43">Coherent changes from day 0 were computed using paired test in Limma (<xref rid="R41" ref-type="bibr">Smyth, 2004</xref>). Surrogate Variable Analysis (<xref rid="R27" ref-type="bibr">Leek and Storey, 2007</xref>) was used to remove hidden
+batch effects. The Wilcoxon test was used to compute coherent changes in cell
+population frequencies. False Discovery Rates were computed as described (<xref rid="R1" ref-type="bibr">Benjamini and Hochberg, 1995</xref>). Pathway enrichment
+analyses were performed using the geneSetTest function (Limma) and pathways annotated
+by Ingenuity (<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="http://www.ingenuity.com">www.ingenuity.com</ext-link>).</p></list-item><list-item><p id="P44">To assess inter- and intra-subject variation, we used data from days -7, 0
+and 70 for each parameter and fitted an ANOVA model to obtain 1) total R<sup>2</sup>,
+2) amount of variation explained by subject, and 3) the residual as an estimate of
+intra-subject variation.</p></list-item><list-item><p id="P45">AdjMFC and MFC are defined in the text. To take the maximum of individual
+viruses, we performed standardization by subtracting the median followed by dividing
+the maximum absolute deviation (MAD) within each virus. To compute adjMFC, we binned
+subjects based on their maximum baseline titers (across viruses) and then subtracted
+the median and divided by the MAD within each bin.</p></list-item><list-item><p id="P46">Contributions to titer response from age, gender, and ancestry were assessed
+using ANOVA. Effects were then removed from the cell population frequency and
+microarray data by retaining the residual after fitting a linear model for each probe
+and subset frequency. Cross-validation based predictive modeling was done as described
+in text and Supplement. We used diagonal linear discriminant analysis for cell
+frequency data and when cell frequency and pathway status were combined. For
+transcript data alone, we used partial least square (for data dimension reduction due
+to the large number of genes) followed by linear discriminant analysis (PLS-LDA).</p></list-item></list></p></sec><sec sec-type="supplementary-material" id="SM"><title>Supplementary Material</title><supplementary-material content-type="local-data" id="SD1" position="float" orientation="portrait"><label>01</label><media xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="NIHMS580872-supplement-01.pdf" orientation="portrait" id="d36e855" position="anchor"/></supplementary-material><supplementary-material content-type="local-data" id="SD2" position="float" orientation="portrait"><label>02</label><media xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="NIHMS580872-supplement-02.xlsx" orientation="portrait" id="d36e859" position="anchor"/></supplementary-material><supplementary-material content-type="local-data" id="SD3" position="float" orientation="portrait"><label>03</label><media xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="NIHMS580872-supplement-03.xlsx" orientation="portrait" id="d36e863" position="anchor"/></supplementary-material><supplementary-material content-type="local-data" id="SD4" position="float" orientation="portrait"><label>04</label><media xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="NIHMS580872-supplement-04.xlsx" orientation="portrait" id="d36e867" position="anchor"/></supplementary-material><supplementary-material content-type="local-data" id="SD5" position="float" orientation="portrait"><label>05</label><media xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="NIHMS580872-supplement-05.xlsx" orientation="portrait" id="d36e871" position="anchor"/></supplementary-material></sec></body><back><ack id="S17"><title>Acknowledgements</title><p>We thank M. Connors, K. Subbarao, R. Seder, M. Roederer, D. Douek, J. Bennink, I. Fraser,
+J. Mandl, members of the Systems Genomics and Bioinformatics Unit (NIAID), and M.
+Eichelberger (FDA) for helpful advice and feedback, the staff of the NIH Clinical Center for
+outstanding clinical support, and NIAID's high-performance computing team for outstanding
+support. This work is funded by the Intramural Programs of NIAID, NCI, NHLBI, NIAMS, NICHD,
+NIDDK, NINDS, NIEHS, NEI and NHGRI.</p></ack><fn-group><fn id="FN2"><p content-type="publisher-disclaimer" id="P47">This is a PDF file of an unedited manuscript
+that has been accepted for publication. As a service to our customers we are providing
+this early version of the manuscript. The manuscript will undergo copyediting,
+typesetting, and review of the resulting proof before it is published in its final citable
+form. Please note that during the production process errors may be discovered which could
+affect the content, and all legal disclaimers that apply to the journal pertain.</p></fn><fn id="FN3"><p id="P48"><bold>Author Contributions:</bold> Y.K., A.B., Z.X., R.N.G., E.W., and M.J.O.
+contributed equally to this work. M.N., H.G., S.M., H.B.D., S.P., and F.C. contributed
+equally to this work. J.S.T. directed, designed, and performed data analyses, interpreted
+results, and wrote the manuscript. P.L.S. designed the study, helped design experiments
+and analyses, interpreted results, and wrote the manuscript. Y.K., Z.X., M.N., and F.C.
+designed and performed computational analyses and helped prepare the manuscript. A.B. and
+E.W. designed and performed experiments, analyzed data, and helped prepare the manuscript.
+R.N.G. designed the study, helped design experiments and analyses, and helped prepare the
+manuscript. M.J.O. helped design, organize, and execute the clinical study. H.G. and S.M.
+designed experiments and analyzed data. H.B.D. helped design and orga- nize the clinical
+study. S.P. helped organize and execute the clinical study.</p></fn></fn-group><ref-list><title>References</title><ref id="R1"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Benjamini</surname><given-names>Y</given-names></name><name name-style="western"><surname>Hochberg</surname><given-names>Y</given-names></name></person-group><article-title>Controlling the False Discovery Rate: A Practical and Powerful Approach to
+Multiple Testing.</article-title><source>Journal of the Royal Statistical Society Series B (Methodological)</source><year>1995</year><volume>57</volume><fpage>289</fpage><lpage>300</lpage></element-citation></ref><ref id="R2"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Biancotto</surname><given-names>A</given-names></name><name name-style="western"><surname>Fuchs</surname><given-names>JC</given-names></name><name name-style="western"><surname>Williams</surname><given-names>A</given-names></name><name name-style="western"><surname>Dagur</surname><given-names>PK</given-names></name><name name-style="western"><surname>McCoy</surname><given-names>JP</given-names><suffix>Jr.</suffix></name></person-group><article-title>High dimensional flow cytometry for comprehensive leukocyte
+immunophenotyping (CLIP) in translational research.</article-title><source>Journal of immunological methods</source><year>2011</year><volume>363</volume><fpage>245</fpage><lpage>261</lpage><pub-id pub-id-type="pmid">20600079</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1016/j.jim.2010.06.010</pub-id><pub-id pub-id-type="pmcid">PMC2990781</pub-id></element-citation></ref><ref id="R3"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Brandes</surname><given-names>M</given-names></name><name name-style="western"><surname>K.F.</surname></name><name name-style="western"><surname>Kuchen</surname><given-names>S</given-names></name><name name-style="western"><surname>Germain</surname><given-names>RN</given-names></name></person-group><article-title>A Top-down Systems Analysis Identifies an Innate Feed-forward Inflammatory
+Circuit Leading to Lethal Influenza Infection.</article-title><source>Cell</source><year>2013</year><comment>in press</comment><pub-id pub-id-type="doi" assigning-authority="pmc">10.1016/j.cell.2013.06.013</pub-id><pub-id pub-id-type="pmcid">PMC3763506</pub-id><pub-id pub-id-type="pmid">23827683</pub-id></element-citation></ref><ref id="R4"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Bucasas</surname><given-names>KL</given-names></name><name name-style="western"><surname>Franco</surname><given-names>LM</given-names></name><name name-style="western"><surname>Shaw</surname><given-names>CA</given-names></name><name name-style="western"><surname>Bray</surname><given-names>MS</given-names></name><name name-style="western"><surname>Wells</surname><given-names>JM</given-names></name><name name-style="western"><surname>Nino</surname><given-names>D</given-names></name><name name-style="western"><surname>Arden</surname><given-names>N</given-names></name><name name-style="western"><surname>Quarles</surname><given-names>JM</given-names></name><name name-style="western"><surname>Couch</surname><given-names>RB</given-names></name><name name-style="western"><surname>Belmont</surname><given-names>JW</given-names></name></person-group><article-title>Early patterns of gene expression correlate with the humoral immune
+response to influenza vaccination in humans.</article-title><source>The Journal of infectious diseases</source><year>2011</year><volume>203</volume><fpage>921</fpage><lpage>929</lpage><pub-id pub-id-type="pmid">21357945</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1093/infdis/jiq156</pub-id><pub-id pub-id-type="pmcid">PMC3068032</pub-id></element-citation></ref><ref id="R5"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Chuang</surname><given-names>HY</given-names></name><name name-style="western"><surname>Hofree</surname><given-names>M</given-names></name><name name-style="western"><surname>Ideker</surname><given-names>T</given-names></name></person-group><article-title>A decade of systems biology.</article-title><source>Annual review of cell and developmental biology</source><year>2010</year><volume>26</volume><fpage>721</fpage><lpage>744</lpage><pub-id pub-id-type="doi" assigning-authority="pmc">10.1146/annurev-cellbio-100109-104122</pub-id><pub-id pub-id-type="pmcid">PMC3371392</pub-id><pub-id pub-id-type="pmid">20604711</pub-id></element-citation></ref><ref id="R6"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Clutterbuck</surname><given-names>EA</given-names></name><name name-style="western"><surname>Salt</surname><given-names>P</given-names></name><name name-style="western"><surname>Oh</surname><given-names>S</given-names></name><name name-style="western"><surname>Marchant</surname><given-names>A</given-names></name><name name-style="western"><surname>Beverley</surname><given-names>P</given-names></name><name name-style="western"><surname>Pollard</surname><given-names>AJ</given-names></name></person-group><article-title>The kinetics and phenotype of the human B-cell response following
+immunization with a heptavalent pneumococcal-CRM conjugate vaccine.</article-title><source>Immunology</source><year>2006</year><volume>119</volume><fpage>328</fpage><lpage>337</lpage><pub-id pub-id-type="pmid">17067312</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1111/j.1365-2567.2006.02436.x</pub-id><pub-id pub-id-type="pmcid">PMC1819566</pub-id></element-citation></ref><ref id="R7"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Cox</surname><given-names>RJ</given-names></name><name name-style="western"><surname>Brokstad</surname><given-names>KA</given-names></name><name name-style="western"><surname>Zuckerman</surname><given-names>MA</given-names></name><name name-style="western"><surname>Wood</surname><given-names>JM</given-names></name><name name-style="western"><surname>Haaheim</surname><given-names>LR</given-names></name><name name-style="western"><surname>Oxford</surname><given-names>JS</given-names></name></person-group><article-title>An early humoral immune response in peripheral blood following parenteral
+inactivated influenza vaccination.</article-title><source>Vaccine</source><year>1994</year><volume>12</volume><fpage>993</fpage><lpage>999</lpage><pub-id pub-id-type="pmid">7975853</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1016/0264-410x(94)90334-4</pub-id></element-citation></ref><ref id="R8"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Davis</surname><given-names>MM</given-names></name></person-group><article-title>A prescription for human immunology.</article-title><source>Immunity</source><year>2008</year><volume>29</volume><fpage>835</fpage><lpage>838</lpage><pub-id pub-id-type="pmid">19100694</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1016/j.immuni.2008.12.003</pub-id><pub-id pub-id-type="pmcid">PMC2905652</pub-id></element-citation></ref><ref id="R9"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>de Jong</surname><given-names>JC</given-names></name><name name-style="western"><surname>Palache</surname><given-names>AM</given-names></name><name name-style="western"><surname>Beyer</surname><given-names>WE</given-names></name><name name-style="western"><surname>Rimmelzwaan</surname><given-names>GF</given-names></name><name name-style="western"><surname>Boon</surname><given-names>AC</given-names></name><name name-style="western"><surname>Osterhaus</surname><given-names>AD</given-names></name></person-group><article-title>Haemagglutination-inhibiting antibody to influenza virus.</article-title><source>Developments in biologicals</source><year>2003</year><volume>115</volume><fpage>63</fpage><lpage>73</lpage><pub-id pub-id-type="pmid">15088777</pub-id></element-citation></ref><ref id="R10"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Fiore</surname><given-names>AE</given-names></name><name name-style="western"><surname>Shay</surname><given-names>DK</given-names></name><name name-style="western"><surname>Broder</surname><given-names>K</given-names></name><name name-style="western"><surname>Iskander</surname><given-names>JK</given-names></name><name name-style="western"><surname>Uyeki</surname><given-names>TM</given-names></name><name name-style="western"><surname>Mootrey</surname><given-names>G</given-names></name><name name-style="western"><surname>Bresee</surname><given-names>JS</given-names></name><name name-style="western"><surname>Cox</surname><given-names>NJ</given-names></name><collab>Centers for Disease, C., and Prevention</collab></person-group><article-title>Prevention and control of seasonal influenza with vaccines: recommendations
+of the Advisory Committee on Immunization Practices (ACIP), 2009.</article-title><source>MMWR Recommendations and reports : Morbidity and mortality weekly report
+Recommendations and reports / Centers for Disease Control</source><year>2009</year><volume>58</volume><fpage>1</fpage><lpage>52</lpage><pub-id pub-id-type="pmid">19644442</pub-id></element-citation></ref><ref id="R11"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Fonteneau</surname><given-names>JF</given-names></name><name name-style="western"><surname>Gilliet</surname><given-names>M</given-names></name><name name-style="western"><surname>Larsson</surname><given-names>M</given-names></name><name name-style="western"><surname>Dasilva</surname><given-names>I</given-names></name><name name-style="western"><surname>Munz</surname><given-names>C</given-names></name><name name-style="western"><surname>Liu</surname><given-names>YJ</given-names></name><name name-style="western"><surname>Bhardwaj</surname><given-names>N</given-names></name></person-group><article-title>Activation of influenza virus-specific CD4+ and CD8+ T cells: a new role
+for plasmacytoid dendritic cells in adaptive immunity.</article-title><source>Blood</source><year>2003</year><volume>101</volume><fpage>3520</fpage><lpage>3526</lpage><pub-id pub-id-type="pmid">12511409</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1182/blood-2002-10-3063</pub-id></element-citation></ref><ref id="R12"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Frasca</surname><given-names>D</given-names></name><name name-style="western"><surname>Diaz</surname><given-names>A</given-names></name><name name-style="western"><surname>Romero</surname><given-names>M</given-names></name><name name-style="western"><surname>Phillips</surname><given-names>M</given-names></name><name name-style="western"><surname>Mendez</surname><given-names>NV</given-names></name><name name-style="western"><surname>Landin</surname><given-names>AM</given-names></name><name name-style="western"><surname>Blomberg</surname><given-names>BB</given-names></name></person-group><article-title>Unique biomarkers for B-cell function predict the serum response to
+pandemic H1N1 influenza vaccine.</article-title><source>International immunology</source><year>2012</year><volume>24</volume><fpage>175</fpage><lpage>182</lpage><pub-id pub-id-type="pmid">22281510</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1093/intimm/dxr123</pub-id><pub-id pub-id-type="pmcid">PMC3621378</pub-id></element-citation></ref><ref id="R13"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Furman</surname><given-names>D</given-names></name><name name-style="western"><surname>Jojic</surname><given-names>V</given-names></name><name name-style="western"><surname>Kidd</surname><given-names>B</given-names></name><name name-style="western"><surname>Shen-Orr</surname><given-names>S</given-names></name><name name-style="western"><surname>Price</surname><given-names>J</given-names></name><name name-style="western"><surname>Jarrell</surname><given-names>J</given-names></name><name name-style="western"><surname>Tse</surname><given-names>T</given-names></name><name name-style="western"><surname>Huang</surname><given-names>H</given-names></name><name name-style="western"><surname>Lund</surname><given-names>P</given-names></name><name name-style="western"><surname>Maecker</surname><given-names>HT</given-names></name><etal/></person-group><article-title>Apoptosis and other immune biomarkers predict influenza vaccine
+responsiveness.</article-title><source>Molecular systems biology</source><year>2013</year><volume>9</volume><fpage>659</fpage><pub-id pub-id-type="pmid">23591775</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1038/msb.2013.15</pub-id><pub-id pub-id-type="pmcid">PMC3658270</pub-id></element-citation></ref><ref id="R14"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Gass</surname><given-names>JN</given-names></name><name name-style="western"><surname>Gunn</surname><given-names>KE</given-names></name><name name-style="western"><surname>Sriburi</surname><given-names>R</given-names></name><name name-style="western"><surname>Brewer</surname><given-names>JW</given-names></name></person-group><article-title>Stressed-out B cells? Plasma-cell differentiation and the unfolded protein
+response.</article-title><source>Trends in immunology</source><year>2004</year><volume>25</volume><fpage>17</fpage><lpage>24</lpage><pub-id pub-id-type="pmid">14698280</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1016/j.it.2003.11.004</pub-id></element-citation></ref><ref id="R15"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Gaucher</surname><given-names>D</given-names></name><name name-style="western"><surname>Therrien</surname><given-names>R</given-names></name><name name-style="western"><surname>Kettaf</surname><given-names>N</given-names></name><name name-style="western"><surname>Angermann</surname><given-names>BR</given-names></name><name name-style="western"><surname>Boucher</surname><given-names>G</given-names></name><name name-style="western"><surname>Filali-Mouhim</surname><given-names>A</given-names></name><name name-style="western"><surname>Moser</surname><given-names>JM</given-names></name><name name-style="western"><surname>Mehta</surname><given-names>RS</given-names></name><name name-style="western"><surname>Drake</surname><given-names>DR</given-names><suffix>3rd</suffix></name><name name-style="western"><surname>Castro</surname><given-names>E</given-names></name><etal/></person-group><article-title>Yellow fever vaccine induces integrated multilineage and polyfunctional
+immune responses.</article-title><source>The Journal of experimental medicine</source><year>2008</year><volume>205</volume><fpage>3119</fpage><lpage>3131</lpage><pub-id pub-id-type="pmid">19047440</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1084/jem.20082292</pub-id><pub-id pub-id-type="pmcid">PMC2605227</pub-id></element-citation></ref><ref id="R16"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Germain</surname><given-names>RN</given-names></name><name name-style="western"><surname>Schwartzberg</surname><given-names>PL</given-names></name></person-group><article-title>The human condition: an immunological perspective.</article-title><source>Nature immunology</source><year>2011</year><volume>12</volume><fpage>369</fpage><lpage>372</lpage><pub-id pub-id-type="pmid">21502986</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1038/ni0511-369</pub-id><pub-id pub-id-type="pmcid">PMC3164551</pub-id></element-citation></ref><ref id="R17"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Gerriets</surname><given-names>VA</given-names></name><name name-style="western"><surname>Rathmell</surname><given-names>JC</given-names></name></person-group><article-title>Metabolic pathways in T cell fate and function.</article-title><source>Trends in immunology</source><year>2012</year><volume>33</volume><fpage>168</fpage><lpage>173</lpage><pub-id pub-id-type="pmid">22342741</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1016/j.it.2012.01.010</pub-id><pub-id pub-id-type="pmcid">PMC3319512</pub-id></element-citation></ref><ref id="R18"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Goodwin</surname><given-names>K</given-names></name><name name-style="western"><surname>Viboud</surname><given-names>C</given-names></name><name name-style="western"><surname>Simonsen</surname><given-names>L</given-names></name></person-group><article-title>Antibody response to influenza vaccination in the elderly: a quantitative
+review.</article-title><source>Vaccine</source><year>2006</year><volume>24</volume><fpage>1159</fpage><lpage>1169</lpage><pub-id pub-id-type="pmid">16213065</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1016/j.vaccine.2005.08.105</pub-id></element-citation></ref><ref id="R19"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Gross</surname><given-names>PA</given-names></name><name name-style="western"><surname>Hermogenes</surname><given-names>AW</given-names></name><name name-style="western"><surname>Sacks</surname><given-names>HS</given-names></name><name name-style="western"><surname>Lau</surname><given-names>J</given-names></name><name name-style="western"><surname>Levandowski</surname><given-names>RA</given-names></name></person-group><article-title>The efficacy of influenza vaccine in elderly persons. A meta-analysis and
+review of the literature.</article-title><source>Annals of internal medicine</source><year>1995</year><volume>123</volume><fpage>518</fpage><lpage>527</lpage><pub-id pub-id-type="pmid">7661497</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.7326/0003-4819-123-7-199510010-00008</pub-id></element-citation></ref><ref id="R20"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Hancock</surname><given-names>K</given-names></name><name name-style="western"><surname>Veguilla</surname><given-names>V</given-names></name><name name-style="western"><surname>Lu</surname><given-names>X</given-names></name><name name-style="western"><surname>Zhong</surname><given-names>W</given-names></name><name name-style="western"><surname>Butler</surname><given-names>EN</given-names></name><name name-style="western"><surname>Sun</surname><given-names>H</given-names></name><name name-style="western"><surname>Liu</surname><given-names>F</given-names></name><name name-style="western"><surname>Dong</surname><given-names>L</given-names></name><name name-style="western"><surname>DeVos</surname><given-names>JR</given-names></name><name name-style="western"><surname>Gargiullo</surname><given-names>PM</given-names></name><etal/></person-group><article-title>Cross-reactive antibody responses to the 2009 pandemic H1N1 influenza
+virus.</article-title><source>The New England journal of medicine</source><year>2009</year><volume>361</volume><fpage>1945</fpage><lpage>1952</lpage><pub-id pub-id-type="pmid">19745214</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1056/NEJMoa0906453</pub-id></element-citation></ref><ref id="R21"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>He</surname><given-names>XS</given-names></name><name name-style="western"><surname>Holmes</surname><given-names>TH</given-names></name><name name-style="western"><surname>Sasaki</surname><given-names>S</given-names></name><name name-style="western"><surname>Jaimes</surname><given-names>MC</given-names></name><name name-style="western"><surname>Kemble</surname><given-names>GW</given-names></name><name name-style="western"><surname>Dekker</surname><given-names>CL</given-names></name><name name-style="western"><surname>Arvin</surname><given-names>AM</given-names></name><name name-style="western"><surname>Greenberg</surname><given-names>HB</given-names></name></person-group><article-title>Baseline levels of influenza-specific CD4 memory T-cells affect T-cell
+responses to influenza vaccines.</article-title><source>PloS one</source><year>2008</year><volume>3</volume><fpage>e2574</fpage><pub-id pub-id-type="pmid">18596908</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1371/journal.pone.0002574</pub-id><pub-id pub-id-type="pmcid">PMC2440350</pub-id></element-citation></ref><ref id="R22"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Henn</surname><given-names>AD</given-names></name><name name-style="western"><surname>Wu</surname><given-names>S</given-names></name><name name-style="western"><surname>Qiu</surname><given-names>X</given-names></name><name name-style="western"><surname>Ruda</surname><given-names>M</given-names></name><name name-style="western"><surname>Stover</surname><given-names>M</given-names></name><name name-style="western"><surname>Yang</surname><given-names>H</given-names></name><name name-style="western"><surname>Liu</surname><given-names>Z</given-names></name><name name-style="western"><surname>Welle</surname><given-names>SL</given-names></name><name name-style="western"><surname>Holden-Wiltse</surname><given-names>J</given-names></name><name name-style="western"><surname>Wu</surname><given-names>H</given-names></name><etal/></person-group><article-title>High-resolution temporal response patterns to influenza vaccine reveal a
+distinct human plasma cell gene signature.</article-title><source>Scientific reports</source><year>2013</year><volume>3</volume><fpage>2327</fpage><pub-id pub-id-type="pmid">23900141</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1038/srep02327</pub-id><pub-id pub-id-type="pmcid">PMC3728595</pub-id></element-citation></ref><ref id="R23"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Ho</surname><given-names>J</given-names></name><name name-style="western"><surname>Moir</surname><given-names>S</given-names></name><name name-style="western"><surname>Wang</surname><given-names>W</given-names></name><name name-style="western"><surname>Posada</surname><given-names>JG</given-names></name><name name-style="western"><surname>Gu</surname><given-names>W</given-names></name><name name-style="western"><surname>Rehman</surname><given-names>MT</given-names></name><name name-style="western"><surname>Dewar</surname><given-names>R</given-names></name><name name-style="western"><surname>Kovacs</surname><given-names>C</given-names></name><name name-style="western"><surname>Sneller</surname><given-names>MC</given-names></name><name name-style="western"><surname>Chun</surname><given-names>TW</given-names></name><etal/></person-group><article-title>Enhancing effects of adjuvanted 2009 pandemic H1N1 influenza A vaccine on
+memory B-cell responses in HIV-infected individuals.</article-title><source>AIDS</source><year>2011</year><volume>25</volume><fpage>295</fpage><lpage>302</lpage><pub-id pub-id-type="pmid">21157297</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1097/QAD.0b013e328342328b</pub-id><pub-id pub-id-type="pmcid">PMC3791488</pub-id></element-citation></ref><ref id="R24"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Iwakoshi</surname><given-names>NN</given-names></name><name name-style="western"><surname>Lee</surname><given-names>AH</given-names></name><name name-style="western"><surname>Glimcher</surname><given-names>LH</given-names></name></person-group><article-title>The X-box binding protein-1 transcription factor is required for plasma
+cell differentiation and the unfolded protein response.</article-title><source>Immunological reviews</source><year>2003</year><volume>194</volume><fpage>29</fpage><lpage>38</lpage><pub-id pub-id-type="pmid">12846805</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1034/j.1600-065x.2003.00057.x</pub-id></element-citation></ref><ref id="R25"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Kaminski</surname><given-names>DA</given-names></name><name name-style="western"><surname>Wei</surname><given-names>C</given-names></name><name name-style="western"><surname>Qian</surname><given-names>Y</given-names></name><name name-style="western"><surname>Rosenberg</surname><given-names>AF</given-names></name><name name-style="western"><surname>Sanz</surname><given-names>I</given-names></name></person-group><article-title>Advances in human B cell phenotypic profiling.</article-title><source>Frontiers in immunology</source><year>2012</year><volume>3</volume><fpage>302</fpage><pub-id pub-id-type="pmid">23087687</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.3389/fimmu.2012.00302</pub-id><pub-id pub-id-type="pmcid">PMC3467643</pub-id></element-citation></ref><ref id="R26"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Kitano</surname><given-names>H</given-names></name></person-group><article-title>Computational systems biology.</article-title><source>Nature</source><year>2002</year><volume>420</volume><fpage>206</fpage><lpage>210</lpage><pub-id pub-id-type="pmid">12432404</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1038/nature01254</pub-id></element-citation></ref><ref id="R27"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Leek</surname><given-names>JT</given-names></name><name name-style="western"><surname>Storey</surname><given-names>JD</given-names></name></person-group><article-title>Capturing heterogeneity in gene expression studies by surrogate variable
+analysis.</article-title><source>PLoS genetics</source><year>2007</year><volume>3</volume><fpage>1724</fpage><lpage>1735</lpage><pub-id pub-id-type="pmid">17907809</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1371/journal.pgen.0030161</pub-id><pub-id pub-id-type="pmcid">PMC1994707</pub-id></element-citation></ref><ref id="R28"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Li</surname><given-names>GM</given-names></name><name name-style="western"><surname>Chiu</surname><given-names>C</given-names></name><name name-style="western"><surname>Wrammert</surname><given-names>J</given-names></name><name name-style="western"><surname>McCausland</surname><given-names>M</given-names></name><name name-style="western"><surname>Andrews</surname><given-names>SF</given-names></name><name name-style="western"><surname>Zheng</surname><given-names>NY</given-names></name><name name-style="western"><surname>Lee</surname><given-names>JH</given-names></name><name name-style="western"><surname>Huang</surname><given-names>M</given-names></name><name name-style="western"><surname>Qu</surname><given-names>X</given-names></name><name name-style="western"><surname>Edupuganti</surname><given-names>S</given-names></name><etal/></person-group><article-title>Pandemic H1N1 influenza vaccine induces a recall response in humans that
+favors broadly cross-reactive memory B cells.</article-title><source>Proceedings of the National Academy of Sciences of the United States of
+America</source><year>2012</year><volume>109</volume><fpage>9047</fpage><lpage>9052</lpage><pub-id pub-id-type="pmid">22615367</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1073/pnas.1118979109</pub-id><pub-id pub-id-type="pmcid">PMC3384143</pub-id></element-citation></ref><ref id="R29"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Munz</surname><given-names>C</given-names></name><name name-style="western"><surname>Lunemann</surname><given-names>JD</given-names></name><name name-style="western"><surname>Getts</surname><given-names>MT</given-names></name><name name-style="western"><surname>Miller</surname><given-names>SD</given-names></name></person-group><article-title>Antiviral immune responses: triggers of or triggered by
+autoimmunity?</article-title><source>Nature reviews Immunology</source><year>2009</year><volume>9</volume><fpage>246</fpage><lpage>258</lpage><pub-id pub-id-type="doi" assigning-authority="pmc">10.1038/nri2527</pub-id><pub-id pub-id-type="pmcid">PMC2854652</pub-id><pub-id pub-id-type="pmid">19319143</pub-id></element-citation></ref><ref id="R30"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Nakaya</surname><given-names>HI</given-names></name><name name-style="western"><surname>Wrammert</surname><given-names>J</given-names></name><name name-style="western"><surname>Lee</surname><given-names>EK</given-names></name><name name-style="western"><surname>Racioppi</surname><given-names>L</given-names></name><name name-style="western"><surname>Marie-Kunze</surname><given-names>S</given-names></name><name name-style="western"><surname>Haining</surname><given-names>WN</given-names></name><name name-style="western"><surname>Means</surname><given-names>AR</given-names></name><name name-style="western"><surname>Kasturi</surname><given-names>SP</given-names></name><name name-style="western"><surname>Khan</surname><given-names>N</given-names></name><name name-style="western"><surname>Li</surname><given-names>GM</given-names></name><etal/></person-group><article-title>Systems biology of vaccination for seasonal influenza in
+humans.</article-title><source>Nature immunology</source><year>2011</year><volume>12</volume><fpage>786</fpage><lpage>795</lpage><pub-id pub-id-type="pmid">21743478</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1038/ni.2067</pub-id><pub-id pub-id-type="pmcid">PMC3140559</pub-id></element-citation></ref><ref id="R31"><element-citation publication-type="book"><person-group person-group-type="author"><name name-style="western"><surname>Nauta</surname><given-names>J</given-names></name></person-group><source>Statistics in clinical vaccine trials</source><year>2011</year><publisher-name>Springer</publisher-name><publisher-loc>Berlin Heidelberg</publisher-loc></element-citation></ref><ref id="R32"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Obermoser</surname><given-names>G</given-names></name><name name-style="western"><surname>Presnell</surname><given-names>S</given-names></name><name name-style="western"><surname>Domico</surname><given-names>K</given-names></name><name name-style="western"><surname>Xu</surname><given-names>H</given-names></name><name name-style="western"><surname>Wang</surname><given-names>Y</given-names></name><name name-style="western"><surname>Anguiano</surname><given-names>E</given-names></name><name name-style="western"><surname>Thompson-Snipes</surname><given-names>L</given-names></name><name name-style="western"><surname>Ranganathan</surname><given-names>R</given-names></name><name name-style="western"><surname>Zeitner</surname><given-names>B</given-names></name><name name-style="western"><surname>Bjork</surname><given-names>A</given-names></name><etal/></person-group><article-title>Systems scale interactive exploration reveals quantitative and qualitative
+differences in response to influenza and pneumococcal vaccines.</article-title><source>Immunity</source><year>2013</year><volume>38</volume><fpage>831</fpage><lpage>844</lpage><pub-id pub-id-type="pmid">23601689</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1016/j.immuni.2012.12.008</pub-id><pub-id pub-id-type="pmcid">PMC3681204</pub-id></element-citation></ref><ref id="R33"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Orru</surname><given-names>V</given-names></name><name name-style="western"><surname>Steri</surname><given-names>M</given-names></name><name name-style="western"><surname>Sole</surname><given-names>G</given-names></name><name name-style="western"><surname>Sidore</surname><given-names>C</given-names></name><name name-style="western"><surname>Virdis</surname><given-names>F</given-names></name><name name-style="western"><surname>Dei</surname><given-names>M</given-names></name><name name-style="western"><surname>Lai</surname><given-names>S</given-names></name><name name-style="western"><surname>Zoledziewska</surname><given-names>M</given-names></name><name name-style="western"><surname>Busonero</surname><given-names>F</given-names></name><name name-style="western"><surname>Mulas</surname><given-names>A</given-names></name><etal/></person-group><article-title>Genetic variants regulating immune cell levels in health and
+disease.</article-title><source>Cell</source><year>2013</year><volume>155</volume><fpage>242</fpage><lpage>256</lpage><pub-id pub-id-type="pmid">24074872</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1016/j.cell.2013.08.041</pub-id><pub-id pub-id-type="pmcid">PMC5541764</pub-id></element-citation></ref><ref id="R34"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Pulendran</surname><given-names>B</given-names></name><name name-style="western"><surname>Ahmed</surname><given-names>R</given-names></name></person-group><article-title>Immunological mechanisms of vaccination.</article-title><source>Nature immunology</source><year>2011</year><volume>12</volume><fpage>509</fpage><lpage>517</lpage><pub-id pub-id-type="pmid">21739679</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1038/ni.2039</pub-id><pub-id pub-id-type="pmcid">PMC3253344</pub-id></element-citation></ref><ref id="R35"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Pulendran</surname><given-names>B</given-names></name><name name-style="western"><surname>Li</surname><given-names>S</given-names></name><name name-style="western"><surname>Nakaya</surname><given-names>HI</given-names></name></person-group><article-title>Systems vaccinology.</article-title><source>Immunity</source><year>2010</year><volume>33</volume><fpage>516</fpage><lpage>529</lpage><pub-id pub-id-type="pmid">21029962</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1016/j.immuni.2010.10.006</pub-id><pub-id pub-id-type="pmcid">PMC3001343</pub-id></element-citation></ref><ref id="R36"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Querec</surname><given-names>TD</given-names></name><name name-style="western"><surname>Akondy</surname><given-names>RS</given-names></name><name name-style="western"><surname>Lee</surname><given-names>EK</given-names></name><name name-style="western"><surname>Cao</surname><given-names>W</given-names></name><name name-style="western"><surname>Nakaya</surname><given-names>HI</given-names></name><name name-style="western"><surname>Teuwen</surname><given-names>D</given-names></name><name name-style="western"><surname>Pirani</surname><given-names>A</given-names></name><name name-style="western"><surname>Gernert</surname><given-names>K</given-names></name><name name-style="western"><surname>Deng</surname><given-names>J</given-names></name><name name-style="western"><surname>Marzolf</surname><given-names>B</given-names></name><etal/></person-group><article-title>Systems biology approach predicts immunogenicity of the yellow fever
+vaccine in humans.</article-title><source>Nature immunology</source><year>2009</year><volume>10</volume><fpage>116</fpage><lpage>125</lpage><pub-id pub-id-type="pmid">19029902</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1038/ni.1688</pub-id><pub-id pub-id-type="pmcid">PMC4049462</pub-id></element-citation></ref><ref id="R37"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Sasaki</surname><given-names>S</given-names></name><name name-style="western"><surname>He</surname><given-names>XS</given-names></name><name name-style="western"><surname>Holmes</surname><given-names>TH</given-names></name><name name-style="western"><surname>Dekker</surname><given-names>CL</given-names></name><name name-style="western"><surname>Kemble</surname><given-names>GW</given-names></name><name name-style="western"><surname>Arvin</surname><given-names>AM</given-names></name><name name-style="western"><surname>Greenberg</surname><given-names>HB</given-names></name></person-group><article-title>Influence of prior influenza vaccination on antibody and B-cell
+responses.</article-title><source>PloS one</source><year>2008</year><volume>3</volume><fpage>e2975</fpage><pub-id pub-id-type="pmid">18714352</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1371/journal.pone.0002975</pub-id><pub-id pub-id-type="pmcid">PMC2500171</pub-id></element-citation></ref><ref id="R38"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Schadt</surname><given-names>EE</given-names></name></person-group><article-title>Molecular networks as sensors and drivers of common human
+diseases.</article-title><source>Nature</source><year>2009</year><volume>461</volume><fpage>218</fpage><lpage>223</lpage><pub-id pub-id-type="pmid">19741703</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1038/nature08454</pub-id></element-citation></ref><ref id="R39"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Shen-Orr</surname><given-names>SS</given-names></name><name name-style="western"><surname>Tibshirani</surname><given-names>R</given-names></name><name name-style="western"><surname>Khatri</surname><given-names>P</given-names></name><name name-style="western"><surname>Bodian</surname><given-names>DL</given-names></name><name name-style="western"><surname>Staedtler</surname><given-names>F</given-names></name><name name-style="western"><surname>Perry</surname><given-names>NM</given-names></name><name name-style="western"><surname>Hastie</surname><given-names>T</given-names></name><name name-style="western"><surname>Sarwal</surname><given-names>MM</given-names></name><name name-style="western"><surname>Davis</surname><given-names>MM</given-names></name><name name-style="western"><surname>Butte</surname><given-names>AJ</given-names></name></person-group><article-title>Cell type-specific gene expression differences in complex
+tissues.</article-title><source>Nature methods</source><year>2010</year><volume>7</volume><fpage>287</fpage><lpage>289</lpage><pub-id pub-id-type="pmid">20208531</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1038/nmeth.1439</pub-id><pub-id pub-id-type="pmcid">PMC3699332</pub-id></element-citation></ref><ref id="R40"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Shi</surname><given-names>Y</given-names></name><name name-style="western"><surname>Agematsu</surname><given-names>K</given-names></name><name name-style="western"><surname>Ochs</surname><given-names>HD</given-names></name><name name-style="western"><surname>Sugane</surname><given-names>K</given-names></name></person-group><article-title>Functional analysis of human memory B-cell subpopulations: IgD+CD27+ B
+cells are crucial in secondary immune response by producing high affinity
+IgM.</article-title><source>Clin Immunol</source><year>2003</year><volume>108</volume><fpage>128</fpage><lpage>137</lpage><pub-id pub-id-type="pmid">12921759</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1016/s1521-6616(03)00092-5</pub-id></element-citation></ref><ref id="R41"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Smyth</surname><given-names>GK</given-names></name></person-group><article-title>Linear models and empirical bayes methods for assessing differential
+expression in microarray experiments.</article-title><source>Stat Appl Genet Mol Biol</source><year>2004</year><volume>3</volume><comment>Article3</comment><pub-id pub-id-type="doi" assigning-authority="pmc">10.2202/1544-6115.1027</pub-id><pub-id pub-id-type="pmid">16646809</pub-id></element-citation></ref><ref id="R42"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Tulp</surname><given-names>A</given-names></name><name name-style="western"><surname>Barnhoorn</surname><given-names>M</given-names></name><name name-style="western"><surname>Bause</surname><given-names>E</given-names></name><name name-style="western"><surname>Ploegh</surname><given-names>H</given-names></name></person-group><article-title>Inhibition of N-linked oligosaccharide trimming mannosidases blocks human B
+cell development.</article-title><source>The EMBO journal</source><year>1986</year><volume>5</volume><fpage>1783</fpage><lpage>1790</lpage><pub-id pub-id-type="pmid">2944744</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1002/j.1460-2075.1986.tb04427.x</pub-id><pub-id pub-id-type="pmcid">PMC1167041</pub-id></element-citation></ref><ref id="R43"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>van Duin</surname><given-names>D</given-names></name><name name-style="western"><surname>Allore</surname><given-names>HG</given-names></name><name name-style="western"><surname>Mohanty</surname><given-names>S</given-names></name><name name-style="western"><surname>Ginter</surname><given-names>S</given-names></name><name name-style="western"><surname>Newman</surname><given-names>FK</given-names></name><name name-style="western"><surname>Belshe</surname><given-names>RB</given-names></name><name name-style="western"><surname>Medzhitov</surname><given-names>R</given-names></name><name name-style="western"><surname>Shaw</surname><given-names>AC</given-names></name></person-group><article-title>Prevaccine determination of the expression of costimulatory B7 molecules in
+activated monocytes predicts influenza vaccine responses in young and older
+adults.</article-title><source>The Journal of infectious diseases</source><year>2007</year><volume>195</volume><fpage>1590</fpage><lpage>1597</lpage><pub-id pub-id-type="pmid">17471428</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1086/516788</pub-id></element-citation></ref><ref id="R44"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Welsh</surname><given-names>RM</given-names></name><name name-style="western"><surname>Selin</surname><given-names>LK</given-names></name></person-group><article-title>No one is naive: the significance of heterologous T-cell
+immunity.</article-title><source>Nature reviews Immunology</source><year>2002</year><volume>2</volume><fpage>417</fpage><lpage>426</lpage><pub-id pub-id-type="doi" assigning-authority="pmc">10.1038/nri820</pub-id><pub-id pub-id-type="pmid">12093008</pub-id></element-citation></ref><ref id="R45"><element-citation publication-type="journal"><person-group person-group-type="author"><name name-style="western"><surname>Withers</surname><given-names>DR</given-names></name><name name-style="western"><surname>Fiorini</surname><given-names>C</given-names></name><name name-style="western"><surname>Fischer</surname><given-names>RT</given-names></name><name name-style="western"><surname>Ettinger</surname><given-names>R</given-names></name><name name-style="western"><surname>Lipsky</surname><given-names>PE</given-names></name><name name-style="western"><surname>Grammer</surname><given-names>AC</given-names></name></person-group><article-title>T cell-dependent survival of CD20+ and CD20− plasma cells in human
+secondary lymphoid tissue.</article-title><source>Blood</source><year>2007</year><volume>109</volume><fpage>4856</fpage><lpage>4864</lpage><pub-id pub-id-type="pmid">17299094</pub-id><pub-id pub-id-type="doi" assigning-authority="pmc">10.1182/blood-2006-08-043414</pub-id><pub-id pub-id-type="pmcid">PMC1885535</pub-id></element-citation></ref></ref-list></back><floats-group><boxed-text position="float" id="BX1" orientation="portrait"><caption><title>Research Highlights</title></caption><p>Global characterization of pre- and post-vaccination immune variation in humans</p><p>Pre- and post-vaccination correlates of response quality identified</p><p>Integrative analyses revealed baseline predictors of vaccination response quality</p><p>Prediction derived from temporally stable immune-cell population frequencies</p></boxed-text><boxed-text position="float" id="BX2" orientation="portrait"><caption><title>Consortia</title></caption><p>The members of the Baylor HIPC Center are Gerlinde Obermoser, Damien Chaussabel and
+Karolina Palucka. The members of the CHI Consortium are Jinguo Chen, J. Christopher Fuchs,
+Jason Ho, Surender Khurana, Lisa R. King, Marc Langweiler, Hui Liu, Jody Manischewitz,
+Zoltan Pos, Jacqueline G. Posada, Paula Schum, Rongye Shi, Janet Valdez, Wei Wang, Huizhi
+Zhou, Daniel L Kastner, Francesco M. Marincola, J. Philip McCoy, Giorgio Trinchieri, and
+Neal S. Young</p></boxed-text><fig id="F1" orientation="portrait" position="float"><label>Figure 1</label><caption><title>Study design</title><p>(A) Study design indicating blood collections and assays performed. Each subject was
+vaccinated with the seasonal and pandemic H1N1 influenza vaccines right after the day 0
+blood draw.</p></caption><graphic xmlns:xlink="http://www.w3.org/1999/xlink" position="float" orientation="portrait" xlink:href="nihms-580872-f0001.jpg"/></fig><fig id="F2" orientation="portrait" position="float"><label>Figure 2</label><caption><title>Inter- and intra-subject variation at baseline</title><p>(A) Variation in cell population frequencies at baseline. The length of the bar denotes
+observed sum-of-squares (R<sup>2</sup>). Blue and grey designate R<sup>2</sup> attributed
+to inter- and intra-subject variation, respectively. (B) Variation in gene expression at
+baseline. Hierarchical-clustered heatmap of the 500 most variable genes and the relative
+proportion of inter- and intra-subject variation (see Methods). (C) Clustered heatmaps of
+genes from two variable immune relevant pathways showing distinct patterns of expression
+heterogeneity across subjects (see Figure S2C and Methods).</p></caption><graphic xmlns:xlink="http://www.w3.org/1999/xlink" position="float" orientation="portrait" xlink:href="nihms-580872-f0002.jpg"/></fig><fig id="F3" orientation="portrait" position="float"><label>Figure 3</label><caption><title>Post-vaccination changes in serologic, cellular and transcriptomic parameters</title><p>(A) Increased antigen-specific antibody secreting cells on day 7 following vaccination
+measured by ELISpot. (B) Heatmap of genes from days -7, 1, 7 and 70 that changed
+significantly compared to day 0 (FDR&lt;0.05 and absolute log-fold-change &gt;
+0.2; fold-change from day 0 is indicated by color). Genes with similar patterns of change
+were grouped by clustering analysis (indicated by the color bars on the left.) (C)
+Coherently changed genes in the clusters from B. Right: Representative immunological
+pathways enriched in coherently changing genes on days 1 and 7 (see Methods). (D)
+Coherently-changed cell populations on days 1 and 7 post-vaccination (FDR&lt;0.05 and
+&gt;10% change from day 0). Blue and brown boxes denote populations considered
+“innate” and “adaptive”, respectively.</p></caption><graphic xmlns:xlink="http://www.w3.org/1999/xlink" position="float" orientation="portrait" xlink:href="nihms-580872-f0003.jpg"/></fig><fig id="F4" orientation="portrait" position="float"><label>Figure 4</label><caption><title>Post-vaccination responses depend on baseline serology and memory B-cell
+status</title><p>(A) Relationship between initial and fold-change (day 70/day 0) in titer for A/Uruguay
+after vaccination (see Figure S4 for other viruses). Histogram at left shows distribution
+of the titer responses. (B) Heatmap showing two distinct groups of subjects identified
+based on robust clustering analysis of day 0 serologic and memory B-cell variables (see
+Methods) (C) Post-vaccination changes in plasmablast frequencies on day 7 for the low (1)
+and high (2) initial titer groups from B.</p></caption><graphic xmlns:xlink="http://www.w3.org/1999/xlink" position="float" orientation="portrait" xlink:href="nihms-580872-f0004.jpg"/></fig><fig id="F5" orientation="portrait" position="float"><label>Figure 5</label><caption><title>Predictive modeling of antibody response and identification of correlates</title><p>(A) Conceptual framework for analyzing contributors to titer response variation following
+vaccination. Variation in intrinsic factors (purple) can contribute to variations in
+baseline immune statuses (day 0, marked in blue) and post-vaccination responses (days 1
+and 7, marked in green and orange). Baseline variation can in turn contribute to response
+variation, and all sources of variation can together contribute to variation in titer
+responses. Contributions to titer variation were analyzed following the
+“flow” of time (right panel): the contributions of intrinsic variables are
+first analyzed and their effects are then removed from baseline (day 0) and response (days
+1 and 7) parameters, which were then analyzed in a similar step-wise manner (see Methods).
+(B) ANOVA modeling of day 70 titer response using age, gender, ethnicity, and baseline
+titers. Fraction of variance explained by each variable and the associated p-values are
+shown for MFC and adjMFC. (C) Robust transcriptomic correlates from days 1 and 7
+post-vaccination (shown as pathway enrichments) (see Methods). Percentage of times a
+pathway is enriched (<italic toggle="yes">p</italic>&lt;0.05) is shown. Pathways significant for
+more than 80% of the trials for at least one time-point are shown. (D) Prediction
+performance for MFC and adjMFC shown for models built using different number of top
+cell-populations (D) and genes (F) from day 7 (see Methods). (E) Day 7 predictive cell
+populations (see Results and Methods). The percentage of times (from 5000 random trials) a
+cell population is included in the model is shown. Median normalized weights of each
+population are shown on the right. The sign of the weight indicates the direction of
+correlation between the cell population and the titer endpoint.</p></caption><graphic xmlns:xlink="http://www.w3.org/1999/xlink" position="float" orientation="portrait" xlink:href="nihms-580872-f0005.jpg"/></fig><fig id="F6" orientation="portrait" position="float"><label>Figure 6</label><caption><title>Day 0 predictors and correlates</title><p>(A) Robust correlates between day 0 gene expression and response titers (see <xref ref-type="fig" rid="F5">Figure 5C</xref>). (B) Prediction performance using day 0
+populations (as in <xref ref-type="fig" rid="F5">Figure 5D</xref>). (C) Day 0 predictive
+cell populations analyzed as in <xref ref-type="fig" rid="F5">Figure 5E</xref>. (D)
+Scatter plot of intra-subject stability (y) vs. inter-subject variance (x) (see Methods).
+Predictive populations from (C) are highlighted in blue (more stable populations) and
+yellow (less stable). (E-F) Temporal profiles of two stable predictive cell populations
+for high (orange) and low (green) responders (based on adjMFC). Missing data points
+correspond to samples with low viability. (G) Predictive performance for day 0 using only
+the temporally stable populations (those above the 80% mark in <xref ref-type="fig" rid="F6">Figure 6D</xref>).</p></caption><graphic xmlns:xlink="http://www.w3.org/1999/xlink" position="float" orientation="portrait" xlink:href="nihms-580872-f0006.jpg"/></fig><fig id="F7" orientation="portrait" position="float"><label>Figure 7</label><caption><title>Gene expression and pathway enrichment signatures of predictive cell
+populations</title><p>Genes significantly correlated with predictive populations from (A) day 0 and (B) day 7.
+In (B), coherently changing genes from <xref ref-type="fig" rid="F3">Figure 3</xref> are
+highlighted by color denoting the clusters from <xref ref-type="fig" rid="F3">Figure
+3B</xref>. Analyses were performed separately for positively and negatively correlated
+genes (in red and blue scales respectively). Only genes significantly correlated with at
+least one population are shown (FDR&lt;0.01). Pathway enrichment analyses of gene
+correlates of (C) day 0 and (D) day 7 predictive cell populations (from <xref ref-type="fig" rid="F6">Figure 6C</xref>).</p></caption><graphic xmlns:xlink="http://www.w3.org/1999/xlink" position="float" orientation="portrait" xlink:href="nihms-580872-f0007.jpg"/></fig></floats-group></article></pmc-articleset>
