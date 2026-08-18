@@ -149,3 +149,38 @@ export interface ChatSession {
   messages: ChatMessage[];
   createdAt: string;
 }
+
+/** How an assay name was resolved to its OBI term, in fixed display order. */
+export type ObiResource =
+  | 'exact_original'
+  | 'exact_normalized'
+  | 'embedding_llm'
+  | 'unresolved';
+
+export interface AssayObiRow {
+  study: string;
+  assay: string;
+  normalized_name: string;
+  sample_type: string;
+  readouts: string;
+  obi_id: string | null;
+  obi_label: string | null;
+  resource: ObiResource;
+  /** "high" for exact matches, a cosine similarity for LLM-picked ones, null when unresolved. */
+  obi_confidence: string | number | null;
+}
+
+export interface AssayObiStats {
+  total_rows: number;
+  papers: number;
+  obi_terms: number;
+  mapped_rows: number;
+  coverage_pct: number;
+  by_resource: { resource: ObiResource; count: number }[];
+  unresolved_names: string[];
+}
+
+export interface AssayObiResponse {
+  rows: AssayObiRow[];
+  stats: AssayObiStats;
+}

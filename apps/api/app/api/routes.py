@@ -119,3 +119,60 @@ async def get_completeness_report():
         raise HTTPException(status_code=404, detail="No completeness report found. Run an analysis first.")
     import json
     return JSONResponse(content=json.loads(report_file.read_text(encoding="utf-8")))
+
+
+# ── Assay → OBI registry ──────────────────────────────────────────────────────
+
+# Fixed display order, so the UI's colours never shift when the data changes.
+_RESOURCE_ORDER = ["exact_original", "exact_normalized", "embedding_llm", "unresolved"]
+
+_ASSAY_OBI_PATH = (
+    Path(__file__).resolve().parents[4] / "data" / "claims" / "all_assays_full_OBI.json"
+)
+
+
+def _assay_obi_stats(rows: list[dict]) -> dict:
+    """Summary counts for the assay registry table.
+
+    Computed here rather than in the browser so the arithmetic is testable and the
+    frontend stays a renderer.
+    """
+    by_resource = {resource: 0 for resource in _RESOURCE_ORDER}
+    for row in rows:
+        resource = row.get("resource") or "unresolved"
+        by_resource[resource] = by_resource.get(resource, 0) + 1
+
+    mapped_rows = sum(1 for row in rows if row.get("obi_id"))
+    unresolved_names = sorted({row["assay"] for row in rows if not row.get("obi_id")})
+
+    return {
+        "total_rows": len(rows),
+        "papers": len({row.get("study") for row in rows}),
+        "obi_terms": len({row["obi_id"] for row in rows if row.get("obi_id")}),
+        "mapped_rows": mapped_rows,
+        "coverage_pct": round(100 * mapped_rows / len(rows), 1) if rows else 0.0,
+        # Ordered list, not a dict — the bar segments must render in a stable order.
+        "by_resource": [
+            {"resource": resource, "count": by_resource[resource]}
+            for resource in _RESOURCE_ORDER
+            if by_resource.get(resource)
+        ],
+        "unresolved_names": unresolved_names,
+    }
+
+
+@router.get("/assay-obi")
+async def get_assay_obi():
+    """Return the assay registry with its OBI mappings, plus summary statistics."""
+    if not _ASSAY_OBI_PATH.exists():
+        raise HTTPException(
+            status_code=404,
+            detail=(
+                "No assay/OBI table found. Run scripts/extract_assays.py and then "
+                "scripts/map_assays_to_obi.py to generate it."
+            ),
+        )
+    import json
+
+    rows = json.loads(_ASSAY_OBI_PATH.read_text(encoding="utf-8"))
+    return JSONResponse(content={"rows": rows, "stats": _assay_obi_stats(rows)})

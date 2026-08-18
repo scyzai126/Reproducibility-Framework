@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { ChatSession } from '@/lib/types';
 
 interface Props {
@@ -100,6 +101,19 @@ export default function Sidebar({ sessions, currentId, isOpen, onToggle, onNewCh
               ))}
             </div>
           )}
+        </div>
+
+        {/* Assay registry — a browsable dataset, not a chat session */}
+        <div className="border-b border-gray-200">
+          <Link
+            href="/assays"
+            className="w-full flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium text-gray-500 hover:bg-gray-100 hover:text-emerald-800 transition-colors"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 3h18v4H3z"/><path d="M3 11h18v4H3z"/><path d="M3 19h18v2H3z"/>
+            </svg>
+            Assay Registry
+          </Link>
         </div>
 
         {/* Chat history section */}

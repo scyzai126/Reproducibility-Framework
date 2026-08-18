@@ -1,4 +1,4 @@
-import type { AgentResponse } from './types';
+import type { AgentResponse, AssayObiResponse } from './types';
 
 const BASE = '/backend';
 const CHAT_TIMEOUT_MS = 120_000;
@@ -73,4 +73,15 @@ export async function fetchLog(): Promise<string> {
   const res = await fetch(`${BASE}/agent/log`);
   if (!res.ok) return '';
   return res.text();
+}
+
+export async function fetchAssayObi(): Promise<AssayObiResponse> {
+  // A file read on the backend, not an LLM call — keep the timeout short.
+  const res = await fetchWithTimeout(`${BASE}/agent/assay-obi`, {}, 15_000);
+
+  if (!res.ok) {
+    throw new Error(await parseErrorDetail(res));
+  }
+
+  return res.json() as Promise<AssayObiResponse>;
 }
