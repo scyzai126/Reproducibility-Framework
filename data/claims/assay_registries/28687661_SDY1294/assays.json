@@ -1,0 +1,81 @@
+{
+  "microarray": {
+    "name_in_paper": "microarray",
+    "aliases": [
+      "transcriptional profiling",
+      "microarray hybridization",
+      "Affymetrix arrays",
+      "Human PrimeView Arrays"
+    ],
+    "sample_type": "PBMCs",
+    "readouts": "gene expression, differentially expressed genes (DEGs)",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "PBMCs were isolated and their transcriptomes were analyzed using Affymetrix arrays."
+    },
+    "confidence": 0.97,
+    "claim_role": "primary"
+  },
+  "flow cytometry": {
+    "name_in_paper": "flow cytometry",
+    "aliases": [
+      "FACS",
+      "immunophenotyping"
+    ],
+    "sample_type": "PBMCs",
+    "readouts": "percentages of monocytes, dendritic cells, NK cells, B cell subsets, T cell subsets",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Regarding innate immune cells, compared to baseline levels at 0 h, the percentage of monocytes in PBMCs decreased significantly at Day 14 (p = 0.01) after a negligible change at Day 7, and later increased at Day 86 (p = 0.095) ( Figure 4A )."
+    },
+    "confidence": 0.96,
+    "claim_role": "primary"
+  },
+  "antibody-dependent cell-mediated cytotoxicity (ADCC) assay": {
+    "name_in_paper": "antibody-dependent cell-mediated cytotoxicity (ADCC) assay",
+    "aliases": [
+      "NK-mediated ADCC assay",
+      "ADCC activity"
+    ],
+    "sample_type": "PBMCs",
+    "readouts": "NK-mediated cytotoxicity, CD107a, TNF-α, IFN-γ",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "NK-mediated cytotoxicity, as assessed by ADCC activity or secretion of the cytokines TNF-α, IFN-γ, and CD107a, increased significantly at Day 7 and dropped to baseline levels at and after Day 14 ( Figure 4 G - I )."
+    },
+    "confidence": 0.93,
+    "claim_role": "primary"
+  },
+  "intracellular cytokine staining": {
+    "name_in_paper": "intracellular cytokine staining",
+    "aliases": [],
+    "sample_type": "stimulated PBMCs",
+    "readouts": "YFV-specific IL-2, IFN-γ, TNF-α secretion by T cells",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "This analysis revealed that secretion of YFV-specific IL-2 by CD4 + cells (as shown in Figure 5 I , J ) increased at Day 28 and Day 86 post vaccination after stimulation with NS1 and Env antigens, respectively (p = 0.07 and p = 0.038)."
+    },
+    "confidence": 0.95,
+    "claim_role": "primary"
+  },
+  "immunofluorescence assay": {
+    "name_in_paper": "immunofluorescence assay",
+    "aliases": [
+      "immunofluorescence assays",
+      "fluorescence microscopy"
+    ],
+    "sample_type": "serum",
+    "readouts": "baseline antibodies reactive against West Nile virus and/or Japanese encephalitis virus",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "We therefore performed immunofluorescence assays to investigate baseline serum reactivity to West Nile Virus (WNV) and Japanese encephalitis virus (JEV). We found that six out of the 21 subjects were seropositive to at least one of the flaviviruses tested ( Supplemental Figure 3 )."
+    },
+    "confidence": 0.9,
+    "claim_role": "outcome_variable"
+  }
+}

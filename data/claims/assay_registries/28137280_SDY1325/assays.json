@@ -1,0 +1,86 @@
+{
+  "serum bactericidal assay": {
+    "name_in_paper": "serum bactericidal assay",
+    "aliases": [
+      "SBA",
+      "human complement serum bactericidal assays"
+    ],
+    "sample_type": "serum",
+    "readouts": "MenA- and MenC-specific bactericidal antibody titres",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "The first dose of either MenACWY-CRM or MenACWY-PS elicited a rise in SBA geometric mean titres (GMTs) against MenA and MenC 28 days post-vaccination for all groups."
+    },
+    "confidence": 0.98,
+    "claim_role": "outcome_variable"
+  },
+  "ELISpot": {
+    "name_in_paper": "ELISpot",
+    "aliases": [
+      "enzyme-linked immunospot (ELISpot)",
+      "B-cell memory enzyme-linked immunospot",
+      "cultured antibody-secreting cell (ASC) ELISpots",
+      "ex vivo antibody-secreting cell (ASC) ELISpots"
+    ],
+    "sample_type": "PBMCs",
+    "readouts": "MenA-, MenC-, and diphtheria toxoid-specific antibody-secreting cell frequencies; memory B-cell-derived ASCs after culture and ex vivo ASCs",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "MenA- and MenC-specific ex vivo ASCs were detectable 7 days after each vaccine, with inferior MenC-specific ex vivo ASCs seen after the second dose of vaccine in those who previously received MenACWY-PS (Fig. 1c)."
+    },
+    "confidence": 0.95,
+    "claim_role": "validation"
+  },
+  "flow cytometry": {
+    "name_in_paper": "flow cytometry",
+    "aliases": [
+      "flow cytometric characterisation of B cells and plasma cells",
+      "flow cytometric analysis"
+    ],
+    "sample_type": "purified CD19+ B cells from PBMCs",
+    "readouts": "frequencies of total plasma cells, CXCR3/HLA-DR plasma cell subsets, IgM memory B cells, and switched memory B cells",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "An expansion of the CXCR3 + HLA-DR + subset 7 days post-immunisation with either MenACWY-CRM or MenACWY-PS was observed (Fig. 2e)."
+    },
+    "confidence": 0.97,
+    "claim_role": "primary"
+  },
+  "microarray": {
+    "name_in_paper": "microarray",
+    "aliases": [
+      "gene expression microarray",
+      "Transcriptomic analysis",
+      "BeadChip microarray",
+      "transcriptomics"
+    ],
+    "sample_type": "whole blood collected in PAXgene RNA tubes",
+    "readouts": "whole-blood transcript expression levels and differential gene expression signatures",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "In this combined analysis, five transcripts were differentially expressed, three of which were annotated as antibody segments: LOC651751 (Ig kappa chain V-II region), LOC642113 (IGKV3D-20) and LOC649923 (Additional file 3 : Table S2)."
+    },
+    "confidence": 0.96,
+    "claim_role": "primary"
+  },
+  "quantitative PCR": {
+    "name_in_paper": "quantitative PCR",
+    "aliases": [
+      "Quantitative real-time PCR",
+      "real-time PCR (RT-PCR)"
+    ],
+    "sample_type": "whole-blood RNA from PAXgene tubes converted to cDNA",
+    "readouts": "spliced and unspliced XBP1 isoform expression",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "To address this query, we conducted quantitative PCR using primers specific for the spliced and unspliced isoforms of XBP1 , finding upregulation of XBP1s but not XBP1u 7 days after an initial dose of either MenACWY-CRM or MenACWY-PS vaccine."
+    },
+    "confidence": 0.97,
+    "claim_role": "validation"
+  }
+}

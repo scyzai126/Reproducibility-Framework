@@ -1,0 +1,102 @@
+{
+  "SARS-CoV-2 RBD ELISA": {
+    "name_in_paper": "SARS-CoV-2 RBD ELISA",
+    "aliases": [
+      "ELISA",
+      "Plasma ELISA titers to SARS-CoV-2 spike RBD",
+      "SARS-CoV-2 spike protein receptor binding domain (RBD) ELISA"
+    ],
+    "sample_type": "plasma",
+    "readouts": "anti-spike RBD IgG, IgM, and IgA titers",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "All patients were confirmed COVID-19 cases by SARS-CoV-2 RBD ELISA ( Figures 1 and S1 ). All cases were IgG positive; anti-RBD IgM and IgA was also detected in the large majority of cases"
+    },
+    "confidence": 0.98,
+    "claim_role": "outcome_variable"
+  },
+  "Direct ex vivo PBMC immune cell phenotyping": {
+    "name_in_paper": "Direct ex vivo PBMC immune cell phenotyping",
+    "aliases": [
+      "Immunophenotyping of mononuclear leukocytes",
+      "Phenotyping Flow Cytometry",
+      "21-color flow cytometry panel"
+    ],
+    "sample_type": "PBMCs",
+    "readouts": "frequencies of CD3+ total T cells, CD4+ T cells, CD8+ T cells, CD19+ B cells, CD3-CD19- cells, and CD14+CD16- monocytes",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "The frequency of CD3 + cells was slightly increased in recovered COVID-19 patients relative to non-exposed controls, while no significant differences overall were observed in the frequencies of CD4 + or CD8 + T cells between the two groups. Frequencies of CD19 + cells were somewhat decreased"
+    },
+    "confidence": 0.93,
+    "claim_role": "primary"
+  },
+  "Activation induced cell marker assay": {
+    "name_in_paper": "Activation induced cell marker assay",
+    "aliases": [
+      "AIM assays",
+      "AIM",
+      "T cell receptor (TCR) dependent activation induced marker (AIM) assays"
+    ],
+    "sample_type": "PBMCs",
+    "readouts": "frequency of SARS-CoV-2-specific AIM+ CD4+ T cells (OX40+ CD137+) and AIM+ CD8+ T cells (CD69+ CD137+) after peptide stimulation; antigen specificity/immunodominance",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "SARS-CoV-2 spike-specific CD4 + T cell responses (OX40 + CD137 + ) were detected in 100% of COVID-19 cases"
+    },
+    "confidence": 0.99,
+    "claim_role": "primary"
+  },
+  "Cytokine bead assays": {
+    "name_in_paper": "Cytokine bead assays",
+    "aliases": [
+      "multiplex detection of cytokines",
+      "human Th cytokine panel (13-plex) kit",
+      "LEGENDplex"
+    ],
+    "sample_type": "PBMC culture supernatants",
+    "readouts": "secreted cytokine levels including IL-2, IFN-γ, IL-4, IL-5, IL-13, and IL-17α after peptide stimulation",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "To assess functionality and polarization of the SARS-CoV-2-specific CD4 + T cell response, we measured cytokines secreted in response to MP stimulation. The SARS-CoV-2-specific CD4 + T cells were functional, as the cells produced IL-2 in response to non-spike and spike MPs"
+    },
+    "confidence": 0.95,
+    "claim_role": "validation"
+  },
+  "Intracellular cytokine staining assay": {
+    "name_in_paper": "Intracellular cytokine staining assay",
+    "aliases": [
+      "ICS",
+      "intracellular cytokine staining (ICS)"
+    ],
+    "sample_type": "PBMCs",
+    "readouts": "percentage of CD8+ T cells producing IFN-γ and co-expressing granzyme B, TNF-α, or IL-10 after peptide stimulation",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Independently, ICS assays detected IFN-γ + SARS-CoV-2-specific CD8 + T cells in the majority of COVID-19 cases"
+    },
+    "confidence": 0.98,
+    "claim_role": "validation"
+  },
+  "OC43 and NL63 coronavirus RBD ELISA": {
+    "name_in_paper": "OC43 and NL63 coronavirus RBD ELISA",
+    "aliases": [
+      "Plasma IgG ELISAs for seroreactivity to RBD of HCoV-OC43 or HCoV-NL63",
+      "seroreactivity to HCoV-OC43 and HCoV-NL63 RBD"
+    ],
+    "sample_type": "plasma/serum",
+    "readouts": "IgG seroreactivity to HCoV-OC43 RBD and HCoV-NL63 RBD",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "All donors were IgG seropositive to HCoV-OC43 and HCoV-NL63 RBD, to varying degrees ( Figure 5 C)"
+    },
+    "confidence": 0.9,
+    "claim_role": "validation"
+  }
+}

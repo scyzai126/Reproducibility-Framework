@@ -1,0 +1,80 @@
+{
+  "real-time RT–PCR": {
+    "name_in_paper": "real-time RT–PCR",
+    "aliases": [],
+    "sample_type": "acute-phase sample / patient serum",
+    "readouts": "CHIKV detection and viral RNA copies (viremia, viral titer)",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "diagnosis of chikungunya was confirmed by real-time RT–PCR in the acute-phase sample"
+    },
+    "confidence": 0.93,
+    "claim_role": "outcome_variable"
+  },
+  "mass cytometry": {
+    "name_in_paper": "mass cytometry",
+    "aliases": [
+      "CyTOF",
+      "37-plex mass cytometry"
+    ],
+    "sample_type": "PBMCs",
+    "readouts": "immune cell surface marker expression, CHIKV envelope protein E2 expression, canonical leukocyte and sub-community frequencies",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Clustering by community frequency revealed a distinct contrast in CD14 + CD16 + monocyte frequencies between the acute and convalescent phases."
+    },
+    "confidence": 0.98,
+    "claim_role": "primary"
+  },
+  "multiplex ELISA-based assay (Luminex)": {
+    "name_in_paper": "multiplex ELISA-based assay (Luminex)",
+    "aliases": [
+      "Luminex",
+      "serum cytokine measurements"
+    ],
+    "sample_type": "serum",
+    "readouts": "cytokine, chemokine, and growth factor concentrations",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "The strongest contrast was for the monocyte chemoattractant CCL2 (FDR P = 3.6 × 10 −11 )."
+    },
+    "confidence": 0.96,
+    "claim_role": "primary"
+  },
+  "RNA-seq": {
+    "name_in_paper": "RNA-seq",
+    "aliases": [
+      "whole-blood RNA-seq",
+      "transcriptomic analysis",
+      "gene expression profiling"
+    ],
+    "sample_type": "whole blood",
+    "readouts": "gene expression and transcript abundances; differentially expressed genes/transcripts associated with timepoint, viral titer, severity, and antibody titer",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "We obtained a strong transcriptional signature for timepoint (acute vs. convalescent transcript abundances), with 8,008 transcripts differentially expressed at FDR < 0.05 and FCH > 2 (Fig 6 A)."
+    },
+    "confidence": 0.99,
+    "claim_role": "primary"
+  },
+  "anti-CHIKV antibody titer": {
+    "name_in_paper": "anti-CHIKV antibody titer",
+    "aliases": [
+      "convalescent anti-CHIKV antibody titer",
+      "anti-CHIKV antibodies"
+    ],
+    "sample_type": "serum",
+    "readouts": "anti-CHIKV antibody levels/titers",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "There was, however, a single significant correlation between CD14 + CD16 + monocyte sub-community 1 at the acute phase and the convalescent anti-CHIKV antibody titer (FDR P = 0.0050, Spearman's ρ = 0.60; see Appendix Fig S3A )."
+    },
+    "confidence": 0.58,
+    "claim_role": "outcome_variable"
+  }
+}

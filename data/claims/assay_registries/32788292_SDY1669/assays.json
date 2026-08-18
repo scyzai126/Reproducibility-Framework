@@ -1,0 +1,142 @@
+{
+  "mass cytometry": {
+    "name_in_paper": "mass cytometry",
+    "aliases": [
+      "phospho-CyTOF",
+      "Mass cytometry analysis of human peripheral blood leukocytes from COVID-19 patients"
+    ],
+    "sample_type": "PBMCs",
+    "readouts": "immune cell subset frequencies; intracellular signaling marker expression including pS6, IκBα, and HLA-DR",
+    "evidence_location": {
+      "type": "text",
+      "section": "Analysis of peripheral blood leukocytes from COVID-19 patients by mass cytometry",
+      "quote": "There was a notable increase in the frequency of plasmablast and effector CD8 T cells in all infected individuals."
+    },
+    "confidence": 0.98,
+    "claim_role": "primary"
+  },
+  "flow cytometry": {
+    "name_in_paper": "flow cytometry",
+    "aliases": [
+      "intracellular staining assay",
+      "Flow cytometry analysis of ex vivo stimulated human peripheral blood leukocytes from COVID-19 patients"
+    ],
+    "sample_type": "PBMCs",
+    "readouts": "fractions of pDCs, mDCs, and monocytes producing IFN-α, TNF-α, and IL-6 after TLR stimulation; NF-κB p65 phosphorylation; HLA-DR expression",
+    "evidence_location": {
+      "type": "text",
+      "section": "COVID-19 results in functional impairment of blood myeloid cells and pDCs",
+      "quote": "Consistent with our hypothesis, there was reduced production of IFN-α in response to the TLR stimuli in the pDCs of infected individuals compared with those of healthy controls."
+    },
+    "confidence": 0.97,
+    "claim_role": "primary"
+  },
+  "Olink multiplex inflammation panel": {
+    "name_in_paper": "Olink multiplex inflammation panel",
+    "aliases": [
+      "Olink proteomics",
+      "Multiplex analysis of cytokines in the plasma of COVID-19 patients",
+      "multiplex Olink analysis"
+    ],
+    "sample_type": "plasma",
+    "readouts": "normalized protein expression levels of cytokines, chemokines, and inflammatory mediators including IL-6, MCP-3, CXCL10, TNFSF14, EN-RAGE, and OSM",
+    "evidence_location": {
+      "type": "text",
+      "section": "Enhanced concentrations of cytokines and inflammatory mediators in plasma from COVID-19 patients",
+      "quote": "Of these 71 proteins, 43 cytokines, including IL-6, MCP-3, and CXCL10, were significantly up-regulated in COVID-19 infection."
+    },
+    "confidence": 0.96,
+    "claim_role": "primary"
+  },
+  "ELISA": {
+    "name_in_paper": "ELISA",
+    "aliases": [
+      "enzyme-linked immunosorbent assay"
+    ],
+    "sample_type": "plasma",
+    "readouts": "protein concentrations of TNFSF14, EN-RAGE, and OSM",
+    "evidence_location": {
+      "type": "text",
+      "section": "Enhanced concentrations of cytokines and inflammatory mediators in plasma from COVID-19 patients",
+      "quote": "Consistent with the multiplex Olink analysis, we found a significant increase of these inflammatory mediators in the plasma of severe and intensive care unit (ICU) COVID-19 patients."
+    },
+    "confidence": 0.95,
+    "claim_role": "validation"
+  },
+  "CITE-seq": {
+    "name_in_paper": "CITE-seq",
+    "aliases": [
+      "cellular indexing of transcriptomes and epitopes by sequencing"
+    ],
+    "sample_type": "PBMCs",
+    "readouts": "single-cell gene expression and antibody-derived protein expression; cell clusters; ISG signatures; HLA-DR/CD86 and S100A12-associated myeloid states",
+    "evidence_location": {
+      "type": "text",
+      "section": "Single-cell transcriptional response to COVID-19 infection",
+      "quote": "Notably, with the exception of modest levels of IFN-γ expression in T and NK cells, we could not detect any expression of IFN-α and -β genes, which is consistent with the functional data demonstrating impaired type I IFN production by pDCs and myeloid cells."
+    },
+    "confidence": 0.98,
+    "claim_role": "primary"
+  },
+  "SIMoA": {
+    "name_in_paper": "SIMoA",
+    "aliases": [
+      "single molecule array (SIMoA) technology"
+    ],
+    "sample_type": "plasma",
+    "readouts": "IFN-α concentration",
+    "evidence_location": {
+      "type": "text",
+      "section": "Single-cell transcriptional response to COVID-19 infection",
+      "quote": "We observed a marked increase in the concentration of IFN-α, which peaked around day 8 after onset of symptoms and regressed to baseline levels by day 20."
+    },
+    "confidence": 0.94,
+    "claim_role": "outcome_variable"
+  },
+  "bulk RNA sequencing": {
+    "name_in_paper": "bulk RNA sequencing",
+    "aliases": [
+      "bulk RNA-seq",
+      "RNA-seq"
+    ],
+    "sample_type": "PBMCs",
+    "readouts": "bulk gene expression, including ISG signature and IFN-related transcripts",
+    "evidence_location": {
+      "type": "text",
+      "section": "Single-cell transcriptional response to COVID-19 infection",
+      "quote": "We observed a strong induction of the ISGs in COVID-19 subjects compared with healthy donors in this dataset as well."
+    },
+    "confidence": 0.97,
+    "claim_role": "validation"
+  },
+  "PCR quantitation of bacterial 16 S ribosomal RNA (rRNA) gene product": {
+    "name_in_paper": "PCR quantitation of bacterial 16 S ribosomal RNA (rRNA) gene product",
+    "aliases": [
+      "PCR",
+      "qPCR",
+      "quantitative PCR"
+    ],
+    "sample_type": "plasma",
+    "readouts": "bacterial DNA levels measured via bacterial 16S rRNA gene",
+    "evidence_location": {
+      "type": "text",
+      "section": "Severe COVID-19 infection is associated with the systemic release of bacterial products",
+      "quote": "Notably, the plasma of severe and ICU patients had significantly higher levels of bacterial DNA, as measured by PCR quantitation of bacterial 16 S ribosomal RNA (rRNA) gene product."
+    },
+    "confidence": 0.9,
+    "claim_role": "primary"
+  },
+  "TLR4-based reporter assay": {
+    "name_in_paper": "TLR4-based reporter assay",
+    "aliases": [],
+    "sample_type": "plasma",
+    "readouts": "LPS levels",
+    "evidence_location": {
+      "type": "text",
+      "section": "Severe COVID-19 infection is associated with the systemic release of bacterial products",
+      "quote": "Notably, the plasma of severe and ICU patients had significantly higher levels of bacterial DNA, as measured by PCR quantitation of bacterial 16 S ribosomal RNA (rRNA) gene product, and of LPS, as measured by a TLR4-based reporter assay."
+    },
+    "confidence": 0.88,
+    "claim_role": "primary"
+  }
+}

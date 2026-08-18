@@ -1,0 +1,69 @@
+{
+  "microarray": {
+    "name_in_paper": "microarray",
+    "aliases": [
+      "Affymetrix exon microarrays",
+      "Microarrays",
+      "Affymetrix Exon Arrays",
+      "Human Exon ST 1.0 microarray platform",
+      "Agilent 3′ Arrays",
+      "Agilent SurePrint G3 Human GE 8 × 60K microarray platform",
+      "transcriptional profiling"
+    ],
+    "sample_type": "PBMCs",
+    "readouts": "gene expression changes, exon-level expression responses, transcriptional signatures",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Responses to MRKAd5/HIV peaked at 24 h, with 1,026 genes exhibiting enhanced and 1,048 genes exhibiting repressed expression levels compared with prevaccination."
+    },
+    "confidence": 0.98,
+    "claim_role": "primary"
+  },
+  "quantitative real-time PCR": {
+    "name_in_paper": "quantitative real-time PCR",
+    "aliases": [
+      "Quantitative RT-PCR",
+      "qRT-PCR"
+    ],
+    "sample_type": "PBMC RNA",
+    "readouts": "mRNA expression of selected genes (e.g., CXCL10, ISG-15, STAT1)",
+    "evidence_location": {
+      "type": "figure",
+      "ref": "Figure 1C"
+    },
+    "confidence": 0.97,
+    "claim_role": "validation"
+  },
+  "multiplex cytokine analysis": {
+    "name_in_paper": "multiplex cytokine analysis",
+    "aliases": [
+      "multiplex serum analyte analysis",
+      "Multiplex Cytokine Analysis",
+      "multiplex analyte analysis",
+      "Luminex 200"
+    ],
+    "sample_type": "serum",
+    "readouts": "cytokine and chemokine concentrations",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Next, we corroborated the differential expression of many cytokines and chemokines at the protein level using multiplex serum analyte analysis (Fig. 1D and Dataset S1, tab 6), detecting robust changes in serum levels of IP-10, I-TAC, monocyte chemoattractant protein-1 (MCP-1), and MCP-2, as well as immunoregulatory IL-10 and IL-1Ra."
+    },
+    "confidence": 0.95,
+    "claim_role": "primary"
+  },
+  "flow cytometry": {
+    "name_in_paper": "flow cytometry",
+    "aliases": [],
+    "sample_type": "fresh whole blood / circulating peripheral blood leukocytes",
+    "readouts": "concentrations of monocytes and lymphocyte populations (T, B, and NK cells)",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Finally, we validated the cellular trafficking responses predicted from the modular analysis by directly assessing circulating peripheral blood leukocyte concentrations (Fig. 1E and Dataset S1, tab 7), confirming vaccine-induced influx of monocytes and pronounced efflux of lymphocyte populations (T, B, and NK cells)."
+    },
+    "confidence": 0.9,
+    "claim_role": "validation"
+  }
+}

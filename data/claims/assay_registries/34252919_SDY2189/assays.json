@@ -1,0 +1,151 @@
+{
+  "enzyme-linked immunosorbent assay": {
+    "name_in_paper": "enzyme-linked immunosorbent assay",
+    "aliases": [
+      "Anti-spike binding enzyme-linked immunosorbent assay",
+      "ELISA",
+      "measured by enzyme-linked immunosorbent assay"
+    ],
+    "sample_type": "serum",
+    "readouts": "anti-spike IgG titres (EC50), binding antibody responses",
+    "evidence_location": {
+      "type": "figure",
+      "ref": "Figure 1a"
+    },
+    "confidence": 0.98,
+    "claim_role": "outcome_variable"
+  },
+  "focus reduction neutralization titre assay": {
+    "name_in_paper": "focus reduction neutralization titre assay",
+    "aliases": [
+      "FRNT assay",
+      "focus reduction neutralization titre assays",
+      "live-virus neutralizing antibody titres",
+      "FRNT–mNG50"
+    ],
+    "sample_type": "serum",
+    "readouts": "live-virus neutralizing antibody titres against SARS-CoV-2 WA1 and B.1.351",
+    "evidence_location": {
+      "type": "text",
+      "section": "Antibody and T cell responses",
+      "quote": "BNT162b2 vaccination also induced a neutralizing antibody response against the B.1.351 variant of concern, albeit at a tenfold-lower magnitude than against the wild-type WA1/2020 (WA1) strain ( Fig. 1c )"
+    },
+    "confidence": 0.98,
+    "claim_role": "outcome_variable"
+  },
+  "intracellular cytokine staining assay": {
+    "name_in_paper": "intracellular cytokine staining assay",
+    "aliases": [
+      "spike-specific T cell responses",
+      "flow cytometry"
+    ],
+    "sample_type": "PBMCs",
+    "readouts": "spike-specific CD4 and CD8 T cell cytokine responses, including IFNγ, TNF and IL-4",
+    "evidence_location": {
+      "type": "text",
+      "section": "Antibody and T cell responses",
+      "quote": "Vaccination also stimulated spike-specific T cell responses, which were more readily detectable seven days after the secondary immunization ( Fig. 1d , e )."
+    },
+    "confidence": 0.97,
+    "claim_role": "outcome_variable"
+  },
+  "bead-based antigen arrays": {
+    "name_in_paper": "bead-based antigen arrays",
+    "aliases": [
+      "55-plex antigen and 58-plex cytokine arrays",
+      "COVID-19 Autoantigen Array",
+      "COVID-19 Cytokine Array",
+      "Luminex"
+    ],
+    "sample_type": "serum",
+    "readouts": "IgG autoantibody and anticytokine antibody mean fluorescence intensity",
+    "evidence_location": {
+      "type": "text",
+      "section": "Lack of autoantibodies or anticytokine antibodies",
+      "quote": "Anticytokine antibodies were largely absent or were observed at a low mean fluorescence intensity with no significant changes ."
+    },
+    "confidence": 0.9,
+    "claim_role": "primary"
+  },
+  "cytometry by time of flight": {
+    "name_in_paper": "cytometry by time of flight",
+    "aliases": [
+      "CyTOF",
+      "CyTOF analysis of whole-blood samples"
+    ],
+    "sample_type": "whole blood",
+    "readouts": "immune cell frequencies and intracellular phospho-signaling markers including pSTAT1 and pSTAT3",
+    "evidence_location": {
+      "type": "text",
+      "section": "Innate immune responses",
+      "quote": "The frequency of intermediate monocytes (CD14 + CD16 + monocytes) increased significantly two days after the primary vaccination, and was substantially higher two days after the secondary vaccination ( Fig. 2b )."
+    },
+    "confidence": 0.99,
+    "claim_role": "primary"
+  },
+  "Olink multiplex proximity extension assay (PEA) inflammation panel": {
+    "name_in_paper": "Olink multiplex proximity extension assay (PEA) inflammation panel",
+    "aliases": [
+      "Olink",
+      "plasma protein profiling using multiplex Olink panel",
+      "measured plasma cytokines in 31 vaccinated individuals using Olink"
+    ],
+    "sample_type": "plasma",
+    "readouts": "cytokine concentrations including IFNγ, CXCL10, IL-10 and IFNα2",
+    "evidence_location": {
+      "type": "text",
+      "section": "Innate immune responses",
+      "quote": "Of the 67 cytokines detected, the concentration of 2 cytokines (IFNγ and CXCL10) were increased significantly on days 1 and 2 after primary vaccination ( Fig. 2e left)."
+    },
+    "confidence": 0.97,
+    "claim_role": "primary"
+  },
+  "bulk mRNA sequencing": {
+    "name_in_paper": "bulk mRNA sequencing",
+    "aliases": [
+      "bulk transcriptomics"
+    ],
+    "sample_type": "whole blood",
+    "readouts": "gene expression, differentially expressed genes, interferon and innate transcriptional modules",
+    "evidence_location": {
+      "type": "text",
+      "section": "Transcriptional signatures of vaccination",
+      "quote": "Secondary vaccination generated a greater transcriptional response (as has previously been seen in a recent study of adjuvanted hepatitis B vaccine 17 ), with nearly a fourfold increase of differentially expressed genes at day 22 as compared to day 1 ( Fig. 3a )"
+    },
+    "confidence": 0.98,
+    "claim_role": "primary"
+  },
+  "cellular indexing of transcriptomes and epitopes by sequencing": {
+    "name_in_paper": "cellular indexing of transcriptomes and epitopes by sequencing",
+    "aliases": [
+      "CITE-seq",
+      "single-cell transcriptomics analysis",
+      "single-cell transcriptional profiling"
+    ],
+    "sample_type": "PBMCs enriched with dendritic cells",
+    "readouts": "single-cell RNA and surface protein-defined cell clusters, cluster frequencies, cell-type-specific gene expression signatures",
+    "evidence_location": {
+      "type": "text",
+      "section": "Single-cell transcriptional response",
+      "quote": "Notably, cluster C8 (which expressed CD14 , VCAN , CD1C , FCGR1A and CD274 mRNA or protein) emerged on day 22, one day after secondary vaccination ( Fig. 4b )."
+    },
+    "confidence": 0.99,
+    "claim_role": "primary"
+  },
+  "qPCR": {
+    "name_in_paper": "qPCR",
+    "aliases": [
+      "RNA isolation and qPCR",
+      "enzyme-linked immunosorbent assay"
+    ],
+    "sample_type": "purified monocytes",
+    "readouts": "gene expression of induced C8 signature transcripts after IFNγ or plasma stimulation",
+    "evidence_location": {
+      "type": "text",
+      "section": "Single-cell transcriptional response",
+      "quote": "In vitro stimulation of purified healthy monocytes with IFNγ or day-22 plasma also induced a C8 signature, which suggests that IFNγ has a key role in inducing cluster C8, in response to mRNA vaccination ."
+    },
+    "confidence": 0.55,
+    "claim_role": "validation"
+  }
+}

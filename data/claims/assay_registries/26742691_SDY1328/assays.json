@@ -1,0 +1,87 @@
+{
+  "microarray": {
+    "name_in_paper": "microarray",
+    "aliases": [
+      "transcriptional profiling",
+      "gene-expression signature",
+      "Affymetrix HuRSTA-2a520709 chips",
+      "Illumina Sentrix Human Whole Genome 6 BeadChips"
+    ],
+    "sample_type": "whole blood RNA from PAXgene blood samples; peripheral blood mononuclear cells in SAFHS",
+    "readouts": "transcript expression levels, age-related gene modules, pre-vaccination gene signatures predictive of HBV vaccine response",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "To test the accuracy of this signature, we performed a receiver operating characteristic (ROC) analysis that indicated that the BioAge signature could predict the response to the HBV vaccine with an accuracy of 60.0% in the EM131 elderly cohort."
+    },
+    "confidence": 0.96,
+    "claim_role": "primary"
+  },
+  "flow cytometry": {
+    "name_in_paper": "flow cytometry",
+    "aliases": [
+      "FCM",
+      "Polychromatic FCM",
+      "cytometric profiling"
+    ],
+    "sample_type": "whole blood and PBMCs collected pre-vaccination",
+    "readouts": "frequencies of immune cell subsets and marker median fluorescence intensity, including memory B cells, CD4 T-effector memory 2 cells, and CD40 on pDCs",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Two cell subsets defined by FCM, namely frequencies of switched IgG+ memory B cells (CD3−, CD19+, HLADR+, CD27+, IgG+) and of IgG+ memory B cells (CD3−, CD19+, HLADR+, CD27+, CD10−, CD20+, IgG+) were identified as significant predictors of the response to the HBV vaccine."
+    },
+    "confidence": 0.97,
+    "claim_role": "validation"
+  },
+  "multiplex ELISA": {
+    "name_in_paper": "multiplex ELISA",
+    "aliases": [
+      "Human Inflammation multianalyte profiling",
+      "cytokine profiling",
+      "multianalyte profiling protocols"
+    ],
+    "sample_type": "serum",
+    "readouts": "concentrations of cytokines and chemokines, including IL-15, IL-1ra and TNFR2",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "We also screened a panel of 47 serum cytokines and chemokines for their association with the response to HBV vaccination. Three inflammation-associated proteins—IL-15, IL-1ra and TNFR2—were negatively associated with HBV vaccine response on the EM131 training set."
+    },
+    "confidence": 0.88,
+    "claim_role": "validation"
+  },
+  "complete blood count": {
+    "name_in_paper": "complete blood count",
+    "aliases": [
+      "haematologic markers",
+      "RBC counts"
+    ],
+    "sample_type": "blood",
+    "readouts": "red blood cell counts",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Interestingly, higher red blood cell (RBC) counts were associated with low Ab titres in elderly (Table 1 and Fig. 5c,d)."
+    },
+    "confidence": 0.9,
+    "claim_role": "validation"
+  },
+  "anti-HBsAg total antibodies": {
+    "name_in_paper": "anti-HBsAg total antibodies",
+    "aliases": [
+      "HBV titres",
+      "anti-HBsAg titres",
+      "antibody titres for HBsAg"
+    ],
+    "sample_type": "serum",
+    "readouts": "anti-hepatitis B surface antigen antibody titers",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Kernel density estimation of anti-HBsAg titres showed that a cutoff of 5 mIU ml−1 demarcated study participants as HBV vaccine responders (Ab titres≥5 mIU ml−1) and poor-responders (Ab titres below detection threshold)."
+    },
+    "confidence": 0.62,
+    "claim_role": "outcome_variable"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "single-cell RNA-seq": {
+    "name_in_paper": "single-cell RNA-seq",
+    "aliases": [
+      "scRNA-seq",
+      "Chromium 3′-scRNA-seq",
+      "single cell RNA-sequencing",
+      "scRNAseq"
+    ],
+    "sample_type": "CD3+ T cells from lung, lung-draining lymph node, bone marrow, blood, and published tumor-associated T cells",
+    "readouts": "single-cell transcriptomes; gene expression states; T cell subset identities; tissue signatures; activation-state markers",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Differential gene expression from the scRNA-seq data resolved T cell subsets and functional states within and between sites and lineages into 10–11 clusters (Fig. 1c, Supplementary Data 3, 4)."
+    },
+    "confidence": 0.99,
+    "claim_role": "primary"
+  },
+  "qPCR": {
+    "name_in_paper": "qPCR",
+    "aliases": [
+      "quantitative real-time PCR",
+      "quantitative PCR (qPCR)"
+    ],
+    "sample_type": "sorted blood CD4+ and CD8+ T cells",
+    "readouts": "NME1, IL2RA, and IFIT3 mRNA fold-change after stimulation or IFN blockade",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Expression of NME1 transcripts rapidly increased after TCR-stimulation, peaking between 16 and 24 h and remaining elevated for up to 72 h, for both CD4 + and CD8 + T cells compared to unstimulated controls, a pattern of expression similar to the canonical T cell activation marker IL2RA (Fig. 5a)."
+    },
+    "confidence": 0.97,
+    "claim_role": "validation"
+  },
+  "flow cytometry": {
+    "name_in_paper": "flow cytometry",
+    "aliases": [],
+    "sample_type": "tissue and blood T cells; proliferating CD3+ T cells",
+    "readouts": "surface-marker phenotype; intracellular NME1 protein; CD25 expression; proliferation-associated protein expression",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "At the protein level, NME1 expression increased in CD4 + and CD8 + T cells after TCR-mediated stimulation from 24 to 120 h (Fig. 5b, upper), and with each successive round of T cell proliferation, while CD25 was expressed similarly, independent of cell division (Fig. 5b, lower)."
+    },
+    "confidence": 0.95,
+    "claim_role": "validation"
+  }
+}

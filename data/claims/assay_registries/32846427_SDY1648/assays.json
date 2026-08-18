@@ -1,0 +1,80 @@
+{
+  "RT-PCR": {
+    "name_in_paper": "RT-PCR",
+    "aliases": [
+      "real-time RT-PCR",
+      "Virus RNA measurement"
+    ],
+    "sample_type": "nasopharyngeal swab and saliva",
+    "readouts": "SARS-CoV-2 RNA concentrations, virus RNA copies",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "For both Cohort A and B, there was no difference by sex in terms of viral RNA concentrations in nasopharyngeal swab and saliva."
+    },
+    "confidence": 0.97,
+    "claim_role": "outcome_variable"
+  },
+  "ELISA": {
+    "name_in_paper": "ELISA",
+    "aliases": [
+      "ELISAs",
+      "SARS-CoV-2 specific antibody titer measurement"
+    ],
+    "sample_type": "serum",
+    "readouts": "anti-SARS-CoV-2 S1-specific IgG and IgM antibody titers",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Anti-SARS-CoV-2 S1-specific IgG and IgM (anti-S1-IgG and -IgM) antibodies were comparable in infected men and women in Cohort A ( Fig. 1b ) and Cohort B ."
+    },
+    "confidence": 0.98,
+    "claim_role": "outcome_variable"
+  },
+  "Human Cytokine Array/Chemokine Array 71-Plex Panel (HD71)": {
+    "name_in_paper": "Human Cytokine Array/Chemokine Array 71-Plex Panel (HD71)",
+    "aliases": [
+      "cytokine/chemokine measurements",
+      "cytokine and chemokine measurement"
+    ],
+    "sample_type": "plasma/sera",
+    "readouts": "levels of 71 cytokines and chemokines",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "However, IL-8 and IL-18 were significantly higher in male patients compared to female patients in Cohort A ( Fig. 1c )."
+    },
+    "confidence": 0.88,
+    "claim_role": "primary"
+  },
+  "flow cytometry": {
+    "name_in_paper": "flow cytometry",
+    "aliases": [
+      "Flow cytometry"
+    ],
+    "sample_type": "freshly isolated PBMCs",
+    "readouts": "PBMC composition, monocyte subsets, T cell frequencies, activated T cells, terminally differentiated T cells, intracellular cytokine-positive T cells",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "In contrast, female patients mounted significantly more robust T cell activation than male patients during SARS-CoV-2 infection, which was sustained in old age."
+    },
+    "confidence": 0.99,
+    "claim_role": "primary"
+  },
+  "T cell intracellular staining": {
+    "name_in_paper": "T cell intracellular staining",
+    "aliases": [
+      "intracellular cytokine staining",
+      "3) T cell intracellular staining"
+    ],
+    "sample_type": "freshly isolated PBMCs",
+    "readouts": "IFNγ, Granzyme B, TNF, IL-6, IL-2, IL-17A positive T-cell frequencies",
+    "evidence_location": {
+      "type": "figure",
+      "ref": "Figure 4d"
+    },
+    "confidence": 0.9,
+    "claim_role": "validation"
+  }
+}
