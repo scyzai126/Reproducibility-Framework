@@ -6,11 +6,13 @@ from pathlib import Path
 import pytest
 
 from app.agent.claim_abstraction_v5 import (
+    CLAIMS_OUTPUT_FIELDS,
     UsageTracker,
     apply_verdicts,
     build_pass1_user_message,
     load_v5_prompts,
     pick_modal,
+    project_claims,
     split_panels,
     system_prompts,
 )
@@ -51,11 +53,12 @@ JATS = """<article>
 
 
 V5_PROMPT = "claim_abstraction_prompt_v5.md"
+V7_PROMPT = "claim_abstraction_prompt_v7.md"
 
 
-@pytest.mark.parametrize("prompt_file", [None, V5_PROMPT])
+@pytest.mark.parametrize("prompt_file", [None, V5_PROMPT, V7_PROMPT])
 def test_load_prompts_returns_every_block(prompt_file):
-    """Both documents carry the same five-pass skeleton and must parse identically."""
+    """All three documents carry the same five-pass skeleton and must parse identically."""
     blocks = load_v5_prompts() if prompt_file is None else load_v5_prompts(prompt_file)
     assert set(blocks) == {"preamble", "pass1", "pass2", "pass3", "pass4", "pass5"}
     assert all(v.strip() for v in blocks.values())
@@ -149,6 +152,129 @@ def test_v6_pass5_normalizes_names_across_panels():
     assert "NAMING" in prompts["pass5"]
     assert "sample_type" in prompts["pass5"]
     assert "serum and plasma are not the same sample" in prompts["pass5"]
+
+
+# ── v7: the granularity guideline ─────────────────────────────────────────────
+
+
+def test_v7_preserves_everything_downstream_parses():
+    """v7 changes only the splitting rules. claim_validator._head() splits on "showed",
+    validate_claims.txt reads `sources`, and claim_filter reads the shared vocabulary — a
+    v7 that dropped any of them would still be a runnable prompt."""
+    prompts = system_prompts(load_v5_prompts(V7_PROMPT))
+
+    assert "THE HEAD IS MANDATORY IN BOTH FORMS" in prompts["pass1"]
+    assert "showed" in prompts["pass1"]
+    assert '"sources"' in prompts["pass1"]
+    assert "Figure N caption" in prompts["pass1"]
+    assert "POLARITY is separate from type" in prompts["pass1"]
+    assert '"polarity": "affirm" | "null"' in prompts["pass1"]
+    assert "null_result" not in prompts["pass1"]
+    assert "Use exactly these six reason strings" in prompts["pass1"]
+
+    assert CLAIM_TYPES_PLACEHOLDER not in prompts["pass1"]
+    for claim_type in DOWNSTREAM_CLAIM_TYPES:
+        assert claim_type in prompts["pass1"]
+
+
+@pytest.mark.parametrize("prompt_file", [None, V7_PROMPT])
+def test_response_difference_carries_both_of_its_references(prompt_file):
+    """A difference-in-differences needs two references — the within-group baseline each arm
+    is measured against, and the comparator arm. `contrast` has one `reference` slot, so
+    without `within_reference` the baseline is overwritten by the comparator and the record
+    no longer says whether to compare levels or changes. Both v6 (the module default) and v7
+    must ship the field and the rule that fills it."""
+    prompts = system_prompts(load_v5_prompts() if prompt_file is None
+                             else load_v5_prompts(prompt_file))
+    pass1 = prompts["pass1"]
+
+    assert "response_difference" in pass1
+    assert '"within_reference"' in pass1
+    # The DiD must not be split into an induction plus a between-group comparison.
+    assert "difference-in-differences is ONE claim" in pass1
+    # And the level/change test that decides the type must survive the vocabulary injection.
+    assert "Level or change?" in pass1
+
+
+def test_v7_carries_the_one_claim_one_verdict_test():
+    """The principle the five rules are derived from. v6 listed the rules without it."""
+    prompts = system_prompts(load_v5_prompts(V7_PROMPT))
+    assert "ONE CLAIM = ONE VERDICT" in prompts["pass1"]
+    assert "CAN THIS COME BACK HALF-TRUE" in prompts["pass1"]
+
+
+def test_v7_guards_over_splitting_not_only_under_splitting():
+    """The gap v7 exists to close: every v6-era prompt pushes one direction only."""
+    prompts = system_prompts(load_v5_prompts(V7_PROMPT))
+    assert "OVER-SPLITTING" in prompts["pass1"]
+    assert "THE TWO FAILURE MODES ARE NOT SYMMETRIC" in prompts["pass1"]
+    # The asymmetry must survive: splitting stays the safer default.
+    assert "Under-extraction is as much a defect as fabrication" in prompts["pass1"]
+    assert "Splitting remains the safer default" in prompts["pass1"]
+
+
+def test_v7_adds_the_data_object_split_and_the_merging_case():
+    """Rule 5 and its counterweight — absent from every other prompt in the repo."""
+    prompts = system_prompts(load_v5_prompts(V7_PROMPT))
+    assert "RULE 5 — SPLIT WHEN THE DATA OBJECT DIFFERS" in prompts["pass1"]
+    assert "THE ONE CASE THAT ARGUES FOR MERGING" in prompts["pass1"]
+    assert "WRITE THE REPRODUCTION PROCEDURE BEFORE YOU SPLIT" in prompts["pass1"]
+    assert "CALIBRATION" in prompts["pass1"]
+
+
+def test_v7_keeps_the_cardinality_test_and_its_one_way_converse():
+    """Splitting on claim_type is the mechanical under-split check; a SHARED type is
+    never grounds to merge. The over-split guard must not have weakened either."""
+    prompts = system_prompts(load_v5_prompts(V7_PROMPT))
+    assert "CARDINALITY TEST" in prompts["pass1"]
+    assert "THE CONVERSE DOES NOT HOLD" in prompts["pass1"]
+    assert "conjunction" in prompts["pass1"]
+    # The vocabulary-consistent shared-type example carries the converse on its own.
+    assert "remained above baseline at day 750" in prompts["pass1"]
+
+
+def test_v7_does_not_prescribe_group_difference_for_whole_course_comparisons():
+    """v7 once told the extractor that the magnitude and duration halves of the SDY1260
+    Fig. 1a sentence were BOTH `group_difference`. That contradicted claim_types.txt three
+    ways -- group_difference requires a matched timepoint, the precedence ladder ranks
+    trajectory_segment and magnitude_comparison above it, and "greater magnitude" is a
+    listed magnitude_comparison cue -- and the SDY1260 run typed the same assertion two
+    different ways across panels as a result."""
+    prompts = system_prompts(load_v5_prompts(V7_PROMPT))
+    assert "BOTH `group_difference`" not in prompts["pass1"]
+    assert "A BETWEEN-ARM COMPARISON IS NOT AUTOMATICALLY `group_difference`" in prompts["pass1"]
+    assert "magnitude -> `response_difference`" in prompts["pass1"]
+    assert 'duration -> `trajectory_segment` ("how long it lasts")' in prompts["pass1"]
+
+
+def test_v7_magnitude_duration_convention_matches_the_whole_pdf_extractor():
+    """The five-pass and single-call extractors must not drift on this pair.
+    extract_claims_pdf.txt's worked example is the origin of the convention."""
+    whole_pdf = (
+        _REPO_ROOT / "apps/api/app/prompts/extract_claims_pdf.txt"
+    ).read_text(encoding="utf-8")
+    assert "greater magnitude" in whole_pdf and "`claim_type: response_difference`" in whole_pdf
+    assert "greater duration" in whole_pdf and "`claim_type: trajectory_segment`" in whole_pdf
+    # The magnitude half compares two ARMS, so it is a response_difference; labelling it
+    # magnitude_comparison would send it to the filter's discard pile.
+    assert "showed greater magnitude of the polysaccharide-specific IgG response after MPSV4"\
+           " compared to a single dose of MCV4.\" `claim_type: magnitude_comparison`" not in whole_pdf
+
+    pass1 = system_prompts(load_v5_prompts(V7_PROMPT))["pass1"]
+    assert "`response_difference`" in pass1
+    assert '`trajectory_segment` ("how long it lasts")' in pass1
+
+
+def test_v7_routes_the_merge_decision_to_pass1_only():
+    """Pass 2 sees the draft and the legend, never the prose, so it cannot re-derive the
+    reproduction procedure that decides a merge. Without this, v7's new recombine step
+    would read as licence for pass 2 to merge — and pass 2 forbids exactly that."""
+    prompts = system_prompts(load_v5_prompts(V7_PROMPT))
+    assert "PASS 1 IS THE ONLY PLACE IT CAN HAPPEN" in prompts["pass1"]
+    assert "Do not merge draft claims." in prompts["pass2"]
+    assert "YOU CANNOT TELL AN OVER-SPLIT PARTITION" in prompts["pass2"]
+    # Pass 5 still owns cross-panel redundancy, and still may not undo a legitimate split.
+    assert "SHARING A SOURCE IS NORMAL" in prompts["pass5"]
 
 
 # ── panel splitting ───────────────────────────────────────────────────────────
@@ -314,3 +440,66 @@ def test_a_response_without_usage_still_counts_as_a_call():
     tracker.record("pass3", None)
     assert tracker.summary()["total"]["calls"] == 1
     assert tracker.summary()["total"]["total"] == 0
+
+
+# ── claims.json projection ────────────────────────────────────────────────────
+
+
+def _full_claim(**overrides) -> dict:
+    """A claim carrying every field the five passes attach to it."""
+    claim = {
+        "claim": "ELISA analysis of serum ... showed X.",
+        "claim_type": "induction_vs_reference",
+        "polarity": "affirm",
+        "measured": "titer",
+        "operation": None,
+        "contrast": {"subject_groups": [{"label": "MCV4"}], "reference": "baseline"},
+        "targets": ["IgG"],
+        "timepoints": ["day 7"],
+        "candidate_set": None,
+        "parent_claims": [],
+        "assay": "ELISA",
+        "sample_type": "serum",
+        "cohort_n": "n=17",
+        "timeframe": "days 0-30",
+        "method": "paired t-test",
+        "sources": [{"type": "text", "section": "Results", "quote": "verbatim"}],
+        "unspecified": ["threshold"],
+        "data_derived_part": "the comparison",
+        "imported_inputs": [],
+        "scope_changes": ["measured: a -> b"],
+        "figure_omissions": [],
+        "method_added": ["paired t-test"],
+        "provenance_audit": {"audited": True, "action": "keep"},
+        "panel": "Figure 1",
+    }
+    claim.update(overrides)
+    return claim
+
+
+def test_project_claims_keeps_only_the_output_fields():
+    """~53% of claims.json was scaffolding no downstream stage reads."""
+    out = project_claims({"claim_1": _full_claim()})
+    assert tuple(out["claim_1"]) == CLAIMS_OUTPUT_FIELDS
+    for dropped in ("provenance_audit", "contrast", "scope_changes", "method_added",
+                    "polarity", "panel", "sample_type", "unspecified"):
+        assert dropped not in out["claim_1"]
+    assert out["claim_1"]["sources"][0]["quote"] == "verbatim"
+
+
+def test_project_claims_preserves_claim_order_and_emits_missing_fields_as_null():
+    """Every entry keeps the same shape, so a reader can index without testing presence."""
+    claims = {"claim_2": _full_claim(), "claim_1": {"claim": "bare"}}
+    out = project_claims(claims)
+    assert list(out) == ["claim_2", "claim_1"]
+    assert tuple(out["claim_1"]) == CLAIMS_OUTPUT_FIELDS
+    assert out["claim_1"]["assay"] is None
+    assert out["claim_1"]["claim"] == "bare"
+
+
+def test_projection_would_starve_pass5_if_applied_before_the_write():
+    """run_dedup_audit reads polarity/panel/contrast/targets/timepoints off the in-memory
+    claim set, and pass 3 attaches provenance_audit onto each claim. Slimming inside the
+    pipeline instead of at the write site would silently break both."""
+    pass5_needs = {"polarity", "sample_type", "targets", "timepoints", "contrast", "panel"}
+    assert not pass5_needs & set(CLAIMS_OUTPUT_FIELDS)

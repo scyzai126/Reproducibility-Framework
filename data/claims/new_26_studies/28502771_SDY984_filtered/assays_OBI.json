@@ -1,0 +1,166 @@
+{
+  "flow cytometry": {
+    "name_in_paper": "flow cytometry",
+    "aliases": [
+      "FACS",
+      "intracellular FACS staining"
+    ],
+    "sample_type": "heparinized whole blood or cryopreserved PBMCs",
+    "readouts": "frequencies and phenotypes of CD4+ and CD8+ T cells, Tfh-like cells, innate cell populations, plasmablasts, NK cells, neutrophils, dendritic cells, activation markers (e.g., Ki67, Bcl2, CXCR5, ICOS, CXCR3, CD80, HLA-DR), intracellular VZV glycoprotein and cytokines",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Figure 1C shows an increase in CD4+CXCR5+CXCR3+ICOS+ T cells after Zostavax® in both the young and elderly adults."
+    },
+    "confidence": "high",
+    "claim_role": "primary",
+    "normalized_name": "flow cytometry",
+    "obi_id": "OBI:0000916",
+    "obi_label": "flow cytometry assay",
+    "resource": "exact_original"
+  },
+  "ELISPOT": {
+    "name_in_paper": "ELISPOT",
+    "aliases": [
+      "Zostavax®-specific IFN-γ, IL-4 and IL-21 ELISPOT",
+      "Zostavax®-specific and total IgG B cell ELISPOT"
+    ],
+    "sample_type": "PBMCs",
+    "readouts": "antigen-specific IFN-γ, IL-4 and IL-21 spot-forming cells; VZV-specific plasmablast/IgG B cell spot counts",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Significant increase in CD4+ T cells that are positive for IFN-γ, IL-4 and IL-21 were also detected, indicating a mixed Th1/Th2/Th21 profile (Figure 1C)."
+    },
+    "confidence": "high",
+    "claim_role": "primary",
+    "normalized_name": "ELISPOT",
+    "obi_id": "OBI:0600031",
+    "obi_label": "enzyme-linked immunospot assay",
+    "resource": "exact_original"
+  },
+  "ELISA": {
+    "name_in_paper": "ELISA",
+    "aliases": [
+      "Zostavax®-specific IgG/IgA ELISA"
+    ],
+    "sample_type": "plasma",
+    "readouts": "VZV glycoprotein-specific IgG titers, VZV lysate-specific IgG titers, VZV-specific IgA titers",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "The measurement of VZV glycoprotein-specific IgG over the course of the study showed significant increases induced by Zostavax® in both the young and elderly adults (Figure 1E)."
+    },
+    "confidence": "high",
+    "claim_role": "outcome_variable",
+    "normalized_name": "ELISA",
+    "obi_id": "OBI:0000661",
+    "obi_label": "enzyme-linked immunosorbent assay",
+    "resource": "exact_original"
+  },
+  "PCR": {
+    "name_in_paper": "PCR",
+    "aliases": [
+      "polymerase chain reactions (PCR)",
+      "Viral DNA detection",
+      "nested PCR",
+      "real-time PCR"
+    ],
+    "sample_type": "whole blood",
+    "readouts": "VZV DNAemia / viral DNA copy numbers",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Interestingly, when we examined VZV DNA in the blood, although residual amount of viral DNA was seen in some subjects at day 1 (Table S2), only three showed positive viral replication in the blood, including both the CD8+ responders (Figure 1D)."
+    },
+    "confidence": 0.5812,
+    "claim_role": "outcome_variable",
+    "normalized_name": "PCR",
+    "obi_id": "OBI:0002692",
+    "obi_label": "polymerase chain reaction assay",
+    "resource": "embedding_llm"
+  },
+  "Multiplex cytokine assays": {
+    "name_in_paper": "Multiplex cytokine assays",
+    "aliases": [
+      "27-plex Luminex platform",
+      "Luminex assays"
+    ],
+    "sample_type": "plasma",
+    "readouts": "cytokine concentrations (e.g., IL-7 and other plasma cytokines)",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Furthermore, difference in NK cells measured by flow cytometry (Figure 4E) was consistent with the transcriptomics data, and Luminex data supported the higher level of IL-7 in the elderly group (Figure 4F)."
+    },
+    "confidence": 0.6549,
+    "claim_role": "validation",
+    "normalized_name": "Multiplex cytokine assays",
+    "obi_id": "OBI:0002766",
+    "obi_label": "cytokine assay",
+    "resource": "embedding_llm"
+  },
+  "PBMC Transcriptomics analysis": {
+    "name_in_paper": "PBMC Transcriptomics analysis",
+    "aliases": [
+      "transcriptomics",
+      "gene expression changes in PBMCs",
+      "microarray",
+      "Human U133 Plus 2.0 Arrays",
+      "DNA microarray data"
+    ],
+    "sample_type": "PBMCs",
+    "readouts": "gene expression / transcriptional signatures and blood transcription module activities",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "We assessed the gene expression changes in PBMCs induced by Zostavax® vaccination."
+    },
+    "confidence": 0.6161,
+    "claim_role": "primary",
+    "normalized_name": "PBMC Transcriptomics analysis",
+    "obi_id": "OBI:0002485",
+    "obi_label": "transcript analysis by single-end sequencing assay",
+    "resource": "embedding_llm"
+  },
+  "Plasma Metabolomics analysis": {
+    "name_in_paper": "Plasma Metabolomics analysis",
+    "aliases": [
+      "untargeted high-resolution metabolomics",
+      "high-resolution metabolomics",
+      "LC-MS analysis"
+    ],
+    "sample_type": "plasma",
+    "readouts": "metabolite peaks, metabolomic signatures, pathway-associated metabolite changes",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Using untargeted high-resolution metabolomics, thousands of metabolite peaks were detected in vaccinee plasma samples (Figure 2A, B)."
+    },
+    "confidence": 0.6518,
+    "claim_role": "primary",
+    "normalized_name": "Plasma Metabolomics analysis",
+    "obi_id": "OBI:0003782",
+    "obi_label": "metabolomics by mass spectrometry assay",
+    "resource": "embedding_llm"
+  },
+  "Cytokine Bead Array (CBA)": {
+    "name_in_paper": "Cytokine Bead Array (CBA)",
+    "aliases": [
+      "CBA"
+    ],
+    "sample_type": "cell-free culture supernatants from in vitro stimulated PBMCs",
+    "readouts": "cytokines and chemokines including IL-6, TNF, CXCL8, CCL2, CXCL9 and CXCL10",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "However, Zostavax® induced several chemokines, such as CXCL8, CCL2, CXCL9 and CXCL10 in PBMCs (Figure S3E)."
+    },
+    "confidence": 0.7177,
+    "claim_role": "validation",
+    "normalized_name": "Cytokine Bead Array (CBA)",
+    "obi_id": "OBI:0003116",
+    "obi_label": "antibody detection by cytometric bead array assay",
+    "resource": "embedding_llm"
+  }
+}

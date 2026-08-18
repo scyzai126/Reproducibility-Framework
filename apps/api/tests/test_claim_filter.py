@@ -21,11 +21,12 @@ def _claim(claim_type: str | None, polarity: str = "affirm") -> dict:
     return entry
 
 
-def test_keeps_only_the_three_downstream_types():
+def test_keeps_only_the_downstream_types():
     claims = {f"claim_{i}": _claim(t) for i, t in enumerate(
         [
             "induction_vs_reference",
             "group_difference",
+            "response_difference",
             "extremum",
             "trajectory_segment",
             "magnitude_comparison",
@@ -39,9 +40,37 @@ def test_keeps_only_the_three_downstream_types():
 
     kept, dropped, _ = filter_claims_for_downstream(claims)
 
-    assert list(kept) == ["claim_1", "claim_2", "claim_3"]
+    assert list(kept) == ["claim_1", "claim_2", "claim_3", "claim_4"]
     assert sum(dropped.values()) == 6
     assert dropped["descriptive"] == 1
+
+
+def test_the_two_second_order_types_are_split_by_the_subject_partition():
+    """`response_difference` compares the change two SUBJECT GROUPS underwent, so it
+    resolves against arms and carries forward. `magnitude_comparison` compares two targets
+    in the same subjects, so there is no group to match and it is dropped. Collapsing them
+    back into one type would send half the difference-in-differences claims to either fate,
+    which is the failure this split exists to end."""
+    claims = {
+        "claim_1": _claim("response_difference"),
+        "claim_2": _claim("magnitude_comparison"),
+    }
+
+    kept, dropped, _ = filter_claims_for_downstream(claims)
+
+    assert list(kept) == ["claim_1"]
+    assert dropped == {"magnitude_comparison": 1}
+
+
+def test_a_null_polarity_response_difference_carries_forward():
+    """"No significant difference in induction between arms" is the same operation with the
+    opposite expected answer, so it must survive the filter and be tallied as null."""
+    claims = {"claim_1": _claim("response_difference", polarity="null")}
+
+    kept, _, kept_polarity = filter_claims_for_downstream(claims)
+
+    assert list(kept) == ["claim_1"]
+    assert kept_polarity == {"null": 1}
 
 
 def test_preserves_original_keys_and_order():

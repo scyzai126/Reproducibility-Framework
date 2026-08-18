@@ -1,0 +1,61 @@
+{
+  "ex vivo IFN ELISpot assay": {
+    "name_in_paper": "ex vivo IFN ELISpot assay",
+    "aliases": [
+      "IFN ELISpot",
+      "ELISpot"
+    ],
+    "sample_type": "fresh PBMC",
+    "readouts": "Ag85A-specific and PPD-specific IFN-γ spot-forming cells per million PBMC",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Both intradermal and intramuscular MVA85A induced high levels of Ag85A-specific IFN at the peak (day 7) time-point. The responses were durable, staying significantly above baseline six months post-vaccination"
+    },
+    "confidence": 0.7764,
+    "claim_role": "primary",
+    "normalized_name": "ex vivo IFN ELISpot assay",
+    "obi_id": "OBI:1110059",
+    "obi_label": "ELISPOT assay measuring epitope specific interferon-gamma production by T cells",
+    "resource": "embedding_llm"
+  },
+  "surface and intracellular cytokine staining": {
+    "name_in_paper": "surface and intracellular cytokine staining",
+    "aliases": [
+      "multi-parameter flow cytometry",
+      "intracellular cytokine staining"
+    ],
+    "sample_type": "cryopreserved/frozen PBMC",
+    "readouts": "CD4+ T-cell cytokine production (IFNγ, TNFα, IL2), polyfunctional CD4+ T cells, and CD4+ T-cell chemokine receptor expression (CCR4, CCR6, CCR7, CXCR3)",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Both routes of vaccination induced significant IFN, TNFα and IL2 at weeks 1 and 24 post vaccination. Levels of produced cytokines between the two groups did not significantly differ at any time-point."
+    },
+    "confidence": 0.6934,
+    "claim_role": "validation",
+    "normalized_name": "surface and intracellular cytokine staining",
+    "obi_id": "OBI:1110172",
+    "obi_label": "intracellular cytokine staining assay measuring epitope specific interferon-gamma production by T cells",
+    "resource": "embedding_llm"
+  },
+  "IgG enzyme linked immunosorbent assay (ELISA)": {
+    "name_in_paper": "IgG enzyme linked immunosorbent assay (ELISA)",
+    "aliases": [
+      "ELISA"
+    ],
+    "sample_type": "serum",
+    "readouts": "anti-r85A IgG levels as background-subtracted optical density (OD)",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Volunteers who were vaccinated intradermally with MVA85A had significantly higher serum IgG 4 weeks post-vaccination when compared to baseline (p = 0.0342) and week-2 (p = 0.0005)."
+    },
+    "confidence": 0.7942,
+    "claim_role": "validation",
+    "normalized_name": "IgG enzyme linked immunosorbent assay (ELISA)",
+    "obi_id": "OBI:0000661",
+    "obi_label": "enzyme-linked immunosorbent assay",
+    "resource": "embedding_llm"
+  }
+}

@@ -1,0 +1,76 @@
+## What counts as a claim
+
+A claim is an **interpretive or comparative assertion the authors explicitly make** — a stated
+relationship, effect, direction of change, comparison, correlation, or dependency ("X increased",
+"X was higher in A than B", "X peaked at day N", "X correlated with Y", "X depended on Z").
+
+A standalone measured value reported in isolation ("the mean titer was 450 AU/mL") is **not** a claim.
+Extract it only when the authors attach an interpretive statement to it.
+
+**Grounding gate.** The assertion must be stated in words by the authors — in the Results prose or in a
+figure/table legend. Never extract a finding that exists only as a bar height, axis label, or table cell
+that the authors never put into words. Never invent a panel label.
+
+## Splitting and merging
+
+1. **One claim per subject group.** A sentence covering two vaccine arms yields one claim per arm.
+   ("Both vaccines induced X" → two claims.)
+2. **One assertion per claim.** Split when the comparison structure, outcome metric, timepoint, assay, or
+   statistical relationship differs. Do not chain "induced a response" + "peaked at day 30" + "was of
+   greater magnitude" into one claim — that is three claims.
+   *Operational test:* two assertions needing different `claim_type` values are always separate claims.
+   If one drafted claim would need two `claim_type` labels, it is under-split — divide it.
+3. **Merge same-assertion targets.** Several named targets (genes, serogroups, cell subsets, analytes)
+   that share one assertion, one group, one timepoint and one metric stay in **one** claim, even if they
+   moved in different directions. Do not split by target category alone.
+
+Sharing a source quote is normal and is never by itself a reason to merge: one sentence naming two arms
+and four temporal assertions legitimately yields eight claims that all cite it.
+
+## claim_type — exactly one value from this closed vocabulary
+
+| value | asserts |
+|---|---|
+| `induction_vs_reference` | the quantity changes relative to a stated reference — baseline, pre-treatment, control |
+| `group_difference` | the quantity differs between two distinct populations at a matched timepoint |
+| `extremum` | one timepoint or group is the largest/smallest of three or more candidates (peaked, highest, earliest) |
+| `trajectory_segment` | the shape or persistence of a time course (declined by, remained above baseline, waned, persisted to) |
+| `response_difference` | second-order — the *change* from a within-group reference differs between two subject groups (greater increase in A than B, the response was lower in the elderly) |
+| `magnitude_comparison` | second-order — the *size* of an effect differs between two targets or methods measured in the same subjects |
+| `association` | a directional association between two named measured variables (correlated with, r =) |
+| `prediction` | a model/signature/classifier predicts an outcome, reported with a performance metric |
+| `dependency` | one variable is required by / abrogated by another, shown by intervention (knockout, blockade) |
+| `descriptive` | a state or composition with no comparison, or a statement about spread rather than level |
+
+Never invent a value, never emit an array, never leave it null.
+
+## polarity — `affirm` or `null`
+
+`affirm` when the paper reports the effect; `null` when it reports its **absence** (no significant
+difference, not associated, did not change, "but not X", "whereas … did not").
+
+A null result **keeps the `claim_type` that names the operation** — only the expected answer flips.
+A negative attached to a positive finding by "but not" / "whereas … did not" / "except" is **its own
+separate claim**, with the same `claim_type` and `polarity: null`.
+
+## Output — JSON only, no prose, no code fences
+
+```json
+{
+  "claim_1": {
+    "claim": "<one self-contained sentence: assay + sample + cohort + groups + timepoint + the assertion>",
+    "claim_type": "<one value from the vocabulary>",
+    "polarity": "affirm | null",
+    "groups": ["<subject group(s) this claim is about>"],
+    "targets": ["<what was measured>"],
+    "timepoints": ["<timepoint(s), or [] if none stated>"],
+    "assay": "<assay name as used in the paper, or null>",
+    "sample_type": "<serum, PBMC, whole blood, ..., or null>",
+    "panel": "<Figure 1a, Table 1, Supplementary Fig. 3, or null if prose-only>",
+    "quote": "<verbatim sentence from the Results or legend that states this assertion>"
+  }
+}
+```
+
+Number claims `claim_1` … `claim_N` with no gaps. `quote` must be copied verbatim from the source — never
+paraphrased.

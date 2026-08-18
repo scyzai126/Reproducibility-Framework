@@ -1,0 +1,118 @@
+{
+  "microarray": {
+    "name_in_paper": "microarray",
+    "aliases": [
+      "Blood transcriptome analysis",
+      "DNA microarrays",
+      "gene expression profile",
+      "Affymetrix human U133 Plus 2.0 arrays",
+      "GeneTitan platform"
+    ],
+    "sample_type": "PBMCs",
+    "readouts": "blood transcriptome gene expression, differentially expressed genes (DEGs)",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "we analyzed the transcriptomic profiles in peripheral blood mononuclear cells (PBMC, days 0, 3 and 7) of the vaccinees using DNA microarrays (Table 1). At day 7 post-vaccination, we identified 1,150 differentially expressed genes (DEGs) in MCV4 vaccinees"
+    },
+    "confidence": 0.98,
+    "claim_role": "primary"
+  },
+  "ELISA": {
+    "name_in_paper": "ELISA",
+    "aliases": [
+      "Measurement of anti-Meningococcal antibodies by ELISA",
+      "anti-PS IgG (ELISA)",
+      "anti-PS IgM (ELISA)"
+    ],
+    "sample_type": "serum",
+    "readouts": "polysaccharide-specific IgG, IgG1, IgG2, and IgM antibody titers against meningococcal serogroups A and C",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Both vaccines induced robust polysaccharide-specific IgG binding antibody responses against serogroups A and C, as measured by ELISA."
+    },
+    "confidence": 0.97,
+    "claim_role": "outcome_variable"
+  },
+  "serum bactericidal assay (SBA)": {
+    "name_in_paper": "serum bactericidal assay (SBA)",
+    "aliases": [
+      "Measurement of serum bactericidal titers (SBA)",
+      "Serum bactericidal assay (SBA)"
+    ],
+    "sample_type": "serum",
+    "readouts": "serum bactericidal activity titers / functional antibody killing activity",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Both vaccines induced a rapid increase in serum bactericidal activity (SBA), which was detectable as early as day 7, peaked at day 30, began to decline by day 180, yet remained substantially above baseline at day 750 (Fig. 1d)."
+    },
+    "confidence": 0.99,
+    "claim_role": "outcome_variable"
+  },
+  "anti-DT IgG capture microsphere assay": {
+    "name_in_paper": "anti-DT IgG capture microsphere assay",
+    "aliases": [
+      "Measurement of anti-Diphtheria IgG by Luminex",
+      "Anti-DT IgG (Luminex)",
+      "Luminex"
+    ],
+    "sample_type": "sera",
+    "readouts": "diphtheria toxoid-specific IgG titer measured as median fluorescence intensity-derived arbitrary units per milliliter",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "MCV4, which contains the diphtheria toxoid (DT) protein as a conjugate, elicited a strong anti-DT IgG response at days 7 and 30, whereas MPSV4 containing polysaccharide alone did not (Fig. 1e)."
+    },
+    "confidence": 0.95,
+    "claim_role": "outcome_variable"
+  },
+  "flow cytometry": {
+    "name_in_paper": "flow cytometry",
+    "aliases": [
+      "Measurement of antibody secreting cells by FACS",
+      "FACS",
+      "Antibody secreting cells (FACS)"
+    ],
+    "sample_type": "whole blood",
+    "readouts": "frequency/number of antibody secreting cells (ASCs; CD3neg CD20neg CD38hi CD27hi CD19+ cells)",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "The number of peripheral blood antibody secreting cells (ASCs) induced by vaccination was assessed. The ASCs showed a peak at day 7 in both vaccines (Fig. 1f)."
+    },
+    "confidence": 0.97,
+    "claim_role": "primary"
+  },
+  "ELISpot": {
+    "name_in_paper": "ELISpot",
+    "aliases": [
+      "Polysaccharide- and DT-specific ELISpots"
+    ],
+    "sample_type": "blood antibody secreting cells / peripheral blood cells",
+    "readouts": "antigen-specific and total IgG, IgM, and IgA secreting cells; polysaccharide-specific and diphtheria toxoid-specific ASC counts",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Polysaccharide- and DT-specific ELISpots in a subset of MCV4 vaccinees revealed that the majority of IgG ASCs detected in the blood at day 7 were specific for DT (Supplementary Fig. 1a, b)."
+    },
+    "confidence": 0.96,
+    "claim_role": "validation"
+  },
+  "ELISA kits": {
+    "name_in_paper": "ELISA kits",
+    "aliases": [
+      "ELISA"
+    ],
+    "sample_type": "cell culture supernatants from human myeloid DCs, monocyte-derived DCs, and mouse splenic CD11c+ DCs",
+    "readouts": "IL-6, TNF, IL-12p40, and IL-1b cytokine concentrations",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Up-regulation of co-stimulatory molecules and secretion of IL-6, TNF and IL-12p40 was detected in human DCs stimulated by MPSV4 (Fig. 6a)."
+    },
+    "confidence": 0.72,
+    "claim_role": "validation"
+  }
+}

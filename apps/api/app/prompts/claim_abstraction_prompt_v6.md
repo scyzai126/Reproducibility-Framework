@@ -206,8 +206,9 @@ INDIVIDUATION — split on the contrast and on the subject partition; enumerate 
         becomes one claim per group, because each group is a different set of subjects and a merged claim is
         reproducible against neither. "Both vaccines induced robust IgG responses" -> two claims. This is the
         one factor you enumerate across records rather than within one record; an explicit pairwise comparison
-        between two named groups stays a single `group_difference` or `magnitude_comparison` claim and is NOT
-        decomposed per group.
+        between two named groups stays a single claim and is NOT decomposed per group — `group_difference`
+        when it compares a LEVEL at a matched timepoint, `response_difference` when it compares the CHANGE
+        each group underwent from its own reference.
     (c) the effect is present at one level and absent at another. The absent level becomes its own record with
         `polarity: null`.
 
@@ -217,6 +218,10 @@ INDIVIDUATION — split on the contrast and on the subject partition; enumerate 
     needs `group_difference` AND `magnitude_comparison` -> two claims.
     "responses peaked at day 7 and remained above baseline at week 24, with no difference between arms"
     needs `extremum` + `trajectory_segment` + a null-polarity `group_difference` -> three claims.
+  THE TRAP IN THE OTHER DIRECTION — a difference-in-differences is ONE claim, not two. "the increase in HAI
+  titer from day 0 to day 28 was greater in young than elderly adults" is a single `response_difference`. It
+  looks like `induction_vs_reference` plus `group_difference`, but the two inductions are not the assertion —
+  the assertion is that they differ in size, and it survives in neither half.
   The converse does NOT hold: a shared `claim_type` is never grounds to merge. "began to decline by day 180"
   and "remained above baseline at day 750" are both `trajectory_segment` and are two claims — different
   timepoints, different reference points.
@@ -302,6 +307,11 @@ far as the text supports. Three traps the results text sets:
     "whether age was continuous or stratified" in `unspecified`. Do not default to `group_difference`.
   - "increased on day 7" with no comparator — the reference is genuinely ambiguous between the arm's own
     baseline and the other arm at day 7. Leave `reference` null and list it in `unspecified`. Never pick one.
+  - "the response was lower in the elderly", "induction differed between arms" — the paper names two arms and
+    compares a CHANGE, not a level, so this is `response_difference`, not `group_difference`. Fill BOTH
+    references: `contrast.within_reference` for the day each arm is measured against, `contrast.reference` for
+    the comparator arm, and list both days in `timepoints`. Where the text does not name the within-group
+    reference, leave it null and list it in `unspecified` — do not silently drop it.
   - a negative clause hanging off a positive finding ("but not X", "whereas Y did not") — that is a second
     claim with `polarity: null`, not a qualifier on the first.
 
@@ -318,12 +328,15 @@ Schema:
      "operation": "<statistical operation, or null if the excerpt does not say>",
      "contrast": {"subject_groups": [{"label": "...", "definition": "..."}],
                   "reference": "<baseline|pre-dose|unstimulated|comparator population|candidate set|null>",
+                  "within_reference": "<required for response_difference: the within-group reference the
+                                        compared change is measured from, e.g. 'baseline (day 0)'; else null>",
                   "covariate": "<e.g. age (continuous), or null>",
                   "conjunction": "all" | "any" | null},
      "targets": ["<exact identifiers — module IDs, gene symbols, cluster names>"],
      "timepoints": ["<as stated, or empty>"],
      "candidate_set": "<required for extremum: what was ranked; else null>",
-     "parent_claims": ["<required for magnitude_comparison: the two first-order claims; else empty>"],
+     "parent_claims": ["<required for magnitude_comparison and response_difference: the two first-order
+                          claims whose sizes are being compared; else empty>"],
      "assay": "<or null>", "sample_type": "<or null>", "cohort_n": "<or null>",
      "timeframe": "<or null>", "method": "<or null>",
      "sources": [{"type": "text", "section": "Results", "quote": "<verbatim>"}],

@@ -6,7 +6,8 @@
 | `group_difference` | the quantity differs between two distinct populations at a matched timepoint | higher in A than B, lower in A than B, differed between, age-associated increase, enriched in |
 | `extremum` | one timepoint **or one group** is the largest/smallest of three or more candidates. **The cues below are necessary, not sufficient — see "A superlative needs a candidate set" below.** | peaked, maximum, greatest, largest, smallest, highest, lowest, earliest, nadir, most prominently, most strongly |
 | `trajectory_segment` | the shape or persistence of the time course — how it moves between named points, or how long it lasts | declined from X to Y, plateaued after X, remained stable between X and Y, remained above baseline for, persisted to, returned to baseline by, waned, transient, durable |
-| `magnitude_comparison` | **second-order** — the *size* of an already-established effect differs between subjects | greater magnitude, larger response than, greater increase, much greater expansion, larger number of |
+| `response_difference` | **second-order** — the *change* from a within-group reference differs between two subject groups (difference-in-differences). **See "Level or change?" below before choosing this or `group_difference`.** | greater increase in A than B, the response was lower in the elderly, induction differed between arms, much greater expansion after X than Y, more responsive genes after X than Y |
+| `magnitude_comparison` | **second-order** — the *size* of an already-established effect differs between two **targets or methods measured in the same subjects** | greater magnitude of X than Y, broader/stronger than, superior sensitivity to, larger number of |
 | `association` | a directional association between two named measured variables | correlated with, positively/negatively associated with, varied with, r = |
 | `prediction` | a model, signature, or classifier predicts an outcome, reported with a performance metric | predicted, classified, predictive of, accuracy, AUC, ROC, cross-validation, discriminated |
 | `dependency` | one variable is required by, regulated by, or abrogated by another — typically shown by experimental intervention | dependent on, required for, abrogated by, depletion, knockout, neutralizing antibody, blockade, abolished, *(stimulated vs. unstimulated)* |
@@ -48,7 +49,7 @@ along inside a positive claim — see Rule 1.
 
 ```
 dependency > prediction > association
-           > extremum > trajectory_segment > magnitude_comparison
+           > extremum > trajectory_segment > response_difference > magnitude_comparison
            > group_difference > induction_vs_reference > descriptive
 ```
 
@@ -59,6 +60,36 @@ An experimental intervention outranks the change it produced. A model with a met
 **Variability is not a trajectory.** A claim about how *stable* or *variable* a measure is — within-subject versus between-subject variation, reproducibility over repeated sampling — is `descriptive`, even when it spans months and even when it uses the word "compared to". It asserts something about the measure's spread, not about a time course, so it is never `trajectory_segment`. Reserve `trajectory_segment` for claims that state where a quantity *went*: rose, fell, plateaued, persisted above a reference.
 - `descriptive`: "…many B-cell subsets displayed low within-subject variability over more than two months compared to their inter-subject variability."
 - `trajectory_segment`: "…the response remained substantially above baseline at day 750."
+
+**Level or change?** Two subject groups compared is not enough to settle the type. Ask what quantity the
+sentence actually compares.
+
+| the sentence compares | across | type |
+|---|---|---|
+| a **level** at a matched timepoint | two subject groups | `group_difference` |
+| a **change** from a within-group reference | two subject groups | `response_difference` |
+| a size, breadth, or performance | two targets or methods in the **same** subjects | `magnitude_comparison` |
+
+- `group_difference`: "HAI titer was higher in young than elderly adults at day 28." One measurement per
+  subject, one timepoint, two populations.
+- `response_difference`: "the increase in HAI titer from day 0 to day 28 was greater in young than elderly
+  adults." Each group is first measured against its own baseline, and those two changes are then compared —
+  a difference-in-differences. Set `contrast.within_reference` to the within-group reference and
+  `contrast.reference` to the comparator group, and list **both** days in `timepoints`.
+- `magnitude_comparison`: "CD4+ T-cell proliferative responses were broader than CD8+ responses." Two targets,
+  one population — there is no subject partition to compare across.
+
+Words that name a **change** rather than a level: response, induction, increase, decrease, expansion, rise,
+fold-change, responsive genes, number of regulated genes, magnitude of the response. When one of these is the
+compared quantity and the comparison runs across two subject groups, the claim is `response_difference` even
+though the sentence reads like a plain between-group comparison.
+
+A stated absence follows the same rule: "no significant difference in monocyte induction between older and
+young adults" is `response_difference` + `polarity: null`, because the operation the verifier runs is still
+baseline-corrected-change-in-A versus baseline-corrected-change-in-B.
+
+This test runs **before** the precedence ladder. The ladder cannot recover the distinction, because it never
+sees which quantity was compared.
 
 **A superlative needs a candidate set.** Before labelling a claim `extremum`, name the candidates it ranks over. There must be **three or more**, and each must be recoverable from the claim sentence itself. If you cannot list them, the cue word is not asserting a superlative and `extremum` does not apply — pick the type that describes what the sentence actually asserts.
 - **Two candidates is not an extremum.** A quantity that is highest in one of two groups is `group_difference`; highest at one of two timepoints, one of which is a baseline, is `induction_vs_reference`. Three is the threshold because a superlative is a statement about *all* the candidates.

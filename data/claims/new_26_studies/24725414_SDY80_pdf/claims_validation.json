@@ -1,0 +1,93 @@
+{
+  "summary": {
+    "total": 3,
+    "accurate": 0,
+    "needs_revision": 3,
+    "inconclusive": 0,
+    "errors": 0,
+    "metadata_checked": true,
+    "fail_counts": {
+      "grounding": 2,
+      "comparator_form": 0,
+      "claim_type": 1,
+      "metadata": 0
+    }
+  },
+  "results": [
+    {
+      "claim_id": "claim_1",
+      "checks": {
+        "grounding": {
+          "status": "fail",
+          "reason": "The sources say influenza vaccine-specific IgG+ antibody secreting cells increased on day 7, but they do not state the claim's added comparator 'compared to baseline (day 0)'."
+        },
+        "comparator_form": {
+          "status": "pass",
+          "reason": "The claim does not invent a discrete group split from an association or dependency; it asserts a timepoint comparison."
+        },
+        "claim_type": {
+          "status": "pass",
+          "reason": "The claim asserts an increase relative to a stated reference timepoint, so induction_vs_reference is the correct label."
+        },
+        "metadata": {
+          "status": "pass",
+          "reason": "ELISpot on PBMCs from 63 healthy volunteers with samples at days -7, 0, 1, 7, and 70 matches Figure 1 and the Experimental Procedures, which state influenza-specific antibody-secreting cells were measured by ELISpot assays on frozen PBMCs and analyses used the 63 subjects with all scheduled time-points."
+        }
+      },
+      "verdict": "needs_revision",
+      "issues": [
+        "grounding: The sources say influenza vaccine-specific IgG+ antibody secreting cells increased on day 7, but they do not state the claim's added comparator 'compared to baseline (day 0)'."
+      ]
+    },
+    {
+      "claim_id": "claim_2",
+      "checks": {
+        "grounding": {
+          "status": "pass",
+          "reason": "The sources state that genes changed significantly compared to day 0 and that days 1 and 7 had largely non-overlapping signatures, which matches the claim's finding."
+        },
+        "comparator_form": {
+          "status": "pass",
+          "reason": "The claim does not invent subject groups from an association or dependency; it describes differences in gene-expression signatures across timepoints relative to baseline."
+        },
+        "claim_type": {
+          "status": "fail",
+          "reason": "Labelled group_difference, but the assertion is about changes relative to the baseline day 0 reference ('on day 1 and day 7 compared to baseline'), so the better claim type is induction_vs_reference."
+        },
+        "metadata": {
+          "status": "pass",
+          "reason": "Microarray on PBMCs from 63 healthy volunteers with samples at days -7, 0, 1, 7, and 70 matches Figure 1 and the Experimental Procedures, which describe PBMC RNA hybridized to HG 1.0 ST arrays and analyses performed on the 63 subjects with all scheduled time-points."
+        }
+      },
+      "verdict": "needs_revision",
+      "issues": [
+        "claim_type: Labelled group_difference, but the assertion is about changes relative to the baseline day 0 reference ('on day 1 and day 7 compared to baseline'), so the better claim type is induction_vs_reference."
+      ]
+    },
+    {
+      "claim_id": "claim_3",
+      "checks": {
+        "grounding": {
+          "status": "fail",
+          "reason": "The sources say 'day 1 responses included pathways reflecting innate immune-cell activation, including Interferon-related genes' but do not state the claim's comparator 'compared to baseline (day 0)'."
+        },
+        "comparator_form": {
+          "status": "pass",
+          "reason": "The claim does not invent subject groups from an association or dependency; it describes a timepoint comparison."
+        },
+        "claim_type": {
+          "status": "pass",
+          "reason": "As written, the claim asserts a change at day 1 relative to baseline, which fits induction_vs_reference."
+        },
+        "metadata": {
+          "status": "pass",
+          "reason": "Microarray on PBMCs from 63 healthy volunteers with samples at days -7, 0, 1, 7, and 70 matches Figure 1 and the Experimental Procedures, which describe PBMC RNA hybridized to HG 1.0 ST arrays and analyses performed on the 63 subjects with all scheduled time-points."
+        }
+      },
+      "verdict": "needs_revision",
+      "issues": [
+        "grounding: The sources say 'day 1 responses included pathways reflecting innate immune-cell activation, including Interferon-related genes' but do not state the claim's comparator 'compared to baseline (day 0)'."
+      ]
+    }
+  ]
+}

@@ -34,6 +34,15 @@ CLAIM_TYPES_FILE = "claim_types.txt"
 
 SAMPLED_TEMPERATURE = 1.0
 
+#: The fields claims.json persists, in the order they are written. Everything else a pass
+#: produces — the contrast block, `unspecified`, pass 2's `scope_changes`/`method_added`,
+#: pass 3's `provenance_audit` — is extraction scaffolding that no downstream stage reads,
+#: and together it was ~53% of the file. It is dropped at the WRITE, never earlier: pass 3
+#: attaches its verdict onto each claim and pass 5 reads `polarity`, `panel`, `contrast`,
+#: `targets` and `timepoints` off the in-memory set, so the full shape has to survive until
+#: `abstract_claims_from_jats` returns.
+CLAIMS_OUTPUT_FIELDS = ("claim", "claim_type", "assay", "sources")
+
 # 79 calls fired at once would be rate-limited, and a 429 late in a panel discards the
 # samples already paid for. Cap in-flight calls instead.
 MAX_CONCURRENT_CALLS = 8
@@ -450,6 +459,19 @@ async def run_coverage_audit(
         f"EXTRACTED CLAIMS:\n{json.dumps(listing, indent=2, ensure_ascii=False)}"
     )
     return await _call_json(client, model, prompts["pass4"], user, 0, tracker, "pass4")
+
+
+def project_claims(claims: dict) -> dict:
+    """Reduce each claim to CLAIMS_OUTPUT_FIELDS, for writing to claims.json.
+
+    Claim key order is preserved, and a claim that never got one of the four fields still
+    carries the key with a null — a downstream reader can then index every entry the same
+    way instead of testing for presence.
+    """
+    return {
+        key: {field: claim.get(field) for field in CLAIMS_OUTPUT_FIELDS}
+        for key, claim in claims.items()
+    }
 
 
 async def run_dedup_audit(

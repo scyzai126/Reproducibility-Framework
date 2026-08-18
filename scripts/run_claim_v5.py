@@ -1,9 +1,12 @@
 """Run the five-pass panel claim abstraction over a paper's JATS XML.
 
-Two prompt documents share the architecture and can be selected with --prompt:
+Three prompt documents share the architecture and can be selected with --prompt:
     claim_abstraction_prompt_v6.md  (default) extract_claims_pdf.txt's content in v5's
                                     five-pass form: sources[], the mandatory claim head,
                                     and polarity instead of a null_result claim type
+    claim_abstraction_prompt_v7.md  v6 with INDIVIDUATION rebuilt on the one-claim-one-
+                                    verdict test: an over-splitting guard, the data-object
+                                    split, and the reproduction-procedure diagnostic
     claim_abstraction_prompt_v5.md  the original design doc, single `quote` per claim
 
 Usage:
@@ -15,7 +18,8 @@ Example:
         data/claims/new_26_studies/24336226_SDY1260_v6 --runs 5
 
 Output files:
-    claims.json           claim_1..N, one entry per surviving claim, with its panel
+    claims.json           claim_1..N, one entry per surviving claim, carrying only
+                          claim, claim_type, assay and sources (CLAIMS_OUTPUT_FIELDS)
     claims_v5_audit.json  demotions, provenance verdicts, abstract coverage, proposed
                           merges, the per-panel sampling record, and token usage
     token_usage.json      per-pass and total token counts for the run
@@ -36,6 +40,7 @@ from app.agent.claim_abstraction_v5 import (
     PROMPT_FILE,
     abstract_claims_from_jats,
     load_v5_prompts,
+    project_claims,
     split_panels,
     system_prompts,
 )
@@ -107,8 +112,9 @@ async def main() -> None:
     )
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
+    # Written slim; `claims` keeps its full shape for the summary below.
     (args.out_dir / "claims.json").write_text(
-        json.dumps(claims, indent=2, ensure_ascii=False), encoding="utf-8"
+        json.dumps(project_claims(claims), indent=2, ensure_ascii=False), encoding="utf-8"
     )
     (args.out_dir / "claims_v5_audit.json").write_text(
         json.dumps(audit, indent=2, ensure_ascii=False), encoding="utf-8"

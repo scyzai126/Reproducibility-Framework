@@ -1,10 +1,17 @@
 """Select the claim types that carry forward into downstream reproduction work.
 
 Claim extraction labels every claim with a `claim_type` from the closed vocabulary in
-prompts/claim_types.txt. Only three of those types assert something reproducible against
+prompts/claim_types.txt. Only four of those types assert something reproducible against
 ImmPort subject data — everything else (associations, predictive models, descriptive
 statements) has no group/comparison structure to match subjects against, so it is filtered
 out before group classification rather than paying an LLM call per claim for it.
+
+The line between the two second-order types is the subject partition, and it is why one is
+kept and the other is not. A `response_difference` compares the change two SUBJECT GROUPS
+underwent ("the increase was greater in young than elderly"), so it resolves against arms
+and cohorts like any other kept type. A `magnitude_comparison` compares two targets or
+methods measured in the SAME subjects ("CD4+ responses were broader than CD8+"), so there
+is no group to match and nothing downstream can act on it.
 
 Polarity is deliberately NOT a filter. A stated absence ("no significant difference between
 arms") carries the type that names the operation plus `polarity: null`, and the verifier
@@ -13,7 +20,12 @@ be typed `null_result` and dropped here; they now carry forward, so `filter_clai
 downstream` reports a polarity tally to keep the added volume visible.
 """
 
-DOWNSTREAM_CLAIM_TYPES = ("induction_vs_reference", "group_difference", "extremum")
+DOWNSTREAM_CLAIM_TYPES = (
+    "induction_vs_reference",
+    "group_difference",
+    "response_difference",
+    "extremum",
+)
 
 MISSING_TYPE_KEY = "(missing)"
 

@@ -1,0 +1,983 @@
+{
+  "summary": {
+    "total": 32,
+    "accurate": 0,
+    "needs_revision": 32,
+    "errors": 0,
+    "fail_counts": {
+      "grounding": 32,
+      "comparator_form": 4,
+      "completeness": 12,
+      "timepoint_group_coverage": 19,
+      "structural": 3
+    }
+  },
+  "results": [
+    {
+      "claim_id": "claim_1",
+      "checks": {
+        "grounding": {
+          "status": "fail",
+          "reason": "The only source says 'Both vaccines induced robust polysaccharide-specific IgG binding antibody responses against serogroups A and C, as measured by ELISA,' but the claim adds unsupported details including 'serum,' 'healthy adult cohorts (18–45 yr, n=17 for MCV4),' specific days '0, 7, 30, 180 and 750 post-vaccination,' restriction to 'MCV4,' and the comparator 'compared to baseline (day 0)'."
+        },
+        "comparator_form": {
+          "status": "pass",
+          "reason": "The source describes vaccine-induced responses rather than an association that was improperly converted into higher/lower subject groups."
+        },
+        "completeness": {
+          "status": "fail",
+          "reason": "The source states 'Both vaccines induced' the ELISA responses, but the claim and structure silently drop the second vaccine and represent only MCV4."
+        },
+        "timepoint_group_coverage": {
+          "status": "fail",
+          "reason": "The source names two populations via 'Both vaccines,' but the groups array includes only the MCV4 cohort and no group for the other vaccine."
+        },
+        "structural": {
+          "status": "pass",
+          "reason": "All contrast indices resolve to existing group_ids and there are no duplicate comparisons or invalid ranking entries."
+        }
+      },
+      "verdict": "needs_revision",
+      "issues": [
+        "grounding: The only source says 'Both vaccines induced robust polysaccharide-specific IgG binding antibody responses against serogroups A and C, as measured by ELISA,' but the claim adds unsupported details including 'serum,' 'healthy adult cohorts (18–45 yr, n=17 for MCV4),' specific days '0, 7, 30, 180 and 750 post-vaccination,' restriction to 'MCV4,' and the comparator 'compared to baseline (day 0)'.",
+        "completeness: The source states 'Both vaccines induced' the ELISA responses, but the claim and structure silently drop the second vaccine and represent only MCV4.",
+        "timepoint_group_coverage: The source names two populations via 'Both vaccines,' but the groups array includes only the MCV4 cohort and no group for the other vaccine."
+      ]
+    },
+    {
+      "claim_id": "claim_2",
+      "checks": {
+        "grounding": {
+          "status": "fail",
+          "reason": "The only source says 'Both vaccines induced robust polysaccharide-specific IgG binding antibody responses against serogroups A and C, as measured by ELISA,' but the claim adds unsupported details including 'serum,' 'healthy adult cohorts (18–45 yr, n=13 for MPSV4),' specific days '0, 7, 30, 180 and 750 post-vaccination,' restriction to 'MPSV4,' and the comparator 'compared to baseline (day 0)'."
+        },
+        "comparator_form": {
+          "status": "pass",
+          "reason": "The source states vaccine-induced responses rather than an association/correlation that was improperly converted into discrete groups."
+        },
+        "completeness": {
+          "status": "fail",
+          "reason": "The source reports a finding for 'Both vaccines,' but the claim and structure silently drop the second vaccine and represent only the MPSV4 cohort."
+        },
+        "timepoint_group_coverage": {
+          "status": "fail",
+          "reason": "The source names distinct populations via 'Both vaccines,' but the groups array includes only MPSV4 and no group for the other vaccine."
+        },
+        "structural": {
+          "status": "pass",
+          "reason": "All contrast indices 0–4 resolve to existing group_ids and there are no duplicate comparison entries or invalid rankings."
+        }
+      },
+      "verdict": "needs_revision",
+      "issues": [
+        "grounding: The only source says 'Both vaccines induced robust polysaccharide-specific IgG binding antibody responses against serogroups A and C, as measured by ELISA,' but the claim adds unsupported details including 'serum,' 'healthy adult cohorts (18–45 yr, n=13 for MPSV4),' specific days '0, 7, 30, 180 and 750 post-vaccination,' restriction to 'MPSV4,' and the comparator 'compared to baseline (day 0)'.",
+        "completeness: The source reports a finding for 'Both vaccines,' but the claim and structure silently drop the second vaccine and represent only the MPSV4 cohort.",
+        "timepoint_group_coverage: The source names distinct populations via 'Both vaccines,' but the groups array includes only MPSV4 and no group for the other vaccine."
+      ]
+    },
+    {
+      "claim_id": "claim_3",
+      "checks": {
+        "grounding": {
+          "status": "fail",
+          "reason": "The sources support only that total IgG responses for serogroups A and C peaked at day 30 for MCV4, but the claim adds unsupported details including 'ELISA analysis of serum', 'healthy adult cohorts (18–45 yr, n=17)', the specific timepoints 'days 0, 7, 30, 180 and 750', 'post-vaccination', and the comparator phrase 'compared to baseline (day 0)'."
+        },
+        "comparator_form": {
+          "status": "pass",
+          "reason": "The sources describe vaccine cohorts and response time courses rather than an association being converted into invented higher/lower subject groups."
+        },
+        "completeness": {
+          "status": "fail",
+          "reason": "The Results quote states two distinct peak findings—'day 30 (MCV4) or day 180 (MPSV4)'—but the claim and structure omit the MPSV4 day 180 finding."
+        },
+        "timepoint_group_coverage": {
+          "status": "fail",
+          "reason": "The sources explicitly name both vaccine populations MCV4 and MPSV4, but the groups array represents only the MCV4 cohort and has no groups for MPSV4."
+        },
+        "structural": {
+          "status": "fail",
+          "reason": "The ranking entry has scope 'contrast' but its winner is 1 (comparison index 1, the day 0 vs day 30 contrast) while the finding says 'peaked at day 30'; additionally 'over' omits comparison index 3 despite there being four comparisons."
+        }
+      },
+      "verdict": "needs_revision",
+      "issues": [
+        "grounding: The sources support only that total IgG responses for serogroups A and C peaked at day 30 for MCV4, but the claim adds unsupported details including 'ELISA analysis of serum', 'healthy adult cohorts (18–45 yr, n=17)', the specific timepoints 'days 0, 7, 30, 180 and 750', 'post-vaccination', and the comparator phrase 'compared to baseline (day 0)'.",
+        "completeness: The Results quote states two distinct peak findings—'day 30 (MCV4) or day 180 (MPSV4)'—but the claim and structure omit the MPSV4 day 180 finding.",
+        "timepoint_group_coverage: The sources explicitly name both vaccine populations MCV4 and MPSV4, but the groups array represents only the MCV4 cohort and has no groups for MPSV4.",
+        "structural: The ranking entry has scope 'contrast' but its winner is 1 (comparison index 1, the day 0 vs day 30 contrast) while the finding says 'peaked at day 30'; additionally 'over' omits comparison index 3 despite there being four comparisons."
+      ]
+    },
+    {
+      "claim_id": "claim_4",
+      "checks": {
+        "grounding": {
+          "status": "fail",
+          "reason": "The sources support only that total IgG responses for serogroups A and C peaked at day 180 for MPSV4, but the claim adds unsupported details including 'ELISA analysis of serum', 'healthy adult cohorts (18–45 yr, n=13)', the specific sampled days '0, 7, 30, 180 and 750', and the comparator phrase 'compared to baseline (day 0)'."
+        },
+        "comparator_form": {
+          "status": "pass",
+          "reason": "The sources describe vaccine-group time-course responses rather than an association being converted into invented higher/lower subject groups."
+        },
+        "completeness": {
+          "status": "fail",
+          "reason": "The Results quote states two distinct peak findings—'day 30 (MCV4) or day 180 (MPSV4)'—but the claim and structure capture only the MPSV4 day-180 finding and omit the MCV4 day-30 finding."
+        },
+        "timepoint_group_coverage": {
+          "status": "fail",
+          "reason": "The sources name two distinct populations, MCV4 and MPSV4, but the groups array represents only the 'MPSV4 adult cohort' and has no group entries for the MCV4 cohort mentioned in 'day 30 (MCV4) or day 180 (MPSV4)'."
+        },
+        "structural": {
+          "status": "fail",
+          "reason": "The ranking entry has scope 'contrast' but its winner is 2, which points to comparison index 2 (the day 180 contrast), while the finding says 'peaked at day 180' yet the listed candidates [0,1,2,3] omit comparison index 3 for day 750 and the winner/group mapping is internally confusing."
+        }
+      },
+      "verdict": "needs_revision",
+      "issues": [
+        "grounding: The sources support only that total IgG responses for serogroups A and C peaked at day 180 for MPSV4, but the claim adds unsupported details including 'ELISA analysis of serum', 'healthy adult cohorts (18–45 yr, n=13)', the specific sampled days '0, 7, 30, 180 and 750', and the comparator phrase 'compared to baseline (day 0)'.",
+        "completeness: The Results quote states two distinct peak findings—'day 30 (MCV4) or day 180 (MPSV4)'—but the claim and structure capture only the MPSV4 day-180 finding and omit the MCV4 day-30 finding.",
+        "timepoint_group_coverage: The sources name two distinct populations, MCV4 and MPSV4, but the groups array represents only the 'MPSV4 adult cohort' and has no group entries for the MCV4 cohort mentioned in 'day 30 (MCV4) or day 180 (MPSV4)'.",
+        "structural: The ranking entry has scope 'contrast' but its winner is 2, which points to comparison index 2 (the day 180 contrast), while the finding says 'peaked at day 180' yet the listed candidates [0,1,2,3] omit comparison index 3 for day 750 and the winner/group mapping is internally confusing."
+      ]
+    },
+    {
+      "claim_id": "claim_5",
+      "checks": {
+        "grounding": {
+          "status": "fail",
+          "reason": "The sources support only that 'the magnitude and duration of the polysaccharide-specific IgG response was greater with MPSV4 compared to a single dose of MCV4' and that Fig. 1a is total IgG, but they do not state ELISA, serum, healthy adults aged 18–45 yr, sample sizes n=13/n=17, or the specific timepoints days 0, 7, 30, 180, and 750."
+        },
+        "comparator_form": {
+          "status": "pass",
+          "reason": "The Results quote explicitly contrasts two named vaccine groups, MPSV4 and a single dose of MCV4, rather than reporting only an association."
+        },
+        "completeness": {
+          "status": "fail",
+          "reason": "The Results quote states both greater 'magnitude and duration' with MPSV4, but the claim and structured comparisons capture only magnitude and omit duration."
+        },
+        "timepoint_group_coverage": {
+          "status": "pass",
+          "reason": "The quoted sources name the two vaccine populations MPSV4 and single-dose MCV4, and both are represented; no specific timepoints are named in the quoted evidence that would require additional group coverage."
+        },
+        "structural": {
+          "status": "pass",
+          "reason": "All contrast indices resolve to existing group_ids and there are no duplicate comparison entries or invalid ranking entries."
+        }
+      },
+      "verdict": "needs_revision",
+      "issues": [
+        "grounding: The sources support only that 'the magnitude and duration of the polysaccharide-specific IgG response was greater with MPSV4 compared to a single dose of MCV4' and that Fig. 1a is total IgG, but they do not state ELISA, serum, healthy adults aged 18–45 yr, sample sizes n=13/n=17, or the specific timepoints days 0, 7, 30, 180, and 750.",
+        "completeness: The Results quote states both greater 'magnitude and duration' with MPSV4, but the claim and structured comparisons capture only magnitude and omit duration."
+      ]
+    },
+    {
+      "claim_id": "claim_6",
+      "checks": {
+        "grounding": {
+          "status": "fail",
+          "reason": "The sources support only that 'The magnitude and duration of the polysaccharide-specific IgG response was greater with MPSV4 compared to a single dose of MCV4' and that total IgG was measured in Fig. 1a, but the claim adds unsupported details including 'ELISA analysis', 'serum', 'healthy adult cohorts (18–45 yr)', sample sizes 'n=13' and 'n=17', and timepoints 'days 0, 7, 30, 180 and 750 post-vaccination'."
+        },
+        "comparator_form": {
+          "status": "pass",
+          "reason": "The sources explicitly compare two named vaccine groups, MPSV4 and a single dose of MCV4, so the claim does not invent a group split from an association."
+        },
+        "completeness": {
+          "status": "pass",
+          "reason": "The quoted sources state one substantive finding—greater magnitude and duration of polysaccharide-specific IgG response with MPSV4 versus single-dose MCV4—and the claim captures that relationship."
+        },
+        "timepoint_group_coverage": {
+          "status": "fail",
+          "reason": "The sources do not name any timepoints or participant subgroups beyond MPSV4 and single-dose MCV4, so the groups array's specific day 0/7/30/180/750 entries and added cohort descriptors are not grounded in the quoted evidence."
+        },
+        "structural": {
+          "status": "pass",
+          "reason": "All contrast indices resolve to existing group_ids and there are no duplicate comparison entries with the same contrast pair and finding."
+        }
+      },
+      "verdict": "needs_revision",
+      "issues": [
+        "grounding: The sources support only that 'The magnitude and duration of the polysaccharide-specific IgG response was greater with MPSV4 compared to a single dose of MCV4' and that total IgG was measured in Fig. 1a, but the claim adds unsupported details including 'ELISA analysis', 'serum', 'healthy adult cohorts (18–45 yr)', sample sizes 'n=13' and 'n=17', and timepoints 'days 0, 7, 30, 180 and 750 post-vaccination'.",
+        "timepoint_group_coverage: The sources do not name any timepoints or participant subgroups beyond MPSV4 and single-dose MCV4, so the groups array's specific day 0/7/30/180/750 entries and added cohort descriptors are not grounded in the quoted evidence."
+      ]
+    },
+    {
+      "claim_id": "claim_7",
+      "checks": {
+        "grounding": {
+          "status": "fail",
+          "reason": "The sources support only that both MPSV4 and MCV4 induced polysaccharide-specific IgG2 and IgG1 responses and that serogroups A and C were measured, but they do not state 'ELISA', 'serum', 'healthy adult cohorts (18–45 yr, n=13 for MPSV4 and n=17 for MCV4)', the specific timepoints 'days 0, 7 and 30', or the comparator clause 'compared to baseline (day 0)'."
+        },
+        "comparator_form": {
+          "status": "pass",
+          "reason": "The claim concerns named vaccine cohorts rather than inventing discrete groups from an association or correlation."
+        },
+        "completeness": {
+          "status": "fail",
+          "reason": "The Results quote also states 'as well as specific IgM antibody titers, which continued to rise until at least day 30', but the claim and structure omit this distinct IgM finding."
+        },
+        "timepoint_group_coverage": {
+          "status": "fail",
+          "reason": "The sources explicitly mention only 'day 30' in the quoted text, while the groups/comparisons additionally encode unsupported day 0 and day 7 timepoints and baseline contrasts not named in the sources."
+        },
+        "structural": {
+          "status": "pass",
+          "reason": "All contrast indices resolve to existing group_ids and there are no duplicate comparison entries or invalid ranking entries."
+        }
+      },
+      "verdict": "needs_revision",
+      "issues": [
+        "grounding: The sources support only that both MPSV4 and MCV4 induced polysaccharide-specific IgG2 and IgG1 responses and that serogroups A and C were measured, but they do not state 'ELISA', 'serum', 'healthy adult cohorts (18–45 yr, n=13 for MPSV4 and n=17 for MCV4)', the specific timepoints 'days 0, 7 and 30', or the comparator clause 'compared to baseline (day 0)'.",
+        "completeness: The Results quote also states 'as well as specific IgM antibody titers, which continued to rise until at least day 30', but the claim and structure omit this distinct IgM finding.",
+        "timepoint_group_coverage: The sources explicitly mention only 'day 30' in the quoted text, while the groups/comparisons additionally encode unsupported day 0 and day 7 timepoints and baseline contrasts not named in the sources."
+      ]
+    },
+    {
+      "claim_id": "claim_8",
+      "checks": {
+        "grounding": {
+          "status": "fail",
+          "reason": "The sources support only that both MPSV4 and MCV4 induced specific IgM titers that 'continued to rise until at least day 30' for serogroups A and C, but the claim adds unsupported details including 'ELISA analysis of serum', 'healthy adult cohorts (18–45 yr, n=13...n=17)', explicit timepoints 'days 0, 7 and 30', and the comparator 'compared to baseline (day 0)'."
+        },
+        "comparator_form": {
+          "status": "pass",
+          "reason": "The claim describes longitudinal vaccine cohorts rather than inventing discrete groups from an association or correlation."
+        },
+        "completeness": {
+          "status": "pass",
+          "reason": "The quoted sources state one relevant finding—IgM titers for serogroups A and C continued to rise until at least day 30 in both vaccine groups—and that finding is represented."
+        },
+        "timepoint_group_coverage": {
+          "status": "fail",
+          "reason": "The groups array includes day 0 and day 7 entries even though the quoted sources only explicitly mention 'day 30' and do not name baseline or day 7 timepoints."
+        },
+        "structural": {
+          "status": "pass",
+          "reason": "All contrast indices resolve to existing group_ids and there are no duplicate comparison entries or invalid ranking entries."
+        }
+      },
+      "verdict": "needs_revision",
+      "issues": [
+        "grounding: The sources support only that both MPSV4 and MCV4 induced specific IgM titers that 'continued to rise until at least day 30' for serogroups A and C, but the claim adds unsupported details including 'ELISA analysis of serum', 'healthy adult cohorts (18–45 yr, n=13...n=17)', explicit timepoints 'days 0, 7 and 30', and the comparator 'compared to baseline (day 0)'.",
+        "timepoint_group_coverage: The groups array includes day 0 and day 7 entries even though the quoted sources only explicitly mention 'day 30' and do not name baseline or day 7 timepoints."
+      ]
+    },
+    {
+      "claim_id": "claim_9",
+      "checks": {
+        "grounding": {
+          "status": "fail",
+          "reason": "The claim adds unsupported details not stated in the quoted sources, including 'ELISA analysis of serum', the cohort ages '18–45 yr', sample sizes 'n=13' and 'n=17', specific timepoints 'days 0, 7, 30, 180 and 750', and the explicit comparator 'compared to baseline (day 0)' for the MPSV4 response."
+        },
+        "comparator_form": {
+          "status": "pass",
+          "reason": "The sources genuinely contrast vaccine groups MPSV4 and MCV4 rather than reporting only an association or correlation."
+        },
+        "completeness": {
+          "status": "pass",
+          "reason": "The quoted sources state one substantive finding at two years—persistent significant IgG after MPSV4 and declined but above-baseline response after primary MCV4—and the claim and structure capture both parts."
+        },
+        "timepoint_group_coverage": {
+          "status": "fail",
+          "reason": "The sources only explicitly name the two-year timepoint, but the groups array includes unsupported extra timepoints 'day 0', 'day 7', 'day 30', and 'day 180' that are not grounded in any quoted source."
+        },
+        "structural": {
+          "status": "pass",
+          "reason": "All contrast indices resolve to existing group_ids and there are no duplicate comparison entries or invalid ranking entries."
+        }
+      },
+      "verdict": "needs_revision",
+      "issues": [
+        "grounding: The claim adds unsupported details not stated in the quoted sources, including 'ELISA analysis of serum', the cohort ages '18–45 yr', sample sizes 'n=13' and 'n=17', specific timepoints 'days 0, 7, 30, 180 and 750', and the explicit comparator 'compared to baseline (day 0)' for the MPSV4 response.",
+        "timepoint_group_coverage: The sources only explicitly name the two-year timepoint, but the groups array includes unsupported extra timepoints 'day 0', 'day 7', 'day 30', and 'day 180' that are not grounded in any quoted source."
+      ]
+    },
+    {
+      "claim_id": "claim_10",
+      "checks": {
+        "grounding": {
+          "status": "fail",
+          "reason": "The claim adds unsupported details not stated in the quoted sources, including 'serum from healthy adult cohorts (18–45 yr, n=13 for MPSV4 and n=17 for MCV4)' and the explicit comparator phrase 'compared to baseline (day 0)'."
+        },
+        "comparator_form": {
+          "status": "pass",
+          "reason": "The sources describe vaccine-specific temporal changes rather than an association split into invented higher/lower groups."
+        },
+        "completeness": {
+          "status": "pass",
+          "reason": "The quoted sources state one temporal SBA pattern for both vaccines, and the claim plus structure capture detectability by day 7, peak at day 30, decline by day 180, and persistence above baseline at day 750."
+        },
+        "timepoint_group_coverage": {
+          "status": "fail",
+          "reason": "The sources imply baseline plus days 7, 30, 180, and 750, but the groups omit any representation of the serogroups A and C named in the Figure 1 caption for SBA titers (d)."
+        },
+        "structural": {
+          "status": "fail",
+          "reason": "The ranking entries use 'scope': 'contrast' but the findings 'MPSV4 serum bactericidal activity peaked at day 30' and 'MCV4 serum bactericidal activity peaked at day 30' rank timepoint levels across groups, which should be modeled with group scope rather than contrast scope."
+        }
+      },
+      "verdict": "needs_revision",
+      "issues": [
+        "grounding: The claim adds unsupported details not stated in the quoted sources, including 'serum from healthy adult cohorts (18–45 yr, n=13 for MPSV4 and n=17 for MCV4)' and the explicit comparator phrase 'compared to baseline (day 0)'.",
+        "timepoint_group_coverage: The sources imply baseline plus days 7, 30, 180, and 750, but the groups omit any representation of the serogroups A and C named in the Figure 1 caption for SBA titers (d).",
+        "structural: The ranking entries use 'scope': 'contrast' but the findings 'MPSV4 serum bactericidal activity peaked at day 30' and 'MCV4 serum bactericidal activity peaked at day 30' rank timepoint levels across groups, which should be modeled with group scope rather than contrast scope."
+      ]
+    },
+    {
+      "claim_id": "claim_11",
+      "checks": {
+        "grounding": {
+          "status": "fail",
+          "reason": "The sources support only that an SBA titer of 1:8 or higher was maintained in the majority of MPSV4 and MCV4 vaccinees two years after inoculation with no difference between groups, but the claim adds unsupported details including 'healthy adult cohorts (18–45 yr, n=13 for MPSV4 and n=17 for MCV4)' and measurements 'at days 0, 7, 30, 180 and 750 post-vaccination'."
+        },
+        "comparator_form": {
+          "status": "pass",
+          "reason": "The sources explicitly compare two named vaccine groups, MPSV4 and MCV4, and the claim preserves that group comparison."
+        },
+        "completeness": {
+          "status": "pass",
+          "reason": "The quoted sources state a single substantive finding—no difference between MPSV4 and MCV4 in maintaining SBA titer 1:8 or higher two years after inoculation—and that finding is captured."
+        },
+        "timepoint_group_coverage": {
+          "status": "fail",
+          "reason": "The sources only name the two-year timepoint, so the groups array's added day 0, 7, 30, and 180 entries are unsupported rather than required by the quotes."
+        },
+        "structural": {
+          "status": "pass",
+          "reason": "The comparison references existing group_ids 8 and 9, there are no duplicate comparisons, and no ranking inconsistencies are present."
+        }
+      },
+      "verdict": "needs_revision",
+      "issues": [
+        "grounding: The sources support only that an SBA titer of 1:8 or higher was maintained in the majority of MPSV4 and MCV4 vaccinees two years after inoculation with no difference between groups, but the claim adds unsupported details including 'healthy adult cohorts (18–45 yr, n=13 for MPSV4 and n=17 for MCV4)' and measurements 'at days 0, 7, 30, 180 and 750 post-vaccination'.",
+        "timepoint_group_coverage: The sources only name the two-year timepoint, so the groups array's added day 0, 7, 30, and 180 entries are unsupported rather than required by the quotes."
+      ]
+    },
+    {
+      "claim_id": "claim_12",
+      "checks": {
+        "grounding": {
+          "status": "fail",
+          "reason": "The sources support only that MCV4 elicited a strong anti-DT IgG response at days 7 and 30 whereas MPSV4 did not, but the claim adds unsupported details including 'Luminex analysis', 'serum', 'healthy adult cohorts (18–45 yr, n=17 for MCV4 and n=13 for MPSV4)', 'days 0, 7 and 30 post-vaccination', and 'compared to baseline (day 0)'."
+        },
+        "comparator_form": {
+          "status": "pass",
+          "reason": "The sources explicitly contrast two named vaccine groups, MCV4 and MPSV4, rather than only reporting an association."
+        },
+        "completeness": {
+          "status": "pass",
+          "reason": "The sources state a single substantive finding about anti-DT IgG responses in MCV4 versus MPSV4 at days 7 and 30, and that finding is captured."
+        },
+        "timepoint_group_coverage": {
+          "status": "fail",
+          "reason": "The groups array includes day 0 baseline groups even though the quoted sources name only days 7 and 30 for this anti-DT IgG finding."
+        },
+        "structural": {
+          "status": "pass",
+          "reason": "All contrast indices resolve to existing group_ids and there are no duplicate comparison entries or invalid ranking entries."
+        }
+      },
+      "verdict": "needs_revision",
+      "issues": [
+        "grounding: The sources support only that MCV4 elicited a strong anti-DT IgG response at days 7 and 30 whereas MPSV4 did not, but the claim adds unsupported details including 'Luminex analysis', 'serum', 'healthy adult cohorts (18–45 yr, n=17 for MCV4 and n=13 for MPSV4)', 'days 0, 7 and 30 post-vaccination', and 'compared to baseline (day 0)'.",
+        "timepoint_group_coverage: The groups array includes day 0 baseline groups even though the quoted sources name only days 7 and 30 for this anti-DT IgG finding."
+      ]
+    },
+    {
+      "claim_id": "claim_13",
+      "checks": {
+        "grounding": {
+          "status": "fail",
+          "reason": "The sources support only that ASCs peaked at day 7 in both vaccines, but the claim adds unsupported details including 'flow cytometry analysis of whole blood cells', 'healthy adult cohorts (18–45 yr, n=13 for MPSV4 and n=17 for MCV4)', 'at days 0, 3, 7 and 14 post-vaccination', and 'compared to baseline (day 0)'."
+        },
+        "comparator_form": {
+          "status": "pass",
+          "reason": "The claim does not invent a higher/lower subgroup split from a correlation or association; it describes vaccine/timepoint patterns."
+        },
+        "completeness": {
+          "status": "fail",
+          "reason": "The Figure 1 caption also states that '(g) the number of ASCs at day 7 correlated with diphtheria toxoid-specific serum IgG at day 7', but the claim and structure omit this distinct reported relationship."
+        },
+        "timepoint_group_coverage": {
+          "status": "pass",
+          "reason": "The quoted sources explicitly mention both vaccines and day 7, and the groups array includes MPSV4 and MCV4 with a day 7 entry for each."
+        },
+        "structural": {
+          "status": "pass",
+          "reason": "All contrast and ranking indices resolve correctly, there are no duplicate comparisons, and the ranking entries consistently use comparison indices for contrast-level peak findings."
+        }
+      },
+      "verdict": "needs_revision",
+      "issues": [
+        "grounding: The sources support only that ASCs peaked at day 7 in both vaccines, but the claim adds unsupported details including 'flow cytometry analysis of whole blood cells', 'healthy adult cohorts (18–45 yr, n=13 for MPSV4 and n=17 for MCV4)', 'at days 0, 3, 7 and 14 post-vaccination', and 'compared to baseline (day 0)'.",
+        "completeness: The Figure 1 caption also states that '(g) the number of ASCs at day 7 correlated with diphtheria toxoid-specific serum IgG at day 7', but the claim and structure omit this distinct reported relationship."
+      ]
+    },
+    {
+      "claim_id": "claim_14",
+      "checks": {
+        "grounding": {
+          "status": "fail",
+          "reason": "The sources support only that 'the magnitude of the ASC response induced by MPSV4 was lower than that induced by MCV4' and that ASCs were measured at day 7, but the claim adds unsupported details including 'whole blood cells', 'healthy adult cohorts (18–45 yr, n=13 for MPSV4 and n=17 for MCV4)', and measurements at 'days 0, 3, 7 and 14 post-vaccination'."
+        },
+        "comparator_form": {
+          "status": "pass",
+          "reason": "The sources explicitly compare two vaccine groups, MPSV4 and MCV4, rather than only reporting an association."
+        },
+        "completeness": {
+          "status": "fail",
+          "reason": "The sources state two distinct findings—lower ASC response for MPSV4 than MCV4 and that 'the number of ASCs at day 7 correlated with diphtheria toxoid-specific serum IgG at day 7'—but the claim and structure omit the correlation finding."
+        },
+        "timepoint_group_coverage": {
+          "status": "fail",
+          "reason": "The quoted sources name only day 7 for ASCs, yet the groups array introduces unsupported day 0, day 3, and day 14 groups and time-specific comparisons."
+        },
+        "structural": {
+          "status": "pass",
+          "reason": "All contrast indices resolve to existing group_ids and there are no duplicate comparison entries or invalid ranking entries."
+        }
+      },
+      "verdict": "needs_revision",
+      "issues": [
+        "grounding: The sources support only that 'the magnitude of the ASC response induced by MPSV4 was lower than that induced by MCV4' and that ASCs were measured at day 7, but the claim adds unsupported details including 'whole blood cells', 'healthy adult cohorts (18–45 yr, n=13 for MPSV4 and n=17 for MCV4)', and measurements at 'days 0, 3, 7 and 14 post-vaccination'.",
+        "completeness: The sources state two distinct findings—lower ASC response for MPSV4 than MCV4 and that 'the number of ASCs at day 7 correlated with diphtheria toxoid-specific serum IgG at day 7'—but the claim and structure omit the correlation finding.",
+        "timepoint_group_coverage: The quoted sources name only day 7 for ASCs, yet the groups array introduces unsupported day 0, day 3, and day 14 groups and time-specific comparisons."
+      ]
+    },
+    {
+      "claim_id": "claim_15",
+      "checks": {
+        "grounding": {
+          "status": "fail",
+          "reason": "The claim adds unsupported details not stated in the quoted sources, including 'healthy adult cohorts (18–45 yr, n=17 for MCV4)', 'whole blood cells', and that the serum anti-diphtheria toxoid IgG response was measured by 'Luminex'."
+        },
+        "comparator_form": {
+          "status": "pass",
+          "reason": "The claim preserves the source's correlation between ASCs and serum anti-diphtheria toxoid IgG without inventing responder subgroups."
+        },
+        "completeness": {
+          "status": "fail",
+          "reason": "The Results quote states both that total ASCs at day 7 strongly correlated with serum anti-DT IgG and that they did not correlate with the anti-polysaccharide IgG response, but the claim and structure omit the latter relationship."
+        },
+        "timepoint_group_coverage": {
+          "status": "pass",
+          "reason": "Day 7 is the only explicit timepoint for the ASC-IgG correlation in the quoted sources, and both structured groups are assigned to day 7."
+        },
+        "structural": {
+          "status": "pass",
+          "reason": "The single comparison references existing group_ids 0 and 1, there are no duplicate comparisons, and no ranking entries create inconsistencies."
+        }
+      },
+      "verdict": "needs_revision",
+      "issues": [
+        "grounding: The claim adds unsupported details not stated in the quoted sources, including 'healthy adult cohorts (18–45 yr, n=17 for MCV4)', 'whole blood cells', and that the serum anti-diphtheria toxoid IgG response was measured by 'Luminex'.",
+        "completeness: The Results quote states both that total ASCs at day 7 strongly correlated with serum anti-DT IgG and that they did not correlate with the anti-polysaccharide IgG response, but the claim and structure omit the latter relationship."
+      ]
+    },
+    {
+      "claim_id": "claim_16",
+      "checks": {
+        "grounding": {
+          "status": "fail",
+          "reason": "The claim adds unsupported details 'PBMC', 'healthy adult cohorts (18–45 yr, n=17 for MCV4)', and 'DNA microarray' that do not appear in the quoted sources, although the day 7 vs baseline DEG finding is supported."
+        },
+        "comparator_form": {
+          "status": "pass",
+          "reason": "The sources explicitly describe differential expression at day 7 compared to baseline, so the claim's longitudinal comparison does not invent a group split from an association."
+        },
+        "completeness": {
+          "status": "pass",
+          "reason": "The quoted sources state one substantive finding for MCV4—1,150 DEGs at day 7 versus baseline bearing an ASC hallmark—and that finding is captured."
+        },
+        "timepoint_group_coverage": {
+          "status": "pass",
+          "reason": "The sources imply baseline and day 7 for this MCV4 comparison, and both timepoints are represented in the groups array."
+        },
+        "structural": {
+          "status": "pass",
+          "reason": "The single contrast [0, 1] resolves to existing group_ids, there are no duplicate comparisons, and no ranking entries to validate."
+        }
+      },
+      "verdict": "needs_revision",
+      "issues": [
+        "grounding: The claim adds unsupported details 'PBMC', 'healthy adult cohorts (18–45 yr, n=17 for MCV4)', and 'DNA microarray' that do not appear in the quoted sources, although the day 7 vs baseline DEG finding is supported."
+      ]
+    },
+    {
+      "claim_id": "claim_17",
+      "checks": {
+        "grounding": {
+          "status": "fail",
+          "reason": "The sources support only that increased module activity at day 7 in MCV4 correlated with later DT-specific IgG response, but the claim adds unsupported details including 'DNA microarray analysis of PBMC', 'healthy adult cohorts (18–45 yr, n=17)', 'at days 0 and 7 post-vaccination', 'using blood transcription module analysis', 'Plasma cells-Immunoglobulin module', and specifically 'the Luminex day 30/day 0 anti-diphtheria toxoid IgG response'."
+        },
+        "comparator_form": {
+          "status": "pass",
+          "reason": "The claim preserves the source's correlational form between module activity and later antibody response without inventing responder subgroups."
+        },
+        "completeness": {
+          "status": "fail",
+          "reason": "The Results quote states two relationships—correlation with later DT-specific IgG response and consistency with increased antibody secreting cells at day 7—but the claim and structure capture only the first and omit the antibody secreting cell finding."
+        },
+        "timepoint_group_coverage": {
+          "status": "fail",
+          "reason": "The claim names 'days 0 and 7 post-vaccination', but the groups array includes only a day 7 transcriptional group and no day 0 group."
+        },
+        "structural": {
+          "status": "pass",
+          "reason": "The single contrast [0,1] resolves to existing group_ids and there are no duplicate comparisons or invalid ranking entries."
+        }
+      },
+      "verdict": "needs_revision",
+      "issues": [
+        "grounding: The sources support only that increased module activity at day 7 in MCV4 correlated with later DT-specific IgG response, but the claim adds unsupported details including 'DNA microarray analysis of PBMC', 'healthy adult cohorts (18–45 yr, n=17)', 'at days 0 and 7 post-vaccination', 'using blood transcription module analysis', 'Plasma cells-Immunoglobulin module', and specifically 'the Luminex day 30/day 0 anti-diphtheria toxoid IgG response'.",
+        "completeness: The Results quote states two relationships—correlation with later DT-specific IgG response and consistency with increased antibody secreting cells at day 7—but the claim and structure capture only the first and omit the antibody secreting cell finding.",
+        "timepoint_group_coverage: The claim names 'days 0 and 7 post-vaccination', but the groups array includes only a day 7 transcriptional group and no day 0 group."
+      ]
+    },
+    {
+      "claim_id": "claim_18",
+      "checks": {
+        "grounding": {
+          "status": "fail",
+          "reason": "The sources support three distinctive day-3 BTM correlation patterns and which vaccines share them, but they do not state 'DNA microarray analysis of PBMC from vaccinees' or that YF-17D was identified 'compared to each other'; those details are added beyond the quoted evidence."
+        },
+        "comparator_form": {
+          "status": "pass",
+          "reason": "The claim describes named vaccine groups sharing or differing in pattern, rather than inventing subject subgroups from a mere association."
+        },
+        "completeness": {
+          "status": "pass",
+          "reason": "The claim and structure capture all three relationships stated in the Results quote: the protein recall pattern, the polysaccharide pattern, and the primary viral response pattern at day 3."
+        },
+        "timepoint_group_coverage": {
+          "status": "pass",
+          "reason": "Day 3 is the only explicit timepoint in the quoted evidence, and all vaccine-related groups represented in the stated patterns are included at day 3."
+        },
+        "structural": {
+          "status": "pass",
+          "reason": "All contrast indices resolve to existing group_ids 0 through 4, there are no duplicate comparison entries with the same contrast and finding, and no ranking inconsistencies are present."
+        }
+      },
+      "verdict": "needs_revision",
+      "issues": [
+        "grounding: The sources support three distinctive day-3 BTM correlation patterns and which vaccines share them, but they do not state 'DNA microarray analysis of PBMC from vaccinees' or that YF-17D was identified 'compared to each other'; those details are added beyond the quoted evidence."
+      ]
+    },
+    {
+      "claim_id": "claim_19",
+      "checks": {
+        "grounding": {
+          "status": "fail",
+          "reason": "The claim adds unsupported details 'DNA microarray analysis of PBMC from vaccinees' and 'using blood transcription module analysis'; the sources mention only BTM/module activity and do not state PBMC, vaccinees, or DNA microarray in the quoted text."
+        },
+        "comparator_form": {
+          "status": "fail",
+          "reason": "The Results quote states an association ('higher antibody response is associated with greater activity') rather than contrasting discrete 'higher antibody responders' versus 'lower antibody responders' groups, but the structure invents that split."
+        },
+        "completeness": {
+          "status": "pass",
+          "reason": "The quoted sources provide one substantive relationship—greater interferon response and cell adhesion module activity with higher antibody response in the primary viral response—and the claim captures it."
+        },
+        "timepoint_group_coverage": {
+          "status": "pass",
+          "reason": "The sources name only the context 'primary viral response' and no specific timepoints or additional populations that would require separate group entries."
+        },
+        "structural": {
+          "status": "pass",
+          "reason": "The single contrast [0, 1] resolves to existing group_ids, there are no duplicate comparisons, and no ranking entries create inconsistencies."
+        }
+      },
+      "verdict": "needs_revision",
+      "issues": [
+        "grounding: The claim adds unsupported details 'DNA microarray analysis of PBMC from vaccinees' and 'using blood transcription module analysis'; the sources mention only BTM/module activity and do not state PBMC, vaccinees, or DNA microarray in the quoted text.",
+        "comparator_form: The Results quote states an association ('higher antibody response is associated with greater activity') rather than contrasting discrete 'higher antibody responders' versus 'lower antibody responders' groups, but the structure invents that split."
+      ]
+    },
+    {
+      "claim_id": "claim_20",
+      "checks": {
+        "grounding": {
+          "status": "fail",
+          "reason": "The sources support a robust correlation between module activity and antibody response in YF-17D, consistent with type I IFN production, but they do not state 'DNA microarray analysis of PBMC' or explicitly say the interferon response was 'positively associated' rather than just correlated."
+        },
+        "comparator_form": {
+          "status": "pass",
+          "reason": "The claim describes an association between interferon response and antibody production without inventing discrete higher- or lower-response subject groups."
+        },
+        "completeness": {
+          "status": "pass",
+          "reason": "The quoted sources present a single relevant relationship—module activity/interferon-related correlation with antibody response—and the claim captures that relationship."
+        },
+        "timepoint_group_coverage": {
+          "status": "pass",
+          "reason": "The sources name no specific timepoints or multiple distinct participant populations requiring additional group entries."
+        },
+        "structural": {
+          "status": "pass",
+          "reason": "The structure has one valid group, no comparisons, and no ranking entries, so there are no dangling indices or duplicates."
+        }
+      },
+      "verdict": "needs_revision",
+      "issues": [
+        "grounding: The sources support a robust correlation between module activity and antibody response in YF-17D, consistent with type I IFN production, but they do not state 'DNA microarray analysis of PBMC' or explicitly say the interferon response was 'positively associated' rather than just correlated."
+      ]
+    },
+    {
+      "claim_id": "claim_21",
+      "checks": {
+        "grounding": {
+          "status": "fail",
+          "reason": "The source only states 'Inversely correlated to the antibody response are a number of cell division modules, including PLK1 signaling events,' so the claim adds unsupported details about 'DNA microarray analysis of PBMC from vaccinees,' 'using blood transcription module analysis,' and 'in the primary viral response.'"
+        },
+        "comparator_form": {
+          "status": "pass",
+          "reason": "The claim preserves the source as an inverse correlation with antibody response and does not invent discrete higher- versus lower-response subject groups."
+        },
+        "completeness": {
+          "status": "pass",
+          "reason": "The single relationship in the source—cell division modules including PLK1 signaling events being inversely correlated with antibody response—is captured."
+        },
+        "timepoint_group_coverage": {
+          "status": "pass",
+          "reason": "The source names no specific timepoints or distinct participant subgroups that would require additional group entries."
+        },
+        "structural": {
+          "status": "pass",
+          "reason": "The structured output has one valid group, no comparisons, and no ranking entries, so there are no dangling indices or duplicates."
+        }
+      },
+      "verdict": "needs_revision",
+      "issues": [
+        "grounding: The source only states 'Inversely correlated to the antibody response are a number of cell division modules, including PLK1 signaling events,' so the claim adds unsupported details about 'DNA microarray analysis of PBMC from vaccinees,' 'using blood transcription module analysis,' and 'in the primary viral response.'"
+      ]
+    },
+    {
+      "claim_id": "claim_22",
+      "checks": {
+        "grounding": {
+          "status": "fail",
+          "reason": "The claim adds unsupported specifics — 'DNA microarray analysis of PBMC from MPSV4 and MCV4 vaccinees' — because the quoted sources only mention 'each study' and do not state PBMC, DNA microarray, or the specific cohorts MPSV4 and MCV4."
+        },
+        "comparator_form": {
+          "status": "pass",
+          "reason": "The claim preserves the source's association/correlation framing ('positively associated') and does not invent responder subgroups or a compared-to baseline."
+        },
+        "completeness": {
+          "status": "pass",
+          "reason": "The sources state one substantive relationship at day 3, namely association of the anti-polysaccharide response with modules linked to antigen presenting cells, complement, and proinflammatory cytokines, and the claim captures that."
+        },
+        "timepoint_group_coverage": {
+          "status": "fail",
+          "reason": "The sources refer to correlations 'in each study' and the claim names two distinct populations ('MPSV4 and MCV4 vaccinees'), but the groups array collapses them into a single group instead of representing each named cohort separately."
+        },
+        "structural": {
+          "status": "pass",
+          "reason": "The structured output has one valid group_id, no comparisons or rankings to invalidate, and no duplicate contrast entries."
+        }
+      },
+      "verdict": "needs_revision",
+      "issues": [
+        "grounding: The claim adds unsupported specifics — 'DNA microarray analysis of PBMC from MPSV4 and MCV4 vaccinees' — because the quoted sources only mention 'each study' and do not state PBMC, DNA microarray, or the specific cohorts MPSV4 and MCV4.",
+        "timepoint_group_coverage: The sources refer to correlations 'in each study' and the claim names two distinct populations ('MPSV4 and MCV4 vaccinees'), but the groups array collapses them into a single group instead of representing each named cohort separately."
+      ]
+    },
+    {
+      "claim_id": "claim_23",
+      "checks": {
+        "grounding": {
+          "status": "fail",
+          "reason": "The source supports only 'The correlation of DC surface signature module to anti-polysaccharide IgG in both MCV4 and MPSV4', but the claim adds unsupported details: 'DNA microarray analysis', 'PBMC', 'at day 3 post-vaccination', and 'using blood transcription module analysis'."
+        },
+        "comparator_form": {
+          "status": "pass",
+          "reason": "The claim preserves the source as an association between the DC surface signature module and anti-polysaccharide IgG without inventing responder subgroups."
+        },
+        "completeness": {
+          "status": "pass",
+          "reason": "The quoted source states a single relationship, and the claim and structure capture that association."
+        },
+        "timepoint_group_coverage": {
+          "status": "fail",
+          "reason": "The source names two distinct populations, 'both MCV4 and MPSV4', but the groups array collapses them into a single cohort entry 'MPSV4 and MCV4 vaccinees' rather than representing each named population separately."
+        },
+        "structural": {
+          "status": "pass",
+          "reason": "The only contrast references existing group_ids 0 and 1, there are no duplicate comparisons, and no ranking entries create inconsistencies."
+        }
+      },
+      "verdict": "needs_revision",
+      "issues": [
+        "grounding: The source supports only 'The correlation of DC surface signature module to anti-polysaccharide IgG in both MCV4 and MPSV4', but the claim adds unsupported details: 'DNA microarray analysis', 'PBMC', 'at day 3 post-vaccination', and 'using blood transcription module analysis'.",
+        "timepoint_group_coverage: The source names two distinct populations, 'both MCV4 and MPSV4', but the groups array collapses them into a single cohort entry 'MPSV4 and MCV4 vaccinees' rather than representing each named population separately."
+      ]
+    },
+    {
+      "claim_id": "claim_24",
+      "checks": {
+        "grounding": {
+          "status": "fail",
+          "reason": "The sources support MPSV4-induced up-regulation/secretion in human DCs, but they do not mention 'flow cytometry analysis', the specific molecules 'CD80, CD83, HLA-DR, and CD86', or the comparator clause 'compared to MCV4 or medium control'."
+        },
+        "comparator_form": {
+          "status": "pass",
+          "reason": "The claim is framed as a group comparison rather than inventing groups from an association, and the sources do not present a correlation-style relationship."
+        },
+        "completeness": {
+          "status": "pass",
+          "reason": "The quoted sources state a single overall finding that MPSV4 activates human myeloid and monocyte-derived DCs with co-stimulatory molecule up-regulation and cytokine secretion, which the claim attempts to capture."
+        },
+        "timepoint_group_coverage": {
+          "status": "pass",
+          "reason": "The sources name two cell populations—human myeloid DC and monocyte derived DC—and the groups refer to both, while no timepoints are stated in the quotes."
+        },
+        "structural": {
+          "status": "pass",
+          "reason": "All contrast indices resolve to existing group_ids 0, 1, and 2, and there are no duplicate comparison entries or invalid ranking fields."
+        }
+      },
+      "verdict": "needs_revision",
+      "issues": [
+        "grounding: The sources support MPSV4-induced up-regulation/secretion in human DCs, but they do not mention 'flow cytometry analysis', the specific molecules 'CD80, CD83, HLA-DR, and CD86', or the comparator clause 'compared to MCV4 or medium control'."
+      ]
+    },
+    {
+      "claim_id": "claim_25",
+      "checks": {
+        "grounding": {
+          "status": "fail",
+          "reason": "The claim adds unsupported specifics 'flow cytometry analysis' and 'stimulated in vitro showed' because the quoted sources mention only that CD11c+ DCs were isolated and stimulated in vitro, not the assay method used to assess maturation."
+        },
+        "comparator_form": {
+          "status": "pass",
+          "reason": "The sources explicitly contrast WT and knockout mouse DC groups, so representing the finding as group comparisons does not invent a comparator from a mere association."
+        },
+        "completeness": {
+          "status": "pass",
+          "reason": "The sources state dependency on Myd88, Trif, Tlr4, and inflammasome activation/Asc, and all four relationships are captured in the claim and comparison structure."
+        },
+        "timepoint_group_coverage": {
+          "status": "fail",
+          "reason": "The Figure 6 caption specifies stimulation 'for 24 h,' but all group entries have time_point set to null, so the named timepoint is not represented."
+        },
+        "structural": {
+          "status": "pass",
+          "reason": "All contrast indices resolve to existing group_ids 0-4, there are no duplicate comparison entries, and no ranking structure is present to invalidate."
+        }
+      },
+      "verdict": "needs_revision",
+      "issues": [
+        "grounding: The claim adds unsupported specifics 'flow cytometry analysis' and 'stimulated in vitro showed' because the quoted sources mention only that CD11c+ DCs were isolated and stimulated in vitro, not the assay method used to assess maturation.",
+        "timepoint_group_coverage: The Figure 6 caption specifies stimulation 'for 24 h,' but all group entries have time_point set to null, so the named timepoint is not represented."
+      ]
+    },
+    {
+      "claim_id": "claim_26",
+      "checks": {
+        "grounding": {
+          "status": "fail",
+          "reason": "The sources support that 'MCV4 did not induce robust activation of DCs in vitro' and that Figure 6a shows cytokine induction by MPSV4 in human myeloid DC and monocyte derived DC, but they do not state 'flow cytometry analysis' or explicitly say 'compared to MPSV4.'"
+        },
+        "comparator_form": {
+          "status": "pass",
+          "reason": "The structured comparison is between named vaccine groups MCV4 and MPSV4 rather than an invented split from a correlation or association."
+        },
+        "completeness": {
+          "status": "fail",
+          "reason": "The sources also state a distinct finding that there was 'a correlation of the DC surface signature module to anti-polysaccharide IgG,' which is omitted from the claim and structure."
+        },
+        "timepoint_group_coverage": {
+          "status": "pass",
+          "reason": "No specific timepoints are named in the quoted sources, and the named populations MCV4 and MPSV4 with human myeloid DC and monocyte derived DC are represented."
+        },
+        "structural": {
+          "status": "pass",
+          "reason": "The only contrast uses valid group_ids 0 and 1, and there are no duplicate comparisons or invalid ranking entries."
+        }
+      },
+      "verdict": "needs_revision",
+      "issues": [
+        "grounding: The sources support that 'MCV4 did not induce robust activation of DCs in vitro' and that Figure 6a shows cytokine induction by MPSV4 in human myeloid DC and monocyte derived DC, but they do not state 'flow cytometry analysis' or explicitly say 'compared to MPSV4.'",
+        "completeness: The sources also state a distinct finding that there was 'a correlation of the DC surface signature module to anti-polysaccharide IgG,' which is omitted from the claim and structure."
+      ]
+    },
+    {
+      "claim_id": "claim_27",
+      "checks": {
+        "grounding": {
+          "status": "fail",
+          "reason": "The claim adds unsupported specifics in 'DNA microarray analysis of PBMC from TIV and MCV4 vaccinees' and 'using blood transcription module analysis' because the quoted sources mention day 3 module activity and BTM analysis but do not state PBMC or DNA microarray in those passages."
+        },
+        "comparator_form": {
+          "status": "pass",
+          "reason": "The claim preserves the source's association/correlation framing between day 3 module activity and antibody titers without inventing responder subgroups."
+        },
+        "completeness": {
+          "status": "pass",
+          "reason": "The claim and structured comparisons capture both stated relationships: correlation with HAI titers in TIV and with DT-specific antibody titers in MCV4, along with the linked monocyte/TLR and downstream B-cell modules."
+        },
+        "timepoint_group_coverage": {
+          "status": "pass",
+          "reason": "The only explicit timepoint in the quoted evidence is day 3, and both named populations, TIV and MCV4 vaccinees, are represented in the groups."
+        },
+        "structural": {
+          "status": "pass",
+          "reason": "All contrast indices map to existing group_ids, the two comparisons are distinct, and there are no invalid or inconsistent ranking entries."
+        }
+      },
+      "verdict": "needs_revision",
+      "issues": [
+        "grounding: The claim adds unsupported specifics in 'DNA microarray analysis of PBMC from TIV and MCV4 vaccinees' and 'using blood transcription module analysis' because the quoted sources mention day 3 module activity and BTM analysis but do not state PBMC or DNA microarray in those passages."
+      ]
+    },
+    {
+      "claim_id": "claim_28",
+      "checks": {
+        "grounding": {
+          "status": "fail",
+          "reason": "The source only says 'Plasma and memory B cell modules at day 7 are indeed positively correlated with the antibody response in both vaccines,' but the claim adds unsupported details including 'DNA microarray analysis of PBMC,' 'using blood transcription module analysis,' and the comparator 'compared to lower module activity.'"
+        },
+        "comparator_form": {
+          "status": "fail",
+          "reason": "The source reports a correlation/association with antibody response, not a contrast between discrete higher- and lower-responder or lower-module-activity groups, so the claim and structure invent a group split."
+        },
+        "completeness": {
+          "status": "pass",
+          "reason": "The single reported relationship—positive correlation of plasma and memory B cell modules at day 7 with antibody response in both vaccines—is captured in substance."
+        },
+        "timepoint_group_coverage": {
+          "status": "pass",
+          "reason": "Day 7 is the only named timepoint, and both named vaccine populations (TIV and MCV4/both vaccines) are represented in the groups."
+        },
+        "structural": {
+          "status": "pass",
+          "reason": "The only contrast references existing group_ids 0 and 1, and there are no duplicate comparisons or invalid ranking entries."
+        }
+      },
+      "verdict": "needs_revision",
+      "issues": [
+        "grounding: The source only says 'Plasma and memory B cell modules at day 7 are indeed positively correlated with the antibody response in both vaccines,' but the claim adds unsupported details including 'DNA microarray analysis of PBMC,' 'using blood transcription module analysis,' and the comparator 'compared to lower module activity.'",
+        "comparator_form: The source reports a correlation/association with antibody response, not a contrast between discrete higher- and lower-responder or lower-module-activity groups, so the claim and structure invent a group split."
+      ]
+    },
+    {
+      "claim_id": "claim_29",
+      "checks": {
+        "grounding": {
+          "status": "fail",
+          "reason": "The source quote supports only that 'several BTM modules were ... common to 3 out of the 5 vaccines' and that 'cell cycle related modules are shared among MPSV4, TIV and MCV4 anti-DT responses,' but the claim adds unsupported details including 'DNA microarray analysis of PBMC,' 'day 7 post-vaccination,' 'using blood transcription module analysis,' and 'compared to the other vaccine-response profiles.'"
+        },
+        "comparator_form": {
+          "status": "pass",
+          "reason": "The source names vaccine-response profiles directly rather than reporting only an association that was converted into invented higher/lower groups."
+        },
+        "completeness": {
+          "status": "pass",
+          "reason": "The claim captures both findings stated in the quote: that several BTM modules were common to 3 of 5 vaccines and that cell cycle modules were shared among MPSV4, TIV, and MCV4 anti-DT responses."
+        },
+        "timepoint_group_coverage": {
+          "status": "fail",
+          "reason": "The quote refers only to 'this time point' without naming day 7, so the groups array assigns an unsupported specific time_point ('day 7') to all groups."
+        },
+        "structural": {
+          "status": "pass",
+          "reason": "All contrast indices resolve to existing group_ids and there are no duplicate comparison entries or invalid ranking entries."
+        }
+      },
+      "verdict": "needs_revision",
+      "issues": [
+        "grounding: The source quote supports only that 'several BTM modules were ... common to 3 out of the 5 vaccines' and that 'cell cycle related modules are shared among MPSV4, TIV and MCV4 anti-DT responses,' but the claim adds unsupported details including 'DNA microarray analysis of PBMC,' 'day 7 post-vaccination,' 'using blood transcription module analysis,' and 'compared to the other vaccine-response profiles.'",
+        "timepoint_group_coverage: The quote refers only to 'this time point' without naming day 7, so the groups array assigns an unsupported specific time_point ('day 7') to all groups."
+      ]
+    },
+    {
+      "claim_id": "claim_30",
+      "checks": {
+        "grounding": {
+          "status": "fail",
+          "reason": "The sources support positive correlation/association of plasma cell and immunoglobulin modules with antibody responses in TIV and MCV4, but they do not state 'day 7 post-vaccination,' 'DNA microarray analysis of PBMC,' 'using blood transcription module analysis,' or the comparator phrase 'compared to lower module activity.'"
+        },
+        "comparator_form": {
+          "status": "fail",
+          "reason": "The quotes report correlations/associations between module activity and antibody responses, but the claim and structure invent discrete 'higher antibody responders' and 'lower antibody responders' groups and a comparison to 'lower module activity.'"
+        },
+        "completeness": {
+          "status": "fail",
+          "reason": "The sources also state that memory B cell modules are inversely correlated to antibody titers in YF-17D and that this is opposite to TIV/MCV4, but the claim/structure omit that distinct reported relationship."
+        },
+        "timepoint_group_coverage": {
+          "status": "fail",
+          "reason": "The sources name distinct populations TIV, MCV4, and YF-17D, but the groups array only includes combined 'TIV and MCV4 vaccinees' and does not represent the quoted YF-17D population."
+        },
+        "structural": {
+          "status": "pass",
+          "reason": "The single contrast [0,1] resolves to existing group_ids and there are no duplicate comparisons or invalid ranking entries."
+        }
+      },
+      "verdict": "needs_revision",
+      "issues": [
+        "grounding: The sources support positive correlation/association of plasma cell and immunoglobulin modules with antibody responses in TIV and MCV4, but they do not state 'day 7 post-vaccination,' 'DNA microarray analysis of PBMC,' 'using blood transcription module analysis,' or the comparator phrase 'compared to lower module activity.'",
+        "comparator_form: The quotes report correlations/associations between module activity and antibody responses, but the claim and structure invent discrete 'higher antibody responders' and 'lower antibody responders' groups and a comparison to 'lower module activity.'",
+        "completeness: The sources also state that memory B cell modules are inversely correlated to antibody titers in YF-17D and that this is opposite to TIV/MCV4, but the claim/structure omit that distinct reported relationship.",
+        "timepoint_group_coverage: The sources name distinct populations TIV, MCV4, and YF-17D, but the groups array only includes combined 'TIV and MCV4 vaccinees' and does not represent the quoted YF-17D population."
+      ]
+    },
+    {
+      "claim_id": "claim_31",
+      "checks": {
+        "grounding": {
+          "status": "fail",
+          "reason": "The source supports only that these modules are 'inversely correlated to antibody titers in YF-17D'; it does not state 'DNA microarray analysis of PBMC', 'day 7 post-vaccination', 'using blood transcription module analysis', or the comparator phrase 'compared to lower module activity'."
+        },
+        "comparator_form": {
+          "status": "fail",
+          "reason": "The Results quote reports an inverse correlation between module activity and antibody titers, but the claim recasts this as a comparison 'compared to lower module activity,' inventing a discrete comparator not named in the source."
+        },
+        "completeness": {
+          "status": "pass",
+          "reason": "The claim captures the stated inverse relationship for plasma cell/immunoglobulin modules and memory B cell modules with antibody titers in YF-17D, and the opposite pattern in TIV/MCV4 is contextual rather than an omitted relationship within the structured claim."
+        },
+        "timepoint_group_coverage": {
+          "status": "fail",
+          "reason": "The quote names no timepoint at all, yet the groups array introduces 'day 0' and 'day 7' groups that are not grounded in the source."
+        },
+        "structural": {
+          "status": "pass",
+          "reason": "The single contrast [0,1] resolves to existing group_ids and there are no duplicate comparisons or invalid ranking entries."
+        }
+      },
+      "verdict": "needs_revision",
+      "issues": [
+        "grounding: The source supports only that these modules are 'inversely correlated to antibody titers in YF-17D'; it does not state 'DNA microarray analysis of PBMC', 'day 7 post-vaccination', 'using blood transcription module analysis', or the comparator phrase 'compared to lower module activity'.",
+        "comparator_form: The Results quote reports an inverse correlation between module activity and antibody titers, but the claim recasts this as a comparison 'compared to lower module activity,' inventing a discrete comparator not named in the source.",
+        "timepoint_group_coverage: The quote names no timepoint at all, yet the groups array introduces 'day 0' and 'day 7' groups that are not grounded in the source."
+      ]
+    },
+    {
+      "claim_id": "claim_32",
+      "checks": {
+        "grounding": {
+          "status": "fail",
+          "reason": "The source quote supports only that 'T cell activation appears to be negatively correlated with antibody responses in MPSV4 (D7) and TIV (D3 and D7)', but the claim adds unsupported specifics: 'DNA microarray analysis of PBMC', 'using blood transcription module analysis', and 'showed'."
+        },
+        "comparator_form": {
+          "status": "pass",
+          "reason": "The claim preserves the source as a negative association/correlation and does not invent higher- versus lower-response subject groups."
+        },
+        "completeness": {
+          "status": "pass",
+          "reason": "The source states three negative correlation instances—MPSV4 at day 7 and TIV at days 3 and 7—and all are captured in the claim and structured comparisons."
+        },
+        "timepoint_group_coverage": {
+          "status": "pass",
+          "reason": "The groups array includes entries for all source-named cohort/timepoint combinations: MPSV4 day 7, TIV day 3, and TIV day 7."
+        },
+        "structural": {
+          "status": "pass",
+          "reason": "All contrast indices resolve to existing group_ids (0, 1, 2), there are no duplicate comparison entries, and no ranking structure is present to invalidate."
+        }
+      },
+      "verdict": "needs_revision",
+      "issues": [
+        "grounding: The source quote supports only that 'T cell activation appears to be negatively correlated with antibody responses in MPSV4 (D7) and TIV (D3 and D7)', but the claim adds unsupported specifics: 'DNA microarray analysis of PBMC', 'using blood transcription module analysis', and 'showed'."
+      ]
+    }
+  ]
+}

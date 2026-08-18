@@ -1,0 +1,120 @@
+{
+  "Microarray Assay": {
+    "name_in_paper": "Microarray Assay",
+    "aliases": [
+      "microarray",
+      "whole-genome transcriptional profiles",
+      "whole-genome arrays",
+      "Illumina HT-12 V3 beadchips"
+    ],
+    "sample_type": "whole blood; capillary blood by finger stick; isolated neutrophils, monocytes, CD4+ T cells, and CD8+ T cells",
+    "readouts": "global transcript abundance; gene expression profiles; module-level expression signatures",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Whole-genome transcriptional profiles were generated at each time point from the first cohort of volunteers (n = 6 subjects/ group; 162 samples in total)."
+    },
+    "confidence": "high",
+    "claim_role": "primary",
+    "normalized_name": "Microarray Assay",
+    "obi_id": "OBI:0001985",
+    "obi_label": "microarray assay",
+    "resource": "exact_original"
+  },
+  "Flow Cytometry": {
+    "name_in_paper": "Flow Cytometry",
+    "aliases": [
+      "polychromatic flow cytometry",
+      "multi-parameter flow cytometry"
+    ],
+    "sample_type": "whole blood",
+    "readouts": "absolute numbers and frequencies/composition of B cells, plasmablasts, and plasma cells",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Plasmablasts were identified by polychromatic flow cytometry in whole blood samples as CD19+/lo CD20−CD27+CD38hi plasmablasts and plasma cells."
+    },
+    "confidence": "high",
+    "claim_role": "validation",
+    "normalized_name": "Flow Cytometry",
+    "obi_id": "OBI:0000916",
+    "obi_label": "flow cytometry assay",
+    "resource": "exact_original"
+  },
+  "Hemagglutinin Inhibition": {
+    "name_in_paper": "Hemagglutinin Inhibition",
+    "aliases": [
+      "HAI",
+      "hemagglutinin inhibition assay"
+    ],
+    "sample_type": "serum",
+    "readouts": "influenza neutralizing antibody titers",
+    "evidence_location": {
+      "type": "figure",
+      "ref": "Figure 7"
+    },
+    "confidence": 0.6383,
+    "claim_role": "outcome_variable",
+    "normalized_name": "Hemagglutinin Inhibition",
+    "obi_id": "OBI:0000875",
+    "obi_label": "viral hemagglutination inhibition assay",
+    "resource": "embedding_llm"
+  },
+  "Virus-neutralization assays": {
+    "name_in_paper": "Virus-neutralization assays",
+    "aliases": [
+      "VN",
+      "virus neutralization"
+    ],
+    "sample_type": "serum",
+    "readouts": "influenza virus neutralizing antibody titers",
+    "evidence_location": {
+      "type": "figure",
+      "ref": "Figure 7"
+    },
+    "confidence": 0.7184,
+    "claim_role": "outcome_variable",
+    "normalized_name": "Virus-neutralization assays",
+    "obi_id": "OBI:0000872",
+    "obi_label": "serum neutralization of viral infectivity assay",
+    "resource": "embedding_llm"
+  },
+  "commercial immunoassays": {
+    "name_in_paper": "commercial immunoassays",
+    "aliases": [],
+    "sample_type": "serum",
+    "readouts": "antibody response to 14 pneumococcal polysaccharides",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "The strongest correlations were observed between day 7 modular transcriptional data and serology results in the pneumococcal vaccine group."
+    },
+    "confidence": 0.5953,
+    "claim_role": "outcome_variable",
+    "normalized_name": "commercial immunoassays",
+    "obi_id": "OBI:0000661",
+    "obi_label": "enzyme-linked immunosorbent assay",
+    "resource": "embedding_llm"
+  },
+  "Multiplex Cytokine Analysis": {
+    "name_in_paper": "Multiplex Cytokine Analysis",
+    "aliases": [
+      "Luminex",
+      "Multiplex 42-human cytokine and chemokine panel",
+      "serum analysis of cytokines"
+    ],
+    "sample_type": "serum",
+    "readouts": "cytokine and chemokine concentrations, including CXCL10 (IP-10)",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Furthermore, serum levels of the IFN-inducible chemokine CXCL10 (IP-10) were also found to increase significantly on day 1 after influenza vaccination (p < 0.01; Figure S4)."
+    },
+    "confidence": 0.6575,
+    "claim_role": "validation",
+    "normalized_name": "Multiplex Cytokine Analysis",
+    "obi_id": "OBI:0002766",
+    "obi_label": "cytokine assay",
+    "resource": "embedding_llm"
+  }
+}

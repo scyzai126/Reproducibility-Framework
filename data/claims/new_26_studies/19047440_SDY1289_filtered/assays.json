@@ -1,0 +1,144 @@
+{
+  "gene array": {
+    "name_in_paper": "gene array",
+    "aliases": [
+      "microarray",
+      "microarray analysis",
+      "Illumina chips",
+      "Illumina Human RefSeq-8 BeadChips",
+      "functional genomics"
+    ],
+    "sample_type": "whole blood RNA; also DC/CD4+ T cell co-culture RNA in the MIMIC system",
+    "readouts": "gene expression profiles, differentially expressed genes, transcriptional signatures",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Expression profiles of 594 genes ... were found to change significantly between day 0 and any time point after vaccination."
+    },
+    "confidence": 0.95,
+    "claim_role": "primary"
+  },
+  "quantitative real-time PCR (qPCR)": {
+    "name_in_paper": "quantitative real-time PCR (qPCR)",
+    "aliases": [
+      "qPCR",
+      "RT-PCR"
+    ],
+    "sample_type": "whole blood RNA from vaccinated volunteers",
+    "readouts": "expression levels of selected genes for validation of microarray findings",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "we could observe a highly significant correlation between the results obtained by qPCR and those obtained by gene microarray, with coefficients of correlation ranging between 0.78 and 0.96."
+    },
+    "confidence": 0.98,
+    "claim_role": "validation"
+  },
+  "ELISA": {
+    "name_in_paper": "ELISA",
+    "aliases": [
+      "IL-1β ELISA"
+    ],
+    "sample_type": "supernatants from monocyte-derived dendritic cells incubated with live, UV-inactivated, or heat-inactivated YF17D",
+    "readouts": "IL-1β secretion",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "The results show that DCs incubated with live or UV-inactivated YF17D showed a marked increased IL-1β secretion (up to ninefold, compared with DCs incubated in medium alone), whereas heat-inactivated YF17D only triggered a modest secretion of the proinflammatory cytokine."
+    },
+    "confidence": 0.96,
+    "claim_role": "validation"
+  },
+  "flow cytometry": {
+    "name_in_paper": "flow cytometry",
+    "aliases": [
+      "polychromatic flow cytometry",
+      "FACS",
+      "cytometry"
+    ],
+    "sample_type": "PBMCs; also DC/T-cell co-cultures in the MIMIC system",
+    "readouts": "frequencies of Ki67+ proliferating leukocyte subsets; antigen-specific CD4+ T-cell activation and intracellular cytokine expression; Th1/Th2 phenotype",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "An increase in frequencies of Ki67+ cells in the CD4+CD8− (2.3-fold increase; P = 0.0049) and the CD4−CD8+ (4.7-fold increase; P = 0.0157) populations occurred within the first 14 d after YF17D vaccination."
+    },
+    "confidence": 0.97,
+    "claim_role": "primary"
+  },
+  "CFSE labeling": {
+    "name_in_paper": "CFSE labeling",
+    "aliases": [],
+    "sample_type": "PBMCs stimulated with YF17D-derived peptide pools",
+    "readouts": "CD4+ and CD8+ T cell proliferative responses; breadth and persistence of peptide-specific responses",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "PBMCs sampled at day 60 after vaccination were incubated in the presence of each of 22 YF17D-derived peptide pools ... and their proliferation was measured by CFSE labeling."
+    },
+    "confidence": 0.93,
+    "claim_role": "primary"
+  },
+  "cytometric bead assay (CBA)": {
+    "name_in_paper": "cytometric bead assay (CBA)",
+    "aliases": [
+      "CBA",
+      "BD Th1/Th2 CBA array"
+    ],
+    "sample_type": "PBMC culture supernatants after stimulation with YF17D-derived peptide pools",
+    "readouts": "Th1/Th2 cytokine levels including IL-2, IFN-γ, TNF, IL-4, and IL-10",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "We used cytometric bead assay (CBA) to assess the levels of the Th1 cytokines IL-2, IFN-γ, and TNF, and the Th2 cytokines IL-4 and -10 secreted by these cells."
+    },
+    "confidence": 0.97,
+    "claim_role": "primary"
+  },
+  "multiplex cytokine analysis": {
+    "name_in_paper": "multiplex cytokine analysis",
+    "aliases": [
+      "Beadlyte human 22-plex Multi-cytokine Detection System",
+      "Bio-Plex"
+    ],
+    "sample_type": "MIMIC DC/T-cell co-culture supernatants",
+    "readouts": "cytokine concentrations including IL-2, IFN-γ, IL-13, IL-5, and IL-10",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "The levels of the cytokines IL-2, IFN-γ, IL-13, IL-5, and IL-10 in the MIMIC co-culture supernatants were measured by multiplex cytokine analysis (Fig. 8 c). When YF17D was used as pulse and recall antigen, the cells produced high levels of all the cytokines measured except IL-10."
+    },
+    "confidence": 0.94,
+    "claim_role": "validation"
+  },
+  "neutralizing antibody titers": {
+    "name_in_paper": "neutralizing antibody titers",
+    "aliases": [
+      "neutralizing humoral immune response",
+      "YF17D-specific neutralizing antibody production",
+      "seroconversion"
+    ],
+    "sample_type": "serum",
+    "readouts": "neutralizing antibody response to YF17D",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "This late induction of B cell–associated genes (days 10 and 14) coincided with the onset of YF17D-specific neutralizing antibody production, which occurred by day 14 in the majority of the vaccinated volunteers (Table S2)."
+    },
+    "confidence": 0.72,
+    "claim_role": "outcome_variable"
+  },
+  "viremia": {
+    "name_in_paper": "viremia",
+    "aliases": [],
+    "sample_type": "blood",
+    "readouts": "level/development of circulating virus after vaccination",
+    "evidence_location": {
+      "type": "text",
+      "section": "Discussion",
+      "quote": "Control of viral replication (Table S5, available at http://www.jem.org/cgi/content/full/jem.20082292/DC1) happens as this innate response precedes the emergence of YF17D-specific humoral and cellular immune responses."
+    },
+    "confidence": 0.35,
+    "claim_role": "outcome_variable"
+  }
+}

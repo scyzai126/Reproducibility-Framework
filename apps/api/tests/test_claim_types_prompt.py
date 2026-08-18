@@ -18,6 +18,7 @@ CLAIM_TYPES = [
     "group_difference",
     "extremum",
     "trajectory_segment",
+    "response_difference",
     "magnitude_comparison",
     "association",
     "prediction",

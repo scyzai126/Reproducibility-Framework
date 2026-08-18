@@ -1,0 +1,1210 @@
+{
+  "claim_1": {
+    "claim": "Affymetrix exon microarray analysis of peripheral blood mononuclear cells (PBMC) from seven Ad5 nAb seronegative individuals during the first week after MRKAd5/HIV vaccination at prevaccination and 6, 24, 72, and 168 h postvaccination showed that PBMC gene expression responses peaked at 24 h compared to prevaccination.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "We assessed the innate immune response to MRKAd5/HIV by profiling transcriptomes of peripheral blood mononuclear cells (PBMC) isolated from seven Ad5 nAb seronegative individuals (Ad5 nAb titer ≤18; Ad5Neg) during the first week after vaccination, by gene-level analysis of Affymetrix exon microarrays. Responses to MRKAd5/HIV peaked at 24 h, with 1,026 genes exhibiting enhanced and 1,048 genes exhibiting repressed expression levels compared with prevaccination (Fig. 1A and Dataset S1, tab 1)."
+      },
+      {
+        "type": "text",
+        "section": "Figure 1 caption",
+        "quote": "Fig. 1. Systems analysis identifies widespread innate immune activation and cellular trafficking responses response to MRKAd5/HIV vaccination in humans. (A) In vivo PBMC transcriptional responses to vaccination with MRKAd5/HIV [n = 7 Ad5 seronegative individuals, false-discovery rate (FDR) ≤ 10%, absolute average log2 fold-change ≥ 0.5]."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 1A"
+      }
+    ],
+    "comparison_strategy": "longitudinal",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": 7,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "Ad5 nAb seronegative individuals",
+        "assay_method": "Affymetrix exon microarray",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": "day 0"
+      },
+      {
+        "group_id": 1,
+        "study_accession": null,
+        "sample_size": 7,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "Ad5 nAb seronegative individuals",
+        "assay_method": "Affymetrix exon microarray",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": "day 0.25"
+      },
+      {
+        "group_id": 2,
+        "study_accession": null,
+        "sample_size": 7,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "Ad5 nAb seronegative individuals",
+        "assay_method": "Affymetrix exon microarray",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": "day 1"
+      },
+      {
+        "group_id": 3,
+        "study_accession": null,
+        "sample_size": 7,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "Ad5 nAb seronegative individuals",
+        "assay_method": "Affymetrix exon microarray",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": "day 3"
+      },
+      {
+        "group_id": 4,
+        "study_accession": null,
+        "sample_size": 7,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "Ad5 nAb seronegative individuals",
+        "assay_method": "Affymetrix exon microarray",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": "day 7"
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "PBMC gene expression responses at 6 h relative to prevaccination"
+      },
+      {
+        "contrast": [
+          0,
+          2
+        ],
+        "finding": "PBMC gene expression responses at 24 h relative to prevaccination"
+      },
+      {
+        "contrast": [
+          0,
+          3
+        ],
+        "finding": "PBMC gene expression responses at 72 h relative to prevaccination"
+      },
+      {
+        "contrast": [
+          0,
+          4
+        ],
+        "finding": "PBMC gene expression responses at 168 h relative to prevaccination"
+      }
+    ],
+    "ranking": [
+      {
+        "type": "argmax",
+        "scope": "contrast",
+        "metric": "magnitude of PBMC gene expression response relative to prevaccination",
+        "over": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "winner": 1,
+        "finding": "PBMC gene expression responses peaked at 24 h compared to prevaccination"
+      }
+    ]
+  },
+  "claim_2": {
+    "claim": "Affymetrix exon microarray analysis of peripheral blood mononuclear cells (PBMC) from seven Ad5 nAb seronegative individuals during the first week after MRKAd5/HIV vaccination at prevaccination and 6, 24, 72, and 168 h postvaccination showed that inflammation, interferon response, and myeloid lineage modules were up-regulated, whereas lymphoid lineage, T-cell, and cytotoxicity modules were down-regulated at 24 h compared to prevaccination.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Modules induced by MRKAd5/HIV were associated with cell intrinsic innate immune responses (“Inflammation” and “Interferon response” modules) and influx of inflammatory cells (“Myeloid lineage” module). Concomitantly, the “Lymphoid lineage,” “T cells,” and “Cytotoxicity” modules were suppressed, leading to the hypothesis that the vaccine was stimulating an influx of myeloid cells and an efflux of lymphoid cells from the circulation."
+      },
+      {
+        "type": "text",
+        "section": "Figure 1 caption",
+        "quote": "Fig. 1. Systems analysis identifies widespread innate immune activation and cellular trafficking responses response to MRKAd5/HIV vaccination in humans. (B) Functional gene modules significantly differentially expressed in PBMC in response to vaccination. Each black line represents the average log2(fold change) of all genes in the module for a single subject. Up-regulated modules have values >0, down-regulated modules have values <0. FDR < 10%, |average log2(fold-change)|>0.5."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 1B"
+      }
+    ],
+    "comparison_strategy": "longitudinal",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": 7,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "Ad5 nAb seronegative individuals",
+        "assay_method": "Affymetrix exon microarray",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": "day 0"
+      },
+      {
+        "group_id": 1,
+        "study_accession": null,
+        "sample_size": 7,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "Ad5 nAb seronegative individuals",
+        "assay_method": "Affymetrix exon microarray",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": "day 0.25"
+      },
+      {
+        "group_id": 2,
+        "study_accession": null,
+        "sample_size": 7,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "Ad5 nAb seronegative individuals",
+        "assay_method": "Affymetrix exon microarray",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": "day 1"
+      },
+      {
+        "group_id": 3,
+        "study_accession": null,
+        "sample_size": 7,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "Ad5 nAb seronegative individuals",
+        "assay_method": "Affymetrix exon microarray",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": "day 3"
+      },
+      {
+        "group_id": 4,
+        "study_accession": null,
+        "sample_size": 7,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "Ad5 nAb seronegative individuals",
+        "assay_method": "Affymetrix exon microarray",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": "day 7"
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          2
+        ],
+        "finding": "At 24 h relative to prevaccination, inflammation, interferon response, and myeloid lineage modules were up-regulated, whereas lymphoid lineage, T-cell, and cytotoxicity modules were down-regulated."
+      }
+    ]
+  },
+  "claim_3": {
+    "claim": "Quantitative RT-PCR analysis of peripheral blood mononuclear cells (PBMC) from seven Ad5 nAb seronegative individuals during the first week after MRKAd5/HIV vaccination at prevaccination and 6, 24, 72, and 168 h postvaccination showed that CXCL10, ISG-15, and STAT1 mRNAs increased after vaccination compared to prevaccination.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "We validated the microarray results at the transcript, protein, and cellular levels. First, we quantified and confirmed the differential expression of mRNAs associated with several vaccine-regulated modules, including “Interferon response” [C-X-C motif chemokine 10 (CXCL10), ISG-15, and STAT1] (Fig. 1C)."
+      },
+      {
+        "type": "text",
+        "section": "Figure 1 caption",
+        "quote": "Fig. 1. Systems analysis identifies widespread innate immune activation and cellular trafficking responses response to MRKAd5/HIV vaccination in humans. (C) Quantitative RT-PCR validation of the differential expression of module-associated genes identified by microarray analysis. Each line represents the response of one individual (n = 7)."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 1C"
+      }
+    ],
+    "comparison_strategy": "longitudinal",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": 7,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "Ad5 nAb seronegative individuals",
+        "assay_method": "Quantitative RT-PCR",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": "day 0"
+      },
+      {
+        "group_id": 1,
+        "study_accession": null,
+        "sample_size": 7,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "Ad5 nAb seronegative individuals",
+        "assay_method": "Quantitative RT-PCR",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": "day 0.25"
+      },
+      {
+        "group_id": 2,
+        "study_accession": null,
+        "sample_size": 7,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "Ad5 nAb seronegative individuals",
+        "assay_method": "Quantitative RT-PCR",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": "day 1"
+      },
+      {
+        "group_id": 3,
+        "study_accession": null,
+        "sample_size": 7,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "Ad5 nAb seronegative individuals",
+        "assay_method": "Quantitative RT-PCR",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": "day 3"
+      },
+      {
+        "group_id": 4,
+        "study_accession": null,
+        "sample_size": 7,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "Ad5 nAb seronegative individuals",
+        "assay_method": "Quantitative RT-PCR",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": "day 7"
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "CXCL10, ISG-15, and STAT1 mRNAs increased at 6 h postvaccination compared to prevaccination"
+      },
+      {
+        "contrast": [
+          0,
+          2
+        ],
+        "finding": "CXCL10, ISG-15, and STAT1 mRNAs increased at 24 h postvaccination compared to prevaccination"
+      },
+      {
+        "contrast": [
+          0,
+          3
+        ],
+        "finding": "CXCL10, ISG-15, and STAT1 mRNAs increased at 72 h postvaccination compared to prevaccination"
+      },
+      {
+        "contrast": [
+          0,
+          4
+        ],
+        "finding": "CXCL10, ISG-15, and STAT1 mRNAs increased at 168 h postvaccination compared to prevaccination"
+      }
+    ]
+  },
+  "claim_4": {
+    "claim": "Multiplex analyte analysis of serum from vaccinated subjects at prevaccination and 24 h postvaccination showed that IP-10, I-TAC, MCP-1, MCP-2, IL-10, and IL-1Ra levels changed robustly after vaccination compared to prevaccination.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Next, we corroborated the differential expression of many cytokines and chemokines at the protein level using multiplex serum analyte analysis (Fig. 1D and Dataset S1, tab 6), detecting robust changes in serum levels of IP-10, I-TAC, monocyte chemoattractant protein-1 (MCP-1), and MCP-2, as well as immunoregulatory IL-10 and IL-1Ra."
+      },
+      {
+        "type": "text",
+        "section": "Figure 1 caption",
+        "quote": "Fig. 1. Systems analysis identifies widespread innate immune activation and cellular trafficking responses response to MRKAd5/HIV vaccination in humans. (D) Protein-level validation of vaccine-induced cytokine and chemokine differential expression by multiplex analyte analysis."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 1D"
+      }
+    ],
+    "comparison_strategy": "longitudinal",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "vaccinated subjects",
+        "assay_method": "Multiplex analyte",
+        "tissue_type": "serum",
+        "gender": null,
+        "age": null,
+        "time_point": "day 0"
+      },
+      {
+        "group_id": 1,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "vaccinated subjects",
+        "assay_method": "Multiplex analyte",
+        "tissue_type": "serum",
+        "gender": null,
+        "age": null,
+        "time_point": "day 1"
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "IP-10, I-TAC, MCP-1, MCP-2, IL-10, and IL-1Ra serum levels changed robustly at 24 h postvaccination compared to prevaccination"
+      }
+    ]
+  },
+  "claim_5": {
+    "claim": "Flow cytometry analysis of circulating peripheral blood leukocytes from vaccinated subjects during the first week after MRKAd5/HIV vaccination showed that monocyte concentrations increased, whereas T-cell, B-cell, and NK-cell concentrations decreased after vaccination compared to prevaccination.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Finally, we validated the cellular trafficking responses predicted from the modular analysis by directly assessing circulating peripheral blood leukocyte concentrations (Fig. 1E and Dataset S1, tab 7), confirming vaccine-induced influx of monocytes and pronounced efflux of lymphocyte populations (T, B, and NK cells)."
+      },
+      {
+        "type": "text",
+        "section": "Figure 1 caption",
+        "quote": "Fig. 1. Systems analysis identifies widespread innate immune activation and cellular trafficking responses response to MRKAd5/HIV vaccination in humans. (E) Validation of vaccine-induced cellular fluxes predicted by module-level analysis of the PBMC transcriptional responses. *P < 0.05 with Hochberg adjustment from the statistical model assessing change in concentration over time."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 1E"
+      }
+    ],
+    "comparison_strategy": "longitudinal",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "vaccinated subjects",
+        "assay_method": "Flow cytometry",
+        "tissue_type": "circulating peripheral blood leukocytes",
+        "gender": null,
+        "age": null,
+        "time_point": "day 0"
+      },
+      {
+        "group_id": 1,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "vaccinated subjects",
+        "assay_method": "Flow cytometry",
+        "tissue_type": "circulating peripheral blood leukocytes",
+        "gender": null,
+        "age": null,
+        "time_point": null
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "after MRKAd5/HIV vaccination compared to prevaccination, monocyte concentrations increased, whereas T-cell, B-cell, and NK-cell concentrations decreased"
+      }
+    ]
+  },
+  "claim_6": {
+    "claim": "Affymetrix exon microarray analysis of peripheral blood mononuclear cells (PBMC) from four Ad5 seronegative donors stimulated in vitro for 24 h with MRKAd5 and from seven Ad5 nAb seronegative individuals profiled in vivo showed that interferon response and other innate immune response modules induced in vivo were also induced in vitro compared to unstimulated or prevaccination controls.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "We found that 8 of 13 (62%) modules induced in vivo were also induced in vitro and these consisted of the three “Interferon response modules” as well as unannotated modules largely comprised of innate immune response genes (Fig. 2A)."
+      },
+      {
+        "type": "text",
+        "section": "Figure 2 caption",
+        "quote": "Fig. 2. Responses to MRKAd5/HIV are recapitulated in vitro and involve coordinate regulation of an innate immune network involving unique gene isoforms. (A and B) In vitro responses of modules regulated by MRKAd5/HIV in vivo. Each black line represents the average log2 fold-change of all genes in the module for PBMC derived from separate donors and stimulated in vitro (n = 4); red line indicates average module-level response in vivo. *P ≤ 0.01 comparing module fold-changes observed in vitro those observed in vivo. (A) Gene modules consistently regulated by MRKAd5 in vivo and in vitro."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 2A"
+      }
+    ],
+    "comparison_strategy": "cohort",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": 4,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "Ad5 seronegative donors stimulated in vitro with MRKAd5 for 24 h",
+        "assay_method": "Affymetrix exon microarray",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": null
+      },
+      {
+        "group_id": 1,
+        "study_accession": null,
+        "sample_size": 7,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "Ad5 nAb seronegative individuals profiled in vivo",
+        "assay_method": "Affymetrix exon microarray",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": null
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "interferon response modules and other innate immune response modules induced in vivo were also induced in vitro relative to unstimulated or prevaccination controls; 8 of 13 modules induced in vivo were also induced in vitro"
+      }
+    ]
+  },
+  "claim_8": {
+    "claim": "Affymetrix exon microarray analysis of peripheral blood mononuclear cells (PBMC) from four Ad5 seronegative donors stimulated in vitro for 24 h with MRKAd5 and from seven Ad5 nAb seronegative individuals profiled in vivo showed that myeloid, lymphoid, T-cell, B-cell, and cytotoxicity modules were regulated in vivo but not in vitro compared to unstimulated or prevaccination controls.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Many of the modules discordant between the in vitro and in vivo responses were associated with particular cellular lineages (myeloid, lymphoid, T cell, B cell) or cell-type specific attributes (cytotoxicity) (Fig. 2B), suggesting that the much of the discrepancy between the in vivo and in vitro responses arose from an absence of cell trafficking in vitro."
+      },
+      {
+        "type": "text",
+        "section": "Figure 2 caption",
+        "quote": "Fig. 2. Responses to MRKAd5/HIV are recapitulated in vitro and involve coordinate regulation of an innate immune network involving unique gene isoforms. (A and B) In vitro responses of modules regulated by MRKAd5/HIV in vivo. Each black line represents the average log2 fold-change of all genes in the module for PBMC derived from separate donors and stimulated in vitro (n = 4); red line indicates average module-level response in vivo. *P ≤ 0.01 comparing module fold-changes observed in vitro those observed in vivo. (B) Gene modules regulated in vivo but not in vitro."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 2B"
+      }
+    ],
+    "comparison_strategy": "cohort",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": 4,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "Ad5 seronegative donors stimulated in vitro with MRKAd5 for 24 h",
+        "assay_method": "Affymetrix exon microarray",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": null
+      },
+      {
+        "group_id": 1,
+        "study_accession": null,
+        "sample_size": 7,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "Ad5 nAb seronegative individuals profiled in vivo",
+        "assay_method": "Affymetrix exon microarray",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": null
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "myeloid, lymphoid, T-cell, B-cell, and cytotoxicity modules were regulated in vivo but not in vitro compared to unstimulated or prevaccination controls"
+      }
+    ]
+  },
+  "claim_9": {
+    "claim": "Affymetrix exon microarray analysis of peripheral blood mononuclear cells (PBMC) from seven Ad5 nAb seronegative individuals in vivo and four Ad5 seronegative donors stimulated in vitro for 24 h with MRKAd5 showed that exon-level analysis identified additional vaccine-induced genes, including TLR3, RIPK1, NLRC5, APOBEC3G, APOBEC3F, CCR5, and CD74, compared to prevaccination or unstimulated controls.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Exon-level analysis led to the identification of 94 additional vaccine-induced genes in vivo and in vitro (Dataset S1, tab 9), including critical innate immune pathway genes (TLR3, RIPK1, and NLRC5) and several genes with important roles in HIV infection (APOBEC3G, APOBEC3F, CCR5, and CD74)."
+      }
+    ],
+    "comparison_strategy": "cohort",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": 7,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "Ad5 nAb seronegative individuals in vivo",
+        "assay_method": "Affymetrix exon microarray",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": null
+      },
+      {
+        "group_id": 1,
+        "study_accession": null,
+        "sample_size": 4,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "Ad5 seronegative donors stimulated in vitro for 24 h with MRKAd5",
+        "assay_method": "Affymetrix exon microarray",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": null
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "exon-level analysis identified additional vaccine-induced genes in both in vivo and in vitro Ad5 seronegative PBMC samples, including TLR3, RIPK1, NLRC5, APOBEC3G, APOBEC3F, CCR5, and CD74, relative to prevaccination or unstimulated controls"
+      }
+    ]
+  },
+  "claim_10": {
+    "claim": "Affymetrix exon microarray analysis of peripheral blood mononuclear cells (PBMC) from seven Ad5 nAb seronegative individuals in vivo and four Ad5 seronegative donors stimulated in vitro for 24 h with MRKAd5 showed that 16 genes, including FANCA, FARP2, RERE, GBP6, and GBP7, had vaccine-induced responses that varied strongly from exon to exon but were nevertheless consistent in vitro and in vivo compared to prevaccination or unstimulated controls.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Additionally, alternative transcription analysis identified 16 genes with vaccine-induced responses that varied strongly from exon to exon, but were nevertheless consistent in vitro and in vivo, including FANCA, FARP2, RERE, GBP6, and GBP7 (Fig. 2C and Dataset S1, tab 10)."
+      },
+      {
+        "type": "text",
+        "section": "Figure 2 caption",
+        "quote": "Fig. 2. Responses to MRKAd5/HIV are recapitulated in vitro and involve coordinate regulation of an innate immune network involving unique gene isoforms. (C) Single gene heatmaps showing average exon-level expression responses to MRKAd5/HIV in vivo (n = 7) and in vitro (n = 4). Pink intensity indicates up-regulation, cyan indicates down-regulation."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 2C"
+      }
+    ],
+    "comparison_strategy": "cohort",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": 7,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "Ad5 nAb seronegative individuals in vivo",
+        "assay_method": "Affymetrix exon microarray",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": null
+      },
+      {
+        "group_id": 1,
+        "study_accession": null,
+        "sample_size": 4,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "Ad5 seronegative donors stimulated in vitro for 24 h with MRKAd5",
+        "assay_method": "Affymetrix exon microarray",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": null
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "vaccine-induced exon-level responses in 16 genes, including FANCA, FARP2, RERE, GBP6, and GBP7, varied strongly from exon to exon but were nevertheless consistent between in vivo and in vitro conditions relative to prevaccination or unstimulated controls"
+      }
+    ]
+  },
+  "claim_11": {
+    "claim": "Affymetrix exon microarray analysis of peripheral blood mononuclear cells (PBMC) from vaccinated subjects at 24 and 72 h postvaccination showed that vaccine-induced responses were markedly attenuated in subjects with Ad5 nAb titers >200 compared to subjects with Ad5 nAb titers ≤200.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Given the possibility of threshold effects of Ad5 nAb (3, 4), we compared the responses between subjects with Ad5 nAb titers ≤ 200 and >200, and thereby identified 306 seropositivity effect genes (302 at 24 h, six at 72 h) for which the vaccine-induced responses were markedly attenuated (Dataset S1, tab 11)."
+      }
+    ],
+    "comparison_strategy": "cross_sectional_longitudinal",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "vaccinated subjects with Ad5 nAb titers ≤200",
+        "assay_method": "Affymetrix exon microarray",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": "day 1"
+      },
+      {
+        "group_id": 1,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "vaccinated subjects with Ad5 nAb titers >200",
+        "assay_method": "Affymetrix exon microarray",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": "day 1"
+      },
+      {
+        "group_id": 2,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "vaccinated subjects with Ad5 nAb titers ≤200",
+        "assay_method": "Affymetrix exon microarray",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": "day 3"
+      },
+      {
+        "group_id": 3,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "vaccinated subjects with Ad5 nAb titers >200",
+        "assay_method": "Affymetrix exon microarray",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": "day 3"
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "vaccine-induced responses were markedly attenuated at 24 h in subjects with Ad5 nAb titers >200 compared to subjects with Ad5 nAb titers ≤200; 302 seropositivity effect genes were identified at this time point"
+      },
+      {
+        "contrast": [
+          2,
+          3
+        ],
+        "finding": "vaccine-induced responses were markedly attenuated at 72 h in subjects with Ad5 nAb titers >200 compared to subjects with Ad5 nAb titers ≤200; six seropositivity effect genes were identified at this time point"
+      }
+    ]
+  },
+  "claim_12": {
+    "claim": "Affymetrix exon microarray analysis of peripheral blood mononuclear cells (PBMC) from vaccinated subjects showed that induction of complement pathways, innate immune sensors, and G-protein coupled receptor signaling was significantly attenuated in subjects with Ad5 nAb titers >200 compared to subjects with Ad5 nAb titers ≤200.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Canonical pathway enrichment analysis of these genes revealed that induction of complement pathways, innate immune sensors, and G-protein coupled receptor signaling was significantly attenuated (Dataset S1, tab 12)."
+      }
+    ],
+    "comparison_strategy": "response_stratified",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "vaccinated subjects — Ad5 nAb titers >200",
+        "assay_method": "Affymetrix exon microarray",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": null
+      },
+      {
+        "group_id": 1,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "vaccinated subjects — Ad5 nAb titers ≤200",
+        "assay_method": "Affymetrix exon microarray",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": null
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "induction of complement pathways, innate immune sensors, and G-protein coupled receptor signaling was significantly attenuated in subjects with Ad5 nAb titers >200 compared to subjects with Ad5 nAb titers ≤200"
+      }
+    ]
+  },
+  "claim_13": {
+    "claim": "Affymetrix exon microarray analysis of peripheral blood mononuclear cells (PBMC) from vaccinated subjects at 6, 24, 72, and 168 h postvaccination showed that all modules regulated by MRKAd5 were attenuated in subjects with Ad5 nAb titers >200 compared to subjects with Ad5 nAb titers ≤200.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "This attenuation extended to all modules regulated by the MRKAd5 vaccine (Fig. 3A), including impaired down-regulation of lymphocyte modules and genes preferentially expressed in lymphocytes (Dataset S1, tab 11), suggesting suppression of the acute lymphopenia observed in the Ad5 seronegative subjects (Fig. 1E)."
+      },
+      {
+        "type": "text",
+        "section": "Figure 3 caption",
+        "quote": "Fig. 3. Preexisting Ad5 neutralizing antibodies attenuate the MRKAd5/HIV-induced innate immune response in vivo. (A) Effect of Ad5 nAbs on gene modules regulated by MRKAd5/HIV. Black line represents the average fold-change of all genes in the modules, averaged over 8 Ad5 nAb ≤ 200 subjects. Green lines represent the average fold-change of all genes in the module for the two Ad5 nAb > 200 subjects."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 3A"
+      }
+    ],
+    "comparison_strategy": "cross_sectional_longitudinal",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": 8,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "vaccinated subjects with Ad5 nAb titers ≤200",
+        "assay_method": "Affymetrix exon microarray",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": "day 0.25"
+      },
+      {
+        "group_id": 1,
+        "study_accession": null,
+        "sample_size": 2,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "vaccinated subjects with Ad5 nAb titers >200",
+        "assay_method": "Affymetrix exon microarray",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": "day 0.25"
+      },
+      {
+        "group_id": 2,
+        "study_accession": null,
+        "sample_size": 8,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "vaccinated subjects with Ad5 nAb titers ≤200",
+        "assay_method": "Affymetrix exon microarray",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": "day 1"
+      },
+      {
+        "group_id": 3,
+        "study_accession": null,
+        "sample_size": 2,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "vaccinated subjects with Ad5 nAb titers >200",
+        "assay_method": "Affymetrix exon microarray",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": "day 1"
+      },
+      {
+        "group_id": 4,
+        "study_accession": null,
+        "sample_size": 8,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "vaccinated subjects with Ad5 nAb titers ≤200",
+        "assay_method": "Affymetrix exon microarray",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": "day 3"
+      },
+      {
+        "group_id": 5,
+        "study_accession": null,
+        "sample_size": 2,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "vaccinated subjects with Ad5 nAb titers >200",
+        "assay_method": "Affymetrix exon microarray",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": "day 3"
+      },
+      {
+        "group_id": 6,
+        "study_accession": null,
+        "sample_size": 8,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "vaccinated subjects with Ad5 nAb titers ≤200",
+        "assay_method": "Affymetrix exon microarray",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": "day 7"
+      },
+      {
+        "group_id": 7,
+        "study_accession": null,
+        "sample_size": 2,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "vaccinated subjects with Ad5 nAb titers >200",
+        "assay_method": "Affymetrix exon microarray",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": "day 7"
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "all modules regulated by MRKAd5 were attenuated at 6 h in subjects with Ad5 nAb titers >200 compared to subjects with Ad5 nAb titers ≤200"
+      },
+      {
+        "contrast": [
+          2,
+          3
+        ],
+        "finding": "all modules regulated by MRKAd5 were attenuated at 24 h in subjects with Ad5 nAb titers >200 compared to subjects with Ad5 nAb titers ≤200"
+      },
+      {
+        "contrast": [
+          4,
+          5
+        ],
+        "finding": "all modules regulated by MRKAd5 were attenuated at 72 h in subjects with Ad5 nAb titers >200 compared to subjects with Ad5 nAb titers ≤200"
+      },
+      {
+        "contrast": [
+          6,
+          7
+        ],
+        "finding": "all modules regulated by MRKAd5 were attenuated at 168 h in subjects with Ad5 nAb titers >200 compared to subjects with Ad5 nAb titers ≤200, including impaired down-regulation of lymphocyte modules and genes preferentially expressed in lymphocytes"
+      }
+    ]
+  },
+  "claim_14": {
+    "claim": "Multiplex cytokine analysis of serum from vaccinated subjects at prevaccination and 24 h postvaccination showed that cytokine responses were markedly attenuated in subjects with Ad5 nAb titers >200 compared to subjects with Ad5 nAb titers ≤200.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Finally, we validated these transcriptional results at the protein level by analyzing serum analytes from a larger set of vaccinated subjects (Fig. S2). Consistent with the transcriptional results, cytokine responses were markedly attenuated in Ad5 nAb >200 subjects compared with Ad5 nAb ≤ 200 subjects (Fig. 3C and Dataset S1, tab 13)."
+      },
+      {
+        "type": "text",
+        "section": "Figure 3 caption",
+        "quote": "Fig. 3. Preexisting Ad5 neutralizing antibodies attenuate the MRKAd5/HIV-induced innate immune response in vivo. (C) Representative attenuation of MRKAd5/HIV serum cytokine induction in Ad5 nAb > 200 subjects. Serum IP-10/CXCL10 concentrations are contrasted between Ad5 nAb ≤ 200 (n = 27) and Ad5 nAb > 200 (n = 6) individuals."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 3C"
+      }
+    ],
+    "comparison_strategy": "cross_sectional_longitudinal",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": 27,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "vaccinated subjects with Ad5 nAb titers ≤200",
+        "assay_method": "Multiplex cytokine",
+        "tissue_type": "serum",
+        "gender": null,
+        "age": null,
+        "time_point": "day 0"
+      },
+      {
+        "group_id": 1,
+        "study_accession": null,
+        "sample_size": 6,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "vaccinated subjects with Ad5 nAb titers >200",
+        "assay_method": "Multiplex cytokine",
+        "tissue_type": "serum",
+        "gender": null,
+        "age": null,
+        "time_point": "day 0"
+      },
+      {
+        "group_id": 2,
+        "study_accession": null,
+        "sample_size": 27,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "vaccinated subjects with Ad5 nAb titers ≤200",
+        "assay_method": "Multiplex cytokine",
+        "tissue_type": "serum",
+        "gender": null,
+        "age": null,
+        "time_point": "day 1"
+      },
+      {
+        "group_id": 3,
+        "study_accession": null,
+        "sample_size": 6,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "vaccinated subjects with Ad5 nAb titers >200",
+        "assay_method": "Multiplex cytokine",
+        "tissue_type": "serum",
+        "gender": null,
+        "age": null,
+        "time_point": "day 1"
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          2,
+          3
+        ],
+        "finding": "cytokine responses at 24 h postvaccination were markedly attenuated in subjects with Ad5 nAb titers >200 compared to subjects with Ad5 nAb titers ≤200"
+      }
+    ]
+  },
+  "claim_20": {
+    "claim": "Affymetrix exon microarray analysis of peripheral blood mononuclear cells (PBMC) from vaccine recipients at 72 h postvaccination showed no significant differences in MRKAd5-responsive modules between subjects with high and low Gag-specific CD8+ T-cell responses at day 28.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Surprisingly, significant differences between these groups of subjects were only identified from the transcriptional responses measured 72 h postvaccination (88 genes were positively associated and 121 genes were negatively associated) (Fig. 5 A and B and Dataset S1, tab 14), and none of the MRKAd5-responsive modules differed significantly between the groups."
+      },
+      {
+        "type": "text",
+        "section": "Figure 5 caption",
+        "quote": "Fig. 5. Systems analysis identifies innate immune response genes that are associated with the immunogenicity of MRKAd5/HIV. (A) The 209 genes with 72-h MRKAd5/HIV-induced expression responses that are positively (Upper) or negatively (Lower) associated with the magnitude of MRKAd5/HIV-induced CD8+ T-cell responses."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 5A"
+      }
+    ],
+    "comparison_strategy": "response_stratified",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "vaccine recipients — high Gag-specific CD8+ T-cell responders",
+        "assay_method": "Affymetrix exon microarray",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": "day 3"
+      },
+      {
+        "group_id": 1,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "vaccine recipients — low Gag-specific CD8+ T-cell responders",
+        "assay_method": "Affymetrix exon microarray",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": "day 3"
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "no significant differences in MRKAd5-responsive modules between subjects with high and low Gag-specific CD8+ T-cell responses"
+      }
+    ]
+  },
+  "claim_24": {
+    "claim": "Agilent 3′ arrays analysis of peripheral blood mononuclear cells (PBMC) from four Ad5 seronegative donors stimulated in vitro for 24 h with MRKAd5 or YF-17D showed that MRKAd5 preferentially induced IRF1, C1QB, TLR8, CASP10, P2RX7, and SLAMF7 compared to YF-17D.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "We identified 43 genes preferentially induced by MRKAd5/HIV in vivo that confirmed in vitro (Fig. 6C), including several associated with innate immune responses (IRF1), the complement pathway (C1QB), pathogen recognition (TLR8), the inflammasome (CASP10, P2RX7), and NK-cell activation [SLAMF7 (33)]."
+      },
+      {
+        "type": "text",
+        "section": "Figure 6 caption",
+        "quote": "Fig. 6. MRKAd5 induces more extensive innate immune activation than the gold-standard yellow fever vaccine, YF-17D. (C) Average expression responses in vivo and in vitro of 43 genes preferentially induced by MRKAd5."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 6C"
+      }
+    ],
+    "comparison_strategy": "clinical_trial",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": 4,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "MRKAd5",
+        "assay_method": "Agilent 3′ arrays",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": null
+      },
+      {
+        "group_id": 1,
+        "study_accession": null,
+        "sample_size": 4,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "YF-17D",
+        "assay_method": "Agilent 3′ arrays",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": null
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "MRKAd5 preferentially induced IRF1, C1QB, TLR8, CASP10, P2RX7, and SLAMF7 compared to YF-17D after 24 h in vitro stimulation"
+      }
+    ]
+  },
+  "claim_25": {
+    "claim": "Agilent 3′ arrays analysis of peripheral blood mononuclear cells (PBMC) from four Ad5 seronegative donors stimulated in vitro for 24 h with MRKAd5 or YF-17D showed that MRKAd5 preferentially induced T-cell chemoattractants CXCL9, CXCL10, and CXCL11, MHC genes, and T-cell-associated cytokines IFNG, IL-2, and IL-7, whereas YF-17D preferentially induced IFNA family cytokines and neutrophil chemokines IL-8, CXCL2, CXCL3, CXCL5, and CXCL6 compared to each other.",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "MRKAd5 preferentially induced T-cell chemoattractants (CXCL9/10/11), MHC genes, and T-cell–associated cytokines (IFNG, IL-2, and IL-7) but YF-17D preferentially induced the IFNA family of antiviral cytokines and several neutrophil chemokines (IL-8, CXCL2, -3, -5, and -6)."
+      }
+    ],
+    "comparison_strategy": "clinical_trial",
+    "groups": [
+      {
+        "group_id": 0,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "MRKAd5",
+        "assay_method": "Agilent 3′ arrays",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": null
+      },
+      {
+        "group_id": 1,
+        "study_accession": null,
+        "sample_size": null,
+        "disease": null,
+        "disease_stage": null,
+        "cohort": "YF-17D",
+        "assay_method": "Agilent 3′ arrays",
+        "tissue_type": "peripheral blood mononuclear cells (PBMC)",
+        "gender": null,
+        "age": null,
+        "time_point": null
+      }
+    ],
+    "comparison": [
+      {
+        "contrast": [
+          0,
+          1
+        ],
+        "finding": "MRKAd5 preferentially induced T-cell chemoattractants CXCL9, CXCL10, and CXCL11, MHC genes, and T-cell-associated cytokines IFNG, IL-2, and IL-7, whereas YF-17D preferentially induced IFNA family cytokines and neutrophil chemokines IL-8, CXCL2, CXCL3, CXCL5, and CXCL6"
+      }
+    ]
+  }
+}

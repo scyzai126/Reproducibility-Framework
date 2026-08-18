@@ -1,0 +1,125 @@
+{
+  "microarray": {
+    "name_in_paper": "microarray",
+    "aliases": [
+      "Affymetrix exon microarrays",
+      "Human Exon ST 1.0 microarray platform",
+      "Agilent SurePrint G3 Human GE 8 × 60K microarray platform",
+      "Microarrays",
+      "Affymetrix Exon Arrays",
+      "Agilent 3′ Arrays",
+      "transcriptional profiling"
+    ],
+    "sample_type": "PBMCs",
+    "readouts": "gene expression transcriptomes, differential gene expression, exon-level expression responses",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Responses to MRKAd5/HIV peaked at 24 h, with 1,026 genes exhibiting enhanced and 1,048 genes exhibiting repressed expression levels compared with prevaccination (Fig. 1A and Dataset S1, tab 1)."
+    },
+    "confidence": "high",
+    "claim_role": "primary",
+    "normalized_name": "microarray",
+    "obi_id": "OBI:0001985",
+    "obi_label": "microarray assay",
+    "resource": "exact_original"
+  },
+  "quantitative real-time PCR": {
+    "name_in_paper": "quantitative real-time PCR",
+    "aliases": [
+      "Quantitative RT-PCR",
+      "qRT-PCR"
+    ],
+    "sample_type": "PBMC RNA",
+    "readouts": "mRNA transcript levels of selected genes (e.g., CXCL10, ISG-15, STAT1)",
+    "evidence_location": {
+      "type": "figure",
+      "ref": "Figure 1C"
+    },
+    "confidence": 0.6658,
+    "claim_role": "validation",
+    "normalized_name": "quantitative real-time PCR",
+    "obi_id": "OBI:0000911",
+    "obi_label": "real time reverse-transcription polymerase chain reaction assay",
+    "resource": "embedding_llm"
+  },
+  "Multiplex Cytokine Analysis": {
+    "name_in_paper": "Multiplex Cytokine Analysis",
+    "aliases": [
+      "multiplex serum analyte analysis",
+      "multiplex analyte analysis",
+      "Luminex 200"
+    ],
+    "sample_type": "serum",
+    "readouts": "cytokine and chemokine concentrations",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Next, we corroborated the differential expression of many cytokines and chemokines at the protein level using multiplex serum analyte analysis (Fig. 1D and Dataset S1, tab 6), detecting robust changes in serum levels of IP-10, I-TAC, monocyte chemoattractant protein-1 (MCP-1), and MCP-2, as well as immunoregulatory IL-10 and IL-1Ra."
+    },
+    "confidence": 0.6575,
+    "claim_role": "primary",
+    "normalized_name": "Multiplex Cytokine Analysis",
+    "obi_id": "OBI:0002766",
+    "obi_label": "cytokine assay",
+    "resource": "embedding_llm"
+  },
+  "flow cytometry": {
+    "name_in_paper": "flow cytometry",
+    "aliases": [],
+    "sample_type": "whole blood",
+    "readouts": "circulating leukocyte concentrations and blood cell population frequencies/counts including T, B, NK cells, and monocytes",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Finally, we validated the cellular trafficking responses predicted from the modular analysis by directly assessing circulating peripheral blood leukocyte concentrations (Fig. 1E and Dataset S1, tab 7), confirming vaccine-induced influx of monocytes and pronounced efflux of lymphocyte populations (T, B, and NK cells)."
+    },
+    "confidence": "high",
+    "claim_role": "validation",
+    "normalized_name": "flow cytometry",
+    "obi_id": "OBI:0000916",
+    "obi_label": "flow cytometry assay",
+    "resource": "exact_original"
+  },
+  "neutralizing antibodies to Ad5": {
+    "name_in_paper": "neutralizing antibodies to Ad5",
+    "aliases": [
+      "Ad5 nAb",
+      "Ad5 neutralizing antibodies",
+      "Ad5 nAb titers"
+    ],
+    "sample_type": "serum",
+    "readouts": "Ad5 neutralizing antibody titers/serostatus",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Given the possibility of threshold effects of Ad5 nAb (3, 4), we compared the responses between subjects with Ad5 nAb titers ≤ 200 and >200, and thereby identified 306 seropositivity effect genes (302 at 24 h, six at 72 h) for which the vaccine-induced responses were markedly attenuated (Dataset S1, tab 11)."
+    },
+    "confidence": 0.4981,
+    "claim_role": "outcome_variable",
+    "normalized_name": "neutralizing antibodies to Ad5",
+    "obi_id": "OBI:0003796",
+    "obi_label": "pathogen neutralization assay",
+    "resource": "embedding_llm"
+  },
+  "CD8+ T-cell responses": {
+    "name_in_paper": "CD8+ T-cell responses",
+    "aliases": [
+      "Gag-specific CD8+ T-cell responses",
+      "HIV-specific CD8+ T-cell responses"
+    ],
+    "sample_type": "PBMCs",
+    "readouts": "frequency/magnitude of vaccine-induced Gag-specific CD8+ T-cell responses",
+    "evidence_location": {
+      "type": "text",
+      "section": "Results",
+      "quote": "Based on the frequency of Gag-specific CD8+ T-cell responses detected at day 28 after one immunization (Fig. S3), we categorized vaccine recipients (n = 31) into high, moderate, or low responders."
+    },
+    "confidence": 0.35,
+    "claim_role": "outcome_variable",
+    "normalized_name": "CD8+ T-cell responses",
+    "obi_id": null,
+    "obi_label": null,
+    "resource": "unresolved"
+  }
+}

@@ -47,7 +47,10 @@ async def run_step2(claims: dict, client: AsyncOpenAI) -> dict:
         val = result.get(key, {})
         val.setdefault("claim", claims[key]["claim"])
         val.setdefault("sources", claims[key].get("sources", []))
-        groups[key] = val
+        # claim_type is carried through from the input claims rather than asked of the
+        # model: claim_filter already selected on this value, so a re-derived one could
+        # disagree with the filter that let the claim through.
+        groups[key] = {"claim_type": claims[key].get("claim_type"), **val}
         print(f"  [{i}/{len(claim_keys)}] {key} done")
     return groups
 
