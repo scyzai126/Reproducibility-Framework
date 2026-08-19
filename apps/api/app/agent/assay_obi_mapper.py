@@ -20,14 +20,32 @@ from openai import OpenAI
 from app.config import settings
 
 _REPO_ROOT = Path(__file__).resolve().parents[4]
-_OBI_REFERENCES_DIR = _REPO_ROOT / ".claude" / "skills" / "extract-assay-methods" / "references"
-_OBI_TERMS_PATH = _OBI_REFERENCES_DIR / "obi_assay_terms.json"
-_EMBEDDINGS_PATH = _OBI_REFERENCES_DIR / "obi_assay_embeddings.json"
+_OBI_DIR = _REPO_ROOT / "data" / "OBI"
+# Pruned vocabulary + matching vectors — see data/OBI/README.md for how they are built.
+_OBI_TERMS_PATH = _OBI_DIR / "obi_generic_index.json"
+_EMBEDDINGS_PATH = _OBI_DIR / "obi_generic_embeddings.json"
 _PROMPTS_DIR = _REPO_ROOT / "apps" / "api" / "app" / "prompts"
 
 EMBED_MODEL = "text-embedding-3-small"
 LLM_MODEL = "gpt-4o-mini"
 TOP_K = 10
+
+
+# ── Vocabulary pruning ────────────────────────────────────────────────────────
+
+_COMPOSITIONAL_LABEL_RE = re.compile(r"\bmeasuring\b", re.IGNORECASE)
+
+
+def _is_generic_assay_label(label: str) -> bool:
+    """False for IEDB-style compositional labels ("... assay measuring epitope specific X of
+    Y cells").
+
+    These are ~30% of the OBI assay branch (532 of the 1794 terms we index) and they outrank
+    the plain family terms in similarity search — 43 of the 45 ELISPOT-ish labels are
+    compositional, so an "IFN-y ELISPOT" query buries OBI:0600031 under cytokine-specific
+    IEDB constructs. They never belong in the candidate pool.
+    """
+    return not _COMPOSITIONAL_LABEL_RE.search(label or "")
 
 
 # ── Exact-match helpers ───────────────────────────────────────────────────────
@@ -48,7 +66,7 @@ def _build_lookup(terms_path: Path = _OBI_TERMS_PATH) -> dict[str, dict[str, str
     for term in terms:
         obi_id = term.get("id", "")
         label = term.get("label", "")
-        if not obi_id or not label:
+        if not obi_id or not label or not _is_generic_assay_label(label):
             continue
         entry = {"obi_id": obi_id, "obi_label": label}
         for key in _index_keys(label):
@@ -62,9 +80,11 @@ def _build_lookup(terms_path: Path = _OBI_TERMS_PATH) -> dict[str, dict[str, str
 
 @lru_cache(maxsize=8)
 def _term_ids(terms_path: Path) -> frozenset[str]:
-    """OBI ids present in a given terms file — used to restrict embedding candidates."""
+    """Generic OBI ids in a given terms file — used to restrict embedding candidates."""
     terms = json.loads(terms_path.read_text(encoding="utf-8"))
-    return frozenset(t["id"] for t in terms if t.get("id"))
+    return frozenset(
+        t["id"] for t in terms if t.get("id") and _is_generic_assay_label(t.get("label", ""))
+    )
 
 
 # ── Embedding helpers ─────────────────────────────────────────────────────────
@@ -73,6 +93,8 @@ def _term_ids(terms_path: Path) -> frozenset[str]:
 def _load_embeddings() -> tuple[list[dict], np.ndarray]:
     """Load cached OBI embeddings. Returns (entries, matrix) where matrix shape is (N, 1536)."""
     entries = json.loads(_EMBEDDINGS_PATH.read_text(encoding="utf-8"))
+    # Prune before the matrix is built so entries and matrix rows stay index-aligned
+    entries = [e for e in entries if _is_generic_assay_label(e.get("label", ""))]
     matrix = np.array([e["embedding"] for e in entries], dtype=np.float64)
     # Pre-normalise rows so cosine similarity reduces to a dot product
     norms = np.linalg.norm(matrix, axis=1, keepdims=True)
@@ -160,14 +182,29 @@ def _llm_pick(
 
 
 def _embedding_llm_match(
-    query: str, allowed_ids: frozenset[str] | None = None, sample_type: str = "", readouts: str = ""
+    query: str,
+    allowed_ids: frozenset[str] | None = None,
+    sample_type: str = "",
+    readouts: str = "",
+    display_name: str = "",
 ) -> dict[str, Any] | None:
+    """Retrieve on `query`, but show the LLM `display_name` when they differ.
+
+    The two do different jobs. The normalized name is the better *retrieval* query —
+    it is the cleaned-up, conventional wording, so it pulls the right neighbourhood of
+    OBI terms. But it is the worse thing to *show the model*, because normalizing can
+    drop the very detail that picks between a parent term and its child: "ImmunoChip
+    array" normalized to "Genome-wide SNP genotyping" loses the word "array", and with
+    it the evidence for `genotyping by SNP array assay` over plain `genotyping assay`.
+    """
     if not _EMBEDDINGS_PATH.exists():
         return None
     candidates = _top_k_candidates(query, allowed_ids=allowed_ids)
     if not candidates:
         return None
-    return _llm_pick(query, candidates, sample_type=sample_type, readouts=readouts)
+    return _llm_pick(
+        display_name or query, candidates, sample_type=sample_type, readouts=readouts
+    )
 
 
 # ── Public API ────────────────────────────────────────────────────────────────
@@ -205,8 +242,18 @@ def map_assay_to_obi(
 
     # Step 3 — embedding top-10 candidates (restricted to terms_path's vocabulary), LLM picks best
     query = normalized_name.strip() or name_in_paper.strip()
+    original = name_in_paper.strip()
+    display_name = query
+    if original and original.lower() != query.lower():
+        display_name = f"{original} (also described as: {query})"
     allowed_ids = _term_ids(terms_path)
-    return _embedding_llm_match(query, allowed_ids=allowed_ids, sample_type=sample_type, readouts=readouts)
+    return _embedding_llm_match(
+        query,
+        allowed_ids=allowed_ids,
+        sample_type=sample_type,
+        readouts=readouts,
+        display_name=display_name,
+    )
 
 
 def enrich_assays_with_obi(

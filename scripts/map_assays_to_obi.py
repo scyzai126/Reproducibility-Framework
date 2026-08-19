@@ -6,8 +6,8 @@ Uses the repo's existing three-step chain in app.agent.assay_obi_mapper:
   3. embedding top-10 + LLM pick        -> resource: embedding_llm,  confidence = similarity
 
 The existing CLIs (run_obi_map.py, map_assays_obi.py, the skill's obi_enrich_file.py) all
-take a per-study registry dict keyed by assay name; this one takes the flat table produced
-by scripts/extract_assays.py.
+take a per-study registry dict keyed by assay name; this one takes the flat corpus-wide
+table checked in at data/claims/all_assays_full.json.
 
 Each distinct (assay, normalized_name) pair is mapped once and the result fanned back out
 to every row sharing it — fewer calls, and the same assay name is guaranteed the same OBI
@@ -80,6 +80,24 @@ def _cache_key(assay: str, normalized: str) -> str:
     return f"{assay}\x1f{normalized}"
 
 
+def _decision_key(assay: str, normalized: str, terms_path: Path) -> str:
+    """The input that actually decides this pair's OBI term.
+
+    Steps 1-2 key on the pair, because they test the paper's name and then the
+    normalized name as literal strings. Step 3 keys on its *query* — which is the
+    normalized name, falling back to the paper's — because that, plus the candidate
+    list it retrieves, is the whole input to the LLM's pick.
+
+    Grouping by this rather than by the pair is what stops two assay names sharing a
+    normalized name from getting different OBI terms out of an identical query. That
+    happened: "ImmunoChip array" and "Whole-genome genotyping" both normalize to
+    "Genome-wide SNP genotyping", and the model answered differently for each.
+    """
+    if _resolves_locally(assay, normalized, terms_path):
+        return f"exact\x1f{_cache_key(assay, normalized)}"
+    return f"query\x1f{normalized.strip() or assay.strip()}"
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--in", dest="in_path", type=Path, default=IN_PATH)
@@ -109,24 +127,43 @@ def main() -> int:
     if CACHE_PATH.exists() and not args.force:
         cache = json.loads(CACHE_PATH.read_text(encoding="utf-8"))
 
+    # Pairs that share a decision key must share an answer, so map once per key.
+    groups: dict[str, list[tuple[str, str]]] = {}
+    for pair in sorted(pairs):
+        groups.setdefault(_decision_key(*pair, args.terms), []).append(pair)
+
+    # Carry forward results cached under the old per-pair keys, so tightening the key
+    # does not re-decide the whole corpus. A group whose members disagree is exactly
+    # the inconsistency this key change exists to fix — drop it and let it recompute.
+    for key, members in groups.items():
+        if key in cache:
+            continue
+        previous = [cache[_cache_key(*p)] for p in members if _cache_key(*p) in cache]
+        if len(previous) == len(members) and all(p == previous[0] for p in previous):
+            cache[key] = previous[0]
+    for pair in pairs:
+        cache.pop(_cache_key(*pair), None)
+
     mapped: dict[tuple[str, str], dict] = {}
-    for assay, normalized in sorted(pairs):
-        key = _cache_key(assay, normalized)
+    for key, members in groups.items():
         if key in cache:
             result = cache[key]
         else:
+            assay, normalized = members[0]
             result = map_assay_to_obi(
                 assay,
                 normalized,
                 terms_path=args.terms,
-                sample_type=pairs[(assay, normalized)]["sample_type"],
-                readouts=pairs[(assay, normalized)]["readouts"],
+                sample_type=pairs[members[0]]["sample_type"],
+                readouts=pairs[members[0]]["readouts"],
             )
             cache[key] = result
         entry = result or UNRESOLVED
-        mapped[(assay, normalized)] = entry
-        print(f"  {assay[:52]:54s} -> {entry['obi_id'] or '—'} | "
-              f"{entry['obi_label'] or '—'} ({entry['resource']})")
+        for pair in members:
+            mapped[pair] = entry
+        shared = f"  (shared by {len(members)} names)" if len(members) > 1 else ""
+        print(f"  {members[0][0][:52]:54s} -> {entry['obi_id'] or '—'} | "
+              f"{entry['obi_label'] or '—'} ({entry['resource']}){shared}")
 
     CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
     CACHE_PATH.write_text(json.dumps(cache, indent=2, ensure_ascii=False), encoding="utf-8")

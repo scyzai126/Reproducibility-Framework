@@ -7,8 +7,8 @@ ontology mappings, using this repo's existing OBI matching chain:
 
 This only works when run from inside the claim_reprodue_agent repo: it imports
 apps/api/app/agent/assay_obi_mapper.py and needs OPENAI_API_KEY set in the
-environment plus this skill's references/obi_assay_terms.json and
-references/obi_assay_embeddings.json. If any of that isn't available, OBI
+environment plus that repo's data/OBI/obi_generic_index.json and
+data/OBI/obi_generic_embeddings.json. If any of that isn't available, OBI
 mapping isn't possible in the current environment -- skip this step and say so.
 
 Usage:
