@@ -168,8 +168,7 @@ async def get_assay_obi():
         raise HTTPException(
             status_code=404,
             detail=(
-                "No assay/OBI table found. Run scripts/extract_assays.py and then "
-                "scripts/map_assays_to_obi.py to generate it."
+                "No assay/OBI table found at data/claims/all_assays_full_OBI.json."
             ),
         )
     import json

@@ -211,34 +211,6 @@ async def extract_claims_from_jats_and_figures(
     return assays, claims
 
 
-async def extract_assays_from_jats_xml(
-    paper_text: str,
-    pdf_bytes: bytes,
-    client: AsyncOpenAI,
-    model: str = settings.OPENAI_MODEL,
-) -> dict:
-    """Step 1 assay discovery via extract_assays_xml.txt: JATS-parsed text + figure/table
-    page images, as the source for a step-2 extract_claims_from_jats_xml call.
-
-    Returns:
-        assays registry dict — same contract as extract_assays_from_pdf_direct.
-    """
-    system_prompt = (_PROMPTS_DIR / "extract_assays_xml.txt").read_text(encoding="utf-8").strip()
-    content = _jats_and_figures_content(paper_text, pdf_bytes)
-
-    resp = await client.chat.completions.create(
-        model=model,
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": content},
-        ],
-        temperature=0,
-    )
-
-    result = json.loads(_strip_fences((resp.choices[0].message.content or "").strip()))
-    return result.get("assays", {})
-
-
 async def extract_claims_from_jats_xml(
     paper_text: str,
     pdf_bytes: bytes,
@@ -246,8 +218,8 @@ async def extract_claims_from_jats_xml(
     model: str = settings.OPENAI_MODEL,
 ) -> tuple[dict, list]:
     """Claim extraction via extract_claims_xml.txt: JATS-parsed text + figure/table page
-    images. Extracted independently — each claim self-names its own assay; it does not
-    see the assay registry from extract_assays_from_jats_xml.
+    images. Each claim names the assay that generated it; the registry is folded up from
+    those names afterward by app.agent.assay_registry.
 
     Returns:
         (claims, abstract_unmatched_findings) — same contract as extract_claims_from_pdf_direct.
