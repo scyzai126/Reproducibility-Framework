@@ -1,21 +1,18 @@
 {
   "claim_1": {
-    "claim": "Luminex analysis of serum from 91 young and older individuals at baseline showed circulating IL-13 and IFN-γ cytokine levels were higher in young CMV+ individuals compared to young CMV− individuals.",
-    "claim_type": "group_difference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "Luminex"
-    },
+    "claim": "Computational model analysis of immunological and gene expression profiles from 91 healthy donors vaccinated during the fall of 2008, using a combination of nuclear norm and Elastic net methods, showed that yCMV− and yCMV+ subjects could be separated by regression coefficients used to separate the classes, with 79% accuracy compared to the comparator population.",
+    "claim_type": "prediction",
+    "assay_method_in_paper": null,
     "sources": [
       {
         "type": "text",
         "section": "Results",
-        "quote": "In particular, we found an elevation of circulating IL-13 and IFN-γ cytokines, and higher CD8+ pSTAT1 and pSTAT3 responses to IL-6 in CMV+ individuals in the younger cohort compared to the CMV− subjects (Fig. 1)."
+        "quote": "The accuracy of the computational models to distinguish yCMV− vs yCMV+ and yCMV− vs oCMV− were 79% and 91.7%, respectively (Table S2), indicating that aging has a more profound effect on the immune system than latent CMV."
       },
       {
         "type": "text",
         "section": "Figure 1 caption",
-        "quote": "Figure 1. Different immunological profiles in aging versus CMV seropositivity The contribution of age and CMV to immunological and gene expression profiles was estimated by a combination of nuclear norm and the Elastic net methods (see Methods). The magnitude of the regression coefficients used to separate the classes yCMV− and oCMV− (CMV-independent age effect) or yCMV− and yCMV+ (age-independent CMV effect) are shown in light and dark grey bars, respectively."
+        "quote": "Figure 1 Different immunological profiles in aging versus CMV seropositivityThe contribution of age and CMV to immunological and gene expression profiles was estimated by a combination of nuclear norm and the Elastic net methods (see Methods). The magnitude of the regression coefficients used to separate the classes yCMV− and oCMV− (CMV-independent age effect) or yCMV− and yCMV+ (age-independent CMV effect) are shown in light and dark grey bars, respectively."
       },
       {
         "type": "figure",
@@ -24,22 +21,19 @@
     ]
   },
   "claim_2": {
-    "claim": "Phosphoflow analysis of PBMC from 91 young and older individuals at baseline showed CD8+ pSTAT1 and pSTAT3 responses to IL-6 were higher in young CMV+ individuals compared to young CMV− individuals.",
-    "claim_type": "group_difference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "phosphoflow analysis"
-    },
+    "claim": "Computational model analysis of immunological and gene expression profiles from 91 healthy donors vaccinated during the fall of 2008, using a combination of nuclear norm and Elastic net methods, showed that yCMV− and oCMV− subjects could be separated by regression coefficients used to separate the classes, with 91.7% accuracy compared to the comparator population.",
+    "claim_type": "prediction",
+    "assay_method_in_paper": null,
     "sources": [
       {
         "type": "text",
         "section": "Results",
-        "quote": "In particular, we found an elevation of circulating IL-13 and IFN-γ cytokines, and higher CD8+ pSTAT1 and pSTAT3 responses to IL-6 in CMV+ individuals in the younger cohort compared to the CMV− subjects (Fig. 1)."
+        "quote": "The accuracy of the computational models to distinguish yCMV− vs yCMV+ and yCMV− vs oCMV− were 79% and 91.7%, respectively (Table S2), indicating that aging has a more profound effect on the immune system than latent CMV."
       },
       {
         "type": "text",
         "section": "Figure 1 caption",
-        "quote": "Figure 1. Different immunological profiles in aging versus CMV seropositivity The contribution of age and CMV to immunological and gene expression profiles was estimated by a combination of nuclear norm and the Elastic net methods (see Methods). The magnitude of the regression coefficients used to separate the classes yCMV− and oCMV− (CMV-independent age effect) or yCMV− and yCMV+ (age-independent CMV effect) are shown in light and dark grey bars, respectively."
+        "quote": "Figure 1 Different immunological profiles in aging versus CMV seropositivityThe contribution of age and CMV to immunological and gene expression profiles was estimated by a combination of nuclear norm and the Elastic net methods (see Methods). The magnitude of the regression coefficients used to separate the classes yCMV− and oCMV− (CMV-independent age effect) or yCMV− and yCMV+ (age-independent CMV effect) are shown in light and dark grey bars, respectively."
       },
       {
         "type": "figure",
@@ -48,22 +42,19 @@
     ]
   },
   "claim_3": {
-    "claim": "Whole blood microarray analysis of whole blood from 91 young and older individuals at baseline showed expression of module 103 and module 30 was elevated in young CMV+ individuals compared to young CMV− individuals.",
-    "claim_type": "group_difference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "microarray"
-    },
+    "claim": "Flow cytometry analysis of PBMC from 91 healthy donors vaccinated during the fall of 2008, using the regression coefficients from a combination of nuclear norm and Elastic net methods, showed that CD8+ effector memory (TEM) and CD8+ CD28− cell frequencies overlapped between the yCMV− versus oCMV− and yCMV− versus yCMV+ classification tasks.",
+    "claim_type": "descriptive",
+    "assay_method_in_paper": "flow cytometry",
     "sources": [
       {
         "type": "text",
         "section": "Results",
-        "quote": "At the gene expression level, the CMV effect independent of age was an up-regulation of genes associated with immune activation. For example, expression of module 103 (antigen processing and presentation, P < 0.00001 and NK cell mediated cytotoxicity, P < 0.00001) was elevated in yCMV+ (Fig. 1) and this module includes several KIR2 and KIR3 genes as well as GZMH (see http://cs.unc.edu/~vjojic/fluy2-upd/mod103.html), genes typically highly expressed in NK cells and in CD4+ and CD8+ T lacking CD28 (38, 39).. The expression of the gene module 30 was also elevated in yCMV+ (Fig. 1) and this module is composed of HLA-DOA and –DOB genes , which clustered with APOD, LAMC1, MIR600 among other genes."
+        "quote": "The only exceptions to this were the CD8+ effector memory (TEM) and CD8+ CD28− cell frequencies, both being positively correlated with age and CMV."
       },
       {
         "type": "text",
         "section": "Figure 1 caption",
-        "quote": "Figure 1. Different immunological profiles in aging versus CMV seropositivity The contribution of age and CMV to immunological and gene expression profiles was estimated by a combination of nuclear norm and the Elastic net methods (see Methods). The magnitude of the regression coefficients used to separate the classes yCMV− and oCMV− (CMV-independent age effect) or yCMV− and yCMV+ (age-independent CMV effect) are shown in light and dark grey bars, respectively."
+        "quote": "Only two parameters, the frequency of CD8+ CD28− and CD8+ TEM cells, overlapped between these classification tasks."
       },
       {
         "type": "figure",
@@ -72,22 +63,19 @@
     ]
   },
   "claim_4": {
-    "claim": "Whole blood microarray analysis of whole blood from 91 young and older individuals at baseline showed gene modules associated with cell cycle (module 34 and 101), protein synthesis (module 35 and 39), amino-acid metabolism (module 43), cell-death (modules 47 and 54), the ubiquitination pathway (module 98), HIF1α signaling (module 101), LXR/RXR activation (module 102), and the metabolism of carbohydrates (module 108) were down-regulated in older CMV− individuals compared to young CMV− individuals.",
-    "claim_type": "group_difference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "microarray"
-    },
+    "claim": "Analysis of immunological and gene expression profiles from 91 healthy donors vaccinated during the fall of 2008, using a combination of nuclear norm and Elastic net methods, showed that 16 of 23 parameters used to separate the yCMV− and oCMV− classes were down-regulated in aging.",
+    "claim_type": "descriptive",
+    "assay_method_in_paper": null,
     "sources": [
       {
         "type": "text",
         "section": "Results",
-        "quote": "The age effect independent of CMV (yCMV− vs oCMV−) revealed down-regulation of several gene modules (Fig. 1) including those associated with cell cycle (module 34 and 101, P = 0.019), protein synthesis (module 35 and 39, P = 0.0009 and P < 0.0001, respectively) amino-acid metabolism (module 43, P = 0.0023), cell-death (modules 47 and 54, P = 0.0021 and P < 0.0001, respectively), the ubiquitination pathway (module 98, P = 0.0092), HIF1α signaling (module 101, P < 0.0001), LXR/RXR activation, which is involved in cholesterol and lipid metabolism (module 102, P = 0.007) and the metabolism of carbohydrates (module 108, P = 0.00074)."
+        "quote": "Strikingly, while expression of most parameters (71%, 17/24) decreased with age, the majority (88%, 14/16) increased with CMV seropositivity in young individuals (Fig. 1 and Table S2), indicating an overall down-regulation of the immune response and associated parameters during aging and an up-regulation of several components of the immune system in young subjects with latent CMV."
       },
       {
         "type": "text",
         "section": "Figure 1 caption",
-        "quote": "Figure 1. Different immunological profiles in aging versus CMV seropositivity The contribution of age and CMV to immunological and gene expression profiles was estimated by a combination of nuclear norm and the Elastic net methods (see Methods). The magnitude of the regression coefficients used to separate the classes yCMV− and oCMV− (CMV-independent age effect) or yCMV− and yCMV+ (age-independent CMV effect) are shown in light and dark grey bars, respectively."
+        "quote": "14/16 (87.5%) of the parameters used to separate the yCMV− from yCMV+ classes were up-regulated in CMV, in contrast, the majority of parameters used to separate the yCMV− from oCMV− classes (16/23, 69.5%) were down-regulated in aging."
       },
       {
         "type": "figure",
@@ -96,36 +84,42 @@
     ]
   },
   "claim_5": {
-    "claim": "Hemagglutinin-inhibition (HAI) assay analysis of serum from 30 young (20–30 years) and 61 older (60–>89 years) individuals at day 0 and 28±7 days after influenza vaccination (day 28) in year 1 showed the antibody response to trivalent inactivated influenza vaccination was lower in older individuals compared to young individuals.",
-    "claim_type": "group_difference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "hemagglutination inhibition assay"
-    },
+    "claim": "Analysis of immunological and gene expression profiles from 91 healthy donors vaccinated during the fall of 2008, using a combination of nuclear norm and Elastic net methods, showed that 14 of 16 parameters used to separate the yCMV− and yCMV+ classes were up-regulated in CMV compared to the comparator population.",
+    "claim_type": "descriptive",
+    "assay_method_in_paper": null,
     "sources": [
       {
         "type": "text",
         "section": "Results",
-        "quote": "As expected, a negative effect of age was observed in the antibody response to IIV (P < 0.0001) (Fig. 2a)."
+        "quote": "Strikingly, while expression of most parameters (71%, 17/24) decreased with age, the majority (88%, 14/16) increased with CMV seropositivity in young individuals (Fig. 1 and Table S2), indicating an overall down-regulation of the immune response and associated parameters during aging and an up-regulation of several components of the immune system in young subjects with latent CMV."
       },
       {
         "type": "text",
-        "section": "Figure 2 caption",
-        "quote": "Figure 2. Young but not old CMV+ individuals have a better response to influenza vaccination The geometric mean titer (GMT) for all three strains in the vaccine was calculated for each individual in the study and a standardized score (delta (Δ) post-pre GMT) for response was computed as described in Methods (y-axis). A higher response is observed in yCMV+ compared to yCMV− in the first (a) and second (b) year, as well as in an independent validation study conducted during the 2010-2011 influenza season (c). No significant differences were observed between oCMV− and oCMV+. Green bars = CMV-, yellow bars = CMV+. The age ranges for young and older individuals were 20-30 and 60->89 years, respectively (a); 22-32 (young) and 62->89 (older) years (b) and 19-44 years old (c)."
+        "section": "Figure 1 caption",
+        "quote": "14/16 (87.5%) of the parameters used to separate the yCMV− from yCMV+ classes were up-regulated in CMV, in contrast, the majority of parameters used to separate the yCMV− from oCMV− classes (16/23, 69.5%) were down-regulated in aging."
       },
       {
         "type": "figure",
-        "ref": "Figure 2A"
+        "ref": "Figure 1"
       }
     ]
   },
   "claim_6": {
-    "claim": "Hemagglutinin-inhibition (HAI) assay analysis of serum from 30 young (20–30 years) individuals at day 0 and 28±7 days after influenza vaccination (day 28) in year 1 showed the antibody response to trivalent inactivated influenza vaccination was higher in young CMV+ individuals compared to young CMV− individuals.",
-    "claim_type": "group_difference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "hemagglutination inhibition assay"
-    },
+    "claim": "Hemagglutination inhibition assay analysis of serum from 91 healthy donors vaccinated with seasonal trivalent inactivated influenza vaccine across the first and second study years, using geometric mean titer delta post- minus pre-vaccination, showed that the antibody response to IIV was lower with age compared to younger subjects.",
+    "claim_type": "association",
+    "assay_method_in_paper": "hemagglutination inhibition assay",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "We computed the pre- and post-vaccine geometric mean titer (GMT) for all three strains in the vaccine and calculated a response score as the delta post- minus pre-GMT. As expected, a negative effect of age was observed in the antibody response to IIV (P < 0.0001) (Fig. 2a)."
+      }
+    ]
+  },
+  "claim_7": {
+    "claim": "Hemagglutination inhibition assay analysis of serum from young vaccinated subjects in the first study year (20-30 years old), using geometric mean titer delta post- minus pre-vaccination, showed that the antibody response was higher in yCMV+ compared to yCMV− subjects.",
+    "claim_type": "response_difference",
+    "assay_method_in_paper": "hemagglutination inhibition assay",
     "sources": [
       {
         "type": "text",
@@ -135,21 +129,18 @@
       {
         "type": "text",
         "section": "Figure 2 caption",
-        "quote": "Figure 2. Young but not old CMV+ individuals have a better response to influenza vaccination The geometric mean titer (GMT) for all three strains in the vaccine was calculated for each individual in the study and a standardized score (delta (Δ) post-pre GMT) for response was computed as described in Methods (y-axis). A higher response is observed in yCMV+ compared to yCMV− in the first (a) and second (b) year, as well as in an independent validation study conducted during the 2010-2011 influenza season (c). No significant differences were observed between oCMV− and oCMV+. Green bars = CMV-, yellow bars = CMV+. The age ranges for young and older individuals were 20-30 and 60->89 years, respectively (a); 22-32 (young) and 62->89 (older) years (b) and 19-44 years old (c)."
+        "quote": "A higher response is observed in yCMV+ compared to yCMV− in the first (a) and second (b) year, as well as in an independent validation study conducted during the 2010-2011 influenza season (c)."
       },
       {
         "type": "figure",
-        "ref": "Figure 2A"
+        "ref": "Figure 2"
       }
     ]
   },
-  "claim_7": {
-    "claim": "Hemagglutinin-inhibition (HAI) assay analysis of serum from 61 older (60–>89 years) individuals at day 0 and 28±7 days after influenza vaccination (day 28) in year 1 showed no significant difference in the antibody response to trivalent inactivated influenza vaccination between older CMV+ individuals and older CMV− individuals.",
-    "claim_type": "group_difference",
-    "polarity": "null",
-    "assay": {
-      "name_in_paper": "hemagglutination inhibition assay"
-    },
+  "claim_8": {
+    "claim": "Hemagglutination inhibition assay analysis of serum from older vaccinated subjects in the first study year (60->89 years old), using geometric mean titer delta post- minus pre-vaccination, showed that CMV-related differences in antibody response were not significant compared to oCMV− subjects.",
+    "claim_type": "response_difference",
+    "assay_method_in_paper": "hemagglutination inhibition assay",
     "sources": [
       {
         "type": "text",
@@ -159,45 +150,18 @@
       {
         "type": "text",
         "section": "Figure 2 caption",
-        "quote": "Figure 2. Young but not old CMV+ individuals have a better response to influenza vaccination The geometric mean titer (GMT) for all three strains in the vaccine was calculated for each individual in the study and a standardized score (delta (Δ) post-pre GMT) for response was computed as described in Methods (y-axis). A higher response is observed in yCMV+ compared to yCMV− in the first (a) and second (b) year, as well as in an independent validation study conducted during the 2010-2011 influenza season (c). No significant differences were observed between oCMV− and oCMV+. Green bars = CMV-, yellow bars = CMV+. The age ranges for young and older individuals were 20-30 and 60->89 years, respectively (a); 22-32 (young) and 62->89 (older) years (b) and 19-44 years old (c)."
+        "quote": "No significant differences were observed between oCMV− and oCMV+."
       },
       {
         "type": "figure",
-        "ref": "Figure 2A"
-      }
-    ]
-  },
-  "claim_8": {
-    "claim": "Hemagglutinin-inhibition (HAI) assay analysis of serum from 77 individuals who returned one year later at day 0 and 28±7 days after influenza vaccination (day 28) during the 2009–2010 influenza season showed the antibody response was higher in young CMV+ individuals compared to young CMV− individuals.",
-    "claim_type": "group_difference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "hemagglutination inhibition assay"
-    },
-    "sources": [
-      {
-        "type": "text",
-        "section": "Results",
-        "quote": "A similar positive effect of CMV in the young (P = 0.04) but not the older cohort was observed in the 77 individuals who returned one year later during the 2009-2010 influenza season (Fig. 2b)."
-      },
-      {
-        "type": "text",
-        "section": "Figure 2 caption",
-        "quote": "Figure 2. Young but not old CMV+ individuals have a better response to influenza vaccination The geometric mean titer (GMT) for all three strains in the vaccine was calculated for each individual in the study and a standardized score (delta (Δ) post-pre GMT) for response was computed as described in Methods (y-axis). A higher response is observed in yCMV+ compared to yCMV− in the first (a) and second (b) year, as well as in an independent validation study conducted during the 2010-2011 influenza season (c). No significant differences were observed between oCMV− and oCMV+. Green bars = CMV-, yellow bars = CMV+. The age ranges for young and older individuals were 20-30 and 60->89 years, respectively (a); 22-32 (young) and 62->89 (older) years (b) and 19-44 years old (c)."
-      },
-      {
-        "type": "figure",
-        "ref": "Figure 2B"
+        "ref": "Figure 2"
       }
     ]
   },
   "claim_9": {
-    "claim": "Hemagglutinin-inhibition (HAI) assay analysis of serum from 77 individuals who returned one year later at day 0 and 28±7 days after influenza vaccination (day 28) during the 2009–2010 influenza season showed no significant difference in the antibody response between older CMV+ individuals and older CMV− individuals.",
-    "claim_type": "group_difference",
-    "polarity": "null",
-    "assay": {
-      "name_in_paper": "hemagglutination inhibition assay"
-    },
+    "claim": "Hemagglutination inhibition assay analysis of serum from the 77 individuals who returned one year later during the 2009-2010 influenza season, including young subjects aged 22-32 years, using geometric mean titer delta post- minus pre-vaccination, showed that CMV had a positive effect on antibody response in the young compared to young CMV-seronegative subjects.",
+    "claim_type": "response_difference",
+    "assay_method_in_paper": "hemagglutination inhibition assay",
     "sources": [
       {
         "type": "text",
@@ -207,21 +171,39 @@
       {
         "type": "text",
         "section": "Figure 2 caption",
-        "quote": "Figure 2. Young but not old CMV+ individuals have a better response to influenza vaccination The geometric mean titer (GMT) for all three strains in the vaccine was calculated for each individual in the study and a standardized score (delta (Δ) post-pre GMT) for response was computed as described in Methods (y-axis). A higher response is observed in yCMV+ compared to yCMV− in the first (a) and second (b) year, as well as in an independent validation study conducted during the 2010-2011 influenza season (c). No significant differences were observed between oCMV− and oCMV+. Green bars = CMV-, yellow bars = CMV+. The age ranges for young and older individuals were 20-30 and 60->89 years, respectively (a); 22-32 (young) and 62->89 (older) years (b) and 19-44 years old (c)."
+        "quote": "A higher response is observed in yCMV+ compared to yCMV− in the first (a) and second (b) year, as well as in an independent validation study conducted during the 2010-2011 influenza season (c)."
       },
       {
         "type": "figure",
-        "ref": "Figure 2B"
+        "ref": "Figure 2"
       }
     ]
   },
   "claim_10": {
-    "claim": "Hemagglutinin-inhibition (HAI) assay analysis of serum from an independent cohort of 37 young individuals (19–44 years old) at day 0 and 28±7 days after influenza vaccination (day 28) during the 2010–2011 influenza season showed the antibody response was higher in young CMV+ individuals compared to young CMV− individuals.",
-    "claim_type": "group_difference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "hemagglutination inhibition assay"
-    },
+    "claim": "Hemagglutination inhibition assay analysis of serum from the 77 individuals who returned one year later during the 2009-2010 influenza season, including older subjects aged 62->89 years, using geometric mean titer delta post- minus pre-vaccination, showed that the CMV effect on antibody response was not significant in the older cohort compared to oCMV− subjects.",
+    "claim_type": "response_difference",
+    "assay_method_in_paper": "hemagglutination inhibition assay",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "A similar positive effect of CMV in the young (P = 0.04) but not the older cohort was observed in the 77 individuals who returned one year later during the 2009-2010 influenza season (Fig. 2b)."
+      },
+      {
+        "type": "text",
+        "section": "Figure 2 caption",
+        "quote": "No significant differences were observed between oCMV− and oCMV+."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 2"
+      }
+    ]
+  },
+  "claim_11": {
+    "claim": "Hemagglutination inhibition assay analysis of serum from an independent cohort of 37 young individuals recruited during the 2010-2011 influenza season (19-44 years old), using geometric mean titer delta post- minus pre-vaccination, showed that CMV had a positive effect on antibody response in the young compared to young CMV-seronegative subjects.",
+    "claim_type": "response_difference",
+    "assay_method_in_paper": "hemagglutination inhibition assay",
     "sources": [
       {
         "type": "text",
@@ -231,36 +213,18 @@
       {
         "type": "text",
         "section": "Figure 2 caption",
-        "quote": "Figure 2. Young but not old CMV+ individuals have a better response to influenza vaccination The geometric mean titer (GMT) for all three strains in the vaccine was calculated for each individual in the study and a standardized score (delta (Δ) post-pre GMT) for response was computed as described in Methods (y-axis). A higher response is observed in yCMV+ compared to yCMV− in the first (a) and second (b) year, as well as in an independent validation study conducted during the 2010-2011 influenza season (c). No significant differences were observed between oCMV− and oCMV+. Green bars = CMV-, yellow bars = CMV+. The age ranges for young and older individuals were 20-30 and 60->89 years, respectively (a); 22-32 (young) and 62->89 (older) years (b) and 19-44 years old (c)."
+        "quote": "A higher response is observed in yCMV+ compared to yCMV− in the first (a) and second (b) year, as well as in an independent validation study conducted during the 2010-2011 influenza season (c)."
       },
       {
         "type": "figure",
-        "ref": "Figure 2C"
-      }
-    ]
-  },
-  "claim_11": {
-    "claim": "ImmunoChip array analysis of genomic DNA from CMV+ subjects showed 35 SNPs on chromosomes 6, 9, 12, 14, 15, 17 and 19 were associated with the frequency of CD4+ CD28− cells.",
-    "claim_type": "association",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "single-nucleotide polymorphism assay"
-    },
-    "sources": [
-      {
-        "type": "text",
-        "section": "Results",
-        "quote": "We identified 35 SNPs (on chromosomes 6, 9, 12, 14, 15, 17 and 19) associated with the frequency of CD4+ CD28− cells, at a false discovery rate (FDR) lower than 5% (P < 5 × 10−6, FDR Q < 0.05) (Fig. S4)."
+        "ref": "Figure 2"
       }
     ]
   },
   "claim_12": {
-    "claim": "Plaque assay analysis of lungs from C57BL/6 mice challenged with influenza A virus 5 weeks after MCMV infection (day 35) showed influenza viral titers were reduced in IAV+ MCMV+ mice compared to IAV+ MCMV− mice at day 7 after IAV challenge (day 42).",
+    "claim": "Plaque assay analysis of lungs from groups of C57BL/6 mice mock infected or infected with 4×10^4 PFU MCMV Smith strain i.p. and challenged with 10^6 EID50 of IAV ×31 i.n. 5 weeks later, showed reduced influenza viral titers in IAV+ MCMV+ mice compared to IAV+ MCMV− mice at day 7 after IAV infection.",
     "claim_type": "group_difference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "plaque assay"
-    },
+    "assay_method_in_paper": "plaque assay",
     "sources": [
       {
         "type": "text",
@@ -270,21 +234,18 @@
       {
         "type": "text",
         "section": "Figure 3 caption",
-        "quote": "Figure 3. Reduced viral titer and enhanced IAV-specific CD8+ T cell responses in early and established but not long-standing MCMV latency Groups of C57BL/6 mice were mock infected or infected with 4×104 PFU MCMV Smith strain i.p. and challenged with 106 EID50 of IAV ×31 i.n. 5 weeks (early latency) (a and d), 12 weeks (established latency) (b and e) or 9 months (long-standing latency) later (c and f). Seven days after IAV infection, influenza viral titer was determined (upper panel) and IAV-specific T cells were enumerated from the BAL of IAV+ MCMV− (MCMV−) or IAV+ MCMV+ (MCMV+) mice by tetramer staining for NP, PA and PB1-specific responses."
+        "quote": "Figure 3 Reduced viral titer and enhanced IAV-specific CD8+ T cell responses in early and established but not long-standing MCMV latencyGroups of C57BL/6 mice were mock infected or infected with 4×104 PFU MCMV Smith strain i.p. and challenged with 106 EID50 of IAV ×31 i.n. 5 weeks (early latency) (a and d), 12 weeks (established latency) (b and e) or 9 months (long-standing latency) later (c and f). Seven days after IAV infection, influenza viral titer was determined (upper panel) and IAV-specific T cells were enumerated from the BAL of IAV+ MCMV− (MCMV−) or IAV+ MCMV+ (MCMV+) mice by tetramer staining for NP, PA and PB1-specific responses. Data are representative of three independent experiments with 4-6 mice per group in each experiment. Significance was determined by t-test for viral titer and using the Fisher’s combined probability test for comparison of specific T cell responses."
       },
       {
         "type": "figure",
-        "ref": "Figure 3A"
+        "ref": "Figure 3"
       }
     ]
   },
   "claim_13": {
-    "claim": "Plaque assay analysis of lungs from C57BL/6 mice challenged with influenza A virus 12 weeks after MCMV infection (day 84) showed influenza viral titers were reduced in IAV+ MCMV+ mice compared to IAV+ MCMV− mice at day 7 after IAV challenge (day 91).",
+    "claim": "Plaque assay analysis of lungs from groups of C57BL/6 mice mock infected or infected with 4×10^4 PFU MCMV Smith strain i.p. and challenged with 10^6 EID50 of IAV ×31 i.n. 12 weeks later, showed reduced influenza viral titers in IAV+ MCMV+ mice compared to IAV+ MCMV− mice at day 7 after IAV infection.",
     "claim_type": "group_difference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "plaque assay"
-    },
+    "assay_method_in_paper": "plaque assay",
     "sources": [
       {
         "type": "text",
@@ -294,21 +255,18 @@
       {
         "type": "text",
         "section": "Figure 3 caption",
-        "quote": "Figure 3. Reduced viral titer and enhanced IAV-specific CD8+ T cell responses in early and established but not long-standing MCMV latency Groups of C57BL/6 mice were mock infected or infected with 4×104 PFU MCMV Smith strain i.p. and challenged with 106 EID50 of IAV ×31 i.n. 5 weeks (early latency) (a and d), 12 weeks (established latency) (b and e) or 9 months (long-standing latency) later (c and f). Seven days after IAV infection, influenza viral titer was determined (upper panel) and IAV-specific T cells were enumerated from the BAL of IAV+ MCMV− (MCMV−) or IAV+ MCMV+ (MCMV+) mice by tetramer staining for NP, PA and PB1-specific responses."
+        "quote": "Figure 3 Reduced viral titer and enhanced IAV-specific CD8+ T cell responses in early and established but not long-standing MCMV latencyGroups of C57BL/6 mice were mock infected or infected with 4×104 PFU MCMV Smith strain i.p. and challenged with 106 EID50 of IAV ×31 i.n. 5 weeks (early latency) (a and d), 12 weeks (established latency) (b and e) or 9 months (long-standing latency) later (c and f). Seven days after IAV infection, influenza viral titer was determined (upper panel) and IAV-specific T cells were enumerated from the BAL of IAV+ MCMV− (MCMV−) or IAV+ MCMV+ (MCMV+) mice by tetramer staining for NP, PA and PB1-specific responses. Data are representative of three independent experiments with 4-6 mice per group in each experiment. Significance was determined by t-test for viral titer and using the Fisher’s combined probability test for comparison of specific T cell responses."
       },
       {
         "type": "figure",
-        "ref": "Figure 3B"
+        "ref": "Figure 3"
       }
     ]
   },
   "claim_14": {
-    "claim": "Plaque assay analysis of lungs from C57BL/6 mice challenged with influenza A virus 9 months after MCMV infection (day 270) showed no significant difference in influenza viral titers between IAV+ MCMV+ mice and IAV+ MCMV− mice at day 7 after IAV challenge (day 277).",
+    "claim": "Plaque assay analysis of lungs from groups of C57BL/6 mice mock infected or infected with 4×10^4 PFU MCMV Smith strain i.p. and challenged with 10^6 EID50 of IAV ×31 i.n. 9 months later, showed no difference in influenza viral titers between IAV+ MCMV+ mice and IAV+ MCMV− mice at day 7 after IAV infection.",
     "claim_type": "group_difference",
-    "polarity": "null",
-    "assay": {
-      "name_in_paper": "plaque assay"
-    },
+    "assay_method_in_paper": "plaque assay",
     "sources": [
       {
         "type": "text",
@@ -318,21 +276,18 @@
       {
         "type": "text",
         "section": "Figure 3 caption",
-        "quote": "Figure 3. Reduced viral titer and enhanced IAV-specific CD8+ T cell responses in early and established but not long-standing MCMV latency Groups of C57BL/6 mice were mock infected or infected with 4×104 PFU MCMV Smith strain i.p. and challenged with 106 EID50 of IAV ×31 i.n. 5 weeks (early latency) (a and d), 12 weeks (established latency) (b and e) or 9 months (long-standing latency) later (c and f). Seven days after IAV infection, influenza viral titer was determined (upper panel) and IAV-specific T cells were enumerated from the BAL of IAV+ MCMV− (MCMV−) or IAV+ MCMV+ (MCMV+) mice by tetramer staining for NP, PA and PB1-specific responses."
+        "quote": "Figure 3 Reduced viral titer and enhanced IAV-specific CD8+ T cell responses in early and established but not long-standing MCMV latencyGroups of C57BL/6 mice were mock infected or infected with 4×104 PFU MCMV Smith strain i.p. and challenged with 106 EID50 of IAV ×31 i.n. 5 weeks (early latency) (a and d), 12 weeks (established latency) (b and e) or 9 months (long-standing latency) later (c and f). Seven days after IAV infection, influenza viral titer was determined (upper panel) and IAV-specific T cells were enumerated from the BAL of IAV+ MCMV− (MCMV−) or IAV+ MCMV+ (MCMV+) mice by tetramer staining for NP, PA and PB1-specific responses. Data are representative of three independent experiments with 4-6 mice per group in each experiment. Significance was determined by t-test for viral titer and using the Fisher’s combined probability test for comparison of specific T cell responses."
       },
       {
         "type": "figure",
-        "ref": "Figure 3C"
+        "ref": "Figure 3"
       }
     ]
   },
   "claim_15": {
-    "claim": "Tetramer staining analysis of BAL from C57BL/6 mice challenged with influenza A virus 5 weeks after MCMV infection (day 35) showed influenza-specific CD8+ T cell responses against NP, PA and PB1 were higher in IAV+ MCMV+ mice compared to IAV+ MCMV− mice at day 7 after IAV challenge (day 42).",
+    "claim": "Tetramer staining analysis of BAL from groups of C57BL/6 mice mock infected or infected with 4×10^4 PFU MCMV Smith strain i.p. and challenged with 10^6 EID50 of IAV ×31 i.n. 5 weeks later, showed higher IAV-specific T cell responses against NP, PA and PB1 in IAV+ MCMV+ mice compared to IAV+ MCMV− mice at day 7 after IAV infection.",
     "claim_type": "group_difference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "tetramer staining"
-    },
+    "assay_method_in_paper": "tetramer staining",
     "sources": [
       {
         "type": "text",
@@ -342,21 +297,18 @@
       {
         "type": "text",
         "section": "Figure 3 caption",
-        "quote": "Figure 3. Reduced viral titer and enhanced IAV-specific CD8+ T cell responses in early and established but not long-standing MCMV latency Groups of C57BL/6 mice were mock infected or infected with 4×104 PFU MCMV Smith strain i.p. and challenged with 106 EID50 of IAV ×31 i.n. 5 weeks (early latency) (a and d), 12 weeks (established latency) (b and e) or 9 months (long-standing latency) later (c and f). Seven days after IAV infection, influenza viral titer was determined (upper panel) and IAV-specific T cells were enumerated from the BAL of IAV+ MCMV− (MCMV−) or IAV+ MCMV+ (MCMV+) mice by tetramer staining for NP, PA and PB1-specific responses."
+        "quote": "Figure 3 Reduced viral titer and enhanced IAV-specific CD8+ T cell responses in early and established but not long-standing MCMV latencyGroups of C57BL/6 mice were mock infected or infected with 4×104 PFU MCMV Smith strain i.p. and challenged with 106 EID50 of IAV ×31 i.n. 5 weeks (early latency) (a and d), 12 weeks (established latency) (b and e) or 9 months (long-standing latency) later (c and f). Seven days after IAV infection, influenza viral titer was determined (upper panel) and IAV-specific T cells were enumerated from the BAL of IAV+ MCMV− (MCMV−) or IAV+ MCMV+ (MCMV+) mice by tetramer staining for NP, PA and PB1-specific responses. Data are representative of three independent experiments with 4-6 mice per group in each experiment. Significance was determined by t-test for viral titer and using the Fisher’s combined probability test for comparison of specific T cell responses."
       },
       {
         "type": "figure",
-        "ref": "Figure 3D"
+        "ref": "Figure 3"
       }
     ]
   },
   "claim_16": {
-    "claim": "Tetramer staining analysis of BAL from C57BL/6 mice challenged with influenza A virus 12 weeks after MCMV infection (day 84) showed influenza-specific CD8+ T cell responses against NP, PA and PB1 were higher in IAV+ MCMV+ mice compared to IAV+ MCMV− mice at day 7 after IAV challenge (day 91).",
+    "claim": "Tetramer staining analysis of BAL from groups of C57BL/6 mice mock infected or infected with 4×10^4 PFU MCMV Smith strain i.p. and challenged with 10^6 EID50 of IAV ×31 i.n. 12 weeks later, showed higher IAV-specific T cell responses against NP, PA and PB1 in IAV+ MCMV+ mice compared to IAV+ MCMV− mice at day 7 after IAV infection.",
     "claim_type": "group_difference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "tetramer staining"
-    },
+    "assay_method_in_paper": "tetramer staining",
     "sources": [
       {
         "type": "text",
@@ -366,21 +318,18 @@
       {
         "type": "text",
         "section": "Figure 3 caption",
-        "quote": "Figure 3. Reduced viral titer and enhanced IAV-specific CD8+ T cell responses in early and established but not long-standing MCMV latency Groups of C57BL/6 mice were mock infected or infected with 4×104 PFU MCMV Smith strain i.p. and challenged with 106 EID50 of IAV ×31 i.n. 5 weeks (early latency) (a and d), 12 weeks (established latency) (b and e) or 9 months (long-standing latency) later (c and f). Seven days after IAV infection, influenza viral titer was determined (upper panel) and IAV-specific T cells were enumerated from the BAL of IAV+ MCMV− (MCMV−) or IAV+ MCMV+ (MCMV+) mice by tetramer staining for NP, PA and PB1-specific responses."
+        "quote": "Figure 3 Reduced viral titer and enhanced IAV-specific CD8+ T cell responses in early and established but not long-standing MCMV latencyGroups of C57BL/6 mice were mock infected or infected with 4×104 PFU MCMV Smith strain i.p. and challenged with 106 EID50 of IAV ×31 i.n. 5 weeks (early latency) (a and d), 12 weeks (established latency) (b and e) or 9 months (long-standing latency) later (c and f). Seven days after IAV infection, influenza viral titer was determined (upper panel) and IAV-specific T cells were enumerated from the BAL of IAV+ MCMV− (MCMV−) or IAV+ MCMV+ (MCMV+) mice by tetramer staining for NP, PA and PB1-specific responses. Data are representative of three independent experiments with 4-6 mice per group in each experiment. Significance was determined by t-test for viral titer and using the Fisher’s combined probability test for comparison of specific T cell responses."
       },
       {
         "type": "figure",
-        "ref": "Figure 3E"
+        "ref": "Figure 3"
       }
     ]
   },
   "claim_17": {
-    "claim": "Tetramer staining analysis of BAL from C57BL/6 mice challenged with influenza A virus 9 months after MCMV infection (day 270) showed no significant difference in influenza-specific CD8+ T cell responses against NP, PA and PB1 between IAV+ MCMV+ mice and IAV+ MCMV− mice at day 7 after IAV challenge (day 277).",
+    "claim": "Tetramer staining analysis of BAL from groups of C57BL/6 mice mock infected or infected with 4×10^4 PFU MCMV Smith strain i.p. and challenged with 10^6 EID50 of IAV ×31 i.n. 9 months later, showed no difference in IAV-specific T cell responses against NP, PA and PB1 between IAV+ MCMV+ mice and IAV+ MCMV− mice at day 7 after IAV infection.",
     "claim_type": "group_difference",
-    "polarity": "null",
-    "assay": {
-      "name_in_paper": "tetramer staining"
-    },
+    "assay_method_in_paper": "tetramer staining",
     "sources": [
       {
         "type": "text",
@@ -390,59 +339,53 @@
       {
         "type": "text",
         "section": "Figure 3 caption",
-        "quote": "Figure 3. Reduced viral titer and enhanced IAV-specific CD8+ T cell responses in early and established but not long-standing MCMV latency Groups of C57BL/6 mice were mock infected or infected with 4×104 PFU MCMV Smith strain i.p. and challenged with 106 EID50 of IAV ×31 i.n. 5 weeks (early latency) (a and d), 12 weeks (established latency) (b and e) or 9 months (long-standing latency) later (c and f). Seven days after IAV infection, influenza viral titer was determined (upper panel) and IAV-specific T cells were enumerated from the BAL of IAV+ MCMV− (MCMV−) or IAV+ MCMV+ (MCMV+) mice by tetramer staining for NP, PA and PB1-specific responses."
+        "quote": "Figure 3 Reduced viral titer and enhanced IAV-specific CD8+ T cell responses in early and established but not long-standing MCMV latencyGroups of C57BL/6 mice were mock infected or infected with 4×104 PFU MCMV Smith strain i.p. and challenged with 106 EID50 of IAV ×31 i.n. 5 weeks (early latency) (a and d), 12 weeks (established latency) (b and e) or 9 months (long-standing latency) later (c and f). Seven days after IAV infection, influenza viral titer was determined (upper panel) and IAV-specific T cells were enumerated from the BAL of IAV+ MCMV− (MCMV−) or IAV+ MCMV+ (MCMV+) mice by tetramer staining for NP, PA and PB1-specific responses. Data are representative of three independent experiments with 4-6 mice per group in each experiment. Significance was determined by t-test for viral titer and using the Fisher’s combined probability test for comparison of specific T cell responses."
       },
       {
         "type": "figure",
-        "ref": "Figure 3F"
+        "ref": "Figure 3"
       }
     ]
   },
   "claim_18": {
-    "claim": "Plaque assay analysis of lungs from co-infected mice at early MCMV latency (>5 weeks) showed influenza viral titers were higher in IFN-γ-deficient IAV+ MCMV+ mice compared to wild-type IAV+ MCMV+ mice at day 7 after IAV infection.",
+    "claim": "Plaque assay analysis of lung homogenates from IFN-γ-deficient or wild-type C57BL/6 co-infected mice challenged 5-6 weeks after MCMV infection with influenza A virus, showed higher influenza viral titers in IFN-γ-deficient IAV+ MCMV+ mice compared to wild-type IAV+ MCMV+ mice at day 7 after IAV infection.",
     "claim_type": "dependency",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "plaque assay"
-    },
+    "assay_method_in_paper": "plaque assay",
     "sources": [
       {
         "type": "text",
         "section": "Results",
-        "quote": "Significantly higher viral titers and lower influenza-specific responses were observed in the IFN-γ KO compared to control mice (Fig 4a and b), demonstrating that IFN-γ is essential for the MCMV-induced cross-protection against influenza in young mice during early MCMV latency and probably also contributes to this effect directly through its antiviral activity."
+        "quote": "To test this, we monitored the influenza viral titer in the lungs and also the number of influenza-specific CD8+ T cells in IFN-γ knock-out (KO) or control mice challenged with IAV at 5 weeks after MCMV infection, as described earlier. Significantly higher viral titers and lower influenza-specific responses were observed in the IFN-γ KO compared to control mice (Fig 4a and b), demonstrating that IFN-γ is essential for the MCMV-induced cross-protection against influenza in young mice during early MCMV latency and probably also contributes to this effect directly through its antiviral activity."
       },
       {
         "type": "text",
         "section": "Figure 4 caption",
-        "quote": "Figure 4. The effect of MCMV on cross-protection against influenza is IFN-γ-mediated Groups of C57BL/6 mice or IFN-γ-deficient mice (on the C57BL/6 background) were mock infected or infected with 4×104 PFU MCMV Smith strain i.p. and challenged 5-6 weeks later with 106 EID50 of IAV x31 i.n. (a) IAV lung viral titers from control (wild-type, WT) or IFN-γ-deficient co-infected (IAV+ MCMV+) mice were determined at day 7 after IAV infection in early MCMV latency (>5 weeks)."
+        "quote": "Figure 4 The effect of MCMV on cross-protection against influenza is IFN-γ-mediatedGroups of C57BL/6 mice or IFN-γ-deficient mice (on the C57BL/6 background) were mock infected or infected with 4×104 PFU MCMV Smith strain i.p. and challenged 5-6 weeks later with 106 EID50 of IAV x31 i.n. (a) IAV lung viral titers from control (wild-type, WT) or IFN-γ-deficient co-infected (IAV+ MCMV+) mice were determined at day 7 after IAV infection in early MCMV latency (>5 weeks)."
       },
       {
         "type": "figure",
-        "ref": "Figure 4A"
+        "ref": "Figure 4a"
       }
     ]
   },
   "claim_19": {
-    "claim": "Tetramer staining analysis of BAL from co-infected mice at early MCMV latency (>5 weeks) showed influenza-specific CD8+ T cell responses against NP, PA and PB1 were lower in IFN-γ-deficient IAV+ MCMV+ mice compared to wild-type IAV+ MCMV+ mice at day 7 after IAV infection.",
+    "claim": "Tetramer staining analysis of BAL from wild-type or IFN-γ-deficient C57BL/6 MCMV and IAV co-infected mice challenged 5-6 weeks after MCMV infection with influenza A virus, showed lower influenza-specific CD8+ T cell responses against NP, PA and PB1 in IFN-γ-deficient mice compared to wild-type mice at day 7 after IAV infection.",
     "claim_type": "dependency",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "tetramer staining"
-    },
+    "assay_method_in_paper": "tetramer staining",
     "sources": [
       {
         "type": "text",
         "section": "Results",
-        "quote": "Significantly higher viral titers and lower influenza-specific responses were observed in the IFN-γ KO compared to control mice (Fig 4a and b), demonstrating that IFN-γ is essential for the MCMV-induced cross-protection against influenza in young mice during early MCMV latency and probably also contributes to this effect directly through its antiviral activity."
+        "quote": "To test this, we monitored the influenza viral titer in the lungs and also the number of influenza-specific CD8+ T cells in IFN-γ knock-out (KO) or control mice challenged with IAV at 5 weeks after MCMV infection, as described earlier. Significantly higher viral titers and lower influenza-specific responses were observed in the IFN-γ KO compared to control mice (Fig 4a and b), demonstrating that IFN-γ is essential for the MCMV-induced cross-protection against influenza in young mice during early MCMV latency and probably also contributes to this effect directly through its antiviral activity."
       },
       {
         "type": "text",
         "section": "Figure 4 caption",
-        "quote": "Figure 4. The effect of MCMV on cross-protection against influenza is IFN-γ-mediated Groups of C57BL/6 mice or IFN-γ-deficient mice (on the C57BL/6 background) were mock infected or infected with 4×104 PFU MCMV Smith strain i.p. and challenged 5-6 weeks later with 106 EID50 of IAV x31 i.n. (a) IAV lung viral titers from control (wild-type, WT) or IFN-γ-deficient co-infected (IAV+ MCMV+) mice were determined at day 7 after IAV infection in early MCMV latency (>5 weeks). (b) IAV-specific CD8+ T cells were enumerated from the BAL of WT and IFN-γ-deficient MCMV and IAV co-infected mice by tetramer staining for NP, PA and PB1-specific responses, 7 days after IAV infection."
+        "quote": "(b) IAV-specific CD8+ T cells were enumerated from the BAL of WT and IFN-γ-deficient MCMV and IAV co-infected mice by tetramer staining for NP, PA and PB1-specific responses, 7 days after IAV infection. Significance was determined by t-test. Data are representative of two independent experiments with 3-5 mice per group. Significance was determined by t-test for viral titer and using the Fisher’s combined probability test for comparison of specific T cell responses."
       },
       {
         "type": "figure",
-        "ref": "Figure 4B"
+        "ref": "Figure 4b"
       }
     ]
   }
