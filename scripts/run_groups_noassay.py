@@ -22,7 +22,13 @@ async def run_group_step(claims: dict, client) -> dict:
     claim_keys = [k for k in claims if k.startswith("claim_")]
     print(f"Structuring {len(claim_keys)} claims...")
     for i, key in enumerate(claim_keys, 1):
-        single = {key: {"claim": claims[key]["claim"], "sources": claims[key].get("sources", [])}}
+        single = {
+            key: {
+                "claim": claims[key]["claim"],
+                "claim_type": claims[key].get("claim_type"),
+                "sources": claims[key].get("sources", []),
+            }
+        }
         prompt = template.replace("{claims}", json.dumps(single, indent=2))
         resp = await client.chat.completions.create(
             model=settings.OPENAI_MODEL,
@@ -36,7 +42,10 @@ async def run_group_step(claims: dict, client) -> dict:
         val.setdefault("sources", claims[key].get("sources", []))
         # claim_type is carried through from the input claims rather than asked of the
         # model: claim_filter already selected on this value, so a re-derived one could
-        # disagree with the filter that let the claim through.
+        # disagree with the filter that let the claim through. The model now SEES the field
+        # in its input, so it may echo one back — discard that before merging, or `**val`
+        # would override the inherited value and quietly break the chain.
+        val.pop("claim_type", None)
         groups[key] = {"claim_type": claims[key].get("claim_type"), **val}
         print(f"  [{i}/{len(claim_keys)}] {key} done")
     return groups
