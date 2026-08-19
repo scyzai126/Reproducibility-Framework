@@ -19,7 +19,8 @@ Example:
 
 Output files:
     claims.json           claim_1..N, one entry per surviving claim, carrying only
-                          claim, claim_type, assay and sources (CLAIMS_OUTPUT_FIELDS)
+                          claim, claim_type, assay_method_in_paper and sources
+                          (CLAIMS_OUTPUT_FIELDS)
     claims_v5_audit.json  demotions, provenance verdicts, abstract coverage, proposed
                           merges, the per-panel sampling record, and token usage
     token_usage.json      per-pass and total token counts for the run

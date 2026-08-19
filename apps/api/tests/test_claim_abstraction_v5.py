@@ -311,6 +311,76 @@ def test_abstract_and_methods_are_separated_from_panel_prose():
     assert all("ELISA" not in p.prose for p in paper.panels)
 
 
+def _paper(methods_xml: str) -> str:
+    """A minimal article carrying one figure panel and the given Methods markup."""
+    return f"""<article>
+  <front><article-meta><abstract><p>An abstract.</p></abstract></article-meta></front>
+  <body>
+    <sec><title>Results</title>
+      <p>IgG rose (<xref rid="F1" ref-type="fig">Fig. 1</xref>).</p>
+    </sec>
+    {methods_xml}
+    <fig id="F1"><label>Figure 1</label><caption><p>Antibody responses.</p></caption></fig>
+  </body>
+</article>"""
+
+
+def test_methods_is_found_under_a_cell_press_experimental_procedures_heading():
+    """A prefix match on "methods" missed this on 4 of the 30 corpus papers."""
+    paper = split_panels(_paper(
+        "<sec><title>EXPERIMENTAL PROCEDURES</title><p>IgG was measured by ELISA.</p></sec>"
+    ))
+
+    assert "ELISA" in paper.methods
+
+
+def test_methods_is_found_under_a_star_methods_heading():
+    paper = split_panels(_paper(
+        "<sec><title>STAR\u2605METHODS</title><p>IgG was measured by ELISA.</p></sec>"
+    ))
+
+    assert "ELISA" in paper.methods
+
+
+def test_a_parent_methods_section_wins_over_its_own_subsections():
+    """Otherwise the first nested child is picked and the rest of Methods is dropped."""
+    paper = split_panels(_paper(
+        "<sec><title>STAR METHODS</title>"
+        "<sec><title>Method Details</title><p>IgG was measured by ELISA.</p></sec>"
+        "<sec><title>Quantification</title><p>Titers were log-transformed.</p></sec>"
+        "</sec>"
+    ))
+
+    assert "ELISA" in paper.methods
+    assert "log-transformed" in paper.methods
+
+
+def test_the_real_methods_wins_over_an_earlier_results_subsection_titled_study_design():
+    """"Study design for ..." canonicalizes to methods too, and comes first in the document."""
+    paper = split_panels("""<article>
+  <front><article-meta><abstract><p>An abstract.</p></abstract></article-meta></front>
+  <body>
+    <sec><title>Results</title>
+      <sec><title>Study design for integrative profiling</title><p>Subjects were enrolled.</p></sec>
+      <p>IgG rose (<xref rid="F1" ref-type="fig">Fig. 1</xref>).</p>
+    </sec>
+    <sec><title>STAR METHODS</title>
+      <p>IgG was measured by ELISA in serum, with titers reported as endpoint dilutions.</p>
+    </sec>
+    <fig id="F1"><label>Figure 1</label><caption><p>Antibody responses.</p></caption></fig>
+  </body>
+</article>""")
+
+    assert "ELISA" in paper.methods
+    assert "were enrolled" not in paper.methods
+
+
+def test_a_paper_with_no_methods_section_still_reports_none():
+    paper = split_panels(_paper(""))
+
+    assert paper.methods == ""
+
+
 def test_methods_precedes_prose_so_the_shared_prefix_caches():
     panel = next(p for p in split_panels(JATS).panels if p.panel_id == "F2")
     message = build_pass1_user_message(panel, "IgG was measured by ELISA.")
@@ -482,7 +552,7 @@ def test_project_claims_keeps_only_the_output_fields():
     out = project_claims({"claim_1": _full_claim()})
     assert tuple(out["claim_1"]) == CLAIMS_OUTPUT_FIELDS
     for dropped in ("provenance_audit", "contrast", "scope_changes", "method_added",
-                    "polarity", "panel", "sample_type", "unspecified"):
+                    "polarity", "panel", "sample_type", "unspecified", "assay"):
         assert dropped not in out["claim_1"]
     assert out["claim_1"]["sources"][0]["quote"] == "verbatim"
 
@@ -493,8 +563,20 @@ def test_project_claims_preserves_claim_order_and_emits_missing_fields_as_null()
     out = project_claims(claims)
     assert list(out) == ["claim_2", "claim_1"]
     assert tuple(out["claim_1"]) == CLAIMS_OUTPUT_FIELDS
-    assert out["claim_1"]["assay"] is None
+    assert out["claim_1"]["claim_type"] is None
+    assert out["claim_1"]["assay_method_in_paper"] is None
     assert out["claim_1"]["claim"] == "bare"
+
+
+def test_assay_is_published_under_its_renamed_key():
+    """The passes emit `assay`; claims.json publishes `assay_method_in_paper` to say the
+    value is the method as the paper words it, not an OBI-mapped identifier. A plain tuple
+    rename without the source-key mapping would write null for every claim, which is the
+    failure this pins."""
+    out = project_claims({"claim_1": _full_claim(assay="Hemagglutination inhibition")})
+
+    assert out["claim_1"]["assay_method_in_paper"] == "Hemagglutination inhibition"
+    assert "assay" not in out["claim_1"]
 
 
 def test_projection_would_starve_pass5_if_applied_before_the_write():

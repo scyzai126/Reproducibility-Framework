@@ -26,6 +26,7 @@ from lxml import etree
 from openai import AsyncOpenAI
 
 from app.agent.claim_parser import CLAIM_TYPES_PLACEHOLDER, _load_prompt, _strip_fences
+from app.agent.jats_parser import _canonical_section
 
 PROMPT_FILE = "claim_abstraction_prompt_v6.md"
 
@@ -41,7 +42,14 @@ SAMPLED_TEMPERATURE = 1.0
 #: attaches its verdict onto each claim and pass 5 reads `polarity`, `panel`, `contrast`,
 #: `targets` and `timepoints` off the in-memory set, so the full shape has to survive until
 #: `abstract_claims_from_jats` returns.
-CLAIMS_OUTPUT_FIELDS = ("claim", "claim_type", "assay", "sources")
+CLAIMS_OUTPUT_FIELDS = ("claim", "claim_type", "assay_method_in_paper", "sources")
+
+#: Output key -> the key the model actually emits. The extraction passes name the field
+#: `assay`, but claims.json publishes it as `assay_method_in_paper` to say what it holds:
+#: the method as the paper words it, not an OBI-mapped or registry-resolved identifier.
+#: Renaming at the write site keeps passes 2-5, which read `claim["assay"]` internally,
+#: working off the name they were written against.
+CLAIMS_OUTPUT_SOURCE_KEYS = {"assay_method_in_paper": "assay"}
 
 # 79 calls fired at once would be rate-limited, and a 429 late in a panel discards the
 # samples already paid for. Cap in-flight calls instead.
@@ -156,6 +164,28 @@ def _section_by_title(root, *wanted: str):
     return None
 
 
+def _methods_section(root):
+    """The paper's Methods section, however it is titled.
+
+    Matching goes through jats_parser._canonical_section rather than a prefix list, so the
+    Cell-press styles ("EXPERIMENTAL PROCEDURES", "STAR\u2605METHODS") resolve like a plain
+    "Methods" heading does — a prefix match missed those on 7 of the 30 corpus papers, and
+    a missed Methods silently drops the METHODS block from every pass-1 message, taking the
+    assay/sample_type/cohort_n/timeframe provenance fields with it.
+
+    Nested matches are dropped so a parent STAR\u2605Methods section wins over its own
+    subsections, and the longest survivor wins because a Results subsection titled
+    "Study design for ..." canonicalizes to methods too and can precede the real one.
+    """
+    matches = [
+        sec for sec in root.iter("sec")
+        if (title := sec.find("title")) is not None
+        and _canonical_section(_text(title).lstrip("0123456789. ")) == "methods"
+    ]
+    outermost = [sec for sec in matches if not any(a in matches for a in sec.iterancestors())]
+    return max(outermost, key=lambda sec: len(_text(sec)), default=None)
+
+
 def split_panels(xml_text: str) -> PaperPanels:
     """Split a JATS article into panels, plus the abstract and Methods text.
 
@@ -204,7 +234,7 @@ def split_panels(xml_text: str) -> PaperPanels:
                 panels[rid].prose_paragraphs.append(text)
 
     abstract_node = root.find(".//abstract")
-    methods = _section_by_title(root, "methods", "on-line methods", "online methods", "materials and methods")
+    methods = _methods_section(root)
 
     return PaperPanels(
         panels=[p for p in panels.values()],
@@ -464,12 +494,19 @@ async def run_coverage_audit(
 def project_claims(claims: dict) -> dict:
     """Reduce each claim to CLAIMS_OUTPUT_FIELDS, for writing to claims.json.
 
-    Claim key order is preserved, and a claim that never got one of the four fields still
+    Claim key order is preserved, and a claim that never got one of the three fields still
     carries the key with a null — a downstream reader can then index every entry the same
     way instead of testing for presence.
+
+    A field the model emits under a different name is remapped via
+    CLAIMS_OUTPUT_SOURCE_KEYS rather than renamed upstream, so the passes that read it
+    internally are untouched.
     """
     return {
-        key: {field: claim.get(field) for field in CLAIMS_OUTPUT_FIELDS}
+        key: {
+            field: claim.get(CLAIMS_OUTPUT_SOURCE_KEYS.get(field, field))
+            for field in CLAIMS_OUTPUT_FIELDS
+        }
         for key, claim in claims.items()
     }
 
