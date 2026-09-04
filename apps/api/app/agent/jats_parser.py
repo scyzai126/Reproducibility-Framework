@@ -457,3 +457,108 @@ def parse_jats_xml(xml_text: str) -> str:
         blocks.append("--- Tables ---\n" + "\n\n".join(tbl_blocks))
 
     return _truncate_blocks(blocks, MAX_PAPER_CHARS)
+
+
+# ── Sentence numbering ────────────────────────────────────────────────────────
+#
+# Lives here rather than in .claude/skills/extract-assay-methods/scripts/jats_to_text.py,
+# where it was written, because the HTTP route and the assay passes both need it and
+# apps/api must not import from .claude/skills. The skill script now imports it from here,
+# which is the direction that already holds: skill scripts import this package.
+#
+# Numbering is lossless -- deleting every `[S<n>] ` marker restores the parser's output byte
+# for byte, which is what makes an extracted quote checkable against the source.
+
+import itertools as _itertools
+
+#: Abbreviations whose trailing period does not end a sentence, plus a single capital letter
+#: (initials, and the "Inc." / "Fig." style already covered by name).
+_ABBREVIATIONS = (
+    r"(?<!\bi\.e)(?<!\be\.g)(?<!\bvs)(?<!\bFig)(?<!\bcf)(?<!\bca)(?<!\bno)(?<!\bDr)"
+    r"(?<!\bInc)(?<!\bLtd)(?<!\bCo)(?<!\bet al)(?<!\bapprox)(?<!\bref)(?<!\bcat)"
+    r"(?<!\bver)(?<!\bMr)(?<!\bSt)(?<![A-Z])"
+)
+
+#: Matches the whitespace separating two sentences. The lookahead is `[^\s]` rather than
+#: `[A-Z]` on purpose: scientific sentences routinely open lowercase ("cRNA was
+#: hybridized...", "mRNA levels...", "pH was..."), and requiring a capital silently glues
+#: them onto the previous sentence.
+SENTENCE_SPLIT = re.compile(_ABBREVIATIONS + r"(?<=[.!?])\s+(?=[^\s])")
+
+#: `Title:`/`Caption:`/`Body:` prefix on a figure or table line -- the label is scaffolding,
+#: the text after it is quotable content.
+_CAPTION_FIELD = re.compile(r"^(\s*(?:Title|Caption|Body):\s*)(.*)$")
+
+#: Structural lines that carry no prose: section headings, the figure/table banners, and a
+#: bare `[Figure 1]` / `[Table 2]` label.
+_STRUCTURAL = re.compile(r"^(?:##\s|---\s|\[[^\]]*\]\s*$)")
+
+SENTENCE_MARKER = re.compile(r"\[S\d+\] ")
+
+
+def _number_content(content: str, counter) -> str:
+    """Insert `[S<n>] ` before each sentence in one line of prose.
+
+    Markers are inserted around the original text rather than derived from splitting and
+    rejoining it, so whatever whitespace separated two sentences survives intact and
+    strip_sentence_ids() is an exact inverse.
+    """
+    if not content.strip():
+        return content
+
+    start = len(content) - len(content.lstrip())
+    parts = [content[:start], f"[S{next(counter)}] "]
+
+    pos = start
+    for match in SENTENCE_SPLIT.finditer(content, start):
+        parts.append(content[pos:match.end()])
+        parts.append(f"[S{next(counter)}] ")
+        pos = match.end()
+    parts.append(content[pos:])
+
+    return "".join(parts)
+
+
+def number_sentences(text: str) -> str:
+    """Prefix every sentence of prose in the parsed paper with a `[S<n>] ` marker."""
+    counter = _itertools.count(1)
+    numbered = []
+
+    for line in text.split("\n"):
+        if not line.strip() or _STRUCTURAL.match(line):
+            numbered.append(line)
+            continue
+
+        caption = _CAPTION_FIELD.match(line)
+        if caption:
+            label, content = caption.groups()
+            numbered.append(label + _number_content(content, counter))
+        else:
+            numbered.append(_number_content(line, counter))
+
+    return "\n".join(numbered)
+
+
+def strip_sentence_ids(text: str) -> str:
+    """Inverse of number_sentences() -- used to check a quote against the raw parse."""
+    return SENTENCE_MARKER.sub("", text)
+
+
+def article_title(xml_text: Union[str, bytes]) -> Optional[str]:
+    """The paper's title from JATS `<article-title>`, or None.
+
+    Read from the XML rather than from parse_jats_xml's output, which carries no title at
+    all -- its first line is `## Abstract`. Callers that guessed "the first line that is not
+    a heading" were therefore handing whole abstracts to prompts as the paper's name.
+    """
+    try:
+        root = etree.fromstring(xml_text.encode("utf-8") if isinstance(xml_text, str) else xml_text)
+    except etree.XMLSyntaxError:
+        return None
+
+    node = root.find(".//front//article-meta//article-title")
+    if node is None:
+        node = root.find(".//article-title")
+    if node is None:
+        return None
+    return " ".join("".join(node.itertext()).split()) or None

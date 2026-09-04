@@ -301,12 +301,16 @@ async def resolve_experiment_accession(
     claim_text: str | None = None,
     original_name: str = "",
     readouts: str = "",
+    platform: str = "",
 ) -> tuple[str, str] | None:
     """Resolve an assay method → experiment_accession.
 
     SQL step tries canonical name then original_name (if different).
     If both miss, one LLM call is made with canonical name, original name,
-    and readouts all included for richer context.
+    readouts and platform all included for richer context.
+
+    `platform` is deliberately kept out of the SQL step: it holds vendor product names
+    ("LSRII flow cytometer (BD)"), which do not appear in ImmPort's technique columns.
     """
     if not assay_method or not study_accession:
         return None
@@ -354,6 +358,7 @@ async def resolve_experiment_accession(
         search_term=assay_method,
         original_name=original_name or assay_method,
         readouts=readouts or "",
+        platform=platform or "",
     )
     if claim_text:
         prompt += f"\n\nOriginal claim for context:\n{claim_text}"
@@ -1659,6 +1664,7 @@ async def resolve_and_build_queries(
                     claim_text=claim_text,
                     original_name=registry_entry.get("name_in_paper", ""),
                     readouts=registry_entry.get("readouts", ""),
+                    platform=registry_entry.get("platform", ""),
                 )
 
         async def _cond():

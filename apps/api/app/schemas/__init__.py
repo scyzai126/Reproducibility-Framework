@@ -57,3 +57,44 @@ class AgentResponse(BaseModel):
     question: str | None = None
     # ImmPort field resolution completeness summary
     completeness: CompletnessSummary | None = None
+
+
+class AssayRequest(BaseModel):
+    """Ask what assays a paper used. At least one identifier is required.
+
+    `verify` and `correct` default on: the point of the endpoint is to return the accurate
+    registry, and an unverified one cannot be told apart from a verified one by the reader --
+    a `platform` inferred from what a technique usually runs on looks exactly like one copied
+    from Methods. Turn them off only to inspect an intermediate round.
+
+    `refresh` defaults off because the answer for a paper does not change between requests,
+    and a cold run costs 1 + N + F model calls.
+    """
+
+    study_accession: str = ""
+    pubmed_id: str = ""
+    verify: bool = True
+    correct: bool = True
+    refresh: bool = False
+
+
+class AssayResponse(BaseModel):
+    study_accession: str = ""
+    pubmed_id: str = ""
+    paper_title: str = ""
+    paper_source: str = ""
+    #: name_in_paper -> the seven-field entry: the CORRECTED registry, as assays.json holds it.
+    assays: dict = {}
+    #: The free verbatim-quote check. Always present, cached results included.
+    quote_check: dict = {}
+    #: build_report() output, or null when verify was false or the paper has no assays.
+    verification: dict | None = None
+    #: assay id -> {entry, reason} for assays round 3 set aside as never performed.
+    dropped: dict = {}
+    #: What each of the three rounds did, and what it cost.
+    rounds: dict = {}
+    #: Entries that broke the extraction contract; report these, do not skim them.
+    contract_warnings: list[str] = []
+    #: Where the registry and report came from, and what the request actually cost.
+    meta: dict = {}
+

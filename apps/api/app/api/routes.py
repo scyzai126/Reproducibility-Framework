@@ -4,10 +4,19 @@ from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from fastapi.responses import JSONResponse, PlainTextResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.agent.claim_parser import get_paper_url, parse_paper_claims
+from app.agent.assay_extractor import AssayExtractionError
+from app.agent.assay_service import PaperNotFoundError, assay_report
+from app.agent.claim_parser import _get_client, get_paper_url, parse_paper_claims
 from app.agent.orchestrator import run_agent_from_paper, run_agent_from_pdf_vision, run_agent_from_pubmed_id, run_agent_from_text
 from app.database import get_session
-from app.schemas import AgentResponse, ParsePaperRequest, ParsePaperResponse, TextRequest
+from app.schemas import (
+    AgentResponse,
+    AssayRequest,
+    AssayResponse,
+    ParsePaperRequest,
+    ParsePaperResponse,
+    TextRequest,
+)
 
 router = APIRouter(prefix="/agent", tags=["agent"])
 
@@ -95,6 +104,37 @@ async def agent_parse_paper(
         raise HTTPException(status_code=400, detail=str(exc))
     except RuntimeError as exc:
         raise HTTPException(status_code=500, detail=str(exc))
+
+
+@router.post("/assays", response_model=AssayResponse)
+async def agent_assays(request: AssayRequest):
+    """What assays did this paper use? Extract, verify, correct — and return the accurate set.
+
+    Three rounds in one call:
+      1. prompts/extract_assays.txt builds the registry            (1 call)
+      2. prompts/verify_assays.txt judges every entry              (1 call per assay)
+      3. prompts/correct_assay_field.txt repairs what round 2       (1 call per flagged field)
+         refused to support, and sets aside rejected assays
+
+    `assays` in the response is the corrected registry, and it is what assays.json now holds.
+    Every round caches, so asking again about the same paper costs nothing; `refresh` re-runs
+    all three. `rounds` reports what each round did and what it cost.
+    """
+    if not (request.study_accession.strip() or request.pubmed_id.strip()):
+        raise HTTPException(
+            status_code=400,
+            detail="Provide study_accession, pubmed_id, or both.",
+        )
+    try:
+        result = await assay_report(
+            request.pubmed_id, request.study_accession, _get_client(),
+            verify=request.verify, correct=request.correct, refresh=request.refresh,
+        )
+    except PaperNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc))
+    except AssayExtractionError as exc:
+        raise HTTPException(status_code=502, detail=f"assay extraction failed: {exc}")
+    return AssayResponse(**result)
 
 
 @router.post("/cache/clear")

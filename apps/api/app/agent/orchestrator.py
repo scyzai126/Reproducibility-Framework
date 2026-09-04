@@ -10,6 +10,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
+from app.agent.assay_registry import load_verified_registry, merge_verified
 from app.agent.claim_parser import fetch_paper_content_async, parse_paper_claims_from_text, parse_paper_claims_step1_only, parse_paper_claims_noimmport, PaperNotAvailableError
 from app.agent.ncbi_utils import pmid_to_pmc_url, pmc_to_pmid
 from app.agent.description_analyzer import analyze_claims_batch, analyze_descriptions
@@ -627,6 +628,15 @@ async def _run_full_paper_analysis(
             paper_text, study_accession
         )
         assay_registry = step1_json.get("assays", {})
+
+    # Enrich with the independently-extracted registry for this paper, when one exists on
+    # disk. Claims name their assay but carry no platform/sample_type/readouts, and those are
+    # exactly the hints resolve_experiment_accession hands the LLM when its SQL step misses.
+    # Additive only -- every entry the claims named survives, so a paper with no registry
+    # resolves exactly as it did before.
+    if verified := load_verified_registry(pubmed_id, study_accession):
+        assay_registry = merge_verified(assay_registry, verified)
+        logger.info("Merged verified assay registry for %s (%d entries)", pubmed_id, len(verified))
 
     claims: list[dict] = []
     batch_analysis: dict[str, list[dict]] = {}

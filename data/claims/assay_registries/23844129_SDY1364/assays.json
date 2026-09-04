@@ -3,79 +3,92 @@
     "name_in_paper": "IFN-γ ELISpot",
     "aliases": [
       "IFN-γ ELISpots",
-      "ELIspot",
-      "ELISpot assays"
+      "ELISpot assay"
     ],
-    "sample_type": "fresh PBMC; mouse splenocytes",
-    "readouts": "antigen 85A-specific IFN-γ spot-forming responses, immunogenicity/AUC",
-    "evidence_location": {
-      "type": "text",
-      "section": "Results",
-      "quote": "we divided the 24 volunteers into “high” or “low” responders based on an area under the curve analysis for IFN-γ ELISpot responses to 66 overlapping peptides covering antigen 85A"
-    },
-    "confidence": 0.98,
-    "claim_role": "outcome_variable"
+    "platform": null,
+    "sample_type": "PBMC from vaccinated subjects; ACK-treated splenocytes",
+    "readouts": "antigen-specific IFN-γ spot-forming responses",
+    "source": "methods",
+    "evidence": {
+      "section": "Materials and Methods",
+      "sentence_ids": [
+        "S93"
+      ],
+      "quote": "IFN-γ ELISpots were performed ex-vivo at screening and weeks 1,2,4,12, and 24 post-vaccination as previously described [ 29 ]."
+    }
   },
   "Gene Expression Analysis": {
     "name_in_paper": "Gene Expression Analysis",
     "aliases": [
-      "gene expression analysis on Illumina microarrays",
+      "gene expression analysis",
       "microarray",
-      "Illumina microarrays",
-      "Illumina HumanHT-12 version 4 expression beadchip"
+      "Illumina microarrays"
     ],
-    "sample_type": "unstimulated PBMC; in vitro stimulated PBMC",
-    "readouts": "transcript abundance/gene expression changes",
-    "evidence_location": {
-      "type": "text",
-      "section": "Results",
-      "quote": "Comparing two days after vaccination to baseline, 1100 genes were differentially expressed (false discovery rate <0.05)."
-    },
-    "confidence": 0.93,
-    "claim_role": "primary"
-  },
-  "flow cytometry": {
-    "name_in_paper": "flow cytometry",
-    "aliases": [],
-    "sample_type": "unstimulated PBMC",
-    "readouts": "Treg frequency (CD4+ CD25+ Foxp3+), TLR1 surface mean fluorescence intensity",
-    "evidence_location": {
-      "type": "text",
-      "section": "Results",
-      "quote": "The number of Tregs (CD4+ CD25+ Foxp3+) in unstimulated PBMC from day of vaccination and 7 days later were quantified by flow cytometry. In high responders, the number of Tregs (as a percentage of CD4+ cells) remained constant pre- and post vaccination, however in low responders it increased between day 0 and day 7"
-    },
-    "confidence": 0.96,
-    "claim_role": "primary"
+    "platform": "Illumina HumanHT-12 version 4 expression beadchip",
+    "sample_type": "RNA from PBMC",
+    "readouts": "genome-wide gene expression levels",
+    "source": "methods",
+    "evidence": {
+      "section": "Materials and Methods",
+      "sentence_ids": [
+        "S106",
+        "S107"
+      ],
+      "quote": "Amplified RNA (750ng per array) was hybridized to the Illumina HumanHT-12 version 4 expression beadchip according to manufacturer’s instructions. Arrays were scanned with an Illumina bead array reader confocal scanner."
+    }
   },
   "Quantitative PCR": {
     "name_in_paper": "Quantitative PCR",
     "aliases": [
-      "qPCR",
-      "real-time RT-PCR"
+      "qPCR"
     ],
-    "sample_type": "PBMC RNA/cDNA",
-    "readouts": "expression levels of candidate genes including TLR1, TICAM2 and CD14",
-    "evidence_location": {
-      "type": "text",
-      "section": "Results",
-      "quote": "We measured the expression of the nine genes by qPCR and again classified the volunteers as high or low responders based on the median AUC value for their ELISpot responses"
-    },
-    "confidence": 0.97,
-    "claim_role": "validation"
+    "platform": "Roche LightCycler® 480 and Quantitect mastermix (Qiagen)",
+    "sample_type": "cDNA reverse transcribed from RNA",
+    "readouts": "gene-specific transcript copy numbers",
+    "source": "methods",
+    "evidence": {
+      "section": "Materials and Methods",
+      "sentence_ids": [
+        "S108",
+        "S109"
+      ],
+      "quote": "RNA was reverse transcribed to cDNA using oligo-dT and the Omniscript reverse transcription kit (Qiagen). cDNA was stored at -20°C until qPCR was performed, using the Roche LightCycler® 480 and Quantitect mastermix (Qiagen)."
+    }
+  },
+  "Flow cytometry": {
+    "name_in_paper": "Flow cytometry",
+    "aliases": [
+      "flow cytometry of Treg markers"
+    ],
+    "platform": "FACSCalibur (Becton Dickinson)",
+    "sample_type": "PBMC",
+    "readouts": "cell-surface and intracellular marker expression including Treg frequencies and TLR1 fluorescence intensity",
+    "source": "methods",
+    "evidence": {
+      "section": "Materials and Methods",
+      "sentence_ids": [
+        "S114"
+      ],
+      "quote": "A FACSCalibur (Becton Dickinson) was used for flow cytometry event collection and events were analysed using FlowJo (Tree Star Inc.)."
+    }
   },
   "Western blot": {
     "name_in_paper": "Western blot",
     "aliases": [
       "western blot"
     ],
-    "sample_type": "cell culture supernatant from infected/stimulated cells",
+    "platform": "4-20% precise protein gel (Thermo Scientific Pierce) and Trans-Blot Turbo Transfer Pack, Bio-Rad Laboratories Ltd",
+    "sample_type": "cell culture supernatant",
     "readouts": "HMGB1 protein in supernatant",
-    "evidence_location": {
-      "type": "text",
-      "section": "Results",
-      "quote": "HMGB1 is detectable by western blot in the supernatant of infected cells 4 and 6 hours post infection but not in the supernatant of uninfected cells after 6 hours."
-    },
-    "confidence": 0.98,
-    "claim_role": "primary"
+    "source": "methods",
+    "evidence": {
+      "section": "Materials and Methods",
+      "sentence_ids": [
+        "S118",
+        "S119",
+        "S120"
+      ],
+      "quote": "The supernatant was mixed 1:1 with loading dye, run 1 hour at 100 Volts on a 4-20% precise protein gel (Thermo Scientific Pierce) and transferred to a membrane (Trans-Blot Turbo Transfer Pack, Bio-Rad Laboratories Ltd) by Turbo blotting for 7 minutes. The membrane was incubated sequentially for 1 hour with PBS with 3% BSA alone, primary antibody (mouse anti-human HMGB1, Biolegend, UK) and finally secondary antibody (Alkaline Phosphatase-AffiniPure Donkey Anti-Mouse IgG, Stratech Scientific Limited). The membrane was washed and developed."
+    }
   }
 }

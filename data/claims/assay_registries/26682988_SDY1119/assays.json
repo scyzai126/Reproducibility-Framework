@@ -1,56 +1,59 @@
 {
-  "hemagglutination-inhibition (HAI) antibody titer assays": {
-    "name_in_paper": "hemagglutination-inhibition (HAI) antibody titer assays",
-    "aliases": [
-      "HAI assays",
-      "HAI response"
-    ],
-    "sample_type": "plasma",
-    "readouts": "influenza antibody titers, fold change from baseline to day 28 or day 180, seroconversion/high-versus-low responder classification",
-    "evidence_location": {
-      "type": "text",
-      "section": "Results",
-      "quote": "We evaluated the plasma antibody responses of all vaccinated individuals via hemagglutination-inhibition (HAI) antibody titer assays."
-    },
-    "confidence": 0.98,
-    "claim_role": "outcome_variable"
-  },
   "microarray": {
     "name_in_paper": "microarray",
     "aliases": [
       "microarray analyses",
-      "Microarray Analysis",
-      "Microarray experiments",
-      "gene expression profiles",
-      "transcriptomic profiling",
-      "Human U133 Plus 2.0 Arrays"
+      "Microarray experiments"
     ],
+    "platform": "Human U133 Plus 2.0 Arrays (Affymetrix)",
     "sample_type": "PBMCs",
-    "readouts": "gene expression profiles, differentially expressed genes, transcriptional module activity",
-    "evidence_location": {
-      "type": "text",
-      "section": "Results",
-      "quote": "We performed microarray analyses on the peripheral blood mononuclear cells (PBMCs) as indicated ( Figure 1A )."
-    },
-    "confidence": 0.97,
-    "claim_role": "primary"
+    "readouts": "genome-wide gene expression levels; differentially expressed genes",
+    "source": "methods",
+    "evidence": {
+      "section": "RNA Isolation and Microarray Analysis",
+      "sentence_ids": [
+        "S167",
+        "S168"
+      ],
+      "quote": "Total RNA from PBMCs (~1.5 × 10 6 cells) was purified using Trizol (Invitrogen, Life Technologies Corporation) according to the manufacturer’s instructions. Samples were checked for purity and hybridized on Human U133 Plus 2.0 Arrays (Affymetrix)."
+    }
   },
   "flow cytometry": {
     "name_in_paper": "flow cytometry",
     "aliases": [
       "fluorescence-activated cell sorting (FACS) measurements",
-      "FACS analysis",
-      "Flow Cytometry Analysis"
+      "FACS analysis"
     ],
+    "platform": "LSRII flow cytometer (BD)",
     "sample_type": "PBMCs",
-    "readouts": "NK cell and monocyte frequencies, NK subset distribution, CD69 activation, CCR5 and CD86 expression, geometric mean fluorescence intensity (MFI)",
-    "evidence_location": {
-      "type": "text",
-      "section": "Results",
-      "quote": "In order to distinguish between these two possibilities, we performed FACS analysis on PBMCs in a subset of subjects from the 2010 cohort."
-    },
-    "confidence": 0.96,
-    "claim_role": "validation"
+    "readouts": "NK cell and monocyte subset frequencies; CD69, CCR5 and CD86 expression",
+    "source": "methods",
+    "evidence": {
+      "section": "Flow Cytometry Analysis",
+      "sentence_ids": [
+        "S177",
+        "S178",
+        "S179"
+      ],
+      "quote": "2–3 × 10 6 PBMCs were thawed and stained with live/dead marker (Alexa Fluor 430, Life Technologies) to exclude dead cells. Cells were then stained with an appropriate antibody cocktail. Cells were washed, fixed, and analyzed on the LSRII flow cytometer (BD)."
+    }
+  },
+  "hemagglutination-inhibition (HAI) antibody titer assays": {
+    "name_in_paper": "hemagglutination-inhibition (HAI) antibody titer assays",
+    "aliases": [
+      "HAI assays"
+    ],
+    "platform": null,
+    "sample_type": "plasma",
+    "readouts": "strain-specific HAI antibody titers; fold change of titer at day 28 and day 180 relative to baseline",
+    "source": "results",
+    "evidence": {
+      "section": "RESULTS",
+      "sentence_ids": [
+        "S17"
+      ],
+      "quote": "We evaluated the plasma antibody responses of all vaccinated individuals via hemagglutination-inhibition (HAI) antibody titer assays."
+    }
   },
   "miRNA expression profiling": {
     "name_in_paper": "miRNA expression profiling",
@@ -58,14 +61,16 @@
       "miRNA profiling",
       "miRNA expression profiles"
     ],
-    "sample_type": "PBMCs",
-    "readouts": "miRNA expression levels, differentially expressed miRNAs, correlations of miRNAs with HAI response",
-    "evidence_location": {
-      "type": "text",
-      "section": "Results",
-      "quote": "To assess whether or not miRNAs contribute to the differences in response we saw between young and elderly vaccinees, we measured the miRNA expression profiles of 672 human miRNAs on days 1, 3, and 7 after vaccination from a subset of subjects in the 2010 cohort ( Figure 7A )."
-    },
-    "confidence": 0.9,
-    "claim_role": "primary"
+    "platform": null,
+    "sample_type": null,
+    "readouts": "expression levels of 672 human miRNAs; differentially expressed miRNAs after vaccination",
+    "source": "results",
+    "evidence": {
+      "section": "RESULTS",
+      "sentence_ids": [
+        "S141"
+      ],
+      "quote": "we measured the miRNA expression profiles of 672 human miRNAs on days 1, 3, and 7 after vaccination from a subset of subjects in the 2010 cohort"
+    }
   }
 }

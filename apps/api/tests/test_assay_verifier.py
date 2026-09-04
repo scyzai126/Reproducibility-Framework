@@ -1,0 +1,349 @@
+import json
+
+import pytest
+
+from app.agent.assay_verifier import (
+    ACCEPT,
+    CONTRADICTED,
+    NOT_REPORTED,
+    NOT_SUPPORTED,
+    REJECT,
+    REVIEW,
+    SUPPORTED,
+    build_summary,
+    check_quote_verbatim,
+    derive_record_verdict,
+    get_evidence,
+    get_name,
+    proposed_fields,
+    sentence_index,
+    verify_assay,
+)
+
+SOURCE = (
+    "## Materials and Methods\n"
+    "[S1] PBMCs were thawed and rested overnight. "
+    "[S2] Cells were acquired on a BD LSRFortessa flow cytometer. "
+    "[S3] Serum antibody titers were measured by ELISA.\n"
+    "## Results\n"
+    "[S4] Frequencies of IFN-g producing cells rose by day 7.\n"
+)
+
+ENTRY = {
+    "name_in_paper": "flow cytometry",
+    "aliases": ["FACS"],
+    "platform": "BD LSRFortessa",
+    "sample_type": "PBMCs",
+    "readouts": "cytokine-producing cell frequencies",
+    "source": "methods",
+    "evidence": {
+        "section": "Materials and Methods",
+        "sentence_ids": ["S2"],
+        "quote": "Cells were acquired on a BD LSRFortessa flow cytometer.",
+    },
+}
+
+
+def test_sentence_index_maps_ids_to_text_without_markers():
+    index = sentence_index(SOURCE)
+
+    assert index["S1"] == "PBMCs were thawed and rested overnight."
+    assert "[S" not in index["S2"]
+    assert "BD LSRFortessa" in index["S2"]
+
+
+def test_quote_check_accepts_a_verbatim_quote_from_the_cited_sentence():
+    check = check_quote_verbatim(ENTRY, SOURCE)
+
+    assert check["status"] == "found"
+    assert check["verdict"] == SUPPORTED
+
+
+def test_quote_check_contradicts_a_fabricated_quote():
+    entry = {**ENTRY, "evidence": {**ENTRY["evidence"],
+                                   "quote": "Cells were acquired on a NovaSeq 6000."}}
+
+    check = check_quote_verbatim(entry, SOURCE)
+
+    assert check["status"] == "missing"
+    assert check["verdict"] == CONTRADICTED
+
+
+def test_quote_check_rejects_a_quote_lifted_from_an_uncited_sentence():
+    """A real sentence is still wrong evidence when it is not the one cited."""
+    entry = {**ENTRY, "evidence": {**ENTRY["evidence"],
+                                   "quote": "Serum antibody titers were measured by ELISA."}}
+
+    assert check_quote_verbatim(entry, SOURCE)["status"] == "missing"
+
+
+def test_quote_check_tolerates_whitespace_and_line_breaks():
+    entry = {**ENTRY, "evidence": {**ENTRY["evidence"],
+                                   "quote": "Cells were acquired\n   on a BD LSRFortessa"}}
+
+    assert check_quote_verbatim(entry, SOURCE)["status"] == "found"
+
+
+def test_quote_check_tolerates_parser_inserted_spacing():
+    """The JATS parser writes "( Figure 4 )"; a faithful quote says "(Figure 4)".
+
+    Comparing on whitespace flagged 36 of 156 corpus entries as fabricated, almost all of
+    them this one artifact.
+    """
+    source = "[S1] Transcripts correlated with the antibody response ( Figure 4 ) in both arms."
+    entry = {"name_in_paper": "microarray",
+             "evidence": {"sentence_ids": ["S1"],
+                          "quote": "correlated with the antibody response (Figure 4)"}}
+
+    assert check_quote_verbatim(entry, source)["status"] == "found"
+
+
+def test_quote_check_tolerates_typographic_dash_variants():
+    """Papers use U+2010 HYPHEN; a model retyping the sentence writes ASCII "-"."""
+    source = "[S1] Diagnosis was confirmed by real\u2010time RT\u2013PCR in the acute sample."
+    entry = {"name_in_paper": "real-time RT-PCR",
+             "evidence": {"sentence_ids": ["S1"],
+                          "quote": "confirmed by real-time RT-PCR in the acute sample"}}
+
+    assert check_quote_verbatim(entry, source)["status"] == "found"
+
+
+def test_quote_check_still_catches_a_reconstructed_quote():
+    """Normalizing typography must not excuse two fragments spliced with an ellipsis."""
+    source = "[S1] Expression profiles of 594 genes were measured across all donors. "\
+             "[S2] Of these, 211 were found to change significantly after vaccination."
+    entry = {"name_in_paper": "gene array",
+             "evidence": {"sentence_ids": ["S1"],
+                          "quote": "Expression profiles of 594 genes ... were found to "
+                                   "change significantly"}}
+
+    assert check_quote_verbatim(entry, source)["status"] == "missing"
+
+
+def test_quote_check_tolerates_a_trailing_period_the_excerpt_added():
+    """Truncating a clause and closing it with a period is quoting, not fabricating."""
+    source = "[S1] Frequencies rose in the elderly cohort ( Fig. 3b, p = 0.01 ) at day 7."
+    entry = {"name_in_paper": "flow cytometry",
+             "evidence": {"sentence_ids": ["S1"],
+                          "quote": "Frequencies rose in the elderly cohort."}}
+
+    check = check_quote_verbatim(entry, source)
+
+    assert check["status"] == "found"
+    assert "trailing punctuation" in check["detail"]
+
+
+def test_quote_check_falls_back_to_the_whole_document_without_sentence_ids():
+    """Every registry on disk predates sentence_ids, so this is the common path."""
+    entry = {
+        "name_in_paper": "ELISA",
+        "evidence_location": {"type": "text", "section": "Methods",
+                              "quote": "Serum antibody titers were measured by ELISA."},
+    }
+
+    check = check_quote_verbatim(entry, SOURCE)
+
+    assert check["status"] == "found"
+    assert "whole document" in check["detail"]
+
+
+def test_quote_check_flags_a_sentence_id_that_does_not_exist():
+    entry = {**ENTRY, "evidence": {**ENTRY["evidence"], "sentence_ids": ["S999"]}}
+
+    check = check_quote_verbatim(entry, SOURCE)
+
+    assert check["unknown_sentence_ids"] == ["S999"]
+    assert check["status"] == "found"  # found by fallback, but the bad id is reported
+
+
+def test_quote_check_reports_an_entry_with_no_quote_at_all():
+    check = check_quote_verbatim({"name_in_paper": "ELISA"}, SOURCE)
+
+    assert check["status"] == "no_quote"
+    assert check["verdict"] is None
+
+
+def test_old_schema_entries_are_read_under_their_own_field_names():
+    entry = {
+        "original_name": "gene array",
+        "confidence": 0.95,
+        "claim_role": "primary",
+        "evidence_location": {"type": "text", "section": "Results", "quote": "q"},
+    }
+
+    assert get_name("gene array", entry) == "gene array"
+    assert get_evidence(entry)["section"] == "Results"
+
+    fields = dict(proposed_fields(entry))
+    assert "original_name" in fields
+    assert "evidence_location.quote" in fields
+    # Removed on purpose by the current schema, so not values to verify.
+    assert "confidence" not in fields and "claim_role" not in fields
+
+
+def test_registry_key_is_the_name_when_no_name_field_exists():
+    """The claims-derived registries carry only sample_type and readouts."""
+    assert get_name("Bulk RNA-seq", {"sample_type": "whole blood"}) == "Bulk RNA-seq"
+
+
+def test_proposed_fields_enumerates_aliases_and_skips_nulls():
+    entry = {**ENTRY, "aliases": ["FACS", "flow"], "platform": None}
+
+    fields = dict(proposed_fields(entry))
+
+    assert fields["aliases[0]"] == "FACS"
+    assert fields["aliases[1]"] == "flow"
+    assert "platform" not in fields
+    assert fields["evidence.sentence_ids"] == ["S2"]
+
+
+def test_record_verdict_derivation():
+    ok = [{"verdict": SUPPORTED}, {"verdict": SUPPORTED}]
+
+    assert derive_record_verdict(SUPPORTED, ok) == ACCEPT
+    assert derive_record_verdict(CONTRADICTED, ok) == REJECT
+    assert derive_record_verdict(NOT_SUPPORTED, ok) == REVIEW
+    assert derive_record_verdict(SUPPORTED, [{"verdict": CONTRADICTED}]) == REVIEW
+    # A field nobody answered for has not been cleared.
+    assert derive_record_verdict(SUPPORTED, [{"verdict": NOT_REPORTED}]) == REVIEW
+    # A value the extraction proposed and the judge declined to support is a defect.
+    assert derive_record_verdict(SUPPORTED, [{"verdict": NOT_SUPPORTED}]) == REVIEW
+
+
+def test_an_unstated_field_is_compliance_and_still_reaches_accept():
+    """The absence case is a field that produces no verification at all, not one verdicted
+    NOT_SUPPORTED: proposed_fields skips nulls, so absence never reaches the judge."""
+    entry = {"name_in_paper": "ELISA", "platform": None, "sample_type": "serum"}
+
+    assert [f for f, _ in proposed_fields(entry)] == ["name_in_paper", "sample_type"]
+    assert derive_record_verdict(
+        SUPPORTED, [{"verdict": SUPPORTED}, {"verdict": SUPPORTED}]
+    ) == ACCEPT
+
+
+class _FakeClient:
+    """Minimal stand-in for AsyncOpenAI: returns a canned body, or raises."""
+
+    def __init__(self, body: str | None = None, error: Exception | None = None):
+        self._body, self._error = body, error
+        outer = self
+
+        class _Completions:
+            async def create(self, **_kwargs):
+                if outer._error:
+                    raise outer._error
+                message = type("M", (), {"content": outer._body})()
+                return type("R", (), {"choices": [type("C", (), {"message": message})()]})()
+
+        self.chat = type("Chat", (), {"completions": _Completions()})()
+
+
+@pytest.mark.asyncio
+async def test_verify_assay_reports_a_field_the_judge_skipped():
+    body = json.dumps({
+        "assay_identity_verdict": SUPPORTED,
+        "field_verifications": [
+            {"field_name": "name_in_paper", "proposed_value": "flow cytometry",
+             "verdict": SUPPORTED, "reason": "stated in Methods"},
+            {"field_name": "platform", "proposed_value": "BD LSRFortessa",
+             "verdict": SUPPORTED, "reason": "named in S2"},
+        ],
+        "record_verdict": ACCEPT,
+    })
+
+    result = await verify_assay("flow cytometry", ENTRY, SOURCE, "Paper", _FakeClient(body))
+
+    by_name = {v["field_name"]: v for v in result["field_verifications"]}
+    assert by_name["platform"]["verdict"] == SUPPORTED
+    assert by_name["sample_type"]["verdict"] == NOT_REPORTED
+    # Skipped fields keep the record out of ACCEPT even though the judge asked for it.
+    assert result["record_verdict"] == REVIEW
+    assert result["model_record_verdict"] == ACCEPT
+
+
+@pytest.mark.asyncio
+async def test_deterministic_quote_check_overrides_the_judge():
+    entry = {**ENTRY, "evidence": {**ENTRY["evidence"], "quote": "acquired on a NovaSeq 6000"}}
+    body = json.dumps({
+        "assay_identity_verdict": SUPPORTED,
+        "field_verifications": [
+            {"field_name": "evidence.quote", "proposed_value": "acquired on a NovaSeq 6000",
+             "verdict": SUPPORTED, "reason": "looks fine to me"},
+        ],
+        "record_verdict": ACCEPT,
+    })
+
+    result = await verify_assay("flow cytometry", entry, SOURCE, "Paper", _FakeClient(body))
+
+    quote = next(v for v in result["field_verifications"] if v["field_name"] == "evidence.quote")
+    assert quote["verdict"] == CONTRADICTED
+    assert result["record_verdict"] == REVIEW
+
+
+@pytest.mark.asyncio
+async def test_a_failed_call_becomes_an_error_record_rather_than_raising():
+    result = await verify_assay(
+        "flow cytometry", ENTRY, SOURCE, "Paper", _FakeClient(error=RuntimeError("boom"))
+    )
+
+    assert result["record_verdict"] == "ERROR"
+    assert "boom" in result["error"]
+    assert all(v["verdict"] == NOT_REPORTED for v in result["field_verifications"])
+
+
+@pytest.mark.asyncio
+async def test_unparseable_response_becomes_an_error_record():
+    result = await verify_assay("flow cytometry", ENTRY, SOURCE, "Paper", _FakeClient("not json"))
+
+    assert result["record_verdict"] == "ERROR"
+
+
+def test_summary_tallies_alias_positions_together():
+    results = [
+        {"record_verdict": REVIEW, "quote_check": {"status": "found"},
+         "field_verifications": [
+             {"field_name": "aliases[0]", "verdict": CONTRADICTED},
+             {"field_name": "aliases[2]", "verdict": CONTRADICTED},
+             {"field_name": "sample_type", "verdict": SUPPORTED},
+         ]},
+        {"record_verdict": ACCEPT, "quote_check": {"status": "missing"},
+         "field_verifications": [{"field_name": "aliases[0]", "verdict": NOT_SUPPORTED}]},
+    ]
+
+    summary = build_summary(results)
+
+    assert summary["field_issues"]["aliases[]"] == {CONTRADICTED: 2, NOT_SUPPORTED: 1}
+    assert "sample_type" not in summary["field_issues"]
+    assert summary["quotes_missing"] == 1
+    assert summary["review"] == 1 and summary["accept"] == 1
+
+
+def test_a_quote_that_elides_its_own_middle_is_still_verbatim():
+    """Excerpting with " ... " is a quoting convention, not a fabrication -- comparing the
+    joined string produced the one false MISSING in a 156-entry corpus survey."""
+    source = ("[S1] Expression profiles of 594 genes, measured across five seasons, were "
+              "found to change significantly after vaccination.")
+    entry = {"evidence": {"sentence_ids": ["S1"], "quote":
+             "Expression profiles of 594 genes ... were found to change significantly"}}
+
+    assert check_quote_verbatim(entry, source)["status"] == "found"
+
+
+def test_elided_fragments_found_out_of_order_are_not_verbatim():
+    """Order is required: two spans found back-to-front are not a faithful excerpt, and
+    accepting them would trade the false positive for a false negative."""
+    source = "[S1] Expression profiles of 594 genes were found to change significantly."
+    entry = {"evidence": {"sentence_ids": ["S1"], "quote":
+             "were found to change significantly ... Expression profiles of 594 genes"}}
+
+    assert check_quote_verbatim(entry, source)["status"] == "missing"
+
+
+def test_a_fabricated_quote_is_not_rescued_by_an_ellipsis():
+    source = "[S1] Cells were analyzed on the LSRII flow cytometer (BD)."
+    entry = {"evidence": {"sentence_ids": ["S1"], "quote":
+             "Cells were analyzed ... on a NovaSeq 6000"}}
+
+    result = check_quote_verbatim(entry, source)
+    assert result["status"] == "missing"
+    assert result["verdict"] == CONTRADICTED
