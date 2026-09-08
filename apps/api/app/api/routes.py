@@ -117,8 +117,9 @@ async def agent_assays(request: AssayRequest):
          refused to support, and sets aside rejected assays
 
     `assays` in the response is the corrected registry, and it is what assays.json now holds.
-    Every round caches, so asking again about the same paper costs nothing; `refresh` re-runs
-    all three. `rounds` reports what each round did and what it cost.
+    All three rounds run on every request -- asking again about the same paper pays again --
+    so this is not an endpoint to put behind a page load. `rounds` reports what each round did
+    and what it cost.
     """
     if not (request.study_accession.strip() or request.pubmed_id.strip()):
         raise HTTPException(
@@ -128,7 +129,7 @@ async def agent_assays(request: AssayRequest):
     try:
         result = await assay_report(
             request.pubmed_id, request.study_accession, _get_client(),
-            verify=request.verify, correct=request.correct, refresh=request.refresh,
+            verify=request.verify, correct=request.correct,
         )
     except PaperNotFoundError as exc:
         raise HTTPException(status_code=404, detail=str(exc))

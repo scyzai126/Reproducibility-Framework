@@ -30,6 +30,7 @@ otherwise hide the contradiction. The model's own answer is kept alongside as
 `model_record_verdict` so the disagreement stays visible.
 """
 
+import asyncio
 import json
 import logging
 import re
@@ -50,6 +51,12 @@ CONTRADICTED = "CONTRADICTED"
 NOT_REPORTED = "NOT_REPORTED"
 
 _MODEL_VERDICTS = (SUPPORTED, NOT_SUPPORTED, CONTRADICTED)
+
+#: How many per-assay calls may be in flight at once. Every call in this pass is independent
+#: -- that is the design, one assay per call so the judge's attention is not spread across a
+#: registry -- so the loop was pure latency. Matches claim_abstraction_v5.MAX_CONCURRENT_CALLS
+#: rather than inventing a second number; assay_corrector imports this one.
+MAX_CONCURRENT_CALLS = 8
 
 ACCEPT = "ACCEPT"
 REVIEW = "REVIEW"
@@ -480,20 +487,38 @@ async def verify_registry(
     client: AsyncOpenAI,
     model: str = settings.OPENAI_MODEL,
     limit: int | None = None,
+    max_concurrency: int = MAX_CONCURRENT_CALLS,
 ) -> list[dict]:
-    """Verify every entry in an assays.json mapping, one call each."""
+    """Verify every entry in an assays.json mapping, one call each.
+
+    The calls run concurrently, bounded by `max_concurrency`. They are independent by
+    construction -- each judges one entry against the same unchanging paper and writes
+    nothing -- so the previous sequential loop bought nothing but wall-clock. `gather`
+    preserves argument order, so `results` is still in registry order however the calls
+    interleave; the progress lines are the one thing that arrives out of order, and they
+    carry the assay name precisely because the counter no longer identifies it.
+
+    verify_assay never raises, so no call can cancel its siblings.
+    """
     keys = list(assays)
     if limit is not None:
         keys = keys[:limit]
 
-    results: list[dict] = []
-    print(f"Verifying {len(keys)} assay(s)...")
-    for i, key in enumerate(keys, 1):
-        result = await verify_assay(key, assays[key], source_text, paper_title, client, model)
-        results.append(result)
-        print(f"  [{i}/{len(keys)}] {key}: {result['record_verdict']} "
+    semaphore = asyncio.Semaphore(max(1, max_concurrency))
+    done = 0
+
+    async def _verify_one(key: str) -> dict:
+        nonlocal done
+        async with semaphore:
+            result = await verify_assay(key, assays[key], source_text, paper_title,
+                                        client, model)
+        done += 1
+        print(f"  [{done}/{len(keys)}] {key}: {result['record_verdict']} "
               f"(identity {result['assay_identity_verdict']})")
-    return results
+        return result
+
+    print(f"Verifying {len(keys)} assay(s), up to {max(1, max_concurrency)} at a time...")
+    return list(await asyncio.gather(*(_verify_one(key) for key in keys)))
 
 
 def build_summary(results: list[dict]) -> dict:

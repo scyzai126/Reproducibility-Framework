@@ -19,16 +19,19 @@ The chain itself is app.agent.assay_service.assay_report, which is also what POS
 runs. This script is the CLI in front of it, so a registry built here and one built through the
 endpoint are the same files, and run_assay_verify.py / run_assay_correct.py still read them.
 
-**Every round caches to disk**, so re-running a finished paper costs nothing and prints what it
-found. Pass --refresh to pay for all three again.
+**Nothing is reused between runs.** Every invocation pays for all three rounds, so re-running
+a finished paper costs what the first run cost. Reuse was removed because it could not be kept
+for round 1 alone -- a fresh registry invalidates the stored verdicts, which invalidates the
+corrections derived from them -- and because an edit to extract_assays.txt had no effect on a
+paper that had already been run.
 
-**--dry-run makes no API call** and reports the projected bill. Run it first: a cold 10-assay
-paper is upwards of 20 calls, and the estimate is exact for any round whose input already
-exists on disk.
+**--dry-run makes no API call** and reports the projected bill. Run it first: a 10-assay paper
+is upwards of 20 calls. Round 1 is one call; round 2 is exact once a registry exists on disk
+to count entries in, and round 3 once a verification does.
 
 Usage:
-    python3 scripts/run_assay_pipeline.py <registry_dir> [--dry-run] [--refresh]
-    python3 scripts/run_assay_pipeline.py --pmid 34252919 --sdy SDY2189 [--dry-run] [--refresh]
+    python3 scripts/run_assay_pipeline.py <registry_dir> [--dry-run]
+    python3 scripts/run_assay_pipeline.py --pmid 34252919 --sdy SDY2189 [--dry-run]
 
 Example:
     python3 scripts/run_assay_pipeline.py data/claims/assay_registries/34252919_SDY2189 --dry-run
@@ -92,13 +95,13 @@ def _print_fields(assays: dict) -> None:
         print(f"  {key}\n      source: {cite}\n      aliases: {shown}")
 
 
-def _dry_run(pmid: str, sdy: str, refresh: bool) -> None:
+def _dry_run(pmid: str, sdy: str) -> None:
     """What the chain would cost, without calling anything.
 
-    Exact for every round whose input is already on disk: round 2 bills one call per assay in
-    an existing registry, and round 3's bill is computed from the stored verification by
-    corrections_available(). A round whose input does not exist yet can only be bounded, and
-    is reported that way rather than guessed at.
+    Every round runs, so the only question is how many calls each will make. A stored registry
+    and verification are read for their *shape* -- how many assays, how many flagged fields --
+    which makes the estimate exact even though neither will be reused. Where they are absent
+    the round can only be bounded, and is reported that way rather than guessed at.
     """
     xml_path = locate_paper_xml(pmid, sdy)
     if xml_path is None:
@@ -111,43 +114,37 @@ def _dry_run(pmid: str, sdy: str, refresh: bool) -> None:
 
     registry_path = out_dir / "assays.json"
     verification_path = out_dir / "assays_verification.json"
-    corrections_path = out_dir / "assays_corrections.json"
 
     assays = (json.loads(registry_path.read_text(encoding="utf-8"))
               if registry_path.exists() else None)
     verification = (json.loads(verification_path.read_text(encoding="utf-8"))
                     if verification_path.exists() else None)
 
-    if assays is not None and not refresh:
-        print(f"  round 1 extract: cache ({len(assays)} entries)          0 calls")
-    else:
-        print("  round 1 extract: will run                            1 call")
+    print("  round 1 extract: will run                            1 call")
 
-    if verification is not None and not refresh:
-        print("  round 2 verify:  cache                               0 calls")
-    elif assays is not None:
-        print(f"  round 2 verify:  will run                            {len(assays)} calls")
+    if assays is not None:
+        print(f"  round 2 verify:  will run                            ~{len(assays)} calls"
+              "   (the last run found that many)")
     else:
         print("  round 2 verify:  will run, 1 call per assay found    ? calls")
 
-    if corrections_path.exists() and not refresh:
-        print("  round 3 correct: cache                               0 calls")
-    elif verification is not None:
+    if verification is not None:
         pending = corrections_available(assays or {}, verification)
-        print(f"  round 3 correct: will run                            {pending['calls']} calls"
-              f"   ({pending['rejected']} assay(s) would be set aside)")
+        print(f"  round 3 correct: will run                            ~{pending['calls']} calls"
+              f"   ({pending['rejected']} assay(s) set aside last run)")
     else:
         print("  round 3 correct: will run, 1 call per flagged field  ? calls")
 
-    if refresh:
-        print("\n--refresh: every round re-runs; nothing is served from cache.")
+    if assays is not None:
+        print("\n  ~ because rounds 2 and 3 are sized from the previous run's output, which "
+              "this run\n    re-extracts rather than reuses. The shape rarely moves; it is not "
+              "guaranteed.")
     print("\n--dry-run: nothing called.")
 
 
-async def main(pmid: str, sdy: str, refresh: bool) -> None:
+async def main(pmid: str, sdy: str) -> None:
     try:
-        result = await assay_report(pmid, sdy, _get_client(), verify=True, correct=True,
-                                    refresh=refresh)
+        result = await assay_report(pmid, sdy, _get_client(), verify=True, correct=True)
     except PaperNotFoundError as exc:
         raise SystemExit(str(exc))
 
@@ -196,8 +193,6 @@ if __name__ == "__main__":
     parser.add_argument("--sdy", default="", help="study accession (instead of registry_dir)")
     parser.add_argument("--dry-run", action="store_true",
                         help="report the projected call count; makes no API call")
-    parser.add_argument("--refresh", action="store_true",
-                        help="re-run every round instead of serving finished ones from cache")
     args = parser.parse_args()
 
     if args.registry_dir is not None:
@@ -208,6 +203,6 @@ if __name__ == "__main__":
         parser.error("give a registry directory, or --pmid/--sdy")
 
     if args.dry_run:
-        _dry_run(pubmed_id, study, args.refresh)
+        _dry_run(pubmed_id, study)
     else:
-        asyncio.run(main(pubmed_id, study, args.refresh))
+        asyncio.run(main(pubmed_id, study))

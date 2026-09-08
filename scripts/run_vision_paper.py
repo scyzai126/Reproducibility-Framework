@@ -10,7 +10,7 @@ Output files are written to:
     data/claims/new_26_studies/<pubmed_id>_<study_id>/
         assay.json    - assay types inferred by vision
         claims.json   - step 1: raw claim sentences + sources
-        groups.json   - step 2: structured groups + comparisons
+        claims_groups.json   - step 2: structured groups + comparisons
 """
 
 import asyncio
@@ -79,8 +79,8 @@ async def main(pdf_path: Path, pubmed_id: str, study_id: str) -> None:
 
     # Step 2: classify groups
     groups = await run_step2(claims, client)
-    (out_dir / "groups.json").write_text(json.dumps(groups, indent=2, ensure_ascii=False), encoding="utf-8")
-    print(f"  saved groups.json")
+    (out_dir / "claims_groups.json").write_text(json.dumps(groups, indent=2, ensure_ascii=False), encoding="utf-8")
+    print(f"  saved claims_groups.json")
 
     print(f"\nDone. Files written to {out_dir}")
 

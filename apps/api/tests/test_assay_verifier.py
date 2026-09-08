@@ -1,3 +1,4 @@
+import asyncio
 import json
 
 import pytest
@@ -19,6 +20,7 @@ from app.agent.assay_verifier import (
     proposed_fields,
     sentence_index,
     verify_assay,
+    verify_registry,
 )
 
 SOURCE = (
@@ -397,3 +399,90 @@ def test_an_entry_the_map_cannot_place_is_unknown_not_a_mismatch():
     assert check_source_section(
         {"source": "methods", "evidence": {"sentence_ids": ["S99"]}}, sections
     )["status"] == "unknown"
+
+
+# ── the paper sits in a shared prefix, and the calls run at once ──────────────
+
+class _RecordingClient:
+    """Records every prompt it is handed, and how many calls overlapped in flight.
+
+    `delays` staggers completion so a test can tell "results came back in order" apart from
+    "results were never reordered because nothing ran concurrently".
+    """
+
+    def __init__(self, body: str, delays: list[float] | None = None):
+        self.prompts: list[str] = []
+        self.in_flight = 0
+        self.peak_in_flight = 0
+        outer = self
+
+        class _Completions:
+            async def create(self, **kwargs):
+                outer.prompts.append(kwargs["messages"][0]["content"])
+                outer.in_flight += 1
+                outer.peak_in_flight = max(outer.peak_in_flight, outer.in_flight)
+                delay = (delays or [0.0])[(len(outer.prompts) - 1) % len(delays or [0.0])]
+                await asyncio.sleep(delay)
+                outer.in_flight -= 1
+                message = type("M", (), {"content": body})()
+                return type("R", (), {"choices": [type("C", (), {"message": message})()]})()
+
+        self.chat = type("Chat", (), {"completions": _Completions()})()
+
+
+_VERDICT_BODY = json.dumps({
+    "assay_identity_verdict": SUPPORTED,
+    "field_verifications": [],
+    "record_verdict": ACCEPT,
+})
+
+
+def _registry(*names) -> dict:
+    return {name: dict(ENTRY, name_in_paper=name) for name in names}
+
+
+@pytest.mark.asyncio
+async def test_the_paper_is_the_same_prefix_for_every_assay_in_a_registry():
+    """Everything up to and including the source text must be byte-identical across calls.
+
+    That prefix is what a provider's automatic prompt caching keys on. Putting a per-assay
+    value above the paper -- which is where `section_name` used to sit -- makes every call a
+    cache miss on the largest part of the prompt, so this is a cost contract, not a style one.
+    """
+    client = _RecordingClient(_VERDICT_BODY)
+    await verify_registry(_registry("flow cytometry", "ELISA"), SOURCE, "Paper", client)
+
+    assert len(client.prompts) == 2
+    heads = {p[: p.index(SOURCE) + len(SOURCE)] for p in client.prompts}
+    assert len(heads) == 1, "the paper is not in a shared prefix"
+    # ...and the per-assay parts really do come after it.
+    tail = len(next(iter(heads)))
+    assert all(p.index("SECTION THE EXTRACTION CITED") >= tail for p in client.prompts)
+    assert all(p.index("CANDIDATE ASSAY EXTRACTION") >= tail for p in client.prompts)
+
+
+@pytest.mark.asyncio
+async def test_verify_prompt_leaves_no_placeholder_unrendered():
+    client = _RecordingClient(_VERDICT_BODY)
+    await verify_registry(_registry("flow cytometry"), SOURCE, "Paper", client)
+    for token in ("{paper_title}", "{section_name}", "{source_text}", "{candidate}"):
+        assert token not in client.prompts[0]
+
+
+@pytest.mark.asyncio
+async def test_results_keep_registry_order_when_calls_finish_out_of_order():
+    """The first call finishes last; the results must not follow completion order."""
+    client = _RecordingClient(_VERDICT_BODY, delays=[0.03, 0.0, 0.0])
+    names = ("flow cytometry", "ELISA", "microarray")
+    results = await verify_registry(_registry(*names), SOURCE, "Paper", client)
+
+    assert [r["assay_id"] for r in results] == list(names)
+    assert client.peak_in_flight > 1, "calls did not actually overlap"
+
+
+@pytest.mark.asyncio
+async def test_concurrency_never_exceeds_the_bound():
+    client = _RecordingClient(_VERDICT_BODY, delays=[0.01])
+    names = tuple(f"assay {i}" for i in range(7))
+    await verify_registry(_registry(*names), SOURCE, "Paper", client, max_concurrency=2)
+    assert client.peak_in_flight == 2

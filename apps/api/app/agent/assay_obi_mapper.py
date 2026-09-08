@@ -17,6 +17,7 @@ from typing import Any
 import numpy as np
 from openai import OpenAI
 
+from app.agent.assay_registry import normalize_assay_name
 from app.config import settings
 
 _REPO_ROOT = Path(__file__).resolve().parents[4]
@@ -225,6 +226,11 @@ def map_assay_to_obi(
     sample_type/readouts are only used by the embedding+LLM fallback (step 3), as
     disambiguating context for the LLM's pick among candidates — exact matches
     (steps 1-2) don't need them.
+
+    The lexical key normalize_assay_name() derives is used for the step-2 lookup only. It is
+    deliberately kept out of step 3: lowercasing and dropping a trailing " assay"/" analysis"
+    adds no semantic information, so it is no better as a retrieval query, and threading it
+    into display_name would put a meaningless "(also described as: ...)" in front of the LLM.
     """
     lookup = _build_lookup(terms_path)
 
@@ -233,12 +239,18 @@ def map_assay_to_obi(
     if result:
         return {**result, "resource": "exact_original", "confidence": "high"}
 
-    # Step 2 — exact on normalized
-    norm = normalized_name.strip().lower()
-    if norm and norm != name_in_paper.strip().lower():
-        result = lookup.get(norm)
-        if result:
-            return {**result, "resource": "exact_normalized", "confidence": "high"}
+    # Step 2 — exact on normalized. Two keys are tried: the caller's normalized_name, then
+    # the lexical form of the paper's own name. The second is what saves registries that
+    # carry no normalized_name at all (the extract-assay-methods skill emits none, so
+    # enrich_assays_with_obi passes the registry key back in and the first key is a no-op):
+    # "Flow Cytometry Analysis" reduces to "flow cytometry", an exact hit for OBI:0000916,
+    # instead of falling through to a paid embedding+LLM round.
+    original_key = name_in_paper.strip().lower()
+    for norm in (normalized_name.strip().lower(), normalize_assay_name(name_in_paper)):
+        if norm and norm != original_key:
+            result = lookup.get(norm)
+            if result:
+                return {**result, "resource": "exact_normalized", "confidence": "high"}
 
     # Step 3 — embedding top-10 candidates (restricted to terms_path's vocabulary), LLM picks best
     query = normalized_name.strip() or name_in_paper.strip()
@@ -259,7 +271,14 @@ def map_assay_to_obi(
 def enrich_assays_with_obi(
     assays: dict[str, Any], terms_path: Path = _OBI_TERMS_PATH
 ) -> dict[str, dict[str, Any]]:
-    """Add OBI fields to a Phase-1 assay registry keyed by assay name."""
+    """Add OBI fields to a Phase-1 assay registry keyed by assay name.
+
+    The OBI score is written as `obi_confidence`, never `confidence`: registries carry the
+    *extraction* confidence under the latter (how clearly the paper identifies the technique),
+    and overwriting it destroys that. scripts/map_assays_to_obi.py, data/claims/all_assays_full_OBI.json
+    and the UI (apps/web/src/lib/types.ts) are all already on `obi_confidence`.
+    Whatever `confidence` the caller passed in is left exactly as it was.
+    """
     enriched: dict[str, dict[str, Any]] = {}
     for canonical, value in assays.items():
         entry: dict[str, Any] = dict(value) if isinstance(value, dict) else {"description": value}
@@ -276,12 +295,17 @@ def enrich_assays_with_obi(
             original, normalized, terms_path=terms_path, sample_type=sample_type, readouts=readouts
         )
         if mapped:
-            entry.update(mapped)
+            entry["obi_id"] = mapped["obi_id"]
+            entry["obi_label"] = mapped["obi_label"]
+            entry["resource"] = mapped["resource"]
+            entry["obi_confidence"] = mapped["confidence"]
         else:
-            entry.setdefault("obi_id", None)
-            entry.setdefault("obi_label", None)
-            entry.setdefault("resource", "unresolved")
-            entry.setdefault("confidence", None)
+            entry["obi_id"] = None
+            entry["obi_label"] = None
+            entry["resource"] = "unresolved"
+            # Unconditional, not setdefault: a stale extraction confidence sitting next to
+            # resource="unresolved" reads as an OBI score.
+            entry["obi_confidence"] = None
 
         enriched[canonical] = entry
     return enriched

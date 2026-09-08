@@ -1,34 +1,44 @@
-"""Five-pass panel claim abstraction (prompts/claim_abstraction_prompt_v6.md).
+"""Five-pass whole-document claim abstraction (prompts/claim_abstraction_prompt_v8.md).
 
 The prompt document is the single source of truth: its fenced blocks are the system
 prompts, parsed out at call time rather than copied into this module, so editing the
-markdown changes the run. v5 (the original design doc) and v6 (the same architecture
-carrying extract_claims_pdf.txt's content) share this module — they differ only in prompt
-text, and either can be named via `prompt_file`.
+markdown changes the run.
 
-    passes 1-3   per panel   prose -> draft, draft+legend -> claims, provenance audit
-    passes 4-5   per paper   abstract coverage audit, cross-panel de-duplication
+    passes 1-3   per paper   prose -> draft, draft+legends -> claims, provenance audit
+    passes 4-5   per paper   abstract coverage audit, claim-set de-duplication
 
 Passes 1 and 2 are self-consistency sampled: `runs` samples at temperature 1.0, keep the
 sample whose claim count is the mode. Passes 3-5 are single deterministic calls.
 
-Panels come from the paper's JATS XML: each <fig>/<table-wrap> is one panel, its legend is
-the caption, and its prose is every Results paragraph that cross-references it.
+The paper arrives from `jats_parser.parse_jats_xml` as two blocks — its Abstract, Results
+and Methods prose, and every figure/table legend — so pass 1 drafts without seeing a legend
+and pass 2 reconciles against them. `split_document` makes that cut.
+
+This module previously split each paper into one panel per <fig>/<table-wrap> and looped the
+passes over them. That was dropped: panels were paired to prose by <xref> alone, which left
+127 of the 30-paper corpus's 494 Results paragraphs (26%) attached to no panel and therefore
+read by no pass; findings comparing two figures were split across two runs and survived in
+neither; and a paper cost ~79 calls against 13 here. The measurement is in
+data/experiments/sdy1260_prompt_ab/comparison.md.
+
+XML only. Papers PMC will not serve as full text have no path here yet.
 """
 
 import asyncio
 import json
-import re
 from collections import Counter
 from dataclasses import dataclass, field
 
-from lxml import etree
 from openai import AsyncOpenAI
 
 from app.agent.claim_parser import CLAIM_TYPES_PLACEHOLDER, _load_prompt, _strip_fences
-from app.agent.jats_parser import _canonical_section
+from app.agent.jats_parser import _BANNER, _HEADING_BUCKET, parse_jats_xml
 
-PROMPT_FILE = "claim_abstraction_prompt_v6.md"
+
+#: The only prompt document. v8 reads a paper whole: the `other-panel` demotion reason is
+#: retired (nothing else would pick up what it drops), pass 2 selects each claim's legend out
+#: of all of them, and pass 1 is told its text is complete rather than an excerpt.
+DOCUMENT_PROMPT_FILE = "claim_abstraction_prompt_v8.md"
 
 #: The shared claim_type vocabulary, substituted per block — see load_v5_prompts.
 CLAIM_TYPES_FILE = "claim_types.txt"
@@ -39,9 +49,9 @@ SAMPLED_TEMPERATURE = 1.0
 #: produces — the contrast block, `unspecified`, pass 2's `scope_changes`/`method_added`,
 #: pass 3's `provenance_audit` — is extraction scaffolding that no downstream stage reads,
 #: and together it was ~53% of the file. It is dropped at the WRITE, never earlier: pass 3
-#: attaches its verdict onto each claim and pass 5 reads `polarity`, `panel`, `contrast`,
-#: `targets` and `timepoints` off the in-memory set, so the full shape has to survive until
-#: `abstract_claims_from_jats` returns.
+#: attaches its verdict onto each claim and pass 5 reads `polarity`, `contrast`, `targets`
+#: and `timepoints` off the in-memory set, so the full shape has to survive until
+#: `abstract_claims_from_document` returns.
 CLAIMS_OUTPUT_FIELDS = ("claim", "claim_type", "assay_method_in_paper", "sources")
 
 #: Output key -> the key the model actually emits. The extraction passes name the field
@@ -51,8 +61,8 @@ CLAIMS_OUTPUT_FIELDS = ("claim", "claim_type", "assay_method_in_paper", "sources
 #: working off the name they were written against.
 CLAIMS_OUTPUT_SOURCE_KEYS = {"assay_method_in_paper": "assay"}
 
-# 79 calls fired at once would be rate-limited, and a 429 late in a panel discards the
-# samples already paid for. Cap in-flight calls instead.
+# A 429 late in a pass discards the samples already paid for. Cap in-flight calls instead.
+# Less load-bearing than when a paper was ~79 calls, but the sampled passes still fan out.
 MAX_CONCURRENT_CALLS = 8
 
 _HEADING_KEYS = {
@@ -65,7 +75,7 @@ _HEADING_KEYS = {
 }
 
 
-def load_v5_prompts(filename: str = PROMPT_FILE) -> dict[str, str]:
+def load_v5_prompts(filename: str = DOCUMENT_PROMPT_FILE) -> dict[str, str]:
     """Return {preamble, pass1..pass5} — the first fenced block under each `## ` heading.
 
     The claim_type vocabulary is substituted into each block AFTER the split, never before:
@@ -124,140 +134,77 @@ def system_prompts(blocks: dict[str, str]) -> dict[str, str]:
     }
 
 
-# ── JATS -> panels ────────────────────────────────────────────────────────────
+# ── JATS -> one document ──────────────────────────────────────────────────────
 
 
 @dataclass
-class Panel:
-    """One figure or table: its legend, and the Results prose that cites it."""
+class PaperDocument:
+    """A whole paper as two blocks: its prose, and every figure/table legend.
 
-    panel_id: str
-    label: str
-    legend: str
-    prose_paragraphs: list[str] = field(default_factory=list)
+    The split is what lets the document path keep pass 1's legend blinding without panels.
+    `prose` is the Abstract, Results and Methods as `parse_jats_xml` leaves them -- headings,
+    document order and all -- and `panels_block` is the `--- Figures ---`/`--- Tables ---`
+    banners and everything under them.
+    """
 
-    @property
-    def prose(self) -> str:
-        return "\n\n".join(self.prose_paragraphs)
-
-
-@dataclass
-class PaperPanels:
-    panels: list[Panel]
+    prose: str
+    panels_block: str
     abstract: str
-    methods: str
 
 
-def _text(node) -> str:
-    return re.sub(r"\s+", " ", "".join(node.itertext())).strip()
+def split_document(xml_text: str) -> PaperDocument:
+    """Split a JATS article into (prose, all legends, abstract) via `parse_jats_xml`.
+
+`parse_jats_xml` keeps every paragraph in document order regardless of what it
+    cites, and drops the reference list, supplementary material, Extended Data, publisher
+    boilerplate, Introduction and Discussion instead. That is the property this path is built
+    on: the panel splitter it replaced paired prose to a figure by `<xref>` alone and left 26%
+    of the corpus's Results paragraphs attached to nothing, read by no pass.
+
+    The cut is the first `--- ` banner. Everything above it is prose and everything from it
+    down is legends -- `parse_jats_xml` emits the figure and table blocks last and in that
+    order, so one cut separates them from the body whichever blocks a paper has.
+    """
+    text = parse_jats_xml(xml_text)
+    lines = text.split("\n")
+
+    cut = next((i for i, line in enumerate(lines) if _BANNER.match(line)), None)
+    if cut is None:
+        # Degrading to one block here would send the legends into pass 1 and silently turn a
+        # blinded two-pass run into an unblinded one-pass run -- same claims.json, same call
+        # count, no error, and the sole reason for pass 2 gone. Refuse instead.
+        raise ValueError(
+            "parse_jats_xml output has no '--- Figures ---' or '--- Tables ---' banner: "
+            "the paper's legends cannot be withheld from pass 1. Check the XML has "
+            "<fig>/<table-wrap> nodes."
+        )
+
+    return PaperDocument(
+        prose="\n".join(lines[:cut]).strip(),
+        panels_block="\n".join(lines[cut:]).strip(),
+        abstract=_abstract_of(lines[:cut]),
+    )
 
 
-def _section_by_title(root, *wanted: str):
-    """Return the first <sec> whose <title> starts with one of `wanted` (case-insensitive)."""
-    for sec in root.iter("sec"):
-        title = sec.find("title")
-        if title is None:
+def _abstract_of(prose_lines: list[str]) -> str:
+    """The text under the `## ... [abstract]` heading, for pass 4's coverage audit.
+
+    Read off the bucket tag `parse_jats_xml` writes into each heading rather than by matching
+    the word "Abstract": the tag already resolved the section, and a structured abstract
+    carries its own `Background/Methods/Results` sub-headings, so in document order its
+    "Results" comes first and a title match would land on a 600-character summary citing no
+    figures.
+    """
+    out: list[str] = []
+    collecting = False
+    for line in prose_lines:
+        heading = _HEADING_BUCKET.match(line)
+        if heading:
+            collecting = heading.group(1) == "abstract"
             continue
-        text = _text(title).lower().lstrip("0123456789. ")
-        if any(text.startswith(w.lower()) for w in wanted):
-            return sec
-    return None
-
-
-def _methods_section(root):
-    """The paper's Methods section, however it is titled.
-
-    Matching goes through jats_parser._canonical_section rather than a prefix list, so the
-    Cell-press styles ("EXPERIMENTAL PROCEDURES", "STAR\u2605METHODS") resolve like a plain
-    "Methods" heading does — a prefix match missed those on 7 of the 30 corpus papers, and
-    a missed Methods silently drops the METHODS block from every pass-1 message, taking the
-    assay/sample_type/cohort_n/timeframe provenance fields with it.
-
-    Nested matches are dropped so a parent STAR\u2605Methods section wins over its own
-    subsections, and the longest survivor wins because a Results subsection titled
-    "Study design for ..." canonicalizes to methods too and can precede the real one.
-    """
-    matches = [
-        sec for sec in root.iter("sec")
-        if (title := sec.find("title")) is not None
-        and _canonical_section(_text(title).lstrip("0123456789. ")) == "methods"
-    ]
-    outermost = [sec for sec in matches if not any(a in matches for a in sec.iterancestors())]
-    return max(outermost, key=lambda sec: len(_text(sec)), default=None)
-
-
-def split_panels(xml_text: str) -> PaperPanels:
-    """Split a JATS article into panels, plus the abstract and Methods text.
-
-    A Results paragraph is attached to every panel it cross-references, so a paragraph
-    discussing two figures feeds both — the prompt reads one panel at a time and the
-    paragraph is evidence for each.
-    """
-    root = etree.fromstring(xml_text.encode("utf-8") if isinstance(xml_text, str) else xml_text)
-
-    panels: dict[str, Panel] = {}
-    for tag in ("fig", "table-wrap"):
-        for node in root.iter(tag):
-            pid = node.get("id")
-            if not pid:
-                continue
-            label_node = node.find("label")
-            caption = node.find("caption")
-            legend_parts = []
-            if label_node is not None:
-                legend_parts.append(_text(label_node))
-            if caption is not None:
-                legend_parts.append(_text(caption))
-            for foot in node.iter("table-wrap-foot"):
-                legend_parts.append(_text(foot))
-            panels[pid] = Panel(
-                panel_id=pid,
-                label=_text(label_node) if label_node is not None else pid,
-                legend=" ".join(p for p in legend_parts if p),
-            )
-
-    results = _section_by_title(root, "results")
-    if results is not None:
-        for para in results.iter("p"):
-            # A <p> inside a figure caption is the legend, not prose about the panel.
-            if any(a.tag in ("fig", "table-wrap", "caption") for a in para.iterancestors()):
-                continue
-            cited = []
-            for xref in para.iter("xref"):
-                if xref.get("ref-type") not in ("fig", "table"):
-                    continue
-                for rid in (xref.get("rid") or "").split():
-                    if rid in panels and rid not in cited:
-                        cited.append(rid)
-            text = _text(para)
-            for rid in cited:
-                panels[rid].prose_paragraphs.append(text)
-
-    abstract_node = root.find(".//abstract")
-    methods = _methods_section(root)
-
-    return PaperPanels(
-        panels=[p for p in panels.values()],
-        abstract=_text(abstract_node) if abstract_node is not None else "",
-        methods=_text(methods) if methods is not None else "",
-    )
-
-
-def build_pass1_user_message(panel: Panel, methods: str = "") -> str:
-    """`RESULTS TEXT:\\n{prose}`, with Methods prepended when available.
-
-    The preamble lets Methods fill the five provenance fields and nothing else, so it is
-    labelled as such rather than merged into the results text. It leads rather than
-    trails because it is byte-identical across every panel: ahead of the panel-specific
-    prose it extends the cacheable prompt prefix, behind it caches nothing.
-    """
-    if not methods:
-        return f"RESULTS TEXT:\n{panel.prose}"
-    return (
-        "METHODS (provenance fields only — assay, sample_type, cohort_n, timeframe, method; "
-        f"never a finding and never a quote source):\n{methods}"
-        f"\n\nRESULTS TEXT:\n{panel.prose}"
-    )
+        if collecting:
+            out.append(line)
+    return "\n".join(out).strip()
 
 
 # ── token accounting ──────────────────────────────────────────────────────────
@@ -335,7 +282,7 @@ def pick_modal(results: list[dict]) -> tuple[dict, dict, bool]:
     `decisive` is False when the winning count beat its runner-up by fewer than two samples.
     "More than half" is the wrong bar here: SDY1260 Figure 2 returned {2: 3, 10: 2}, a
     strict majority that nonetheless let a one-sample swing decide between 2 claims and 10.
-    The mode is still used; the flag records that the panel's count was not determinate.
+    The mode is still used; the flag records that the count was not determinate.
     """
     if not results:
         raise ValueError("no successful samples to choose from")
@@ -361,7 +308,7 @@ async def _sampled_pass(
 ) -> tuple[dict, dict, list[str], bool]:
     """Run `runs` samples concurrently and keep the modal-claim-count one.
 
-    A sample that comes back unparseable is dropped rather than aborting the panel: the
+    A sample that comes back unparseable is dropped rather than aborting the pass: the
     mode is taken over whatever parsed, and the failures are returned for the run record.
     """
     temperature = SAMPLED_TEMPERATURE if runs > 1 else 0
@@ -380,26 +327,30 @@ async def _sampled_pass(
     return chosen, tally, errors, decisive
 
 
-async def run_panel(
+async def run_document(
     client: AsyncOpenAI,
     model: str,
     prompts: dict[str, str],
-    panel: Panel,
-    methods: str = "",
+    doc: PaperDocument,
     runs: int = 5,
     tracker: UsageTracker | None = None,
     semaphore: asyncio.Semaphore | None = None,
 ) -> dict:
-    """Passes 1-3 for one panel. Returns {claims, not_a_claim, verdicts, run_record}."""
-    pass1_user = build_pass1_user_message(panel, methods)
+    """Passes 1-3 over a whole paper. Returns {claims, not_a_claim, verdicts, run_record}.
+
+    Pass 1 sees `doc.prose` and never a legend; passes 2 and 3 see `doc.panels_block`, which
+    holds all of them. Methods needs no separate argument -- `parse_jats_xml` leaves it in the
+    prose under its own heading, and the v8 preamble scopes it to the provenance fields there.
+    """
+    pass1_user = f"PAPER TEXT:\n{doc.prose}"
     draft, tally1, errors1, decisive1 = await _sampled_pass(
         client, model, prompts["pass1"], pass1_user, runs, tracker, "pass1", semaphore
     )
 
     pass2_user = (
-        "DRAFT CLAIMS (from the results text alone):\n"
+        "DRAFT CLAIMS (from the paper text alone):\n"
         f"{json.dumps(draft, indent=2, ensure_ascii=False)}\n\n"
-        f"FIGURE LEGEND (not seen in pass 1):\n{panel.legend}"
+        f"FIGURE AND TABLE LEGENDS (not seen in pass 1):\n{doc.panels_block}"
     )
     final, tally2, errors2, decisive2 = await _sampled_pass(
         client, model, prompts["pass2"], pass2_user, runs, tracker, "pass2", semaphore
@@ -413,14 +364,14 @@ async def run_panel(
     if claims:
         pass3_user = (
             f"CLAIMS:\n{json.dumps(claims, indent=2, ensure_ascii=False)}\n\n"
-            f"FIGURE LEGEND:\n{panel.legend}"
+            f"FIGURE AND TABLE LEGENDS:\n{doc.panels_block}"
         )
         try:
             audit = await _call_json(
                 client, model, prompts["pass3"], pass3_user, 0, tracker, "pass3", semaphore
             )
             verdicts = audit.get("verdicts", [])
-        except Exception as exc:  # the panel's claims are already extracted; keep them
+        except Exception as exc:  # the claims are already extracted; keep them
             audit_error = f"{type(exc).__name__}: {exc}"
 
     return {
@@ -428,13 +379,14 @@ async def run_panel(
         "not_a_claim": not_a_claim,
         "verdicts": verdicts,
         "run_record": {
-            "panel": panel.label,
-            "panel_id": panel.panel_id,
-            "prose_paragraphs": len(panel.prose_paragraphs),
+            "scope": "document",
+            "prose_chars": len(doc.prose),
+            "legends_chars": len(doc.panels_block),
             "pass1_claim_counts": tally1,
             "pass2_claim_counts": tally2,
             # False means the winning claim count beat its runner-up by fewer than two
-            # samples, so this panel's count turned on a near-tie rather than on agreement.
+            # samples, so the count turned on a near-tie rather than on agreement. It carries
+            # weight: a single near-tie decides the whole paper's claim count.
             "pass1_decisive": decisive1,
             "pass2_decisive": decisive2,
             "draft_claims": len(draft.get("claims", [])),
@@ -518,12 +470,12 @@ async def run_dedup_audit(
     claims: dict,
     tracker: UsageTracker | None = None,
 ) -> dict:
-    """Pass 5 — cross-panel reconciliation. Reports merges and naming normalisations; it
+    """Pass 5 — claim-set reconciliation. Reports merges and naming normalisations; it
     never applies either.
 
     `polarity` and `sample_type` are in the listing because the pass reasons about both: a
     positive claim and its null-polarity counterpart must never be merged, and sample_type
-    is one of the two fields whose spelling it normalises across panels.
+    is one of the two fields whose spelling it normalises across the set.
     """
     listing = {
         k: {
@@ -535,7 +487,6 @@ async def run_dedup_audit(
             "targets": v.get("targets", []),
             "timepoints": v.get("timepoints", []),
             "contrast": v.get("contrast"),
-            "panel": v.get("panel"),
         }
         for k, v in claims.items()
     }
@@ -543,65 +494,47 @@ async def run_dedup_audit(
     return await _call_json(client, model, prompts["pass5"], user, 0, tracker, "pass5")
 
 
-async def abstract_claims_from_jats(
+async def abstract_claims_from_document(
     xml_text: str,
     client: AsyncOpenAI,
     model: str,
     runs: int = 5,
-    include_methods: bool = True,
-    panel_ids: list[str] | None = None,
-    prompt_file: str = PROMPT_FILE,
+    prompt_file: str = DOCUMENT_PROMPT_FILE,
 ) -> tuple[dict, dict]:
-    """Run all five passes over a JATS article. Returns (claims, audit).
+    """Run all five passes over a paper. Returns (claims, audit).
 
-    `claims` is keyed claim_1..N in panel order — the shape the rest of the pipeline reads
-    (claim_filter, classify_groups). `audit` holds everything the passes reported that is
-    not itself a claim: demotions, provenance verdicts, coverage, proposed merges, and the
-    per-panel sampling record.
+    `claims` is keyed claim_1..N -- the shape the rest of the pipeline reads (claim_filter,
+    classify_groups). `audit` holds everything the passes reported that is not itself a claim:
+    demotions, provenance verdicts, coverage, proposed merges, and the sampling record.
+
+    13 calls: 2x`runs` sampled extraction passes, 1 provenance audit, and passes 4-5 over the
+    pooled set.
     """
     prompts = system_prompts(load_v5_prompts(prompt_file))
-    paper = split_panels(xml_text)
-
-    panels = [p for p in paper.panels if p.prose_paragraphs]
-    skipped = [p.label for p in paper.panels if not p.prose_paragraphs]
-    if panel_ids:
-        panels = [p for p in panels if p.panel_id in panel_ids or p.label in panel_ids]
+    doc = split_document(xml_text)
 
     tracker = UsageTracker()
     semaphore = asyncio.Semaphore(MAX_CONCURRENT_CALLS)
-    methods = paper.methods if include_methods else ""
-    results = await asyncio.gather(
-        *(run_panel(client, model, prompts, p, methods, runs, tracker, semaphore) for p in panels)
-    )
+    result = await run_document(client, model, prompts, doc, runs, tracker, semaphore)
 
-    claims: dict = {}
-    not_a_claim: list = []
-    run_records: list = []
-    for panel, result in zip(panels, results):
-        kept, demoted = apply_verdicts(result["claims"], result["verdicts"])
-        for claim in kept:
-            claim["panel"] = panel.label
-            claims[f"claim_{len(claims) + 1}"] = claim
-        for entry in result["not_a_claim"] + demoted:
-            entry["panel"] = panel.label
-            not_a_claim.append(entry)
-        result["run_record"]["demoted_by_audit"] = len(demoted)
-        run_records.append(result["run_record"])
+    kept, demoted = apply_verdicts(result["claims"], result["verdicts"])
+    claims = {f"claim_{i}": claim for i, claim in enumerate(kept, start=1)}
+    not_a_claim = result["not_a_claim"] + demoted
+    result["run_record"]["demoted_by_audit"] = len(demoted)
 
     coverage, dedup = {}, {}
     if claims:
         coverage, dedup = await asyncio.gather(
-            run_coverage_audit(client, model, prompts, paper.abstract, claims, tracker),
+            run_coverage_audit(client, model, prompts, doc.abstract, claims, tracker),
             run_dedup_audit(client, model, prompts, claims, tracker),
         )
 
     audit = {
         "not_a_claim": not_a_claim,
         "abstract_coverage": coverage,
-        "cross_panel_dedup": dedup,
-        "panels": run_records,
-        "panels_skipped_no_prose": skipped,
+        "claim_set_dedup": dedup,
+        "document": result["run_record"],
         "token_usage": tracker.summary(),
-        "settings": {"model": model, "runs_per_pass": runs, "methods_included": bool(methods)},
+        "settings": {"model": model, "runs_per_pass": runs, "prompt_file": prompt_file},
     }
     return claims, audit

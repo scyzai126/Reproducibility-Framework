@@ -19,7 +19,7 @@ Output files:
     assays_OBI.json                 - assays.json enriched with OBI ontology mappings
     claims.json                     - the extracted claims, each carrying the assay it named
     abstract_unmatched_findings.json - Abstract findings with no Results/Figure/Table support (only if non-empty)
-    groups.json                     - claims structured into groups + comparisons (classify_groups.txt)
+    claims_groups.json              - claims structured into groups + comparisons (classify_groups.txt)
 """
 
 import asyncio
@@ -114,8 +114,8 @@ async def main(jats_text_path: Path, pdf_path: Path, out_dir: Path) -> None:
         unmatched_path.unlink()
 
     groups = await run_group_step(final_claims, client)
-    (out_dir / "groups.json").write_text(json.dumps(groups, indent=2, ensure_ascii=False), encoding="utf-8")
-    print("  saved groups.json")
+    (out_dir / "claims_groups.json").write_text(json.dumps(groups, indent=2, ensure_ascii=False), encoding="utf-8")
+    print("  saved claims_groups.json")
 
     print(f"\nDone. Files written to {out_dir}")
 

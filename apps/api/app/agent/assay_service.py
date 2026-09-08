@@ -4,16 +4,21 @@ This is the pipeline behind POST /agent/assays. It chains the two prompts a fron
 question needs — prompts/extract_assays.txt to build the registry, prompts/verify_assays.txt
 to judge it — with the free deterministic quote check in between.
 
-**Results are cached on disk and reused by default.** A single request costs 1 + N calls (one
-extraction, one verification per assay), which is real money to spend on a page load, and the
-answer for a given paper does not change between requests. So an existing
-`assays.json` / `assays_verification.json` under data/claims/assay_registries is served as-is
-unless the caller passes `refresh`. Both files are the same ones the CLI scripts read and
-write, so a registry built here is visible to run_assay_verify.py and vice versa.
+**Every request runs all three rounds.** Results are written to disk under
+data/claims/assay_registries, and the files are the same ones the CLI scripts read and write,
+so a registry built here is visible to run_assay_verify.py and vice versa — but a stored one
+is never served back. A request costs 1 + N + F calls every time.
 
-The quote check runs on every response, cached or fresh. It costs nothing, it is the one
-signal that does not depend on a model's opinion, and a registry that was fine when written
-can stop matching if the paper's XML is re-fetched.
+Reuse used to be the default, and it was removed rather than narrowed. Round 1's cache could
+not be dropped on its own: a freshly extracted registry invalidates any stored verification
+(the verdicts describe different entries), which in turn invalidates the corrections derived
+from them, so the rounds are reusable together or not at all. What reuse cost in exchange was
+that an edit to extract_assays.txt had no effect on a paper that had already been run, and
+nothing in the output said so.
+
+The quote check runs on every response. It costs nothing, it is the one signal that does not
+depend on a model's opinion, and a registry that was fine when written can stop matching if
+the paper's XML is re-fetched.
 """
 
 import json
@@ -120,7 +125,7 @@ def quote_report(assays: dict, source_text: str) -> dict:
 
     Two of them now: the quote is copied verbatim from the sentences it cites, and `source`
     agrees with the section those sentences sit in. Both are pure string work, so they run on
-    every response, cached or fresh, and neither depends on a model's opinion.
+    every response, and neither depends on a model's opinion.
     """
     sections = sentence_sections(source_text)
     per_assay = {key: check_quote_verbatim(entry, source_text) for key, entry in assays.items()}
@@ -146,7 +151,6 @@ async def assay_report(
     client: AsyncOpenAI,
     verify: bool = True,
     correct: bool = True,
-    refresh: bool = False,
     model: str = settings.OPENAI_MODEL,
 ) -> dict:
     """Answer "what assays did this paper use?" in three rounds, and return the accurate set.
@@ -163,9 +167,8 @@ async def assay_report(
     assays_precorrection.json, so an extracted value and a repaired one are still tellable
     apart; that distinction moves into the filename rather than being lost.
 
-    A cold paper costs 1 + N + F calls. Every round caches to disk and is skipped on a repeat
-    request, so asking twice costs nothing -- `assays_corrections.json` is the marker that
-    round 3 already ran, written even when it repaired nothing.
+    Every paper costs 1 + N + F calls, every time. Nothing is served from disk: asking twice
+    pays twice, and the second answer is the one that reflects the current prompts.
 
     Raises PaperNotFoundError when no XML is on disk. Extraction failures propagate as
     AssayExtractionError; verification and correction failures do not, because both turn a
@@ -188,33 +191,23 @@ async def assay_report(
     rounds: dict = {}
 
     # ── Round 1: extract ──────────────────────────────────────────────────────
-    if registry_path.exists() and not refresh:
-        assays = json.loads(registry_path.read_text(encoding="utf-8"))
-        rounds["extract"] = {"source": "cache", "calls": 0}
-    else:
-        assays = await extract_assays(source_text, title, client, model)
-        out_dir.mkdir(parents=True, exist_ok=True)
-        registry_path.write_text(json.dumps(assays, indent=2, ensure_ascii=False) + "\n",
-                                 encoding="utf-8")
-        calls += 1
-        rounds["extract"] = {"source": "extracted", "calls": 1}
-    rounds["extract"]["assays"] = len(assays)
+    assays = await extract_assays(source_text, title, client, model)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    registry_path.write_text(json.dumps(assays, indent=2, ensure_ascii=False) + "\n",
+                             encoding="utf-8")
+    calls += 1
+    rounds["extract"] = {"source": "extracted", "calls": 1, "assays": len(assays)}
+    extracted = assays
 
     warnings = contract_warnings(assays)
     for warning in warnings:
         logger.warning("assay extraction: %s", warning)
 
-    fresh_registry = rounds["extract"]["source"] != "cache"
-
     # ── Round 2: verify ───────────────────────────────────────────────────────
     verification = None
     if not verify or not assays:
         rounds["verify"] = {"source": "skipped", "calls": 0}
-    elif verification_path.exists() and not refresh and not fresh_registry:
-        verification = json.loads(verification_path.read_text(encoding="utf-8"))
-        rounds["verify"] = {"source": "cache", "calls": 0}
     else:
-        # A fresh registry invalidates any stored report: it judged different entries.
         results = await verify_registry(assays, source_text, title, client, model)
         verification = build_report(results)
         verification_path.write_text(
@@ -224,27 +217,10 @@ async def assay_report(
     if verification:
         rounds["verify"]["summary"] = verification.get("summary", {})
 
-    fresh_verification = rounds["verify"]["source"] == "verified"
-
     # ── Round 3: correct, then promote ────────────────────────────────────────
     dropped: dict = {}
     if not correct or not verification:
         rounds["correct"] = {"source": "skipped", "calls": 0}
-    elif corrections_path.exists() and not refresh and not fresh_verification:
-        report = json.loads(corrections_path.read_text(encoding="utf-8"))
-        rejected_path = out_dir / "assays_rejected.json"
-        if rejected_path.exists():
-            dropped = json.loads(rejected_path.read_text(encoding="utf-8"))
-        # Promotion is idempotent, and running it here holds the invariant this endpoint
-        # promises: what we return IS assays.json. A registry corrected through the CLI and
-        # never promoted would otherwise come back uncorrected -- measured on SDY1119, whose
-        # assays.json still carried an alias its own correction had dropped.
-        corrected_path = out_dir / "assays_corrected.json"
-        if corrected_path.exists():
-            promote_registry(out_dir)
-            assays = json.loads(corrected_path.read_text(encoding="utf-8"))
-        rounds["correct"] = {"source": "cache", "calls": 0,
-                             "actions": report.get("summary", {}).get("actions", {})}
     else:
         kept, dropped = drop_rejected(assays, verification)
         corrected, records = await correct_registry(kept, verification, source_text, title,
@@ -254,14 +230,25 @@ async def assay_report(
 
         (out_dir / "assays_corrected.json").write_text(
             json.dumps(corrected, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-        # Written even when nothing was repaired: this file is the marker that round 3 ran,
-        # and without it every later request would pay for round 3 again.
         corrections_path.write_text(
             json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        # Removed rather than left behind when this run rejected nothing: a stale file from an
+        # earlier run would read as this run's findings. Same reason the snapshot below is
+        # rewritten -- every one of these files now describes one specific run.
+        rejected_path = out_dir / "assays_rejected.json"
         if dropped:
-            (out_dir / "assays_rejected.json").write_text(
+            rejected_path.write_text(
                 json.dumps(dropped, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        elif rejected_path.exists():
+            rejected_path.unlink()
 
+        # This run's extraction is what "pre-correction" means. promote_registry writes the
+        # snapshot only when absent, which was right while a finished paper was served from
+        # cache -- the first extraction really was the only unrepaired version there would
+        # ever be. Now that every run re-extracts, that guard would pin the snapshot to
+        # whichever run happened to be first, so it is written here instead.
+        (out_dir / "assays_precorrection.json").write_text(
+            json.dumps(extracted, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
         promote_registry(out_dir)
         assays = corrected
         calls += spent
@@ -269,8 +256,8 @@ async def assay_report(
                              "actions": report["summary"]["actions"],
                              "dropped": len(dropped)}
 
-    # The deliverable, written from the final registry on every request -- cache hits too, so
-    # it can never lag assays.json. Deliberately not inside promote_registry(): that would make
+    # The deliverable, written from the final registry on every request, so it can never
+    # lag assays.json. Deliberately not inside promote_registry(): that would make
     # assay_corrector import assay_extractor, and it would skip the rounds that never promote.
     # The consequence is that `run_assay_correct.py --promote` alone does not refresh this file.
     benchmark_path = out_dir / "assays_benchmark.json"

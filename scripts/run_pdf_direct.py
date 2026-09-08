@@ -16,7 +16,7 @@ Output files:
     claims.json                     - the extracted claims, each carrying the assay it named
     claim_filtered.json             - the downstream-actionable subset of claims.json (claim_filter.py)
     abstract_unmatched_findings.json - Abstract findings with no Results/Figure/Table support (only if non-empty)
-    groups.json                     - filtered claims structured into groups + comparisons (classify_groups.txt)
+    claims_groups.json              - filtered claims structured into groups + comparisons (classify_groups.txt)
 
 The closed-book accuracy judge is not part of this run - it costs one LLM call per claim
 and gates nothing. Run it on demand with `python scripts/run_claim_validate.py <out_dir>`.
@@ -129,7 +129,7 @@ async def main(pdf_path: Path, out_dir: Path) -> None:
 
     if not filtered_claims:
         # Every extraction output is already on disk. Running the group step on nothing would
-        # overwrite an existing groups.json with an empty object.
+        # overwrite an existing claims_groups.json with an empty object.
         print(
             "\nWARNING: no claim carried a downstream claim_type "
             f"({', '.join(DOWNSTREAM_CLAIM_TYPES)}) - skipping the group step."
@@ -142,8 +142,8 @@ async def main(pdf_path: Path, out_dir: Path) -> None:
     # demand rather than in every parse. Run it separately when you want it:
     #     python scripts/run_claim_validate.py <out_dir>
     groups = await run_group_step(filtered_claims, client)
-    (out_dir / "groups.json").write_text(json.dumps(groups, indent=2, ensure_ascii=False), encoding="utf-8")
-    print("  saved groups.json")
+    (out_dir / "claims_groups.json").write_text(json.dumps(groups, indent=2, ensure_ascii=False), encoding="utf-8")
+    print("  saved claims_groups.json")
 
     print(f"\nDone. Files written to {out_dir}")
 

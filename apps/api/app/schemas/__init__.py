@@ -67,15 +67,14 @@ class AssayRequest(BaseModel):
     a `platform` inferred from what a technique usually runs on looks exactly like one copied
     from Methods. Turn them off only to inspect an intermediate round.
 
-    `refresh` defaults off because the answer for a paper does not change between requests,
-    and a cold run costs 1 + N + F model calls.
+    Every request runs all three rounds and costs 1 + N + F model calls; nothing is served
+    from a previous run.
     """
 
     study_accession: str = ""
     pubmed_id: str = ""
     verify: bool = True
     correct: bool = True
-    refresh: bool = False
 
 
 class AssayResponse(BaseModel):
@@ -85,7 +84,7 @@ class AssayResponse(BaseModel):
     paper_source: str = ""
     #: name_in_paper -> the seven-field entry: the CORRECTED registry, as assays.json holds it.
     assays: dict = {}
-    #: The free verbatim-quote check. Always present, cached results included.
+    #: The free verbatim-quote check. Always present.
     quote_check: dict = {}
     #: build_report() output, or null when verify was false or the paper has no assays.
     verification: dict | None = None

@@ -113,13 +113,13 @@ def contract_warnings(registry: dict) -> list[str]:
     are other passes' jobs. They are surfaced so a bad run is visible immediately rather than
     at OBI-mapping time.
 
-    Every field is read with .get(), because this also runs on registries loaded from disk
-    rather than freshly cleaned (assay_service serves a cached assays.json through here). Most
-    stored registries predate the current schema -- they carry `evidence_location`,
-    `claim_role` and `confidence` instead of `evidence` and `source` -- and subscripting would
-    raise KeyError on the cached path, turning a stale registry into a 500. Reporting the
-    missing fields is the honest answer: those entries really do lack the evidence quote and
-    sentence ids that downstream steps need.
+    Every field is read with .get(), because this also runs over registries that did not come
+    straight from clean_registry: run_assay_pipeline reports on the *corrected* registry, and
+    correction preserves an old-schema entry's `evidence_location` rather than renaming it.
+    Such entries carry `evidence_location`, `claim_role` and `confidence` instead of `evidence`
+    and `source`, and subscripting would raise KeyError on them, turning a stale registry into
+    a 500. Reporting the missing fields is the honest answer: those entries really do lack the
+    evidence quote and sentence ids that downstream steps need.
     """
     warnings: list[str] = []
     for key, entry in registry.items():

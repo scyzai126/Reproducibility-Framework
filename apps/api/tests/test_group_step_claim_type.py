@@ -2,7 +2,7 @@
 
 The chain is: the extractor assigns it into claims.json, claim_filter copies it verbatim
 into claim_filtered.json *and selects on it*, and run_group_step stamps that same value
-onto groups.json. The groups stage is the one hop where a model is in the loop, so it is
+onto claims_groups.json. The groups stage is the one hop where a model is in the loop, so it is
 the one hop where the chain can break — and it breaks silently, because a plausible-looking
 wrong type reads exactly like a right one.
 
@@ -88,7 +88,7 @@ async def test_claim_type_reaches_the_prompt():
 async def test_a_model_echo_never_overrides_the_inherited_type():
     """The merge is `{"claim_type": <inherited>, **val}`, so a claim_type inside `val` would
     win. Harmless while the model could not see the field; now that it can, the echo has to
-    be discarded — otherwise groups.json can disagree with the filter that admitted the
+    be discarded — otherwise claims_groups.json can disagree with the filter that admitted the
     claim, and nothing downstream detects it."""
     runner = _load_runner()
     echoed = {"claim_1": {**_REPLY["claim_1"], "claim_type": "group_difference"}}
@@ -102,7 +102,7 @@ async def test_a_model_echo_never_overrides_the_inherited_type():
 
 @pytest.mark.asyncio
 async def test_claim_type_is_the_first_key_and_claim_survives():
-    """groups.json entries lead with claim_type — the key order 24336226_SDY1260_v7 already
+    """claims_groups.json entries lead with claim_type — the key order 24336226_SDY1260_v7 already
     uses — and the model's own fields are still merged in behind it."""
     runner = _load_runner()
     client = _mock_client(_REPLY)

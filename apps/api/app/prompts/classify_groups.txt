@@ -119,7 +119,12 @@ Do NOT apply this when: the stated day is already `day 0` (no earlier baseline e
 - Example: claim = "...showed that the antibody titer declined from day 30 to day 180." with groups at day 0, day 30, day 180 (group_ids 0–2) → `comparison = [{"contrast": [1,2], "finding": "antibody titer declined from day 30 to day 180"}]`. Group 0 stays in `groups` (baseline was sampled) but appears in no contrast, because the source text never compared it to anything.
 - **Exception — superlative claims (row 1 of the table).** When the claim names a maximum or minimum across timepoints, the full baseline fan **is** stated by the claim: asserting "day 1 was the maximum" asserts something about day 3 and day 14 too, so every candidate timepoint must appear in `comparison` for the `ranking` to mean anything. Emit the whole fan there. This exception does not extend to row 2 (segment) or to claims with no superlative — those stay strict.
 
-**Output format:**
+**Output format:** Two further fields — `claim_type` and `assay_method` — appear on
+each claim in the final file but are **not** yours to emit. They are carried through
+from the claim record this step was handed, so that the value cannot drift from the
+one the upstream filter selected on. Anything you emit under either name is discarded.
+The per-group `assay_method` below is unaffected and remains mandatory.
+
 ```json
 {
   "claim_1": {

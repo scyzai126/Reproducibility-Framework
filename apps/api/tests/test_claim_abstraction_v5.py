@@ -7,13 +7,13 @@ import pytest
 
 from app.agent.claim_abstraction_v5 import (
     CLAIMS_OUTPUT_FIELDS,
+    DOCUMENT_PROMPT_FILE,
     UsageTracker,
     apply_verdicts,
-    build_pass1_user_message,
     load_v5_prompts,
     pick_modal,
     project_claims,
-    split_panels,
+    split_document,
     system_prompts,
 )
 from app.agent.claim_filter import DOWNSTREAM_CLAIM_TYPES
@@ -52,13 +52,13 @@ JATS = """<article>
 # ── prompt assembly ───────────────────────────────────────────────────────────
 
 
-V5_PROMPT = "claim_abstraction_prompt_v5.md"
-V7_PROMPT = "claim_abstraction_prompt_v7.md"
+V8_PROMPT = DOCUMENT_PROMPT_FILE
 
 
-@pytest.mark.parametrize("prompt_file", [None, V5_PROMPT, V7_PROMPT])
+# v8 is the only prompt document; `None` exercises the module default resolving to it.
+@pytest.mark.parametrize("prompt_file", [None, V8_PROMPT])
 def test_load_prompts_returns_every_block(prompt_file):
-    """All three documents carry the same five-pass skeleton and must parse identically."""
+    """The document carries the five-pass skeleton and must parse into exactly its blocks."""
     blocks = load_v5_prompts() if prompt_file is None else load_v5_prompts(prompt_file)
     assert set(blocks) == {"preamble", "pass1", "pass2", "pass3", "pass4", "pass5"}
     assert all(v.strip() for v in blocks.values())
@@ -90,7 +90,7 @@ def test_only_passes_1_and_2_carry_the_preamble():
         assert prompts[audit] == blocks[audit]
 
 
-def test_v6_substitutes_the_shared_claim_type_vocabulary():
+def test_the_shared_claim_type_vocabulary_is_substituted():
     """The extractor and the accuracy judge must read one vocabulary file — an
     unsubstituted placeholder is still a valid prompt and would run without it."""
     prompts = system_prompts(load_v5_prompts())
@@ -114,7 +114,7 @@ def test_vocabulary_substitution_survives_its_own_code_fence():
     assert "FILLING THE PROVENANCE FIELDS" in preamble
 
 
-def test_v6_keeps_sources_and_drops_the_bare_quote_field():
+def test_sources_is_the_evidence_field_and_the_bare_quote_is_gone():
     """validate_claims.txt treats `sources` as its only ground truth, so v6 carries the
     original's array rather than v5's single quote string."""
     prompts = system_prompts(load_v5_prompts())
@@ -123,70 +123,38 @@ def test_v6_keeps_sources_and_drops_the_bare_quote_field():
     assert "Figure N caption" in prompts["pass1"]
 
 
-def test_v6_requires_the_mandatory_head():
+def test_the_mandatory_claim_head_is_required():
     """claim_validator._head() splits on "showed" and the metadata pass batches by head."""
     prompts = system_prompts(load_v5_prompts())
     assert "THE HEAD IS MANDATORY IN BOTH FORMS" in prompts["pass1"]
     assert "showed" in prompts["pass1"]
 
 
-def test_v6_carries_polarity_and_not_the_retired_null_result_type():
+def test_polarity_carries_absence_and_null_result_stays_retired():
     prompts = system_prompts(load_v5_prompts())
     assert "POLARITY is separate from type" in prompts["pass1"]
     assert '"polarity": "affirm" | "null"' in prompts["pass1"]
     assert "null_result" not in prompts["pass1"]
 
 
-def test_v6_names_a_closed_not_a_claim_reason_vocabulary():
-    """The SDY1260 run invented `panel-not-this-figure` and `figure-not-supported` for
-    assertions belonging to a neighbouring panel; `other-panel` gives them a real home."""
-    prompts = system_prompts(load_v5_prompts())
-    assert "other-panel" in prompts["pass1"]
-    assert "Use exactly these six reason strings" in prompts["pass1"]
-    assert "NARROWING IS A REWRITE, NOT A DEMOTION" in prompts["pass2"]
-
-
-def test_v6_pass5_normalizes_names_across_panels():
-    """sample_type drifted across panels on SDY1260 ("PBMC" x13 vs "PBMCs" x2)."""
+def test_pass5_normalizes_names_across_the_claim_set():
+    """sample_type drifted on SDY1260 ("PBMC" x13 vs "PBMCs" x2). Claims are drafted in one
+    sweep now rather than per panel, but without a consistency check, so it still can."""
     prompts = system_prompts(load_v5_prompts())
     assert "NAMING" in prompts["pass5"]
     assert "sample_type" in prompts["pass5"]
     assert "serum and plasma are not the same sample" in prompts["pass5"]
 
 
-# ── v7: the granularity guideline ─────────────────────────────────────────────
+# ── the granularity guideline ─────────────────────────────────────────────────
 
 
-def test_v7_preserves_everything_downstream_parses():
-    """v7 changes only the splitting rules. claim_validator._head() splits on "showed",
-    validate_claims.txt reads `sources`, and claim_filter reads the shared vocabulary — a
-    v7 that dropped any of them would still be a runnable prompt."""
-    prompts = system_prompts(load_v5_prompts(V7_PROMPT))
-
-    assert "THE HEAD IS MANDATORY IN BOTH FORMS" in prompts["pass1"]
-    assert "showed" in prompts["pass1"]
-    assert '"sources"' in prompts["pass1"]
-    assert "Figure N caption" in prompts["pass1"]
-    assert "POLARITY is separate from type" in prompts["pass1"]
-    assert '"polarity": "affirm" | "null"' in prompts["pass1"]
-    assert "null_result" not in prompts["pass1"]
-    assert "Use exactly these six reason strings" in prompts["pass1"]
-
-    assert CLAIM_TYPES_PLACEHOLDER not in prompts["pass1"]
-    for claim_type in DOWNSTREAM_CLAIM_TYPES:
-        assert claim_type in prompts["pass1"]
-
-
-@pytest.mark.parametrize("prompt_file", [None, V7_PROMPT])
-def test_response_difference_carries_both_of_its_references(prompt_file):
+def test_response_difference_carries_both_of_its_references():
     """A difference-in-differences needs two references — the within-group baseline each arm
     is measured against, and the comparator arm. `contrast` has one `reference` slot, so
     without `within_reference` the baseline is overwritten by the comparator and the record
-    no longer says whether to compare levels or changes. Both v6 (the module default) and v7
-    must ship the field and the rule that fills it."""
-    prompts = system_prompts(load_v5_prompts() if prompt_file is None
-                             else load_v5_prompts(prompt_file))
-    pass1 = prompts["pass1"]
+    no longer says whether to compare levels or changes."""
+    pass1 = system_prompts(load_v5_prompts())["pass1"]
 
     assert "response_difference" in pass1
     assert '"within_reference"' in pass1
@@ -196,16 +164,16 @@ def test_response_difference_carries_both_of_its_references(prompt_file):
     assert "Level or change?" in pass1
 
 
-def test_v7_carries_the_one_claim_one_verdict_test():
+def test_v8_carries_the_one_claim_one_verdict_test():
     """The principle the five rules are derived from. v6 listed the rules without it."""
-    prompts = system_prompts(load_v5_prompts(V7_PROMPT))
+    prompts = system_prompts(load_v5_prompts(V8_PROMPT))
     assert "ONE CLAIM = ONE VERDICT" in prompts["pass1"]
     assert "CAN THIS COME BACK HALF-TRUE" in prompts["pass1"]
 
 
-def test_v7_guards_over_splitting_not_only_under_splitting():
+def test_v8_guards_over_splitting_not_only_under_splitting():
     """The gap v7 exists to close: every v6-era prompt pushes one direction only."""
-    prompts = system_prompts(load_v5_prompts(V7_PROMPT))
+    prompts = system_prompts(load_v5_prompts(V8_PROMPT))
     assert "OVER-SPLITTING" in prompts["pass1"]
     assert "THE TWO FAILURE MODES ARE NOT SYMMETRIC" in prompts["pass1"]
     # The asymmetry must survive: splitting stays the safer default.
@@ -213,19 +181,19 @@ def test_v7_guards_over_splitting_not_only_under_splitting():
     assert "Splitting remains the safer default" in prompts["pass1"]
 
 
-def test_v7_adds_the_data_object_split_and_the_merging_case():
+def test_v8_adds_the_data_object_split_and_the_merging_case():
     """Rule 5 and its counterweight — absent from every other prompt in the repo."""
-    prompts = system_prompts(load_v5_prompts(V7_PROMPT))
+    prompts = system_prompts(load_v5_prompts(V8_PROMPT))
     assert "RULE 5 — SPLIT WHEN THE DATA OBJECT DIFFERS" in prompts["pass1"]
     assert "THE ONE CASE THAT ARGUES FOR MERGING" in prompts["pass1"]
     assert "WRITE THE REPRODUCTION PROCEDURE BEFORE YOU SPLIT" in prompts["pass1"]
     assert "CALIBRATION" in prompts["pass1"]
 
 
-def test_v7_keeps_the_cardinality_test_and_its_one_way_converse():
+def test_v8_keeps_the_cardinality_test_and_its_one_way_converse():
     """Splitting on claim_type is the mechanical under-split check; a SHARED type is
     never grounds to merge. The over-split guard must not have weakened either."""
-    prompts = system_prompts(load_v5_prompts(V7_PROMPT))
+    prompts = system_prompts(load_v5_prompts(V8_PROMPT))
     assert "CARDINALITY TEST" in prompts["pass1"]
     assert "THE CONVERSE DOES NOT HOLD" in prompts["pass1"]
     assert "conjunction" in prompts["pass1"]
@@ -233,21 +201,21 @@ def test_v7_keeps_the_cardinality_test_and_its_one_way_converse():
     assert "remained above baseline at day 750" in prompts["pass1"]
 
 
-def test_v7_does_not_prescribe_group_difference_for_whole_course_comparisons():
-    """v7 once told the extractor that the magnitude and duration halves of the SDY1260
+def test_v8_does_not_prescribe_group_difference_for_whole_course_comparisons():
+    """v8 once told the extractor that the magnitude and duration halves of the SDY1260
     Fig. 1a sentence were BOTH `group_difference`. That contradicted claim_types.txt three
     ways -- group_difference requires a matched timepoint, the precedence ladder ranks
     trajectory_segment and magnitude_comparison above it, and "greater magnitude" is a
     listed magnitude_comparison cue -- and the SDY1260 run typed the same assertion two
     different ways across panels as a result."""
-    prompts = system_prompts(load_v5_prompts(V7_PROMPT))
+    prompts = system_prompts(load_v5_prompts(V8_PROMPT))
     assert "BOTH `group_difference`" not in prompts["pass1"]
     assert "A BETWEEN-ARM COMPARISON IS NOT AUTOMATICALLY `group_difference`" in prompts["pass1"]
     assert "magnitude -> `response_difference`" in prompts["pass1"]
     assert 'duration -> `trajectory_segment` ("how long it lasts")' in prompts["pass1"]
 
 
-def test_v7_magnitude_duration_convention_matches_the_whole_pdf_extractor():
+def test_v8_magnitude_duration_convention_matches_the_whole_pdf_extractor():
     """The five-pass and single-call extractors must not drift on this pair.
     extract_claims_pdf.txt's worked example is the origin of the convention."""
     whole_pdf = (
@@ -260,16 +228,16 @@ def test_v7_magnitude_duration_convention_matches_the_whole_pdf_extractor():
     assert "showed greater magnitude of the polysaccharide-specific IgG response after MPSV4"\
            " compared to a single dose of MCV4.\" `claim_type: magnitude_comparison`" not in whole_pdf
 
-    pass1 = system_prompts(load_v5_prompts(V7_PROMPT))["pass1"]
+    pass1 = system_prompts(load_v5_prompts(V8_PROMPT))["pass1"]
     assert "`response_difference`" in pass1
     assert '`trajectory_segment` ("how long it lasts")' in pass1
 
 
-def test_v7_routes_the_merge_decision_to_pass1_only():
+def test_v8_routes_the_merge_decision_to_pass1_only():
     """Pass 2 sees the draft and the legend, never the prose, so it cannot re-derive the
     reproduction procedure that decides a merge. Without this, v7's new recombine step
     would read as licence for pass 2 to merge — and pass 2 forbids exactly that."""
-    prompts = system_prompts(load_v5_prompts(V7_PROMPT))
+    prompts = system_prompts(load_v5_prompts(V8_PROMPT))
     assert "PASS 1 IS THE ONLY PLACE IT CAN HAPPEN" in prompts["pass1"]
     assert "Do not merge draft claims." in prompts["pass2"]
     assert "YOU CANNOT TELL AN OVER-SPLIT PARTITION" in prompts["pass2"]
@@ -277,121 +245,21 @@ def test_v7_routes_the_merge_decision_to_pass1_only():
     assert "SHARING A SOURCE IS NORMAL" in prompts["pass5"]
 
 
-# ── panel splitting ───────────────────────────────────────────────────────────
+class _CapturingClient:
+    """Returns one canned claim per call and records every user message sent."""
 
+    def __init__(self, body: str):
+        self.user_messages: list[str] = []
+        outer = self
 
-def test_split_panels_attaches_prose_by_cross_reference():
-    paper = split_panels(JATS)
-    by_id = {p.panel_id: p for p in paper.panels}
+        class _Completions:
+            async def create(self, **kwargs):
+                outer.user_messages.append(kwargs["messages"][1]["content"])
+                message = type("M", (), {"content": body, })()
+                return type("R", (), {"choices": [type("C", (), {"message": message})()],
+                                      "usage": None})()
 
-    assert set(by_id) == {"F1", "F2", "F3", "T1"}
-    assert len(by_id["F1"].prose_paragraphs) == 2
-    assert by_id["F2"].prose_paragraphs == ["Module M75 was enriched (Fig. 2)."]
-    assert by_id["F3"].prose_paragraphs == []
-
-
-def test_a_paragraph_citing_two_panels_feeds_both():
-    by_id = {p.panel_id: p for p in split_panels(JATS).panels}
-    shared = "Titers differed between arms (Fig. 1b, Table 1)."
-    assert shared in by_id["F1"].prose
-    assert shared in by_id["T1"].prose
-
-
-def test_legend_carries_label_caption_and_table_footer():
-    by_id = {p.panel_id: p for p in split_panels(JATS).panels}
-    assert by_id["F1"].legend == "Figure 1 Antibody responses. n=13 per arm."
-    assert "SBA, serum bactericidal assay." in by_id["T1"].legend
-
-
-def test_abstract_and_methods_are_separated_from_panel_prose():
-    paper = split_panels(JATS)
-    assert paper.abstract == "We measured antibody responses to two vaccines."
-    assert paper.methods.startswith("On-line Methods")
-    assert "ELISA" in paper.methods
-    assert all("ELISA" not in p.prose for p in paper.panels)
-
-
-def _paper(methods_xml: str) -> str:
-    """A minimal article carrying one figure panel and the given Methods markup."""
-    return f"""<article>
-  <front><article-meta><abstract><p>An abstract.</p></abstract></article-meta></front>
-  <body>
-    <sec><title>Results</title>
-      <p>IgG rose (<xref rid="F1" ref-type="fig">Fig. 1</xref>).</p>
-    </sec>
-    {methods_xml}
-    <fig id="F1"><label>Figure 1</label><caption><p>Antibody responses.</p></caption></fig>
-  </body>
-</article>"""
-
-
-def test_methods_is_found_under_a_cell_press_experimental_procedures_heading():
-    """A prefix match on "methods" missed this on 4 of the 30 corpus papers."""
-    paper = split_panels(_paper(
-        "<sec><title>EXPERIMENTAL PROCEDURES</title><p>IgG was measured by ELISA.</p></sec>"
-    ))
-
-    assert "ELISA" in paper.methods
-
-
-def test_methods_is_found_under_a_star_methods_heading():
-    paper = split_panels(_paper(
-        "<sec><title>STAR\u2605METHODS</title><p>IgG was measured by ELISA.</p></sec>"
-    ))
-
-    assert "ELISA" in paper.methods
-
-
-def test_a_parent_methods_section_wins_over_its_own_subsections():
-    """Otherwise the first nested child is picked and the rest of Methods is dropped."""
-    paper = split_panels(_paper(
-        "<sec><title>STAR METHODS</title>"
-        "<sec><title>Method Details</title><p>IgG was measured by ELISA.</p></sec>"
-        "<sec><title>Quantification</title><p>Titers were log-transformed.</p></sec>"
-        "</sec>"
-    ))
-
-    assert "ELISA" in paper.methods
-    assert "log-transformed" in paper.methods
-
-
-def test_the_real_methods_wins_over_an_earlier_results_subsection_titled_study_design():
-    """"Study design for ..." canonicalizes to methods too, and comes first in the document."""
-    paper = split_panels("""<article>
-  <front><article-meta><abstract><p>An abstract.</p></abstract></article-meta></front>
-  <body>
-    <sec><title>Results</title>
-      <sec><title>Study design for integrative profiling</title><p>Subjects were enrolled.</p></sec>
-      <p>IgG rose (<xref rid="F1" ref-type="fig">Fig. 1</xref>).</p>
-    </sec>
-    <sec><title>STAR METHODS</title>
-      <p>IgG was measured by ELISA in serum, with titers reported as endpoint dilutions.</p>
-    </sec>
-    <fig id="F1"><label>Figure 1</label><caption><p>Antibody responses.</p></caption></fig>
-  </body>
-</article>""")
-
-    assert "ELISA" in paper.methods
-    assert "were enrolled" not in paper.methods
-
-
-def test_a_paper_with_no_methods_section_still_reports_none():
-    paper = split_panels(_paper(""))
-
-    assert paper.methods == ""
-
-
-def test_methods_precedes_prose_so_the_shared_prefix_caches():
-    panel = next(p for p in split_panels(JATS).panels if p.panel_id == "F2")
-    message = build_pass1_user_message(panel, "IgG was measured by ELISA.")
-    assert message.index("METHODS") < message.index("RESULTS TEXT")
-    assert message.endswith(panel.prose)
-
-
-def test_pass1_message_omits_the_methods_block_when_there_is_none():
-    panel = next(p for p in split_panels(JATS).panels if p.panel_id == "F2")
-    assert build_pass1_user_message(panel, "") == f"RESULTS TEXT:\n{panel.prose}"
-
+        self.chat = type("Chat", (), {"completions": _Completions()})()
 
 # ── modal sampling ────────────────────────────────────────────────────────────
 
@@ -585,3 +453,179 @@ def test_projection_would_starve_pass5_if_applied_before_the_write():
     pipeline instead of at the write site would silently break both."""
     pass5_needs = {"polarity", "sample_type", "targets", "timepoints", "contrast", "panel"}
     assert not pass5_needs & set(CLAIMS_OUTPUT_FIELDS)
+
+
+# ── v8: the same five passes, rescoped from a panel to the whole paper ────────
+
+
+def test_v8_preserves_everything_downstream_parses():
+    """v8 changes scope, not output. The head, `sources`, polarity and the shared vocabulary
+    are read by claim_validator._head(), validate_claims.txt and claim_filter respectively —
+    a v8 that dropped any of them would still be a runnable prompt, and the loss would only
+    surface a stage later. The v7 sibling of this test guards the same list."""
+    prompts = system_prompts(load_v5_prompts(V8_PROMPT))
+
+    assert "THE HEAD IS MANDATORY IN BOTH FORMS" in prompts["pass1"]
+    assert "showed" in prompts["pass1"]
+    assert '"sources"' in prompts["pass1"]
+    assert "Figure N caption" in prompts["pass1"]
+    assert "POLARITY is separate from type" in prompts["pass1"]
+    assert '"polarity": "affirm" | "null"' in prompts["pass1"]
+    assert "null_result" not in prompts["pass1"]
+    assert "ONE CLAIM = ONE VERDICT" in prompts["pass1"]
+
+    assert CLAIM_TYPES_PLACEHOLDER not in prompts["pass1"]
+    for claim_type in DOWNSTREAM_CLAIM_TYPES:
+        assert claim_type in prompts["pass1"]
+
+
+def test_v8_retires_the_other_panel_demotion_reason():
+    """`other-panel` existed because each panel was extracted alone, so an assertion whose
+    evidence sat elsewhere was demoted and picked up by that panel's own run. Reading the
+    paper whole there is no other run: the same demotion would delete the assertion. The
+    reason must be gone from the emitted enum, and the count updated with it."""
+    prompts = system_prompts(load_v5_prompts(V8_PROMPT))
+
+    enum = '"<cited-background|definition|external-import|interpretation|not-executable>"'
+    assert enum in prompts["pass1"]
+    assert "Use exactly these five reason strings" in prompts["pass1"]
+    assert "six reason strings" not in prompts["pass1"]
+    # v7's routing instruction must not survive anywhere it could still be obeyed.
+    assert "Route those to `not_a_claim`" not in prompts["pass1"]
+    assert "only `external-import` is ever" in prompts["pass2"]
+
+
+def test_v8_makes_pass2_choose_which_legend_applies():
+    """The panel split matched claims to legends structurally; pass 2 was handed the one
+    legend its claims cited. Given every legend at once, choosing is now the model's job, and
+    applying the wrong one silently imports another panel's timepoints and thresholds."""
+    pass2 = system_prompts(load_v5_prompts(V8_PROMPT))["pass2"]
+
+    assert "MATCH EACH CLAIM TO ITS LEGEND" in pass2
+    assert "APPLYING THE WRONG LEGEND IS WORSE THAN APPLYING NONE" in pass2
+    # The fallback must be to leave the claim alone, never to pick a plausible panel.
+    assert "leave the claim as pass 1" in pass2
+    assert "topic similarity" in pass2
+
+
+def test_v8_tells_pass1_the_bucket_tag_is_a_heuristic():
+    """parse_jats_xml tags each heading by title matching, which mislabels a Results section
+    whose title contains an analysis word — SDY1260's "Comparative differential gene
+    expression analysis" is tagged [methods] and cites Figs 2a/3a/3b. Pass 1 is also told
+    Methods is never a claim source, so an unqualified tag would silently drop that section.
+    The panel path cannot hit this: _prose_bucket classifies by exclusion."""
+    pass1 = system_prompts(load_v5_prompts(V8_PROMPT))["pass1"]
+
+    assert "JUDGE A SECTION BY ITS CONTENT, NOT BY ITS `[bucket]` TAG" in pass1
+    assert "DOES IT REPORT WHAT WAS FOUND, OR ONLY WHAT WAS DONE?" in pass1
+
+
+def test_v8_stops_telling_the_model_its_input_is_a_partial_excerpt():
+    """v8 opened by saying the text was deliberately partial and that gaps were expected.
+    Against a complete paper that licenses the wrong inference: an unstated detail is one the
+    paper does not state, not one waiting in a section that was withheld."""
+    preamble = system_prompts(load_v5_prompts(V8_PROMPT))["pass1"]
+
+    assert "The excerpt is deliberately partial" not in preamble
+    assert "ABSENCE IS INFORMATIVE" in preamble
+
+
+# ── JATS -> one document ──────────────────────────────────────────────────────
+
+
+def test_split_document_withholds_every_legend_from_the_prose_block():
+    """The whole reason the document path keeps two passes: pass 1 must not see a caption."""
+    doc = split_document(JATS)
+
+    assert "Caption:" not in doc.prose
+    assert "--- Figures ---" not in doc.prose
+    assert "Antibody responses. n=13 per arm." in doc.panels_block
+    assert "Module activity." in doc.panels_block
+    assert "Subject demographics." in doc.panels_block
+
+
+def test_split_document_keeps_the_results_prose_and_the_methods():
+    """Both blocks feed pass 1: Results supplies the findings, Methods the provenance fields
+    and the head's cohort/timeframe/method slots."""
+    doc = split_document(JATS)
+
+    assert "IgG rose by day 7" in doc.prose
+    assert "Titers differed between arms" in doc.prose
+    assert "Module M75 was enriched" in doc.prose
+    assert "IgG was measured by ELISA in serum." in doc.prose
+
+
+def test_split_document_reads_the_abstract_off_its_bucket_tag():
+    """Pass 4's coverage audit needs the abstract alone. Taken from the `[abstract]` tag
+    rather than by matching the word, because a structured abstract carries its own
+    Background/Methods/Results headings: in document order its "Results" comes first, so a
+    title match lands on the summary rather than the paper's real Results."""
+    doc = split_document(JATS)
+
+    assert doc.abstract == "We measured antibody responses to two vaccines."
+    assert "IgG rose by day 7" not in doc.abstract
+
+
+def test_a_paper_with_no_figure_or_table_banner_is_refused():
+    """Falling back to one block would send the legends into pass 1 and turn a blinded
+    two-pass run into an unblinded one-pass run — same claims.json, same call count, no
+    error, and the only reason pass 2 exists gone. Refuse loudly instead."""
+    no_panels = """<article>
+  <front><article-meta><abstract><p>An abstract.</p></abstract></article-meta></front>
+  <body><sec><title>Results</title><p>Titers rose overall.</p></sec></body>
+</article>"""
+
+    with pytest.raises(ValueError, match="no '--- Figures ---'"):
+        split_document(no_panels)
+
+
+@pytest.mark.asyncio
+async def test_run_document_sends_the_prose_alone_then_the_legends():
+    """Asserted on the messages run_document actually sends, not on the split: a correct
+    PaperDocument fed to a pass that concatenates both blocks would still pass a test of
+    split_document alone."""
+    from app.agent.claim_abstraction_v5 import run_document
+
+    doc = split_document(JATS)
+    body = '{"claims": [{"claim": "IgG rose.", "claim_type": "response_magnitude"}], ' \
+           '"not_a_claim": [], "verdicts": []}'
+    client = _CapturingClient(body)
+
+    result = await run_document(client, "m", {"pass1": "s", "pass2": "s", "pass3": "s"}, doc, runs=1)
+
+    pass1, pass2, pass3 = client.user_messages
+    assert pass1 == f"PAPER TEXT:\n{doc.prose}"
+    assert "Caption:" not in pass1, "pass 1 saw a legend"
+    assert f"FIGURE AND TABLE LEGENDS (not seen in pass 1):\n{doc.panels_block}" in pass2
+    assert f"FIGURE AND TABLE LEGENDS:\n{doc.panels_block}" in pass3
+    # The shape apply_verdicts and the audit writer consume.
+    assert set(result) == {"claims", "not_a_claim", "verdicts", "run_record"}
+    assert result["run_record"]["scope"] == "document"
+
+
+@pytest.mark.asyncio
+async def test_run_document_keeps_its_claims_when_the_provenance_audit_fails():
+    """Pass 3 only annotates. Losing it must not discard claims already paid for."""
+    from app.agent.claim_abstraction_v5 import run_document
+
+    doc = split_document(JATS)
+    body = '{"claims": [{"claim": "IgG rose.", "claim_type": "response_magnitude"}], ' \
+           '"not_a_claim": [], "verdicts": []}'
+    client = _CapturingClient(body)
+
+    calls = {"n": 0}
+    original = client.chat.completions.create
+
+    async def failing(**kwargs):
+        calls["n"] += 1
+        if calls["n"] == 3:  # pass 3
+            raise RuntimeError("boom")
+        return await original(**kwargs)
+
+    client.chat.completions.create = failing
+
+    result = await run_document(client, "m", {"pass1": "s", "pass2": "s", "pass3": "s"}, doc, runs=1)
+
+    assert len(result["claims"]) == 1
+    assert result["verdicts"] == []
+    assert "boom" in result["run_record"]["audit_error"]

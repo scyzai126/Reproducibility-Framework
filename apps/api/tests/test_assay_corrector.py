@@ -1,5 +1,8 @@
 """The corrector repairs only what a verification flagged, and only from a blind re-read."""
 
+import asyncio
+import json
+
 import pytest
 
 from app.agent.assay_corrector import (
@@ -9,6 +12,7 @@ from app.agent.assay_corrector import (
     UNCHANGED,
     apply_correction,
     build_prompt,
+    correct_registry,
     decide,
     drop_rejected,
     field_group,
@@ -291,3 +295,119 @@ def test_re_promoting_does_not_clobber_the_original_snapshot(tmp_path):
 def test_promoting_with_nothing_corrected_raises(tmp_path):
     with pytest.raises(FileNotFoundError):
         promote_registry(tmp_path)
+
+
+# ── the paper sits in a shared prefix, and the calls run at once ──────────────
+
+def test_the_paper_is_the_same_prefix_for_every_question():
+    """Everything up to and including the source text is byte-identical across questions.
+
+    That prefix is what a provider's automatic prompt caching keys on, so the assay name and
+    the question have to come after the paper, not before it. A per-field value above the
+    source text makes every correction call a cache miss on the bulk of the prompt.
+    """
+    prompts = [build_prompt(_entry(), group, _SOURCE, "Paper")
+               for group in ("platform", "sample_type", "aliases", "evidence")]
+
+    heads = {p[: p.index(_SOURCE) + len(_SOURCE)] for p in prompts}
+    assert len(heads) == 1, "the paper is not in a shared prefix"
+
+    tail = len(next(iter(heads)))
+    assert all(p.index("## The question") >= tail for p in prompts)
+
+
+def test_correct_prompt_leaves_no_placeholder_unrendered():
+    prompt = build_prompt(_entry(), "platform", _SOURCE, "Paper")
+    for token in ("{assay_name}", "{locator}", "{question}", "{paper_title}", "{source_text}"):
+        assert token not in prompt
+
+
+class _RecordingClient:
+    """Records every prompt handed to it, and how many calls overlapped in flight."""
+
+    def __init__(self, body: str, delays: list[float] | None = None):
+        self.prompts: list[str] = []
+        self.in_flight = 0
+        self.peak_in_flight = 0
+        outer = self
+
+        class _Completions:
+            async def create(self, **kwargs):
+                outer.prompts.append(kwargs["messages"][0]["content"])
+                outer.in_flight += 1
+                outer.peak_in_flight = max(outer.peak_in_flight, outer.in_flight)
+                delay = (delays or [0.0])[(len(outer.prompts) - 1) % len(delays or [0.0])]
+                await asyncio.sleep(delay)
+                outer.in_flight -= 1
+                message = type("M", (), {"content": body})()
+                return type("R", (), {"choices": [type("C", (), {"message": message})()]})()
+
+        self.chat = type("Chat", (), {"completions": _Completions()})()
+
+
+def _flagged(*keys, field: str = "platform") -> dict:
+    return {"results": [
+        {"assay_id": key, "record_verdict": "REVIEW",
+         "field_verifications": [{"field_name": field, "verdict": "NOT_SUPPORTED",
+                                  "reason": "..."}]}
+        for key in keys
+    ]}
+
+
+_BLIND_BODY = json.dumps({"value": "LSRII", "sentence_ids": ["S1"], "reason": "..."})
+
+
+@pytest.mark.asyncio
+async def test_corrected_registry_keeps_registry_order_when_calls_finish_out_of_order():
+    """The first call finishes last; neither the registry nor the records may follow that."""
+    keys = ("flow cytometry", "ELISA", "microarray")
+    assays = {key: _entry(name_in_paper=key) for key in keys}
+    client = _RecordingClient(_BLIND_BODY, delays=[0.03, 0.0, 0.0])
+
+    corrected, records = await correct_registry(
+        assays, _flagged(*keys), _SOURCE, "Paper", client)
+
+    assert list(corrected) == list(keys)
+    assert [r["assay_id"] for r in records] == list(keys)
+    assert all(entry["platform"] == "LSRII" for entry in corrected.values())
+    assert client.peak_in_flight > 1, "calls did not actually overlap"
+
+
+@pytest.mark.asyncio
+async def test_correction_concurrency_never_exceeds_the_bound():
+    keys = tuple(f"assay {i}" for i in range(7))
+    assays = {key: _entry(name_in_paper=key) for key in keys}
+    client = _RecordingClient(_BLIND_BODY, delays=[0.01])
+
+    await correct_registry(assays, _flagged(*keys), _SOURCE, "Paper", client,
+                           max_concurrency=2)
+    assert client.peak_in_flight == 2
+
+
+@pytest.mark.asyncio
+async def test_every_field_is_asked_against_the_entry_as_extraction_left_it():
+    """No correction may be visible to another correction's prompt.
+
+    `_locator` quotes the entry's evidence, so a repaired quote landing mid-run would change
+    what a later field is asked about. Running the calls first and writing after is what
+    guarantees that, rather than `_QUESTIONS` happening to order evidence last.
+    """
+    original_quote = _entry()["evidence"]["quote"]
+    verification = {"results": [{
+        "assay_id": "flow cytometry", "record_verdict": "REVIEW",
+        "field_verifications": [
+            {"field_name": "platform", "verdict": "NOT_SUPPORTED", "reason": "..."},
+            {"field_name": "evidence.quote", "verdict": "NOT_SUPPORTED", "reason": "..."},
+        ],
+    }]}
+    body = json.dumps({"value": "PBMCs were thawed.", "sentence_ids": ["S2"], "reason": "..."})
+    client = _RecordingClient(body)
+
+    corrected, _ = await correct_registry(
+        {"flow cytometry": _entry()}, verification, _SOURCE, "Paper", client)
+
+    # The evidence quote really was replaced...
+    assert corrected["flow cytometry"]["evidence"]["quote"] == "PBMCs were thawed."
+    # ...and the platform question was still asked against the quote extraction wrote.
+    platform_prompt = next(p for p in client.prompts if "instrument, chip, kit" in p)
+    assert original_quote in platform_prompt

@@ -1,11 +1,29 @@
 {
   "claim_1": {
-    "claim": "Gene array analysis of whole blood from 15 YF17D-vaccinated individuals in the Montreal cohort at days 0, 3, 7, 10, 14, 28, and 60 after vaccination showed that gene expression modulation peaked at days 3 and 7 after vaccination compared to baseline (day 0).",
+    "claim": "Microarray analysis of whole blood from YF17D-vaccinated individuals in the Montreal cohort on day 0 and days 3, 7, 10, 14, 28, and 60 after vaccination, using LIMMA differential expression analysis, showed that 594 genes changed significantly in at least one comparison versus day 0.",
+    "claim_type": "induction_vs_reference",
+    "assay_method_in_paper": "microarray",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "RNA samples obtained from whole blood of 15 YF17D-vaccinated individuals (from the Montreal cohort) on the day of vaccination (day 0) and at several time points after vaccination (day 3, 7, 10, 14, 28, and 60) were amplified and hybridized onto Illumina chips and analyzed. Expression profiles of 594 genes (Supplemental document 1, available at http://www.jem.org/cgi/content/full/jem.20082292/DC1) were found to change significantly between day 0 and any time point after vaccination (with P < 0.05 and fold change less than −1.3 or >1.3)."
+      },
+      {
+        "type": "text",
+        "section": "Figure 1 caption",
+        "quote": "Figure 1. Vaccination with YF17D induces early gene modulation. Global view of gene modulation in total blood cells after YF17D vaccination, as analyzed by gene array on the Montreal cohort (n = 9–15, depending on the time point). Heat map representation (a) and PCA (b) using the significantly modulated genes, in at least one comparison versus day 0."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 1"
+      }
+    ]
+  },
+  "claim_2": {
+    "claim": "Microarray analysis of whole blood from YF17D-vaccinated individuals in the Montreal cohort on day 0 and days 3, 7, 10, 14, 28, and 60 after vaccination, using heat map representation and principal component analysis, showed that gene expression modulation was greatest at days 3 and 7 among the measured post-vaccination timepoints.",
     "claim_type": "extremum",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "gene array"
-    },
+    "assay_method_in_paper": "microarray",
     "sources": [
       {
         "type": "text",
@@ -23,133 +41,64 @@
       }
     ]
   },
-  "claim_2": {
-    "claim": "Gene array analysis of whole blood from 15 YF17D-vaccinated individuals in the Montreal cohort at days 0, 3, 7, 10, 14, 28, and 60 after vaccination showed that TLR-associated genes (TLR7, MYD88, and IRF7) and IFN-induced genes (IFI27, IFI30, G1P2, G1P3, and OAS1-3) were up-regulated early after vaccination compared to baseline (day 0).",
-    "claim_type": "induction_vs_reference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "gene array"
-    },
-    "sources": [
-      {
-        "type": "text",
-        "section": "Results",
-        "quote": "Some Toll-like receptor (TLR)-associated genes (TLR7, MYD88, and IRF7) were also up-regulated, leading to the activation of the IFN pathway, as monitored by the induction of several IFN-induced genes (IFI27, IFI30, G1P2, G1P3, and OAS1-3; Fig. 3 a and Supplemental document 1)."
-      },
-      {
-        "type": "text",
-        "section": "Figure 3 caption",
-        "quote": "Figure 3. YF17D vaccination stimulates multiple arms of the innate and adaptive immunity. (a–e) Heat map representation of significantly modulated genes, P values listed with each gene indicate the largest (least significant) P value among the significant fold changes. n = 9–15, depending on the time point. The listed genes fall under different functional categories: IFN-induced and TLR-associated genes (a); complement-associated genes (b); macrophage-associated genes (c); NK cell-associated genes (d); and B cell-associated genes (e)."
-      },
-      {
-        "type": "figure",
-        "ref": "Figure 3A"
-      }
-    ]
-  },
-  "claim_3": {
-    "claim": "Gene array analysis of whole blood from 15 YF17D-vaccinated individuals in the Montreal cohort at days 0, 3, 7, 10, 14, 28, and 60 after vaccination showed that complement-associated genes (C1QA, C1QB, C3AR1, and SERPING1) were up-regulated early after vaccination compared to baseline (day 0).",
-    "claim_type": "induction_vs_reference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "gene array"
-    },
-    "sources": [
-      {
-        "type": "text",
-        "section": "Results",
-        "quote": "Components of the complement system (C1QA, C1QB, C3AR1, and SERPING1) were found to be up-regulated in blood cells early after vaccination (Fig. 3 b)."
-      },
-      {
-        "type": "text",
-        "section": "Figure 3 caption",
-        "quote": "Figure 3. YF17D vaccination stimulates multiple arms of the innate and adaptive immunity. (a–e) Heat map representation of significantly modulated genes, P values listed with each gene indicate the largest (least significant) P value among the significant fold changes. n = 9–15, depending on the time point. The listed genes fall under different functional categories: IFN-induced and TLR-associated genes (a); complement-associated genes (b); macrophage-associated genes (c); NK cell-associated genes (d); and B cell-associated genes (e)."
-      },
-      {
-        "type": "figure",
-        "ref": "Figure 3B"
-      }
-    ]
-  },
-  "claim_4": {
-    "claim": "Gene array analysis of whole blood from 15 YF17D-vaccinated individuals in the Montreal cohort at days 0, 3, 7, 10, 14, 28, and 60 after vaccination showed that macrophage/DC-associated genes including CD86, CSF1R, MARCO, and IFI16 were induced significantly by vaccination compared to baseline (day 0).",
-    "claim_type": "induction_vs_reference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "gene array"
-    },
-    "sources": [
-      {
-        "type": "text",
-        "section": "Results",
-        "quote": "A few macrophage/DC-associated genes were induced significantly by the vaccine, including CD86 (a marker of DC maturation), CSF1R, MARCO, and IFI16, which are expressed by cells of the monocyte-macrophage lineage (Fig. 3 c)."
-      },
-      {
-        "type": "text",
-        "section": "Figure 3 caption",
-        "quote": "Figure 3. YF17D vaccination stimulates multiple arms of the innate and adaptive immunity. (a–e) Heat map representation of significantly modulated genes, P values listed with each gene indicate the largest (least significant) P value among the significant fold changes. n = 9–15, depending on the time point. The listed genes fall under different functional categories: IFN-induced and TLR-associated genes (a); complement-associated genes (b); macrophage-associated genes (c); NK cell-associated genes (d); and B cell-associated genes (e)."
-      },
-      {
-        "type": "figure",
-        "ref": "Figure 3C"
-      }
-    ]
-  },
-  "claim_5": {
-    "claim": "Gene array analysis of whole blood from 15 YF17D-vaccinated individuals in the Montreal cohort at days 0, 3, 7, 10, 14, 28, and 60 after vaccination showed that NK cell-associated genes (KIR2DL3, KIR2DL4, PRF1, GNLY, and GZMB) were up-regulated after vaccination compared to baseline (day 0).",
-    "claim_type": "induction_vs_reference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "gene array"
-    },
-    "sources": [
-      {
-        "type": "text",
-        "section": "Results",
-        "quote": "NK cell-associated genes (KIR2DL3, KIR2DL4, PRF1, GNLY, and GZMB) were also up-regulated (Fig. 3 d)."
-      },
-      {
-        "type": "text",
-        "section": "Figure 3 caption",
-        "quote": "Figure 3. YF17D vaccination stimulates multiple arms of the innate and adaptive immunity. (a–e) Heat map representation of significantly modulated genes, P values listed with each gene indicate the largest (least significant) P value among the significant fold changes. n = 9–15, depending on the time point. The listed genes fall under different functional categories: IFN-induced and TLR-associated genes (a); complement-associated genes (b); macrophage-associated genes (c); NK cell-associated genes (d); and B cell-associated genes (e)."
-      },
-      {
-        "type": "figure",
-        "ref": "Figure 3D"
-      }
-    ]
-  },
   "claim_6": {
-    "claim": "Gene array analysis of whole blood from 15 YF17D-vaccinated individuals in the Montreal cohort at days 0, 3, 7, 10, 14, 28, and 60 after vaccination showed that B cell activation-associated genes (BANK1, CD19, IGJ, TNFRSF13B, and TNFRSF17) were modulated after vaccination compared to baseline (day 0).",
+    "claim": "Microarray analysis of PBMCs from the Montreal cohort of 20 volunteers after a single YF17D vaccination, using LIMMA differential-expression analysis, showed that 43 genes encoding ribosomal proteins were down-regulated early after vaccination compared to day 0.",
     "claim_type": "induction_vs_reference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "gene array"
-    },
+    "assay_method_in_paper": "microarray",
     "sources": [
       {
         "type": "text",
         "section": "Results",
-        "quote": "Genes associated with B cell activation (BANK1, CD19, IGJ, TNFRSF13B, and TNFRSF17l; Fig. 3 e) were also modulated."
+        "quote": "Strikingly, we observed that 43 genes encoding ribosomal proteins were down-regulated in PBMCs early after vaccination with YF17D (Supplemental document 1), confirming the findings of a previous study (15)."
+      }
+    ]
+  },
+  "claim_7": {
+    "claim": "qPCR analysis of RNA from independent YF17D vaccination trials in the Montreal cohort, Lausanne cohort (13 volunteers), and Emory cohort (10 volunteers), at day 0 and day 7 after vaccination, showed that most genes up-regulated in the Montreal cohort also had increased fold-change expression in the Lausanne and Emory cohorts compared to baseline.",
+    "claim_type": "induction_vs_reference",
+    "assay_method_in_paper": "qPCR",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "The results illustrated in Fig. 4 and in Fig. S3 indicate that most genes that were up-regulated in the Montreal cohort also showed increased expression in the two other independent trials."
       },
       {
         "type": "text",
-        "section": "Figure 3 caption",
-        "quote": "Figure 3. YF17D vaccination stimulates multiple arms of the innate and adaptive immunity. (a–e) Heat map representation of significantly modulated genes, P values listed with each gene indicate the largest (least significant) P value among the significant fold changes. n = 9–15, depending on the time point. The listed genes fall under different functional categories: IFN-induced and TLR-associated genes (a); complement-associated genes (b); macrophage-associated genes (c); NK cell-associated genes (d); and B cell-associated genes (e)."
+        "section": "Figure 4 caption",
+        "quote": "Figure 4. Heat map of fold change gene expression between day 0 and 7, as measured by qPCR. For a complete heat map of all measured fold changes see Fig. S3."
       },
       {
         "type": "figure",
-        "ref": "Figure 3E"
+        "ref": "Figure 4"
       }
     ]
   },
   "claim_8": {
-    "claim": "Gene array analysis of whole blood from volunteers in the Montreal cohort at day 3 after vaccination showed that inflammasome-associated genes caspase-1 and caspase-5 were up-regulated compared to baseline (day 0).",
+    "claim": "qPCR analysis of RNA from independent YF17D vaccination trials in the Montreal cohort, Lausanne cohort (13 volunteers), and Emory cohort (10 volunteers), at day 0 and day 7 after vaccination, showed that most genes down-regulated in the Montreal cohort also had decreased fold-change expression in the Lausanne and Emory cohorts compared to baseline.",
     "claim_type": "induction_vs_reference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "gene array"
-    },
+    "assay_method_in_paper": "qPCR",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Conversely, most down-regulated genes in the Montreal cohort also showed decreased levels of expression in the samples obtained from the two other trials."
+      },
+      {
+        "type": "text",
+        "section": "Figure 4 caption",
+        "quote": "Figure 4. Heat map of fold change gene expression between day 0 and 7, as measured by qPCR. For a complete heat map of all measured fold changes see Fig. S3."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 4"
+      }
+    ]
+  },
+  "claim_9": {
+    "claim": "Microarray analysis of whole-blood RNA from the Montreal cohort (20 volunteers) at day 3 after YF17D vaccination, using LIMMA differential expression analysis and heat-map display of up-regulation, showed that CASP1 and CASP5 mRNA were up-regulated compared to day 0 baseline.",
+    "claim_type": "induction_vs_reference",
+    "assay_method_in_paper": "microarray",
     "sources": [
       {
         "type": "text",
@@ -159,171 +108,60 @@
       {
         "type": "text",
         "section": "Figure 5 caption",
-        "quote": "Figure 5. YF17D induces expression of genes associated with IL-1β and activates the inflammasome. (a) Heat maps showing the up-regulation of genes encoding inflammasome components and the modulation of other, IL-1β-associated genes."
+        "quote": "Figure 5. YF17D induces expression of genes associated with IL-1β and activates the inflammasome. (a) Heat maps showing the up-regulation of genes encoding inflammasome components and the modulation of other, IL-1β–associated genes."
       },
       {
         "type": "figure",
-        "ref": "Figure 5A"
-      }
-    ]
-  },
-  "claim_9": {
-    "claim": "ELISA analysis of supernatants from monocyte-derived DCs incubated with live, UV-inactivated, or heat-inactivated YF17D showed that live or UV-inactivated YF17D induced markedly increased IL-1β secretion compared to DCs incubated in medium alone.",
-    "claim_type": "induction_vs_reference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "ELISA"
-    },
-    "sources": [
-      {
-        "type": "text",
-        "section": "Results",
-        "quote": "The results show that DCs incubated with live or UV-inactivated YF17D showed a marked increased IL-1β secretion (up to ninefold, compared with DCs incubated in medium alone), whereas heat-inactivated YF17D only triggered a modest secretion of the proinflammatory cytokine (Fig. 5 b and Fig. S4, available at http://www.jem.org/cgi/content/full/jem.20082292/DC1)."
-      },
-      {
-        "type": "text",
-        "section": "Figure 5 caption",
-        "quote": "Figure 5. YF17D induces expression of genes associated with IL-1β and activates the inflammasome. (b) IL-1β production by monocyte-derived DCs incubated with live (YF), UV-inactivated (UV), or heat-inactivated (HI) YF17D, as determined by ELISA."
-      },
-      {
-        "type": "figure",
-        "ref": "Figure 5B"
+        "ref": "Figure 5"
       }
     ]
   },
   "claim_10": {
-    "claim": "ELISA analysis of supernatants from monocyte-derived DCs incubated with live, UV-inactivated, or heat-inactivated YF17D showed that heat-inactivated YF17D induced only modest IL-1β secretion compared to DCs incubated in medium alone.",
+    "claim": "Microarray analysis of whole-blood RNA from the Montreal cohort (20 volunteers) at an unspecified post-vaccination timepoint after YF17D vaccination, using LIMMA differential expression analysis, probe-level consideration restricted to probes targeting all transcripts for IL-1R2 and IL-1RN, and heat-map display of modulation, showed that IL-1R2 and IL-1RN mRNA were modulated compared to day 0 baseline.",
     "claim_type": "induction_vs_reference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "ELISA"
-    },
+    "assay_method_in_paper": "microarray",
     "sources": [
       {
         "type": "text",
         "section": "Results",
-        "quote": "The results show that DCs incubated with live or UV-inactivated YF17D showed a marked increased IL-1β secretion (up to ninefold, compared with DCs incubated in medium alone), whereas heat-inactivated YF17D only triggered a modest secretion of the proinflammatory cytokine (Fig. 5 b and Fig. S4, available at http://www.jem.org/cgi/content/full/jem.20082292/DC1)."
+        "quote": "Two other genes related to IL-1β production and signaling that were modulated by the vaccine are IL-1R2 and -1RN."
       },
       {
         "type": "text",
         "section": "Figure 5 caption",
-        "quote": "Figure 5. YF17D induces expression of genes associated with IL-1β and activates the inflammasome. (b) IL-1β production by monocyte-derived DCs incubated with live (YF), UV-inactivated (UV), or heat-inactivated (HI) YF17D, as determined by ELISA."
+        "quote": "(a) Heat maps showing the up-regulation of genes encoding inflammasome components and the modulation of other, IL-1β–associated genes. For IL-1R2 and -1RN only probes targeting all transcripts were considered."
       },
       {
         "type": "figure",
-        "ref": "Figure 5B"
+        "ref": "Figure 5"
       }
     ]
   },
   "claim_11": {
-    "claim": "Flow cytometry analysis of PBMCs from 6 volunteers at days 0, 3, 7, 10, 14, and 28 after YF17D vaccination showed that frequencies of Ki67+ CD4+CD8− cells and Ki67+ CD4−CD8+ cells increased within the first 14 days after vaccination compared to baseline (day 0).",
+    "claim": "Microarray analysis of whole-blood RNA from the Lausanne cohort (13 volunteers) at an unspecified post-vaccination timepoint after YF17D vaccination, using LIMMA differential expression analysis, probe-level consideration restricted to probes targeting all transcripts for IL-1R2 and IL-1RN, and heat-map display of modulation, showed that CASP1, IL-1R2, and IL-1RN mRNA were similarly modulated compared to day 0 baseline.",
     "claim_type": "induction_vs_reference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "flow cytometry"
-    },
+    "assay_method_in_paper": "microarray",
     "sources": [
       {
         "type": "text",
         "section": "Results",
-        "quote": "An increase in frequencies of Ki67+ cells in the CD4+CD8− (2.3-fold increase; P = 0.0049) and the CD4−CD8+ (4.7-fold increase; P = 0.0157) populations occurred within the first 14 d after YF17D vaccination, and then decreased to insignificant levels."
-      }
-    ]
-  },
-  "claim_12": {
-    "claim": "Flow cytometry analysis of PBMCs from 6 volunteers at days 0, 3, 7, 10, 14, and 28 after YF17D vaccination showed that frequencies of Ki67+ NK cells and Ki67+ non-T cell PBMCs containing monocytes and B cells increased within the first 7 days after vaccination compared to baseline (day 0).",
-    "claim_type": "induction_vs_reference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "flow cytometry"
-    },
-    "sources": [
-      {
-        "type": "text",
-        "section": "Results",
-        "quote": "The Ki67+ NK cell population (CD3−CD8Dim; 1.6-fold; P = 0.0474) and non–T cell PBMCs containing monocytes and B cells (CD3−CD4−CD8−; 1.9-fold; P = 0.009) also increased in frequency within the first 7 d and reached insignificant levels thereafter."
-      }
-    ]
-  },
-  "claim_16": {
-    "claim": "Cytometric bead assay analysis of PBMC supernatants from YF17D-vaccinated volunteers stimulated with YF17D-derived peptide pools at day 60 after vaccination showed that both Th1 and Th2 cytokine secretion profiles were induced in most volunteers compared to unstimulated conditions.",
-    "claim_type": "induction_vs_reference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "cytometric bead assay (CBA)"
-    },
-    "sources": [
-      {
-        "type": "text",
-        "section": "Results",
-        "quote": "In most volunteers (12 out of 15), both Th1 and Th2 cytokine secretion profiles were induced by YF17D peptide pools."
+        "quote": "All of these genes, except for caspase-5, were also similarly modulated in the Lausanne cohort."
       },
       {
         "type": "text",
-        "section": "Figure 6 caption",
-        "quote": "Figure 6. YF17D induces a mixed Th1/Th2 response. (a) Day 60 PBMCs were stimulated with the 22 peptide pools and assayed by CFSE labeling for their proliferative response. Bar graphs show data for six selected volunteers, and the dataset for all the volunteers can be found in Fig. S6 (c and d). At 24 h of culture, supernatants were analyzed by CBA to determine the Th1/Th2 cytokine secretion profile in response to each pool."
+        "section": "Figure 5 caption",
+        "quote": "(a) Heat maps showing the up-regulation of genes encoding inflammasome components and the modulation of other, IL-1β–associated genes. For IL-1R2 and -1RN only probes targeting all transcripts were considered."
       },
       {
         "type": "figure",
-        "ref": "Figure 6"
+        "ref": "Figure 5"
       }
     ]
   },
-  "claim_17": {
-    "claim": "Polychromatic flow cytometry analysis of PBMCs from vaccinated volunteers at day 28 after vaccination showed that YF17D-specific CD4+CD154+ T cells expressed IL-2 alone, IFN-γ alone, or both IL-2 and IFN-γ after peptide stimulation compared to unstimulated cells.",
+  "claim_21": {
+    "claim": "Flow cytometry analysis of DC/T cell co-cultures from YF-naive individuals after 14 d co-culture, using short restimulation with autologous DC targets left untouched, pulsed with killed YF17D, or infected with live YF17D, showed that live or UV-inactivated YF17D-pulsed DCs primed a strong antigen-specific response with CD154 and IFN-γ expression in live CD4+-gated events compared to untouched autologous DC targets.",
     "claim_type": "induction_vs_reference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "flow cytometry"
-    },
-    "sources": [
-      {
-        "type": "text",
-        "section": "Results",
-        "quote": "As illustrated in Fig. 7 a, 35.2% of CD4+CD154+ cells expressed IL-2 alone, 8.6% expressed IFN-γ alone, and 29.5% expressed both IL-2 and IFN-γ."
-      },
-      {
-        "type": "text",
-        "section": "Figure 7 caption",
-        "quote": "Figure 7. YF17D vaccination induces specific CD4+ T cells of mixed T helper phenotype. (a) PBMCs from YF17D-vaccinated volunteers (day 28 after vaccination) were stimulated with a group of three immunostimulatory YF17D-derived peptides pools, and then stained with antibodies against CD4 (surface) and CD154, IL-2, and IFN-g (intracellular)."
-      },
-      {
-        "type": "figure",
-        "ref": "Figure 7A"
-      }
-    ]
-  },
-  "claim_18": {
-    "claim": "Flow cytometry analysis of PBMCs from four volunteers at day 365 after vaccination showed that both Th1 and Th2 central memory T cells could be detected after stimulation with YF17D peptide pools compared to background stimulated-only samples.",
-    "claim_type": "induction_vs_reference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "flow cytometry"
-    },
-    "sources": [
-      {
-        "type": "text",
-        "section": "Results",
-        "quote": "However, both Th1 and Th2 central memory T cells could be detected in all four volunteers tested."
-      },
-      {
-        "type": "text",
-        "section": "Figure 7 caption",
-        "quote": "Figure 7. YF17D vaccination induces specific CD4+ T cells of mixed T helper phenotype. (b) FACS analysis of PBMCs from day 365 after vaccination. Cells from four volunteers were stimulated (S) for with immunostimulatory YF17D peptide pools, and then restimulated (RS) or not with the same peptide pools before staining. The data were analyzed according to the gating strategy shown in Fig. S7, and are expressed as the percentage of central memory CD4+ T cells (CD45RA−CCR7+) that express the marker for recent activation CD154, and that are either Th1 or Th2 in the RS samples, over background (S)."
-      },
-      {
-        "type": "figure",
-        "ref": "Figure 7B"
-      }
-    ]
-  },
-  "claim_19": {
-    "claim": "Flow cytometry analysis of DC/T cell co-cultures from YF-naive individuals showed that DCs pulsed with live or UV-inactivated YF17D primed a strong antigen-specific response of naive T cells compared to no-antigen conditions.",
-    "claim_type": "induction_vs_reference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "flow cytometry"
-    },
+    "assay_method_in_paper": "flow cytometry",
     "sources": [
       {
         "type": "text",
@@ -333,21 +171,18 @@
       {
         "type": "text",
         "section": "Figure 8 caption",
-        "quote": "Figure 8. YF17D elicits robust and diverse primary T helper cell responses in DC/T cell co-cultures. (a and b) Purified T helper cells were mixed with DCs that had been incubated with live or UV-inactivated YF17D. After 14 d, the cells were harvested and evaluated by flow cytometry for cytokine and CD154 expression after a short restimulation with autologous DCs targets that had been left untouched, pulsed with killed YF17D, or infected with live YF17D."
+        "quote": "(a and b) Purified T helper cells were mixed with DCs that had been incubated with live or UV-inactivated YF17D. After 14 d, the cells were harvested and evaluated by flow cytometry for cytokine and CD154 expression after a short restimulation with autologous DCs targets that had been left untouched, pulsed with killed YF17D, or infected with live YF17D. All data plots show live CD4+-gated events. These are representative data of experiments done on cells from at least 10 volunteers."
       },
       {
         "type": "figure",
-        "ref": "Figure 8A"
+        "ref": "Figure 8"
       }
     ]
   },
-  "claim_20": {
-    "claim": "Flow cytometry analysis of DC/T cell co-cultures from YF-naive individuals showed that YF17D-pulsed DCs stimulated high numbers of antigen-specific Th2 cells expressing IL-5 and IL-13 upon restimulation with live or inactivated virus compared to no-antigen conditions.",
+  "claim_22": {
+    "claim": "Flow cytometry analysis of DC/T cell co-cultures from YF-naive individuals after 14 d co-culture, using short restimulation with autologous DC targets left untouched, pulsed with killed YF17D, or infected with live YF17D, showed that YF17D-pulsed DCs stimulated antigen-specific Th2 cells expressing IL-5 and IL-13 in live CD4+-gated events compared to untouched autologous DC targets.",
     "claim_type": "induction_vs_reference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "flow cytometry"
-    },
+    "assay_method_in_paper": "flow cytometry",
     "sources": [
       {
         "type": "text",
@@ -357,21 +192,18 @@
       {
         "type": "text",
         "section": "Figure 8 caption",
-        "quote": "Figure 8. YF17D elicits robust and diverse primary T helper cell responses in DC/T cell co-cultures. (a and b) Purified T helper cells were mixed with DCs that had been incubated with live or UV-inactivated YF17D. After 14 d, the cells were harvested and evaluated by flow cytometry for cytokine and CD154 expression after a short restimulation with autologous DCs targets that had been left untouched, pulsed with killed YF17D, or infected with live YF17D."
+        "quote": "(a and b) Purified T helper cells were mixed with DCs that had been incubated with live or UV-inactivated YF17D. After 14 d, the cells were harvested and evaluated by flow cytometry for cytokine and CD154 expression after a short restimulation with autologous DCs targets that had been left untouched, pulsed with killed YF17D, or infected with live YF17D. All data plots show live CD4+-gated events. These are representative data of experiments done on cells from at least 10 volunteers."
       },
       {
         "type": "figure",
-        "ref": "Figure 8B"
+        "ref": "Figure 8"
       }
     ]
   },
-  "claim_21": {
-    "claim": "Multiplex cytokine analysis of supernatants from MIMIC DC/T cell co-cultures showed that when YF17D was used as pulse and recall antigen, the cells produced high levels of IL-2, IFN-γ, IL-13, and IL-5, but not IL-10, compared to co-cultures with no recall antigen.",
+  "claim_23": {
+    "claim": "Multiplex cytokine analysis of culture supernatants from YF-naive individuals after 14 d DC/T cell co-culture showed that IL-2, IFN-γ, IL-13, and IL-5 levels were high when YF17D was used as pulse and recall antigen compared to co-cultures with no recall antigen.",
     "claim_type": "induction_vs_reference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "multiplex cytokine analysis"
-    },
+    "assay_method_in_paper": "multiplex cytokine analysis",
     "sources": [
       {
         "type": "text",
@@ -381,35 +213,32 @@
       {
         "type": "text",
         "section": "Figure 8 caption",
-        "quote": "Figure 8. YF17D elicits robust and diverse primary T helper cell responses in DC/T cell co-cultures. (c) Alternatively, the culture supernatants were harvested and evaluated by a multiplex cytokine analysis."
+        "quote": "(c) Alternatively, the culture supernatants were harvested and evaluated by a multiplex cytokine analysis. Data representative of experiments done on cells from two volunteers."
       },
       {
         "type": "figure",
-        "ref": "Figure 8C"
+        "ref": "Figure 8"
       }
     ]
   },
-  "claim_22": {
-    "claim": "Microarray analysis of cells from MIMIC co-cultures harvested at day 7 versus day 0 showed that eight transcriptional nodes of downstream target genes, including ETS2, STAT1, IRF1, IRF7, IRF8, GATA1, LMO2, and JUN, were consistently identified after YF17D stimulation compared to baseline (day 0).",
+  "claim_24": {
+    "claim": "Multiplex cytokine analysis of culture supernatants from YF-naive individuals after 14 d DC/T cell co-culture showed that IL-10 was not produced at high levels when YF17D was used as pulse and recall antigen compared to co-cultures with no recall antigen.",
     "claim_type": "induction_vs_reference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "gene array"
-    },
+    "assay_method_in_paper": "multiplex cytokine analysis",
     "sources": [
       {
         "type": "text",
         "section": "Results",
-        "quote": "Gene modulation in response to the antigen (day 7 vs. 0) was assessed by microarray analysis. In total, eight nodes of transcriptional regulation of downstream target genes were consistently identified; ETS2, STAT1, IRF1, IRF7, IRF8, GATA1, LMO2, and JUN (Fig. 9)."
+        "quote": "When YF17D was used as pulse and recall antigen, the cells produced high levels of all the cytokines measured except IL-10, compared with co-cultures with no recall antigen."
       },
       {
         "type": "text",
-        "section": "Figure 9 caption",
-        "quote": "Figure 9. Consensus transcriptional network of genes differentially expressed on day 7 as compared with day 0. Network representation of inferred transcription factors and predicted target genes that are consistently modulated in at least two out of three datasets, with the third dataset not being contradictory."
+        "section": "Figure 8 caption",
+        "quote": "(c) Alternatively, the culture supernatants were harvested and evaluated by a multiplex cytokine analysis. Data representative of experiments done on cells from two volunteers."
       },
       {
         "type": "figure",
-        "ref": "Figure 9"
+        "ref": "Figure 8"
       }
     ]
   }

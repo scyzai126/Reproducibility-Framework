@@ -183,3 +183,104 @@ def test_embedding_candidates_are_all_generic(monkeypatch):
 
     assert candidates
     assert all(assay_obi_mapper._is_generic_assay_label(c["label"]) for c in candidates)
+
+
+# ── Extraction confidence vs OBI confidence ───────────────────────────────────
+
+def _no_step3(monkeypatch):
+    """Stub the embedding+LLM fallback so a deliberately unmatchable name resolves to None.
+
+    Without this the unresolved branch reaches OpenAI, and the suite's stub API key 401s.
+    """
+    from app.agent import assay_obi_mapper
+
+    monkeypatch.setattr(
+        assay_obi_mapper, "_embedding_llm_match", lambda *a, **k: None
+    )
+
+
+
+def test_enrich_writes_obi_confidence_and_never_the_bare_confidence_key():
+    """`confidence` means the *extraction* confidence in a registry; the OBI score is its own key.
+
+    scripts/map_assays_to_obi.py, data/claims/all_assays_full_OBI.json and the UI were already
+    on `obi_confidence`; enrich_assays_with_obi was the last path still overwriting.
+    """
+    enriched = enrich_assays_with_obi({"ELISA": {"sample_type": "serum", "readouts": "titers"}})
+
+    assert enriched["ELISA"]["obi_confidence"] == "high"
+    assert "confidence" not in enriched["ELISA"]
+
+
+def test_extraction_confidence_survives_enrichment_on_both_branches(monkeypatch):
+    _no_step3(monkeypatch)
+    assays = {
+        "ELISA": {"sample_type": "serum", "readouts": "titers", "extraction_confidence": 0.98},
+        "Unknown Custom Assay": {"sample_type": "serum", "readouts": "x", "extraction_confidence": 0.45},
+    }
+
+    enriched = enrich_assays_with_obi(assays)
+
+    assert enriched["ELISA"]["extraction_confidence"] == 0.98
+    assert enriched["ELISA"]["obi_id"] == "OBI:0000661"
+    assert enriched["Unknown Custom Assay"]["extraction_confidence"] == 0.45
+    assert enriched["Unknown Custom Assay"]["resource"] == "unresolved"
+
+
+def test_an_unresolved_entry_never_inherits_a_stale_confidence_as_its_obi_score(monkeypatch):
+    """The old code used setdefault, so a registry's own `confidence` survived as the OBI score."""
+    _no_step3(monkeypatch)
+    enriched = enrich_assays_with_obi({"Unknown Custom Assay": {"confidence": 0.9}})
+
+    assert enriched["Unknown Custom Assay"]["resource"] == "unresolved"
+    assert enriched["Unknown Custom Assay"]["obi_confidence"] is None
+    assert enriched["Unknown Custom Assay"]["confidence"] == 0.9
+
+
+# ── Step 2 falls back to the lexical key ──────────────────────────────────────
+
+def test_step2_normalizes_the_paper_name_when_no_normalized_name_is_supplied():
+    """Registries without a normalized_name used to skip step 2 entirely and pay for step 3.
+
+    "Flow Cytometry Analysis" reached embedding_llm at 0.7496 on SDY1119; the lexical key
+    "flow cytometry" is an exact hit. No API call is made on this path.
+    """
+    mapped = map_assay_to_obi("Flow Cytometry Analysis", "")
+
+    assert mapped["obi_id"] == "OBI:0000916"
+    assert mapped["resource"] == "exact_normalized"
+    assert mapped["confidence"] == "high"
+
+
+def test_the_lexical_key_also_fires_when_normalized_name_merely_echoes_the_key():
+    """enrich_assays_with_obi passes the registry key back in as normalized_name."""
+    enriched = enrich_assays_with_obi({"Flow Cytometry Analysis": {"sample_type": "PBMCs"}})
+
+    assert enriched["Flow Cytometry Analysis"]["obi_id"] == "OBI:0000916"
+    assert enriched["Flow Cytometry Analysis"]["resource"] == "exact_normalized"
+
+
+def test_the_lexical_key_is_kept_out_of_step3(monkeypatch):
+    """Lowercasing adds no retrieval signal, so step 3 still queries and shows the paper's wording."""
+    from app.agent import assay_obi_mapper
+
+    seen = {}
+
+    monkeypatch.setattr(
+        assay_obi_mapper,
+        "_top_k_candidates",
+        lambda query, k=10, allowed_ids=None: (
+            seen.__setitem__("query", query),
+            [{"id": "OBI:1", "label": "x", "similarity": 0.5}],
+        )[1],
+    )
+    monkeypatch.setattr(
+        assay_obi_mapper,
+        "_llm_pick",
+        lambda assay_name, candidates, sample_type="", readouts="": seen.__setitem__("shown", assay_name),
+    )
+
+    assay_obi_mapper.map_assay_to_obi("Von Mises Stress Analysis", "")
+
+    assert seen["query"] == "Von Mises Stress Analysis"
+    assert seen["shown"] == "Von Mises Stress Analysis"

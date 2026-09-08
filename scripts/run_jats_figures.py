@@ -171,8 +171,8 @@ async def main() -> None:
 
     print(f"[{args.study}] Step 2: structuring {len(claims)} claims into groups…")
     groups = await _run_step2(client, claims)
-    (out_dir / "groups.json").write_text(json.dumps(groups, indent=2, ensure_ascii=False))
-    print(f"[{args.study}] saved groups.json")
+    (out_dir / "claims_groups.json").write_text(json.dumps(groups, indent=2, ensure_ascii=False))
+    print(f"[{args.study}] saved claims_groups.json")
     print(f"[{args.study}] Done.")
 
 

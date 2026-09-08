@@ -121,39 +121,35 @@ async def test_a_cold_paper_runs_all_three_rounds(paper):
 
 
 @pytest.mark.asyncio
-async def test_a_second_request_for_the_same_paper_spends_nothing(paper):
-    await assay_report("111", "SDY1", _Client(_extraction_body(), _verification_body()))
-    client = _Client("SHOULD NOT BE CALLED")
+async def test_a_second_request_for_the_same_paper_pays_again(paper):
+    """Nothing is served from disk, so a repeat costs what the first run cost."""
+    first = _Client(_extraction_body(), _verification_body())
+    await assay_report("111", "SDY1", first)
+    second = _Client(_extraction_body(), _verification_body())
 
-    result = await assay_report("111", "SDY1", client)
+    result = await assay_report("111", "SDY1", second)
 
-    assert client.calls == 0
-    assert result["meta"]["llm_calls"] == 0
-    assert {r["source"] for r in result["rounds"].values()} == {"cache"}
-    assert result["assays"]["flow cytometry"]["platform"] == "LSRII"
-
-
-@pytest.mark.asyncio
-async def test_refresh_re_extracts_and_re_verifies(paper):
-    await assay_report("111", "SDY1", _Client(_extraction_body(), _verification_body()))
-    client = _Client(_extraction_body(), _verification_body())
-
-    result = await assay_report("111", "SDY1", client, refresh=True)
-
-    assert client.calls == 2
-    assert result["rounds"]["extract"]["source"] == "extracted"
+    assert second.calls == first.calls == 2
+    assert result["meta"]["llm_calls"] == 2
+    assert [r["source"] for r in result["rounds"].values()] == [
+        "extracted", "verified", "corrected"]
 
 
 @pytest.mark.asyncio
-async def test_a_fresh_registry_invalidates_a_stored_verification(paper):
-    """The stored report judged different entries, so reusing it would misattribute verdicts."""
-    (paper).mkdir(parents=True)
+async def test_a_stored_verification_is_never_served_back(paper):
+    """It judged whatever the previous run extracted, and this run extracts again.
+
+    This is why round 1's cache could not be removed on its own: the rounds are reusable
+    together or not at all.
+    """
+    paper.mkdir(parents=True)
     (paper / "assays_verification.json").write_text('{"summary": {}, "results": []}')
     client = _Client(_extraction_body(), _verification_body())
 
-    result = await assay_report("111", "SDY1", client, refresh=True)
+    result = await assay_report("111", "SDY1", client)
 
     assert result["rounds"]["verify"]["source"] == "verified"
+    assert result["verification"]["results"], "the stored empty report was served back"
 
 
 @pytest.mark.asyncio
@@ -172,11 +168,10 @@ async def test_verification_can_be_skipped(paper):
 # ── the free check runs regardless ────────────────────────────────────────────
 
 @pytest.mark.asyncio
-async def test_the_quote_check_runs_on_a_cached_answer_too(paper):
+async def test_the_quote_check_runs_on_every_answer(paper):
     """It costs nothing and does not depend on a model's opinion, so it is never skipped."""
-    await assay_report("111", "SDY1", _Client(_extraction_body(), _verification_body()))
-
-    result = await assay_report("111", "SDY1", _Client("UNUSED"))
+    result = await assay_report("111", "SDY1",
+                                _Client(_extraction_body(), _verification_body()))
 
     assert result["quote_check"]["verified"] == 1
     assert result["quote_check"]["missing"] == 0
@@ -306,16 +301,44 @@ async def test_the_run_writes_a_benchmark_registry_beside_the_full_one(paper):
 
 
 @pytest.mark.asyncio
-async def test_the_benchmark_registry_is_rewritten_on_a_cached_run(paper):
-    """Written on every request, not only a paid one: a benchmark file that lagged assays.json
-    would be worse than none, because nothing about it would say it was stale."""
-    client = _Client(_extraction_body(), _verification_body())
-    await assay_report("111", "SDY1", client)
+async def test_the_benchmark_registry_is_rewritten_on_every_run(paper):
+    """A benchmark file that lagged assays.json would be worse than none, because nothing
+    about it would say it was stale."""
+    await assay_report("111", "SDY1", _Client(_extraction_body(), _verification_body()))
     (paper / "assays_benchmark.json").unlink()
-    spent = client.calls
 
-    result = await assay_report("111", "SDY1", client)
+    result = await assay_report("111", "SDY1",
+                                _Client(_extraction_body(), _verification_body()))
 
-    assert client.calls == spent, "a cached run must not spend anything"
     assert (paper / "assays_benchmark.json").exists()
     assert result["meta"]["benchmark_path"].endswith("assays_benchmark.json")
+
+
+# ── every file describes one run ──────────────────────────────────────────────
+
+@pytest.mark.asyncio
+async def test_the_precorrection_snapshot_describes_the_run_that_wrote_it(paper):
+    """Not whichever run happened to be first.
+
+    promote_registry writes the snapshot only when absent, which was correct while a finished
+    paper was served from cache -- the first extraction was the only unrepaired version there
+    would ever be. With every run re-extracting, that guard alone would pin the file forever.
+    """
+    await assay_report("111", "SDY1", _Client(_extraction_body(), _verification_body()))
+    second = json.dumps({"ELISA": {**_ENTRY, "name_in_paper": "ELISA"}})
+
+    await assay_report("111", "SDY1", _Client(second, _verification_body()))
+
+    snapshot = json.loads((paper / "assays_precorrection.json").read_text())
+    assert list(snapshot) == ["ELISA"]
+
+
+@pytest.mark.asyncio
+async def test_a_stale_rejected_file_does_not_survive_a_run_that_rejects_nothing(paper):
+    """Left behind, it would read as this run's findings."""
+    paper.mkdir(parents=True)
+    (paper / "assays_rejected.json").write_text('{"gone": {"entry": {}, "reason": "old"}}')
+
+    await assay_report("111", "SDY1", _Client(_extraction_body(), _verification_body()))
+
+    assert not (paper / "assays_rejected.json").exists()

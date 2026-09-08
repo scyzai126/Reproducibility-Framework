@@ -1,5 +1,5 @@
 """Run the group-structuring step (classify_groups.txt) against an existing
-claims_noassay.json file, producing groups.json.
+claims_noassay.json file, producing claims_groups.json.
 
 Usage:
     python scripts/run_groups_noassay.py <claims_json_path> <out_dir>
@@ -40,13 +40,20 @@ async def run_group_step(claims: dict, client) -> dict:
         val = result.get(key, {})
         val.setdefault("claim", claims[key]["claim"])
         val.setdefault("sources", claims[key].get("sources", []))
-        # claim_type is carried through from the input claims rather than asked of the
-        # model: claim_filter already selected on this value, so a re-derived one could
-        # disagree with the filter that let the claim through. The model now SEES the field
-        # in its input, so it may echo one back — discard that before merging, or `**val`
-        # would override the inherited value and quietly break the chain.
+        # claim_type and assay_method are carried through from the input claims rather than
+        # asked of the model: claim_filter already selected on claim_type, so a re-derived
+        # one could disagree with the filter that let the claim through, and the assay is
+        # already settled upstream as `assay_method_in_paper` — re-extracting it from the
+        # claim sentence would let the wording drift from the registry the OBI mapping is
+        # built on. The model may echo either field back, so discard those before merging:
+        # `**val` would otherwise override the inherited values and quietly break the chain.
         val.pop("claim_type", None)
-        groups[key] = {"claim_type": claims[key].get("claim_type"), **val}
+        val.pop("assay_method", None)
+        groups[key] = {
+            "claim_type": claims[key].get("claim_type"),
+            "assay_method": claims[key].get("assay_method_in_paper"),
+            **val,
+        }
         print(f"  [{i}/{len(claim_keys)}] {key} done")
     return groups
 
@@ -58,7 +65,7 @@ async def main(claims_path: Path, out_dir: Path) -> None:
     client = _get_client()
     groups = await run_group_step(claims, client)
 
-    out_path = out_dir / "groups.json"
+    out_path = out_dir / "claims_groups.json"
     out_path.write_text(json.dumps(groups, indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"\nSaved {out_path}")
 

@@ -21,15 +21,6 @@ only proximity ties them, you do not have it — answer `null`.
 **Use ONLY the supplied source text.** No external biomedical knowledge, no common laboratory
 practice, no assumption that a method is standard.
 
-## The assay
-
-Name as the paper writes it: {assay_name}
-{locator}
-
-## The question
-
-{question}
-
 ## Output
 
 Return ONLY valid JSON in exactly this shape — no prose, no markdown fences:
@@ -53,4 +44,15 @@ ORIGINAL SOURCE TEXT:
 
 {source_text}
 
-Answer the question above for this assay. Return JSON only.
+---
+
+## The assay
+
+Name as the paper writes it: {assay_name}
+{locator}
+
+## The question
+
+{question}
+
+Answer the question above for this assay, using only the source text. Return JSON only.

@@ -117,6 +117,18 @@ the Results section. If the pass architecture is worth keeping for its within-pa
 is to change what it is fed — attach supplementary-figure paragraphs, and add a sweep pass over
 paragraphs that reference no main panel.
 
+## Status
+
+Settled 2026-09-08 in favour of reading the paper whole, but not by Arm A: the production
+path is now `scripts/run_claim_doc.py`, which feeds `jats_parser.parse_jats_xml` output —
+cleaned JATS text, not the PDF — to the five passes, keeping pass 1's legend blinding by
+withholding the whole `--- Figures ---` block instead of one panel's legend.
+
+The panel architecture this compared against has been deleted (`split_panels`, `run_panel`,
+`pdf_panels.py`, `run_claim_v7.py`, the v5/v6/v7 prompts). **`scripts/exp_run_arm_b.py`
+went with it**, so the Arm B command below no longer runs; its `arm_B/` outputs and scores
+are kept as the record. Arm A's script still exists.
+
 ## Reproducing
 
 ```bash

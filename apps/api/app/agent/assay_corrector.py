@@ -29,6 +29,7 @@ The registry on disk is never modified. The corrected registry is a new file, an
 change carries its provenance, so an extracted value and a repaired one stay distinguishable.
 """
 
+import asyncio
 import json
 import logging
 from pathlib import Path
@@ -37,6 +38,7 @@ from openai import AsyncOpenAI
 
 from app.agent.assay_verifier import (
     CONTRADICTED,
+    MAX_CONCURRENT_CALLS,
     REJECT,
     SUPPORTED,
     check_quote_verbatim,
@@ -313,28 +315,50 @@ async def correct_registry(
     paper_title: str,
     client: AsyncOpenAI,
     model: str = settings.OPENAI_MODEL,
+    max_concurrency: int = MAX_CONCURRENT_CALLS,
 ) -> tuple[dict, list[dict]]:
     """Re-extract every flagged field across a registry. One call per flagged field.
+
+    The calls run concurrently, bounded by `max_concurrency`, and every one of them reads the
+    entry as the extraction left it -- see the comment on the plan below.
 
     Returns (corrected registry, per-assay correction records). The input registry is not
     mutated -- entries are copied before anything is written to them.
     """
     by_id = {r.get("assay_id"): r for r in (verification.get("results") or [])}
+    entries = {key: json.loads(json.dumps(original))  # deep copy; entries nest evidence
+               for key, original in assays.items()}
+    plan = [(key, group) for key in assays for group in flagged_groups(by_id.get(key, {}))]
+
+    print(f"{len(plan)} flagged field(s) to re-extract across {len(assays)} assay(s), "
+          f"up to {max(1, max_concurrency)} at a time...")
+
+    # Every call is asked against the *unedited* entry, and nothing is written until they
+    # have all come back. That is what makes them safe to run at once, and it also pins a
+    # sequencing the old nested loop left to chance: `_locator` reads the evidence quote, so
+    # a repaired evidence field could otherwise change the prompt of a field corrected after
+    # it. `_QUESTIONS` happens to order evidence last, so this preserves today's behaviour
+    # rather than changing it -- but it no longer depends on that ordering holding.
+    semaphore = asyncio.Semaphore(max(1, max_concurrency))
+
+    async def _ask(key: str, group: str) -> tuple[object, str | None]:
+        async with semaphore:
+            return await correct_field(entries[key], group, source_text, paper_title,
+                                       client, model)
+
+    answers = dict(zip(plan, await asyncio.gather(*(_ask(k, g) for k, g in plan))))
+
+    # Applied in registry order, one assay at a time, so the written entry and the printed
+    # log are deterministic no matter how the calls above interleaved.
     corrected: dict = {}
     records: list[dict] = []
-
-    total = sum(len(flagged_groups(by_id.get(k, {}))) for k in assays)
-    print(f"{total} flagged field(s) to re-extract across {len(assays)} assay(s)...")
-
     for key, original in assays.items():
-        entry = json.loads(json.dumps(original))  # deep copy; entries nest evidence
+        entry = entries[key]
         result = by_id.get(key, {})
-        groups = flagged_groups(result)
         changes: list[dict] = []
 
-        for group in groups:
-            blind, error = await correct_field(entry, group, source_text, paper_title,
-                                               client, model)
+        for group in flagged_groups(result):
+            blind, error = answers[(key, group)]
             if error:
                 changes.append({"field": group, "action": "ERROR", "error": error})
                 print(f"  {key} / {group}: ERROR")

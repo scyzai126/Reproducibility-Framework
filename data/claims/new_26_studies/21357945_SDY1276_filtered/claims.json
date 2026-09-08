@@ -1,70 +1,46 @@
 {
   "claim_1": {
-    "claim": "Microarray analysis of peripheral blood cells from 92 healthy male adults of self-reported Caucasian ancestry ages 18–40 years at days 0, 1, 3, and 14 after trivalent influenza vaccination (day 0), using a linear mixed-effects analysis of variance model, showed that expression of genes involved in interferon signaling, positive IL-6 regulation, and antigen processing and presentation increased within 24 hours after vaccination (day 1) compared to baseline (day 0).",
-    "claim_type": "induction_vs_reference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "microarray"
-    },
+    "claim": "Microarray analysis of whole blood from 92 healthy male individuals of self-reported Caucasian ancestry aged 18–40 years, sampled before and on days 1, 3, and 14 after day-0 influenza vaccination, using linear mixed-effects analysis and regression with the titer response index (TRI), showed that the abundance levels of 494 transcripts were significantly associated with TRI in all subjects.",
+    "claim_type": "association",
+    "assay_method_in_paper": "microarray",
     "sources": [
       {
         "type": "text",
         "section": "Results",
-        "quote": "As expected, the early phase of transcriptional activation was marked by upregulation of genes involved in multiple immune processes. The data suggest early expression of genes whose products act on host viral sensing via Toll-like receptors TLR7 and TLR8. Overall, there were significantly increased transcript levels for genes participating in antiviral defense response (eg, GO:0009615), cellular activation (eg, GO:0001775), and cellular differentiation (eg, GO:0045582). Activation of antigen processing and presentation is implied by the increased expression of major histocompatibility complex (MHC) Class I genes (eg, GO:002474). Associations were most significant for the interferon response pathway (GO:0005062, GO:0034341, and GO:0034340) when compared with other cytokines."
-      },
-      {
-        "type": "text",
-        "section": "Figure 1 caption",
-        "quote": "Figure 1. The human transcriptional response to trivalent influenza vaccination shows three distinct patterns of gene expression. (A) Heatmap illustrating the patterns of expression for all differentially expressed genes. Yellow indicates a higher value. Three distinct patterns of expression are evident: early upregulation, late upregulation and downregulation. (C) Selection of the most important GO terms for each expression pattern. Higher z scores indicate that a GO term is more likely to be enriched in a given set of differentially expressed genes."
-      },
-      {
-        "type": "figure",
-        "ref": "Figure 1C"
+        "quote": "We found that the abundance level of 494 transcripts signiﬁ- cantly correlated with the TRI (Dataset 8)."
       }
     ]
   },
   "claim_2": {
-    "claim": "Microarray analysis of peripheral blood cells from 92 healthy male adults of self-reported Caucasian ancestry ages 18–40 years at days 0, 1, 3, and 14 after trivalent influenza vaccination (day 0), using a linear mixed-effects analysis of variance model, showed that the maximum expression change occurred on day 1 compared to days 0, 3, and 14.",
-    "claim_type": "extremum",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "microarray"
-    },
+    "claim": "Microarray analysis of whole blood from 92 healthy male individuals of self-reported Caucasian ancestry aged 18–40 years, sampled before and on days 1 and 3 after day-0 influenza vaccination, using regression with the titer response index (TRI), showed that residual expression values on days 1 and 3 predicted the observed antibody response.",
+    "claim_type": "prediction",
+    "assay_method_in_paper": "microarray",
     "sources": [
       {
         "type": "text",
         "section": "Results",
-        "quote": "The maximum expression change occurred on day 1, while day 14 had the greatest number of genes with maximum expression values."
+        "quote": "We show that the residual expression values on days 1 and 3 are predictive of the observed"
+      },
+      {
+        "type": "text",
+        "section": "Table 1 caption",
+        "quote": "Table 1. Subset of Transcripts Used for Prediction of the TRI"
+      },
+      {
+        "type": "table",
+        "ref": "Table 1"
       }
     ]
   },
   "claim_3": {
-    "claim": "Microarray analysis of peripheral blood cells from 92 healthy male adults of self-reported Caucasian ancestry ages 18–40 years at days 0, 1, 3, and 14 after trivalent influenza vaccination (day 0), using a linear mixed-effects analysis of variance model, showed that day 14 had the greatest number of genes with maximum expression values compared to days 0, 1, and 3.",
-    "claim_type": "extremum",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "microarray"
-    },
+    "claim": "microarray analysis of whole blood from 92 healthy male volunteers of self-reported Caucasian ancestry aged 18–40 years, before and on days 1, 3, and 14 after day-0 trivalent influenza vaccination, using linear mixed-effects ANOVA and heatmap visualization, showed three distinct patterns of expression for all differentially expressed genes: early upregulation, late upregulation, and downregulation.",
+    "claim_type": "descriptive",
+    "assay_method_in_paper": "microarray",
     "sources": [
       {
         "type": "text",
         "section": "Results",
-        "quote": "The maximum expression change occurred on day 1, while day 14 had the greatest number of genes with maximum expression values."
-      }
-    ]
-  },
-  "claim_4": {
-    "claim": "Microarray analysis of peripheral blood cells from 92 healthy male adults of self-reported Caucasian ancestry ages 18–40 years at days 0, 1, 3, and 14 after trivalent influenza vaccination (day 0), using Gene Ontology, DAVID, and Ingenuity Pathway Analysis, showed that genes with late upregulation were not significantly different between days 3 and 14 compared to each other.",
-    "claim_type": "group_difference",
-    "polarity": "null",
-    "assay": {
-      "name_in_paper": "microarray"
-    },
-    "sources": [
-      {
-        "type": "text",
-        "section": "Results",
-        "quote": "Genes with late upregulation of expression were not significantly different between the last two time points."
+        "quote": "A visual summary of the dynamic changes in the transcriptional response to vaccination over time shows three major gene ex- pression patterns: downregulation, early upregulation, and late upregulation (Figure 1A)."
       },
       {
         "type": "text",
@@ -77,150 +53,168 @@
       }
     ]
   },
-  "claim_5": {
-    "claim": "Hemagglutination inhibition analysis of serum from 92 healthy male adults of self-reported Caucasian ancestry at days 0, 14, and 28 after trivalent influenza vaccination (day 0) showed that hemagglutination inhibition titers had generally plateaued after day 14 compared to day 14.",
-    "claim_type": "trajectory_segment",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "hemagglutination inhibition (HAI) tests"
-    },
+  "claim_4": {
+    "claim": "HAI and neutralization assay analysis of serum from 92 healthy male individuals of self-reported Caucasian ancestry ages 18–40 years, before and after day 0 trivalent influenza vaccination, showed that antibody titers measured by hemagglutination inhibition (HAI) and neutralization assays were strongly positively associated.",
+    "claim_type": "association",
+    "assay_method_in_paper": "HAI and neutralization assay",
     "sources": [
       {
         "type": "text",
         "section": "Results",
-        "quote": "Antibody titers were measured by both hemagglutination inhibition (HAI) and neutralization assays. The titer results from these assays were strongly correlated, and the titers generally plateaued after day 14."
+        "quote": "Antibody titers were measured by both hemagglutination in- hibition (HAI) and neutralization assays. The titer results from these assays were strongly correlated"
+      }
+    ]
+  },
+  "claim_5": {
+    "claim": "HAI and neutralization assay analysis of serum from 92 healthy male individuals of self-reported Caucasian ancestry ages 18–40 years, before and after day 0 trivalent influenza vaccination, showed that antibody titers generally plateaued after day 14 compared to earlier postvaccination timepoints.",
+    "claim_type": "trajectory_segment",
+    "assay_method_in_paper": "HAI and neutralization assay",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "The titer results from these assays were strongly correlated, and the titers generally plateaued after day 14."
       }
     ]
   },
   "claim_6": {
-    "claim": "Neutralizing antibody analysis of serum from 92 healthy male adults of self-reported Caucasian ancestry at days 0, 14, and 28 after trivalent influenza vaccination (day 0) showed that neutralizing antibody titers had generally plateaued after day 14 compared to day 14.",
-    "claim_type": "trajectory_segment",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "neutralizing antibody tests"
-    },
+    "claim": "HAI and neutralization assay analysis of serum from 92 healthy male individuals of self-reported Caucasian ancestry ages 18–40 years, before and after day 0 trivalent influenza vaccination, showed that the Titer Response Index (TRI) scores had a trimodal distribution, facilitating classification of individuals as high, intermediate, and low vaccine responders.",
+    "claim_type": "descriptive",
+    "assay_method_in_paper": "HAI and neutralization assay",
     "sources": [
       {
         "type": "text",
         "section": "Results",
-        "quote": "Antibody titers were measured by both hemagglutination inhibition (HAI) and neutralization assays. The titer results from these assays were strongly correlated, and the titers generally plateaued after day 14."
+        "quote": "Interestingly, the distribution of the TRI scores is trimodal, facilitating an unbiased classiﬁcation of individuals as high, intermediate, and low vaccine responders (Figure 2A), depending on where the individual’s TRI falls under this dis- tribution."
+      },
+      {
+        "type": "text",
+        "section": "Figure 2 caption",
+        "quote": "(A) Probability density estimate of the titer response index (TRI) in our cohort. A trimodal distribution for the vaccine response is observed. The hash marks below the curve are the TRI values for each individual, and the colors correspond to low, intermediate, and high responders."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 2"
       }
     ]
   },
   "claim_7": {
-    "claim": "Hemagglutination inhibition analysis of serum from 92 healthy male adults of self-reported Caucasian ancestry at days 0, 14, and 28 after trivalent influenza vaccination (day 0) showed that the rise in hemagglutination inhibition titer was positively associated with the titer response index.",
+    "claim": "HAI assay analysis of serum from 92 healthy male individuals of self-reported Caucasian ancestry ages 18–40 years, before and after day 0 trivalent influenza vaccination, showed that rise in HAI titer was positively associated with the Titer Response Index (TRI).",
     "claim_type": "association",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "hemagglutination inhibition (HAI) tests"
-    },
+    "assay_method_in_paper": "HAI assay",
     "sources": [
       {
         "type": "text",
         "section": "Results",
-        "quote": "The TRI and rise in HAI titer for the 92 individuals show a significant positive relationship (r2 5 0.4585)."
+        "quote": "The TRI and rise in HAI titer for the 92 individuals show a signiﬁcant positive relationship (r2 5 0.4585)."
       }
     ]
   },
   "claim_8": {
-    "claim": "Microarray analysis of peripheral blood cells from 92 healthy male adults of self-reported Caucasian ancestry at days 0, 1, 3, and 14 after trivalent influenza vaccination (day 0) showed that the abundance level of 494 transcripts was significantly associated with the titer response index.",
+    "claim": "microarray analysis of whole blood from 92 healthy male individuals of self-reported Caucasian ancestry ages 18–40 years, before and on days 1, 3, and 14 after day 0 trivalent influenza vaccination, using regression analysis of gene expression against the Titer Response Index (TRI), showed that the abundance levels of 494 transcripts were significantly associated with TRI.",
     "claim_type": "association",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "microarray"
-    },
+    "assay_method_in_paper": "microarray",
     "sources": [
       {
         "type": "text",
         "section": "Results",
-        "quote": "We found that the abundance level of 494 transcripts significantly correlated with the TRI (Dataset 8)."
+        "quote": "To assess whether speciﬁc patterns of gene expression correlated with the magnitude of the antibody response, we studied the relationship between gene expression and the TRI in all subjects. We found that the abundance level of 494 transcripts signiﬁ- cantly correlated with the TRI (Dataset 8)."
       }
     ]
   },
   "claim_9": {
-    "claim": "Microarray analysis of peripheral blood cells from individuals with the highest and lowest antibody responses at days 1 and 3 after trivalent influenza vaccination (day 0), using a cross-validated linear prediction procedure, showed that residual expression values on days 1 and 3 predicted the observed titer response index compared to the observed titer response index.",
-    "claim_type": "prediction",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "microarray"
-    },
+    "claim": "microarray analysis of whole blood from 92 healthy male individuals of self-reported Caucasian ancestry ages 18–40 years, before and on days 1, 3, and 14 after day 0 trivalent influenza vaccination, using regression analysis of gene expression against the Titer Response Index (TRI), showed that the 494 transcripts associated with TRI mapped to 481 known genes and 13 nonannotated gene candidates.",
+    "claim_type": "descriptive",
+    "assay_method_in_paper": "microarray",
     "sources": [
       {
         "type": "text",
         "section": "Results",
-        "quote": "We show that the residual expression values on days 1 and 3 are predictive of the observed TRI for each individual and, more importantly, that the cross-validated predicted TRI recategorized the highest and lowest responders into the appropriate groups (Figure 2D)."
-      },
-      {
-        "type": "text",
-        "section": "Figure 2 caption",
-        "quote": "Figure 2. Early patterns of gene expression correlate with responsiveness to trivalent influenza vaccine. (D) Cross-validation prediction data, illustrating how expression values can be used to predict the TRI."
-      },
-      {
-        "type": "figure",
-        "ref": "Figure 2D"
+        "quote": "We found that the abundance level of 494 transcripts signiﬁ- cantly correlated with the TRI (Dataset 8). These mapped to 481 known genes and 13 nonannotated gene candidates."
       }
     ]
   },
   "claim_10": {
-    "claim": "Microarray analysis of peripheral blood cells from individuals with the highest and lowest antibody responses at days 1 and 3 after trivalent influenza vaccination (day 0), using a cross-validated linear prediction procedure, showed that the cross-validated predicted titer response index recategorized the highest and lowest responders into the appropriate groups compared to their observed responder groups.",
+    "claim": "microarray analysis of whole blood from top 10 and bottom 10 responders among 92 healthy male individuals of self-reported Caucasian ancestry ages 18–40 years, on days 1 and 3 after day 0 trivalent influenza vaccination, using standardized expression values at each time point and averaging of day 1 and day 3 values, showed that residual expression values on days 1 and 3 predicted the observed Titer Response Index (TRI) for each individual.",
     "claim_type": "prediction",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "microarray"
-    },
+    "assay_method_in_paper": "microarray",
     "sources": [
       {
         "type": "text",
         "section": "Results",
-        "quote": "We show that the residual expression values on days 1 and 3 are predictive of the observed TRI for each individual and, more importantly, that the cross-validated predicted TRI recategorized the highest and lowest responders into the appropriate groups (Figure 2D)."
+        "quote": "We then performed a cross-validated linear prediction pro- cedure utilizing the expression values of a subset of differentially expressed genes (Table 1) to predict the antibody response scores of those individuals with the highest and lowest antibody responses as depicted in Figure 2C. We show that the residual expression values on days 1 and 3 are predictive of the observed TRI for each individual"
       },
       {
         "type": "text",
         "section": "Figure 2 caption",
-        "quote": "Figure 2. Early patterns of gene expression correlate with responsiveness to trivalent influenza vaccine. (D) Cross-validation prediction data, illustrating how expression values can be used to predict the TRI."
+        "quote": "(C) Heatmap of the expression signature of vaccine responsiveness in the top 10 (left) and bottom 10 (right) responders. The expression values for each gene were standardized at each time point, and the day 1 and day 3 values were averaged. Yellow indicates a higher value. Each column represents an individual. The top row illustrates the TRI for each individual."
       },
       {
         "type": "figure",
-        "ref": "Figure 2D"
+        "ref": "Figure 2"
       }
     ]
   },
   "claim_11": {
-    "claim": "Microarray analysis of peripheral blood cells from high and low responders after trivalent influenza vaccination, using DAVID Gene Ontology and Ingenuity Pathway Analysis, showed that genes in interferon response and antigen presentation pathways were more highly upregulated in high responders compared to low responders.",
-    "claim_type": "group_difference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "microarray"
-    },
+    "claim": "microarray analysis of whole blood from highest and lowest responders among 92 healthy male individuals of self-reported Caucasian ancestry ages 18–40 years, before and on days 1, 3, and 14 after day 0 trivalent influenza vaccination, using cross-validation prediction, showed that the cross-validated predicted Titer Response Index (TRI) recategorized the highest and lowest responders into the appropriate groups.",
+    "claim_type": "prediction",
+    "assay_method_in_paper": "microarray",
     "sources": [
       {
         "type": "text",
         "section": "Results",
-        "quote": "Content analysis of the genes that were upregulated in the high-responder group showed enrichment of GO categories involved in cellular immune responses, most notably the interferon response and antigen presentation pathways (Figure 3A and Datasets 9, 10). Genes within the interferon response pathway were highly upregulated in the high-responder group (Figure 3B)."
+        "quote": "We show that the residual expression values on days 1 and 3 are predictive of the observed\n\nTRI for each individual and, more importantly, that the cross- validated predicted TRI recategorized the highest and lowest responders into the appropriate groups (Figure 2D)."
       },
       {
         "type": "text",
-        "section": "Figure 3 caption",
-        "quote": "Figure 3. Interferon signaling and antigen presentation genes are preferentially upregulated in individuals with high vaccine responsiveness. (B) Genes that act in the interferon pathway and which are preferentially upregulated in the high vaccine responders are shown in red. Shades of red are used to display the level of expression for each gene in the high-responder relative to the low-responder groups."
+        "section": "Figure 2 caption",
+        "quote": "(D) Cross- validation prediction data, illustrating how expression values can be used to predict the TRI."
       },
       {
         "type": "figure",
-        "ref": "Figure 3B"
+        "ref": "Figure 2"
       }
     ]
   },
   "claim_12": {
-    "claim": "Microarray analysis of peripheral blood cells from high and low responders after trivalent influenza vaccination, using DAVID Gene Ontology and Ingenuity Pathway Analysis, showed that enriched functional pathways in low responders were not specifically related to cell-mediated immune responses compared to high responders.",
+    "claim": "microarray analysis of whole blood from 92 healthy male Caucasian volunteers ages 18–40 years immunized on day 0 with the 2008–2009 trivalent influenza vaccine, sampled before and on days 1, 3, and 14 after immunization, using content analysis, showed enrichment of top pathways including the interferon response and antigen presentation pathways among genes upregulated in the high-responder group compared to the low-responder group.",
     "claim_type": "group_difference",
-    "polarity": "null",
-    "assay": {
-      "name_in_paper": "microarray"
-    },
+    "assay_method_in_paper": "microarray",
     "sources": [
       {
         "type": "text",
         "section": "Results",
-        "quote": "In contrast, the majority of upregulated genes and enriched functional pathways in low responders were not specifically related to cell-mediated immune responses (Figure S3 and Datasets 11, 12)."
+        "quote": "Content analysis of the genes that were upregulated in the high- responder group showed enrichment of GO categories involved in cellular immune responses, most notably the interferon re- sponse and antigen presentation pathways (Figure 3A and Da- tasets 9, 10)."
+      },
+      {
+        "type": "text",
+        "section": "Figure 3 caption",
+        "quote": "(A) Top enriched pathways in the high responder group. The negative log P value, along the x-axis, increases as a pathway is more significantly associated. The ratio indicates the proportion of upregulated genes relative to all the genes present in a pathway."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 3"
+      }
+    ]
+  },
+  "claim_13": {
+    "claim": "microarray analysis of whole blood from 92 healthy male Caucasian volunteers ages 18–40 years immunized on day 0 with the 2008–2009 trivalent influenza vaccine, sampled before and on days 1, 3, and 14 after immunization, showed that interferon pathway genes were preferentially upregulated in the high-responder group compared to the low-responder group.",
+    "claim_type": "group_difference",
+    "assay_method_in_paper": "microarray",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Genes within the interferon response pathway were highly upregulated in the high-responder group (Figure 3B)."
+      },
+      {
+        "type": "text",
+        "section": "Figure 3 caption",
+        "quote": "(B) Genes that act in the interferon pathway and which are preferentially upregulated in the high vaccine responders are shown in red."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 3"
       }
     ]
   }

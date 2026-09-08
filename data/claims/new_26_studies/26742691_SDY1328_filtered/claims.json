@@ -1,21 +1,65 @@
 {
   "claim_1": {
-    "claim": "Microarray analysis of peripheral blood mononuclear cells from the SAFHS cohort (n=1,240) showed that 1,143 transcripts were positively correlated and 1,142 transcripts were negatively correlated with chronological age compared to younger age.",
-    "claim_type": "group_difference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "microarray"
-    },
+    "claim": "ELISA analysis of serum samples from 174 healthy adults in the EM131 cohort before and after vaccination, showed that the percentage of study participants above the protective antibody thresholds was highest for anti-Tetanus toxin, followed by anti-Diphtheria toxin, anti-Cholera toxin, and anti-HBsAg.",
+    "claim_type": "extremum",
+    "assay_method_in_paper": "ELISA",
     "sources": [
       {
         "type": "text",
         "section": "Results",
-        "quote": "Using a cutoff of adjusted P≤0.05 (with the Benjamini–Hochberg method to correct for multiple testing), we identified 1,143 and 1,142 transcripts positively and negatively correlated to age, respectively, in the SAFHS data set (Fig. 2a and Supplementary Table 3a)."
+        "quote": "The percentage of study participants that mounted protective Ab titres (anti-HBsAg: 10 mIU ml−1, anti-Tetanus toxoid: 0.1 IU ml−1, anti-Diphtheria toxoid: 0.1 IU ml−1 and anti-Cholera toxin: dilution 1:40)161718 were, in decreasing order, 95% for Tetanus, 84% for Diphtheria, 71% for Cholera and 37% for HBV (Fig. 1b)."
+      },
+      {
+        "type": "text",
+        "section": "Figure 1 caption",
+        "quote": "(b) Response plots showing antibody titres for HBsAg (hep. B), Diphtheria toxin (dip.), Tetanus toxin (tet.) and Cholera toxin (chol.) for the 174 study participants as a function of the vaccination status (x-axis: before and after vaccination). Red horizontal lines indicate standard titre thresholds and the percentage of participants above the protective thresholds are indicated above each plot (Protect. Ab.)."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 1"
+      }
+    ]
+  },
+  "claim_2": {
+    "claim": "ELISA analysis of serum samples from 174 healthy adults in the EM131 cohort before and after vaccination, showed that anti-HBsAg had the lowest percentage of study participants above the protective antibody threshold compared to anti-Tetanus toxin, anti-Diphtheria toxin, and anti-Cholera toxin.",
+    "claim_type": "extremum",
+    "assay_method_in_paper": "ELISA",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "The percentage of study participants that mounted protective Ab titres (anti-HBsAg: 10 mIU ml−1, anti-Tetanus toxoid: 0.1 IU ml−1, anti-Diphtheria toxoid: 0.1 IU ml−1 and anti-Cholera toxin: dilution 1:40)161718 were, in decreasing order, 95% for Tetanus, 84% for Diphtheria, 71% for Cholera and 37% for HBV (Fig. 1b)."
+      },
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Only the HBV vaccine involved an antigen to which all study participants were naive and presented the lowest response rate (37%, after two injections) even when we restricted the analysis to participants with undetectable Ab titres pre-vaccination (Supplementary Fig. 1a)."
+      },
+      {
+        "type": "text",
+        "section": "Figure 1 caption",
+        "quote": "(b) Response plots showing antibody titres for HBsAg (hep. B), Diphtheria toxin (dip.), Tetanus toxin (tet.) and Cholera toxin (chol.) for the 174 study participants as a function of the vaccination status (x-axis: before and after vaccination). Red horizontal lines indicate standard titre thresholds and the percentage of participants above the protective thresholds are indicated above each plot (Protect. Ab.)."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 1"
+      }
+    ]
+  },
+  "claim_3": {
+    "claim": "DNA microarray analysis of peripheral blood mononuclear cells from healthy participants in the SAFHS cohort (n=1,240), using linear regression models and a moderated t-test with Benjamini–Hochberg adjustment, showed that 1,143 transcripts were positively associated with chronological age in the SAFHS data set.",
+    "claim_type": "association",
+    "assay_method_in_paper": "DNA microarray",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "The impact of age on the transcriptome of peripheral blood mononuclear cells obtained from healthy participants was studied under controlled conditions (morning, after fasting) in the San Antonio Family Heart Study (SAFHS, n=1,240)19. Linear regression models were used to identify transcripts correlated to age (Methods formula 1). Using a cutoff of adjusted P≤0.05 (with the Benjamini–Hochberg method to correct for multiple testing), we identified 1,143 and 1,142 transcripts positively and negatively correlated to age, respectively, in the SAFHS data set (Fig. 2a and Supplementary Table 3a)."
       },
       {
         "type": "text",
         "section": "Figure 2 caption",
-        "quote": "Figure 2 | Development of the BioAge signature and application to the EM131 cohort. (a) Expression of the 2,285 age-related transcripts derived from SAFHS data set (n = 1,240)19; all transcripts correlating with chronological age (moderated t-test: adjusted P≤0.05) were clustered in 20 modules using k-means clustering."
+        "quote": "(a) Expression of the 2,285 age-related transcripts derived from SAFHS data set (n=1,240)19; all transcripts correlating with chronological age (moderated t-test: adjusted P≤0.05) were clustered in 20 modules using k-means clustering."
       },
       {
         "type": "figure",
@@ -23,53 +67,107 @@
       }
     ]
   },
-  "claim_2": {
-    "claim": "Microarray analysis of peripheral blood mononuclear cells from healthy participants showed that pathways regulating cell motility, integrin signalling, type II interferon signalling, complement-related inflammatory responses, and T-cell/natural killer-cell-mediated cytolysis were enriched in elderly participants compared to younger participants.",
-    "claim_type": "group_difference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "microarray"
-    },
-    "sources": [
-      {
-        "type": "text",
-        "section": "Results",
-        "quote": "On the one hand, pathways positively associated with older age included pathways that regulate cell motility (M12 and M14) and genes downstream of integrin signalling (M15). A type II interferon signalling module (M17) characterized by the induced expression of TNF and IFNG was also enriched in elderly participants. Inflammatory responses that include complement genes (M16) downstream of interferons, as well as T-cell/natural killer (NK)-cells-mediated cytolysis (M19) markers such as perforin and granzyme B, were also positively associated with older age."
-      }
-    ]
-  },
-  "claim_3": {
-    "claim": "Microarray analysis of peripheral blood mononuclear cells from healthy participants showed that B-cell signalling, T-cell receptor signalling, antiviral response, MYC signalling, amino acid metabolism, fatty acid biosynthesis, and lipid metabolic pathways were enriched in younger participants compared to elderly participants.",
-    "claim_type": "group_difference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "microarray"
-    },
-    "sources": [
-      {
-        "type": "text",
-        "section": "Results",
-        "quote": "On the other hand, pathways enriched in younger participants included immunological pathways such as B-cell signalling (M1) comprising several B-cell markers (CD79A, CD79B, CD19, CD20 and CD22), T-cell receptor signalling (M6) that included ZAP70, TRAF1, TCF7 a marker of memory T cells20 and antiviral response (M8) that included the antiviral signalling gene MAVS. MYC signalling (M3), which triggers metabolic pathways such as amino acid metabolism (M2 and M4), fatty acid biosynthesis (M9) and lipid metabolic pathways (M11), all critical for the induction of T- and B-cell memory, was enriched in younger participants."
-      }
-    ]
-  },
   "claim_4": {
-    "claim": "Microarray analysis of whole blood cells from the EM131 cohort showed that chronological age was associated with the BioAge score compared to younger age.",
+    "claim": "DNA microarray analysis of peripheral blood mononuclear cells from healthy participants in the SAFHS cohort (n=1,240), using linear regression models and a moderated t-test with Benjamini–Hochberg adjustment, showed that 1,142 transcripts were negatively associated with chronological age in the SAFHS data set.",
     "claim_type": "association",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "microarray"
-    },
+    "assay_method_in_paper": "DNA microarray",
     "sources": [
       {
         "type": "text",
         "section": "Results",
-        "quote": "There was a statistically significant association between chronological age and BioAge on the EM131 cohort (Fig. 2c, Wilcoxon rank-sum test: P = 1.01e−05), confirming the validity of this score to reflect the impact of age on gene expression in whole blood cells."
+        "quote": "The impact of age on the transcriptome of peripheral blood mononuclear cells obtained from healthy participants was studied under controlled conditions (morning, after fasting) in the San Antonio Family Heart Study (SAFHS, n=1,240)19. Linear regression models were used to identify transcripts correlated to age (Methods formula 1). Using a cutoff of adjusted P≤0.05 (with the Benjamini–Hochberg method to correct for multiple testing), we identified 1,143 and 1,142 transcripts positively and negatively correlated to age, respectively, in the SAFHS data set (Fig. 2a and Supplementary Table 3a)."
       },
       {
         "type": "text",
         "section": "Figure 2 caption",
-        "quote": "Figure 2 | Development of the BioAge signature and application to the EM131 cohort. (c) Scatter plot showing the chronological age as a function of the BioAge. The vertical line indicates a BioAge score of 0. We observe that young participants (red circles) have significantly younger BioAge; and among elderly (black circles) about half of participants have a young BioAge (<0) while the other half have an old BioAge (oAge)."
+        "quote": "(a) Expression of the 2,285 age-related transcripts derived from SAFHS data set (n=1,240)19; all transcripts correlating with chronological age (moderated t-test: adjusted P≤0.05) were clustered in 20 modules using k-means clustering."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 2a"
+      }
+    ]
+  },
+  "claim_5": {
+    "claim": "DNA microarray analysis of peripheral blood mononuclear cells from healthy participants in the SAFHS cohort (n=1,240), using the Gap statistic method, showed that 20 was the optimal number of clusters explaining gene-expression variability in the SAFHS data set.",
+    "claim_type": "descriptive",
+    "assay_method_in_paper": "DNA microarray",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "The Gap statistic method estimated 20 as the optimal number of clusters that explained gene-expression variability (Supplementary Fig. 2a)."
+      }
+    ]
+  },
+  "claim_6": {
+    "claim": "DNA microarray analysis of peripheral blood mononuclear cells from healthy participants in the SAFHS cohort (n=1,240), using k-means clustering of the 2,285 age-related transcripts, showed that the 2,285 age-correlated transcripts were regrouped into 20 modules M1 to M20 based on their co-expression in the SAFHS data set.",
+    "claim_type": "descriptive",
+    "assay_method_in_paper": "DNA microarray",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "k-means clustering was used to regroup the 2,285 transcripts in 20 modules (M1 to M20) based on their co-expression in the SAFHS data set (Supplementary Table 3a)."
+      },
+      {
+        "type": "text",
+        "section": "Figure 2 caption",
+        "quote": "(a) Expression of the 2,285 age-related transcripts derived from SAFHS data set (n=1,240)19; all transcripts correlating with chronological age (moderated t-test: adjusted P≤0.05) were clustered in 20 modules using k-means clustering. In the heat map, transcripts (columns) were ordered by their membership to the 20 modules; the 1,240 samples/participants (row) were ordered by their BioAge score (signed average expression of the age-related transcripts)."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 2a"
+      }
+    ]
+  },
+  "claim_7": {
+    "claim": "DNA microarray analysis of peripheral blood mononuclear cells from the SAFHS cohort (n=1,240), using Pearson correlation, showed that the BioAge score was positively associated with chronological age in the SAFHS cohort.",
+    "claim_type": "association",
+    "assay_method_in_paper": "DNA microarray",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "We calculated the BioAge score on the SAFHS cohort and as expected observed a significant correlation between the BioAge score and chronological age (Pearson's correlation: r=0.421, P<2.2e−16; Supplementary Fig. 2b)."
+      }
+    ]
+  },
+  "claim_8": {
+    "claim": "DNA microarray analysis of whole blood cells from participants in the EM131 cohort (n=174), using the BioAge score, showed that chronological age was associated with BioAge in the EM131 cohort.",
+    "claim_type": "association",
+    "assay_method_in_paper": "DNA microarray",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "There was a statistically significant association between chronological age and BioAge on the EM131 cohort (Fig. 2c, Wilcoxon rank-sum test: P=1.01e−05), confirming the validity of this score to reflect the impact of age on gene expression in whole blood cells."
+      },
+      {
+        "type": "text",
+        "section": "Figure 2 caption",
+        "quote": "(b) Expression of the 2,285 transcripts of the BioAge signature in the EM131 data set (n=174). The chronological age of the 174 participants is given in the bar plot at the right. (c) Scatter plot showing the chronological age as a function of the BioAge."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 2"
+      }
+    ]
+  },
+  "claim_9": {
+    "claim": "DNA microarray analysis of whole blood cells from elderly participants in the EM131 elderly cohort (≥65 years), using the BioAge predictor and a BioAge score cutoff of 0, showed that the BioAge predictor divided elderly patients into two groups designated as BioAge young and BioAge old (oAge).",
+    "claim_type": "descriptive",
+    "assay_method_in_paper": "DNA microarray",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "While most young study participants had a low BioAge score, the BioAge predictor divided elderly patients (≥65, EM131 elderly cohort) into two groups designated as BioAge young (n=62, age∈[65, 78]) and BioAge old (n=76, age∈[65, 83]) (Fig. 2c)."
+      },
+      {
+        "type": "text",
+        "section": "Figure 2 caption",
+        "quote": "(c) Scatter plot showing the chronological age as a function of the BioAge. The vertical line indicates a BioAge score of 0. We observe that young participants (red circles) have significantly younger BioAge; and among elderly (black circles) about half of participants have a young BioAge (<0) while the other half have an old BioAge (oAge)."
       },
       {
         "type": "figure",
@@ -77,37 +175,76 @@
       }
     ]
   },
-  "claim_5": {
-    "claim": "Microarray analysis of whole blood cells from elderly participants in the EM131 cohort before vaccination showed that the BioAge score was associated with the rate of response to the HBV vaccine compared to BioAge young elderly participants.",
+  "claim_10": {
+    "claim": "DNA microarray analysis of blood samples from 135 elderly participants in the EM131 cohort before vaccination, using the BioAge signature, showed that BioAge classification based on gene expression prior to vaccination was associated with the response to HBV vaccination in elderly participants compared to null.",
     "claim_type": "association",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "microarray"
-    },
+    "assay_method_in_paper": "DNA microarray",
     "sources": [
       {
         "type": "text",
         "section": "Results",
-        "quote": "Both the BioAge score (Supplementary Fig. 3) and the two groups of elderly identified by the BioAge signature (Fisher’s exact test: odds ratio (OR) = 2.14, P = 0.0357; Fig. 3a) were associated with the rate of response to the HBV vaccine."
+        "quote": "We determined if different BioAge scores correlated with different responses to HBV vaccination. Both the BioAge score (Supplementary Fig. 3) and the two groups of elderly identified by the BioAge signature (Fisher's exact test: odds ratio (OR)=2.14, P=0.0357; Fig. 3a) were associated with the rate of response to the HBV vaccine."
       },
       {
         "type": "text",
         "section": "Figure 3 caption",
-        "quote": "Figure 3 | BioAge predicts HBV vaccine response. (a) BioAge classification of the 135 elderly patients based on gene expression prior to vaccination is significantly associated with the response to HBV vaccination."
+        "quote": "(a) BioAge classification of the 135 elderly patients based on gene expression prior to vaccination is significantly associated with the response to HBV vaccination. Each bar of the bar plot represents one of the elderly participants in the EM131 cohort. The height of the bar indicates the BioAge score of that donor. Bars were ordered by increasing level of the BioAge, separately for the HBV poor-responders (in red) and HBV responders (in black). Fisher's exact test P values are given on the plot."
       },
       {
         "type": "figure",
-        "ref": "Figure 3a"
+        "ref": "Figure 3"
       }
     ]
   },
-  "claim_6": {
-    "claim": "Microarray analysis of whole blood cells from elderly participants in the EM131 cohort before vaccination showed that lower expression of module M1 and higher expression of module M16 predicted response to the HBV vaccine compared to other BioAge modules.",
-    "claim_type": "prediction",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "microarray"
-    },
+  "claim_11": {
+    "claim": "DNA microarray analysis of blood samples from 135 elderly participants in the EM131 cohort before vaccination, using the BioAge signature, showed that the two groups of elderly identified by the BioAge signature were associated with the response to the HBV vaccine in elderly participants compared to each other.",
+    "claim_type": "group_difference",
+    "assay_method_in_paper": "DNA microarray",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "We determined if different BioAge scores correlated with different responses to HBV vaccination. Both the BioAge score (Supplementary Fig. 3) and the two groups of elderly identified by the BioAge signature (Fisher's exact test: odds ratio (OR)=2.14, P=0.0357; Fig. 3a) were associated with the rate of response to the HBV vaccine."
+      },
+      {
+        "type": "text",
+        "section": "Figure 3 caption",
+        "quote": "(a) BioAge classification of the 135 elderly patients based on gene expression prior to vaccination is significantly associated with the response to HBV vaccination. Each bar of the bar plot represents one of the elderly participants in the EM131 cohort. The height of the bar indicates the BioAge score of that donor. Bars were ordered by increasing level of the BioAge, separately for the HBV poor-responders (in red) and HBV responders (in black). Fisher's exact test P values are given on the plot."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 3"
+      }
+    ]
+  },
+  "claim_12": {
+    "claim": "DNA microarray analysis of blood samples from elderly participants in the EM131 cohort before vaccination, using multivariate analysis including available clinical parameters, showed that BioAge was a better predictor of HBV response than chronological age in elderly participants compared to chronological age.",
+    "claim_type": "magnitude_comparison",
+    "assay_method_in_paper": "DNA microarray",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Importantly, in a multivariate analysis including available clinical parameters, the BioAge was both a better predictor of the HBV response than chronological age and independent of gender (Supplementary Table 2)."
+      }
+    ]
+  },
+  "claim_13": {
+    "claim": "DNA microarray analysis of blood samples from elderly participants in the EM131 cohort before vaccination, using multivariate analysis including available clinical parameters, showed that BioAge was independent of gender for prediction of HBV response in elderly participants.",
+    "claim_type": "association",
+    "assay_method_in_paper": "DNA microarray",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Importantly, in a multivariate analysis including available clinical parameters, the BioAge was both a better predictor of the HBV response than chronological age and independent of gender (Supplementary Table 2)."
+      }
+    ]
+  },
+  "claim_14": {
+    "claim": "DNA microarray analysis of blood samples from elderly participants in the EM131 cohort before vaccination, using forward selection among the modules composing the BioAge signature, showed that modules M1 and M16 were selected as optimal signatures predicting HBV vaccine response in the EM131 elderly cohort (age≥65) compared to the other modules composing the BioAge signature.",
+    "claim_type": "extremum",
+    "assay_method_in_paper": "DNA microarray",
     "sources": [
       {
         "type": "text",
@@ -117,123 +254,156 @@
       {
         "type": "text",
         "section": "Figure 3 caption",
-        "quote": "Figure 3 | BioAge predicts HBV vaccine response. (b) Forward selection among the modules composing the BioAge signature resulted in the selection of modules M1 and M16 as optimal signatures, predicting HBV vaccine response in the EM131 elderly cohort (age≥65)."
+        "quote": "(b) Forward selection among the modules composing the BioAge signature resulted in the selection of modules M1 and M16 as optimal signatures, predicting HBV vaccine response in the EM131 elderly cohort (age≥65)."
       },
       {
         "type": "figure",
-        "ref": "Figure 3b"
+        "ref": "Figure 3"
       }
     ]
   },
-  "claim_7": {
-    "claim": "Microarray analysis of whole blood cells from the EM131 elderly cohort before vaccination showed that the BioAge signature predicted the response to the HBV vaccine with 60.0% accuracy compared to chance.",
+  "claim_15": {
+    "claim": "DNA microarray analysis of blood samples from elderly participants in the EM131 cohort before vaccination, using receiver operating characteristic (ROC) analysis and a permutation test, showed that the BioAge signature predicted the response to the HBV vaccine with 60.0% accuracy in the EM131 elderly cohort compared to null.",
     "claim_type": "prediction",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "microarray"
-    },
+    "assay_method_in_paper": "DNA microarray",
     "sources": [
       {
         "type": "text",
         "section": "Results",
-        "quote": "To test the accuracy of this signature, we performed a receiver operating characteristic (ROC) analysis that indicated that the BioAge signature could predict the response to the HBV vaccine with an accuracy of 60.0% in the EM131 elderly cohort (Fig. 3b, permutation test: P = 0.0163)."
-      },
-      {
-        "type": "text",
-        "section": "Figure 3 caption",
-        "quote": "Figure 3 | BioAge predicts HBV vaccine response. (b) Forward selection among the modules composing the BioAge signature resulted in the selection of modules M1 and M16 as optimal signatures, predicting HBV vaccine response in the EM131 elderly cohort (age≥65)."
-      },
-      {
-        "type": "figure",
-        "ref": "Figure 3b"
+        "quote": "To test the accuracy of this signature, we performed a receiver operating characteristic (ROC) analysis that indicated that the BioAge signature could predict the response to the HBV vaccine with an accuracy of 60.0% in the EM131 elderly cohort (Fig. 3b, permutation test: P=0.0163)."
       }
     ]
   },
-  "claim_8": {
-    "claim": "Microarray analysis of whole blood from the EM131 elderly cohort before vaccination showed no single transcript was significantly differentially expressed between HBV vaccine responders and poor-responders compared to the other group.",
+  "claim_16": {
+    "claim": "microarray analysis of PAXgene blood samples from the EM131 elderly training set (n=95) and test set (n=49) before HBV vaccination, using a naive Bayes classifier built on the top 15 differentially expressed genes and 10-fold cross-validation, showed that responder versus poor-responder status was predicted by the 15-gene signature in the EM131 training set and test set.",
+    "claim_type": "prediction",
+    "assay_method_in_paper": "microarray",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "To that end, a naive Bayes classifier based on the top 15 differentially expressed genes between responders and poor-responders to the HBV vaccines was built on the EM131 training set (Fig. 4a). The accuracy of the resulting 15-gene signature was assessed on the EM131 training set by 10-fold cross-validation and on the EM131 test set and found to be 62.6% and 62.2%, respectively (Fig. 4b,c, Supplementary Fig. 4 and Supplementary Table 4b)."
+      },
+      {
+        "type": "text",
+        "section": "Figure 4 caption",
+        "quote": "Figure 4 Identification of gene-expression signature predicting the HBV vaccine response.(a) Expression of 15 genes identified as predictors of the response to the HBV vaccine in the EM131 training set (n=95). The mean-centred gene expression is represented using a blue to white to red colour scale. Rows and columns correspond to the genes and the profiled samples, respectively. Samples were ordered by increasing levels of their predicted probability of responding to the vaccine (that is, posterior probability). Antibody response to the HBV vaccine (log(HepBDifV4/5-V2)) and the response group predicted by the 15-gene signature (nbClass) are presented in coloured squares above each sample. (b) Expression of the 15-gene signature on the EM131 test set (n=49). (c) ROC curve and area under the curve (AUC) for the prediction of the HBV vaccine response using the 15-gene signature on the EM131 test set (n=49)."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 4"
+      }
+    ]
+  },
+  "claim_17": {
+    "claim": "microarray analysis of PAXgene blood samples from the EM131 elderly test set (n=49) before HBV vaccination, using a permutation test on the naive Bayes classifier built from a 15-gene signature, showed that the probability of obtaining a 15-gene signature with equal or better test-set accuracy by random selection was 0.0381.",
+    "claim_type": "prediction",
+    "assay_method_in_paper": "microarray",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "A permutation test was performed to assess the probability of building a signature of the same size (15 genes) with better or equal accuracy to the 15-gene signature on the EM131 test set. That probability was 0.0381, suggesting that building a better predictive model randomly is improbable."
+      },
+      {
+        "type": "text",
+        "section": "Figure 4 caption",
+        "quote": "Figure 4 Identification of gene-expression signature predicting the HBV vaccine response.(a) Expression of 15 genes identified as predictors of the response to the HBV vaccine in the EM131 training set (n=95). The mean-centred gene expression is represented using a blue to white to red colour scale. Rows and columns correspond to the genes and the profiled samples, respectively. Samples were ordered by increasing levels of their predicted probability of responding to the vaccine (that is, posterior probability). Antibody response to the HBV vaccine (log(HepBDifV4/5-V2)) and the response group predicted by the 15-gene signature (nbClass) are presented in coloured squares above each sample. (b) Expression of the 15-gene signature on the EM131 test set (n=49). (c) ROC curve and area under the curve (AUC) for the prediction of the HBV vaccine response using the 15-gene signature on the EM131 test set (n=49)."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 4"
+      }
+    ]
+  },
+  "claim_18": {
+    "claim": "microarray analysis of PAXgene blood samples from the EM131 training set (n=95) before HBV vaccination, using LIMMA with adjusted P≤0.05, showed no significantly differentially expressed transcript between HBV vaccine responders and poor-responders.",
     "claim_type": "group_difference",
-    "polarity": "null",
-    "assay": {
-      "name_in_paper": "microarray"
-    },
+    "assay_method_in_paper": "microarray",
     "sources": [
       {
         "type": "text",
         "section": "Results",
         "quote": "We were not able to identify a single transcript that was significantly differentially expressed between HBV vaccine responders and poor-responders of the EM131 training set (linear model for microarray (LIMMA): adjusted P≤0.05, Supplementary Table 4a)."
-      }
-    ]
-  },
-  "claim_9": {
-    "claim": "Microarray analysis of whole blood from the EM131 elderly training and test cohorts before vaccination showed that a naive Bayes classifier based on the top 15 differentially expressed genes predicted the response to the HBV vaccine with 62.6% accuracy in the training set and 62.2% accuracy in the test set compared to chance.",
-    "claim_type": "prediction",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "microarray"
-    },
-    "sources": [
-      {
-        "type": "text",
-        "section": "Results",
-        "quote": "The accuracy of the resulting 15-gene signature was assessed on the EM131 training set by 10-fold cross-validation and on the EM131 test set and found to be 62.6% and 62.2%, respectively (Fig. 4b,c, Supplementary Fig. 4 and Supplementary Table 4b)."
       },
       {
         "type": "text",
         "section": "Figure 4 caption",
-        "quote": "Figure 4 | Identification of gene-expression signature predicting the HBV vaccine response. (c) ROC curve and area under the curve (AUC) for the prediction of the HBV vaccine response using the 15-gene signature on the EM131 test set (n = 49)."
+        "quote": "Figure 4 Identification of gene-expression signature predicting the HBV vaccine response.(a) Expression of 15 genes identified as predictors of the response to the HBV vaccine in the EM131 training set (n=95). The mean-centred gene expression is represented using a blue to white to red colour scale. Rows and columns correspond to the genes and the profiled samples, respectively. Samples were ordered by increasing levels of their predicted probability of responding to the vaccine (that is, posterior probability). Antibody response to the HBV vaccine (log(HepBDifV4/5-V2)) and the response group predicted by the 15-gene signature (nbClass) are presented in coloured squares above each sample."
       },
       {
         "type": "figure",
-        "ref": "Figure 4c"
+        "ref": "Figure 4"
       }
     ]
   },
-  "claim_10": {
-    "claim": "Microarray analysis of whole blood from the EM131 elderly cohort before vaccination showed that the 15-gene signature and the BioAge signature shared members of the B-cell signalling and inflammation pathways compared to non-overlapping pathways.",
-    "claim_type": "group_difference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "microarray"
-    },
+  "claim_19": {
+    "claim": "microarray analysis of PAXgene blood samples from the EM131 training set (n=95) before HBV vaccination, using network inference on the 15 predictors and BioAge module 1, showed that the 15-gene signature and BioAge module 1 shared members of the B-cell signalling pathway, including CD20 and BANK1.",
+    "claim_type": "descriptive",
+    "assay_method_in_paper": "microarray",
     "sources": [
       {
         "type": "text",
         "section": "Results",
-        "quote": "Network inference revealed that both the 15-gene signature and the BioAge signature shared members of the B-cell signalling (CD20, BANK1; Fisher’s exact test: P = 7.99e−07) and inflammation pathways (Fig. 4e)."
+        "quote": "Network inference revealed that both the 15-gene signature and the BioAge signature shared members of the B-cell signalling (CD20, BANK1; Fisher's exact test: P=7.99e−07) and inflammation pathways (Fig. 4e)."
       },
       {
         "type": "text",
         "section": "Figure 4 caption",
-        "quote": "Figure 4 | Identification of gene-expression signature predicting the HBV vaccine response. (e) Networks were inferred for the BioAge module 1 combined to the 15-gene signature and the BioAge module 16 combined to the 15-gene signature, respectively."
+        "quote": "(e) Networks were inferred for the BioAge module 1 combined to the 15-gene signature and the BioAge module 16 combined to the 15-gene signature, respectively. Nodes included in the BioAge or the 15-gene signature are coloured by their fold-change between R versus PR to the HBV vaccine in the EM131 training set."
       },
       {
         "type": "figure",
-        "ref": "Figure 4e"
+        "ref": "Figure 4"
       }
     ]
   },
-  "claim_11": {
-    "claim": "Microarray analysis of whole blood from the EM131 elderly cohort before vaccination showed that B-cell signalling was positively associated with response to HBV vaccine, whereas inflammation-associated genes including IRF7 and HP were associated with lower antibody titres.",
+  "claim_20": {
+    "claim": "microarray analysis of PAXgene blood samples from the EM131 training set (n=95) before HBV vaccination, using network inference on the 15 predictors and BioAge module 16, showed that the 15-gene signature and BioAge module 16 shared members of inflammation pathways.",
+    "claim_type": "descriptive",
+    "assay_method_in_paper": "microarray",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Network inference revealed that both the 15-gene signature and the BioAge signature shared members of the B-cell signalling (CD20, BANK1; Fisher's exact test: P=7.99e−07) and inflammation pathways (Fig. 4e)."
+      },
+      {
+        "type": "text",
+        "section": "Figure 4 caption",
+        "quote": "(e) Networks were inferred for the BioAge module 1 combined to the 15-gene signature and the BioAge module 16 combined to the 15-gene signature, respectively. Nodes included in the BioAge or the 15-gene signature are coloured by their fold-change between R versus PR to the HBV vaccine in the EM131 training set."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 4"
+      }
+    ]
+  },
+  "claim_21": {
+    "claim": "microarray analysis of PAXgene blood samples from the EM131 elderly cohort before HBV vaccination, using pathway analysis on genes selected at nominal P≤0.05, showed that B-cell signalling was positively associated with HBV vaccine response measured as log(HepBDifV4/5-V2).",
     "claim_type": "association",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "microarray"
-    },
+    "assay_method_in_paper": "microarray",
     "sources": [
       {
         "type": "text",
         "section": "Results",
-        "quote": "Both signatures showed upregulated expression of genes directly associated with inflammation. In the BioAge M16, IRF7 (the master switch of type I interferon) and its downstream targets IL-15 and OAS1, as well as NFkB and C1 (hallmarks of inflammation) were associated with lower Ab titres. In the 15-gene signature, haptoglobin (HP), an acute phase protein and also a target gene of type I interferon signalling, was associated with low Ab titres. Pathway analysis performed on a list of genes derived with a less stringent statistical cutoff of nominal P≤0.05 confirmed the positive association of B-cell signalling and the response to HBV vaccine"
+        "quote": "Pathway analysis performed on a list of genes derived with a less stringent statistical cutoff of nominal P≤0.05 confirmed the positive association of B-cell signalling and the response to HBV vaccine (Supplementary Table 4c)."
+      },
+      {
+        "type": "text",
+        "section": "Figure 4 caption",
+        "quote": "Figure 4 Identification of gene-expression signature predicting the HBV vaccine response.(a) Expression of 15 genes identified as predictors of the response to the HBV vaccine in the EM131 training set (n=95). The mean-centred gene expression is represented using a blue to white to red colour scale. Rows and columns correspond to the genes and the profiled samples, respectively. Samples were ordered by increasing levels of their predicted probability of responding to the vaccine (that is, posterior probability). Antibody response to the HBV vaccine (log(HepBDifV4/5-V2)) and the response group predicted by the 15-gene signature (nbClass) are presented in coloured squares above each sample."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 4"
       }
     ]
   },
-  "claim_12": {
-    "claim": "Flow cytometry analysis of pre-vaccination blood from the EM131 training set showed that frequencies of switched IgG+ memory B cells and IgG+ memory B cells predicted response to the HBV vaccine compared to poor-responders.",
+  "claim_22": {
+    "claim": "Flow cytometry analysis of whole blood and PBMC from 95 pre-vaccination samples of the EM131 training set, using forward selection model, showed that frequencies of switched IgG+ memory B cells and IgG+ memory B cells were predictive of HBV vaccine response.",
     "claim_type": "prediction",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "Polychromatic FCM"
-    },
+    "assay_method_in_paper": "flow cytometry",
     "sources": [
       {
         "type": "text",
@@ -243,25 +413,18 @@
       {
         "type": "text",
         "section": "Figure 5 caption",
-        "quote": "Figure 5 | B-cell subset as well as innate immune cell subsets and RBC counts are predictive of the response to the HBV vaccine. Polychromatic FCM was used to identify cell surface markers of the response to the HBV vaccine. (a) Box plots presenting the frequencies of the four FCM markers selected in the forward selection model in responders and poor-responders to the HBV vaccine on the EM131 training set (n = 95)."
+        "quote": "(a) Box plots presenting the frequencies of the four FCM markers selected in the forward selection model in responders and poor-responders to the HBV vaccine on the EM131 training set (n=95)."
       },
       {
         "type": "figure",
-        "ref": "Figure 5a"
-      },
-      {
-        "type": "table",
-        "ref": "Table 1"
+        "ref": "Figure 5"
       }
     ]
   },
-  "claim_13": {
-    "claim": "Flow cytometry analysis of pre-vaccination blood from the EM131 training set showed that frequencies of CD4 T-effector memory 2 cells and CD40 on plasmacytoid dendritic cells were negatively associated with HBV vaccine response compared to responders.",
+  "claim_23": {
+    "claim": "Flow cytometry analysis of whole blood and PBMC from 95 pre-vaccination samples of the EM131 training set, using forward selection model, showed that frequencies of CD4 T-effector memory 2 (CD28−) were negatively associated with HBV vaccine response.",
     "claim_type": "association",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "Polychromatic FCM"
-    },
+    "assay_method_in_paper": "flow cytometry",
     "sources": [
       {
         "type": "text",
@@ -271,79 +434,65 @@
       {
         "type": "text",
         "section": "Figure 5 caption",
-        "quote": "Figure 5 | B-cell subset as well as innate immune cell subsets and RBC counts are predictive of the response to the HBV vaccine. Polychromatic FCM was used to identify cell surface markers of the response to the HBV vaccine. (a) Box plots presenting the frequencies of the four FCM markers selected in the forward selection model in responders and poor-responders to the HBV vaccine on the EM131 training set (n = 95)."
+        "quote": "(a) Box plots presenting the frequencies of the four FCM markers selected in the forward selection model in responders and poor-responders to the HBV vaccine on the EM131 training set (n=95)."
       },
       {
         "type": "figure",
-        "ref": "Figure 5a"
+        "ref": "Figure 5"
       }
     ]
   },
-  "claim_14": {
-    "claim": "Flow cytometry analysis of pre-vaccination blood from the EM131 training and test sets showed that a multivariate model combining switched IgG+ memory B cells, IgG+ memory B cells, CD4 T-effector memory 2, and CD40 in pDCs predicted the response to HBV vaccine with an accuracy of 63.3% compared to chance.",
-    "claim_type": "prediction",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "Polychromatic FCM"
-    },
+  "claim_24": {
+    "claim": "Flow cytometry analysis of whole blood and PBMC from 95 pre-vaccination samples of the EM131 training set, using forward selection model, showed that median fluorescence intensity of CD40 in plasmacytoid dendritic cells was negatively associated with HBV vaccine response.",
+    "claim_type": "association",
+    "assay_method_in_paper": "flow cytometry",
     "sources": [
       {
         "type": "text",
         "section": "Results",
-        "quote": "A multivariate regression model combining four FCM markers (% switched IgG+ memory B cells, % IgG+ memory B cells, % CD4 T-effector memory 2 and the median fluorescence intensity of CD40 in pDCs; Table 1), trained on the EM131 training set, was able to predict the response to HBV vaccine in the test set with an accuracy of 63.3% (Fig. 5b, permutation test: P = 0.0468)."
+        "quote": "Frequencies of CD4 T-effector memory 2 (CD28−, marker of immunosenescence24) and CD40 on plasmacytoid dendritic cells (pDCs), another byproduct of chronic immune activation and inflammation25, correlated negatively with HBV vaccine response (Fig. 5a)."
+      },
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "A multivariate regression model combining four FCM markers (% switched IgG+ memory B cells, % IgG+ memory B cells, % CD4 T-effector memory 2 and the median fluorescence intensity of CD40 in pDCs; Table 1), trained on the EM131 training set, was able to predict the response to HBV vaccine in the test set with an accuracy of 63.3% (Fig. 5b, permutation test: P=0.0468)."
       },
       {
         "type": "text",
         "section": "Figure 5 caption",
-        "quote": "Figure 5 | B-cell subset as well as innate immune cell subsets and RBC counts are predictive of the response to the HBV vaccine. Polychromatic FCM was used to identify cell surface markers of the response to the HBV vaccine. (b) ROC curves for the prediction of the HBV vaccine response using the FCM data on the EM131 test set."
+        "quote": "(a) Box plots presenting the frequencies of the four FCM markers selected in the forward selection model in responders and poor-responders to the HBV vaccine on the EM131 training set (n=95)."
       },
       {
         "type": "figure",
-        "ref": "Figure 5b"
+        "ref": "Figure 5"
+      }
+    ]
+  },
+  "claim_25": {
+    "claim": "Flow cytometry analysis of whole blood and PBMC from pre-vaccination samples of the EM131 training and test sets, using a multivariate regression model and ROC analysis, showed that a four-marker model comprising switched IgG+ memory B cells, IgG+ memory B cells, CD4 T-effector memory 2, and CD40 median fluorescence intensity in pDCs predicted HBV vaccine response with 63.3% accuracy in the test set compared to the EM131 training set used for model training.",
+    "claim_type": "prediction",
+    "assay_method_in_paper": "flow cytometry",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "A multivariate regression model combining four FCM markers (% switched IgG+ memory B cells, % IgG+ memory B cells, % CD4 T-effector memory 2 and the median fluorescence intensity of CD40 in pDCs; Table 1), trained on the EM131 training set, was able to predict the response to HBV vaccine in the test set with an accuracy of 63.3% (Fig. 5b, permutation test: P=0.0468)."
       },
       {
-        "type": "table",
-        "ref": "Table 1"
-      }
-    ]
-  },
-  "claim_15": {
-    "claim": "Multiplex ELISA analysis of pre-vaccination serum from the EM131 training set showed that IL-15, IL-1ra, and TNFR2 were negatively associated with HBV vaccine response compared to responders.",
-    "claim_type": "association",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "multiplex ELISA protocol Human Inflammation multianalyte profiling"
-    },
-    "sources": [
-      {
         "type": "text",
-        "section": "Results",
-        "quote": "Three inflammation-associated proteins—IL-15, IL-1ra and TNFR2—were negatively associated with HBV vaccine response on the EM131 training set (Supplementary Table 5b,c and Supplementary Fig. 5b)."
+        "section": "Figure 5 caption",
+        "quote": "(b) ROC curves for the prediction of the HBV vaccine response using the FCM data on the EM131 test set."
+      },
+      {
+        "type": "figure",
+        "ref": "Figure 5"
       }
     ]
   },
-  "claim_16": {
-    "claim": "Multiplex ELISA analysis of pre-vaccination serum from the EM131 test set showed that the cytokine model was not significantly associated with HBV vaccine response compared to responders.",
+  "claim_26": {
+    "claim": "Haematologic measurement analysis of blood samples measured in a 28-day window prior to HBV vaccination from 95 pre-vaccination samples of the EM131 training set, using box-plot comparison in responders and poor-responders and ROC analysis on the test set, showed that higher red blood cell counts were predictive of HBV vaccine response.",
     "claim_type": "prediction",
-    "polarity": "null",
-    "assay": {
-      "name_in_paper": "multiplex ELISA protocol Human Inflammation multianalyte profiling"
-    },
-    "sources": [
-      {
-        "type": "text",
-        "section": "Results",
-        "quote": "This model was not significantly associated to the HBV vaccine response in the EM131 test set (Supplementary Fig. 5c, permutation test: P = 0.250)."
-      }
-    ]
-  },
-  "claim_17": {
-    "claim": "Haematologic measurements analysis of pre-vaccination blood from elderly participants showed that higher red blood cell counts were associated with low antibody titres compared to lower red blood cell counts.",
-    "claim_type": "association",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "haematologic measurements"
-    },
+    "assay_method_in_paper": "haematologic measurements",
     "sources": [
       {
         "type": "text",
@@ -353,29 +502,18 @@
       {
         "type": "text",
         "section": "Figure 5 caption",
-        "quote": "Figure 5 | B-cell subset as well as innate immune cell subsets and RBC counts are predictive of the response to the HBV vaccine. (c) Box plots presenting the RBC counts (measured in a 28-day window prior to HBV vaccination) in responders and poor-responders to the HBV vaccine on the EM131 training set (n = 95). (d) ROC curves illustrating the prediction of the HBV vaccine response using RBC counts on the EM131 test set."
+        "quote": "(c) Box plots presenting the RBC counts (measured in a 28-day window prior to HBV vaccination) in responders and poor-responders to the HBV vaccine on the EM131 training set (n=95). (d) ROC curves illustrating the prediction of the HBV vaccine response using RBC counts on the EM131 test set."
       },
       {
         "type": "figure",
-        "ref": "Figure 5c"
-      },
-      {
-        "type": "figure",
-        "ref": "Figure 5d"
-      },
-      {
-        "type": "table",
-        "ref": "Table 1"
+        "ref": "Figure 5"
       }
     ]
   },
-  "claim_18": {
-    "claim": "Microarray analysis of whole blood from elderly participants before vaccination, using least-square regression integration with flow cytometry, showed that the BioAge module M1 and the 15-gene signature were positively associated with frequencies of memory B cells and increased CD4 counts.",
+  "claim_27": {
+    "claim": "DNA microarray analysis of PAXgene blood samples from elderly participants in the EM131 training set at pre-vaccination, using a projection-based multivariate approach with least-square regressions between pairs of data sets in the R package mixOmics and conversion of regression coefficients to Pearson's correlations, showed that the BioAge module M1 and the 15-gene signature were correlated with frequencies of memory B cells identified by flow cytometry and with increased CD4 counts.",
     "claim_type": "association",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "microarray"
-    },
+    "assay_method_in_paper": "microarray",
     "sources": [
       {
         "type": "text",
@@ -385,7 +523,7 @@
       {
         "type": "text",
         "section": "Figure 6 caption",
-        "quote": "Figure 6 | Integrative analysis reveals positive correlations between biomarkers of HBV vaccine response. A projection-based multivariate approach was adopted to assess the correlation between transcriptomic, FCM, haematologic and cytokine/chemokine expression data sets."
+        "quote": "A projection-based multivariate approach was adopted to assess the correlation between transcriptomic, FCM, haematologic and cytokine/chemokine expression data sets. Least-square regressions between pairs of data sets was performed using the R package ‘mixOmics'. The resulting regression coefficients were converted to Pearson's correlations between pairs of features of the different data sets (presented at each quadrant of the figure). Significant (t-test: r≥0.188, P≤0.05) positive correlations are presented as edges and the features as vertices. The vertices are coloured by fold-change between HBV vaccine responders versus poor-responders of the EM131 training set."
       },
       {
         "type": "figure",
@@ -393,13 +531,10 @@
       }
     ]
   },
-  "claim_19": {
-    "claim": "Microarray analysis of whole blood from elderly participants before vaccination, using least-square regression integration with flow cytometry, showed that the inflammation gene-expression signature including C1QB, C3, and IRF7 was positively associated with activated innate immune cell markers and immunosenescent CD4 T cells.",
+  "claim_28": {
+    "claim": "DNA microarray analysis of PAXgene blood samples from elderly participants in the EM131 training set at pre-vaccination, using a projection-based multivariate approach with least-square regressions between pairs of data sets in the R package mixOmics and conversion of regression coefficients to Pearson's correlations, showed that the inflammation gene-expression signature, including C1QB, C3, and IRF7, was positively associated with flow-cytometry markers of activated innate immune cells and immunosenescent CD4 T cells.",
     "claim_type": "association",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "microarray"
-    },
+    "assay_method_in_paper": "microarray",
     "sources": [
       {
         "type": "text",
@@ -409,7 +544,7 @@
       {
         "type": "text",
         "section": "Figure 6 caption",
-        "quote": "Figure 6 | Integrative analysis reveals positive correlations between biomarkers of HBV vaccine response. A projection-based multivariate approach was adopted to assess the correlation between transcriptomic, FCM, haematologic and cytokine/chemokine expression data sets."
+        "quote": "A projection-based multivariate approach was adopted to assess the correlation between transcriptomic, FCM, haematologic and cytokine/chemokine expression data sets. Least-square regressions between pairs of data sets was performed using the R package ‘mixOmics'. The resulting regression coefficients were converted to Pearson's correlations between pairs of features of the different data sets (presented at each quadrant of the figure). Significant (t-test: r≥0.188, P≤0.05) positive correlations are presented as edges and the features as vertices. The vertices are coloured by fold-change between HBV vaccine responders versus poor-responders of the EM131 training set."
       },
       {
         "type": "figure",
@@ -417,13 +552,10 @@
       }
     ]
   },
-  "claim_20": {
-    "claim": "Multiplex ELISA analysis of serum from elderly participants before vaccination, using least-square regression integration with flow cytometry, showed that heightened levels of pro-inflammatory cytokines including SCF, TNFR2, and VEGF were positively associated with increased frequencies of activated innate immune cells.",
+  "claim_29": {
+    "claim": "Multiplex ELISA analysis of serum samples from the EM131 training set at pre-vaccination, using a projection-based multivariate approach with least-square regressions between pairs of data sets in the R package mixOmics and conversion of regression coefficients to Pearson's correlations, showed that heightened levels of SCF, TNFR2, and VEGF were positively associated with increased frequencies of activated innate immune cells measured by flow cytometry.",
     "claim_type": "association",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "multiplex ELISA protocol Human Inflammation multianalyte profiling"
-    },
+    "assay_method_in_paper": "multiplex ELISA",
     "sources": [
       {
         "type": "text",
@@ -433,188 +565,95 @@
       {
         "type": "text",
         "section": "Figure 6 caption",
-        "quote": "Figure 6 | Integrative analysis reveals positive correlations between biomarkers of HBV vaccine response. A projection-based multivariate approach was adopted to assess the correlation between transcriptomic, FCM, haematologic and cytokine/chemokine expression data sets."
+        "quote": "A projection-based multivariate approach was adopted to assess the correlation between transcriptomic, FCM, haematologic and cytokine/chemokine expression data sets. Least-square regressions between pairs of data sets was performed using the R package ‘mixOmics'. The resulting regression coefficients were converted to Pearson's correlations between pairs of features of the different data sets (presented at each quadrant of the figure). Significant (t-test: r≥0.188, P≤0.05) positive correlations are presented as edges and the features as vertices. The vertices are coloured by fold-change between HBV vaccine responders versus poor-responders of the EM131 training set."
       },
       {
         "type": "figure",
         "ref": "Figure 6"
-      }
-    ]
-  },
-  "claim_21": {
-    "claim": "Microarray analysis of whole blood from poor-responders and responders before vaccination showed that MYD88 and TRAF were negatively associated with the frequency of CD4 T cells compared to higher CD4 T-cell frequency.",
-    "claim_type": "association",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "microarray"
-    },
-    "sources": [
-      {
-        "type": "text",
-        "section": "Results",
-        "quote": "Both MYD88 and TRAF are negatively correlated to the frequency of CD4 T cells, a marker of good response to HBV vaccination (Supplementary Fig. 6b, Pearson’s correlation: r = −0.347 P<0.05 and r = −0.353 P<0.05, respectively)."
-      }
-    ]
-  },
-  "claim_22": {
-    "claim": "Microarray analysis of whole blood from poor-responders and responders before vaccination showed that C3 and WARS were negatively associated with the frequencies of the two memory B-cell subsets compared to higher memory B-cell frequencies.",
-    "claim_type": "association",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "microarray"
-    },
-    "sources": [
-      {
-        "type": "text",
-        "section": "Results",
-        "quote": "Moreover, C3 and WARS, two target genes of type I interferons, were negatively associated to the frequencies of the two memory B-cell subsets."
-      }
-    ]
-  },
-  "claim_23": {
-    "claim": "Microarray analysis of whole blood from poor-responders and responders before vaccination showed that CD200 and BATF3 were repressed in HBV vaccine hyporesponders compared to responders.",
-    "claim_type": "group_difference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "microarray"
-    },
-    "sources": [
-      {
-        "type": "text",
-        "section": "Results",
-        "quote": "In contrast, anti-inflammatory protein-coding genes like CD200 (ref. 32) and BATF3 (ref. 33) were repressed in HBV vaccine hyporesponders (Fig. 6)."
-      },
-      {
-        "type": "text",
-        "section": "Figure 6 caption",
-        "quote": "Figure 6 | Integrative analysis reveals positive correlations between biomarkers of HBV vaccine response. A projection-based multivariate approach was adopted to assess the correlation between transcriptomic, FCM, haematologic and cytokine/chemokine expression data sets."
-      },
-      {
-        "type": "figure",
-        "ref": "Figure 6"
-      }
-    ]
-  },
-  "claim_24": {
-    "claim": "Haematologic measurements analysis of blood from poor-responders and responders before vaccination showed that poor-responders had higher numbers of red blood cells than responders.",
-    "claim_type": "group_difference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "haematologic measurements"
-    },
-    "sources": [
-      {
-        "type": "text",
-        "section": "Results",
-        "quote": "Poor-responders to HBV vaccine showed higher numbers of RBCs than responders."
-      }
-    ]
-  },
-  "claim_25": {
-    "claim": "Microarray analysis of whole blood from poor-responders and responders before vaccination showed that genes and pathways positively correlated with HBV antibody titres, including genes within module M1, were negatively associated with red blood cell counts, whereas genes included in module M16 and pro-inflammatory genes enriched in poor-responders were positively associated with red blood cell counts.",
-    "claim_type": "association",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "microarray"
-    },
-    "sources": [
-      {
-        "type": "text",
-        "section": "Results",
-        "quote": "Interestingly genes and pathways that correlate positively with HBV Ab titres including genes within module M1 were negatively correlated with RBC counts. Conversely genes included in module M16 (Fig. 6) and pro-inflammatory genes included in pathways enriched in poor-responders (Fig. 5e) were positive correlates of RBC counts."
-      }
-    ]
-  },
-  "claim_26": {
-    "claim": "Microarray analysis of whole blood from poor-responders and responders before vaccination showed that the HIF-1α pathway was upregulated in poor-responders compared to responders.",
-    "claim_type": "group_difference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "microarray"
-    },
-    "sources": [
-      {
-        "type": "text",
-        "section": "Results",
-        "quote": "The HIF-1α pathway. which controls erythropoietin expression, was significantly upregulated in poor-responders (Fisher’s exact test: P = 0.0360, Supplementary Table 4c); target genes of HIF-1α were induced in poor-responders and their expression levels correlated with higher RBC counts (Pearson’s t-test: P = 0.0462, Fig. 5e)."
-      },
-      {
-        "type": "text",
-        "section": "Figure 5 caption",
-        "quote": "Figure 5 | B-cell subset as well as innate immune cell subsets and RBC counts are predictive of the response to the HBV vaccine. (e) Heat map representation of the genes differentially expressed between HBV vaccine R and PR overlapping the HIF-1α canonical pathway in the training set."
-      },
-      {
-        "type": "figure",
-        "ref": "Figure 5e"
-      }
-    ]
-  },
-  "claim_27": {
-    "claim": "Microarray analysis of whole blood from poor-responders and responders before vaccination showed that HIF-1α target gene expression was positively associated with higher red blood cell counts.",
-    "claim_type": "association",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "microarray"
-    },
-    "sources": [
-      {
-        "type": "text",
-        "section": "Results",
-        "quote": "The HIF-1α pathway. which controls erythropoietin expression, was significantly upregulated in poor-responders (Fisher’s exact test: P = 0.0360, Supplementary Table 4c); target genes of HIF-1α were induced in poor-responders and their expression levels correlated with higher RBC counts (Pearson’s t-test: P = 0.0462, Fig. 5e)."
-      },
-      {
-        "type": "text",
-        "section": "Figure 5 caption",
-        "quote": "Figure 5 | B-cell subset as well as innate immune cell subsets and RBC counts are predictive of the response to the HBV vaccine. (e) Heat map representation of the genes differentially expressed between HBV vaccine R and PR overlapping the HIF-1α canonical pathway in the training set. The P value of t-test between RBC and the ordering of the samples is 0.0462."
-      },
-      {
-        "type": "figure",
-        "ref": "Figure 5e"
-      }
-    ]
-  },
-  "claim_28": {
-    "claim": "Microarray analysis of whole blood from poor-responders and responders before vaccination showed that red blood cell counts were positively associated with HMOX1, HP, and CD163 expression compared to lower red blood cell counts.",
-    "claim_type": "association",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "microarray"
-    },
-    "sources": [
-      {
-        "type": "text",
-        "section": "Results",
-        "quote": "RBC counts were positively correlated to the HMOX1 (haem oxidase catalysing the degradation of haem), HP (scavenger of free Hb) and CD163 expressions (scavenger receptor of the Hb–HP complex), all of which are interferon-regulated genes and were induced in HBV vaccine poor-responders (Supplementary Table 4a)."
-      }
-    ]
-  },
-  "claim_29": {
-    "claim": "Microarray analysis of whole blood from poor-responders and responders before vaccination showed that the haem-induced response pathway was enriched in poor-responders compared to responders.",
-    "claim_type": "group_difference",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "microarray"
-    },
-    "sources": [
-      {
-        "type": "text",
-        "section": "Results",
-        "quote": "The haem-induced response pathway was significantly enriched among genes differentially expressed between HBV vaccine responders and poor-responders (Fisher’s exact test: P = 0.0461, Supplementary Table 4c)."
       }
     ]
   },
   "claim_30": {
-    "claim": "Microarray analysis of whole blood from poor-responders and responders before vaccination showed that EIF2AK1 and several of its downstream targets including EIF2, EIF3, and EIF4 were negatively associated with antibody titres.",
-    "claim_type": "association",
-    "polarity": "affirm",
-    "assay": {
-      "name_in_paper": "microarray"
-    },
+    "claim": "Flow cytometry analysis of whole blood and PBMC from the EM131 cohort at pre-vaccination baseline, using logistic regression, showed that frequencies of switched IgG+ memory B cells (CD3−, CD19+, HLADR+, CD27+, IgG+) and IgG+ memory B cells (CD3−, CD19+, HLADR+, CD27+, CD10−, CD20+, IgG+) were significant predictors of HBV vaccine response.",
+    "claim_type": "prediction",
+    "assay_method_in_paper": "flow cytometry",
     "sources": [
       {
         "type": "text",
         "section": "Results",
-        "quote": "EIF2AK1 (Haem-Regulated Inhibitor) and several of its downstream targets (for example, EIF2, EIF3 and EIF4) were negatively associated with Ab titres (Supplementary Fig. 6a)."
+        "quote": "Two cell subsets defined by FCM, namely frequencies of switched IgG+ memory B cells (CD3−, CD19+, HLADR+, CD27+, IgG+) and of IgG+ memory B cells (CD3−, CD19+, HLADR+, CD27+, CD10−, CD20+, IgG+) were identified as significant predictors of the response to the HBV vaccine (Fig. 5a and Table 1)."
+      },
+      {
+        "type": "text",
+        "section": "Table 1 caption",
+        "quote": "Table 1 Identification of FCM markers and haematologic markers associated with response to HBV vaccine."
+      },
+      {
+        "type": "table",
+        "ref": "Table 1"
+      }
+    ]
+  },
+  "claim_31": {
+    "claim": "Flow cytometry analysis of whole blood and PBMC from the EM131 cohort at pre-vaccination baseline, using association screening, showed that frequencies of CD4 T-effector memory 2 (CD28−) and median fluorescence intensity of CD40 on plasmacytoid dendritic cells were negatively associated with HBV vaccine response.",
+    "claim_type": "association",
+    "assay_method_in_paper": "flow cytometry",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Frequencies of CD4 T-effector memory 2 (CD28−, marker of immunosenescence24) and CD40 on plasmacytoid dendritic cells (pDCs), another byproduct of chronic immune activation and inflammation25, correlated negatively with HBV vaccine response (Fig. 5a)."
+      },
+      {
+        "type": "text",
+        "section": "Table 1 caption",
+        "quote": "Table 1 Identification of FCM markers and haematologic markers associated with response to HBV vaccine."
+      },
+      {
+        "type": "table",
+        "ref": "Table 1"
+      }
+    ]
+  },
+  "claim_32": {
+    "claim": "Flow cytometry analysis of whole blood and PBMC from the EM131 training and test sets at pre-vaccination baseline, using a multivariate regression model, showed that the four-marker model comprising % switched IgG+ memory B cells, % IgG+ memory B cells, % CD4 T-effector memory 2, and median fluorescence intensity of CD40 in pDCs predicted HBV vaccine response in the test set with 63.3% accuracy.",
+    "claim_type": "prediction",
+    "assay_method_in_paper": "flow cytometry",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "A multivariate regression model combining four FCM markers (% switched IgG+ memory B cells, % IgG+ memory B cells, % CD4 T-effector memory 2 and the median fluorescence intensity of CD40 in pDCs; Table 1), trained on the EM131 training set, was able to predict the response to HBV vaccine in the test set with an accuracy of 63.3% (Fig. 5b, permutation test: P=0.0468)."
+      },
+      {
+        "type": "text",
+        "section": "Table 1 caption",
+        "quote": "Table 1 Identification of FCM markers and haematologic markers associated with response to HBV vaccine."
+      },
+      {
+        "type": "table",
+        "ref": "Table 1"
+      }
+    ]
+  },
+  "claim_33": {
+    "claim": "Haematologic measurements analysis of blood samples from elderly participants in the EM131 cohort at pre-vaccination baseline, using association screening, showed that higher red blood cell counts were associated with low antibody titres to the HBV vaccine.",
+    "claim_type": "association",
+    "assay_method_in_paper": "haematologic measurements",
+    "sources": [
+      {
+        "type": "text",
+        "section": "Results",
+        "quote": "Similarly, a set of haematologic markers was screened for their association with the HBV vaccine response. Interestingly, higher red blood cell (RBC) counts were associated with low Ab titres in elderly (Table 1 and Fig. 5c,d)."
+      },
+      {
+        "type": "text",
+        "section": "Table 1 caption",
+        "quote": "Table 1 Identification of FCM markers and haematologic markers associated with response to HBV vaccine."
+      },
+      {
+        "type": "table",
+        "ref": "Table 1"
       }
     ]
   }
