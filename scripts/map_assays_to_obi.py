@@ -5,7 +5,7 @@ Uses the repo's existing three-step chain in app.agent.assay_obi_mapper:
   2. exact match on the normalized name -> resource: exact_normalized, confidence "high"
   3. embedding top-10 + LLM pick        -> resource: embedding_llm,  confidence = similarity
 
-The existing CLIs (run_obi_map.py, map_assays_obi.py, the skill's obi_enrich_file.py) all
+The existing CLIs (run_obi_map.py, map_assays_obi.py) both
 take a per-study registry dict keyed by assay name; this one takes the flat corpus-wide
 table checked in at data/claims/all_assays_full.json.
 

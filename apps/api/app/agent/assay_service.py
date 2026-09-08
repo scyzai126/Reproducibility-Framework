@@ -1,4 +1,4 @@
-"""Answer "what assays did this paper use?" end to end: extract, then verify.
+"""Answer "what assays did this paper use?" end to end: extract, verify, correct.
 
 This is the pipeline behind POST /agent/assays. It chains the two prompts a front-end
 question needs — prompts/extract_assays.txt to build the registry, prompts/verify_assays.txt
@@ -31,9 +31,19 @@ from app.agent.assay_corrector import (
     rejected_assays,
     uncorrectable_flags,
 )
-from app.agent.assay_extractor import contract_warnings, extract_assays
-from app.agent.assay_verifier import build_report, check_quote_verbatim, verify_registry
-from app.agent.jats_parser import article_title, number_sentences, parse_jats_xml
+from app.agent.assay_extractor import contract_warnings, extract_assays, trim_registry
+from app.agent.assay_verifier import (
+    build_report,
+    check_quote_verbatim,
+    check_source_section,
+    verify_registry,
+)
+from app.agent.jats_parser import (
+    article_title,
+    number_sentences,
+    parse_jats_xml,
+    sentence_sections,
+)
 from app.config import settings
 
 logger = logging.getLogger(__name__)
@@ -106,15 +116,27 @@ def paper_source_text(xml_path: Path) -> tuple[str, str]:
 
 
 def quote_report(assays: dict, source_text: str) -> dict:
-    """The free verbatim check over a whole registry, as a serialisable summary."""
+    """The free deterministic checks over a whole registry, as a serialisable summary.
+
+    Two of them now: the quote is copied verbatim from the sentences it cites, and `source`
+    agrees with the section those sentences sit in. Both are pure string work, so they run on
+    every response, cached or fresh, and neither depends on a model's opinion.
+    """
+    sections = sentence_sections(source_text)
     per_assay = {key: check_quote_verbatim(entry, source_text) for key, entry in assays.items()}
+    per_source = {key: check_source_section(entry, sections) for key, entry in assays.items()}
     statuses = [c["status"] for c in per_assay.values()]
+    source_statuses = [c["status"] for c in per_source.values()]
     return {
         "verified": statuses.count("found"),
         "missing": statuses.count("missing"),
         "no_quote": statuses.count("no_quote"),
         "total": len(per_assay),
         "per_assay": per_assay,
+        "source_aligned": source_statuses.count("aligned"),
+        "source_mismatch": source_statuses.count("mismatch"),
+        "source_unknown": source_statuses.count("unknown"),
+        "per_assay_source": per_source,
     }
 
 
@@ -247,6 +269,15 @@ async def assay_report(
                              "actions": report["summary"]["actions"],
                              "dropped": len(dropped)}
 
+    # The deliverable, written from the final registry on every request -- cache hits too, so
+    # it can never lag assays.json. Deliberately not inside promote_registry(): that would make
+    # assay_corrector import assay_extractor, and it would skip the rounds that never promote.
+    # The consequence is that `run_assay_correct.py --promote` alone does not refresh this file.
+    benchmark_path = out_dir / "assays_benchmark.json"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    benchmark_path.write_text(
+        json.dumps(trim_registry(assays), indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+
     return {
         "study_accession": study_accession,
         "pubmed_id": pubmed_id,
@@ -261,8 +292,9 @@ async def assay_report(
         "meta": {
             "llm_calls": calls,
             "registry_path": _display_path(registry_path),
+            "benchmark_path": _display_path(benchmark_path),
             "note": "assays.json holds the corrected registry; the extracted one is kept as "
-                    "assays_precorrection.json",
+                    "assays_precorrection.json; assays_benchmark.json is the reading view",
         },
     }
 

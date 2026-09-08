@@ -308,13 +308,27 @@ def _truncate_blocks(blocks: list[str], limit: int) -> str:
 def parse_jats_xml(xml_text: str) -> str:
     """Extract structured text from JATS XML: sections, figures, and tables.
 
-    Output order: abstract → introduction → results (including subsections) →
-    methods (including subsections) → discussion → other sections →
-    Figures block → Tables block.
+    Output order: the abstract, then every surviving section in *document order*,
+    then the Figures block, then the Tables block. Nothing is re-sorted -- a paper
+    that prints Methods before Results comes out that way (8 of the 30 papers in
+    data/JAT_XML do).
 
-    Subsections inherit their canonical type from the nearest ancestor <sec>
-    so that e.g. "Innate immune activation" inside Results is sorted with
-    Results rather than at the end.
+    Introduction, Discussion, and Conclusion do not survive: _is_excluded_section_label
+    drops them, along with references, supplementary material, and the boilerplate
+    sections (acknowledgments, funding, author contributions, competing interests,
+    data/code availability, ethics). What is left is the material that states what
+    the study did and found. _canonical_section still maps "introduction" and
+    "discussion" to buckets for completeness, but nothing carrying those labels
+    gets that far.
+
+    A section whose title matches no canonical bucket is kept, not dropped: it
+    inherits its parent <sec>'s type if it has one -- so "Innate immune activation"
+    inside Results counts as Results -- and otherwise becomes "other". Papers that
+    label Results sections with descriptive titles instead ("Innate immune
+    responses", "Monocyte differences by sex") are the common case for "other",
+    and their text reaches the caller in full, in place. The canonical type drives
+    only that inheritance and which empty header-only sections are retained; it
+    never reorders or filters.
     """
     if not xml_text.strip():
         return ""
@@ -398,7 +412,7 @@ def parse_jats_xml(xml_text: str) -> str:
 
     section_blocks: list[str] = []
     for _, canon, header, body in section_records:
-        section_blocks.append(f"## {header}\n{body}".rstrip())
+        section_blocks.append(f"## {header}  [{canon}]\n{body}".rstrip())
 
     # ── Figures ──────────────────────────────────────────────────────────────
     fig_blocks: list[str] = []
@@ -461,10 +475,10 @@ def parse_jats_xml(xml_text: str) -> str:
 
 # ── Sentence numbering ────────────────────────────────────────────────────────
 #
-# Lives here rather than in .claude/skills/extract-assay-methods/scripts/jats_to_text.py,
-# where it was written, because the HTTP route and the assay passes both need it and
-# apps/api must not import from .claude/skills. The skill script now imports it from here,
-# which is the direction that already holds: skill scripts import this package.
+# Lives here rather than in scripts/jats_to_text.py, where it was written, because the HTTP
+# route and the assay passes both need it and apps/api must not import from scripts/. That CLI
+# now imports it from here, which is the direction that already holds: scripts import this
+# package.
 #
 # Numbering is lossless -- deleting every `[S<n>] ` marker restores the parser's output byte
 # for byte, which is what makes an extracted quote checkable against the source.
@@ -542,6 +556,48 @@ def number_sentences(text: str) -> str:
 def strip_sentence_ids(text: str) -> str:
     """Inverse of number_sentences() -- used to check a quote against the raw parse."""
     return SENTENCE_MARKER.sub("", text)
+
+
+#: The `[bucket]` tag parse_jats_xml appends to every `## ` heading, and the banner lines that
+#: open the figure and table blocks. Read back by sentence_sections.
+_HEADING_BUCKET = re.compile(r"^##\s.*\[(abstract|introduction|results|methods|discussion|"
+                             r"references|supplementary|other)\]\s*$")
+_BANNER = re.compile(r"^---\s")
+
+#: What a sentence in the figure/table blocks belongs to. Not a section the paper wrote, but
+#: the passes treat captions alongside Results, so it needs a name of its own.
+CAPTIONS = "captions"
+
+
+def sentence_sections(text: str) -> dict[str, str]:
+    """Map each `S<n>` id to the canonical bucket of the section it sits in.
+
+    The sibling of assay_verifier.sentence_index, which maps the same ids to their text. Both
+    read the numbered parse rather than the XML: parse_jats_xml already resolved each section's
+    bucket -- including inheritance, so a Methods subsection titled "Flow Cytometry Analysis"
+    resolves to `methods` -- and wrote it into the heading. Recomputing the bucket from heading
+    text here would lose that inheritance and misfile every Methods subsection.
+
+    Ids in the figure and table blocks map to CAPTIONS. An id in neither -- which cannot happen
+    on a parse from this module -- is simply absent, and callers treat absence as unknown
+    rather than as a section mismatch.
+    """
+    sections: dict[str, str] = {}
+    bucket: str | None = None
+
+    for line in text.split("\n"):
+        heading = _HEADING_BUCKET.match(line)
+        if heading:
+            bucket = heading.group(1)
+            continue
+        if _BANNER.match(line):
+            bucket = CAPTIONS
+            continue
+        if bucket is None:
+            continue
+        for marker in SENTENCE_MARKER.finditer(line):
+            sections[marker.group(0).strip()[1:-1]] = bucket
+    return sections
 
 
 def article_title(xml_text: Union[str, bytes]) -> Optional[str]:

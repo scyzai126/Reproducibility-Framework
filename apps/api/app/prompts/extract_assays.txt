@@ -9,20 +9,40 @@ You are NOT attributing findings to assays. Produce the inventory; nothing else.
 
 ## The source text
 
-You are given the paper as `## <heading>` sections in reading order — abstract, results,
-methods, discussion, then anything else — followed by a `--- Figures ---` block and a
-`--- Tables ---` block of `[Label]` entries with `Title:`, `Caption:` and `Body:` lines.
+You are given the paper as `## <heading>` sections: the abstract first, then every section in
+the paper's own document order — followed by a `--- Figures ---` block and a `--- Tables ---`
+block of `[Label]` entries with `Title:`, `Caption:` and `Body:` lines.
+
+**Every heading carries its section type in brackets**, resolved for you:
+
+    ## Flow Cytometry Analysis  [methods]
+    ## Innate immune responses  [other]
+
+`[methods]`, `[results]`, `[abstract]`, or `[other]`. **The tag is authoritative — use it, do
+not re-derive the section type from the heading's wording.** A subsection inherits its parent's
+tag, so a Methods subsection named only "Flow Cytometry Analysis" is still tagged `[methods]`.
+
+`[other]` means the publisher labelled the section as neither Methods nor Results. In practice
+those are Results sections the paper titled descriptively ("Monocyte differences by sex")
+rather than "Results" — treat them as Results, never as Methods.
+
+**Nothing is reordered, and the headings are the paper's own wording.** Methods may come
+before Results, and a paper may have no heading literally named either. Rely on the tag, never
+on position or on matching a heading word.
 
 **Every sentence is prefixed with an `[S<n>]` marker.** Section headings and `[Figure 1]`
 labels carry no marker; caption and table-body text does. These are the ids your `evidence`
 cites, and they are what lets a later step confirm an extracted value points at a real
 sentence rather than a paraphrase.
 
-The reference list, supplementary containers, and publisher boilerplate are already removed.
+The Introduction, the Discussion/Conclusions, the reference list, supplementary containers,
+and publisher boilerplate are already removed. Do not expect them, and do not treat their
+absence as the paper having nothing to say there.
 
-**Skip the Introduction and the Discussion/Conclusions entirely.** An assay named only there
-is background from someone else's study, not something this paper used to generate its own
-findings.
+**Background mentions still reach you, because they also appear inside Results and Methods.**
+An assay the paper names only as someone else's work — cited from another study, invoked as
+established knowledge, or proposed for future experiments — is background, not something this
+paper performed, wherever in the supplied text it appears.
 
 ## Two passes. Methods is the inventory; Results is only a recall backstop.
 
@@ -32,9 +52,9 @@ paraphrase ("cell death assay" for what Methods calls "cell viability staining u
 multi-photon microscopy") mixed with computational analyses. Mining them for assay *names*
 inflates the inventory with duplicates and non-assays.
 
-**PASS 1 — build the inventory from the Methods section only.** Whatever the paper calls it:
-Methods, Materials and Methods, Experimental Procedures, Study Design, Online Methods. Every
-distinct wet-lab measurement technique described there is an entry.
+**PASS 1 — build the inventory from the `[methods]` sections only.** Every distinct wet-lab
+measurement technique described in a section tagged `[methods]` is an entry. You do not have to
+work out which sections those are; the tags name them.
 
 - Find them regardless of how they are named — some are a single clause embedded in another
   assay's paragraph, with no subheading of their own.
@@ -42,8 +62,9 @@ distinct wet-lab measurement technique described there is an entry.
   Inhibition and Virus-Neutralization Assays"), split them into separate entries. Group by
   distinct technique, not by how the paper organized its headings.
 
-**PASS 2 — sweep the Abstract, Results and figure/table captions, then classify every
-candidate against the Pass 1 inventory.** Exactly one label each:
+**PASS 2 — sweep everything that is not tagged `[methods]`** — the `[abstract]`, `[results]`
+and `[other]` sections and the figure/table caption blocks — **then classify every candidate
+against the Pass 1 inventory.** Exactly one label each:
 
 - `SAME_AS_METHODS` — a paraphrase, abbreviation, or platform alias of an entry you already
   have. Add the wording to that entry's `aliases`. NEVER create a second entry.
@@ -54,8 +75,19 @@ candidate against the Pass 1 inventory.** Exactly one label each:
 
 Do not skip the classification step and merge the two lists directly.
 
-**If the paper has no Methods section at all**, build the inventory from the Results text and
-the figure/table captions directly, and set `source: "results"` on every entry.
+**Three structures are possible. Check which one you have before starting.**
+
+1. **Both `[methods]` and `[results]` present** — the usual case. Run the two passes above.
+2. **`[methods]` present but no `[results]`** — the paper titled its Results sections
+   descriptively, so they are tagged `[other]`. Run Pass 1 on the `[methods]` sections exactly
+   as usual, and let Pass 2 sweep the `[other]` sections in place of Results. Nothing else
+   changes: the inventory and the names still come from Methods.
+3. **No `[methods]` section at all** — the publisher omitted it. Only then build the inventory
+   from the remaining text and the captions directly, and set `source: "results"` on every
+   entry. Precision is lower here; do not compensate by guessing details the text lacks.
+
+Do not fall back to structure 3 because you could not find a Methods *heading*. If any section
+is tagged `[methods]`, you are in structure 1 or 2.
 
 ## What counts as an entry
 
@@ -166,8 +198,11 @@ Return ONLY a JSON object with one key per deduplicated assay — the key is the
 - `readouts` — the key measurement(s) it produces, in your own words. What the instrument
   measured, **not** what the paper concluded from it: "miRNA expression levels", never "miRNA
   correlations with the antibody response".
-- `source` — `"methods"` for a Pass 1 entry, `"results"` for one admitted by Pass 2. This is
-  what keeps the classification pass auditable.
+- `source` — where the paper establishes the technique, not which pass found it:
+  `"methods"` when its evidence sits in a `[methods]` section, `"results"` when the technique
+  appears only outside one. A later step re-derives this from your `sentence_ids` and reports
+  any entry where the two disagree, so an entry quoting a `[results]` sentence must not claim
+  `"methods"`.
 - `evidence` — **required on every entry**, and its only traceability.
   - `sentence_ids` are the `[S<n>]` markers the quote spans, given without brackets ("S318").
     List every one it spans, and list them contiguously — a quote joining non-adjacent
@@ -191,5 +226,5 @@ PAPER TEXT:
 
 {source_text}
 
-Build the inventory. Run Pass 1 over Methods, then classify every Abstract/Results/caption
-candidate against it. Return JSON only.
+Build the inventory. Run Pass 1 over the `[methods]` sections, then classify every candidate
+from the untagged-as-methods text against it. Return JSON only.

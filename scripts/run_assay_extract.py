@@ -1,8 +1,7 @@
 """Extract a paper's assay registry with one LLM call.
 
-The programmatic form of the extract-assay-methods skill: same rules
-(apps/api/app/prompts/extract_assays.txt), run as a single call over the sentence-numbered
-paper instead of read interactively.
+The rules live in apps/api/app/prompts/extract_assays.txt and are applied as a single call
+over the sentence-numbered paper rather than an interactive read.
 
 Writes data/claims/assay_registries/<pmid>_<SDY>/assays.json -- the canonical location the
 rest of the chain reads. Re-running overwrites it in place.
@@ -32,7 +31,6 @@ from pathlib import Path
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_REPO_ROOT / "apps" / "api"))
-sys.path.insert(0, str(_REPO_ROOT / ".claude" / "skills" / "extract-assay-methods" / "scripts"))
 
 from app.agent.assay_extractor import AssayExtractionError, contract_warnings, extract_assays
 from app.agent.claim_parser import _get_client

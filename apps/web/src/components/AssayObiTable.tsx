@@ -187,7 +187,7 @@ export default function AssayObiTable({ rows }: { rows: AssayObiRow[] }) {
       </div>
 
       <div className="border border-gray-200 rounded-xl overflow-hidden">
-        <div className="overflow-x-auto max-h-[calc(100vh-380px)] overflow-y-auto">
+        <div className="overflow-x-auto max-h-[70vh] min-h-[320px] overflow-y-auto">
           <table className="w-full text-xs">
             <thead className="sticky top-0 bg-gray-50 border-b border-gray-200 z-10">
               <tr>

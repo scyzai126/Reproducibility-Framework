@@ -5,10 +5,12 @@ import pytest
 from app.agent.assay_extractor import (
     AssayExtractionError,
     ENTRY_FIELDS,
+    TRIMMED_FIELDS,
     build_prompt,
     clean_entry,
     clean_registry,
     contract_warnings,
+    trim_registry,
 )
 
 
@@ -81,8 +83,38 @@ def test_an_invented_source_value_is_preserved_not_silently_corrected():
     assert contract_warnings({"ELISA": entry})
 
 
-def test_an_omitted_source_defaults_to_methods():
-    assert clean_entry("ELISA", _raw(source=None))["source"] == "methods"
+def test_an_omitted_source_becomes_null_and_warns():
+    """Defaulting to "methods" asserted the stronger provenance claim on exactly the entries
+    where the model declined to say. The null is not the point; the warning is."""
+    entry = clean_entry("ELISA", _raw(source=None))
+
+    assert entry["source"] is None
+    assert any("source is None" in w for w in contract_warnings({"ELISA": entry}))
+
+
+def test_a_blank_source_is_treated_as_omitted():
+    assert clean_entry("ELISA", _raw(source="   "))["source"] is None
+
+
+def test_contract_warnings_report_an_old_schema_entry_instead_of_raising():
+    """Most stored registries predate the current schema, and assay_service runs this on
+    registries loaded from disk -- subscripting turned a stale cache into a 500."""
+    old_schema = {
+        "ELISA": {
+            "name_in_paper": "ELISA",
+            "aliases": [],
+            "readouts": "cytokine concentrations",
+            "sample_type": "serum",
+            "evidence_location": "Methods",
+            "claim_role": "primary",
+            "confidence": "high",
+        }
+    }
+    warnings = contract_warnings(old_schema)
+
+    assert any("no evidence quote" in w for w in warnings)
+    assert any("cites no sentence_ids" in w for w in warnings)
+    assert any("source is None" in w for w in warnings)
 
 
 def test_a_non_object_answer_is_an_error_not_an_empty_registry():
@@ -113,6 +145,47 @@ def test_contract_warnings_name_the_unusable_entries():
     assert any("no evidence quote" in w for w in warnings)
     assert any("cites no sentence_ids" in w for w in warnings)
     assert not any("flow cytometry" in w for w in warnings)
+
+
+def test_contract_warnings_flag_aliases_that_are_not_a_list():
+    """`[]` is a real answer -- plenty of assays are named one way only -- but `null` or a bare
+    string is a defect that reads as "no aliases" downstream instead of as the gap it is. The
+    correction round can clear the field, and assay_service runs this over registries loaded
+    from disk, so nothing else would catch it."""
+    registry = {
+        "ELISA": {**_raw(name_in_paper="ELISA"), "aliases": None},
+        "Luminex": {**_raw(name_in_paper="Luminex"), "aliases": "FACS"},
+        "flow cytometry": _raw(),
+    }
+    warnings = contract_warnings(registry)
+
+    assert any("ELISA: aliases is None" in w for w in warnings)
+    assert any("Luminex: aliases is 'FACS'" in w for w in warnings)
+    assert not any("flow cytometry" in w for w in warnings)
+
+
+def test_trim_registry_keeps_only_the_deliverable_fields():
+    """The trimmed view answers "which assay, called what else, established where". platform,
+    sample_type and readouts answer a different question and stay in assays.json."""
+    trimmed = trim_registry(clean_registry({"flow cytometry": _raw()}))
+
+    assert tuple(trimmed["flow cytometry"]) == TRIMMED_FIELDS
+    assert trimmed["flow cytometry"]["aliases"] == ["FACS"]
+    assert trimmed["flow cytometry"]["evidence"]["sentence_ids"] == ["S318"]
+
+
+def test_trim_registry_reports_an_old_schema_entry_rather_than_dropping_it():
+    """Registries stored before the current schema carry `evidence_location`. Such an entry
+    comes back with a null evidence field -- a visible gap beats a silently missing assay."""
+    trimmed = trim_registry({
+        "ELISA": {"name_in_paper": "ELISA", "aliases": [],
+                  "evidence_location": {"quote": "..."}, "confidence": "high"},
+        "junk": "not an entry",
+    })
+
+    assert list(trimmed) == ["ELISA"]
+    assert trimmed["ELISA"]["evidence"] is None
+    assert "confidence" not in trimmed["ELISA"]
 
 
 def test_the_prompt_carries_the_paper_and_leaves_no_placeholders():

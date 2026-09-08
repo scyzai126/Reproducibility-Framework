@@ -12,6 +12,7 @@ from app.agent.assay_verifier import (
     SUPPORTED,
     build_summary,
     check_quote_verbatim,
+    check_source_section,
     derive_record_verdict,
     get_evidence,
     get_name,
@@ -347,3 +348,52 @@ def test_a_fabricated_quote_is_not_rescued_by_an_ellipsis():
     result = check_quote_verbatim(entry, source)
     assert result["status"] == "missing"
     assert result["verdict"] == CONTRADICTED
+
+
+def test_source_methods_is_aligned_when_its_evidence_sits_in_methods():
+    entry = {"source": "methods", "evidence": {"sentence_ids": ["S2"], "quote": "x"}}
+
+    assert check_source_section(entry, {"S1": "results", "S2": "methods"})["status"] == "aligned"
+
+
+def test_source_methods_is_a_mismatch_when_its_evidence_sits_in_results():
+    """The classification pass claimed Methods established the technique; the sentence it
+    cites is in Results. Either the structure was misread or the evidence points elsewhere."""
+    entry = {"source": "methods", "evidence": {"sentence_ids": ["S1"], "quote": "x"}}
+
+    result = check_source_section(entry, {"S1": "results", "S2": "methods"})
+
+    assert result["status"] == "mismatch"
+    assert "S1 in [results]" in result["detail"]
+
+
+def test_source_results_is_a_mismatch_only_when_every_sentence_is_in_methods():
+    sections = {"S1": "results", "S2": "methods"}
+
+    assert check_source_section(
+        {"source": "results", "evidence": {"sentence_ids": ["S2"]}}, sections
+    )["status"] == "mismatch"
+    # One Methods sentence quoted alongside a Results one is not a wrong classification.
+    assert check_source_section(
+        {"source": "results", "evidence": {"sentence_ids": ["S1", "S2"]}}, sections
+    )["status"] == "aligned"
+
+
+def test_captions_and_other_sections_support_a_results_source():
+    """`other` is a Results section the publisher did not label; captions sit with Results."""
+    sections = {"S1": "other", "S2": "captions"}
+
+    for sid in ("S1", "S2"):
+        entry = {"source": "results", "evidence": {"sentence_ids": [sid]}}
+        assert check_source_section(entry, sections)["status"] == "aligned"
+
+
+def test_an_entry_the_map_cannot_place_is_unknown_not_a_mismatch():
+    """Most registries on disk predate sentence_ids and `source`; they must pass quietly."""
+    sections = {"S1": "methods"}
+
+    assert check_source_section({"source": "methods", "evidence": {}}, sections)["status"] == "unknown"
+    assert check_source_section({"evidence": {"sentence_ids": ["S1"]}}, sections)["status"] == "unknown"
+    assert check_source_section(
+        {"source": "methods", "evidence": {"sentence_ids": ["S99"]}}, sections
+    )["status"] == "unknown"

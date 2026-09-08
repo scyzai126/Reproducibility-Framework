@@ -18,7 +18,7 @@ export default function AssaysPage() {
   }, []);
 
   return (
-    <div className="h-screen bg-white text-gray-900 overflow-y-auto">
+    <div className="min-h-screen bg-white text-gray-900">
       <div className="max-w-6xl mx-auto px-6 py-8">
         <header className="mb-6">
           <Link

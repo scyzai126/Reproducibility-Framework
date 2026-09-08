@@ -1,7 +1,7 @@
 """Independently verify an extracted assay registry against the paper it came from.
 
-The input is the `assays.json` an extraction step produced (the `extract-assay-methods`
-skill, normally) plus the sentence-numbered text of the same paper. The output is a
+The input is the `assays.json` an extraction step produced (normally
+scripts/run_assay_extract.py) plus the sentence-numbered text of the same paper. The output is a
 per-field verdict — SUPPORTED / NOT_SUPPORTED / CONTRADICTED — and a record-level
 ACCEPT / REVIEW / REJECT for each assay.
 
@@ -123,6 +123,54 @@ def sentence_index(source_text: str) -> dict[str, str]:
         end = matches[i + 1].start() if i + 1 < len(matches) else len(source_text)
         index[f"S{match.group(1)}"] = strip_markers(source_text[match.end():end]).strip()
     return index
+
+
+def check_source_section(entry: dict, sections: dict[str, str]) -> dict:
+    """Confirm `source` agrees with the section the entry's evidence actually sits in.
+
+    The free counterpart to check_quote_verbatim, and the reason `source` is auditable at all.
+    The extraction decides whether a technique is established in Methods; `sections` -- from
+    jats_parser.sentence_sections -- says where the cited sentences really are. When they
+    disagree, either the classification pass mis-read the paper's structure or the evidence
+    points at the wrong sentence, and both matter: `source` is what the two-pass design records
+    about itself.
+
+    An entry is aligned when `source: "methods"` and at least one cited sentence is in a
+    `methods` section, or `source: "results"` and at least one is outside every `methods`
+    section. "At least one", not "all": an entry may legitimately quote a Methods sentence and
+    a Results sentence together, and only a claim with no support anywhere is wrong.
+
+    Reports; never rewrites. An entry admitted as NEW_ASSAY correctly carries "results", so a
+    mismatch is a signal for a human rather than a value to correct automatically.
+
+    Returns `unknown` -- never a mismatch -- when the entry cites no sentence_ids, when its ids
+    are absent from the map, or when `source` is missing. Most registries on disk predate both
+    fields, and they must pass through quietly, the same concession check_quote_verbatim makes.
+    """
+    source = entry.get("source")
+    if source not in ("methods", "results"):
+        return {"status": "unknown", "detail": f"source is {source!r}, nothing to check"}
+
+    ids = [str(s) for s in (get_evidence(entry).get("sentence_ids") or [])]
+    if not ids:
+        return {"status": "unknown", "detail": "entry cites no sentence_ids"}
+
+    located = {sid: sections[sid] for sid in ids if sid in sections}
+    if not located:
+        return {"status": "unknown",
+                "detail": f"none of {', '.join(ids)} appear in the paper's section map"}
+
+    buckets = sorted(set(located.values()))
+    in_methods = "methods" in buckets
+    aligned = in_methods if source == "methods" else not all(b == "methods" for b in buckets)
+
+    where = ", ".join(f"{sid} in [{bucket}]" for sid, bucket in located.items())
+    if aligned:
+        return {"status": "aligned", "detail": f"source {source!r} agrees with {where}"}
+    return {
+        "status": "mismatch",
+        "detail": f"source is {source!r} but its evidence sits in {'/'.join(buckets)} ({where})",
+    }
 
 
 def get_evidence(entry: dict) -> dict:

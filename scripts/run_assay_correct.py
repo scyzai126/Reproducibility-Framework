@@ -40,7 +40,6 @@ from pathlib import Path
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_REPO_ROOT / "apps" / "api"))
-sys.path.insert(0, str(_REPO_ROOT / ".claude" / "skills" / "extract-assay-methods" / "scripts"))
 
 from app.agent.assay_corrector import (
     build_report,

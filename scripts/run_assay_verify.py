@@ -33,12 +33,20 @@ from pathlib import Path
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_REPO_ROOT / "apps" / "api"))
-sys.path.insert(0, str(_REPO_ROOT / ".claude" / "skills" / "extract-assay-methods" / "scripts"))
 
-from app.agent.assay_verifier import build_report, check_quote_verbatim, verify_registry
+from app.agent.assay_verifier import (
+    build_report,
+    check_quote_verbatim,
+    check_source_section,
+    verify_registry,
+)
 from app.agent.claim_parser import _get_client
-from app.agent.jats_parser import article_title as _article_title, parse_jats_xml
-from jats_to_text import number_sentences
+from app.agent.jats_parser import (
+    article_title as _article_title,
+    number_sentences,
+    parse_jats_xml,
+    sentence_sections,
+)
 
 _XML_ROOT = _REPO_ROOT / "data" / "JAT_XML"
 
@@ -82,15 +90,29 @@ def paper_text(xml_path: Path) -> tuple[str, str]:
 
 
 def report_quotes(assays: dict, source_text: str) -> None:
-    """Print the deterministic quote check for every entry. No API call."""
-    missing = 0
+    """Print the deterministic checks for every entry. No API call.
+
+    Two of them: the quote is copied from the sentences it cites, and `source` agrees with the
+    section those sentences sit in. The second is what makes the extraction's Methods/Results
+    classification auditable rather than self-asserted.
+    """
+    sections = sentence_sections(source_text)
+    missing = mismatched = 0
     for key, entry in assays.items():
         check = check_quote_verbatim(entry, source_text)
         flag = {"found": "ok     ", "missing": "MISSING", "no_quote": "no quote"}[check["status"]]
         if check["status"] != "found":
             missing += 1
         print(f"  {flag}  {key}: {check['detail']}")
+
+        src = check_source_section(entry, sections)
+        if src["status"] == "mismatch":
+            mismatched += 1
+            print(f"  SOURCE?  {key}: {src['detail']}")
+
     print(f"\n{len(assays) - missing}/{len(assays)} quotes verified verbatim")
+    if mismatched:
+        print(f"{mismatched}/{len(assays)} entries claim a section their evidence does not support")
 
 
 async def main(registry_dir: Path, limit: int | None, xml_path: Path | None, quotes_only: bool) -> None:

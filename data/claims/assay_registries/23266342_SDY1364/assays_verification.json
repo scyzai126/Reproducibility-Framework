@@ -1,0 +1,257 @@
+{
+  "summary": {
+    "total": 3,
+    "accept": 3,
+    "review": 0,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_absent": 0,
+    "field_issues": {}
+  },
+  "results": [
+    {
+      "assay_id": "ex vivo IFNγ ELISpot assay",
+      "assay_name": "ex vivo IFNγ ELISpot assay",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "ex vivo IFNγ ELISpot assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S27",
+            "S30",
+            "S31"
+          ],
+          "evidence_text": "the ex vivo interferon-gamma (IFNγ) ELISpot assay",
+          "reason": "The Methods explicitly names and describes this assay as performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "ELISpot",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S17",
+            "S41"
+          ],
+          "evidence_text": "ex vivo ELISpot",
+          "reason": "The paper uses ELISpot wording to refer to the same assay type performed in the study."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "IFNγ ELISpot assays",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S31"
+          ],
+          "evidence_text": "IFNγ ELISpot assays",
+          "reason": "This exact phrase appears verbatim and refers to the assay performed here."
+        },
+        {
+          "field_name": "platform",
+          "proposed_value": "Human IFNγ ELISpot (ALP) kit (Mabtech)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S31"
+          ],
+          "evidence_text": "using the Human IFNγ ELISpot (ALP) kit (Mabtech)",
+          "reason": "The source explicitly ties this kit to the IFNγ ELISpot assay."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S30",
+            "S31"
+          ],
+          "evidence_text": "## Ex vivo IFNγ ELISpot assay  [methods]",
+          "reason": "The assay is described in the Methods section."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "IFNγ ELISpot assays were performed on freshly isolated PBMC from all 24 subjects at screening and at 1, 2, 4, 12 and 24 weeks post-vaccination, using the Human IFNγ ELISpot (ALP) kit (Mabtech).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S31"
+          ],
+          "evidence_text": "IFNγ ELISpot assays were performed on freshly isolated PBMC from all 24 subjects at screening and at 1, 2, 4, 12 and 24 weeks post-vaccination, using the Human IFNγ ELISpot (ALP) kit (Mabtech).",
+          "reason": "quote found in sentences S31"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S31"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S31"
+          ],
+          "evidence_text": "IFNγ ELISpot assays were performed on freshly isolated PBMC from all 24 subjects at screening and at 1, 2, 4, 12 and 24 weeks post-vaccination, using the Human IFNγ ELISpot (ALP) kit (Mabtech).",
+          "reason": "Sentence ID S31 exists and contains the quoted evidence."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S31",
+        "unknown_sentence_ids": []
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "multi-parameter flow cytometry",
+      "assay_name": "multi-parameter flow cytometry",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "multi-parameter flow cytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S28"
+          ],
+          "evidence_text": "multi-parameter flow cytometry",
+          "reason": "The Methods text explicitly states that multi-parameter flow cytometry was included as an analysis performed in this study."
+        },
+        {
+          "field_name": "platform",
+          "proposed_value": "LSR-II (Becton Dickinson)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S51"
+          ],
+          "evidence_text": "Stained cells were immediately acquired using an LSR-II (Becton Dickinson).",
+          "reason": "This sentence directly ties the LSR-II instrument to the flow cytometry assay described in the Methods."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S28"
+          ],
+          "evidence_text": "Exploratory pre-defined immunological analyses included multi-parameter flow cytometry as detailed below.",
+          "reason": "The assay is described in the Methods section."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Exploratory pre-defined immunological analyses included multi-parameter flow cytometry as detailed below.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S28"
+          ],
+          "evidence_text": "Exploratory pre-defined immunological analyses included multi-parameter flow cytometry as detailed below.",
+          "reason": "quote found in sentences S28"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S28"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S28"
+          ],
+          "evidence_text": "Exploratory pre-defined immunological analyses included multi-parameter flow cytometry as detailed below.",
+          "reason": "Sentence ID S28 exists and contains the quoted evidence."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S28",
+        "unknown_sentence_ids": []
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "IgG enzyme linked immunosorbent assay (ELISA)",
+      "assay_name": "IgG enzyme linked immunosorbent assay (ELISA)",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "IgG enzyme linked immunosorbent assay (ELISA)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S56",
+            "S57"
+          ],
+          "evidence_text": "Anti-r85A IgG was measured in serum samples collected at week 0, 2, 4 and 24. ELISA plates (NUNC ImmunoPlates, Fisher) were coated overnight with 2 μg/ml r85A (Lionex, Germany) in PBS.",
+          "reason": "The Methods section explicitly describes an ELISA procedure used to measure anti-r85A IgG in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "ELISA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S57"
+          ],
+          "evidence_text": "ELISA plates",
+          "reason": "The term appears verbatim in the assay section and refers to the same assay procedure."
+        },
+        {
+          "field_name": "platform",
+          "proposed_value": "NUNC ImmunoPlates, Fisher",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S57"
+          ],
+          "evidence_text": "ELISA plates (NUNC ImmunoPlates, Fisher)",
+          "reason": "The text explicitly ties these plates to the ELISA assay."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S56",
+            "S57"
+          ],
+          "evidence_text": "## IgG enzyme linked immunosorbent assay (ELISA)  [methods]",
+          "reason": "The assay is described in the Methods section."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Anti-r85A IgG was measured in serum samples collected at week 0, 2, 4 and 24. ELISA plates (NUNC ImmunoPlates, Fisher) were coated overnight with 2 μg/ml r85A (Lionex, Germany) in PBS.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S56",
+            "S57"
+          ],
+          "evidence_text": "Anti-r85A IgG was measured in serum samples collected at week 0, 2, 4 and 24. ELISA plates (NUNC ImmunoPlates, Fisher) were coated overnight with 2 μg/ml r85A (Lionex, Germany) in PBS.",
+          "reason": "quote found in sentences S56, S57"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S56",
+            "S57"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S56",
+            "S57"
+          ],
+          "evidence_text": "Anti-r85A IgG was measured in serum samples collected at week 0, 2, 4 and 24. ELISA plates (NUNC ImmunoPlates, Fisher) were coated overnight with 2 μg/ml r85A (Lionex, Germany) in PBS.",
+          "reason": "Both cited sentence IDs exist and correspond exactly to the quoted text."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S56, S57",
+        "unknown_sentence_ids": []
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

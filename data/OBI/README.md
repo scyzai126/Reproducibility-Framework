@@ -54,9 +54,9 @@ PY
   for the default vocabulary. It stays because `run_obi_map.py --terms` can point the mapper at
   any term list, including `obi_assay_terms_full.json`.
 - This folder is the **only** location for OBI vocabularies. The former copies under
-  `.claude/skills/extract-assay-methods/references/` were deleted on 2026-08-19; the skill's
-  `obi_enrich_file.py` imports the mapper and so reads these files transparently. Recover the
-  old ones from git history if ever needed.
+  `.claude/skills/extract-assay-methods/references/` were deleted on 2026-08-19; `run_obi_map.py`
+  imports the mapper and so reads these files transparently. Recover the old ones from git
+  history if ever needed.
 - `obi.obo` — full OBI release 2026-05-08 (5218 terms), the upstream ontology. Not read by any
   code; kept here as the provenance for `obi_assay_terms_full.json` and for regenerating the
   assay branch against a newer OBI release.

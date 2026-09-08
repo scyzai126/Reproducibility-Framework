@@ -2,141 +2,155 @@
   "mass cytometry": {
     "name_in_paper": "mass cytometry",
     "aliases": [
-      "phospho-CyTOF",
-      "Mass cytometry analysis of human peripheral blood leukocytes from COVID-19 patients"
+      "phospho-CyTOF"
     ],
+    "platform": null,
     "sample_type": "PBMCs",
-    "readouts": "immune cell subset frequencies; intracellular signaling marker expression including pS6, IκBα, and HLA-DR",
-    "evidence_location": {
-      "type": "text",
+    "readouts": "immune cell phenotypes, cell subset frequencies, and intracellular signaling marker expression",
+    "source": "results",
+    "evidence": {
       "section": "Analysis of peripheral blood leukocytes from COVID-19 patients by mass cytometry",
-      "quote": "There was a notable increase in the frequency of plasmablast and effector CD8 T cells in all infected individuals."
-    },
-    "confidence": 0.98,
-    "claim_role": "primary"
+      "sentence_ids": [
+        "S10",
+        "S11"
+      ],
+      "quote": "We used mass cytometry to assess immune responses to SARS-CoV-2 infection in 52 COVID-19 patients, who were confirmed positive for viral RNA by polymerase chain reaction (PCR), and 62 age- and gender-matched healthy controls distributed between the two cohorts. To characterize immune cell phenotypes in PBMCs, we used a phospho-CyTOF panel that includes 22 cell surface markers and 12 intracellular markers against an assortment of kinases and phospho-specific epitopes of signaling molecules and H3K27ac—a marker of histone modification that drives epigenetic remodeling"
+    }
   },
-  "flow cytometry": {
-    "name_in_paper": "flow cytometry",
+  "intracellular staining assay": {
+    "name_in_paper": "intracellular staining assay",
     "aliases": [
-      "intracellular staining assay",
-      "Flow cytometry analysis of ex vivo stimulated human peripheral blood leukocytes from COVID-19 patients"
+      "flow cytometry"
     ],
+    "platform": null,
     "sample_type": "PBMCs",
-    "readouts": "fractions of pDCs, mDCs, and monocytes producing IFN-α, TNF-α, and IL-6 after TLR stimulation; NF-κB p65 phosphorylation; HLA-DR expression",
-    "evidence_location": {
-      "type": "text",
+    "readouts": "cytokine responses after ex vivo TLR stimulation and p65 phosphorylation staining",
+    "source": "results",
+    "evidence": {
       "section": "COVID-19 results in functional impairment of blood myeloid cells and pDCs",
-      "quote": "Consistent with our hypothesis, there was reduced production of IFN-α in response to the TLR stimuli in the pDCs of infected individuals compared with those of healthy controls."
-    },
-    "confidence": 0.97,
-    "claim_role": "primary"
+      "sentence_ids": [
+        "S44"
+      ],
+      "quote": "To test this, we performed ex vivo stimulation of PBMCs from healthy or COVID-19–infected individuals, using a mixture of synthetic TLR7 and TLR 8 (TLR7/8) and TLR3 ligands, which are known to be expressed by viruses, and we performed an intracellular staining assay to detect cytokine responses."
+    }
   },
   "Olink multiplex inflammation panel": {
     "name_in_paper": "Olink multiplex inflammation panel",
     "aliases": [
-      "Olink proteomics",
-      "Multiplex analysis of cytokines in the plasma of COVID-19 patients",
       "multiplex Olink analysis"
     ],
-    "sample_type": "plasma",
-    "readouts": "normalized protein expression levels of cytokines, chemokines, and inflammatory mediators including IL-6, MCP-3, CXCL10, TNFSF14, EN-RAGE, and OSM",
-    "evidence_location": {
-      "type": "text",
+    "platform": "Olink multiplex inflammation panel",
+    "sample_type": "plasma samples",
+    "readouts": "cytokine and chemokine protein levels",
+    "source": "results",
+    "evidence": {
       "section": "Enhanced concentrations of cytokines and inflammatory mediators in plasma from COVID-19 patients",
-      "quote": "Of these 71 proteins, 43 cytokines, including IL-6, MCP-3, and CXCL10, were significantly up-regulated in COVID-19 infection."
-    },
-    "confidence": 0.96,
-    "claim_role": "primary"
+      "sentence_ids": [
+        "S58"
+      ],
+      "quote": "Therefore, we evaluated cytokines and chemokines in plasma samples from the Atlanta cohort using the Olink multiplex inflammation panel that measures 92 different cytokines and chemokines."
+    }
   },
-  "ELISA": {
-    "name_in_paper": "ELISA",
+  "enzyme-linked immunosorbent assay (ELISA)": {
+    "name_in_paper": "enzyme-linked immunosorbent assay (ELISA)",
     "aliases": [
-      "enzyme-linked immunosorbent assay"
+      "ELISA"
     ],
+    "platform": null,
     "sample_type": "plasma",
-    "readouts": "protein concentrations of TNFSF14, EN-RAGE, and OSM",
-    "evidence_location": {
-      "type": "text",
+    "readouts": "plasma concentrations of TNFSF14, EN-RAGE, OSM, and IFN-α",
+    "source": "results",
+    "evidence": {
       "section": "Enhanced concentrations of cytokines and inflammatory mediators in plasma from COVID-19 patients",
-      "quote": "Consistent with the multiplex Olink analysis, we found a significant increase of these inflammatory mediators in the plasma of severe and intensive care unit (ICU) COVID-19 patients."
-    },
-    "confidence": 0.95,
-    "claim_role": "validation"
+      "sentence_ids": [
+        "S69"
+      ],
+      "quote": "Given the pronounced and unappreciated observations of the enhanced plasma concentrations of TNFSF14, EN-RAGE, and OSM and their correlation to disease severity, we used an enzyme-linked immunosorbent assay (ELISA) to independently validate these results."
+    }
   },
-  "CITE-seq": {
-    "name_in_paper": "CITE-seq",
+  "cellular indexing of transcriptomes and epitopes by sequencing (CITE-seq)": {
+    "name_in_paper": "cellular indexing of transcriptomes and epitopes by sequencing (CITE-seq)",
     "aliases": [
-      "cellular indexing of transcriptomes and epitopes by sequencing"
+      "CITE-seq"
     ],
-    "sample_type": "PBMCs",
-    "readouts": "single-cell gene expression and antibody-derived protein expression; cell clusters; ISG signatures; HLA-DR/CD86 and S100A12-associated myeloid states",
-    "evidence_location": {
-      "type": "text",
+    "platform": null,
+    "sample_type": "PBMC samples",
+    "readouts": "single-cell gene expression and DNA-labeled antibody-derived protein expression",
+    "source": "results",
+    "evidence": {
       "section": "Single-cell transcriptional response to COVID-19 infection",
-      "quote": "Notably, with the exception of modest levels of IFN-γ expression in T and NK cells, we could not detect any expression of IFN-α and -β genes, which is consistent with the functional data demonstrating impaired type I IFN production by pDCs and myeloid cells."
-    },
-    "confidence": 0.98,
-    "claim_role": "primary"
+      "sentence_ids": [
+        "S75"
+      ],
+      "quote": "To investigate the molecular and cellular processes that lead to the distinctive inflammatory program, we used cellular indexing of transcriptomes and epitopes by sequencing (CITE-seq) and profiled the gene and protein expression in PBMC samples of COVID-19–infected individuals."
+    }
   },
-  "SIMoA": {
-    "name_in_paper": "SIMoA",
-    "aliases": [
-      "single molecule array (SIMoA) technology"
-    ],
-    "sample_type": "plasma",
-    "readouts": "IFN-α concentration",
-    "evidence_location": {
-      "type": "text",
-      "section": "Single-cell transcriptional response to COVID-19 infection",
-      "quote": "We observed a marked increase in the concentration of IFN-α, which peaked around day 8 after onset of symptoms and regressed to baseline levels by day 20."
-    },
-    "confidence": 0.94,
-    "claim_role": "outcome_variable"
-  },
-  "bulk RNA sequencing": {
-    "name_in_paper": "bulk RNA sequencing",
+  "bulk RNA sequencing (RNA-seq)": {
+    "name_in_paper": "bulk RNA sequencing (RNA-seq)",
     "aliases": [
       "bulk RNA-seq",
       "RNA-seq"
     ],
+    "platform": null,
     "sample_type": "PBMCs",
-    "readouts": "bulk gene expression, including ISG signature and IFN-related transcripts",
-    "evidence_location": {
-      "type": "text",
+    "readouts": "bulk transcript abundance and interferon-stimulated gene expression",
+    "source": "results",
+    "evidence": {
       "section": "Single-cell transcriptional response to COVID-19 infection",
-      "quote": "We observed a strong induction of the ISGs in COVID-19 subjects compared with healthy donors in this dataset as well."
-    },
-    "confidence": 0.97,
-    "claim_role": "validation"
+      "sentence_ids": [
+        "S116"
+      ],
+      "quote": "To investigate this further and to independently validate the observations in the CITE-seq analysis, we performed bulk RNA sequencing (RNA-seq) analysis of PBMCs in an extended group of subjects (17 COVID-19 patients and 17 healthy controls) from the same cohort."
+    }
+  },
+  "single molecule array (SIMoA) technology": {
+    "name_in_paper": "single molecule array (SIMoA) technology",
+    "aliases": [
+      "SIMoA"
+    ],
+    "platform": "single molecule array (SIMoA) technology",
+    "sample_type": "plasma",
+    "readouts": "IFN-α concentration",
+    "source": "results",
+    "evidence": {
+      "section": "Single-cell transcriptional response to COVID-19 infection",
+      "sentence_ids": [
+        "S110"
+      ],
+      "quote": "We thus measured the concentration of IFN-α in plasma using a highly sensitive ELISA enabled by single molecule array (SIMoA) technology."
+    }
   },
   "PCR quantitation of bacterial 16 S ribosomal RNA (rRNA) gene product": {
     "name_in_paper": "PCR quantitation of bacterial 16 S ribosomal RNA (rRNA) gene product",
     "aliases": [
-      "PCR",
       "qPCR",
-      "quantitative PCR"
+      "PCR"
     ],
+    "platform": null,
     "sample_type": "plasma",
-    "readouts": "bacterial DNA levels measured via bacterial 16S rRNA gene",
-    "evidence_location": {
-      "type": "text",
+    "readouts": "bacterial DNA levels",
+    "source": "results",
+    "evidence": {
       "section": "Severe COVID-19 infection is associated with the systemic release of bacterial products",
-      "quote": "Notably, the plasma of severe and ICU patients had significantly higher levels of bacterial DNA, as measured by PCR quantitation of bacterial 16 S ribosomal RNA (rRNA) gene product."
-    },
-    "confidence": 0.9,
-    "claim_role": "primary"
+      "sentence_ids": [
+        "S168"
+      ],
+      "quote": "Notably, the plasma of severe and ICU patients had significantly higher levels of bacterial DNA, as measured by PCR quantitation of bacterial 16 S ribosomal RNA (rRNA) gene product, and of LPS, as measured by a TLR4-based reporter assay"
+    }
   },
   "TLR4-based reporter assay": {
     "name_in_paper": "TLR4-based reporter assay",
     "aliases": [],
+    "platform": null,
     "sample_type": "plasma",
     "readouts": "LPS levels",
-    "evidence_location": {
-      "type": "text",
+    "source": "results",
+    "evidence": {
       "section": "Severe COVID-19 infection is associated with the systemic release of bacterial products",
-      "quote": "Notably, the plasma of severe and ICU patients had significantly higher levels of bacterial DNA, as measured by PCR quantitation of bacterial 16 S ribosomal RNA (rRNA) gene product, and of LPS, as measured by a TLR4-based reporter assay."
-    },
-    "confidence": 0.88,
-    "claim_role": "primary"
+      "sentence_ids": [
+        "S168"
+      ],
+      "quote": "Notably, the plasma of severe and ICU patients had significantly higher levels of bacterial DNA, as measured by PCR quantitation of bacterial 16 S ribosomal RNA (rRNA) gene product, and of LPS, as measured by a TLR4-based reporter assay"
+    }
   }
 }

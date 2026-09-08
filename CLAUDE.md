@@ -100,28 +100,6 @@ This applies to both arm resolution (`arm_or_cohort` table → `arm_accession`) 
 
 All queries join `expsample → expsample_2_biosample → biosample` with an optional `LEFT JOIN immune_exposure`. Active filters are driven by `OPTIONAL_FILTERS` list (experiment, study, tissue_type, condition). Arm membership is handled separately via a subquery on `arm_2_subject`.
 
-### API response shape
-
-```json
-{
-  "study_accession": "SDY1669",
-  "subject_results": [
-    {
-      "group_id": "1",
-      "group_name": "Healthy individuals",
-      "arm_accession": "ARM5346",
-      "experiment_accession": "EXP15660",
-      "tissue_type": "",
-      "condition": "healthy",
-      "subjects": [{ "subject_accession": "SUB255603", ... }],
-      "error": null
-    }
-  ]
-}
-```
-
-The UI renders this as a formatted JSON block in the assistant chat bubble.
-
 ### LLM prompt
 
 The description analyzer system prompt lives in `apps/api/app/prompts/description_analyzer.txt` (not inline). Modify it there to change how groups are parsed from paper text.
@@ -141,7 +119,8 @@ The description analyzer system prompt lives in `apps/api/app/prompts/descriptio
 
 ### Paper / LLM Runs (cost control)
 - **No unprompted paper runs:** When a piece of work is finished, do NOT test it by running the pipeline on a new PDF paper unless the user explicitly asks. LLM calls over a full paper are expensive — finish with unit tests and a summary instead, and let the user decide when to spend a real paper run.
-- **One LLM step at a time:** When the user does ask to test with a PDF, run only the single LLM call that step involves (e.g. just assay extraction) and then stop and report. Do NOT chain into the following calls (claim extraction, reconciliation, OBI mapping, group classification) unless the user explicitly tells you to continue.
+- **One LLM step at a time:** When the user does ask to test with a PDF, run only the single LLM call that step involves and then stop and report. Do NOT chain into the following calls (claim extraction, reconciliation, OBI mapping, group classification) unless the user explicitly tells you to continue.
+- **Assay extraction is the exception — it runs the full chain.** When the user asks for a paper's assays, run `scripts/run_assay_pipeline.py`, which does extract → verify → correct → promote in one command. An unverified registry cannot be told apart from a verified one by reading it, so stopping after round 1 hands back something that looks finished and is not. First report the `--dry-run` call estimate (free) and wait for a go-ahead before the paid run. The deliverable is `assays_benchmark.json`, carrying per entry exactly `name_in_paper`, `aliases`, `source`, and `evidence` (section / sentence_ids / quote) — point the user at that file, not `assays.json`, which keeps the full seven-field record every pass in the chain works from. Report every `WARNING`, `REVIEW`, `REJECT` and `DROPPED` line the script prints rather than summarising them away.
 - **Re-parsing overwrites the old result:** When the user asks to parse a paper, write the output over that paper's existing result files in place (e.g. `data/claims/<paper>/claims.json`) — do not create a timestamped/suffixed copy, a new sibling directory, or otherwise keep the previous run alongside it. Only preserve the old result if the user explicitly asks you to.
 
 ## Repo / Git Etiquette

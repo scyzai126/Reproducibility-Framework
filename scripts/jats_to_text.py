@@ -1,10 +1,10 @@
-"""Parse a JATS XML paper into the structured plain text this skill extracts from,
+"""Parse a JATS XML paper into the structured plain text the assay passes extract from,
 using this repo's existing parser (apps/api/app/agent/jats_parser.py).
 
 Output shape:
-  ## <section heading>        one block per section, in canonical reading order
-                              (abstract -> introduction -> results -> methods ->
-                              discussion -> other)
+  ## <section heading>        abstract first, then every surviving section in the
+                              paper's own document order (nothing is re-sorted, so
+                              a Methods-before-Results paper prints that way)
   --- Figures ---             [Label] + Title:/Caption: lines per figure
   --- Tables ---              same, plus a Body: line carrying the table grid
 
@@ -23,6 +23,17 @@ Extended Data figures, and publisher boilerplate (acknowledgments, author
 contributions, competing interests, and similar), and truncates to
 jats_parser.MAX_PAPER_CHARS.
 
+It also drops Introduction, Discussion, and Conclusion, so the text is what the
+study did and found, not what it framed or concluded. That matters when reading
+an extraction: an assay a paper only cites in its Introduction, or only reflects
+on in the Discussion, is not in this text and cannot be extracted from it.
+
+Sections the parser cannot classify are kept, not dropped. A paper that titles its
+Results sections descriptively ("Monocyte differences by sex") rather than
+"Results" still has that text here in full, under its own heading -- the `##`
+headings are the paper's own, so a missing "## Results" means the paper never wrote
+one, not that the section was lost.
+
 This only works when run from inside the claim_reprodue_agent repo: it imports
 apps/api/app/agent/jats_parser.py. It needs no API key and makes no network call.
 
@@ -39,7 +50,7 @@ import re
 import sys
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[4]
+REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "apps" / "api"))
 from app.agent.jats_parser import (
     SENTENCE_SPLIT,
@@ -48,11 +59,10 @@ from app.agent.jats_parser import (
     strip_sentence_ids,
 )
 
-# The sentence-numbering itself now lives in app.agent.jats_parser, imported above. It moved
-# there because the HTTP route and the assay passes need it too, and apps/api must not import
-# from .claude/skills -- so the shared code sits in the package the skill scripts already
-# depend on. number_sentences / strip_sentence_ids / SENTENCE_SPLIT are re-exported here so
-# anything importing them from this module keeps working.
+# The sentence-numbering itself lives in app.agent.jats_parser, imported above, because the
+# HTTP route and the assay passes need it too -- so the shared code sits in the package rather
+# than in this CLI. number_sentences / strip_sentence_ids / SENTENCE_SPLIT are re-exported here
+# so anything importing them from this module keeps working.
 
 
 def main() -> None:

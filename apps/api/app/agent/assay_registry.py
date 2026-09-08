@@ -99,12 +99,12 @@ def registry_from_claims(claims: dict) -> dict:
 #: `platform` is new to the entry shape; `sample_type` and `readouts` exist but are empty.
 _ENRICHED_FIELDS = ("platform", "sample_type", "readouts")
 
-#: Where the extract-assay-methods skill writes its registries.
+#: Where scripts/run_assay_extract.py writes its registries.
 _REGISTRY_ROOT = Path(__file__).resolve().parents[4] / "data" / "claims" / "assay_registries"
 
 
 def load_verified_registry(pubmed_id: str, study_accession: str) -> dict:
-    """Read the skill-extracted registry for a paper, or `{}` when there is none.
+    """Read the extracted registry for a paper, or `{}` when there is none.
 
     The directory is `<pmid>_<SDY>`, but the swapped spelling is tried too, for the reason
     run_assay_verify.locate_xml gives: the directory schemes in this repo were named

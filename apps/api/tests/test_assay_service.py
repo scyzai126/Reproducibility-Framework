@@ -6,6 +6,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.agent import assay_service
+from app.agent.assay_extractor import TRIMMED_FIELDS
 from app.agent.assay_service import (
     NothingToDoError,
     PaperNotFoundError,
@@ -284,3 +285,37 @@ def test_the_route_returns_the_corrected_registry(paper):
     body = response.json()
     assert list(body["assays"]) == ["flow cytometry"]
     assert [r["source"] for r in body["rounds"].values()] == ["extracted", "verified", "corrected"]
+
+
+# ── the trimmed deliverable ───────────────────────────────────────────────────
+
+@pytest.mark.asyncio
+async def test_the_run_writes_a_benchmark_registry_beside_the_full_one(paper):
+    """assays.json keeps all seven fields because every pass in the chain works from them;
+    assays_benchmark.json is the reading view and carries only the four."""
+    await assay_report("111", "SDY1", _Client(_extraction_body(), _verification_body()))
+
+    full = json.loads((paper / "assays.json").read_text())
+    trimmed = json.loads((paper / "assays_benchmark.json").read_text())
+
+    assert tuple(trimmed["flow cytometry"]) == TRIMMED_FIELDS
+    assert trimmed["flow cytometry"]["evidence"]["sentence_ids"] == ["S1"]
+    # The pipeline's own record is untouched -- the trim is a projection, not a schema.
+    assert full["flow cytometry"]["platform"] == "LSRII"
+    assert full["flow cytometry"]["readouts"] == "cell frequencies"
+
+
+@pytest.mark.asyncio
+async def test_the_benchmark_registry_is_rewritten_on_a_cached_run(paper):
+    """Written on every request, not only a paid one: a benchmark file that lagged assays.json
+    would be worse than none, because nothing about it would say it was stale."""
+    client = _Client(_extraction_body(), _verification_body())
+    await assay_report("111", "SDY1", client)
+    (paper / "assays_benchmark.json").unlink()
+    spent = client.calls
+
+    result = await assay_report("111", "SDY1", client)
+
+    assert client.calls == spent, "a cached run must not spend anything"
+    assert (paper / "assays_benchmark.json").exists()
+    assert result["meta"]["benchmark_path"].endswith("assays_benchmark.json")

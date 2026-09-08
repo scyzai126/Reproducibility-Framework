@@ -54,7 +54,7 @@ CLEARED = "CLEARED"
 UNCHANGED = "UNCHANGED"
 
 #: What to ask for each correctable field. The wording mirrors the extraction contract in
-#: .claude/skills/extract-assay-methods/SKILL.md, so a blind re-read is held to the same
+#: apps/api/app/prompts/extract_assays.txt, so a blind re-read is held to the same
 #: standard as the original pass rather than a looser one.
 _QUESTIONS = {
     "platform": (

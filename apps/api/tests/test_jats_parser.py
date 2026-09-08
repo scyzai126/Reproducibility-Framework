@@ -1,4 +1,12 @@
-from app.agent.jats_parser import parse_jats_xml
+import re
+
+from app.agent.jats_parser import (
+    SENTENCE_MARKER,
+    number_sentences,
+    parse_jats_xml,
+    sentence_sections,
+    strip_sentence_ids,
+)
 
 
 def test_parse_jats_xml_drops_back_matter_without_merging_unknown_sections():
@@ -18,7 +26,7 @@ def test_parse_jats_xml_drops_back_matter_without_merging_unknown_sections():
 
     parsed = parse_jats_xml(xml)
 
-    assert "## Analysis of peripheral blood leukocytes\nMass cytometry result." in parsed
+    assert "## Analysis of peripheral blood leukocytes  [other]\nMass cytometry result." in parsed
     assert "Acknowledgement text" not in parsed
     assert "Data location text" not in parsed
     assert "Competing interest text" not in parsed
@@ -48,9 +56,9 @@ def test_parse_jats_xml_skips_abstract_sections_during_body_walk():
     assert parsed.count("Abstract background.") == 1
     assert parsed.count("Abstract methods.") == 1
     assert parsed.count("Abstract results.") == 1
-    assert "## Methods\nAbstract methods." not in parsed
-    assert "## Results\nAbstract results." not in parsed
-    assert "## Results\nBody result." in parsed
+    assert "## Methods  [methods]\nAbstract methods." not in parsed
+    assert "## Results  [results]\nAbstract results." not in parsed
+    assert "## Results  [results]\nBody result." in parsed
 
 
 def test_parse_jats_xml_skips_figures_and_tables_in_excluded_sections():
@@ -194,3 +202,66 @@ def test_parse_jats_xml_drops_common_non_claim_section_aliases():
     assert "Combined result section." in parsed
     for idx, title in enumerate(dropped_titles):
         assert f"drop alias marker {idx}" not in parsed, title
+
+
+def test_every_heading_carries_its_canonical_bucket():
+    """The bucket parse_jats_xml already resolves is written into the heading rather than
+    discarded -- it is what tells the extraction which sections are Methods."""
+    xml = """
+    <article>
+      <body>
+        <sec><title>Results</title><p>Antibody titers rose.</p></sec>
+        <sec><title>Materials and Methods</title>
+          <sec><title>Flow Cytometry Analysis</title><p>Cells ran on an LSRFortessa.</p></sec>
+        </sec>
+        <sec><title>Monocyte differences by sex</title><p>Monocytes differed.</p></sec>
+      </body>
+    </article>
+    """
+
+    parsed = parse_jats_xml(xml)
+
+    assert "## Results  [results]" in parsed
+    assert "## Materials and Methods  [methods]" in parsed
+    # A Methods subsection inherits its parent's bucket rather than falling to `other`.
+    assert "## Flow Cytometry Analysis  [methods]" in parsed
+    # An unrecognised heading is kept and marked, never dropped.
+    assert "## Monocyte differences by sex  [other]" in parsed
+
+
+def test_sentence_sections_maps_ids_through_the_inherited_bucket():
+    xml = """
+    <article>
+      <body>
+        <sec><title>Results</title><p>Antibody titers rose.</p></sec>
+        <sec><title>Methods</title>
+          <sec><title>Flow Cytometry Analysis</title><p>Cells ran on an LSRFortessa.</p></sec>
+        </sec>
+      </body>
+    </article>
+    """
+
+    sections = sentence_sections(number_sentences(parse_jats_xml(xml)))
+
+    assert sections == {"S1": "results", "S2": "methods"}
+
+
+def test_tagging_a_heading_does_not_renumber_the_prose():
+    """Sentence ids are stored in every registry on disk, so the tag must be invisible to
+    number_sentences -- headings are structural lines and never consume the counter."""
+    xml = """
+    <article>
+      <body>
+        <sec><title>Results</title><p>Titers rose. Titers fell.</p></sec>
+        <sec><title>Methods</title><p>Cells were stained.</p></sec>
+      </body>
+    </article>
+    """
+    parsed = parse_jats_xml(xml)
+    untagged = re.sub(r"^(##\s.*?)\s\s\[[a-z]+\]$", r"\1", parsed, flags=re.M)
+
+    numbered, numbered_untagged = number_sentences(parsed), number_sentences(untagged)
+
+    assert strip_sentence_ids(numbered) == parsed
+    assert SENTENCE_MARKER.findall(numbered) == SENTENCE_MARKER.findall(numbered_untagged)
+    assert "[S3] Cells were stained." in numbered

@@ -1,9 +1,9 @@
 """Extract a paper's assay registry in one LLM call.
 
-The same job the `extract-assay-methods` skill does by reading, expressed as a prompt so the
-agent can run it when a user asks for a paper's assays. The skill remains the authority on
-the rules; prompts/extract_assays.txt is those rules written for a model that gets one shot
-at the paper instead of an interactive read.
+Driven by scripts/run_assay_extract.py when a user asks for a paper's assays.
+prompts/extract_assays.txt is the authority on the rules -- what counts as an entry, how
+entries are named, when Results may add one, and what each field may say -- written for a
+model that gets one shot at the paper instead of an interactive read.
 
 This is NOT the full-paper assay pass that app.agent.assay_registry's docstring describes as
 removed. That one existed to be reconciled against the claims, and it is gone because every
@@ -29,11 +29,18 @@ from app.config import settings
 
 logger = logging.getLogger(__name__)
 
-#: The seven-field contract, in the order the skill documents them. Anything else a model
-#: returns is dropped: `confidence` and `claim_role` are the two it reaches for unprompted,
-#: and both were removed from this schema on purpose.
+#: The seven-field contract, in the order extract_assays.txt documents them. Anything else a
+#: model returns is dropped: `confidence` and `claim_role` are the two it reaches for
+#: unprompted, and both were removed from this schema on purpose.
 ENTRY_FIELDS = ("name_in_paper", "aliases", "platform", "sample_type", "readouts",
                 "source", "evidence")
+
+#: What the finished registry is projected onto for `assays_benchmark.json`: the assay's name,
+#: its aliases, and its evidence source kept as both the label and the traceability. The other
+#: three fields stay in `assays.json` because the pipeline needs them -- the verifier rules on
+#: a specimen, the corrector repairs one, and merge_verified hands them to claim resolution.
+#: Trimming the deliverable is a reading concern; trimming the schema broke all three.
+TRIMMED_FIELDS = ("name_in_paper", "aliases", "source", "evidence")
 
 _EVIDENCE_FIELDS = ("section", "sentence_ids", "quote")
 
@@ -59,9 +66,15 @@ def clean_entry(key: str, raw: dict) -> dict:
     """Reduce one model-returned entry to the seven-field contract.
 
     `name_in_paper` falls back to the registry key, which is what the skill says the key is:
-    the same string. `source` is defaulted to "methods" only when the model omitted it
-    entirely -- an invented value is not silently corrected to a valid one, because that
-    would hide the classification pass going wrong.
+    the same string.
+
+    An omitted `source` becomes None, not "methods". Defaulting it to "methods" asserted the
+    stronger claim -- that the paper established the technique in its Methods section -- on
+    exactly the entries where the model declined to say, and the papers where the model is
+    least sure are the ones with no heading named "Methods" or "Results" at all. None is
+    outside _SOURCE_VALUES, so contract_warnings surfaces it rather than the registry
+    recording a provenance nobody asserted. An invented value is likewise not corrected to a
+    valid one, because that would hide the classification pass going wrong.
     """
     aliases = raw.get("aliases")
     source = raw.get("source")
@@ -73,7 +86,7 @@ def clean_entry(key: str, raw: dict) -> dict:
         "platform": raw.get("platform") or None,
         "sample_type": raw.get("sample_type") or None,
         "readouts": raw.get("readouts") or None,
-        "source": source if source in _SOURCE_VALUES else ("methods" if source is None else source),
+        "source": source if isinstance(source, str) and source.strip() else None,
         "evidence": _clean_evidence(raw.get("evidence")),
     }
 
@@ -99,19 +112,51 @@ def contract_warnings(registry: dict) -> list[str]:
     None of these are recoverable here -- fixing them means re-extracting or repairing, which
     are other passes' jobs. They are surfaced so a bad run is visible immediately rather than
     at OBI-mapping time.
+
+    Every field is read with .get(), because this also runs on registries loaded from disk
+    rather than freshly cleaned (assay_service serves a cached assays.json through here). Most
+    stored registries predate the current schema -- they carry `evidence_location`,
+    `claim_role` and `confidence` instead of `evidence` and `source` -- and subscripting would
+    raise KeyError on the cached path, turning a stale registry into a 500. Reporting the
+    missing fields is the honest answer: those entries really do lack the evidence quote and
+    sentence ids that downstream steps need.
     """
     warnings: list[str] = []
     for key, entry in registry.items():
-        evidence = entry["evidence"]
-        if not evidence["quote"]:
+        evidence = entry.get("evidence") or {}
+        if not evidence.get("quote"):
             warnings.append(f"{key}: no evidence quote")
-        if not evidence["sentence_ids"]:
+        if not evidence.get("sentence_ids"):
             warnings.append(f"{key}: evidence cites no sentence_ids")
-        if entry["source"] not in _SOURCE_VALUES:
-            warnings.append(f"{key}: source is {entry['source']!r}, not 'methods' or 'results'")
-        if entry["name_in_paper"] != key:
-            warnings.append(f"{key}: name_in_paper is {entry['name_in_paper']!r}, not the key")
+        if entry.get("source") not in _SOURCE_VALUES:
+            warnings.append(f"{key}: source is {entry.get('source')!r}, not 'methods' or 'results'")
+        # `[]` is a valid answer -- plenty of assays are named one way only. A non-list is not:
+        # a correction round that cleared the field to null, or an extraction that returned a
+        # bare string, both read as "no aliases" downstream instead of as the defect they are.
+        if not isinstance(entry.get("aliases"), list):
+            warnings.append(f"{key}: aliases is {entry.get('aliases')!r}, not a list")
+        if entry.get("name_in_paper") != key:
+            warnings.append(f"{key}: name_in_paper is {entry.get('name_in_paper')!r}, not the key")
     return warnings
+
+
+def trim_registry(registry: dict) -> dict:
+    """Project a finished registry onto TRIMMED_FIELDS, for `assays_benchmark.json`.
+
+    A reading view, not a schema: `assays.json` keeps all seven fields, and every pass in the
+    chain works from that. This exists because the three dropped fields answer a different
+    question -- what the assay ran on and produced -- than the one the deliverable is for.
+
+    Read with .get() and never raising, for the reason contract_warnings gives: this also runs
+    over registries stored before the current schema, which carry `evidence_location` instead
+    of `evidence`. Such an entry comes back with `evidence: None` rather than being skipped --
+    a visible gap beats a silently missing assay.
+    """
+    return {
+        key: {field: entry.get(field) for field in TRIMMED_FIELDS}
+        for key, entry in (registry or {}).items()
+        if isinstance(entry, dict)
+    }
 
 
 def build_prompt(source_text: str, paper_title: str) -> str:
