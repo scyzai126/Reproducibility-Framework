@@ -82,10 +82,11 @@ _QUESTIONS = {
         "\"methods\" or \"results\"."
     ),
     "aliases": (
-        "What other exact wordings does the paper use for THIS assay itself? Answer with a "
-        "JSON list of strings, each appearing verbatim in the source text. An instrument, "
-        "chip, or kit name is NOT an alias -- exclude product names. Answer with an empty "
-        "list if the paper only ever uses one wording."
+        "What other exact wordings does the paper use for THIS assay itself? Set `value` to a "
+        "JSON list of strings, each appearing verbatim in the source text -- the list goes "
+        "inside the `value` field, do not return it on its own. An instrument, chip, or kit "
+        "name is NOT an alias -- exclude product names. Set `value` to an empty list if the "
+        "paper only ever uses one wording."
     ),
     "evidence": (
         "Which sentence or sentences establish that THIS assay was actually performed in this "
@@ -297,6 +298,21 @@ async def correct_field(
     except Exception as exc:  # noqa: BLE001 - one bad field must not cost the whole paper
         logger.warning("blind re-extraction of %s failed - %s", group, exc)
         return None, f"{type(exc).__name__}: {exc}"
+
+    # A bare list is the aliases answer, unwrapped. The prompt asks for {"value": ...} and the
+    # aliases question then says "a JSON list of strings", so a model that follows the question
+    # literally returns the list itself -- and rejecting it discarded a call already paid for.
+    # Measured across every corrections file on disk: 12 of 41 alias re-extractions (29%), in 12
+    # separate papers, and every single ERROR in the corpus. Those entries kept the unsupported
+    # aliases the verifier had flagged, because the one pass that repairs them threw its answer
+    # away.
+    #
+    # Aliases only. `evidence` must keep failing here: its sentence_ids come from a sibling key,
+    # not from `value`, so a coerced bare answer would yield {"quote": None, "sentence_ids": []}
+    # -> CLEARED -> remapped to UNCHANGED, which reads as "checked, nothing to change" when
+    # nothing was checked. A bare list for a scalar field is not an answer at all.
+    if isinstance(parsed, list) and group == "aliases":
+        parsed = {"value": parsed}
 
     if not isinstance(parsed, dict):
         return None, f"corrector returned {type(parsed).__name__}, not an object"

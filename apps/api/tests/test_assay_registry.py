@@ -149,3 +149,40 @@ def test_merge_verified_does_not_duplicate_an_alias_already_present():
 def test_load_verified_registry_is_silent_when_there_is_nothing_on_disk():
     assert load_verified_registry("00000000", "SDY00000") == {}
     assert load_verified_registry("", "SDY1119") == {}
+
+
+def test_merge_verified_reaches_an_entry_round_five_rekeyed_to_its_obi_term():
+    """The regression the OBI-label keys would otherwise cause, silently.
+
+    Round 5 keys the verified registry by its ontology term, so the entry a claim saying "ELISA"
+    needs is filed under "enzyme-linked immunosorbent assay". Matching on the key alone would
+    stop enriching that claim the day the round ran, with nothing in the output to say so.
+    """
+    claims_registry = registry_from_claims({"claim_1": _claim("ELISA")})
+    merged = merge_verified(claims_registry, {
+        "enzyme-linked immunosorbent assay": {
+            "name_in_paper": ["ELISA", "ELISA kits"],
+            "aliases": [],
+            "platform": "ELx808 plate reader",
+            "sample_type": "serum samples",
+            "readouts": "polysaccharide-specific IgG",
+        },
+    })
+
+    entry = merged["ELISA"]
+    assert entry["platform"] == "ELx808 plate reader"
+    assert entry["sample_type"] == "serum samples"
+    # The claim's own wording still keys the registry query_builder looks up.
+    assert list(merged) == ["ELISA"]
+
+
+def test_merge_verified_reaches_an_entry_through_a_folded_wording():
+    """"ELISA kits" is only the entry's second name, and a claim may quote either one."""
+    claims_registry = registry_from_claims({"claim_1": _claim("ELISA kits")})
+    merged = merge_verified(claims_registry, {
+        "enzyme-linked immunosorbent assay": {
+            "name_in_paper": ["ELISA", "ELISA kits"], "aliases": [], "platform": "BD",
+        },
+    })
+
+    assert merged["ELISA kits"]["platform"] == "BD"

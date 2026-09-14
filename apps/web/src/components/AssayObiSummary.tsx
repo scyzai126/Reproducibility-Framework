@@ -13,14 +13,25 @@ import type { AssayObiStats, ObiResource } from '@/lib/types';
 export const RESOURCE_COLOR: Record<ObiResource, string> = {
   exact_original: '#184f95',
   exact_normalized: '#3987e5',
+  // Same swatch as the tier it succeeds, deliberately. The four values above were picked
+  // together and CVD-checked as a set, and the note above says not to extend them by eye --
+  // so the two new tiers reuse their family's colour rather than adding unvalidated hues.
+  // They read as "an exact normalized match" and "an embedding match" respectively, which is
+  // what the chart encodes; the RESOURCE_LABEL text is what tells the two apart. If they ever
+  // need to be distinguished at a glance, re-run the palette analysis rather than nudging a
+  // hex here.
+  exact_normalized_llm: '#3987e5',
   embedding_llm: '#eb6834',
+  embedding_llm_normalized: '#eb6834',
   unresolved: '#898781',
 };
 
 export const RESOURCE_LABEL: Record<ObiResource, string> = {
   exact_original: 'Exact — original name',
-  exact_normalized: 'Exact — normalized name',
+  exact_normalized: 'Exact — normalized name (retired)',
+  exact_normalized_llm: 'Exact — normalized name',
   embedding_llm: 'Embedding + LLM',
+  embedding_llm_normalized: 'Embedding + LLM (via normalized name)',
   unresolved: 'Unresolved',
 };
 

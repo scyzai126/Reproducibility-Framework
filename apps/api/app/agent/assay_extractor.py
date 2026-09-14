@@ -29,11 +29,19 @@ from app.config import settings
 
 logger = logging.getLogger(__name__)
 
-#: The seven-field contract, in the order extract_assays.txt documents them. Anything else a
+#: The eight-field contract, in the order extract_assays.txt documents them. Anything else a
 #: model returns is dropped: `confidence` and `claim_role` are the two it reaches for
 #: unprompted, and both were removed from this schema on purpose.
-ENTRY_FIELDS = ("name_in_paper", "aliases", "platform", "sample_type", "readouts",
-                "source", "evidence")
+#:
+#: `normalized_name` is the odd one out, and deliberately so: every other field records
+#: something the paper states, while this one records which *technique* the assay is -- a
+#: judgement the model makes while reading the paper, often in words the paper never uses.
+#: That is the point. Papers name assays after protocol sections ("Surface and intracellular
+#: cytokine staining"), acronyms ("CBA") and study aims ("Direct ex vivo PBMC immune cell
+#: phenotyping"), none of which retrieve the OBI term they belong to. Because it asserts
+#: nothing about the text it is excluded from verification -- see assay_verifier._NOT_PROPOSED.
+ENTRY_FIELDS = ("name_in_paper", "normalized_name", "aliases", "platform", "sample_type",
+                "readouts", "source", "evidence")
 
 #: What the finished registry is projected onto for `assays_benchmark.json`: the assay's name,
 #: its aliases, and its evidence source kept as both the label and the traceability. The other
@@ -41,6 +49,29 @@ ENTRY_FIELDS = ("name_in_paper", "aliases", "platform", "sample_type", "readouts
 #: a specimen, the corrector repairs one, and merge_verified hands them to claim resolution.
 #: Trimming the deliverable is a reading concern; trimming the schema broke all three.
 TRIMMED_FIELDS = ("name_in_paper", "aliases", "source", "evidence")
+
+#: An eighth field, written only by round 5 (app.agent.assay_merger) and only on an entry that
+#: absorbed another: the merged-away write-up's own record, so folding two entries into one never
+#: costs a quote. Deliberately outside ENTRY_FIELDS -- clean_entry runs on model output, which is
+#: never allowed to assert a merge -- and carried into the deliverable only where it exists, so an
+#: unmerged entry's trimmed record stays exactly what it was before the round existed.
+MERGED_FIELD = "additional_evidence"
+
+
+def paper_names(entry: dict) -> list[str]:
+    """Every wording an entry records for itself, whatever schema it is in.
+
+    `name_in_paper` is a single string as the model returns it and a list once round 5 has folded
+    an entry into it, and both spellings live on disk: a registry written before that round
+    existed is still a registry. Every reader of a *finished* registry goes through this.
+    """
+    value = entry.get("name_in_paper")
+    if isinstance(value, str):
+        return [value] if value.strip() else []
+    if isinstance(value, list):
+        return [v for v in value if isinstance(v, str) and v.strip()]
+    return []
+
 
 _EVIDENCE_FIELDS = ("section", "sentence_ids", "quote")
 
@@ -63,7 +94,7 @@ def _clean_evidence(raw: object) -> dict:
 
 
 def clean_entry(key: str, raw: dict) -> dict:
-    """Reduce one model-returned entry to the seven-field contract.
+    """Reduce one model-returned entry to the eight-field contract.
 
     `name_in_paper` falls back to the registry key, which is what the skill says the key is:
     the same string.
@@ -81,6 +112,12 @@ def clean_entry(key: str, raw: dict) -> dict:
     return {
         "name_in_paper": raw.get("name_in_paper") if isinstance(raw.get("name_in_paper"), str)
                          and raw["name_in_paper"].strip() else key,
+        # Never falls back to the key. An omitted normalization means the model declined to
+        # name a technique, and echoing the paper's wording back would turn that silence into
+        # a claim -- one the OBI mapper would then trust as an exact-match key.
+        "normalized_name": raw.get("normalized_name")
+                           if isinstance(raw.get("normalized_name"), str)
+                           and raw["normalized_name"].strip() else None,
         "aliases": [a for a in aliases if isinstance(a, str) and a.strip()]
                    if isinstance(aliases, list) else [],
         "platform": raw.get("platform") or None,
@@ -135,7 +172,11 @@ def contract_warnings(registry: dict) -> list[str]:
         # bare string, both read as "no aliases" downstream instead of as the defect they are.
         if not isinstance(entry.get("aliases"), list):
             warnings.append(f"{key}: aliases is {entry.get('aliases')!r}, not a list")
-        if entry.get("name_in_paper") != key:
+        # Before round 5 the key is the assay's one wording. After it, the key is the OBI label
+        # and the wordings are a list, so the check becomes "the key is one of the names, or it is
+        # the term they were folded onto" -- a registry whose key is neither is the defect.
+        names = paper_names(entry)
+        if key not in names and not entry.get(MERGED_FIELD) and len(names) < 2:
             warnings.append(f"{key}: name_in_paper is {entry.get('name_in_paper')!r}, not the key")
     return warnings
 
@@ -152,11 +193,17 @@ def trim_registry(registry: dict) -> dict:
     of `evidence`. Such an entry comes back with `evidence: None` rather than being skipped --
     a visible gap beats a silently missing assay.
     """
-    return {
-        key: {field: entry.get(field) for field in TRIMMED_FIELDS}
-        for key, entry in (registry or {}).items()
-        if isinstance(entry, dict)
-    }
+    trimmed = {}
+    for key, entry in (registry or {}).items():
+        if not isinstance(entry, dict):
+            continue
+        record = {field: entry.get(field) for field in TRIMMED_FIELDS}
+        # Present only on a merged entry, and then it is the second write-up's evidence -- the
+        # one thing a reader of the deliverable cannot reconstruct from the winner's own record.
+        if entry.get(MERGED_FIELD):
+            record[MERGED_FIELD] = entry[MERGED_FIELD]
+        trimmed[key] = record
+    return trimmed
 
 
 def build_prompt(source_text: str, paper_title: str) -> str:

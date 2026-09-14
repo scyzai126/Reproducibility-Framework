@@ -20,6 +20,8 @@ import logging
 import re
 from pathlib import Path
 
+from app.agent.assay_extractor import paper_names
+
 logger = logging.getLogger(__name__)
 
 #: Where a claim carries its self-reported assay name, in priority order:
@@ -133,16 +135,30 @@ def load_verified_registry(pubmed_id: str, study_accession: str) -> dict:
 def merge_verified(claims_registry: dict, verified: dict) -> dict:
     """Enrich claims-derived entries with the verified registry's extra fields.
 
-    Matched by `normalize_assay_name`, so "HAI antibody titer assay" from a claim reaches
-    "...assays" from Methods.
+    Matched by `normalize_assay_name` over every wording an entry carries -- its key, its
+    `name_in_paper` and its aliases -- so "HAI antibody titer assay" from a claim reaches
+    "...assays" from Methods, and "ELISA" still reaches an entry round 5 re-keyed to
+    "enzyme-linked immunosorbent assay".
 
     **Only ever adds.** The claims registry decides which entries exist -- it is keyed by the
     wording `query_builder` looks up, and an assay a claim names but the registry missed must
     keep its entry or that claim loses its resolution path entirely. A verified entry with no
     claim referencing it is likewise ignored: nothing would ever look it up.
     """
-    by_key = {normalize_assay_name(name): entry
-              for name, entry in (verified or {}).items() if isinstance(entry, dict)}
+    # Indexed by every surface form, not by the key alone: round 5 re-keys the verified registry
+    # by its OBI term, so its keys are labels like "enzyme-linked immunosorbent assay" while a
+    # claim still says "ELISA". The wordings are all still there, in `name_in_paper` and
+    # `aliases` -- matching on the key alone would silently stop enriching claims the day that
+    # round ran.
+    by_key: dict[str, dict] = {}
+    for name, entry in (verified or {}).items():
+        if not isinstance(entry, dict):
+            continue
+        for form in [name] + paper_names(entry) + [
+                a for a in (entry.get("aliases") or []) if isinstance(a, str)]:
+            key = normalize_assay_name(form)
+            if key:
+                by_key.setdefault(key, entry)
 
     merged: dict = {}
     for name, entry in (claims_registry or {}).items():

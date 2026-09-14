@@ -1,0 +1,397 @@
+{
+  "summary": {
+    "total": 4,
+    "accept": 2,
+    "review": 2,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_absent": 0,
+    "field_issues": {
+      "sample_type": {
+        "NOT_SUPPORTED": 2
+      }
+    }
+  },
+  "results": [
+    {
+      "assay_id": "ELISA",
+      "assay_name": "ELISA",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "ELISA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S32"
+          ],
+          "evidence_text": "anti-DENV IgG and IgM ELISA",
+          "reason": "The text explicitly states that ELISA was performed for DENV serology tests."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "acute phase serum",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "Although acute phase serum is mentioned for diagnostic confirmation, the text does not explicitly link it to the ELISA in S32."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "anti-DENV IgG and IgM serology",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S32"
+          ],
+          "evidence_text": "anti-DENV IgG and IgM ELISA",
+          "reason": "The assay is explicitly described as measuring anti-DENV IgG and IgM serology."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S32"
+          ],
+          "evidence_text": "## 2.2. Dengue Serology and PCR Tests [methods]",
+          "reason": "source 'methods' agrees with S32 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "DENV serology tests were performed with anti-DENV IgG and IgM ELISA as previously described [ 12 ].",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S32"
+          ],
+          "evidence_text": "DENV serology tests were performed with anti-DENV IgG and IgM ELISA as previously described [ 12 ].",
+          "reason": "quote found in sentences S32"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S32"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S32"
+          ],
+          "evidence_text": "DENV serology tests were performed with anti-DENV IgG and IgM ELISA as previously described [ 12 ].",
+          "reason": "The cited sentence ID exists and contains the quoted evidence."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S32",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S32 in [methods]"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    },
+    {
+      "assay_id": "reverse transcription-PCR",
+      "assay_name": "reverse transcription-PCR",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "reverse transcription-PCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S33"
+          ],
+          "evidence_text": "Reverse transcription-PCR was performed",
+          "reason": "The text explicitly states that reverse transcription-PCR was performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "RT-PCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S13"
+          ],
+          "evidence_text": "positive reverse transcription polymerase chain reaction (RT-PCR) of DENV RNA",
+          "reason": "The alias appears verbatim and refers to the same assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "acute phase serum",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "Although acute phase serum is mentioned for diagnostic confirmation, the cited assay description does not explicitly link this specimen to the performed reverse transcription-PCR in section 2.2."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "DENV RNA detection",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S13"
+          ],
+          "evidence_text": "positive reverse transcription polymerase chain reaction (RT-PCR) of DENV RNA",
+          "reason": "The text explicitly indicates that this assay detects DENV RNA."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S33"
+          ],
+          "evidence_text": "Reverse transcription-PCR was performed by using the DV1 and DV3 primer set [ 13 ] and the ALD 1 and ALD 2 primer set [ 14 ] in one reaction with details specified previously [ 15 ].",
+          "reason": "source 'methods' agrees with S33 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Reverse transcription-PCR was performed by using the DV1 and DV3 primer set [ 13 ] and the ALD 1 and ALD 2 primer set [ 14 ] in one reaction with details specified previously [ 15 ].",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S33"
+          ],
+          "evidence_text": "Reverse transcription-PCR was performed by using the DV1 and DV3 primer set [ 13 ] and the ALD 1 and ALD 2 primer set [ 14 ] in one reaction with details specified previously [ 15 ].",
+          "reason": "quote found in sentences S33"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S33"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S33"
+          ],
+          "evidence_text": "Reverse transcription-PCR was performed by using the DV1 and DV3 primer set [ 13 ] and the ALD 1 and ALD 2 primer set [ 14 ] in one reaction with details specified previously [ 15 ].",
+          "reason": "The cited sentence ID exists and matches the quoted text."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S33",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S33 in [methods]"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "flow cytometry",
+      "assay_name": "flow cytometry",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "flow cytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S9"
+          ],
+          "evidence_text": "by RNA-sequencing and flow cytometry",
+          "reason": "The methods explicitly state that flow cytometry was used in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "flowcytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S98"
+          ],
+          "evidence_text": "flowcytometry",
+          "reason": "This exact wording appears verbatim in the figure caption and refers to the same assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "PBMCs",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S34"
+          ],
+          "evidence_text": "PBMCs were stained",
+          "reason": "The text directly states that PBMCs were used for the flow cytometry procedure."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "frequencies and phenotypes of CD4+ SP, CD8+ SP, and CD4+CD8+ DP T cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S9",
+            "S73"
+          ],
+          "evidence_text": "phenotypic attributes of CD4 + CD8 + double-positive (DP) cells with plasma leakage in dengue diseases by RNA-sequencing and flow cytometry",
+          "reason": "The study used flow cytometry for phenotypic assessment and assessed proportions of CD4+CD8+ DP, CD4+ SP, and CD8+ SP T cells."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S34",
+            "S35"
+          ],
+          "evidence_text": "PBMCs were stained with anti-human CD3, CD4, CD8, CD14, CD19, CD56, and live/dead viability antibodies (see Table S1 for antibody details). Subsequently, live CD4 + single positive (SP) (CD14 − CD19 − CD56 − CD3 + CD4 + CD8 − ), CD8 + SP (CD14 − CD19 − CD56 − CD3 + CD4 − CD8 + ), and CD4 + CD8 + DP (CD14 − CD19 − CD56 − CD3 + CD4 + CD8 + ) cells were sorted",
+          "reason": "source 'methods' agrees with S34 in [methods], S35 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "PBMCs were stained with anti-human CD3, CD4, CD8, CD14, CD19, CD56, and live/dead viability antibodies (see Table S1 for antibody details). Subsequently, live CD4 + single positive (SP) (CD14 − CD19 − CD56 − CD3 + CD4 + CD8 − ), CD8 + SP (CD14 − CD19 − CD56 − CD3 + CD4 − CD8 + ), and CD4 + CD8 + DP (CD14 − CD19 − CD56 − CD3 + CD4 + CD8 + ) cells were sorted into TRIzol LS Reagent (Invitrogen, Carlsbad, CA, USA) using a BD FACSAria cell sorter (BD Biosciences, San Jose, CA, USA).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S34",
+            "S35"
+          ],
+          "evidence_text": "PBMCs were stained with anti-human CD3, CD4, CD8, CD14, CD19, CD56, and live/dead viability antibodies (see Table S1 for antibody details). Subsequently, live CD4 + single positive (SP) (CD14 − CD19 − CD56 − CD3 + CD4 + CD8 − ), CD8 + SP (CD14 − CD19 − CD56 − CD3 + CD4 − CD8 + ), and CD4 + CD8 + DP (CD14 − CD19 − CD56 − CD3 + CD4 + CD8 + ) cells were sorted into TRIzol LS Reagent (Invitrogen, Carlsbad, CA, USA) using a BD FACSAria cell sorter (BD Biosciences, San Jose, CA, USA).",
+          "reason": "quote found in sentences S34, S35"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S34",
+            "S35"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S34",
+            "S35"
+          ],
+          "evidence_text": "S34-S35",
+          "reason": "Both cited sentence IDs exist and correspond to the quoted text."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S34, S35",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S34 in [methods], S35 in [methods]"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "RNA Sequencing",
+      "assay_name": "RNA Sequencing",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "RNA Sequencing",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S40"
+          ],
+          "evidence_text": "## 2.4. RNA Sequencing",
+          "reason": "The Methods section explicitly names this assay as RNA Sequencing."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "RNA-seq",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S81"
+          ],
+          "evidence_text": "RNA-seq performed",
+          "reason": "The text explicitly uses RNA-seq to refer to the same sequencing assay."
+        },
+        {
+          "field_name": "platform",
+          "proposed_value": "NovaSeq 6000 system",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S44"
+          ],
+          "evidence_text": "sequenced in 3 batches using a NovaSeq 6000 system",
+          "reason": "The source directly ties the NovaSeq 6000 system to this sequencing assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "sorted CD4 + SP, CD8 + SP, and CD4 + CD8 + DP cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S35",
+            "S81"
+          ],
+          "evidence_text": "live CD4 + single positive (SP) ... CD8 + SP ... and CD4 + CD8 + DP ... cells were sorted into TRIzol LS Reagent",
+          "reason": "The text states these sorted cell subsets were prepared and then RNA-seq was performed on sorted cell subsets."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "whole-transcriptome sequencing reads and gene expression profiles",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S44",
+            "S45",
+            "S80"
+          ],
+          "evidence_text": "to obtain 50-bp paired-end reads",
+          "reason": "The assay explicitly generated sequencing reads and was used to characterize transcriptomic or gene expression profiles."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S40"
+          ],
+          "evidence_text": "## 2.4. RNA Sequencing",
+          "reason": "source 'methods' agrees with S43 in [methods], S44 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "From this step, 1 ng cDNA was used to prepare a standard Nextera XT sequencing library (Nextera XT DNA library preparation kit and index kit (set B and C, respectively), Illumina, San Diego, CA, USA). Samples were sequenced in 3 batches using a NovaSeq 6000 system (Illumina, San Diego, CA, USA) to obtain 50-bp paired-end reads.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S43",
+            "S44"
+          ],
+          "evidence_text": "From this step, 1 ng cDNA was used to prepare a standard Nextera XT sequencing library (Nextera XT DNA library preparation kit and index kit (set B and C, respectively), Illumina, San Diego, CA, USA). Samples were sequenced in 3 batches using a NovaSeq 6000 system (Illumina, San Diego, CA, USA) to obtain 50-bp paired-end reads.",
+          "reason": "quote found in sentences S43, S44"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S43",
+            "S44"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S43",
+            "S44"
+          ],
+          "evidence_text": "From this step, 1 ng cDNA was used to prepare a standard Nextera XT sequencing library (Nextera XT DNA library preparation kit and index kit (set B and C, respectively), Illumina, San Diego, CA, USA). Samples were sequenced in 3 batches using a NovaSeq 6000 system (Illumina, San Diego, CA, USA) to obtain 50-bp paired-end reads.",
+          "reason": "Both cited sentence IDs exist and correspond to the quoted text."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S43, S44",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S43 in [methods], S44 in [methods]"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

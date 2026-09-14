@@ -1,0 +1,167 @@
+{
+  "summary": {
+    "assays": 13,
+    "fields_re_extracted": 5,
+    "actions": {
+      "REAFFIRMED": 1,
+      "UNCHANGED": 1,
+      "REPLACED": 3
+    },
+    "reported_not_corrected": 1
+  },
+  "results": [
+    {
+      "assay_id": "16S V4 rDNA sequencing",
+      "assay_name": "16S V4 rDNA sequencing",
+      "record_verdict": "REVIEW",
+      "corrections": [],
+      "reported_not_corrected": [
+        {
+          "field_name": "name_in_paper",
+          "verdict": "NOT_SUPPORTED",
+          "reason": "The source describes enrichment and sequencing of the 16S V4 region but does not use the exact assay name \"16S V4 rDNA sequencing\"."
+        }
+      ]
+    },
+    {
+      "assay_id": "qPCR assay",
+      "assay_name": "qPCR assay",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "sample_type",
+          "action": "REAFFIRMED",
+          "previous": "fecal samples",
+          "blind_answer": "fecal samples"
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Flagellin and LPS quantification",
+      "assay_name": "Flagellin and LPS quantification",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "ELISA",
+      "assay_name": "ELISA",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "evidence",
+          "action": "UNCHANGED",
+          "previous": "A Hemagglutinin-specific ELISA was used to measure IgG subclasses in human sera. Plates were read by Molecular Devices plate reader.",
+          "blind_answer": {
+            "quote": "\"we also noticed that the antibiotics-treated subjects in phase 2 exhibited significantly reduced concentrations of vaccine-induced IgG1 antibodies specific to the H1N1 A/California strain ( Figure 2C , right panel ) on day 7, as measured by ELISA.\"",
+            "sentence_ids": [
+              "S40"
+            ]
+          },
+          "note": "replacement quote rejected: quote does not appear in sentences S40"
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Measurement of LPS-specific IgA and IgG antibodies",
+      "assay_name": "Measurement of LPS-specific IgA and IgG antibodies",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Influenza microneutralization assay",
+      "assay_name": "Influenza microneutralization assay",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Measurement of antigen-specific IgG1 and IgA1 antibodies by Luminex",
+      "assay_name": "Measurement of antigen-specific IgG1 and IgA1 antibodies by Luminex",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "evidence",
+          "action": "REPLACED",
+          "previous": "Antigen-specific antibody subclass/isotypes were determined using a high-throughput Luminex-based assay ( Brown et al., 2012 ). The microspheres were washed as before and read on an iQue Screener Plus (Intellicyt Corp., Albuquerque, NM).",
+          "blind_answer": {
+            "quote": "Antigen-specific antibody subclass/isotypes were determined using a high-throughput Luminex-based assay",
+            "sentence_ids": [
+              "S188"
+            ]
+          }
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Binding kinetics and antibody affinity of polyclonal serum antibodies to rHA protein by surface plasmon resonance",
+      "assay_name": "Binding kinetics and antibody affinity of polyclonal serum antibodies to rHA protein by surface plasmon resonance",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Flow cytometry analysis of immune populations",
+      "assay_name": "Flow cytometry analysis of immune populations",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "evidence",
+          "action": "REPLACED",
+          "previous": "Flow cytometry analysis was done on either heparinized whole blood (plasmablasts and blood follicular T helper like cells) or cryopreserved PBMCs (activated B cells and innate immune populations). All samples were run on an LSR II (BD Biosciences) and analyzed via the FlowJo software (FlowJo, LLC).",
+          "blind_answer": {
+            "quote": "We also measured frequencies of several innate immune cell populations by flow cytometry, and observed significant increases in two dendritic cell subsets, CD80+ CD16+ mDCs and CD123++ pDCs, post-antibiotics ( Figure 4B ).",
+            "sentence_ids": [
+              "S72"
+            ]
+          }
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "ELISPOT measurement of vaccine-specific antibody-secreting cells (ASCs)",
+      "assay_name": "ELISPOT measurement of vaccine-specific antibody-secreting cells (ASCs)",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "evidence",
+          "action": "REPLACED",
+          "previous": "ELISPOT plates (Millipore, cat. #MAIPS4510) were coated overnight at 4°C with the administered trivalent influenza vaccine (Fluzone) at 9μg/ml in PBS, subsequently washed, and complete medium added for 2 hours at 37°C to avoid aspecific binding. Plates were scanned and spots counted using the CTL Immunospot reader software.",
+          "blind_answer": {
+            "quote": "The following day, in order to enumerate the number of IgG-secreting vaccine-specific plasmablasts, dilutions of washed PBMCs (ranging from 6×10 5 to 2×10 4 cells) were added to the ELISPOT plates and incubated overnight at 37°C with 5% CO2.",
+            "sentence_ids": [
+              "S226"
+            ]
+          }
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Microarray experiments",
+      "assay_name": "Microarray experiments",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Plasma metabolomics analysis",
+      "assay_name": "Plasma metabolomics analysis",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Measurement of bile acids by liquid chromatography-mass spectrometry (LC-MS)",
+      "assay_name": "Measurement of bile acids by liquid chromatography-mass spectrometry (LC-MS)",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    }
+  ]
+}

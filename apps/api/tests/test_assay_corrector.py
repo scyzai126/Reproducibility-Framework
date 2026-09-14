@@ -411,3 +411,92 @@ async def test_every_field_is_asked_against_the_entry_as_extraction_left_it():
     # ...and the platform question was still asked against the quote extraction wrote.
     platform_prompt = next(p for p in client.prompts if "instrument, chip, kit" in p)
     assert original_quote in platform_prompt
+
+
+# ── A bare-list alias answer is the answer, not an error ──────────────────────
+
+class _CannedClient:
+    """Returns one canned body, verbatim."""
+
+    def __init__(self, body: str):
+        outer = self
+
+        class _Completions:
+            async def create(self, **_kwargs):
+                message = type("M", (), {"content": body})()
+                return type("R", (), {"choices": [type("C", (), {"message": message})()]})()
+
+        self.chat = type("Chat", (), {"completions": _Completions()})()
+
+
+@pytest.mark.asyncio
+async def test_an_unwrapped_alias_list_is_used_rather_than_discarded():
+    """The prompt asks for {"value": ...}; the aliases question asks for "a JSON list".
+
+    A model following the question literally returned the bare list, and the strict parser threw
+    away a call already paid for -- 12 of 41 alias re-extractions across the corpus, every ERROR
+    in it. The entry then kept exactly the aliases the verifier had objected to.
+    """
+    from app.agent.assay_corrector import correct_field
+
+    value, error = await correct_field(
+        _entry(), "aliases", _SOURCE, "Paper", _CannedClient('["FACS", "flow cytometry"]'))
+
+    assert error is None
+    assert value == ["FACS", "flow cytometry"]
+
+
+@pytest.mark.asyncio
+async def test_the_wrapped_shape_still_works():
+    from app.agent.assay_corrector import correct_field
+
+    value, error = await correct_field(
+        _entry(), "aliases", _SOURCE, "Paper",
+        _CannedClient('{"value": ["FACS"], "sentence_ids": ["S1"], "reason": "ok"}'))
+
+    assert error is None
+    assert value == ["FACS"]
+
+
+@pytest.mark.asyncio
+async def test_a_bare_list_for_evidence_still_errors():
+    """Its sentence_ids come from a sibling key, not from `value`.
+
+    Coercing would yield {"quote": None, "sentence_ids": []} -> CLEARED -> remapped to
+    UNCHANGED, which reads as "checked, nothing to change" when nothing was checked.
+    """
+    from app.agent.assay_corrector import correct_field
+
+    value, error = await correct_field(
+        _entry(), "evidence", _SOURCE, "Paper", _CannedClient('["some quote"]'))
+
+    assert value is None
+    assert error == "corrector returned list, not an object"
+
+
+@pytest.mark.asyncio
+async def test_a_bare_list_for_a_scalar_field_still_errors():
+    """A list is not an answer to "what instrument did this assay run on"."""
+    from app.agent.assay_corrector import correct_field
+
+    value, error = await correct_field(
+        _entry(), "platform", _SOURCE, "Paper", _CannedClient('["LSRII", "NextSeq"]'))
+
+    assert value is None
+    assert error == "corrector returned list, not an object"
+
+
+def test_the_aliases_question_names_the_field_it_wants_the_list_in():
+    """The wording that invited the bare list in the first place."""
+    from app.agent.assay_corrector import _QUESTIONS
+
+    assert "`value`" in _QUESTIONS["aliases"]
+    assert "do not return it on its own" in _QUESTIONS["aliases"]
+
+
+def test_the_normalized_name_has_no_repair_question():
+    """Nothing to re-extract: no blind question about the paper can recover a technique
+    judgement, and the verifier never flags it anyway (it is in _NOT_PROPOSED). field_group
+    returning None is what keeps a future schema field from silently acquiring a wrong
+    corrector question -- pinned here so the eighth field's arrival stays deliberate."""
+    assert field_group("normalized_name") is None

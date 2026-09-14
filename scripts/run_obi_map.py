@@ -1,8 +1,9 @@
 """Map a study's assays.json to OBI ontology terms using a given standard vocabulary.
 
-Matching chain (stops at first hit): exact match on name_in_paper, exact match on
-normalized_name, then embedding top-10 + LLM pick — restricted to the vocabulary
-in --terms.
+Matching chain (stops at first hit): exact match on name_in_paper, then embedding top-10 +
+LLM pick — restricted to the vocabulary in --terms. A lexical exact match on the normalized
+name used to sit between the two; it was removed, so any name the vocabulary does not carry
+verbatim costs 2 calls.
 
 Usage:
     python scripts/run_obi_map.py <study_dir> [--terms data/OBI/obi_generic_index.json]
@@ -48,7 +49,7 @@ def main() -> None:
     counts = {"exact": 0, "embedding": 0, "unresolved": 0}
     for name, v in enriched.items():
         resource = v.get("resource", "unresolved")
-        if resource in ("exact_original", "exact_normalized"):
+        if resource == "exact_original":
             counts["exact"] += 1
         elif resource == "embedding_llm":
             counts["embedding"] += 1

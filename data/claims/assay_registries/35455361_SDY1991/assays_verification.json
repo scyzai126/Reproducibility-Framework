@@ -1,0 +1,491 @@
+{
+  "summary": {
+    "total": 5,
+    "accept": 3,
+    "review": 1,
+    "reject": 1,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_absent": 0,
+    "field_issues": {
+      "name_in_paper": {
+        "CONTRADICTED": 1
+      },
+      "sample_type": {
+        "NOT_SUPPORTED": 1
+      },
+      "readouts": {
+        "CONTRADICTED": 1
+      },
+      "aliases[]": {
+        "NOT_SUPPORTED": 1
+      }
+    }
+  },
+  "results": [
+    {
+      "assay_id": "DENV-specific IgG ELISAs",
+      "assay_name": "DENV-specific IgG ELISAs",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "DENV-specific IgG ELISAs",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S19"
+          ],
+          "evidence_text": "DENV-specific IgG ELISAs",
+          "reason": "The text explicitly states this assay was used for serology in the study."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "DENV-specific IgG seropositivity",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S16",
+            "S17",
+            "S19"
+          ],
+          "evidence_text": "The IgG serology was additionally carried out to distinguish primary versus secondary DENV infections. Accordingly, we classified the donors as primary infection if seropositive for IgM but not IgG, and secondary infection for all donors seropositive for IgG disregarding the PCR and IgM status. The serology was performed by DENV-specific IgG ELISAs",
+          "reason": "The assay is explicitly tied to determining IgG seropositivity."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S19"
+          ],
+          "evidence_text": "The serology was performed by DENV-specific IgG ELISAs and flow cytometry-based neutralization assays, as previously described [ 26 ].",
+          "reason": "source 'methods' agrees with S19 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "The serology was performed by DENV-specific IgG ELISAs and flow cytometry-based neutralization assays, as previously described [ 26 ].",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S19"
+          ],
+          "evidence_text": "The serology was performed by DENV-specific IgG ELISAs and flow cytometry-based neutralization assays, as previously described [ 26 ].",
+          "reason": "quote found in sentences S19"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S19"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S19"
+          ],
+          "evidence_text": "The serology was performed by DENV-specific IgG ELISAs and flow cytometry-based neutralization assays, as previously described [ 26 ].",
+          "reason": "The cited sentence ID exists and contains the quoted evidence."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S19",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S19 in [methods]"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "flow cytometry-based neutralization assays",
+      "assay_name": "flow cytometry-based neutralization assays",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "flow cytometry-based neutralization assays",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S19"
+          ],
+          "evidence_text": "flow cytometry-based neutralization assays",
+          "reason": "The Methods explicitly states this assay was used for serology in the study."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "neutralization activity in serology testing",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S19"
+          ],
+          "evidence_text": "The serology was performed by DENV-specific IgG ELISAs and flow cytometry-based neutralization assays",
+          "reason": "The text identifies these as neutralization assays used as part of serology, supporting neutralization activity as the assay readout."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S19"
+          ],
+          "evidence_text": "The serology was performed by DENV-specific IgG ELISAs and flow cytometry-based neutralization assays, as previously described [ 26 ].",
+          "reason": "source 'methods' agrees with S19 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "The serology was performed by DENV-specific IgG ELISAs and flow cytometry-based neutralization assays, as previously described [ 26 ].",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S19"
+          ],
+          "evidence_text": "The serology was performed by DENV-specific IgG ELISAs and flow cytometry-based neutralization assays, as previously described [ 26 ].",
+          "reason": "quote found in sentences S19"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S19"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S19"
+          ],
+          "evidence_text": "The serology was performed by DENV-specific IgG ELISAs and flow cytometry-based neutralization assays, as previously described [ 26 ].",
+          "reason": "Sentence ID S19 exists and contains the quoted evidence."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S19",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S19 in [methods]"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "IFN-γ Secretion Assay",
+      "assay_name": "IFN-γ Secretion Assay",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "IFN-γ Secretion Assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S25"
+          ],
+          "evidence_text": "IFN-γ Secretion Assay–Detection kit (PE)",
+          "reason": "The methods explicitly name and use an IFN-γ Secretion Assay kit in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "cytokine capture assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S74"
+          ],
+          "evidence_text": "a cytokine capture assay",
+          "reason": "The paper uses this exact phrase for the same IFN-γ cell isolation assay."
+        },
+        {
+          "field_name": "platform",
+          "proposed_value": "IFN-γ Secretion Assay–Detection kit (PE)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S25"
+          ],
+          "evidence_text": "IFN-γ Secretion Assay–Detection kit (PE)",
+          "reason": "This product is explicitly stated as the kit used for the assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "PBMC",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S23"
+          ],
+          "evidence_text": "Human PBMC were thawed and rested overnight",
+          "reason": "The assay was performed on PBMC."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "IFN-γ-producing CD8+ T cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S25",
+            "S27",
+            "S28"
+          ],
+          "evidence_text": "IFNγ producing cells were labeled",
+          "reason": "The assay labels IFN-γ-producing cells and the sorted populations are CD8+ IFNγ+ and CD8+ IFNγ− cells."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S23",
+            "S25"
+          ],
+          "evidence_text": "## 2.4. IFN-γ Capture Assay and Cell Sorting for RNA-Seq  [methods]",
+          "reason": "source 'methods' agrees with S24 in [methods], S25 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "After overnight resting, cells were stimulated with DENV CD8 megapool (1 ug/mL final concentration) for 3 h at 37 °C. IFNγ producing cells were labeled using an IFN-γ Secretion Assay–Detection kit (PE) (catalog #130-054-202, Miltenyi Biotec, Bergisch Gladbach, North Rhine-Westphalia, Germany) according to manufacturer’s instructions.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S24",
+            "S25"
+          ],
+          "evidence_text": "After overnight resting, cells were stimulated with DENV CD8 megapool (1 ug/mL final concentration) for 3 h at 37 °C. IFNγ producing cells were labeled using an IFN-γ Secretion Assay–Detection kit (PE) (catalog #130-054-202, Miltenyi Biotec, Bergisch Gladbach, North Rhine-Westphalia, Germany) according to manufacturer’s instructions.",
+          "reason": "quote found in sentences S24, S25"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S24",
+            "S25"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S24",
+            "S25"
+          ],
+          "evidence_text": "After overnight resting, cells were stimulated with DENV CD8 megapool (1 ug/mL final concentration) for 3 h at 37 °C. IFNγ producing cells were labeled using an IFN-γ Secretion Assay–Detection kit (PE) (catalog #130-054-202, Miltenyi Biotec, Bergisch Gladbach, North Rhine-Westphalia, Germany) according to manufacturer’s instructions.",
+          "reason": "Both cited sentence IDs exist and correspond to the quoted text."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S24, S25",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S24 in [methods], S25 in [methods]"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "cell sorting",
+      "assay_name": "cell sorting",
+      "assay_identity_verdict": "CONTRADICTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "cell sorting",
+          "verdict": "CONTRADICTED",
+          "evidence_sentence_ids": [
+            "S28"
+          ],
+          "evidence_text": "Two hundred cells each from CD8+ IFNγ+ and CD8+ IFNγ− cell populations were sorted",
+          "reason": "This is a sample-isolation step rather than an assay measurement."
+        },
+        {
+          "field_name": "platform",
+          "proposed_value": "FACSAria cell sorter",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S28"
+          ],
+          "evidence_text": "using a FACSAria cell sorter",
+          "reason": "The text explicitly states this instrument was used for the sorting step."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "CD8+ IFNγ+ and CD8+ IFNγ− cell populations",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "These are sorted cell populations, not a specimen or tissue sample type stated for an assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "isolated IFN-γ-positive and IFN-γ-negative CD8+ T-cell populations",
+          "verdict": "CONTRADICTED",
+          "evidence_sentence_ids": [
+            "S28"
+          ],
+          "evidence_text": "Two hundred cells each from CD8+ IFNγ+ and CD8+ IFNγ− cell populations were sorted",
+          "reason": "This describes isolated fractions from a sorting step, which is not an assay readout."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S23",
+            "S28"
+          ],
+          "evidence_text": "## 2.4. IFN-γ Capture Assay and Cell Sorting for RNA-Seq  [methods]",
+          "reason": "source 'methods' agrees with S28 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Two hundred cells each from CD8+ IFNγ+ and CD8+ IFNγ− cell populations were sorted using a FACSAria cell sorter (BD Biosciences, San Diego, CA, USA).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S28"
+          ],
+          "evidence_text": "Two hundred cells each from CD8+ IFNγ+ and CD8+ IFNγ− cell populations were sorted using a FACSAria cell sorter (BD Biosciences, San Diego, CA, USA).",
+          "reason": "quote found in sentences S28"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": "[\"S28\"]",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S28"
+          ],
+          "evidence_text": "Two hundred cells each from CD8+ IFNγ+ and CD8+ IFNγ− cell populations were sorted using a FACSAria cell sorter (BD Biosciences, San Diego, CA, USA).",
+          "reason": "Sentence ID S28 exists and contains the quoted text."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S28",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S28 in [methods]"
+      },
+      "conflict_detected": true,
+      "record_verdict": "REJECT",
+      "model_record_verdict": "REJECT"
+    },
+    {
+      "assay_id": "Microscaled RNA-Seq",
+      "assay_name": "Microscaled RNA-Seq",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Microscaled RNA-Seq",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S33"
+          ],
+          "evidence_text": "Microscaled RNA-Seq was performed",
+          "reason": "The Methods explicitly states this assay was performed."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "micro-scaled RNA-seq assays",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S88"
+          ],
+          "evidence_text": "We performed micro-scaled RNA-seq assays",
+          "reason": "This exact phrase appears and refers to the same assay."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "microscaled RNAseq data",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "The exact proposed alias does not appear verbatim in the source text."
+        },
+        {
+          "field_name": "platform",
+          "proposed_value": "Smart-Seq2 protocol; HiSeq 2500",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S33",
+            "S39"
+          ],
+          "evidence_text": "according to the Smart-Seq2 protocol... sequenced on the HiSeq 2500",
+          "reason": "Both the protocol and sequencing instrument are explicitly tied to this assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "sorted CD8+ IFNγ+ and CD8+ IFNγ− cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S28",
+            "S31"
+          ],
+          "evidence_text": "Two hundred cells each from CD8+ IFNγ+ and CD8+ IFNγ− cell populations were sorted... Sorted cells (200 to 400)",
+          "reason": "The assay was performed on the sorted CD8+ IFNγ+ and CD8+ IFNγ− cell populations."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "whole-transcriptome mRNA expression profiles",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S34",
+            "S40",
+            "S45"
+          ],
+          "evidence_text": "mRNA was captured... Libraries were sequenced... Read counts to each genomic feature were obtained",
+          "reason": "The assay measures transcriptome-wide mRNA-derived sequencing reads and gene expression counts."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S31",
+            "S33",
+            "S39"
+          ],
+          "evidence_text": "## 2.5. Microscaled RNA-Sequencing Assay  [methods]",
+          "reason": "source 'methods' agrees with S33 in [methods], S39 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Microscaled RNA-Seq was performed according to the Smart-Seq2 protocol, as previously reported [ 31 , 32 ]. Libraries that passed quality controls were pooled at equimolar concentration, loaded, and sequenced on the HiSeq 2500 (Illumina, San Diego, CA, USA).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "quote found in sentences S33, S39"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S33",
+            "S39"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S33",
+            "S39"
+          ],
+          "evidence_text": "S33 ... S39",
+          "reason": "Both cited sentence IDs exist and correspond to the quoted assay details."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S33, S39",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S33 in [methods], S39 in [methods]"
+      },
+      "conflict_detected": true,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    }
+  ]
+}

@@ -35,7 +35,7 @@ def process_study(study_dir: Path) -> None:
     counts = {"exact": 0, "embedding": 0, "unresolved": 0}
     for v in enriched.values():
         resource = v.get("resource", "unresolved")
-        if resource in ("exact_original", "exact_normalized"):
+        if resource == "exact_original":
             counts["exact"] += 1
         elif resource == "embedding_llm":
             counts["embedding"] += 1

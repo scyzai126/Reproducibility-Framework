@@ -1,0 +1,353 @@
+{
+  "summary": {
+    "total": 3,
+    "accept": 3,
+    "review": 0,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_absent": 0,
+    "field_issues": {}
+  },
+  "results": [
+    {
+      "assay_id": "RT-qPCR",
+      "assay_name": "RT-qPCR",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "RT-qPCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S167"
+          ],
+          "evidence_text": "RT-qPCR",
+          "reason": "The Methods explicitly state RNA concentrations were measured by RT-qPCR."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "quantitative PCR with reverse transcription (RT–qPCR)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S13"
+          ],
+          "evidence_text": "quantified by quantitative PCR with reverse tran- scription (RT–qPCR)",
+          "reason": "This exact assay wording appears in the source and refers to the viral RNA measurement."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "real-time RT-qPCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S169"
+          ],
+          "evidence_text": "real-time RT-qPCR",
+          "reason": "This exact wording appears in the Methods for the same viral RNA assay."
+        },
+        {
+          "field_name": "aliases[2]",
+          "proposed_value": "qPCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S171"
+          ],
+          "evidence_text": "qPCR",
+          "reason": "The source explicitly refers to SARS-CoV-2 genomes assayed by qPCR in the same assay context."
+        },
+        {
+          "field_name": "platform",
+          "proposed_value": "US CDC real-time RT-qPCR primer/probe sets for 2019-nCoV_N1, 2019-nCoV_N2, and the human RNase P (RP)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S169"
+          ],
+          "evidence_text": "using the US CDC real-time RT-qPCR primer/probe sets for 2019-nCoV_N1, 2019-nCoV_N2, and the human RNase P (RP) as an extraction control",
+          "reason": "The Methods directly tie these primer/probe sets to this RT-qPCR assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "nasopharyngeal samples",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S167"
+          ],
+          "evidence_text": "from nasopharyngeal samples",
+          "reason": "The Methods explicitly state the RT-qPCR was performed on nasopharyngeal samples."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "SARS-CoV-2 viral RNA copies",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S169",
+            "S170"
+          ],
+          "evidence_text": "For SARS-CoV-2 RNA detection... Virus RNA copies were quantified",
+          "reason": "The assay is explicitly described as detecting SARS-CoV-2 RNA and quantifying virus RNA copies."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S167",
+            "S169",
+            "S170"
+          ],
+          "evidence_text": "## Viral RNA measurements  [methods]",
+          "reason": "source 'methods' agrees with S167 in [methods], S169 in [methods], S170 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "RNA concentrations were measured from nasopharyngeal samples by RT-qPCR as previously described 23 . For SARS-CoV-2 RNA detection, 5 μl of RNA 371 template was tested as previously described 24 , using the US CDC real-time RT-qPCR primer/probe sets for 2019-nCoV_N1, 2019-nCoV_N2, and the human RNase P (RP) as an extraction control. Virus RNA copies were quantified using a 10-fold dilution standard curve of RNA transcripts that we previously generated 24 .",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S167",
+            "S169",
+            "S170"
+          ],
+          "evidence_text": null,
+          "reason": "quote found in sentences S167, S169, S170"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S167",
+            "S169",
+            "S170"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S167",
+            "S169",
+            "S170"
+          ],
+          "evidence_text": "S167 S169 S170",
+          "reason": "All cited sentence IDs exist and correspond to the quoted assay description."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S167, S169, S170",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S167 in [methods], S169 in [methods], S170 in [methods]"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Human Cytokine Array/Chemokine Array 71–403 Plex Panel (HD71)",
+      "assay_name": "Human Cytokine Array/Chemokine Array 71–403 Plex Panel (HD71)",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Human Cytokine Array/Chemokine Array 71–403 Plex Panel (HD71)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S177"
+          ],
+          "evidence_text": "measured with Human Cytokine Array/Chemokine Array 71–403 Plex Panel (HD71)",
+          "reason": "The Methods explicitly state this assay was used to measure cytokines and chemokines."
+        },
+        {
+          "field_name": "platform",
+          "proposed_value": "Human Cytokine Array/Chemokine Array 71–403 Plex Panel (HD71)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S177"
+          ],
+          "evidence_text": "measured with Human Cytokine Array/Chemokine Array 71–403 Plex Panel (HD71)",
+          "reason": "The product is explicitly identified as the panel used for this measurement."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "sera",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S176",
+            "S177"
+          ],
+          "evidence_text": "Patient serum was isolated as before and aliquots were stored in −80°C. Sera were shipped to Eve Technologies",
+          "reason": "The assay was performed on sera according to the cited Methods sentences."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "cytokine and chemokine levels",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S177"
+          ],
+          "evidence_text": "levels of cytokines and chemokines were measured",
+          "reason": "The text directly states that this assay measured cytokine and chemokine levels."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S176",
+            "S177"
+          ],
+          "evidence_text": "## Cytokine and chemokine measurements [methods]",
+          "reason": "source 'methods' agrees with S176 in [methods], S177 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Patient serum was isolated as before and aliquots were stored in −80°C. Sera were shipped to Eve Technologies (Calgary, Alberta, Canada) on dry ice, and levels of cytokines and chemokines were measured with Human Cytokine Array/Chemokine Array 71–403 Plex Panel (HD71).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S176",
+            "S177"
+          ],
+          "evidence_text": "Patient serum was isolated as before and aliquots were stored in −80°C. Sera were shipped to Eve Technologies (Calgary, Alberta, Canada) on dry ice, and levels of cytokines and chemokines were measured with Human Cytokine Array/Chemokine Array 71–403 Plex Panel (HD71).",
+          "reason": "quote found in sentences S176, S177"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S176",
+            "S177"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S176",
+            "S177"
+          ],
+          "evidence_text": "Patient serum was isolated as before and aliquots were stored in −80°C. Sera were shipped to Eve Technologies (Calgary, Alberta, Canada) on dry ice, and levels of cytokines and chemokines were measured with Human Cytokine Array/Chemokine Array 71–403 Plex Panel (HD71).",
+          "reason": "Both cited sentence IDs exist and correspond to the quoted text."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S176, S177",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S176 in [methods], S177 in [methods]"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "flow cytometry",
+      "assay_name": "flow cytometry",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "flow cytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S184",
+            "S185"
+          ],
+          "evidence_text": "## Flow cytometry",
+          "reason": "The Methods section explicitly identifies flow cytometry as a performed assay."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "intracellular cytokine staining",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S192",
+            "S196"
+          ],
+          "evidence_text": "For intracellular cytokine staining following stimulation",
+          "reason": "This exact phrase appears in the Flow cytometry methods and refers to a flow-cytometric staining procedure used here."
+        },
+        {
+          "field_name": "platform",
+          "proposed_value": "Attune NXT (ThermoFisher)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S200"
+          ],
+          "evidence_text": "prepared for analysis on an Attune NXT (ThermoFisher)",
+          "reason": "The text explicitly states the instrument used for analysis in this flow cytometry assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "freshly isolated PBMCs",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S186"
+          ],
+          "evidence_text": "freshly isolated PBMCs",
+          "reason": "The Flow cytometry methods explicitly state that freshly isolated PBMCs were used."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "immune cell subset frequencies and intracellular cytokine-positive cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S23",
+            "S24",
+            "S196",
+            "S202"
+          ],
+          "evidence_text": "by flow cytometry and ELISA to quantify leuko- cytes and soluble mediators, respectively... To quantify intracellular cytokines",
+          "reason": "The text supports flow-cytometric quantification of leukocyte populations and intracellular cytokines."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S184",
+            "S200"
+          ],
+          "evidence_text": "## Flow cytometry",
+          "reason": "source 'methods' agrees with S186 in [methods], S200 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Briefly, freshly isolated PBMCs were plated at 1–2 × 10 6 cells / well in a 96 well U-bottom plate. Following this incubation, cells were washed and prepared for analysis on an Attune NXT (ThermoFisher).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "quote found in sentences S186, S200"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S186",
+            "S200"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S186",
+            "S200"
+          ],
+          "evidence_text": "Briefly, freshly isolated PBMCs were plated at 1–2 × 10 6 cells / well in a 96 well U-bottom plate.... prepared for analysis on an Attune NXT (ThermoFisher).",
+          "reason": "Both cited sentence IDs exist and correspond to the quoted assay evidence locations."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S186, S200",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S186 in [methods], S200 in [methods]"
+      },
+      "conflict_detected": true,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "REVIEW"
+    }
+  ]
+}

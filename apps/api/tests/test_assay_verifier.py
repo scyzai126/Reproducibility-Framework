@@ -200,6 +200,20 @@ def test_proposed_fields_enumerates_aliases_and_skips_nulls():
     assert fields["evidence.sentence_ids"] == ["S2"]
 
 
+def test_the_normalized_name_is_never_verified_against_the_paper():
+    """It is a judgement about the technique, not a claim about the text.
+
+    Every other field reports something the paper states, so the verifier can ask whether the
+    text supports it. `normalized_name` is expected to use words the paper never wrote -- that
+    is the whole reason it exists, since "Surface and intracellular cytokine staining" has to
+    become "flow cytometry" to retrieve the right OBI term. Verifying it would draw a
+    NOT_SUPPORTED on nearly every entry and bury round 2 in REVIEW lines for working output.
+    """
+    entry = {**ENTRY, "normalized_name": "flow cytometry"}
+
+    assert "normalized_name" not in dict(proposed_fields(entry))
+
+
 def test_record_verdict_derivation():
     ok = [{"verdict": SUPPORTED}, {"verdict": SUPPORTED}]
 
@@ -486,3 +500,84 @@ async def test_concurrency_never_exceeds_the_bound():
     names = tuple(f"assay {i}" for i in range(7))
     await verify_registry(_registry(*names), SOURCE, "Paper", client, max_concurrency=2)
     assert client.peak_in_flight == 2
+
+
+# ── The section check outranks the judge on `source` ──────────────────────────
+
+_SOURCE_ENTRY = {
+    "name_in_paper": "phosphoflow analysis", "aliases": [], "platform": None,
+    "sample_type": "PBMC", "readouts": "STAT phosphorylation", "source": "methods",
+    "evidence": {"section": "Phosphorylation of intracellular proteins",
+                 "sentence_ids": ["S10"], "quote": "cell subset frequencies and function"},
+}
+
+
+def _judge_says_source_is_fine() -> str:
+    """A verifier answer that supports every field, `source` included."""
+    return json.dumps({
+        "assay_id": "phosphoflow analysis", "assay_identity_verdict": "SUPPORTED",
+        "field_verifications": [
+            {"field_name": f, "verdict": "SUPPORTED", "reason": "ok"}
+            for f in ("name_in_paper", "sample_type", "readouts", "source",
+                      "evidence.quote", "evidence.sentence_ids")],
+        "conflict_detected": False, "record_verdict": "ACCEPT",
+    })
+
+
+@pytest.mark.asyncio
+async def test_a_source_claim_its_evidence_contradicts_is_overruled(monkeypatch):
+    """The real SDY212 defect: source "methods", evidence in [results], judge said fine.
+
+    Over a 30-paper run the judge returned 2 `source` verdicts across 171 assays while the free
+    check found 2 mismatches on different entries -- which then reached the finished registry
+    because nothing flagged them for correction.
+    """
+    from app.agent import assay_verifier
+
+    source_text = "## Results  [results]\n[S10] cell subset frequencies and function were assessed."
+    result = await assay_verifier.verify_assay(
+        "phosphoflow analysis", _SOURCE_ENTRY, source_text, "A Paper",
+        _FakeClient(_judge_says_source_is_fine()))
+
+    source = next(v for v in result["field_verifications"] if v["field_name"] == "source")
+    assert source["verdict"] == "CONTRADICTED", "the judge's SUPPORTED was allowed to stand"
+    assert "evidence sits in results" in source["reason"]
+    # And it must pull the record down, which is what queues round 3 to repair the field.
+    assert result["record_verdict"] == "REVIEW"
+
+
+@pytest.mark.asyncio
+async def test_an_aligned_source_is_confirmed_not_merely_left_alone(monkeypatch):
+    from app.agent import assay_verifier
+
+    entry = {**_SOURCE_ENTRY}
+    source_text = ("## Materials and Methods  [methods]\n"
+                   "[S10] cell subset frequencies and function were assessed.")
+    result = await assay_verifier.verify_assay(
+        "phosphoflow analysis", entry, source_text, "A Paper",
+        _FakeClient(_judge_says_source_is_fine()))
+
+    source = next(v for v in result["field_verifications"] if v["field_name"] == "source")
+    assert source["verdict"] == "SUPPORTED"
+    assert result["source_check"]["status"] == "aligned"
+
+
+@pytest.mark.asyncio
+async def test_the_judge_keeps_the_field_when_the_check_cannot_run(monkeypatch):
+    """No sentence_ids -- every registry predating that field must pass through quietly."""
+    from app.agent import assay_verifier
+
+    entry = {**_SOURCE_ENTRY, "evidence": {"section": "x", "sentence_ids": [], "quote": "q"}}
+    judged = json.loads(_judge_says_source_is_fine())
+    judged["field_verifications"] = [
+        {"field_name": "source", "verdict": "NOT_SUPPORTED", "reason": "judge's own doubt"}
+        if v["field_name"] == "source" else v for v in judged["field_verifications"]]
+
+    result = await assay_verifier.verify_assay(
+        "phosphoflow analysis", entry, "## Results  [results]\n[S10] text.", "A Paper",
+        _FakeClient(json.dumps(judged)))
+
+    source = next(v for v in result["field_verifications"] if v["field_name"] == "source")
+    assert source["verdict"] == "NOT_SUPPORTED"
+    assert source["reason"] == "judge's own doubt"
+    assert result["source_check"]["verdict"] is None

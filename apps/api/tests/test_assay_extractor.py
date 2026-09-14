@@ -17,6 +17,7 @@ from app.agent.assay_extractor import (
 def _raw(**over) -> dict:
     entry = {
         "name_in_paper": "flow cytometry",
+        "normalized_name": "flow cytometry",
         "aliases": ["FACS"],
         "platform": "BD LSRFortessa",
         "sample_type": "PBMCs",
@@ -28,7 +29,7 @@ def _raw(**over) -> dict:
     return entry
 
 
-def test_an_entry_is_reduced_to_exactly_the_seven_fields():
+def test_an_entry_is_reduced_to_exactly_the_eight_fields():
     """confidence and claim_role are what a model reaches for unprompted; both were removed
     from this schema on purpose and must not come back through the extractor."""
     entry = clean_entry("flow cytometry", _raw(confidence=0.95, claim_role="primary"))
@@ -40,6 +41,34 @@ def test_a_missing_name_falls_back_to_the_registry_key():
     entry = clean_entry("ELISA", _raw(name_in_paper=""))
 
     assert entry["name_in_paper"] == "ELISA"
+
+
+def test_a_missing_normalized_name_stays_null_and_does_not_echo_the_key():
+    """Unlike name_in_paper, this one has no fallback, and that asymmetry is the point.
+
+    An omitted normalization means the model declined to name a technique. Echoing the paper's
+    own wording back would turn that silence into an assertion -- and the OBI mapper trusts
+    this field as an exact-match key without any further adjudication, so a fabricated value
+    here becomes an unchallenged ontology term.
+    """
+    assert clean_entry("ELISA", _raw(normalized_name=""))["normalized_name"] is None
+    assert clean_entry("ELISA", _raw(normalized_name=None))["normalized_name"] is None
+    assert clean_entry("ELISA", _raw(normalized_name="   "))["normalized_name"] is None
+
+
+def test_a_normalized_name_that_is_not_a_string_is_dropped():
+    assert clean_entry("ELISA", _raw(normalized_name=["flow cytometry"]))["normalized_name"] is None
+
+
+def test_an_old_schema_entry_without_the_field_still_parses():
+    """The 44 registries on disk predate the field; reading one must not fail or invent a value."""
+    raw = _raw()
+    del raw["normalized_name"]
+
+    entry = clean_entry("flow cytometry", raw)
+
+    assert entry["normalized_name"] is None
+    assert tuple(entry) == ENTRY_FIELDS
 
 
 def test_absent_optional_fields_become_null_not_empty_string():
@@ -172,6 +201,24 @@ def test_trim_registry_keeps_only_the_deliverable_fields():
     assert tuple(trimmed["flow cytometry"]) == TRIMMED_FIELDS
     assert trimmed["flow cytometry"]["aliases"] == ["FACS"]
     assert trimmed["flow cytometry"]["evidence"]["sentence_ids"] == ["S318"]
+
+
+def test_trim_registry_carries_a_merged_entrys_second_write_up():
+    """`additional_evidence` is round 5's only output, and the deliverable is where it is read.
+
+    It is carried only where it exists: an entry nothing merged into keeps exactly the four
+    fields it had before the round existed, so no stored deliverable gains a null key.
+    """
+    merged = {**clean_entry("ELISA", _raw()), "name_in_paper": "ELISA",
+              "additional_evidence": [{"name_in_paper": "ELISA kits", "source": "methods",
+                                       "evidence": {"section": "In vitro DC activation",
+                                                    "sentence_ids": ["S348"], "quote": "..."}}]}
+
+    trimmed = trim_registry({"ELISA": merged, "flow cytometry": clean_entry("flow cytometry", _raw())})
+
+    assert tuple(trimmed["ELISA"]) == TRIMMED_FIELDS + ("additional_evidence",)
+    assert trimmed["ELISA"]["additional_evidence"][0]["evidence"]["sentence_ids"] == ["S348"]
+    assert tuple(trimmed["flow cytometry"]) == TRIMMED_FIELDS
 
 
 def test_trim_registry_reports_an_old_schema_entry_rather_than_dropping_it():

@@ -1,0 +1,95 @@
+{
+  "summary": {
+    "assays": 6,
+    "fields_re_extracted": 2,
+    "actions": {
+      "REPLACED": 2
+    },
+    "reported_not_corrected": 2
+  },
+  "results": [
+    {
+      "assay_id": "microarray",
+      "assay_name": "microarray",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Flow Cytometry",
+      "assay_name": "Flow Cytometry",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Hemagglutinin Inhibition Assays",
+      "assay_name": "Hemagglutinin Inhibition Assays",
+      "record_verdict": "REVIEW",
+      "corrections": [],
+      "reported_not_corrected": [
+        {
+          "field_name": "name_in_paper",
+          "verdict": "NOT_SUPPORTED",
+          "reason": "The source section title uses the singular phrase \"Hemagglutinin Inhibition and Virus-Neutralization Assays\" and does not explicitly name a standalone assay as \"Hemagglutinin Inhibition Assays.\""
+        }
+      ]
+    },
+    {
+      "assay_id": "Virus-neutralization assays",
+      "assay_name": "Virus-neutralization assays",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "VN"
+          ],
+          "blind_answer": [
+            "neutralizing antibody titers"
+          ],
+          "dropped": [
+            "VN"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Multiplex Cytokine Analysis",
+      "assay_name": "Multiplex Cytokine Analysis",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "Luminex",
+            "multiplex cytokine analysis"
+          ],
+          "blind_answer": [
+            "multiplex cytokine analysis"
+          ],
+          "dropped": [
+            "Luminex"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "commercial immunoassays",
+      "assay_name": "commercial immunoassays",
+      "record_verdict": "REVIEW",
+      "corrections": [],
+      "reported_not_corrected": [
+        {
+          "field_name": "name_in_paper",
+          "verdict": "NOT_SUPPORTED",
+          "reason": "The phrase appears in the text but is too vague to identify a specific reproducible assay procedure."
+        }
+      ]
+    }
+  ]
+}

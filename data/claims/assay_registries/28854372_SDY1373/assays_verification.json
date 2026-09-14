@@ -1,0 +1,419 @@
+{
+  "summary": {
+    "total": 4,
+    "accept": 4,
+    "review": 0,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_absent": 0,
+    "field_issues": {}
+  },
+  "results": [
+    {
+      "assay_id": "Flow Cytometry Analysis",
+      "assay_name": "Flow Cytometry Analysis",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Flow Cytometry Analysis",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S104",
+            "S106"
+          ],
+          "evidence_text": "## Flow Cytometry Analysis",
+          "reason": "This exact assay section title appears in the Methods and describes a performed procedure."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "flow cytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S106"
+          ],
+          "evidence_text": "LSR Fortessa flow cytometer",
+          "reason": "The phrase appears verbatim and refers to the same flow cytometry assay."
+        },
+        {
+          "field_name": "platform",
+          "proposed_value": "LSR Fortessa flow cytometer",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S106"
+          ],
+          "evidence_text": "acquired on an LSR Fortessa flow cytometer",
+          "reason": "The text explicitly states this instrument was used for the assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "PBMC samples",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S104",
+            "S106"
+          ],
+          "evidence_text": "PBMCs from days 0, 1, 3, 7, and 14 were obtained after Ficoll-Hypaque density gradient centrifugation of whole blood. PBMC samples were frozen in liquid nitrogen, thawed, stained, and acquired on an LSR Fortessa flow cytometer.",
+          "reason": "The assay was performed on PBMC samples."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "frequency and surface marker expression of monocytes, dendritic cells, and NK cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S28",
+            "S30",
+            "S31"
+          ],
+          "evidence_text": "we further analyzed peripheral blood mononuclear cells (PBMCs) for changes in frequency and activation status of innate immune cell subsets, including myeloid and plasmacytoid dendritic cells (mDCs and pDCs, respectively), monocytes, and NK cells. Significant modulations were seen in the frequency of CD86+/CD40+ mDCs and pDCs as well as CD16+ inflammatory monocytes, accompanied by an increase in the mean fluorescence intensity (MFI) of CD40 on pDCs and CD86 on mDCs. Analysis also revealed significant upregulation of several activation markers on NK cells",
+          "reason": "The text states this assay assessed frequencies and marker expression on monocytes, dendritic cells, and NK cells."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S104"
+          ],
+          "evidence_text": "## Flow Cytometry Analysis  [methods]",
+          "reason": "source 'methods' agrees with S106 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "PBMC samples were frozen in liquid nitrogen, thawed, stained, and acquired on an LSR Fortessa flow cytometer.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S106"
+          ],
+          "evidence_text": "PBMC samples were frozen in liquid nitrogen, thawed, stained, and acquired on an LSR Fortessa flow cytometer.",
+          "reason": "quote found in sentences S106"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S106"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S106"
+          ],
+          "evidence_text": "PBMC samples were frozen in liquid nitrogen, thawed, stained, and acquired on an LSR Fortessa flow cytometer.",
+          "reason": "The cited sentence ID exists and contains the quoted text."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S106",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S106 in [methods]"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Cytokine and Chemokine Multiplex Analysis",
+      "assay_name": "Cytokine and Chemokine Multiplex Analysis",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Cytokine and Chemokine Multiplex Analysis",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S114",
+            "S115",
+            "S116"
+          ],
+          "evidence_text": "## Cytokine and Chemokine Multiplex Analysis",
+          "reason": "This exact section heading names a procedure that was performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "Luminex assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S11"
+          ],
+          "evidence_text": "using a Luminex assay",
+          "reason": "This exact phrase appears in the paper and refers to the same cytokine measurement assay."
+        },
+        {
+          "field_name": "platform",
+          "proposed_value": "11-Bioplex from Bio-Rad; Bio-Plex Luminex-200 (Bio-Rad)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S115",
+            "S116"
+          ],
+          "evidence_text": "an 11-Bioplex from Bio-Rad consisting of IFN-γ, IL-2, IL-6, IL-10, TNF-α, IL-12, MCP-1, MIP-1β, IL-1RA, and IP-10, with addition of IFN-α and TNF-β to make it a 13-plex assay. Samples were read in duplicates according to the manufacturer’s protocol on a Bio-Plex Luminex-200 (Bio-Rad)",
+          "reason": "The text explicitly ties both the Bioplex assay reagents and the Bio-Plex Luminex-200 instrument to this assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "Plasma samples",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S114"
+          ],
+          "evidence_text": "Plasma samples from the 20 vaccinees investigated here were collected on days 0, 1, 3, 7, and 14 after vaccination",
+          "reason": "The methods section explicitly states that plasma samples were used for this assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "concentrations of cytokines and chemokines including IFN-γ, IL-2, IL-6, IL-10, TNF-α, IL-12, MCP-1, MIP-1β, IL-1RA, IP-10, IFN-α, and TNF-β",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S115"
+          ],
+          "evidence_text": "consisting of IFN-γ, IL-2, IL-6, IL-10, TNF-α, IL-12, MCP-1, MIP-1β, IL-1RA, and IP-10, with addition of IFN-α and TNF-β to make it a 13-plex assay",
+          "reason": "The assay panel explicitly lists these analytes as what was measured."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S114",
+            "S115",
+            "S116"
+          ],
+          "evidence_text": "## Cytokine and Chemokine Multiplex Analysis",
+          "reason": "source 'methods' agrees with S115 in [methods], S116 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "The assay was performed with an 11-Bioplex from Bio-Rad consisting of IFN-γ, IL-2, IL-6, IL-10, TNF-α, IL-12, MCP-1, MIP-1β, IL-1RA, and IP-10, with addition of IFN-α and TNF-β to make it a 13-plex assay. Samples were read in duplicates according to the manufacturer’s protocol on a Bio-Plex Luminex-200 (Bio-Rad) and analyzed using Bio-Plex Manager software.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S115",
+            "S116"
+          ],
+          "evidence_text": "The assay was performed with an 11-Bioplex from Bio-Rad consisting of IFN-γ, IL-2, IL-6, IL-10, TNF-α, IL-12, MCP-1, MIP-1β, IL-1RA, and IP-10, with addition of IFN-α and TNF-β to make it a 13-plex assay. Samples were read in duplicates according to the manufacturer’s protocol on a Bio-Plex Luminex-200 (Bio-Rad) and analyzed using Bio-Plex Manager software.",
+          "reason": "quote found in sentences S115, S116"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S115",
+            "S116"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S115",
+            "S116"
+          ],
+          "evidence_text": "The assay was performed with an 11-Bioplex from Bio-Rad consisting of IFN-γ, IL-2, IL-6, IL-10, TNF-α, IL-12, MCP-1, MIP-1β, IL-1RA, and IP-10, with addition of IFN-α and TNF-β to make it a 13-plex assay. Samples were read in duplicates according to the manufacturer’s protocol on a Bio-Plex Luminex-200 (Bio-Rad) and analyzed using Bio-Plex Manager software.",
+          "reason": "Both cited sentence IDs exist and contain the quoted evidence."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S115, S116",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S115 in [methods], S116 in [methods]"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Next-Generation RNA Sequencing",
+      "assay_name": "Next-Generation RNA Sequencing",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Next-Generation RNA Sequencing",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S117"
+          ],
+          "evidence_text": "RNA Extraction and Next-Generation RNA Sequencing",
+          "reason": "The Methods section explicitly names this procedure."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "RNA-seq",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S121"
+          ],
+          "evidence_text": "RNA-seq libraries were generated",
+          "reason": "The text uses this exact term for the same sequencing assay."
+        },
+        {
+          "field_name": "platform",
+          "proposed_value": "Illumina HiSeq 2500 instrument",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S123"
+          ],
+          "evidence_text": "Illumina HiSeq 2500 instrument",
+          "reason": "The sequencing libraries were explicitly sequenced on this instrument."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "Whole blood",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S117"
+          ],
+          "evidence_text": "Whole blood from participants was directly collected into Paxgene RNA tubes",
+          "reason": "The RNA sequencing workflow is explicitly described as starting from whole blood."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "gene expression levels measured as sequencing reads per gene",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S128",
+            "S129",
+            "S146"
+          ],
+          "evidence_text": "The option “–quantMode GeneCounts” was applied to estimate the reads per gene simultaneously and generate count data. All reads mapping to an exon were attributed to a given gene, and counts were done at the gene level ... we used the normalized gene expression levels",
+          "reason": "The text states that the assay produced gene-level read counts and normalized gene expression levels."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S117"
+          ],
+          "evidence_text": "## RNA Extraction and Next-Generation RNA Sequencing  [methods]",
+          "reason": "source 'methods' agrees with S117 in [methods], S123 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Whole blood from participants was directly collected into Paxgene RNA tubes (PreAnalytiX, QIAGEN) on days 0, 1, 3, and 7 after vaccination. Diluted libraries were multiplex-sequenced on the Illumina HiSeq 2500 instrument (single read, 50-bp run).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S117",
+            "S123"
+          ],
+          "evidence_text": null,
+          "reason": "quote found in sentences S117, S123"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S117",
+            "S123"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S117",
+            "S123"
+          ],
+          "evidence_text": "S117; S123",
+          "reason": "Both cited sentence IDs exist in the source and correspond to the quoted source locations."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S117, S123",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S117 in [methods], S123 in [methods]"
+      },
+      "conflict_detected": true,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "REVIEW"
+    },
+    {
+      "assay_id": "ELISA",
+      "assay_name": "ELISA",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "ELISA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S42"
+          ],
+          "evidence_text": "measured using an ELISA",
+          "reason": "The text explicitly states that antibody responses were measured using an ELISA in this study."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "EBOV-GP-binding antibody levels",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S42",
+            "S43",
+            "S45"
+          ],
+          "evidence_text": "GP-specific antibody responses were measured using an ELISA ... EBOV-GP-binding antibodies were measured using an ELISA ... The levels of EBOV-GP-binding antibodies were durable over time until day 180",
+          "reason": "The ELISA is explicitly linked to measurement of EBOV-GP-binding antibody responses/levels."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "results",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S42",
+            "S43"
+          ],
+          "evidence_text": "GP-specific antibody responses were measured using an ELISA ... EBOV-GP-binding antibodies were measured using an ELISA",
+          "reason": "source 'results' agrees with S42 in [results], S43 in [results]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "GP-specific antibody responses were measured using an ELISA in two centralized laboratories (Marburg, Germany and United States Army Medical Research Institute for Infectious Diseases [USAMRIID], USA) on days 0, 7, 14, 28, 56, 84, and 180. EBOV-GP-binding antibodies were measured using an ELISA against the homologous GP of the Zaire-Kikwit strain (short Kikwit-GP-specific antibodies) by USAMRIID on day 0 and day 28 (these were the only time points available at the time of analysis) or against inactivated whole virions of the Zaire-Gueckedou strain (short Gueckedou-GP-specific antibodies) in Marburg at all available time points (days 28, 56, 84, and 180) ( Agnandji et al., 2016 ).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S42",
+            "S43"
+          ],
+          "evidence_text": "GP-specific antibody responses were measured using an ELISA in two centralized laboratories (Marburg, Germany and United States Army Medical Research Institute for Infectious Diseases [USAMRIID], USA) on days 0, 7, 14, 28, 56, 84, and 180. EBOV-GP-binding antibodies were measured using an ELISA against the homologous GP of the Zaire-Kikwit strain (short Kikwit-GP-specific antibodies) by USAMRIID on day 0 and day 28 (these were the only time points available at the time of analysis) or against inactivated whole virions of the Zaire-Gueckedou strain (short Gueckedou-GP-specific antibodies) in Marburg at all available time points (days 28, 56, 84, and 180) ( Agnandji et al., 2016 ).",
+          "reason": "quote found in sentences S42, S43"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S42",
+            "S43"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S42",
+            "S43"
+          ],
+          "evidence_text": "S42 S43",
+          "reason": "Both cited sentence IDs exist and correspond to the quoted text."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S42, S43",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'results' agrees with S42 in [results], S43 in [results]"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

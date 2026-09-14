@@ -36,6 +36,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "apps" / "api"))
 
 from app.agent.claim_parser import _extract_pmcid  # noqa: E402
+from app.agent.jats_fetcher import unavailable_reason as _unavailable_reason  # noqa: E402
 from app.agent.ncbi_utils import pmid_to_pmc_url  # noqa: E402
 
 XLSX_PATH = ROOT / "data" / "studyid_pmcid.xlsx"
@@ -82,25 +83,6 @@ def _load_from_pdf_dir(pdf_dir: Path) -> list[Paper]:
         papers.append(Paper(study_id, _extract_pmcid(pmc_url), pmid))
         time.sleep(REQUEST_DELAY_S)
     return papers
-
-
-def _unavailable_reason(xml: str, soup: BeautifulSoup) -> str | None:
-    """Return why this XML is not usable full text, or None if it is fine.
-
-    Mirrors the checks in claim_parser._fetch_paper_content so this script's
-    notion of "unavailable" matches the pipeline's.
-    """
-    error_tag = soup.find("ERROR")
-    if error_tag:
-        return f"not in PMC open access: {error_tag.get_text(strip=True)}"
-    if "does not allow downloading" in xml or "does not allow bulk downloading" in xml:
-        return "publisher restricts full-text XML download"
-    article = soup.find("article")
-    if article is None:
-        return "no <article> element in response"
-    if not article.find("body"):
-        return "abstract-only XML (no <body>)"
-    return None
 
 
 def _existing_output(paper: Paper) -> Path | None:

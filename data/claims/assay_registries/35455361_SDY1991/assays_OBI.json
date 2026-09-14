@@ -1,0 +1,93 @@
+{
+  "enzyme-linked immunosorbent assay": {
+    "name_in_paper": [
+      "DENV-specific IgG ELISAs"
+    ],
+    "aliases": [],
+    "platform": null,
+    "sample_type": null,
+    "readouts": "DENV-specific IgG seropositivity",
+    "source": "methods",
+    "evidence": {
+      "section": "2.2. Serology",
+      "sentence_ids": [
+        "S19"
+      ],
+      "quote": "The serology was performed by DENV-specific IgG ELISAs and flow cytometry-based neutralization assays, as previously described [ 26 ]."
+    },
+    "obi_id": "OBI:0000661",
+    "obi_label": "enzyme-linked immunosorbent assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.5767
+  },
+  "flow cytometry-based neutralization assays": {
+    "name_in_paper": [
+      "flow cytometry-based neutralization assays"
+    ],
+    "aliases": [],
+    "platform": null,
+    "sample_type": null,
+    "readouts": "neutralization activity in serology testing",
+    "source": "methods",
+    "evidence": {
+      "section": "2.2. Serology",
+      "sentence_ids": [
+        "S19"
+      ],
+      "quote": "The serology was performed by DENV-specific IgG ELISAs and flow cytometry-based neutralization assays, as previously described [ 26 ]."
+    },
+    "obi_id": null,
+    "obi_label": null,
+    "resource": "unresolved",
+    "obi_confidence": null
+  },
+  "cytokine assay": {
+    "name_in_paper": [
+      "IFN-γ Secretion Assay"
+    ],
+    "aliases": [
+      "cytokine capture assay"
+    ],
+    "platform": "IFN-γ Secretion Assay–Detection kit (PE)",
+    "sample_type": "PBMC",
+    "readouts": "IFN-γ-producing CD8+ T cells",
+    "source": "methods",
+    "evidence": {
+      "section": "2.4. IFN-γ Capture Assay and Cell Sorting for RNA-Seq",
+      "sentence_ids": [
+        "S24",
+        "S25"
+      ],
+      "quote": "After overnight resting, cells were stimulated with DENV CD8 megapool (1 ug/mL final concentration) for 3 h at 37 °C. IFNγ producing cells were labeled using an IFN-γ Secretion Assay–Detection kit (PE) (catalog #130-054-202, Miltenyi Biotec, Bergisch Gladbach, North Rhine-Westphalia, Germany) according to manufacturer’s instructions."
+    },
+    "obi_id": "OBI:0002766",
+    "obi_label": "cytokine assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.5416
+  },
+  "bulk RNA-seq assay": {
+    "name_in_paper": [
+      "Microscaled RNA-Seq"
+    ],
+    "aliases": [
+      "micro-scaled RNA-seq assays",
+      "microscaled RNAseq data"
+    ],
+    "platform": "Smart-Seq2 protocol; HiSeq 2500",
+    "sample_type": "sorted CD8+ IFNγ+ and CD8+ IFNγ− cells",
+    "readouts": "whole-transcriptome mRNA expression profiles",
+    "source": "methods",
+    "evidence": {
+      "section": "2.5. Microscaled RNA-Sequencing Assay",
+      "sentence_ids": [
+        "S33",
+        "S39"
+      ],
+      "quote": "Microscaled RNA-Seq was performed according to the Smart-Seq2 protocol, as previously reported [ 31 , 32 ]. Libraries that passed quality controls were pooled at equimolar concentration, loaded, and sequenced on the HiSeq 2500 (Illumina, San Diego, CA, USA)."
+    },
+    "obi_id": "OBI:0003090",
+    "obi_label": "bulk RNA-seq assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.6501
+  }
+}

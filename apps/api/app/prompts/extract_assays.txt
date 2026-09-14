@@ -174,6 +174,7 @@ Return ONLY a JSON object with one key per deduplicated assay — the key is the
 {
   "flow cytometry": {
     "name_in_paper": "flow cytometry",
+    "normalized_name": "flow cytometry",
     "aliases": ["FACS"],
     "platform": "BD LSRFortessa",
     "sample_type": "PBMCs",
@@ -187,11 +188,38 @@ Return ONLY a JSON object with one key per deduplicated assay — the key is the
   }
 }
 
-**Seven fields, no more.** Do not add a claims array, a confidence score, or a role judgement.
+**Eight fields, no more.** Do not add a claims array, a confidence score, or a role judgement.
 
-- `aliases` — other exact wordings the paper uses **for the assay itself**; `[]` if none. Quote
-  them as the paper writes them; do not tidy up or complete a phrase. Instrument and chip names
-  are not aliases — they belong in `platform`.
+- `normalized_name` — the **measurement technique**: what class of method or instrument
+  produced the data. This is the one field that is not a report of what the paper says. Every
+  other field copies or summarises the text; this one is your judgement, and it is expected to
+  use words the paper never wrote.
+  **Papers name assays after protocol sections, acronyms and study aims. Name the technique
+  instead.** "Surface and intracellular cytokine staining" → `"flow cytometry"`, because the
+  cells were stained and then acquired on a cytometer. "Direct ex vivo PBMC immune cell
+  phenotyping" → `"flow cytometry"`. "CBA" → `"cytometric bead array"`. "Whole transcriptome
+  profiling of NK cell subsets" → `"RNA sequencing"`.
+  **Re-spelling the name is the failure mode to avoid.** "intracellular cytokine staining" →
+  `"intracellular cytokine staining"` is a non-answer: it tidies the wording and names no
+  technique. Ask what machine the numbers came off, and write that.
+  Read `platform` for the answer when the name does not give it — a cytometer means flow
+  cytometry, a sequencer means sequencing — but never emit the instrument itself: `"LSR-II"`
+  is wrong, `"flow cytometry"` is right. Two or three words, no analyte, no vendor, no model
+  number. `null` when the text identifies no technique at all; a wrong guess here is worse than
+  none, because a later step trusts an exact match on this field without further checking.
+
+- `aliases` — other **names** the paper uses for the assay itself; `[]` if none. Quote them as
+  the paper writes them; do not tidy up or complete a phrase. Instrument and chip names are not
+  aliases — they belong in `platform`.
+  **The test is substitution: an alias must be able to replace `name_in_paper` in a sentence
+  like "we performed ___".** "FACS", "HAI assay", "cellular indexing of transcriptomes and
+  epitopes by sequencing" all pass — length is not the issue, and a long formal name is still a
+  name. What fails is a clause describing what the assay *does*: "measuring the phosphorylation
+  levels of STAT proteins in response to multiple stimulations" is a verbatim phrase from the
+  paper and still not an alias, because nobody performs it. That content belongs in `readouts`.
+  A quantity the assay produced — "Plasma ELISA titers to SARS-CoV-2 spike RBD" — is an
+  endpoint, and fails the same test. `[]` is a perfectly good answer; a wrong alias costs more
+  than a missing one, because a later step reads these as evidence of what the technique is.
 - `platform` — the instrument, chip, kit, or vendor product, as the paper writes it. `null`
   when the paper names none for this assay.
 - `sample_type` — the tissue/specimen the assay was performed on. `null` if unstated.

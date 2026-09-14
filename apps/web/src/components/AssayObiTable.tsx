@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import type { AssayObiRow, ObiResource } from '@/lib/types';
+import type { AssayImmportRow, AssayObiRow, ImmportStatus, ObiResource } from '@/lib/types';
 import { RESOURCE_COLOR, RESOURCE_LABEL } from './AssayObiSummary';
 
 type SortKey = 'study' | 'assay' | 'normalized_name' | 'obi_label' | 'resource' | 'obi_confidence';
@@ -13,9 +13,40 @@ const COLUMNS: { key: SortKey | null; label: string; className?: string }[] = [
   { key: 'normalized_name', label: 'Normalized' },
   { key: null, label: 'Sample type' },
   { key: 'obi_label', label: 'OBI term' },
+  { key: null, label: 'In ImmPort' },
   { key: 'resource', label: 'Resolved by' },
   { key: 'obi_confidence', label: 'Conf.', className: 'text-right' },
 ];
+
+/** The column answers one question, so it gives one word. */
+const IMMPORT_LABEL: Record<ImmportStatus, string> = {
+  matched: 'yes',
+  absent: 'no',
+  no_experiments: 'no',
+  unknown_study: '—',
+};
+
+const IMMPORT_TONE: Record<ImmportStatus, string> = {
+  matched: 'text-emerald-700',
+  absent: 'text-gray-400',
+  no_experiments: 'text-gray-400',
+  unknown_study: 'text-gray-300',
+};
+
+/** The two "no"s are different facts — nothing registered for the study at all, versus this
+ *  assay not being among what was registered — so the distinction is kept on hover rather than
+ *  dropped, since only the second is something a resolver could still settle. */
+const IMMPORT_DETAIL: Record<ImmportStatus, string> = {
+  matched: 'ImmPort registers an experiment for this assay',
+  absent: 'ImmPort has experiments for this study, but none matching this assay',
+  no_experiments: 'ImmPort has no experiments registered for this study at all',
+  unknown_study: 'the study identifier could not be read',
+};
+
+/** study + assay is unique across the corpus, so it is the join between the two fetches. */
+function immportKey(study: string, assay: string): string {
+  return `${study}\u0000${assay}`;
+}
 
 /** Exact matches ("high") outrank every similarity score; unresolved sorts last. */
 function confidenceRank(value: string | number | null): number {
@@ -62,7 +93,19 @@ function ConfidenceCell({ value }: { value: string | number | null }) {
   return <span className="text-gray-500 tabular-nums">{Number(value).toFixed(2)}</span>;
 }
 
-export default function AssayObiTable({ rows }: { rows: AssayObiRow[] }) {
+export default function AssayObiTable({
+  rows,
+  immport = [],
+}: {
+  rows: AssayObiRow[];
+  /** Coverage from a separate, free fetch — empty when ImmPort was unreachable. */
+  immport?: AssayImmportRow[];
+}) {
+  const coverage = useMemo(
+    () => new Map(immport.map((r) => [immportKey(r.study, r.assay), r])),
+    [immport]
+  );
+
   const [query, setQuery] = useState('');
   const [study, setStudy] = useState('');
   const [resources, setResources] = useState<ObiResource[]>([]);
@@ -72,6 +115,14 @@ export default function AssayObiTable({ rows }: { rows: AssayObiRow[] }) {
   const studies = useMemo(
     () => Array.from(new Set(rows.map((r) => r.study))).sort(),
     [rows]
+  );
+  // Scoped to one paper — as the summary above a result is — the study filter selects nothing
+  // and the Study column repeats the heading on every row. Derived, so the corpus view, which
+  // has 35 studies, is untouched.
+  const oneStudy = studies.length <= 1;
+  const visibleColumns = useMemo(
+    () => (oneStudy ? COLUMNS.filter((c) => c.key !== 'study') : COLUMNS),
+    [oneStudy]
   );
   const presentResources = useMemo(
     () => (Object.keys(RESOURCE_LABEL) as ObiResource[]).filter((r) => rows.some((row) => row.resource === r)),
@@ -136,16 +187,18 @@ export default function AssayObiTable({ rows }: { rows: AssayObiRow[] }) {
           placeholder="Search assay, OBI term, study…"
           className="flex-1 min-w-[200px] px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-400 focus:border-emerald-400"
         />
-        <select
-          value={study}
-          onChange={(e) => setStudy(e.target.value)}
-          className="px-3 py-2 text-sm border border-gray-200 rounded-lg text-gray-600 focus:outline-none focus:ring-1 focus:ring-emerald-400"
-        >
-          <option value="">All {studies.length} papers</option>
-          {studies.map((s) => (
-            <option key={s} value={s}>{s}</option>
-          ))}
-        </select>
+        {!oneStudy && (
+          <select
+            value={study}
+            onChange={(e) => setStudy(e.target.value)}
+            className="px-3 py-2 text-sm border border-gray-200 rounded-lg text-gray-600 focus:outline-none focus:ring-1 focus:ring-emerald-400"
+          >
+            <option value="">All {studies.length} papers</option>
+            {studies.map((s) => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+          </select>
+        )}
         {presentResources.map((resource) => {
           const active = resources.includes(resource);
           return (
@@ -191,7 +244,7 @@ export default function AssayObiTable({ rows }: { rows: AssayObiRow[] }) {
           <table className="w-full text-xs">
             <thead className="sticky top-0 bg-gray-50 border-b border-gray-200 z-10">
               <tr>
-                {COLUMNS.map(({ key, label, className }) => (
+                {visibleColumns.map(({ key, label, className }) => (
                   <th
                     key={label}
                     className={`px-3 py-2.5 text-left font-medium text-gray-500 whitespace-nowrap ${className ?? ''}`}
@@ -217,7 +270,11 @@ export default function AssayObiTable({ rows }: { rows: AssayObiRow[] }) {
                   key={`${row.study}-${row.assay}-${i}`}
                   className="border-b border-gray-100 last:border-0 hover:bg-gray-50 transition-colors align-top"
                 >
-                  <td className="px-3 py-2 font-mono text-gray-500 whitespace-nowrap">{row.study}</td>
+                  {oneStudy || (
+                    <td className="px-3 py-2 font-mono text-gray-500 whitespace-nowrap">
+                      {row.study}
+                    </td>
+                  )}
                   <td className="px-3 py-2 text-gray-900 max-w-[220px]">{row.assay}</td>
                   <td className="px-3 py-2 text-gray-600 max-w-[180px]">{row.normalized_name}</td>
                   <td className="px-3 py-2 text-gray-400 max-w-[180px]">{row.sample_type || '—'}</td>
@@ -230,6 +287,27 @@ export default function AssayObiTable({ rows }: { rows: AssayObiRow[] }) {
                     ) : (
                       <span className="text-gray-300">—</span>
                     )}
+                  </td>
+                  <td className="px-3 py-2 whitespace-nowrap">
+                    {(() => {
+                      const hit = coverage.get(immportKey(row.study, row.assay));
+                      if (!hit) return <span className="text-gray-300">—</span>;
+                      return (
+                        <span
+                          className={IMMPORT_TONE[hit.status]}
+                          title={IMMPORT_DETAIL[hit.status]}
+                        >
+                          {IMMPORT_LABEL[hit.status]}
+                          {/* What it matched, in ImmPort's own vocabulary — the point of a
+                              "yes" is which technique the study registered. */}
+                          {hit.measurement_technique && (
+                            <span className="block text-gray-500 mt-0.5">
+                              {hit.measurement_technique}
+                            </span>
+                          )}
+                        </span>
+                      );
+                    })()}
                   </td>
                   <td className="px-3 py-2 whitespace-nowrap">
                     {/* Colour chip plus its text label — this table is the bar's accessible fallback. */}

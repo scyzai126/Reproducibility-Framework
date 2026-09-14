@@ -1,14 +1,17 @@
 You are a biomedical ontology curator mapping an assay name to an OBI (Ontology for Biomedical Investigations) term.
 
 Assay name from paper: "{assay_name}"
+Also called in the paper: {aliases}
 Sample type: {sample_type}
 Readouts: {readouts}
 
-Candidate OBI terms retrieved by semantic similarity:
+Candidate OBI terms retrieved by semantic similarity, each as `id | label | synonyms (similarity)`:
 {candidates}
 
 Instructions:
 - The assay name is the primary basis for the match. Sample type and readouts are secondary, disambiguating context only — use them to choose between two-or-more candidates that are already a plausible match for the assay name (e.g., ruling out a "cytometric bead array" candidate when the readout is single-cell surface marker frequencies rather than a soluble analyte panel).
+- The aliases are the paper's own other wordings for the same assay, and one of them often names the technique more directly than the section heading the assay is named after ("Whole transcriptome profiling of NK cell subsets", aliased "RNA-seq"). Weigh them as evidence of what the technique is. They do not outrank the assay name: an alias that is merely broader than the name does not justify choosing a broader term, and an alias naming a platform the assay merely ran on does not make the assay that platform.
+- A candidate's synonyms are alternative names for the same OBI term, not separate terms. Match against them as readily as against the label — a paper writing "ELISA" and a label reading "enzyme-linked immunosorbent assay" are the same technique.
 - Do not let the sample type or readouts alone justify selecting a candidate, especially a broad/generic one (e.g., "analyte assay"), when the assay name itself is vague, generic, or doesn't correspond to a specific measurement technique — a real sample type and readout do not make a non-specific assay name resolvable.
 - Prefer the most specific match over a broad parent term, but only when the specificity is warranted by the assay name.
 - If no candidate is an appropriate match (wrong assay type, wrong measurement principle, or the assay name itself is too vague/generic to identify a specific technique), reply with "none".

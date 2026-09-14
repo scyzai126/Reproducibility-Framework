@@ -1,0 +1,313 @@
+{
+  "summary": {
+    "total": 3,
+    "accept": 2,
+    "review": 1,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_absent": 0,
+    "field_issues": {
+      "platform": {
+        "NOT_SUPPORTED": 1
+      }
+    }
+  },
+  "results": [
+    {
+      "assay_id": "glucose-potentiated arginine test",
+      "assay_name": "glucose-potentiated arginine test",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "glucose-potentiated arginine test",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S2",
+            "S33"
+          ],
+          "evidence_text": "measured β-cell secretory capacity from glucose-potentiated arginine tests",
+          "reason": "The paper explicitly states this test was performed in the study."
+        },
+        {
+          "field_name": "platform",
+          "proposed_value": "automated glucose analyzer (YSI 2300; Yellow Springs Instruments, Yellow Springs, OH)",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "The cited analyzer is used to measure bedside glucose during the clamp, but the text does not establish it as the platform for the glucose-potentiated arginine test as a whole."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "arterialized venous blood",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S36"
+          ],
+          "evidence_text": "one catheter was placed in a hand vein for blood sampling, with the hand placed in a thermoregulated box (∼50°C) or heating pad to promote arterialization of venous blood",
+          "reason": "The assay's blood sampling is explicitly described as arterialized venous blood."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "plasma glucose, insulin, and C-peptide responses to arginine under fasting and hyperglycemic clamp conditions",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S39",
+            "S45",
+            "S46",
+            "S47",
+            "S48"
+          ],
+          "evidence_text": "Plasma glucose was measured in duplicate by the glucose oxidase method using an automated glucose analyzer (YSI 2300; Yellow Springs Instruments). Plasma insulin and C-peptide were measured in duplicate by double-antibody radioimmunoassay (Millipore, Billerica, MA).",
+          "reason": "The source explicitly states that glucose, insulin, and C-peptide were measured in this test and responses were calculated under fasting and glucose-clamp conditions."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S33"
+          ],
+          "evidence_text": "## Glucose-potentiated arginine test.  [methods]",
+          "reason": "source 'methods' agrees with S37 in [methods], S38 in [methods], S39 in [methods], S40 in [methods], S41 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "After at least 20 min of acclimatization to the intravenous catheters, baseline blood samples were taken at −5 and −1 min before the injection of 5 g of 10% arginine over a 1-min period starting at 0 min. Additional blood samples were collected at 2, 3, 4, and 5 min after injection. Beginning at 10 min, a hyperglycemic clamp technique ( 18 ) using a variable rate infusion of 20% glucose was performed to achieve a plasma glucose concentration of ∼230 mg/dL. Blood samples were taken every 5 min, centrifuged, and measured at bedside with an automated glucose analyzer (YSI 2300; Yellow Springs Instruments, Yellow Springs, OH) to adjust the infusion rate and to achieve the desired plasma glucose concentration. After 45 min of the glucose infusion (at 55 min), a 5-g arginine pulse was injected again with identical blood sampling, ending at 60 min.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S37",
+            "S38",
+            "S39",
+            "S40",
+            "S41"
+          ],
+          "evidence_text": "After at least 20 min of acclimatization to the intravenous catheters, baseline blood samples were taken at −5 and −1 min before the injection of 5 g of 10% arginine over a 1-min period starting at 0 min. Additional blood samples were collected at 2, 3, 4, and 5 min after injection. Beginning at 10 min, a hyperglycemic clamp technique ( 18 ) using a variable rate infusion of 20% glucose was performed to achieve a plasma glucose concentration of ∼230 mg/dL. Blood samples were taken every 5 min, centrifuged, and measured at bedside with an automated glucose analyzer (YSI 2300; Yellow Springs Instruments, Yellow Springs, OH) to adjust the infusion rate and to achieve the desired plasma glucose concentration. After 45 min of the glucose infusion (at 55 min), a 5-g arginine pulse was injected again with identical blood sampling, ending at 60 min.",
+          "reason": "quote found in sentences S37, S38, S39, S40, S41"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S37",
+            "S38",
+            "S39",
+            "S40",
+            "S41"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S37",
+            "S38",
+            "S39",
+            "S40",
+            "S41"
+          ],
+          "evidence_text": "After at least 20 min of acclimatization to the intravenous catheters, baseline blood samples were taken at −5 and −1 min before the injection of 5 g of 10% arginine over a 1-min period starting at 0 min. Additional blood samples were collected at 2, 3, 4, and 5 min after injection. Beginning at 10 min, a hyperglycemic clamp technique ( 18 ) using a variable rate infusion of 20% glucose was performed to achieve a plasma glucose concentration of ∼230 mg/dL. Blood samples were taken every 5 min, centrifuged, and measured at bedside with an automated glucose analyzer (YSI 2300; Yellow Springs Instruments, Yellow Springs, OH) to adjust the infusion rate and to achieve the desired plasma glucose concentration. After 45 min of the glucose infusion (at 55 min), a 5-g arginine pulse was injected again with identical blood sampling, ending at 60 min.",
+          "reason": "All cited sentence IDs exist and correspond to the quoted text."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S37, S38, S39, S40, S41",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S37 in [methods], S38 in [methods], S39 in [methods], S40 in [methods], S41 in [methods]"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "glucose oxidase method",
+      "assay_name": "glucose oxidase method",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "glucose oxidase method",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S45"
+          ],
+          "evidence_text": "glucose oxidase method",
+          "reason": "The text explicitly states this method was used to measure plasma glucose."
+        },
+        {
+          "field_name": "platform",
+          "proposed_value": "automated glucose analyzer (YSI 2300; Yellow Springs Instruments)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S45"
+          ],
+          "evidence_text": "using an automated glucose analyzer (YSI 2300; Yellow Springs Instruments)",
+          "reason": "The sentence directly links this analyzer to the glucose oxidase measurement."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "plasma",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S45"
+          ],
+          "evidence_text": "Plasma glucose",
+          "reason": "The assay is explicitly described as measuring glucose in plasma."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "plasma glucose concentration",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S45"
+          ],
+          "evidence_text": "Plasma glucose was measured",
+          "reason": "The assay measured plasma glucose, i.e. plasma glucose concentration."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S45"
+          ],
+          "evidence_text": "## Biochemical analysis.  [methods]",
+          "reason": "source 'methods' agrees with S45 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Plasma glucose was measured in duplicate by the glucose oxidase method using an automated glucose analyzer (YSI 2300; Yellow Springs Instruments).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S45"
+          ],
+          "evidence_text": "Plasma glucose was measured in duplicate by the glucose oxidase method using an automated glucose analyzer (YSI 2300; Yellow Springs Instruments).",
+          "reason": "quote found in sentences S45"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S45"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S45"
+          ],
+          "evidence_text": "S45",
+          "reason": "The cited sentence ID exists and contains the quoted evidence."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S45",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S45 in [methods]"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "double-antibody radioimmunoassay",
+      "assay_name": "double-antibody radioimmunoassay",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "double-antibody radioimmunoassay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S46"
+          ],
+          "evidence_text": "double-antibody radioimmunoassay",
+          "reason": "The text explicitly states this assay was used to measure analytes in this study."
+        },
+        {
+          "field_name": "platform",
+          "proposed_value": "Millipore, Billerica, MA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S46"
+          ],
+          "evidence_text": "(Millipore, Billerica, MA)",
+          "reason": "The vendor/product source is directly attached to the radioimmunoassay in the same sentence."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "plasma",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S46"
+          ],
+          "evidence_text": "Plasma insulin and C-peptide were measured in duplicate by double-antibody radioimmunoassay",
+          "reason": "The sentence explicitly identifies plasma as the specimen for this assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "plasma insulin and C-peptide concentrations",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S46"
+          ],
+          "evidence_text": "Plasma insulin and C-peptide were measured in duplicate by double-antibody radioimmunoassay",
+          "reason": "The assay is explicitly stated to measure plasma insulin and C-peptide."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S43",
+            "S46"
+          ],
+          "evidence_text": "## Biochemical analysis. [methods]",
+          "reason": "source 'methods' agrees with S46 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Plasma insulin and C-peptide were measured in duplicate by double-antibody radioimmunoassay (Millipore, Billerica, MA).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S46"
+          ],
+          "evidence_text": "Plasma insulin and C-peptide were measured in duplicate by double-antibody radioimmunoassay (Millipore, Billerica, MA).",
+          "reason": "quote found in sentences S46"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S46"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S46"
+          ],
+          "evidence_text": "[S46] Plasma insulin and C-peptide were measured in duplicate by double-antibody radioimmunoassay (Millipore, Billerica, MA).",
+          "reason": "The cited sentence ID exists and contains the quoted evidence."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S46",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S46 in [methods]"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

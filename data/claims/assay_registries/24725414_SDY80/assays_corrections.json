@@ -1,0 +1,65 @@
+{
+  "summary": {
+    "assays": 4,
+    "fields_re_extracted": 1,
+    "actions": {
+      "REPLACED": 1
+    },
+    "reported_not_corrected": 0
+  },
+  "results": [
+    {
+      "assay_id": "microarray",
+      "assay_name": "microarray",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "flow cytometric analyses",
+      "assay_name": "flow cytometric analyses",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "flow cytometry"
+          ],
+          "blind_answer": [
+            "cell subpopulation frequencies",
+            "126 PBMC subsets",
+            "cell subsets",
+            "cell populations",
+            "subset frequencies",
+            "frequency of cell subsets",
+            "cell population frequencies",
+            "126 cell populations",
+            "cell populations alone",
+            "day 0 populations",
+            "cell-population data",
+            "cell population and pathway status were combined"
+          ],
+          "dropped": [
+            "flow cytometry"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Virus-neutralizing titers",
+      "assay_name": "Virus-neutralizing titers",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "ELISpot assays",
+      "assay_name": "ELISpot assays",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    }
+  ]
+}

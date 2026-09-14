@@ -1,10 +1,13 @@
-"""Answer "what assays did this paper use?" in one command: extract, verify, correct, promote.
+"""Answer "what assays did this paper use?" in one command: extract, verify, correct, map, merge.
 
-The three rounds the separate scripts run one at a time, chained:
+The rounds the separate scripts run one at a time, chained:
 
   1. prompts/extract_assays.txt      builds the registry              1 call
   2. prompts/verify_assays.txt       judges every entry               1 call per assay
   3. prompts/correct_assay_field.txt repairs what round 2 refused     1 call per flagged FIELD
+  4. prompts/resolver_obi_assay.txt  resolves each name to an OBI term  2 calls per unmatched
+     ("unmatched" = not in the OBI vocabulary verbatim; that exact match is the only free step)
+  5. (no prompt — deterministic)     keys by OBI term, folds duplicates  free
 
 Chaining is the whole point: an unverified registry cannot be told apart from a verified one by
 reading it, because a `platform` inferred from what a technique usually runs on looks exactly
@@ -15,11 +18,21 @@ one kept beside it as `assays_precorrection.json`. The run then projects that on
 `assays_benchmark.json` -- name, aliases, source, evidence -- **which is the file to read**. All
 seven fields stay in `assays.json` because every pass in the chain works from them.
 
+Round 5 runs last because the OBI term from round 4 is the assay's identity: the registry is
+re-keyed by the term's label, and two entries that mapped to one term are one assay, folded with
+every wording kept in `name_in_paper` and every write-up kept in `additional_evidence`. Free, and
+the same registry always canonicalizes the same way.
+
+Round 4 runs on the *corrected* registry, and writes `assays_OBI.json` rather than merging back:
+the OBI resolver reads sample_type and readouts as disambiguating context, and those are fields
+round 3 re-extracts, so mapping earlier would resolve some assays against values the verifier
+had already refused. Its exact-match steps are free; only names the vocabulary misses cost.
+
 The chain itself is app.agent.assay_service.assay_report, which is also what POST /agent/assays
 runs. This script is the CLI in front of it, so a registry built here and one built through the
 endpoint are the same files, and run_assay_verify.py / run_assay_correct.py still read them.
 
-**Nothing is reused between runs.** Every invocation pays for all three rounds, so re-running
+**Nothing is reused between runs.** Every invocation pays for all five rounds, so re-running
 a finished paper costs what the first run cost. Reuse was removed because it could not be kept
 for round 1 alone -- a fresh registry invalidates the stored verdicts, which invalidates the
 corrections derived from them -- and because an edit to extract_assays.txt had no effect on a
@@ -27,7 +40,9 @@ paper that had already been run.
 
 **--dry-run makes no API call** and reports the projected bill. Run it first: a 10-assay paper
 is upwards of 20 calls. Round 1 is one call; round 2 is exact once a registry exists on disk
-to count entries in, and round 3 once a verification does.
+to count entries in, and round 3 once a verification does. Rounds 4 and 5 are exact whenever a
+registry exists, because the vocabulary and the collision check are files and code, not a model's
+answer.
 
 Usage:
     python3 scripts/run_assay_pipeline.py <registry_dir> [--dry-run]
@@ -46,110 +61,134 @@ from pathlib import Path
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_REPO_ROOT / "apps" / "api"))
 
-from app.agent.assay_extractor import contract_warnings
+from app.agent.assay_extractor import contract_warnings, paper_names
 from app.agent.assay_service import (
     PaperNotFoundError,
     assay_report,
-    corrections_available,
-    locate_paper_xml,
-    paper_source_text,
-    registry_dir,
+    estimate_run,
+    split_stem,
 )
+# Re-exported under its old private name: scripts/run_assay_batch.py imports it from here, and
+# the move into the service is not a reason to break that import.
+from app.agent.assay_service import obi_misses as _obi_misses  # noqa: F401
 from app.agent.claim_parser import _get_client
 
 
 def split_registry_dir(path: Path) -> tuple[str, str]:
     """`assay_registries/34252919_SDY2189` -> ("34252919", "SDY2189").
 
-    The registry scheme is `<pmid>_<SDY>` while the XML scheme is `<SDY>_<pmid>`; the halves
-    are identified by which one starts with "SDY" rather than by position, so a directory
-    named the other way round still resolves instead of silently producing a paper we cannot
-    find.
+    The halves are identified by which one starts with "SDY" rather than by position, so a
+    directory named the other way round still resolves instead of silently producing a paper we
+    cannot find. The splitting itself is assay_service.split_stem; what stays here is the
+    exit -- a directory that is not a registry is a CLI usage error, not a library one.
     """
     stem = path.resolve().name
-    left, _, right = stem.partition("_")
-    if not right:
+    split = split_stem(stem)
+    if split is None:
         raise SystemExit(
             f"{stem!r} is not a <pmid>_<SDY> registry directory; pass --pmid/--sdy instead"
         )
-    if left.upper().startswith("SDY"):
-        return right, left
-    return left, right
+    return split
 
 
-def _print_fields(assays: dict) -> None:
-    """The three fields the registry is asked to carry, per entry.
+def _print_fields(assays: dict, obi: dict | None = None) -> None:
+    """The fields the registry is asked to carry, per entry.
 
-    Name, evidence source, aliases. Printed rather than summarised because "10 entries" tells
-    you nothing about whether any of them can be traced back to a sentence.
+    Name, evidence source, aliases, and the OBI term when round 4 produced one. Printed rather
+    than summarised because "10 entries" tells you nothing about whether any of them can be
+    traced back to a sentence.
     """
-    print("\nname / source / aliases:")
+    print("\nname / source / aliases / OBI:" if obi else "\nname / source / aliases:")
     for key, entry in assays.items():
         evidence = entry.get("evidence") or {}
         ids = evidence.get("sentence_ids") or []
         where = entry.get("source") or "?"
+        names = paper_names(entry)
         cite = f"{where} {evidence.get('section') or '?'} [{', '.join(ids) or 'no ids'}]"
         aliases = entry.get("aliases")
         shown = ", ".join(aliases) if isinstance(aliases, list) and aliases else (
             "(none)" if isinstance(aliases, list) else f"NOT A LIST: {aliases!r}")
-        print(f"  {key}\n      source: {cite}\n      aliases: {shown}")
+        print(f"  {key}\n      in paper: {', '.join(names) or '(none)'}"
+              f"\n      source: {cite}\n      aliases: {shown}")
+        if obi is None:
+            continue
+        # The resource is printed beside the term because the two say different things: which
+        # OBI term this is, and how much a model had to do with choosing it.
+        mapped = obi.get(key) or {}
+        term = (f"{mapped['obi_id']} {mapped['obi_label']}" if mapped.get("obi_id")
+                else "unmapped")
+        print(f"      OBI: {term}  ({mapped.get('resource') or 'not mapped'})")
 
 
 def _dry_run(pmid: str, sdy: str) -> None:
-    """What the chain would cost, without calling anything.
+    """Print what the chain would cost, without calling anything.
 
-    Every round runs, so the only question is how many calls each will make. A stored registry
-    and verification are read for their *shape* -- how many assays, how many flagged fields --
-    which makes the estimate exact even though neither will be reused. Where they are absent
-    the round can only be bounded, and is reported that way rather than guessed at.
+    A printer over assay_service.estimate_run, which does the counting. The column layout and
+    the hard-wrapped caveat live here because they are this script's concern; the numbers, and
+    the rule for which of them can be known, are the service's -- POST /agent/assays/estimate
+    has to reach the same answer or the cost gate means two different things in two places.
     """
-    xml_path = locate_paper_xml(pmid, sdy)
-    if xml_path is None:
-        raise SystemExit(f"No JATS XML for pubmed_id={pmid!r} study_accession={sdy!r}")
+    try:
+        estimate = estimate_run(pmid, sdy)
+    except PaperNotFoundError as exc:
+        raise SystemExit(str(exc))
 
-    out_dir = registry_dir(pmid, sdy)
-    title, source_text = paper_source_text(xml_path)
-    print(f"{xml_path.name}: {len(source_text):,} chars, title {title!r}")
-    print(f"registry: {out_dir}")
+    print(f"{estimate['paper_source']}: {estimate['source_chars']:,} chars, "
+          f"title {estimate['paper_title']!r}")
+    print(f"registry: {estimate['registry_dir']}")
 
-    registry_path = out_dir / "assays.json"
-    verification_path = out_dir / "assays_verification.json"
-
-    assays = (json.loads(registry_path.read_text(encoding="utf-8"))
-              if registry_path.exists() else None)
-    verification = (json.loads(verification_path.read_text(encoding="utf-8"))
-                    if verification_path.exists() else None)
+    by_name = {round_["name"]: round_ for round_ in estimate["rounds"]}
+    verify, correct = by_name["verify"], by_name["correct"]
+    obi, canon = by_name["obi"], by_name["canonicalize"]
 
     print("  round 1 extract: will run                            1 call")
 
-    if assays is not None:
-        print(f"  round 2 verify:  will run                            ~{len(assays)} calls"
+    if verify["calls"] is not None:
+        print(f"  round 2 verify:  will run                            ~{verify['calls']} calls"
               "   (the last run found that many)")
     else:
         print("  round 2 verify:  will run, 1 call per assay found    ? calls")
 
-    if verification is not None:
-        pending = corrections_available(assays or {}, verification)
-        print(f"  round 3 correct: will run                            ~{pending['calls']} calls"
-              f"   ({pending['rejected']} assay(s) set aside last run)")
+    if correct["calls"] is not None:
+        print(f"  round 3 correct: will run                            ~{correct['calls']} calls"
+              f"   ({correct['rejected']} assay(s) set aside last run)")
     else:
         print("  round 3 correct: will run, 1 call per flagged field  ? calls")
 
-    if assays is not None:
+    if obi["calls"] is not None:
+        print(f"  round 4 OBI:     will run                            {obi['calls']} calls"
+              f"   ({obi['free_matches']} of {obi['assays']} match the vocabulary for free)")
+        for key in obi["misses"]:
+            print(f"      needs embedding + LLM: {key}")
+    else:
+        print("  round 4 OBI:     will run, 2 calls per unmatched name ? calls")
+
+    if canon["entries"] is not None:
+        print(f"  round 5 canon:   will run                            0 calls"
+              f"   ({canon['entries']} entries \u2192 {canon['groups']}, keyed by OBI term)")
+        for group in canon["folds"]:
+            print(f"      folds onto {group['key']}: {', '.join(group['members'])}")
+    else:
+        print("  round 5 canon:   will run, free                       0 calls")
+
+    if estimate["caveat"]:
         print("\n  ~ because rounds 2 and 3 are sized from the previous run's output, which "
               "this run\n    re-extracts rather than reuses. The shape rarely moves; it is not "
-              "guaranteed.")
+              "guaranteed.\n    Round 4 has no ~: its vocabulary is on disk, so the only "
+              "uncertainty is whether\n    this run re-extracts the same assay names.")
     print("\n--dry-run: nothing called.")
 
 
-async def main(pmid: str, sdy: str) -> None:
-    try:
-        result = await assay_report(pmid, sdy, _get_client(), verify=True, correct=True)
-    except PaperNotFoundError as exc:
-        raise SystemExit(str(exc))
+def report_result(result: dict) -> None:
+    """Print one paper's run in full: rounds, checks, every reason not to trust an entry.
 
+    Factored out of main() so scripts/run_assay_batch.py reports each of its 30 papers the same
+    way. One definition on purpose -- CLAUDE.md requires the WARNING / REVIEW / REJECT /
+    DROPPED / UNMAPPED lines be reported rather than summarised, and a second copy of this
+    logic is how one of them quietly stops being printed.
+    """
     print(f"{result['paper_source']}: {result['paper_title']!r}")
-    for name in ("extract", "verify", "correct"):
+    for name in ("extract", "verify", "correct", "obi", "canonicalize"):
         row = result["rounds"].get(name, {})
         extra = {k: v for k, v in row.items() if k not in ("source", "calls")}
         print(f"  {name:8} {row.get('source', '?'):10} {row.get('calls', 0)} call(s)"
@@ -177,12 +216,45 @@ async def main(pmid: str, sdy: str) -> None:
                       f" — {field.get('reason') or 'no reason given'}")
     for key, record in (result.get("dropped") or {}).items():
         print(f"  DROPPED  {key}: {record.get('reason') or 'rejected'}")
+    # Every fold round 5 made: an entry that is no longer a key of its own because another
+    # write-up of the same OBI term absorbed it. Printed rather than counted, because the OBI term
+    # is coarser than the paper's wording and a fold is exactly where that coarseness shows.
+    for record in (result.get("merges") or {}).get("results", []):
+        print(f"  MERGED  {', '.join(record['folded'])} → {record['key']} "
+              f"({record.get('obi_id') or 'no term'})")
+    # A repair that was asked for, paid for, and then failed. It used to surface only as a count
+    # inside the round's actions JSON, which is how 12 discarded alias corrections crossed a
+    # 30-paper run unnoticed: the entry keeps exactly the field the verifier objected to.
+    for record in (result.get("corrections") or {}).get("results", []):
+        for change in record.get("corrections") or []:
+            if change.get("action") == "ERROR" or change.get("error"):
+                print(f"  CORRECT FAILED  {record.get('assay_id')} / {change.get('field')}: "
+                      f"{change.get('error') or 'no reason given'}")
+    # An assay OBI has no term for is the same kind of finding as an unsupported field: it
+    # means either a gap in the vocabulary or a name too vague to map, and only reading the
+    # name tells you which. Reported per entry rather than as a coverage percentage.
+    if result["rounds"].get("obi", {}).get("source") == "failed":
+        print("  OBI FAILED  mapping did not run; rounds 1-3 are intact. "
+              "Re-run: scripts/run_obi_map.py <registry_dir>")
+    for key in result["rounds"].get("obi", {}).get("unresolved", []):
+        print(f"  UNMAPPED  {key}: no OBI term")
 
-    _print_fields(assays)
+    _print_fields(assays, result.get("obi"))
     meta = result["meta"]
     print(f"\n{meta['llm_calls']} call(s) spent."
           f"\n  {meta['benchmark_path']}  <- the deliverable: name, aliases, source, evidence"
           f"\n  {meta['registry_path']}  full seven-field registry the pipeline works from")
+    if meta.get("obi_path"):
+        print(f"  {meta['obi_path']}  the same registry with OBI terms attached")
+
+
+async def main(pmid: str, sdy: str) -> None:
+    try:
+        result = await assay_report(pmid, sdy, _get_client(), verify=True, correct=True)
+    except PaperNotFoundError as exc:
+        raise SystemExit(str(exc))
+
+    report_result(result)
 
 
 if __name__ == "__main__":

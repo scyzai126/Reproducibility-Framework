@@ -29,6 +29,25 @@ _ENTRY = {
 }
 
 
+@pytest.fixture(autouse=True)
+def stub_obi(monkeypatch):
+    """Round 4 answers from a stub in this file, not from the real OBI vocabulary.
+
+    These tests are about the chain -- what each round costs, what it writes, what it hands
+    on -- and none of them is about which OBI term "flow cytometry" resolves to. Left live,
+    they would pass or fail on the contents of data/OBI, so a vocabulary prune that dropped
+    an unrelated term would break tests that never mention ontologies. Round 4's own
+    behaviour is covered in test_assay_service_obi.py and test_assay_obi_mapper.py.
+    """
+    def _fake(assays, *_args, **_kwargs):
+        return {key: {**entry, "obi_id": "OBI:0000916", "obi_label": "flow cytometry assay",
+                      "resource": "exact_original", "obi_confidence": "high"}
+                for key, entry in assays.items()}
+
+    monkeypatch.setattr(assay_service, "enrich_assays_with_obi", _fake)
+    return _fake
+
+
 @pytest.fixture
 def paper(tmp_path, monkeypatch):
     """A one-paper repo: XML on disk under both roots redirected into tmp_path."""
@@ -106,8 +125,12 @@ async def test_a_missing_paper_raises_rather_than_extracting_from_nothing(paper)
 # ── cost ──────────────────────────────────────────────────────────────────────
 
 @pytest.mark.asyncio
-async def test_a_cold_paper_runs_all_three_rounds(paper):
-    """1 extraction + 1 assay verified + 0 flagged fields to repair."""
+async def test_a_cold_paper_runs_all_five_rounds(paper):
+    """1 extraction + 1 assay verified + 0 flagged fields + a free OBI match + a free re-key.
+
+    Round 5 runs even on a single assay and still costs nothing: keying the registry by its OBI
+    term is the point, and folding is only what happens when two entries land on one term.
+    """
     client = _Client(_extraction_body(), _verification_body())
 
     result = await assay_report("111", "SDY1", client)
@@ -115,7 +138,7 @@ async def test_a_cold_paper_runs_all_three_rounds(paper):
     assert client.calls == 2
     assert result["meta"]["llm_calls"] == 2
     assert [r["source"] for r in result["rounds"].values()] == [
-        "extracted", "verified", "corrected"]
+        "extracted", "verified", "corrected", "mapped", "canonical"]
     for name in ("assays.json", "assays_verification.json", "assays_corrections.json"):
         assert (paper / name).exists(), name
 
@@ -132,7 +155,7 @@ async def test_a_second_request_for_the_same_paper_pays_again(paper):
     assert second.calls == first.calls == 2
     assert result["meta"]["llm_calls"] == 2
     assert [r["source"] for r in result["rounds"].values()] == [
-        "extracted", "verified", "corrected"]
+        "extracted", "verified", "corrected", "mapped", "canonical"]
 
 
 @pytest.mark.asyncio
@@ -268,7 +291,7 @@ async def test_correcting_does_not_touch_the_live_registry(paper):
 
 
 def test_the_route_returns_the_corrected_registry(paper):
-    """One endpoint, three rounds: what comes back is the post-correction set."""
+    """One endpoint, four rounds: what comes back is the post-correction set."""
     import app.api.routes as routes
 
     client = _Client(_extraction_body(), _verification_body())
@@ -278,8 +301,33 @@ def test_the_route_returns_the_corrected_registry(paper):
 
     assert response.status_code == 200
     body = response.json()
-    assert list(body["assays"]) == ["flow cytometry"]
-    assert [r["source"] for r in body["rounds"].values()] == ["extracted", "verified", "corrected"]
+    # Keyed by the OBI term round 5 canonicalized it to, not by the paper's wording.
+    assert list(body["assays"]) == ["flow cytometry assay"]
+    assert [r["source"] for r in body["rounds"].values()] == [
+        "extracted", "verified", "corrected", "mapped", "canonical"]
+
+
+def test_the_route_returns_the_obi_terms_corrections_and_merges_it_computed(paper):
+    """Three of the run's findings reach the caller, or they reach no one.
+
+    assay_report returns `obi`, `corrections` and `merges`; AssayResponse used to declare none
+    of them, and FastAPI filters the response through the model -- so the endpoint dropped every
+    OBI term, every CORRECT FAILED record and every MERGED record on the way out. The CLI never
+    noticed because report_result reads the dict directly. Two entries on one OBI term, so the
+    merge report has something in it to lose.
+    """
+    import app.api.routes as routes
+
+    routes._get_client = lambda: _Client(_two_assays_body(), _verification_body())
+    response = TestClient(app).post(
+        "/agent/assays", json={"study_accession": "SDY1", "pubmed_id": "111"})
+
+    assert response.status_code == 200
+    body = response.json()
+    assert list(body["obi"]) == ["flow cytometry assay"]
+    assert body["obi"]["flow cytometry assay"]["obi_id"] == "OBI:0000916"
+    assert body["merges"]["results"][0]["folded"] == ["ELISA kits"]
+    assert body["corrections"]["summary"]["assays"] == 2
 
 
 # ── the trimmed deliverable ───────────────────────────────────────────────────
@@ -293,11 +341,12 @@ async def test_the_run_writes_a_benchmark_registry_beside_the_full_one(paper):
     full = json.loads((paper / "assays.json").read_text())
     trimmed = json.loads((paper / "assays_benchmark.json").read_text())
 
-    assert tuple(trimmed["flow cytometry"]) == TRIMMED_FIELDS
-    assert trimmed["flow cytometry"]["evidence"]["sentence_ids"] == ["S1"]
+    assert tuple(trimmed["flow cytometry assay"]) == TRIMMED_FIELDS
+    assert trimmed["flow cytometry assay"]["evidence"]["sentence_ids"] == ["S1"]
+    assert trimmed["flow cytometry assay"]["name_in_paper"] == ["flow cytometry"]
     # The pipeline's own record is untouched -- the trim is a projection, not a schema.
-    assert full["flow cytometry"]["platform"] == "LSRII"
-    assert full["flow cytometry"]["readouts"] == "cell frequencies"
+    assert full["flow cytometry assay"]["platform"] == "LSRII"
+    assert full["flow cytometry assay"]["readouts"] == "cell frequencies"
 
 
 @pytest.mark.asyncio
@@ -342,3 +391,51 @@ async def test_a_stale_rejected_file_does_not_survive_a_run_that_rejects_nothing
     await assay_report("111", "SDY1", _Client(_extraction_body(), _verification_body()))
 
     assert not (paper / "assays_rejected.json").exists()
+
+
+# ── round 5: one assay written up twice ───────────────────────────────────────
+
+def _two_assays_body() -> str:
+    """What an extraction looks like when it splits one technique across two subheadings."""
+    return json.dumps({
+        "ELISA": {**_ENTRY, "name_in_paper": "ELISA"},
+        "ELISA kits": {**_ENTRY, "name_in_paper": "ELISA kits"},
+    })
+
+
+@pytest.mark.asyncio
+async def test_two_entries_on_one_obi_term_leave_one_entry_keyed_by_that_term(paper):
+    """The whole point of folding at registry time rather than at report time."""
+    client = _Client(_two_assays_body(), _verification_body())
+
+    result = await assay_report("111", "SDY1", client)
+
+    assert result["rounds"]["canonicalize"]["source"] == "canonical"
+    # Free: the OBI term is already on disk, and the rule reads it rather than asking anything.
+    assert result["rounds"]["canonicalize"]["calls"] == 0
+    assert list(json.loads((paper / "assays.json").read_text())) == ["flow cytometry assay"]
+    # A mapping still keyed by a folded-away wording would read as an assay this paper reported.
+    assert list(json.loads((paper / "assays_OBI.json").read_text())) == ["flow cytometry assay"]
+
+    benchmark = json.loads((paper / "assays_benchmark.json").read_text())
+    assert list(benchmark) == ["flow cytometry assay"]
+    assert benchmark["flow cytometry assay"]["name_in_paper"] == ["ELISA", "ELISA kits"]
+    # The second write-up's evidence survives the fold; it is the one thing the surviving
+    # record cannot reconstruct.
+    assert benchmark["flow cytometry assay"]["additional_evidence"][0]["name_in_paper"] == "ELISA kits"
+    assert json.loads((paper / "assays_merges.json").read_text())["summary"] == {
+        "groups_merged": 1, "entries_folded": 1}
+
+
+@pytest.mark.asyncio
+async def test_a_stale_merges_file_does_not_survive_a_run_that_folds_nothing(paper):
+    """Same reason as assays_rejected.json: it would read as this run's findings."""
+    paper.mkdir(parents=True)
+    (paper / "assays_merges.json").write_text('{"summary": {"groups_merged": 9}}')
+
+    result = await assay_report("111", "SDY1",
+                                _Client(_extraction_body(), _verification_body()))
+
+    assert result["rounds"]["canonicalize"]["source"] == "canonical"
+    assert result["merges"]["results"] == []
+    assert not (paper / "assays_merges.json").exists()

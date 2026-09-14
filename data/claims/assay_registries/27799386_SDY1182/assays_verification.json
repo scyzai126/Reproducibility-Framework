@@ -1,0 +1,229 @@
+{
+  "summary": {
+    "total": 2,
+    "accept": 2,
+    "review": 0,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_absent": 0,
+    "field_issues": {}
+  },
+  "results": [
+    {
+      "assay_id": "real time polymerase chain reaction (PCR) assays",
+      "assay_name": "real time polymerase chain reaction (PCR) assays",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "real time polymerase chain reaction (PCR) assays",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S25"
+          ],
+          "evidence_text": "real time polymerase chain reaction (PCR) assays",
+          "reason": "The Methods explicitly states this assay was used to test the samples for respiratory viruses."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "PCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S25",
+            "S53"
+          ],
+          "evidence_text": "PCR",
+          "reason": "The text uses PCR as shorthand for the same respiratory virus testing assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "nasopharyngeal aspirates",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S22",
+            "S25"
+          ],
+          "evidence_text": "Nasopharyngeal aspirates were collected by trained site investigators... Frozen samples were shipped in batches on dry ice to Baylor College of Medicine, where they were tested for: 1) 17 respiratory viruses",
+          "reason": "The collected nasopharyngeal aspirates were the samples tested by the PCR assays."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "presence of 17 respiratory viruses",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S25"
+          ],
+          "evidence_text": "tested for: 1) 17 respiratory viruses (e.g., respiratory syncytial virus [RSV], rhinovirus) by using real time polymerase chain reaction (PCR) assays",
+          "reason": "The assay is explicitly described as testing for 17 respiratory viruses."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S22",
+            "S23",
+            "S24",
+            "S25"
+          ],
+          "evidence_text": "## Data Collection [methods]",
+          "reason": "source 'methods' agrees with S22 in [methods], S23 in [methods], S24 in [methods], S25 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Nasopharyngeal aspirates were collected by trained site investigators using the same standardized protocol utilized in a previous cohort study of children with bronchiolitis ( 4 , 20 ). All sites used the same collection equipment (Medline Industries, Mundelein, IL) and collected the samples within 24 hours of hospitalization. The nasopharyngeal sample was added to transport medium, immediately placed on ice and then stored at −80°C. Frozen samples were shipped in batches on dry ice to Baylor College of Medicine, where they were tested for: 1) 17 respiratory viruses (e.g., respiratory syncytial virus [RSV], rhinovirus) by using real time polymerase chain reaction (PCR) assays ( 4 , 20 , 21 )",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S22",
+            "S23",
+            "S24",
+            "S25"
+          ],
+          "evidence_text": "Nasopharyngeal aspirates were collected by trained site investigators using the same standardized protocol utilized in a previous cohort study of children with bronchiolitis ( 4 , 20 ). All sites used the same collection equipment (Medline Industries, Mundelein, IL) and collected the samples within 24 hours of hospitalization. The nasopharyngeal sample was added to transport medium, immediately placed on ice and then stored at −80°C. Frozen samples were shipped in batches on dry ice to Baylor College of Medicine, where they were tested for: 1) 17 respiratory viruses (e.g., respiratory syncytial virus [RSV], rhinovirus) by using real time polymerase chain reaction (PCR) assays ( 4 , 20 , 21 )",
+          "reason": "quote found in sentences S22, S23, S24, S25"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S22",
+            "S23",
+            "S24",
+            "S25"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S22",
+            "S23",
+            "S24",
+            "S25"
+          ],
+          "evidence_text": "Nasopharyngeal aspirates were collected by trained site investigators using the same standardized protocol utilized in a previous cohort study of children with bronchiolitis ( 4 , 20 ). All sites used the same collection equipment (Medline Industries, Mundelein, IL) and collected the samples within 24 hours of hospitalization. The nasopharyngeal sample was added to transport medium, immediately placed on ice and then stored at −80°C. Frozen samples were shipped in batches on dry ice to Baylor College of Medicine, where they were tested for: 1) 17 respiratory viruses (e.g., respiratory syncytial virus [RSV], rhinovirus) by using real time polymerase chain reaction (PCR) assays ( 4 , 20 , 21 )",
+          "reason": "All cited sentence IDs exist and correspond to the quoted text."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S22, S23, S24, S25",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S22 in [methods], S23 in [methods], S24 in [methods], S25 in [methods]"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "16S rRNA gene sequencing",
+      "assay_name": "16S rRNA gene sequencing",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "16S rRNA gene sequencing",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S25"
+          ],
+          "evidence_text": "microbiota by using 16S rRNA gene sequencing",
+          "reason": "The text explicitly states this assay was used to test microbiota in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "amplicon sequencing",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S37"
+          ],
+          "evidence_text": "amplicon sequencing",
+          "reason": "The phrase appears verbatim and refers to the same 16S sequencing workflow."
+        },
+        {
+          "field_name": "platform",
+          "proposed_value": "MiSeq platform (Illumina; SanDiego, CA)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S29"
+          ],
+          "evidence_text": "sequenced in the MiSeq platform (Illumina; SanDiego, CA)",
+          "reason": "The source directly links this platform to the 16S rDNA V4 sequencing."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "nasopharyngeal aspirates",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S22",
+            "S25"
+          ],
+          "evidence_text": "Nasopharyngeal aspirates were collected... and 2) microbiota by using 16S rRNA gene sequencing.",
+          "reason": "The collected nasopharyngeal aspirates are explicitly the samples used for 16S rRNA gene sequencing."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "bacterial 16S V4 sequences for microbiota composition and taxonomic profiles",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S29",
+            "S35"
+          ],
+          "evidence_text": "The 16S rDNA V4 region was amplified by PCR and sequenced... OTUs were determined by mapping the centroids to the SILVA database ... to determine taxonomies.",
+          "reason": "The assay generated 16S V4 sequence data used to derive microbiota composition and taxonomic assignments."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S26"
+          ],
+          "evidence_text": "16S rRNA gene sequencing methods were adapted",
+          "reason": "source 'methods' agrees with S29 in [methods], S30 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "The 16S rDNA V4 region was amplified by PCR and sequenced in the MiSeq platform (Illumina; SanDiego, CA) using the 2×250 bp paired-end protocol yielding pair-end reads that overlap almost completely. The primers used for amplification contain adapters for MiSeq sequencing and single-end barcodes allowing pooling and direct sequencing of PCR products ( 22 , 23 ).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S29",
+            "S30"
+          ],
+          "evidence_text": "The 16S rDNA V4 region was amplified by PCR and sequenced in the MiSeq platform (Illumina; SanDiego, CA) using the 2×250 bp paired-end protocol yielding pair-end reads that overlap almost completely. The primers used for amplification contain adapters for MiSeq sequencing and single-end barcodes allowing pooling and direct sequencing of PCR products ( 22 , 23 ).",
+          "reason": "quote found in sentences S29, S30"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S29",
+            "S30"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S29",
+            "S30"
+          ],
+          "evidence_text": "The 16S rDNA V4 region was amplified by PCR and sequenced in the MiSeq platform (Illumina; SanDiego, CA) using the 2×250 bp paired-end protocol yielding pair-end reads that overlap almost completely. The primers used for amplification contain adapters for MiSeq sequencing and single-end barcodes allowing pooling and direct sequencing of PCR products ( 22 , 23 ).",
+          "reason": "Both cited sentence IDs exist and match the quoted text."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S29, S30",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S29 in [methods], S30 in [methods]"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

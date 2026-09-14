@@ -1,9 +1,12 @@
 """Map the flat assay table to OBI ontology terms.
 
-Uses the repo's existing three-step chain in app.agent.assay_obi_mapper:
-  1. exact match on the paper's name   -> resource: exact_original,  confidence "high"
-  2. exact match on the normalized name -> resource: exact_normalized, confidence "high"
-  3. embedding top-10 + LLM pick        -> resource: embedding_llm,  confidence = similarity
+Uses the repo's existing two-step chain in app.agent.assay_obi_mapper:
+  1. exact match on the paper's name -> resource: exact_original, confidence "high"
+  2. embedding top-10 + LLM pick     -> resource: embedding_llm,  confidence = similarity
+
+A lexical exact match on the normalized name used to sit between them, reported as
+"exact_normalized". It was removed; 40 rows of all_assays_full_OBI.json still carry that
+value from before, and the route and UI still render it.
 
 The existing CLIs (run_obi_map.py, map_assays_obi.py) both
 take a per-study registry dict keyed by assay name; this one takes the flat corpus-wide
@@ -67,12 +70,15 @@ def _pairs_with_context(rows: list[dict]) -> dict[tuple[str, str], dict]:
 
 
 def _resolves_locally(assay: str, normalized: str, terms_path: Path) -> str | None:
-    """Which exact-match step would catch this pair, if any. No API call."""
+    """Which exact-match step would catch this pair, if any. No API call.
+
+    One step to mirror now: assay_obi_mapper's lexical exact-match round was removed, so the
+    normalized name is no longer tried as a lookup key at all -- it only ever reaches the
+    embedding query. `normalized` stays in the signature because _decision_key needs the pair.
+    """
     lookup = _build_lookup(terms_path)
     if lookup.get(assay.strip().lower()):
         return "exact_original"
-    if normalized.strip() and lookup.get(normalized.strip().lower()):
-        return "exact_normalized"
     return None
 
 
@@ -83,10 +89,10 @@ def _cache_key(assay: str, normalized: str) -> str:
 def _decision_key(assay: str, normalized: str, terms_path: Path) -> str:
     """The input that actually decides this pair's OBI term.
 
-    Steps 1-2 key on the pair, because they test the paper's name and then the
-    normalized name as literal strings. Step 3 keys on its *query* — which is the
-    normalized name, falling back to the paper's — because that, plus the candidate
-    list it retrieves, is the whole input to the LLM's pick.
+    The exact match keys on the pair, because it tests the paper's name as a literal string.
+    The embedding round keys on its *query* — which is the normalized name, falling back to
+    the paper's — because that, plus the candidate list it retrieves, is the whole input to
+    the LLM's pick.
 
     Grouping by this rather than by the pair is what stops two assay names sharing a
     normalized name from getting different OBI terms out of an identical query. That

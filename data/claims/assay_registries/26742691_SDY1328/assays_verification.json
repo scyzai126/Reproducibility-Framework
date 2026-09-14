@@ -1,0 +1,578 @@
+{
+  "summary": {
+    "total": 5,
+    "accept": 2,
+    "review": 3,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_absent": 0,
+    "field_issues": {
+      "name_in_paper": {
+        "NOT_SUPPORTED": 1
+      },
+      "platform": {
+        "NOT_SUPPORTED": 2
+      },
+      "aliases[]": {
+        "NOT_SUPPORTED": 1
+      }
+    }
+  },
+  "results": [
+    {
+      "assay_id": "ELISA",
+      "assay_name": "ELISA",
+      "assay_identity_verdict": "NOT_SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "ELISA",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "The text describes specific ELISA methods for particular antibody measurements, but not a standalone assay named exactly \"ELISA\" for this record."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "GM1-enzyme-linked immunosorbent assay (ELISA)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S122"
+          ],
+          "evidence_text": "GM1-enzyme-linked immunosorbent assay (ELISA)",
+          "reason": "This exact phrase appears verbatim as the assay used to quantify anti-Cholera toxin B subunit IgG."
+        },
+        {
+          "field_name": "platform",
+          "proposed_value": "MONOLISA Anti-HBs PLUS kit (Bio-Rad catalogue number 72566)",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "This kit is linked to anti-HBsAg antibody quantification, not clearly to the GM1 ELISA evidenced for this assay record."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "serum samples",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S122"
+          ],
+          "evidence_text": "in serum samples",
+          "reason": "The cited ELISA is explicitly performed on serum samples."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "antigen-specific antibody levels measured by optical density and converted to antibody titres or concentrations",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S122",
+            "S134",
+            "S136",
+            "S137",
+            "S138",
+            "S143",
+            "S144",
+            "S146",
+            "S151",
+            "S152",
+            "S154",
+            "S159",
+            "S160"
+          ],
+          "evidence_text": "Anti-Cholera toxin B subunit (CTB) IgG were quantified in serum samples according to a GM1-enzyme-linked immunosorbent assay (ELISA) method adapted from Svennerholm et al. ... optical density (OD) was measured at 450/620 nm ... The antibody titre was defined as the midpoint (or IC50) of the titration curve. ... Anti-hepatitis B surface antigen (anti-HBsAg) total antibodies were quantified in serum samples ... OD was measured at 450/620 nm ... expressed in mIU ml−1. ... Anti-Diphtheria IgG were quantified in serum samples ... OD was measured at 450/620 nm ... expressed in IU ml−1. ... Anti-Tetanus IgG were quantified ... OD was measured at 450/620 nm ... expressed in IU ml−1",
+          "reason": "The Antibody titres section describes ELISA-based quantification of antigen-specific antibodies using OD measurements converted to titres or concentrations."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S122"
+          ],
+          "evidence_text": "## Antibody titres [methods]",
+          "reason": "source 'methods' agrees with S122 in [methods], S123 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Anti-Cholera toxin B subunit (CTB) IgG were quantified in serum samples according to a GM1-enzyme-linked immunosorbent assay (ELISA) method adapted from Svennerholm et al. 41 .",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S122",
+            "S123"
+          ],
+          "evidence_text": "Anti-Cholera toxin B subunit (CTB) IgG were quantified in serum samples according to a GM1-enzyme-linked immunosorbent assay (ELISA) method adapted from Svennerholm et al.",
+          "reason": "quote found in sentences S122, S123"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S122",
+            "S123"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S122",
+            "S123"
+          ],
+          "evidence_text": "S122] Anti-Cholera toxin B subunit (CTB) IgG were quantified in serum samples according to a GM1-enzyme-linked immunosorbent assay (ELISA) method adapted from Svennerholm et al. [S123] 41 .",
+          "reason": "Both cited sentence IDs exist and correspond to the quoted text."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S122, S123",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S122 in [methods], S123 in [methods]"
+      },
+      "conflict_detected": true,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    },
+    {
+      "assay_id": "microarray",
+      "assay_name": "microarray",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "microarray",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S188",
+            "S190"
+          ],
+          "evidence_text": "Analysis of the CEL files was conducted using R/Bioconductor software packages 42 . Five technical duplicates were included in the microarray experiments",
+          "reason": "The text explicitly refers to microarray experiments performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "microarray data set",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "This exact alias does not appear verbatim in the cited assay description and is not clearly used as the assay name."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "microarray experiments",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S190"
+          ],
+          "evidence_text": "microarray experiments",
+          "reason": "This exact phrase appears and refers to the assay performed here."
+        },
+        {
+          "field_name": "platform",
+          "proposed_value": "Affymetrix HuRSTA-2a520709 chips",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S186"
+          ],
+          "evidence_text": "hybridized to Affymetrix HuRSTA-2a520709 chips",
+          "reason": "The platform is explicitly tied to the assay samples."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "PAXgene blood samples",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S184"
+          ],
+          "evidence_text": "RNA was isolated from PAXgene blood samples",
+          "reason": "The text explicitly states the assay input material."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "gene expression intensities",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S164",
+            "S169"
+          ],
+          "evidence_text": "Raw files containing background-subtracted intensities... the log2 expression of transcript ( x )",
+          "reason": "The assay output is explicitly described as intensities and transcript expression values."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S184",
+            "S185",
+            "S186"
+          ],
+          "evidence_text": "RNA was isolated from PAXgene blood samples according to the manufacturer's instructions. Isolated total RNA samples were assayed for quality metrics (Agilent Bioanalyzer) prior to amplification. Three-hundred and thirty-five samples passing quality control were then amplified using the NuGEN amplification protocol and hybridized to Affymetrix HuRSTA-2a520709 chips (Affymetrix, Santa Clara, CA).",
+          "reason": "source 'methods' agrees with S184 in [methods], S185 in [methods], S186 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "RNA was isolated from PAXgene blood samples according to the manufacturer's instructions. Isolated total RNA samples were assayed for quality metrics (Agilent Bioanalyzer) prior to amplification. Three-hundred and thirty-five samples passing quality control were then amplified using the NuGEN amplification protocol and hybridized to Affymetrix HuRSTA-2a520709 chips (Affymetrix, Santa Clara, CA).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S184",
+            "S185",
+            "S186"
+          ],
+          "evidence_text": "RNA was isolated from PAXgene blood samples according to the manufacturer's instructions. Isolated total RNA samples were assayed for quality metrics (Agilent Bioanalyzer) prior to amplification. Three-hundred and thirty-five samples passing quality control were then amplified using the NuGEN amplification protocol and hybridized to Affymetrix HuRSTA-2a520709 chips (Affymetrix, Santa Clara, CA).",
+          "reason": "quote found in sentences S184, S185, S186"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S184",
+            "S185",
+            "S186"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S184",
+            "S185",
+            "S186"
+          ],
+          "evidence_text": "RNA was isolated from PAXgene blood samples according to the manufacturer's instructions. Isolated total RNA samples were assayed for quality metrics (Agilent Bioanalyzer) prior to amplification. Three-hundred and thirty-five samples passing quality control were then amplified using the NuGEN amplification protocol and hybridized to Affymetrix HuRSTA-2a520709 chips (Affymetrix, Santa Clara, CA).",
+          "reason": "All cited sentence IDs exist and match the quoted text."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S184, S185, S186",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S184 in [methods], S185 in [methods], S186 in [methods]"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Polychromatic FCM",
+      "assay_name": "Polychromatic FCM",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Polychromatic FCM",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S211"
+          ],
+          "evidence_text": "Polychromatic FCM",
+          "reason": "The Methods section explicitly names this assay."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "FCM",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S219",
+            "S222"
+          ],
+          "evidence_text": "analysing by FCM",
+          "reason": "The text uses FCM as shorthand for the same cytometry assay."
+        },
+        {
+          "field_name": "platform",
+          "proposed_value": "TruCount tubes (Becton-Dickinson)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S215"
+          ],
+          "evidence_text": "TruCount tubes (Becton-Dickinson)",
+          "reason": "The Methods explicitly tie TruCount tubes to the cytometric phenotypic analysis."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "whole blood and PBMC",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S212",
+            "S213"
+          ],
+          "evidence_text": "staining whole blood collected in EDTA Vacutainer tubes. Blood for B-cell analysis was collected in Na-Heparin Vacutainer tubes and further processed by density gradient centrifugation through Ficoll to obtain peripheral blood mononuclear cells (PBMC)",
+          "reason": "The assay was performed on whole blood for T-cell and innate analyses and PBMC for B-cell analysis."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "frequencies and absolute enumeration of T-cell, B-cell and innate immune cell subsets; median fluorescence intensity of cell surface markers",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S215",
+            "S222",
+            "S227",
+            "S91"
+          ],
+          "evidence_text": "for the phenotypic analysis and absolute enumeration of cellular subsets per microliter of blood",
+          "reason": "The text supports frequencies and absolute enumeration of subsets, and elsewhere reports median fluorescence intensity of CD40 as an FCM marker."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S211"
+          ],
+          "evidence_text": "## Polychromatic FCM [methods]",
+          "reason": "source 'methods' agrees with S212 in [methods], S213 in [methods], S215 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Phenotypic analysis of T-cell and innate cell subsets was performed by staining whole blood collected in EDTA Vacutainer tubes. Blood for B-cell analysis was collected in Na-Heparin Vacutainer tubes and further processed by density gradient centrifugation through Ficoll to obtain peripheral blood mononuclear cells (PBMC) prior to performing the following steps. Briefly, 50 μl of whole blood was added to TruCount tubes (Becton-Dickinson) for the phenotypic analysis and absolute enumeration of cellular subsets per microliter of blood.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S212",
+            "S213",
+            "S215"
+          ],
+          "evidence_text": "Phenotypic analysis of T-cell and innate cell subsets was performed by staining whole blood collected in EDTA Vacutainer tubes. Blood for B-cell analysis was collected in Na-Heparin Vacutainer tubes and further processed by density gradient centrifugation through Ficoll to obtain peripheral blood mononuclear cells (PBMC) prior to performing the following steps. Briefly, 50 μl of whole blood was added to TruCount tubes (Becton-Dickinson) for the phenotypic analysis and absolute enumeration of cellular subsets per microliter of blood.",
+          "reason": "quote found in sentences S212, S213, S215"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S212",
+            "S213",
+            "S215"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S212",
+            "S213",
+            "S215"
+          ],
+          "evidence_text": "Phenotypic analysis of T-cell and innate cell subsets was performed by staining whole blood collected in EDTA Vacutainer tubes. Blood for B-cell analysis was collected in Na-Heparin Vacutainer tubes and further processed by density gradient centrifugation through Ficoll to obtain peripheral blood mononuclear cells (PBMC) prior to performing the following steps. Briefly, 50 μl of whole blood was added to TruCount tubes (Becton-Dickinson) for the phenotypic analysis and absolute enumeration of cellular subsets per microliter of blood.",
+          "reason": "All cited sentence IDs exist and correspond to the quoted text."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S212, S213, S215",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S212 in [methods], S213 in [methods], S215 in [methods]"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "multiplex ELISA",
+      "assay_name": "multiplex ELISA",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "multiplex ELISA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S231"
+          ],
+          "evidence_text": "multiplex ELISA protocol",
+          "reason": "The Methods explicitly states serum samples were analyzed using a multiplex ELISA protocol."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "multianalyte profiling",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S230",
+            "S231"
+          ],
+          "evidence_text": "multianalyte profiling protocols established by Rules-Based Medicine (RBM) (Austin, TX). Serum samples were shipped to RBM for analysis using the multiplex ELISA protocol Human Inflammation multianalyte profiling",
+          "reason": "The text uses multianalyte profiling to describe the same cytokine measurement assay."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "Human Inflammation multianalyte profiling",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S231"
+          ],
+          "evidence_text": "Human Inflammation multianalyte profiling",
+          "reason": "This exact phrase appears as the named protocol used for the assay."
+        },
+        {
+          "field_name": "platform",
+          "proposed_value": "Rules-Based Medicine (RBM) (Austin, TX)",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "RBM is identified as the service provider establishing protocols, not clearly as the assay platform, instrument, kit, or product."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "Serum samples",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S231"
+          ],
+          "evidence_text": "Serum samples were shipped to RBM for analysis",
+          "reason": "The assay was explicitly performed on serum samples."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "concentrations of cytokines, chemokines, and inflammatory proteins",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S229",
+            "S230"
+          ],
+          "evidence_text": "A panel of 45 cytokines/chemokines was measured... determine the concentration of inflammatory proteins",
+          "reason": "The text states the assay measured cytokines/chemokines and determined concentrations of inflammatory proteins."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S229",
+            "S230",
+            "S231"
+          ],
+          "evidence_text": "## Cytokine measurements  [methods]",
+          "reason": "source 'methods' agrees with S229 in [methods], S230 in [methods], S231 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "A panel of 45 cytokines/chemokines was measured on the 174 pre-vaccination (V2) samples of the EM131 cohort. Samples were assayed to determine the concentration of inflammatory proteins according to multianalyte profiling protocols established by Rules-Based Medicine (RBM) (Austin, TX). Serum samples were shipped to RBM for analysis using the multiplex ELISA protocol Human Inflammation multianalyte profiling ( Supplementary Table 5b ).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S229",
+            "S230",
+            "S231"
+          ],
+          "evidence_text": "A panel of 45 cytokines/chemokines was measured on the 174 pre-vaccination (V2) samples of the EM131 cohort. Samples were assayed to determine the concentration of inflammatory proteins according to multianalyte profiling protocols established by Rules-Based Medicine (RBM) (Austin, TX). Serum samples were shipped to RBM for analysis using the multiplex ELISA protocol Human Inflammation multianalyte profiling ( Supplementary Table 5b ).",
+          "reason": "quote found in sentences S229, S230, S231"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S229",
+            "S230",
+            "S231"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S229",
+            "S230",
+            "S231"
+          ],
+          "evidence_text": "S229 S230 S231",
+          "reason": "All cited sentence IDs exist and correspond to the quoted text."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S229, S230, S231",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S229 in [methods], S230 in [methods], S231 in [methods]"
+      },
+      "conflict_detected": true,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    },
+    {
+      "assay_id": "complete blood count",
+      "assay_name": "complete blood count",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "complete blood count",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S235"
+          ],
+          "evidence_text": "complete blood count",
+          "reason": "The Methods explicitly names complete blood count as the haematologic measurement performed."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "pre-vaccination samples",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S235"
+          ],
+          "evidence_text": "pre-vaccination samples taken 28 days prior to vaccination (V1)",
+          "reason": "The sentence directly states these samples were used for the haematologic measurements."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "standard haematologic markers including red blood cell counts",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S235",
+            "S99"
+          ],
+          "evidence_text": "A panel of 3 standard haematologic markers (complete blood count) was measured",
+          "reason": "The assay measured standard haematologic markers, and RBC counts are explicitly discussed as one of those haematologic markers elsewhere in the paper."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S235"
+          ],
+          "evidence_text": "## Haematologic measurements  [methods]",
+          "reason": "source 'methods' agrees with S235 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "A panel of 3 standard haematologic markers (complete blood count) was measured on the 174 pre-vaccination samples taken 28 days prior to vaccination (V1) of the EM131 cohort.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S235"
+          ],
+          "evidence_text": "A panel of 3 standard haematologic markers (complete blood count) was measured on the 174 pre-vaccination samples taken 28 days prior to vaccination (V1) of the EM131 cohort.",
+          "reason": "quote found in sentences S235"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S235"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S235"
+          ],
+          "evidence_text": "A panel of 3 standard haematologic markers (complete blood count) was measured on the 174 pre-vaccination samples taken 28 days prior to vaccination (V1) of the EM131 cohort.",
+          "reason": "Sentence ID S235 exists and contains the quoted evidence."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S235",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S235 in [methods]"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

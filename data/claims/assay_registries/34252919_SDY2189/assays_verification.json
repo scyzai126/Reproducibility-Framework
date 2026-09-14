@@ -1,0 +1,1265 @@
+{
+  "summary": {
+    "total": 10,
+    "accept": 5,
+    "review": 5,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 1,
+    "quotes_absent": 0,
+    "field_issues": {
+      "aliases[]": {
+        "NOT_SUPPORTED": 3,
+        "CONTRADICTED": 1
+      },
+      "sample_type": {
+        "NOT_SUPPORTED": 1
+      },
+      "readouts": {
+        "NOT_SUPPORTED": 1
+      },
+      "evidence.quote": {
+        "CONTRADICTED": 1
+      }
+    }
+  },
+  "results": [
+    {
+      "assay_id": "Anti-spike binding enzyme-linked immunosorbent assay",
+      "assay_name": "Anti-spike binding enzyme-linked immunosorbent assay",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Anti-spike binding enzyme-linked immunosorbent assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S125"
+          ],
+          "evidence_text": "## Anti-spike binding enzyme-linked immunosorbent assay",
+          "reason": "This exact assay name appears as the Methods section heading describing a performed procedure."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "enzyme-linked immunosorbent assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S320"
+          ],
+          "evidence_text": "measured by enzyme-linked immunosorbent assay",
+          "reason": "This exact phrase appears and refers to the same anti-spike binding assay."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "ELISA",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "The exact alias ELISA does not appear verbatim in the supplied text."
+        },
+        {
+          "field_name": "platform",
+          "proposed_value": "Biorad microplate reader",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S133"
+          ],
+          "evidence_text": "Biorad microplate reader",
+          "reason": "The text explicitly states this instrument was used to measure optical density in this assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "sera samples",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S129"
+          ],
+          "evidence_text": "Sera samples",
+          "reason": "The assay procedure explicitly states that sera samples were added to the plates."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "anti-spike IgG binding measured as optical density and antibody titres",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S130",
+            "S133",
+            "S320"
+          ],
+          "evidence_text": "horseradish peroxidase conjugated goat anti-monkey IgG ... The optical density at 450 nanometres was measured with a Biorad microplate reader. Serum anti-S IgG titres ... measured by enzyme-linked immunosorbent assay",
+          "reason": "The text supports IgG anti-spike binding with optical density measurement and reports anti-S IgG titres from this assay."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S125"
+          ],
+          "evidence_text": "## Anti-spike binding enzyme-linked immunosorbent assay",
+          "reason": "source 'methods' agrees with S129 in [methods], S130 in [methods], S131 in [methods], S132 in [methods], S133 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Sera samples serially diluted in 1% non-fat milk containing PBST were added to the plates and incubated at 37 °C for 1 h. The plates were washed 3× with PBST, horseradish peroxidase conjugated goat anti-monkey IgG (γ-chain specific, Alpha Diagnostics, 1:4,000 dilution), in PBS-T containing 1% non-fat milk was added and incubated for 1 h at room temperature. Wells were washed 3× with PBST before addition of 3,3′,5,5′-tetramethylbenzidine (TMB) substrate solution. The reaction was stopped after 12 min by addition of 0.16 M sulfuric or 1 M hydrochloric acid. The optical density at 450 nanometres was measured with a Biorad microplate reader.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S129",
+            "S130",
+            "S131",
+            "S132",
+            "S133"
+          ],
+          "evidence_text": "Sera samples serially diluted in 1% non-fat milk containing PBST were added to the plates and incubated at 37 °C for 1 h. The plates were washed 3× with PBST, horseradish peroxidase conjugated goat anti-monkey IgG (γ-chain specific, Alpha Diagnostics, 1:4,000 dilution), in PBS-T containing 1% non-fat milk was added and incubated for 1 h at room temperature. Wells were washed 3× with PBST before addition of 3,3′,5,5′-tetramethylbenzidine (TMB) substrate solution. The reaction was stopped after 12 min by addition of 0.16 M sulfuric or 1 M hydrochloric acid. The optical density at 450 nanometres was measured with a Biorad microplate reader.",
+          "reason": "quote found in sentences S129, S130, S131, S132, S133"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S129",
+            "S130",
+            "S131",
+            "S132",
+            "S133"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S129",
+            "S130",
+            "S131",
+            "S132",
+            "S133"
+          ],
+          "evidence_text": "Sera samples serially diluted in 1% non-fat milk containing PBST were added to the plates and incubated at 37 °C for 1 h. The plates were washed 3× with PBST, horseradish peroxidase conjugated goat anti-monkey IgG (γ-chain specific, Alpha Diagnostics, 1:4,000 dilution), in PBS-T containing 1% non-fat milk was added and incubated for 1 h at room temperature. Wells were washed 3× with PBST before addition of 3,3′,5,5′-tetramethylbenzidine (TMB) substrate solution. The reaction was stopped after 12 min by addition of 0.16 M sulfuric or 1 M hydrochloric acid. The optical density at 450 nanometres was measured with a Biorad microplate reader.",
+          "reason": "All cited sentence IDs exist and correspond to the quoted text."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S129, S130, S131, S132, S133",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S129 in [methods], S130 in [methods], S131 in [methods], S132 in [methods], S133 in [methods]"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Focus reduction neutralization titre assay",
+      "assay_name": "Focus reduction neutralization titre assay",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Focus reduction neutralization titre assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S133"
+          ],
+          "evidence_text": "## Focus reduction neutralization titre assay",
+          "reason": "This exact assay name appears as the Methods section heading for a procedure performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "Neutralization assays",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S134"
+          ],
+          "evidence_text": "Neutralization assays",
+          "reason": "This exact phrase appears in the assay's Methods description and refers to the same procedure."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "FRNT assay",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "The exact alias does not appear verbatim in the cited assay section."
+        },
+        {
+          "field_name": "aliases[2]",
+          "proposed_value": "focus reduction neutralization titre assays",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S320"
+          ],
+          "evidence_text": "focus reduction neutralization titre assays",
+          "reason": "This exact phrase appears in the figure caption and refers to the same neutralization measurement."
+        },
+        {
+          "field_name": "platform",
+          "proposed_value": "fluorescence ELISPOT reader (CTL ImmunoSpot S6 Universal Analyzer)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S141"
+          ],
+          "evidence_text": "fluorescence ELISPOT reader (CTL ImmunoSpot S6 Universal Analyzer)",
+          "reason": "The Methods explicitly state that foci for this assay were visualized on this instrument."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "sera samples",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S135"
+          ],
+          "evidence_text": "Sera samples",
+          "reason": "The assay Methods explicitly state that sera samples were serially diluted and used in the assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "live-virus neutralizing antibody titres based on reduction in viral foci",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S141",
+            "S142",
+            "S144",
+            "S320"
+          ],
+          "evidence_text": "foci were visualized on a fluorescence ELISPOT reader (CTL ImmunoSpot S6 Universal Analyzer) and enumerated using Viridot 33 . The neutralization titres were calculated as follows",
+          "reason": "The text states that the assay enumerated viral foci and calculated neutralization titres, matching the proposed readout."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S133",
+            "S134"
+          ],
+          "evidence_text": "## Focus reduction neutralization titre assay",
+          "reason": "source 'methods' agrees with S134 in [methods], S135 in [methods], S136 in [methods], S137 in [methods], S138 in [methods], S139 in [methods], S140 in [methods], S141 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Neutralization assays with authentic SARS-CoV-2 virus (infectious clone SARS-CoV-2 derived from 2019-nCoV/USA_WA1/2020 strain) were performed as previously described 31 . Sera samples were serially diluted (threefold) in serum-free Dulbecco’s modified Eagle’s medium (DMEM) in duplicate wells and incubated with 100–200 focus-forming units infectious clone derived SARS-CoV-2-mNG virus 32 at 37 °C for 1 h. The antibody–virus mixture was added to Vero E6 cell (C1008, ATCC, no. CRL-1586) monolayers seeded in 96-well blackout plates and incubated at 37 °C for 1 h. After incubation, the inoculum was removed and replaced with pre-warmed complete DMEM containing 0.85% methylcellulose. Plates were incubated at 37 °C for 24 h. After 24 h, methylcellulose overlay was removed, cells were washed twice with PBS and fixed with 2% paraformaldehyde in PBS for 30 min at room temperature. Following fixation, plates were washed twice with PBS and foci were visualized on a fluorescence ELISPOT reader (CTL ImmunoSpot S6 Universal Analyzer) and enumerated using Viridot 33 .",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S134",
+            "S135",
+            "S136",
+            "S137",
+            "S138",
+            "S139",
+            "S140",
+            "S141"
+          ],
+          "evidence_text": "Neutralization assays with authentic SARS-CoV-2 virus (infectious clone SARS-CoV-2 derived from 2019-nCoV/USA_WA1/2020 strain) were performed as previously described 31 . Sera samples were serially diluted (threefold) in serum-free Dulbecco’s modified Eagle’s medium (DMEM) in duplicate wells and incubated with 100–200 focus-forming units infectious clone derived SARS-CoV-2-mNG virus 32 at 37 °C for 1 h. The antibody–virus mixture was added to Vero E6 cell (C1008, ATCC, no. CRL-1586) monolayers seeded in 96-well blackout plates and incubated at 37 °C for 1 h. After incubation, the inoculum was removed and replaced with pre-warmed complete DMEM containing 0.85% methylcellulose. Plates were incubated at 37 °C for 24 h. After 24 h, methylcellulose overlay was removed, cells were washed twice with PBS and fixed with 2% paraformaldehyde in PBS for 30 min at room temperature. Following fixation, plates were washed twice with PBS and foci were visualized on a fluorescence ELISPOT reader (CTL ImmunoSpot S6 Universal Analyzer) and enumerated using Viridot 33 .",
+          "reason": "quote found in sentences S134, S135, S136, S137, S138, S139, S140, S141"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S134",
+            "S135",
+            "S136",
+            "S137",
+            "S138",
+            "S139",
+            "S140",
+            "S141"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S134",
+            "S135",
+            "S136",
+            "S137",
+            "S138",
+            "S139",
+            "S140",
+            "S141"
+          ],
+          "evidence_text": "Neutralization assays with authentic SARS-CoV-2 virus (infectious clone SARS-CoV-2 derived from 2019-nCoV/USA_WA1/2020 strain) were performed as previously described 31 . Sera samples were serially diluted (threefold) in serum-free Dulbecco’s modified Eagle’s medium (DMEM) in duplicate wells and incubated with 100–200 focus-forming units infectious clone derived SARS-CoV-2-mNG virus 32 at 37 °C for 1 h. The antibody–virus mixture was added to Vero E6 cell (C1008, ATCC, no. CRL-1586) monolayers seeded in 96-well blackout plates and incubated at 37 °C for 1 h. After incubation, the inoculum was removed and replaced with pre-warmed complete DMEM containing 0.85% methylcellulose. Plates were incubated at 37 °C for 24 h. After 24 h, methylcellulose overlay was removed, cells were washed twice with PBS and fixed with 2% paraformaldehyde in PBS for 30 min at room temperature. Following fixation, plates were washed twice with PBS and foci were visualized on a fluorescence ELISPOT reader (CTL ImmunoSpot S6 Universal Analyzer) and enumerated using Viridot 33 .",
+          "reason": "All cited sentence IDs exist and correspond to the quoted text."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S134, S135, S136, S137, S138, S139, S140, S141",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S134 in [methods], S135 in [methods], S136 in [methods], S137 in [methods], S138 in [methods], S139 in [methods], S140 in [methods], S141 in [methods]"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "FRNT assay against the variants of concern",
+      "assay_name": "FRNT assay against the variants of concern",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "FRNT assay against the variants of concern",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S147",
+            "S152"
+          ],
+          "evidence_text": "FRNT assays were performed as described for the wild-type FRNT assay.",
+          "reason": "The Methods section explicitly describes FRNT assays performed for variants of concern."
+        },
+        {
+          "field_name": "platform",
+          "proposed_value": "ELISPOT reader (CTL)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S164",
+            "S165"
+          ],
+          "evidence_text": "imaged on an ELISPOT reader (CTL)",
+          "reason": "The text directly ties this instrument to imaging foci in this FRNT variant assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "samples",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "The text mentions samples but does not specify a specimen type for this assay in the cited section."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "neutralization titres against wild-type or variant SARS-CoV-2 measured by viral foci",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S153",
+            "S155",
+            "S164",
+            "S165"
+          ],
+          "evidence_text": "The assay with each variant was performed simultaneously with wild-type controls... SARS-CoV-2 (wild type or the variant) (100–200 foci per well)... Foci were visualized using TrueBlue HRP substrate (KPL, no. 5510–0050) and imaged on an ELISPOT reader (CTL).",
+          "reason": "The assay is explicitly performed with wild-type or variant virus and measures viral foci as the basis of neutralization."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S147",
+            "S152"
+          ],
+          "evidence_text": "## FRNT assay against the variants of concern  [methods]",
+          "reason": "source 'methods' agrees with S152 in [methods], S153 in [methods], S154 in [methods], S155 in [methods], S156 in [methods], S157 in [methods], S158 in [methods], S159 in [methods], S160 in [methods], S161 in [methods], S162 in [methods], S163 in [methods], S164 in [methods], S165 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "FRNT assays were performed as described for the wild-type FRNT assay. The assay with each variant was performed simultaneously with wild-type controls. The samples were diluted at 3-fold in 8 serial dilutions using DMEM in duplicates with an initial dilution of 1:10 in a total volume of 60 μl. Serially diluted samples were incubated with an equal volume of SARS-CoV-2 (wild type or the variant) (100–200 foci per well) at 37 °C for 1 h in a round-bottomed 96-well culture plate. The antibody–virus mixture was then added to Vero cells and incubated at 37 °C for 1 h. After incubation, the antibody–virus mixture was removed and 100 μl of prewarmed 0.85% overlay was added to each well. Plates were incubated at 37 °C for 24 h. After 24 h, methylcellulose overlay was removed, and cells were washed 3 times with PBS. Cells were then fixed with 2% paraformaldehyde in PBS (Electron Microscopy Sciences) for 30 min. Following fixation, plates were washed twice with PBS and 100 μl of permeabilization buffer (0.1% bovine serum albumin (BSA), saponin in PBS), was added to the fixed Vero cells for 20 min. Cells were incubated with an anti-SARS-CoV spike primary antibody directly conjugated to biotin (CR3022–biotin) for 1 h at room temperature. Next, the cells were washed 3 times in PBS and avidin–HRP was added for 1 h at room temperature followed by 3 washes in PBS. Foci were visualized using TrueBlue HRP substrate (KPL, no. 5510–0050) and imaged on an ELISPOT reader (CTL).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S152",
+            "S153",
+            "S154",
+            "S155",
+            "S156",
+            "S157",
+            "S158",
+            "S159",
+            "S160",
+            "S161",
+            "S162",
+            "S163",
+            "S164",
+            "S165"
+          ],
+          "evidence_text": "FRNT assays were performed as described for the wild-type FRNT assay. The assay with each variant was performed simultaneously with wild-type controls. The samples were diluted at 3-fold in 8 serial dilutions using DMEM in duplicates with an initial dilution of 1:10 in a total volume of 60 μl. Serially diluted samples were incubated with an equal volume of SARS-CoV-2 (wild type or the variant) (100–200 foci per well) at 37 °C for 1 h in a round-bottomed 96-well culture plate. The antibody–virus mixture was then added to Vero cells and incubated at 37 °C for 1 h. After incubation, the antibody–virus mixture was removed and 100 μl of prewarmed 0.85% overlay was added to each well. Plates were incubated at 37 °C for 24 h. After 24 h, methylcellulose overlay was removed, and cells were washed 3 times with PBS. Cells were then fixed with 2% paraformaldehyde in PBS (Electron Microscopy Sciences) for 30 min. Following fixation, plates were washed twice with PBS and 100 μl of permeabilization buffer (0.1% bovine serum albumin (BSA), saponin in PBS), was added to the fixed Vero cells for 20 min. Cells were incubated with an anti-SARS-CoV spike primary antibody directly conjugated to biotin (CR3022–biotin) for 1 h at room temperature. Next, the cells were washed 3 times in PBS and avidin–HRP was added for 1 h at room temperature followed by 3 washes in PBS. Foci were visualized using TrueBlue HRP substrate (KPL, no. 5510–0050) and imaged on an ELISPOT reader (CTL).",
+          "reason": "quote found in sentences S152, S153, S154, S155, S156, S157, S158, S159, S160, S161, S162, S163, S164, S165"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S152",
+            "S153",
+            "S154",
+            "S155",
+            "S156",
+            "S157",
+            "S158",
+            "S159",
+            "S160",
+            "S161",
+            "S162",
+            "S163",
+            "S164",
+            "S165"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S152",
+            "S153",
+            "S154",
+            "S155",
+            "S156",
+            "S157",
+            "S158",
+            "S159",
+            "S160",
+            "S161",
+            "S162",
+            "S163",
+            "S164",
+            "S165"
+          ],
+          "evidence_text": "S152-S165",
+          "reason": "All cited sentence IDs exist and correspond to the quoted passage."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S152, S153, S154, S155, S156, S157, S158, S159, S160, S161, S162, S163, S164, S165",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S152 in [methods], S153 in [methods], S154 in [methods], S155 in [methods], S156 in [methods], S157 in [methods], S158 in [methods], S159 in [methods], S160 in [methods], S161 in [methods], S162 in [methods], S163 in [methods], S164 in [methods], S165 in [methods]"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    },
+    {
+      "assay_id": "Intracellular cytokine staining assay",
+      "assay_name": "Intracellular cytokine staining assay",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Intracellular cytokine staining assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S166"
+          ],
+          "evidence_text": "Antigen-specific T cell responses were measured using the intracellular cytokine staining assay",
+          "reason": "The Methods explicitly states this assay was used in the study."
+        },
+        {
+          "field_name": "platform",
+          "proposed_value": "BD Symphony Flow Cytometer",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S180"
+          ],
+          "evidence_text": "acquisition using the BD Symphony Flow Cytometer",
+          "reason": "The instrument is explicitly linked to acquisition for this assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "live frozen PBMCs",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S167"
+          ],
+          "evidence_text": "Live frozen PBMCs were revived",
+          "reason": "The assay protocol explicitly states it was performed on live frozen PBMCs."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "antigen-specific intracellular cytokine responses in T cells after spike peptide stimulation",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S166",
+            "S170",
+            "S179"
+          ],
+          "evidence_text": "Antigen-specific T cell responses were measured using the intracellular cytokine staining assay... Each sample was treated with two conditions, no stimulation and a peptide pool spanning the spike protein... The permeabilized cells were stained with intracellular cytokine staining antibodies",
+          "reason": "The text supports measurement of antigen-specific T cell cytokine responses after spike peptide stimulation."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S166"
+          ],
+          "evidence_text": "## Intracellular cytokine staining assay [methods]",
+          "reason": "source 'methods' agrees with S166 in [methods], S167 in [methods], S168 in [methods], S169 in [methods], S170 in [methods], S179 in [methods], S180 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Antigen-specific T cell responses were measured using the intracellular cytokine staining assay as previously described 35 . Live frozen PBMCs were revived, counted and resuspended at a density of 2 million live cells per ml in complete RPMI (RPMI supplemented with 10% FBS and antibiotics). The cells were rested overnight at 37 °C in a CO 2 incubator. The next morning, the cells were counted again, resuspended at a density of 15 million cells per ml in complete RPMI and 100 μl of cell suspension containing 1.5 million cells was added to each well of a 96-well round-bottomed tissue culture plate. Each sample was treated with two conditions, no stimulation and a peptide pool spanning the spike protein at a concentration of 1 μg ml −1 of each peptide in the presence of 1 μg ml −1 of anti-CD28 (clone CD28.2, BD Biosciences) and anti-CD49d (clone 9F10, BD Biosciences) as well as anti-CXCR3 and anti-CXCR5. The permeabilized cells were stained with intracellular cytokine staining antibodies for 20 min at room temperature in 1× perm/wash buffer (BD Biosciences). Cells were then washed twice with perm/wash buffer and once with staining buffer before acquisition using the BD Symphony Flow Cytometer and the associated BD FACS Diva software.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S166",
+            "S167",
+            "S168",
+            "S169",
+            "S170",
+            "S179",
+            "S180"
+          ],
+          "evidence_text": "Antigen-specific T cell responses were measured using the intracellular cytokine staining assay as previously described 35 . Live frozen PBMCs were revived, counted and resuspended at a density of 2 million live cells per ml in complete RPMI (RPMI supplemented with 10% FBS and antibiotics). The cells were rested overnight at 37 °C in a CO 2 incubator. The next morning, the cells were counted again, resuspended at a density of 15 million cells per ml in complete RPMI and 100 μl of cell suspension containing 1.5 million cells was added to each well of a 96-well round-bottomed tissue culture plate. Each sample was treated with two conditions, no stimulation and a peptide pool spanning the spike protein at a concentration of 1 μg ml −1 of each peptide in the presence of 1 μg ml −1 of anti-CD28 (clone CD28.2, BD Biosciences) and anti-CD49d (clone 9F10, BD Biosciences) as well as anti-CXCR3 and anti-CXCR5. The permeabilized cells were stained with intracellular cytokine staining antibodies for 20 min at room temperature in 1× perm/wash buffer (BD Biosciences). Cells were then washed twice with perm/wash buffer and once with staining buffer before acquisition using the BD Symphony Flow Cytometer and the associated BD FACS Diva software.",
+          "reason": "quote found in sentences S166, S167, S168, S169, S170, S179, S180"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S166",
+            "S167",
+            "S168",
+            "S169",
+            "S170",
+            "S179",
+            "S180"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S166",
+            "S167",
+            "S168",
+            "S169",
+            "S170",
+            "S179",
+            "S180"
+          ],
+          "evidence_text": "Antigen-specific T cell responses were measured using the intracellular cytokine staining assay as previously described 35 . Live frozen PBMCs were revived, counted and resuspended at a density of 2 million live cells per ml in complete RPMI (RPMI supplemented with 10% FBS and antibiotics). The cells were rested overnight at 37 °C in a CO 2 incubator. The next morning, the cells were counted again, resuspended at a density of 15 million cells per ml in complete RPMI and 100 μl of cell suspension containing 1.5 million cells was added to each well of a 96-well round-bottomed tissue culture plate. Each sample was treated with two conditions, no stimulation and a peptide pool spanning the spike protein at a concentration of 1 μg ml −1 of each peptide in the presence of 1 μg ml −1 of anti-CD28 (clone CD28.2, BD Biosciences) and anti-CD49d (clone 9F10, BD Biosciences) as well as anti-CXCR3 and anti-CXCR5. The permeabilized cells were stained with intracellular cytokine staining antibodies for 20 min at room temperature in 1× perm/wash buffer (BD Biosciences). Cells were then washed twice with perm/wash buffer and once with staining buffer before acquisition using the BD Symphony Flow Cytometer and the associated BD FACS Diva software.",
+          "reason": "All cited sentence IDs exist and correspond to the quoted text."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S166, S167, S168, S169, S170, S179, S180",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S166 in [methods], S167 in [methods], S168 in [methods], S169 in [methods], S170 in [methods], S179 in [methods], S180 in [methods]"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Bead-based antigen arrays",
+      "assay_name": "Bead-based antigen arrays",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Bead-based antigen arrays",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S182"
+          ],
+          "evidence_text": "We used an existing bead-based autoantigen array, and a cytokine array with expanded content",
+          "reason": "The Methods section explicitly describes bead-based antigen array assays performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "55-plex antigen and 58-plex cytokine arrays",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "The exact alias does not appear verbatim and the text instead uses different phrasings for the arrays."
+        },
+        {
+          "field_name": "platform",
+          "proposed_value": "FlexMap3D instrument (Luminex)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S190"
+          ],
+          "evidence_text": "analysis using a FlexMap3D instrument (Luminex)",
+          "reason": "The instrument is explicitly tied to analysis of this assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "serum samples",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S189"
+          ],
+          "evidence_text": "Serum samples were tested",
+          "reason": "The Methods section explicitly states serum samples were used in this assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "IgG autoantibody and anticytokine antibody binding as mean fluorescence intensity",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S182",
+            "S188",
+            "S190",
+            "S192"
+          ],
+          "evidence_text": "We used an existing bead-based autoantigen array, and a cytokine array with expanded content ... Serum samples from individuals with autoimmune polyendocrine syndrome type 1 (APS1), pulmonary alveolar proteinosis (PAP) or atypical mycobacterial infection (AMI) were used for validation of anticytokine antibodies ... Bound antibody was detected using R-phycoerythrin (R-PE) conjugated Fcγ-specific goat anti-human IgG F(ab′)2 fragment ... Binding events were displayed as mean fluorescence intensity (MFI).",
+          "reason": "The assay measures IgG antibody binding to autoantigen and cytokine targets and reports it as MFI."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S182"
+          ],
+          "evidence_text": "## Bead-based antigen arrays [methods]",
+          "reason": "source 'methods' agrees with S182 in [methods], S186 in [methods], S189 in [methods], S190 in [methods], S191 in [methods], S192 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "We used an existing bead-based autoantigen array, and a cytokine array with expanded content that was based on recent COVID-19 studies 16 . Antigens were coupled to carboxylated magnetic beads (MagPlex-C, Luminex) such that each antigen was linked to beads with unique barcodes, as previously described 16 , 36 , 37 . Serum samples were tested at 1:100 dilution in 0.05% PBS-Tween supplemented with 1% (w/v) BSA. Bound antibody was detected using R-phycoerythrin (R-PE) conjugated Fcγ-specific goat anti-human IgG F(ab′)2 fragment (Jackson ImmunoResearch) before analysis using a FlexMap3D instrument (Luminex). A minimum of 100 events per bead identifier were counted, and samples were studied in duplicate. Binding events were displayed as mean fluorescence intensity (MFI).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S182",
+            "S186",
+            "S189",
+            "S190",
+            "S191",
+            "S192"
+          ],
+          "evidence_text": "We used an existing bead-based autoantigen array, and a cytokine array with expanded content that was based on recent COVID-19 studies 16 . Antigens were coupled to carboxylated magnetic beads (MagPlex-C, Luminex) such that each antigen was linked to beads with unique barcodes, as previously described 16 , 36 , 37 . Serum samples were tested at 1:100 dilution in 0.05% PBS-Tween supplemented with 1% (w/v) BSA. Bound antibody was detected using R-phycoerythrin (R-PE) conjugated Fcγ-specific goat anti-human IgG F(ab′)2 fragment (Jackson ImmunoResearch) before analysis using a FlexMap3D instrument (Luminex). A minimum of 100 events per bead identifier were counted, and samples were studied in duplicate. Binding events were displayed as mean fluorescence intensity (MFI).",
+          "reason": "quote found in sentences S182, S186, S189, S190, S191, S192"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S182",
+            "S186",
+            "S189",
+            "S190",
+            "S191",
+            "S192"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S182",
+            "S186",
+            "S189",
+            "S190",
+            "S191",
+            "S192"
+          ],
+          "evidence_text": "S182; S186; S189; S190; S191; S192",
+          "reason": "All cited sentence IDs exist and correspond to the quoted passage."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S182, S186, S189, S190, S191, S192",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S182 in [methods], S186 in [methods], S189 in [methods], S190 in [methods], S191 in [methods], S192 in [methods]"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "CyTOF analysis of whole-blood samples",
+      "assay_name": "CyTOF analysis of whole-blood samples",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "CyTOF analysis of whole-blood samples",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S194"
+          ],
+          "evidence_text": "CyTOF analysis of whole-blood samples",
+          "reason": "This exact assay section title appears in the Methods and identifies a performed assay."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "cytometry by time of flight (CyTOF)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S30"
+          ],
+          "evidence_text": "cytometry by time of flight (CyTOF)",
+          "reason": "This exact phrase appears and refers to the same assay performed on whole-blood samples."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "CyTOF",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S30"
+          ],
+          "evidence_text": "CyTOF",
+          "reason": "This exact alias appears in the assay description."
+        },
+        {
+          "field_name": "platform",
+          "proposed_value": "Helios mass cytometer (Fluidigm)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S203"
+          ],
+          "evidence_text": "acquired on Helios mass cytometer (Fluidigm)",
+          "reason": "The text explicitly states this instrument was used to acquire the CyTOF samples."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "fresh whole-blood samples",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S195"
+          ],
+          "evidence_text": "Fresh whole-blood samples",
+          "reason": "The Methods explicitly state the assay used fresh whole-blood samples."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "immune cell population frequencies and intracellular phospho-protein marker intensities",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S202",
+            "S217",
+            "S209"
+          ],
+          "evidence_text": "stained with pre-titrated intracellular antibody cocktail... High-dimensional analysis of phospho-CyTOF data... The abundance of cell populations was determined",
+          "reason": "The assay measured phospho-marker data and cell population abundance/frequencies."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S194"
+          ],
+          "evidence_text": "CyTOF analysis of whole-blood samples",
+          "reason": "source 'methods' agrees with S195 in [methods], S198 in [methods], S200 in [methods], S202 in [methods], S203 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Fresh whole-blood samples collected in sodium citrate cell preparation tubes (CPT) were fixed in proteomic stabilizer buffer. Cells were permeabilized and barcoded using Cell-IDTM 20-Plex Pd Barcoding Kit (Fluidigm). One pooled sample containing a mix of all barcoded PBMC samples was stained for 30 min with surface antibody cocktail at room temperature. The next day, the cells were washed with CSM, counted and stained with pre-titrated intracellular antibody cocktail for 30 min at room temperature. Cells were then washed with CSM, stained with iridium-containing DNA intercalator (Fluidigm), washed with MilliQ water and acquired on Helios mass cytometer (Fluidigm) in MilliQ water supplemented with 1× EQ four element calibration beads (Fluidigm).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "quote found in sentences S195, S198, S200, S202, S203"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S195",
+            "S198",
+            "S200",
+            "S202",
+            "S203"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S195",
+            "S198",
+            "S200",
+            "S202",
+            "S203"
+          ],
+          "evidence_text": "S195, S198, S200, S202, S203",
+          "reason": "All cited sentence IDs exist in the source and correspond to the quoted assay description sentences."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S195, S198, S200, S202, S203",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S195 in [methods], S198 in [methods], S200 in [methods], S202 in [methods], S203 in [methods]"
+      },
+      "conflict_detected": true,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "REVIEW"
+    },
+    {
+      "assay_id": "Olink multiplex proximity extension assay (PEA) inflammation panel",
+      "assay_name": "Olink multiplex proximity extension assay (PEA) inflammation panel",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Olink multiplex proximity extension assay (PEA) inflammation panel",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S219"
+          ],
+          "evidence_text": "Olink multiplex proximity extension assay (PEA) inflammation panel",
+          "reason": "The Methods explicitly state this assay was used."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "Olink",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S219",
+            "S38"
+          ],
+          "evidence_text": "using Olink",
+          "reason": "The text uses \"Olink\" as shorthand for this assay in both Methods and Results."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "PEA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S220"
+          ],
+          "evidence_text": "The PEA",
+          "reason": "The text explicitly abbreviates the assay as PEA."
+        },
+        {
+          "field_name": "platform",
+          "proposed_value": "Fluidigm BioMark HD system (Fluidigm)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S223"
+          ],
+          "evidence_text": "quantified by microfluidic qPCR using Fluidigm BioMark HD system (Fluidigm)",
+          "reason": "The Methods directly tie this instrument to quantification in this assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "plasma",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S219"
+          ],
+          "evidence_text": "cytokines in plasma",
+          "reason": "The Methods explicitly state the assay measured plasma cytokines."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "cytokine and inflammatory protein concentrations",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S219",
+            "S222"
+          ],
+          "evidence_text": "We measured cytokines in plasma using Olink multiplex proximity extension assay (PEA) inflammation panel ... quantitatively proportional to the initial concentration of target protein.",
+          "reason": "The assay is stated to measure plasma cytokines and quantify target protein concentration."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S219",
+            "S220",
+            "S221",
+            "S222",
+            "S223"
+          ],
+          "evidence_text": "## Plasma protein profiling using multiplex Olink panel",
+          "reason": "source 'methods' agrees with S219 in [methods], S220 in [methods], S221 in [methods], S222 in [methods], S223 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "We measured cytokines in plasma using Olink multiplex proximity extension assay (PEA) inflammation panel (Olink proteomics: www.olink.com ) according to the manufacturer’s instructions. The PEA is a dual-recognition immunoassay, in which two matched antibodies labelled with unique DNA oligonucleotides simultaneously bind to a target protein in solution. This brings the two antibodies into proximity, allowing their DNA oligonucleotides to hybridize, serving as template for a DNA polymerase-dependent extension step. This creates a double-stranded DNA ‘barcode’ that is unique for the specific antigen and quantitatively proportional to the initial concentration of target protein. The hybridization and extension are immediately followed by PCR amplification and the amplicon is then finally quantified by microfluidic qPCR using Fluidigm BioMark HD system (Fluidigm).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S219",
+            "S220",
+            "S221",
+            "S222",
+            "S223"
+          ],
+          "evidence_text": "We measured cytokines in plasma using Olink multiplex proximity extension assay (PEA) inflammation panel (Olink proteomics: www.olink.com ) according to the manufacturer’s instructions. The PEA is a dual-recognition immunoassay, in which two matched antibodies labelled with unique DNA oligonucleotides simultaneously bind to a target protein in solution. This brings the two antibodies into proximity, allowing their DNA oligonucleotides to hybridize, serving as template for a DNA polymerase-dependent extension step. This creates a double-stranded DNA ‘barcode’ that is unique for the specific antigen and quantitatively proportional to the initial concentration of target protein. The hybridization and extension are immediately followed by PCR amplification and the amplicon is then finally quantified by microfluidic qPCR using Fluidigm BioMark HD system (Fluidigm).",
+          "reason": "quote found in sentences S219, S220, S221, S222, S223"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S219",
+            "S220",
+            "S221",
+            "S222",
+            "S223"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S219",
+            "S220",
+            "S221",
+            "S222",
+            "S223"
+          ],
+          "evidence_text": "S219 S220 S221 S222 S223",
+          "reason": "All cited sentence IDs exist and correspond to the quoted passage."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S219, S220, S221, S222, S223",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S219 in [methods], S220 in [methods], S221 in [methods], S222 in [methods], S223 in [methods]"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Bulk transcriptomics",
+      "assay_name": "Bulk transcriptomics",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Bulk transcriptomics",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S223",
+            "S224"
+          ],
+          "evidence_text": "## Bulk transcriptomics",
+          "reason": "The source explicitly names this methods section as Bulk transcriptomics."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "bulk mRNA sequencing",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S51"
+          ],
+          "evidence_text": "we performed bulk mRNA sequencing of whole blood",
+          "reason": "This exact phrase appears and refers to the same assay."
+        },
+        {
+          "field_name": "platform",
+          "proposed_value": "Illumina NovaSeq6000",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S228"
+          ],
+          "evidence_text": "sequenced on an Illumina NovaSeq6000",
+          "reason": "The text directly ties this sequencing platform to the bulk transcriptomics assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "blood samples stored in Paxgene tubes",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S224"
+          ],
+          "evidence_text": "RNA was isolated from blood samples stored in Paxgene tubes",
+          "reason": "The specimen used for this assay is explicitly stated."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "whole-blood gene expression levels",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S51",
+            "S229"
+          ],
+          "evidence_text": "we performed bulk mRNA sequencing of whole blood",
+          "reason": "Bulk mRNA sequencing of whole blood supports measurement of whole-blood gene expression levels."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S223",
+            "S224"
+          ],
+          "evidence_text": "## Bulk transcriptomics",
+          "reason": "source 'methods' agrees with S224 in [methods], S227 in [methods], S228 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "RNA was isolated from blood samples stored in Paxgene tubes at the Yerkes Genomics Core ( http://www.yerkes.emory.edu/nhp_genomics_core/ ). Libraries were prepared using the Clontech SMART-Seq v.4 Ultra Low Input RNA kit (Takara Bio) in combination with the NexteraXT DNA Library Preparation kit to append dual-indexed adaptor sequences (Illumina). Libraries were validated by capillary electrophoresis on an Agilent 4200 TapeStation, pooled at equimolar concentrations, and sequenced on an Illumina NovaSeq6000 at 100SR, yielding 25–30 million reads per sample.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S224",
+            "S227",
+            "S228"
+          ],
+          "evidence_text": "RNA was isolated from blood samples stored in Paxgene tubes at the Yerkes Genomics Core ( http://www.yerkes.emory.edu/nhp_genomics_core/ ). Libraries were prepared using the Clontech SMART-Seq v.4 Ultra Low Input RNA kit (Takara Bio) in combination with the NexteraXT DNA Library Preparation kit to append dual-indexed adaptor sequences (Illumina). Libraries were validated by capillary electrophoresis on an Agilent 4200 TapeStation, pooled at equimolar concentrations, and sequenced on an Illumina NovaSeq6000 at 100SR, yielding 25–30 million reads per sample.",
+          "reason": "quote found in sentences S224, S227, S228"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S224",
+            "S227",
+            "S228"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S224",
+            "S227",
+            "S228"
+          ],
+          "evidence_text": "S224; S227; S228",
+          "reason": "All cited sentence IDs exist and correspond to the quoted text."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S224, S227, S228",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S224 in [methods], S227 in [methods], S228 in [methods]"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "CITE-seq",
+      "assay_name": "CITE-seq",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "CITE-seq",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S249"
+          ],
+          "evidence_text": "CITE-seq analysis of PBMCs were assayed exactly as previously described 4 .",
+          "reason": "The Methods section explicitly states that CITE-seq was assayed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "cellular indexing of transcriptomes and epitopes by sequencing (CITE-seq)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S69"
+          ],
+          "evidence_text": "We performed cellular indexing of transcriptomes and epitopes by sequencing (CITE-seq) of 45 peripheral blood mononuclear cell (PBMC) samples from 6 individuals",
+          "reason": "This exact phrase appears verbatim and refers to the same assay."
+        },
+        {
+          "field_name": "platform",
+          "proposed_value": "10X Chromium system",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S254"
+          ],
+          "evidence_text": "using the 10X Chromium system",
+          "reason": "The CITE-seq Methods explicitly tie this platform to the assay workflow."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "PBMCs",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S249"
+          ],
+          "evidence_text": "CITE-seq analysis of PBMCs",
+          "reason": "The assay is explicitly described as being performed on PBMCs."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "single-cell transcriptomes and antibody-derived epitope tags",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S69",
+            "S257",
+            "S259",
+            "S263"
+          ],
+          "evidence_text": "cellular indexing of transcriptomes and epitopes by sequencing (CITE-seq)",
+          "reason": "The text supports transcript-level measurement together with antibody barcode/epitope tag libraries in this assay."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S249"
+          ],
+          "evidence_text": "## CITE-seq  [methods]",
+          "reason": "source 'methods' agrees with S249 in [methods], S250 in [methods], S252 in [methods], S254 in [methods], S259 in [methods], S262 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "CITE-seq analysis of PBMCs were assayed exactly as previously described 4 . In brief, live frozen PBMCs were thawed and 2× washed with RPMI supplemented with 10% FBS and 20 μg ml −1 DNase I (Sigma Aldrich). The enriched cells were mixed with total PBMCs at a ratio of 1:2 and mixed cells were stained with a cocktail of TotalSeq-A antibodies in PBS supplemented with 5% FBS, 2 mM EDTA and 5 mg ml −1 human IgG, washed twice with PBS supplemented with 5% FBS, and 2 mM EDTA, and resuspended in PBS supplemented with 1% BSA (Miltenyi), and 0.5 U μl −1 RNase Inhibitor (Sigma Aldrich). Cells were mixed with the reverse transcription mix and subjected to partitioning along with the Chromium gel-beads using the 10X Chromium system to generate the gel-bead in emulsions (GEMs) using the 3′ V3 chemistry (10X Genomics). Amplified antibody barcodes were recovered from the supernatant and were processed to generate TotalSeq-A libraries as instructed by the manufacturer (BioLegend, TotalSeq-A antibodies with 10x Single Cell 3′ Reagent Kit v.3 3.1 protocol). 10x Genomics scRNA-seq and TotalSeq-A libraries were pooled and sequenced on an Illumina HiSeq 4000 using the recommended sequencing read lengths of 28 bp (read 1), 8 bp (i7IndexRead) and 91 bp (read 2).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S249",
+            "S250",
+            "S252",
+            "S254",
+            "S259",
+            "S262"
+          ],
+          "evidence_text": "CITE-seq analysis of PBMCs were assayed exactly as previously described 4 . In brief, live frozen PBMCs were thawed and 2× washed with RPMI supplemented with 10% FBS and 20 μg ml −1 DNase I (Sigma Aldrich). The enriched cells were mixed with total PBMCs at a ratio of 1:2 and mixed cells were stained with a cocktail of TotalSeq-A antibodies in PBS supplemented with 5% FBS, 2 mM EDTA and 5 mg ml −1 human IgG, washed twice with PBS supplemented with 5% FBS, and 2 mM EDTA, and resuspended in PBS supplemented with 1% BSA (Miltenyi), and 0.5 U μl −1 RNase Inhibitor (Sigma Aldrich). Cells were mixed with the reverse transcription mix and subjected to partitioning along with the Chromium gel-beads using the 10X Chromium system to generate the gel-bead in emulsions (GEMs) using the 3′ V3 chemistry (10X Genomics). Amplified antibody barcodes were recovered from the supernatant and were processed to generate TotalSeq-A libraries as instructed by the manufacturer (BioLegend, TotalSeq-A antibodies with 10x Single Cell 3′ Reagent Kit v.3 3.1 protocol). 10x Genomics scRNA-seq and TotalSeq-A libraries were pooled and sequenced on an Illumina HiSeq 4000 using the recommended sequencing read lengths of 28 bp (read 1), 8 bp (i7IndexRead) and 91 bp (read 2).",
+          "reason": "quote found in sentences S249, S250, S252, S254, S259, S262"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S249",
+            "S250",
+            "S252",
+            "S254",
+            "S259",
+            "S262"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S249",
+            "S250",
+            "S252",
+            "S254",
+            "S259",
+            "S262"
+          ],
+          "evidence_text": "S249 S250 S252 S254 S259 S262",
+          "reason": "All cited sentence IDs exist and correspond to the quoted text."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S249, S250, S252, S254, S259, S262",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S249 in [methods], S250 in [methods], S252 in [methods], S254 in [methods], S259 in [methods], S262 in [methods]"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "RNA isolation and qPCR",
+      "assay_name": "RNA isolation and qPCR",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "RNA isolation and qPCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S307",
+            "S308",
+            "S311",
+            "S315"
+          ],
+          "evidence_text": "## RNA isolation and qPCR",
+          "reason": "This exact assay section title appears in the Methods and the procedure is described there."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "enzyme-linked immunosorbent assay",
+          "verdict": "CONTRADICTED",
+          "evidence_sentence_ids": [
+            "S304"
+          ],
+          "evidence_text": "as measured by enzyme-linked immunosorbent assay",
+          "reason": "This phrase refers to a different assay, not an alias for RNA isolation and qPCR."
+        },
+        {
+          "field_name": "platform",
+          "proposed_value": "Biorad CFX384 real-time PCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S315"
+          ],
+          "evidence_text": "in Biorad CFX384 real-time PCR",
+          "reason": "The text explicitly states this instrument was used for the PCRs in this assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "RNA from purified monocytes",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S299",
+            "S300",
+            "S302",
+            "S308"
+          ],
+          "evidence_text": "the unbound fraction containing purified CD14 + monocytes",
+          "reason": "The immediately preceding methods describe purified monocytes that were then used for RNA isolation and qPCR."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "gene expression measured by SYBR green real-time PCR",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "The text states SYBR green real-time PCR was performed but does not explicitly state gene expression as the assay readout here."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S307",
+            "S308",
+            "S315"
+          ],
+          "evidence_text": "## RNA isolation and qPCR",
+          "reason": "source 'methods' agrees with S308 in [methods], S311 in [methods], S314 in [methods], S315 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "RNA was isolated using Aurum Total RNA minikit (Biorad, cat. no. 7326820) following the manufacturer’s protocol. cDNA was synthesized using iScript Advanced cDNA synthesis kit (Biorad, cat. no. 1725038) using 150 ng total RNA in 20 μl volume. The cDNA samples were diluted 5-fold by adding 80 μl sterile nuclease-free water and 5 μl of cDNA was used for PCR reaction. The PCRs were carried out using Biorad Prime PCR reagents and SYBR green chemistry (SsoAdvanced Universal SYBR Green Supermix (cat. no. 1725272)) in Biorad CFX384 real-time PCR.",
+          "verdict": "CONTRADICTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "quote does not appear in sentences S308, S311, S314, S315"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S308",
+            "S311",
+            "S314",
+            "S315"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S308",
+            "S311",
+            "S314",
+            "S315"
+          ],
+          "evidence_text": "S308 S311 S314 S315",
+          "reason": "All cited sentence IDs exist and correspond to the quoted assay description sentences."
+        }
+      ],
+      "quote_check": {
+        "status": "missing",
+        "verdict": "CONTRADICTED",
+        "detail": "quote does not appear in sentences S308, S311, S314, S315",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S308 in [methods], S311 in [methods], S314 in [methods], S315 in [methods]"
+      },
+      "conflict_detected": true,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    }
+  ]
+}

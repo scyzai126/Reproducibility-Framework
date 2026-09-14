@@ -1,0 +1,123 @@
+{
+  "flow cytometry assay": {
+    "name_in_paper": [
+      "flow cytometry"
+    ],
+    "aliases": [],
+    "platform": "LSRII flow cytometer",
+    "sample_type": "cells",
+    "readouts": "surface and intracellular marker expression",
+    "source": "methods",
+    "evidence": {
+      "section": "Flow cytometry and sorting",
+      "sentence_ids": [
+        "S16",
+        "S17",
+        "S18"
+      ],
+      "quote": "For surface staining, cells were incubated with antibodies ( Table S2 for list) for 30 minutes at 4°C in the dark along with DAPI (Biolegend). For intracellular staining, cells were incubated in perm-fix buffer (eBioscience) and stained with antibodies for 60 min at 20–25°C. Cells were acquired on an LSRII flow cytometer or sorted with Influx cell sorter (BD Biosciences) and analyzed using FlowJo (Treestar, Ashland, OR)."
+    }
+  },
+  "RNA-seq assay": {
+    "name_in_paper": [
+      "RNA-Sequencing"
+    ],
+    "aliases": [
+      "RNAseq",
+      "RNA-seq"
+    ],
+    "platform": "Illumina HiSeq2000",
+    "sample_type": "sorted cells",
+    "readouts": "whole-transcriptome gene expression profiles",
+    "source": "methods",
+    "evidence": {
+      "section": "Whole-Transcriptome Profiling by RNA-Sequencing",
+      "sentence_ids": [
+        "S19",
+        "S20",
+        "S21"
+      ],
+      "quote": "Total RNA was isolated from sorted cells (gating strategy in Fig. S1 ) using AllPrep DNA/RNA kit (QIAGEN) and quantitated using the Bioanalyzer (Agilent). Library was prepared using a poly-A pull-down and Illumina TruSeq RNA kit, and sequenced using Illumina HiSeq2000."
+    }
+  },
+  "cytometry time of flight assay": {
+    "name_in_paper": [
+      "CyTOF"
+    ],
+    "aliases": [
+      "cytometry by time-of-flight"
+    ],
+    "platform": "CyTOF2 (Fluidigm)",
+    "sample_type": "cryopreserved cell suspensions",
+    "readouts": "high-dimensional protein marker expression",
+    "source": "methods",
+    "evidence": {
+      "section": "CyTOF Sample Preparation and Analysis",
+      "sentence_ids": [
+        "S26",
+        "S27",
+        "S28"
+      ],
+      "quote": "Cryopreserved cell suspensions were thawed and labeled with Rh103 intercalator as a viability marker. Cells from each tissue were barcoded using CD45 antibodies conjugated with monoisotopic cisplatin, pooled, and stained with a panel of antibodies (see Table S2 ). Samples were then incubated in 0.125nM Ir intercalator and acquired on a CyTOF2 (Fluidigm)."
+    }
+  },
+  "cell proliferation assay": {
+    "name_in_paper": [
+      "T cell proliferation assays"
+    ],
+    "aliases": [],
+    "platform": "Proliferation Dye eFluor™450",
+    "sample_type": "Memory CD8 + T cells from BM, LN, Spl or Lung tissues",
+    "readouts": "cell division after CD3/CD28 or antigen stimulation",
+    "source": "methods",
+    "evidence": {
+      "section": "T cell proliferation assays",
+      "sentence_ids": [
+        "S32",
+        "S33"
+      ],
+      "quote": "Memory CD8 + T cells from BM, LN, Spl or Lung tissues were sorted ( Fig S1 ) and stained with Proliferation Dye eFluor™450 (eBioscience). Cells were plated (5×10 5 /mL) in media (RPMI-1640, 10% FBS, 1mM sodium pyruvate, 100 U/mL penicillin, 100ug/mL streptomycin, 2mM L-glutamine, and 100 μM β-Mercaptoethanol) with Human CD3/CD28 Activator (StemCell technologies) and analyzed 4–5 days later by flow cytometry."
+    }
+  },
+  "HLA multimer staining": {
+    "name_in_paper": [
+      "HLA multimer staining"
+    ],
+    "aliases": [
+      "CMV-multimer"
+    ],
+    "platform": "HLA multimer reagents",
+    "sample_type": "cultured whole mononuclear cells from Blood, BM, or LN",
+    "readouts": "detection of CMV-specific T cells",
+    "source": "methods",
+    "evidence": {
+      "section": "T cell proliferation assays",
+      "sentence_ids": [
+        "S34",
+        "S35",
+        "S36"
+      ],
+      "quote": "In some cases, whole mononuclear cells from Blood, BM, or LN were cultured with 0.3μg/mL HCMV pp65 peptide mix (JPT Peptide Technology). IL-2 100U/mL was added on day 2 and cells were analyzed at day 8 or 9 after stimulation. Cells were stained with HLA multimer reagents containing epitopes of CMV (CMV-multimer) ( Table S2 ) as previously described.( 20 )"
+    }
+  },
+  "T cell receptor repertoire sequencing assay": {
+    "name_in_paper": [
+      "TCR sequencing"
+    ],
+    "aliases": [
+      "sequencing of the TCR CDR3β variable (V) regions"
+    ],
+    "platform": "Illumina MiSeq",
+    "sample_type": "DNA extracted from cells",
+    "readouts": "TCR-Vβ sequence repertoires and clonotype diversity",
+    "source": "methods",
+    "evidence": {
+      "section": "Human T cell receptor (TCR) sequencing and analysis",
+      "sentence_ids": [
+        "S37",
+        "S38"
+      ],
+      "quote": "DNA was extracted from cells using the Gentra Puregene kit (Qiagen, Valencia, CA). TCR-Vβ sequences were amplified from the indicated DNA quantities ( Table S3 ) with specific primers as published.( 21 ) Amplicons were purified using the AMPure XP system (Beckman Coulter, Inc., Indianapolis, IN); libraries were generated using the Qiagen Multiplex PCR kit and sequenced using Illumina MiSeq."
+    }
+  }
+}

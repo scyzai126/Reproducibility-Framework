@@ -1,0 +1,216 @@
+{
+  "summary": {
+    "total": 2,
+    "accept": 1,
+    "review": 1,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_absent": 0,
+    "field_issues": {
+      "evidence.sentence_ids": {
+        "NOT_REPORTED": 1
+      }
+    }
+  },
+  "results": [
+    {
+      "assay_id": "Hemagglutination inhibition assays",
+      "assay_name": "Hemagglutination inhibition assays",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Hemagglutination inhibition assays",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S106"
+          ],
+          "evidence_text": "Hemagglutination inhibition assays were performed",
+          "reason": "The Methods explicitly states that hemagglutination inhibition assays were performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "HAI titers",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S14"
+          ],
+          "evidence_text": "flu vaccine‐specific hemagglutination inhibition (HAI) titers",
+          "reason": "The text uses HAI titers to refer to the titers measured by the hemagglutination inhibition assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "influenza vaccine-specific hemagglutination inhibition titers",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S14"
+          ],
+          "evidence_text": "flu vaccine‐specific hemagglutination inhibition (HAI) titers, which were measured",
+          "reason": "The passage explicitly states that the assay measured flu vaccine-specific HAI titers."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S106"
+          ],
+          "evidence_text": "Hemagglutination inhibition assays were performed as previously described",
+          "reason": "source 'methods' agrees with S106 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Hemagglutination inhibition assays were performed as previously described (Thakar et al., 2015 ).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S106"
+          ],
+          "evidence_text": "Hemagglutination inhibition assays were performed as previously described (Thakar et al., 2015 ).",
+          "reason": "quote found in sentences S106"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S106"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S106"
+          ],
+          "evidence_text": "Hemagglutination inhibition assays were performed as previously described (Thakar et al., 2015 ).",
+          "reason": "S106 exists in the source and contains the quoted evidence."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S106",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S106 in [methods]"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "LC–MS",
+      "assay_name": "LC–MS",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "LC–MS",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S114"
+          ],
+          "evidence_text": "using a combination of four LC–MS methods",
+          "reason": "The text explicitly states that LC–MS methods were used in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "untargeted metabolomics",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S11"
+          ],
+          "evidence_text": "we performed untargeted metabolomics on blood plasma samples",
+          "reason": "This phrase appears verbatim and refers to the same metabolomics assay performed here."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "LC–MS‐based metabolomics",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S189"
+          ],
+          "evidence_text": "LC–MS‐based metabolomics",
+          "reason": "This exact phrase appears and refers to the same metabolomics measurement."
+        },
+        {
+          "field_name": "platform",
+          "proposed_value": "Nexera X2 U‐HPLC systems (Shimadzu Scientific Instruments) coupled to Q Exactive/Exactive Plus orbitrap mass spectrometers (Thermo Fisher Scientific)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S119"
+          ],
+          "evidence_text": "Data were acquired using LC–MS systems consisting of Nexera X2 U‐HPLC systems (Shimadzu Scientific Instruments) coupled to Q Exactive/Exactive Plus orbitrap mass spectrometers (Thermo Fisher Scientific).",
+          "reason": "The methods explicitly tie this instrument configuration to the LC–MS assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "plasma samples",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S114"
+          ],
+          "evidence_text": "measured from plasma samples",
+          "reason": "The assay is explicitly described as being measured from plasma samples."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "plasma metabolite profiles and metabolite abundances",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S114",
+            "S166"
+          ],
+          "evidence_text": "The plasma metabolomic profiles of participants were measured from plasma samples",
+          "reason": "The text states that plasma metabolomic profiles were measured, and downstream analysis identifies differentially abundant metabolites."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S114",
+            "S119"
+          ],
+          "evidence_text": "## LC–MS untargeted metabolomics profiling from plasma samples",
+          "reason": "source 'methods' agrees with S114 in [methods], S119 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "The plasma metabolomic profiles of participants were measured from plasma samples using a combination of four LC–MS methods that measure complementary metabolites: two methods that measure polar metabolites, a method that measures metabolites of intermediate polarity (e.g., fatty acids and bile acids), and a lipid profiling method (see below for method‐specific details). Data were acquired using LC–MS systems consisting of Nexera X2 U‐HPLC systems (Shimadzu Scientific Instruments) coupled to Q Exactive/Exactive Plus orbitrap mass spectrometers (Thermo Fisher Scientific).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S114",
+            "S119"
+          ],
+          "evidence_text": "The plasma metabolomic profiles of participants were measured from plasma samples using a combination of four LC–MS methods that measure complementary metabolites: two methods that measure polar metabolites, a method that measures metabolites of intermediate polarity (e.g., fatty acids and bile acids), and a lipid profiling method (see below for method‐specific details). Data were acquired using LC–MS systems consisting of Nexera X2 U‐HPLC systems (Shimadzu Scientific Instruments) coupled to Q Exactive/Exactive Plus orbitrap mass spectrometers (Thermo Fisher Scientific).",
+          "reason": "quote found in sentences S114, S119"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S114",
+            "S119"
+          ],
+          "verdict": "NOT_REPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "not reported by the verifier"
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S114, S119",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S114 in [methods], S119 in [methods]"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

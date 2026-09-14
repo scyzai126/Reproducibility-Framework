@@ -16,7 +16,8 @@ interface Props {
 }
 
 export default function Sidebar({ sessions, currentId, isOpen, onToggle, onNewChat, onSelectSession, cachedPmids, onSelectPaper }: Props) {
-  const [papersExpanded, setPapersExpanded] = useState(true);
+  // Collapsed by default: the list is 16 PMIDs and pushes the rest of the sidebar off-screen.
+  const [papersExpanded, setPapersExpanded] = useState(false);
   const [historyExpanded, setHistoryExpanded] = useState(true);
   const formatDate = (iso: string) => {
     const d = new Date(iso);
@@ -103,7 +104,7 @@ export default function Sidebar({ sessions, currentId, isOpen, onToggle, onNewCh
           )}
         </div>
 
-        {/* Assay registry — a browsable dataset, not a chat session */}
+        {/* Assays — the corpus table, and building one paper's registry. Not a chat session. */}
         <div className="border-b border-gray-200">
           <Link
             href="/assays"
@@ -112,7 +113,7 @@ export default function Sidebar({ sessions, currentId, isOpen, onToggle, onNewCh
             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M3 3h18v4H3z"/><path d="M3 11h18v4H3z"/><path d="M3 19h18v2H3z"/>
             </svg>
-            Assay Registry
+            Assays
           </Link>
         </div>
 

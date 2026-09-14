@@ -1,0 +1,89 @@
+{
+  "summary": {
+    "assays": 7,
+    "fields_re_extracted": 2,
+    "actions": {
+      "REPLACED": 2
+    },
+    "reported_not_corrected": 0
+  },
+  "results": [
+    {
+      "assay_id": "SARS-CoV-2 RBD ELISA",
+      "assay_name": "SARS-CoV-2 RBD ELISA",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "OC43 and NL63 coronavirus RBD ELISA",
+      "assay_name": "OC43 and NL63 coronavirus RBD ELISA",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "ELISAs"
+          ],
+          "blind_answer": [
+            "Plasma IgG ELISAs for seroreactivity to RBD of HCoV-OC43 or HCoV-NL63",
+            "HCoV-OC43 and HCoV-NL63 RBD"
+          ],
+          "dropped": [
+            "ELISAs"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Direct ex vivo PBMC immune cell phenotyping",
+      "assay_name": "Direct ex vivo PBMC immune cell phenotyping",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Activation induced cell marker assay",
+      "assay_name": "Activation induced cell marker assay",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Intracellular cytokine staining assay",
+      "assay_name": "Intracellular cytokine staining assay",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "evidence",
+          "action": "REPLACED",
+          "previous": "For all flow cytometry assays of stimulated T cells, cryopreserved cells were thawed by diluting them in 10 mL complete RPMI 1640 with 5% human AB serum (Gemini Bioproducts) in the presence of benzonase [20ul/10mL]. All samples were acquired on a ZE5 Cell analyzer (Bio-rad laboratories), and analyzed with FlowJo software (Tree Star, San Carlos, CA). For the intracellular cytokine staining, PBMC were cultured in the presence of SARS-CoV-2 specific MPs [1 μg/ml] for 9 hours. Golgi-Plug containing brefeldin A (BD Biosciences, San Diego, CA) and monensin (Biolegend, San Diego, CA) were added 3 hours into the culture. Cells were then washed and surface stained for 30 minutes on ice, fixed with 1% of paraformaldehyde (Sigma-Aldrich, St. Louis, MO) and kept at 4°C overnight. Antibodies used in the ICS assay are listed in Table S5 . The gates applied for the identification of IFNγ, GzB, TNFα, or IL-10 production on the total population of CD8 + T cells were defined according to the cells cultured with DMSO for each individual.",
+          "blind_answer": {
+            "quote": "To measure SARS-CoV-2-specific CD8 + T cells in the recovered COVID-19 patients, we utilized two complementary methodologies, AIM assays and intracellular cytokine staining (ICS). Independently, ICS assays detected IFN-γ + SARS-CoV-2-specific CD8 + T cells in the majority of COVID-19 cases.",
+            "sentence_ids": [
+              "S111",
+              "S139"
+            ]
+          }
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Cytokine bead assays",
+      "assay_name": "Cytokine bead assays",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "lateral flow assay",
+      "assay_name": "lateral flow assay",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    }
+  ]
+}

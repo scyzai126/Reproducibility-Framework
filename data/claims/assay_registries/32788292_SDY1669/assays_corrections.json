@@ -1,0 +1,138 @@
+{
+  "summary": {
+    "assays": 9,
+    "fields_re_extracted": 5,
+    "actions": {
+      "REPLACED": 5
+    },
+    "reported_not_corrected": 0
+  },
+  "results": [
+    {
+      "assay_id": "mass cytometry",
+      "assay_name": "mass cytometry",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "intracellular staining assay",
+      "assay_name": "intracellular staining assay",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "evidence",
+          "action": "REPLACED",
+          "previous": "To test this, we performed ex vivo stimulation of PBMCs from healthy or COVID-19–infected individuals, using a mixture of synthetic TLR7 and TLR 8 (TLR7/8) and TLR3 ligands, which are known to be expressed by viruses, and we performed an intracellular staining assay to detect cytokine responses.",
+          "blind_answer": {
+            "quote": "we performed an intracellular staining assay to detect cytokine responses.",
+            "sentence_ids": [
+              "S44"
+            ]
+          }
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Olink multiplex inflammation panel",
+      "assay_name": "Olink multiplex inflammation panel",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "enzyme-linked immunosorbent assay (ELISA)",
+      "assay_name": "enzyme-linked immunosorbent assay (ELISA)",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "readouts",
+          "action": "REPLACED",
+          "previous": "protein concentrations of inflammatory mediators and IFN-α",
+          "blind_answer": "plasma concentrations of TNFSF14, EN-RAGE, and oncostatin M (OSM)"
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "cellular indexing of transcriptomes and epitopes by sequencing (CITE-seq)",
+      "assay_name": "cellular indexing of transcriptomes and epitopes by sequencing (CITE-seq)",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "bulk RNA sequencing (RNA-seq) analysis",
+      "assay_name": "bulk RNA sequencing (RNA-seq) analysis",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "bulk RNA-seq",
+            "RNA-seq"
+          ],
+          "blind_answer": [
+            "bulk PBMC transcriptomics",
+            "bulk RNA-seq dataset",
+            "bulk transcriptomics"
+          ],
+          "dropped": [
+            "bulk RNA-seq"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "highly sensitive ELISA enabled by single molecule array (SIMoA) technology",
+      "assay_name": "highly sensitive ELISA enabled by single molecule array (SIMoA) technology",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "evidence",
+          "action": "REPLACED",
+          "previous": "We thus measured the concentration of IFN-α in plasma using a highly sensitive ELISA enabled by single molecule array (SIMoA) technology.",
+          "blind_answer": {
+            "quote": "We thus measured the concentration of IFN-α in plasma using a highly sensitive ELISA enabled by single molecule array (SIMoA) technology.",
+            "sentence_ids": [
+              "S110"
+            ]
+          }
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "PCR quantitation of bacterial 16 S ribosomal RNA (rRNA) gene product",
+      "assay_name": "PCR quantitation of bacterial 16 S ribosomal RNA (rRNA) gene product",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "qPCR"
+          ],
+          "blind_answer": [
+            "bacterial DNA",
+            "bacterial 16 S rRNA gene"
+          ],
+          "dropped": [
+            "qPCR"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "TLR4-based reporter assay",
+      "assay_name": "TLR4-based reporter assay",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    }
+  ]
+}

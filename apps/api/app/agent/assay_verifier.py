@@ -35,10 +35,12 @@ import json
 import logging
 import re
 import unicodedata
+from collections.abc import Callable
 
 from openai import AsyncOpenAI
 
 from app.agent.claim_parser import _load_prompt, _strip_fences
+from app.agent.jats_parser import sentence_sections
 from app.config import settings
 
 logger = logging.getLogger(__name__)
@@ -150,21 +152,27 @@ def check_source_section(entry: dict, sections: dict[str, str]) -> dict:
     Reports; never rewrites. An entry admitted as NEW_ASSAY correctly carries "results", so a
     mismatch is a signal for a human rather than a value to correct automatically.
 
+    The `verdict` mirrors check_quote_verbatim's, and is what lets _normalize_result overrule
+    the judge on this field: where the cited sentences sit is a fact about the document, not an
+    opinion. It is None on "unknown" so an entry with no ids, or one predating the field, keeps
+    whatever the judge said instead of being marked wrong for a check that could not run.
+
     Returns `unknown` -- never a mismatch -- when the entry cites no sentence_ids, when its ids
     are absent from the map, or when `source` is missing. Most registries on disk predate both
     fields, and they must pass through quietly, the same concession check_quote_verbatim makes.
     """
     source = entry.get("source")
     if source not in ("methods", "results"):
-        return {"status": "unknown", "detail": f"source is {source!r}, nothing to check"}
+        return {"status": "unknown", "verdict": None,
+                "detail": f"source is {source!r}, nothing to check"}
 
     ids = [str(s) for s in (get_evidence(entry).get("sentence_ids") or [])]
     if not ids:
-        return {"status": "unknown", "detail": "entry cites no sentence_ids"}
+        return {"status": "unknown", "verdict": None, "detail": "entry cites no sentence_ids"}
 
     located = {sid: sections[sid] for sid in ids if sid in sections}
     if not located:
-        return {"status": "unknown",
+        return {"status": "unknown", "verdict": None,
                 "detail": f"none of {', '.join(ids)} appear in the paper's section map"}
 
     buckets = sorted(set(located.values()))
@@ -173,9 +181,11 @@ def check_source_section(entry: dict, sections: dict[str, str]) -> dict:
 
     where = ", ".join(f"{sid} in [{bucket}]" for sid, bucket in located.items())
     if aligned:
-        return {"status": "aligned", "detail": f"source {source!r} agrees with {where}"}
+        return {"status": "aligned", "verdict": SUPPORTED,
+                "detail": f"source {source!r} agrees with {where}"}
     return {
         "status": "mismatch",
+        "verdict": CONTRADICTED,
         "detail": f"source is {source!r} but its evidence sits in {'/'.join(buckets)} ({where})",
     }
 
@@ -367,9 +377,9 @@ def derive_record_verdict(identity_verdict: str, verifications: list[dict]) -> s
 
 
 def _normalize_result(
-    assay_key: str, entry: dict, raw: dict, quote_check: dict
+    assay_key: str, entry: dict, raw: dict, quote_check: dict, source_check: dict | None = None
 ) -> dict:
-    """Build one assay's report from the judge's answer plus the deterministic quote check.
+    """Build one assay's report from the judge's answer plus the two deterministic checks.
 
     `assay_id` is forced to the real registry key — a per-assay call gives the model no way
     to know it beyond the echo we asked for.
@@ -395,6 +405,18 @@ def _normalize_result(
                 verification["verdict"] = quote_check["verdict"]
                 verification["reason"] = quote_check["detail"]
 
+    # And the section check outranks it on `source`, for the same reason: where the cited
+    # sentences sit is a fact about the document. Measured need -- over a 30-paper run the judge
+    # returned two `source` verdicts across 171 assays while this check found two mismatches on
+    # *different* entries, which then survived into the finished registry because nothing
+    # flagged them for round 3. A None verdict means the check could not run, and leaves the
+    # judge's answer alone.
+    if source_check and source_check.get("verdict") is not None:
+        for verification in verifications:
+            if verification["field_name"] == "source":
+                verification["verdict"] = source_check["verdict"]
+                verification["reason"] = source_check["detail"]
+
     identity_key = name_field(entry)
     identity = raw.get("assay_identity_verdict")
     if identity not in _MODEL_VERDICTS:
@@ -408,13 +430,15 @@ def _normalize_result(
         "assay_identity_verdict": identity,
         "field_verifications": verifications,
         "quote_check": quote_check,
+        "source_check": source_check,
         "conflict_detected": bool(raw.get("conflict_detected")),
         "record_verdict": derive_record_verdict(identity, verifications),
         "model_record_verdict": model_verdict if model_verdict in (ACCEPT, REVIEW, REJECT) else None,
     }
 
 
-def _error_result(assay_key: str, entry: dict, quote_check: dict, message: str) -> dict:
+def _error_result(assay_key: str, entry: dict, quote_check: dict, message: str,
+                  source_check: dict | None = None) -> dict:
     """Report shape for an assay whose verifier call failed outright."""
     return {
         "assay_id": assay_key,
@@ -424,6 +448,7 @@ def _error_result(assay_key: str, entry: dict, quote_check: dict, message: str) 
             _missing_verification(field, value) for field, value in proposed_fields(entry)
         ],
         "quote_check": quote_check,
+        "source_check": source_check,
         "conflict_detected": False,
         "record_verdict": "ERROR",
         "model_record_verdict": None,
@@ -438,6 +463,7 @@ async def verify_assay(
     paper_title: str,
     client: AsyncOpenAI,
     model: str = settings.OPENAI_MODEL,
+    sections: dict[str, str] | None = None,
 ) -> dict:
     """Verify one registry entry against the paper. One LLM call, one assay.
 
@@ -449,6 +475,11 @@ async def verify_assay(
     bad entry cannot cost a whole paper's verdicts.
     """
     quote_check = check_quote_verbatim(entry, source_text)
+    # Both free checks run before the call, so the judge's answer on either field can be
+    # overruled by fact. `sections` is passed in by verify_registry, which builds it once for
+    # the paper rather than once per assay.
+    source_check = check_source_section(
+        entry, sections if sections is not None else sentence_sections(source_text))
 
     candidate = json.dumps({assay_key: entry}, indent=2, ensure_ascii=False)
     prompt = (
@@ -469,15 +500,17 @@ async def verify_assay(
         parsed = json.loads(raw) if raw else {}
     except Exception as exc:  # noqa: BLE001 - any failure becomes a per-assay error report
         logger.warning("%s: verification call failed - %s", assay_key, exc)
-        return _error_result(assay_key, entry, quote_check, f"{type(exc).__name__}: {exc}")
+        return _error_result(assay_key, entry, quote_check, f"{type(exc).__name__}: {exc}",
+                             source_check)
 
     if not isinstance(parsed, dict):
         return _error_result(
             assay_key, entry, quote_check,
             f"verifier returned {type(parsed).__name__}, not an object",
+            source_check,
         )
 
-    return _normalize_result(assay_key, entry, parsed, quote_check)
+    return _normalize_result(assay_key, entry, parsed, quote_check, source_check)
 
 
 async def verify_registry(
@@ -488,6 +521,7 @@ async def verify_registry(
     model: str = settings.OPENAI_MODEL,
     limit: int | None = None,
     max_concurrency: int = MAX_CONCURRENT_CALLS,
+    on_item: Callable[[int, int, dict], None] | None = None,
 ) -> list[dict]:
     """Verify every entry in an assays.json mapping, one call each.
 
@@ -498,6 +532,12 @@ async def verify_registry(
     interleave; the progress lines are the one thing that arrives out of order, and they
     carry the assay name precisely because the counter no longer identifies it.
 
+    `on_item(done, total, result)` fires beside each of those lines, for a caller that is
+    watching this round somewhere other than a terminal. It is additive: the print stays, so
+    the CLI is unchanged, and omitting the callback is exactly today's behaviour. The same
+    out-of-order caveat applies -- a listener that assumes `done` identifies the assay will be
+    wrong, which is why the whole result is handed over.
+
     verify_assay never raises, so no call can cancel its siblings.
     """
     keys = list(assays)
@@ -506,15 +546,20 @@ async def verify_registry(
 
     semaphore = asyncio.Semaphore(max(1, max_concurrency))
     done = 0
+    # Parsed once for the paper, not once per assay: it is the same map for every entry, and
+    # sentence_sections walks the whole document to build it.
+    sections = sentence_sections(source_text)
 
     async def _verify_one(key: str) -> dict:
         nonlocal done
         async with semaphore:
             result = await verify_assay(key, assays[key], source_text, paper_title,
-                                        client, model)
+                                        client, model, sections=sections)
         done += 1
         print(f"  [{done}/{len(keys)}] {key}: {result['record_verdict']} "
               f"(identity {result['assay_identity_verdict']})")
+        if on_item is not None:
+            on_item(done, len(keys), result)
         return result
 
     print(f"Verifying {len(keys)} assay(s), up to {max(1, max_concurrency)} at a time...")

@@ -1,0 +1,219 @@
+"""GET /agent/assay-immport and its paid counterpart.
+
+The sweep runs on a page load over the whole corpus, so the properties that matter are that it
+costs nothing, that a dead database degrades instead of 500ing, and that the endpoint which does
+spend refuses to until it has been told the bill.
+"""
+
+import json
+
+import pytest
+from fastapi.testclient import TestClient
+
+import app.api.routes as routes
+from app.database import get_session
+from app.main import app
+
+
+class _NeverCalled:
+    def __init__(self):
+        self.calls = 0
+        self.chat = type("c", (), {"completions": self})()
+
+    async def create(self, **_):
+        self.calls += 1
+        raise AssertionError("a free endpoint made a model call")
+
+
+class _FakeSession:
+    def __init__(self, experiments=None, raises=None):
+        self.experiments, self.raises = experiments or {}, raises
+
+    async def execute(self, statement, params=None):
+        if self.raises is not None:
+            raise self.raises
+        sql, params = str(statement), params or {}
+        if "COUNT(*)" in sql:
+            rows = [(s, len(e)) for s, e in self.experiments.items()
+                    if s in set(params.get("studies") or [])]
+        elif "measurement_technique FROM experiment WHERE experiment_accession" in sql:
+            wanted = params.get("acc", "")
+            rows = [(tech,) for e in self.experiments.values()
+                    for acc, tech in e if acc == wanted]
+        else:
+            pattern = (params.get("pattern") or "").strip("%").lower()
+            rows = [(acc, tech)
+                    for acc, tech in self.experiments.get(params.get("study_accession", ""), [])
+                    if pattern and pattern in tech.lower()]
+        return type("R", (), {
+            "fetchall": lambda self: rows,
+            "fetchone": lambda self: rows[0] if rows else None,
+            "keys": lambda self: ["experiment_accession", "measurement_technique"],
+        })()
+
+
+@pytest.fixture(autouse=True)
+def no_spending(monkeypatch):
+    client = _NeverCalled()
+    monkeypatch.setattr(routes, "_get_client", lambda: client)
+    return client
+
+
+@pytest.fixture
+def corpus(tmp_path, monkeypatch):
+    """A two-row corpus file standing in for data/claims/all_assays_full_OBI.json."""
+    path = tmp_path / "all_assays_full_OBI.json"
+    path.write_text(json.dumps([
+        {"study": "19029902_SDY1264", "assay": "Neut Ab", "normalized_name": "Virus Neutralization",
+         "obi_label": "serum neutralization assay"},
+        {"study": "19029902_SDY1264", "assay": "Mass spec", "normalized_name": "Mass spectrometry",
+         "obi_label": "mass spectrometry assay"},
+    ]), encoding="utf-8")
+    monkeypatch.setattr(routes, "_ASSAY_OBI_PATH", path)
+    return path
+
+
+@pytest.fixture
+def client():
+    def _make(session):
+        async def _override():
+            yield session
+        app.dependency_overrides[get_session] = _override
+        return TestClient(app)
+
+    yield _make
+    app.dependency_overrides.pop(get_session, None)
+
+
+_EXPERIMENTS = {"SDY1264": [("EXP16737", "Virus Neutralization")]}
+
+
+def test_the_sweep_reports_coverage_for_every_corpus_row(corpus, client, no_spending):
+    response = client(_FakeSession(_EXPERIMENTS)).get("/agent/assay-immport")
+
+    assert response.status_code == 200
+    body = response.json()
+    assert len(body["rows"]) == 2
+    assert body["stats"]["matched"] == 1
+    assert body["stats"]["absent"] == 1
+    assert body["rows"][0]["experiment_accession"] == "EXP16737"
+    assert body["rows"][0]["measurement_technique"] == "Virus Neutralization"
+    assert no_spending.calls == 0
+
+
+def test_the_rows_survive_the_response_model(corpus, client):
+    """A report keyed the wrong way is dropped silently by the response model, and the table
+    renders empty with correct-looking statistics above it."""
+    body = client(_FakeSession(_EXPERIMENTS)).get("/agent/assay-immport").json()
+
+    assert body["rows"], "rows were filtered out by the response model"
+    assert body["stats"]["total"] == len(body["rows"])
+
+
+def test_a_study_with_nothing_registered_is_reported_as_such(corpus, client):
+    body = client(_FakeSession({"SDY1264": []})).get("/agent/assay-immport").json()
+
+    assert body["stats"]["no_experiments"] == 2
+    assert body["stats"]["studies_without_experiments"] == ["SDY1264"]
+    # Nothing a model could rescue, so nothing to offer to pay for.
+    assert body["stats"]["resolvable"] == 0
+
+
+def test_an_unreachable_database_degrades_rather_than_failing_the_page(corpus, client):
+    """The assay table is readable without ImmPort; it just cannot say anything about coverage."""
+    response = client(_FakeSession(raises=RuntimeError("mysql is down"))).get(
+        "/agent/assay-immport")
+
+    assert response.status_code == 200
+    assert response.json()["degraded"] is True
+    assert response.json()["warning"]
+    assert response.json()["rows"] == []
+
+
+def test_a_missing_corpus_file_is_a_404(tmp_path, client, monkeypatch):
+    monkeypatch.setattr(routes, "_ASSAY_OBI_PATH", tmp_path / "nope.json")
+
+    assert client(_FakeSession()).get("/agent/assay-immport").status_code == 404
+
+
+# ── the per-paper check, which does not spend ─────────────────────────────────
+
+def test_checking_one_paper_s_rows_needs_no_acknowledgement(corpus, client, no_spending):
+    """It cannot reach a model, so there is no bill to agree to — which is exactly what
+    separates it from /assay-immport/resolve."""
+    response = client(_FakeSession(_EXPERIMENTS)).post(
+        "/agent/assay-immport/check",
+        json={"rows": [{"study": "19029902_SDY1264", "assay": "Neut Ab",
+                        "normalized_name": "Virus Neutralization"},
+                       {"study": "19029902_SDY1264", "assay": "Mass spec",
+                        "normalized_name": "Mass spectrometry"}]})
+
+    assert response.status_code == 200
+    body = response.json()
+    assert [r["status"] for r in body["rows"]] == ["matched", "absent"]
+    assert body["rows"][0]["measurement_technique"] == "Virus Neutralization"
+    assert no_spending.calls == 0
+
+
+def test_a_yes_here_means_what_a_yes_in_the_corpus_table_means(corpus, client):
+    """Both run assay_immport.check_rows with use_llm=False, so the two must agree."""
+    session = _FakeSession(_EXPERIMENTS)
+    swept = client(session).get("/agent/assay-immport").json()
+    matched = [r for r in swept["rows"] if r["status"] == "matched"][0]
+
+    checked = client(_FakeSession(_EXPERIMENTS)).post(
+        "/agent/assay-immport/check",
+        json={"rows": [{"study": matched["study"], "assay": matched["assay"],
+                        "normalized_name": "Virus Neutralization"}]}).json()
+
+    assert checked["rows"][0]["experiment_accession"] == matched["experiment_accession"]
+
+
+def test_checking_nothing_is_an_empty_answer_not_an_error(corpus, client):
+    """A paper whose run found no assays has nothing to check, and that is not a failure."""
+    response = client(_FakeSession(_EXPERIMENTS)).post(
+        "/agent/assay-immport/check", json={"rows": []})
+
+    assert response.status_code == 200
+    assert response.json()["rows"] == []
+
+
+def test_the_check_degrades_when_immport_is_unreachable(corpus, client):
+    """The extracted registry is readable without ImmPort; only the column is lost."""
+    response = client(_FakeSession(raises=RuntimeError("mysql is down"))).post(
+        "/agent/assay-immport/check",
+        json={"rows": [{"study": "19029902_SDY1264", "assay": "Neut Ab"}]})
+
+    assert response.status_code == 200
+    assert response.json()["degraded"] is True
+    assert response.json()["rows"] == []
+
+
+# ── the endpoint that spends ──────────────────────────────────────────────────
+
+def test_resolving_without_acknowledging_the_bill_is_refused(corpus, client):
+    response = client(_FakeSession(_EXPERIMENTS)).post(
+        "/agent/assay-immport/resolve",
+        json={"rows": [{"study": "19029902_SDY1264", "assay": "Mass spec"}]})
+
+    assert response.status_code == 400
+    assert "acknowledged_calls" in response.json()["detail"]
+
+
+def test_resolving_nothing_is_refused_rather_than_charged_for(corpus, client):
+    response = client(_FakeSession(_EXPERIMENTS)).post(
+        "/agent/assay-immport/resolve", json={"rows": [], "acknowledged_calls": 0})
+
+    assert response.status_code == 400
+
+
+def test_an_acknowledged_resolve_runs(corpus, client):
+    """It reaches the resolver; the row here still matches by SQL, so no model call happens."""
+    response = client(_FakeSession(_EXPERIMENTS)).post(
+        "/agent/assay-immport/resolve",
+        json={"rows": [{"study": "19029902_SDY1264", "assay": "Neut Ab",
+                        "normalized_name": "Virus Neutralization"}],
+              "acknowledged_calls": 1})
+
+    assert response.status_code == 200
+    assert response.json()["rows"][0]["experiment_accession"] == "EXP16737"

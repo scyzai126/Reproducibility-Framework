@@ -9,6 +9,7 @@ import asyncio
 import json
 import logging
 import re
+from collections.abc import Sequence
 from pathlib import Path
 
 from openai import AsyncOpenAI
@@ -302,15 +303,26 @@ async def resolve_experiment_accession(
     original_name: str = "",
     readouts: str = "",
     platform: str = "",
+    extra_terms: Sequence[str] = (),
+    use_llm: bool = True,
 ) -> tuple[str, str] | None:
     """Resolve an assay method → experiment_accession.
 
-    SQL step tries canonical name then original_name (if different).
-    If both miss, one LLM call is made with canonical name, original name,
-    readouts and platform all included for richer context.
+    SQL step tries canonical name, then original_name, then each of `extra_terms` in order,
+    stopping at the first that matches exactly one row. If all miss, one LLM call is made with
+    canonical name, original name, readouts and platform all included for richer context.
 
     `platform` is deliberately kept out of the SQL step: it holds vendor product names
     ("LSRII flow cytometer (BD)"), which do not appear in ImmPort's technique columns.
+
+    `extra_terms` lets a caller widen the free step without widening this function's idea of
+    what an assay is called -- aliases from an extracted registry, say, or an OBI label with its
+    trailing "assay" removed, which is the difference between `%flow cytometry assay%` missing
+    ImmPort's "Flow Cytometry" and finding it.
+
+    `use_llm=False` stops after the SQL step and returns None rather than paying for the
+    fallback. That is what lets a caller sweep a whole corpus for free and then ask about only
+    the entries that did not resolve, instead of billing one call per assay to find out.
     """
     if not assay_method or not study_accession:
         return None
@@ -323,7 +335,7 @@ async def resolve_experiment_accession(
 
     # SQL step — try canonical name, then original_name
     seen: set[str] = set()
-    for term in [assay_method, original_name]:
+    for term in [assay_method, original_name, *extra_terms]:
         if not term or term.lower() in seen:
             continue
         seen.add(term.lower())
@@ -341,6 +353,11 @@ async def resolve_experiment_accession(
             logger.info("experiment resolved via SQL (%r): %r → %s", term, assay_method, accession)
             return (accession, "SQL")
         logger.info("SQL match for %r returned %d rows — trying next term", term, len(rows))
+
+    if not use_llm:
+        logger.info("experiment unresolved by SQL for %r; LLM fallback not requested",
+                    assay_method)
+        return None
 
     # LLM fallback — one call with all available context
     all_result = await session.execute(

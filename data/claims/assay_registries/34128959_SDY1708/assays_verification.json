@@ -1,0 +1,432 @@
+{
+  "summary": {
+    "total": 4,
+    "accept": 3,
+    "review": 1,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_absent": 0,
+    "field_issues": {
+      "name_in_paper": {
+        "NOT_SUPPORTED": 1
+      },
+      "sample_type": {
+        "NOT_SUPPORTED": 1
+      }
+    }
+  },
+  "results": [
+    {
+      "assay_id": "scRNA-seq",
+      "assay_name": "scRNA-seq",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "scRNA-seq",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S304"
+          ],
+          "evidence_text": "The Seq-Well platform for scRNA-seq was used",
+          "reason": "The methods explicitly state that scRNA-seq was performed."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "single-cell transcriptomics",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S299"
+          ],
+          "evidence_text": "these cells were processed for single-cell transcriptomics",
+          "reason": "This exact phrase appears and refers to the same scRNA-seq measurement modality."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "single-cell transcriptomic analysis",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S568"
+          ],
+          "evidence_text": "single-cell transcriptomic analysis",
+          "reason": "This exact phrase appears and refers to Seq-Well-based scRNA-seq of neutrophils."
+        },
+        {
+          "field_name": "platform",
+          "proposed_value": "Seq-Well",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S304"
+          ],
+          "evidence_text": "The Seq-Well platform for scRNA-seq",
+          "reason": "The platform is explicitly tied to this assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "PBMCs",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S305"
+          ],
+          "evidence_text": "Immediately after Ficoll separation, 50,000 PBMCs were resuspended",
+          "reason": "The cited methods sentence explicitly states PBMCs were used for this scRNA-seq workflow."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "single-cell whole-transcriptome expression profiles",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S308",
+            "S310"
+          ],
+          "evidence_text": "transcripts hybridized to the mRNA capture beads... Whole-transcriptome amplification was performed",
+          "reason": "The assay measures transcript-derived whole-transcriptome profiles at single-cell resolution."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S304"
+          ],
+          "evidence_text": "## scRNA-seq by Seq-Well  [methods]",
+          "reason": "source 'methods' agrees with S304 in [methods], S305 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "The Seq-Well platform for scRNA-seq was used as described previously ( Gierahn et al., 2017 ; Hughes et al., 2019 Preprint ; Wilk et al., 2020 ; Kazer et al., 2020 ). Immediately after Ficoll separation, 50,000 PBMCs were resuspended in RPMI + 10% FBS at a concentration of 75,000 cells/ml.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S304",
+            "S305"
+          ],
+          "evidence_text": "The Seq-Well platform for scRNA-seq was used as described previously ( Gierahn et al., 2017 ; Hughes et al., 2019 Preprint ; Wilk et al., 2020 ; Kazer et al., 2020 ). Immediately after Ficoll separation, 50,000 PBMCs were resuspended in RPMI + 10% FBS at a concentration of 75,000 cells/ml.",
+          "reason": "quote found in sentences S304, S305"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S304",
+            "S305"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S304",
+            "S305"
+          ],
+          "evidence_text": "The Seq-Well platform for scRNA-seq was used as described previously ( Gierahn et al., 2017 ; Hughes et al., 2019 Preprint ; Wilk et al., 2020 ; Kazer et al., 2020 ). Immediately after Ficoll separation, 50,000 PBMCs were resuspended in RPMI + 10% FBS at a concentration of 75,000 cells/ml.",
+          "reason": "Both cited sentence IDs exist and match the quoted text."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S304, S305",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S304 in [methods], S305 in [methods]"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Mass cytometry",
+      "assay_name": "Mass cytometry",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Mass cytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S378"
+          ],
+          "evidence_text": "Mass cytometry",
+          "reason": "The Methods section explicitly names this assay."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "CyTOF",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S303"
+          ],
+          "evidence_text": "All CyTOF and scATAC-seq processing was performed on samples cryopreserved under the vapor phase of liquid nitrogen.",
+          "reason": "The text uses CyTOF to refer to the same mass cytometry assay."
+        },
+        {
+          "field_name": "platform",
+          "proposed_value": "Helios mass cytometer",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S387"
+          ],
+          "evidence_text": "Data were collected on a Helios mass cytometer.",
+          "reason": "The instrument is explicitly stated for this assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "whole PBMCs and isolated NK cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S381"
+          ],
+          "evidence_text": "After isolation of NK cells, both the whole PBMCs and the isolated NK cells from each sample were stained",
+          "reason": "The assay was performed on both whole PBMCs and isolated NK cells."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "single-cell protein marker expression",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S383",
+            "S398"
+          ],
+          "evidence_text": "stained with relevant surface panels ( Table S22 )",
+          "reason": "The assay measured marker staining at single-cell level, i.e. protein marker expression."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S378"
+          ],
+          "evidence_text": "## Mass cytometry  [methods]",
+          "reason": "source 'methods' agrees with S381 in [methods], S387 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "After isolation of NK cells, both the whole PBMCs and the isolated NK cells from each sample were stained with cisplatin for 1 min in order to allow viability determination and subsequently quenched with FBS. Data were collected on a Helios mass cytometer.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S381",
+            "S387"
+          ],
+          "evidence_text": "After isolation of NK cells, both the whole PBMCs and the isolated NK cells from each sample were stained with cisplatin for 1 min in order to allow viability determination and subsequently quenched with FBS. Data were collected on a Helios mass cytometer.",
+          "reason": "quote found in sentences S381, S387"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S381",
+            "S387"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S381",
+            "S387"
+          ],
+          "evidence_text": "After isolation of NK cells, both the whole PBMCs and the isolated NK cells from each sample were stained with cisplatin for 1 min in order to allow viability determination and subsequently quenched with FBS. Data were collected on a Helios mass cytometer.",
+          "reason": "Both cited sentence IDs exist and contain the quoted text."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S381, S387",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S381 in [methods], S387 in [methods]"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "scATAC-seq",
+      "assay_name": "scATAC-seq",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "scATAC-seq",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S404"
+          ],
+          "evidence_text": "scATAC-seq was performed",
+          "reason": "The text explicitly states that scATAC-seq was performed in this study."
+        },
+        {
+          "field_name": "platform",
+          "proposed_value": "Chromium Next GEM Single Cell ATAC Reagent Kits version 1.1 (10x Genomics; PN-1000175)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S404"
+          ],
+          "evidence_text": "using the Chromium Next GEM Single Cell ATAC Reagent Kits version 1.1 (10x Genomics; PN-1000175)",
+          "reason": "The methods directly tie this kit to the scATAC-seq assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "cryopreserved PBMCs",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S405"
+          ],
+          "evidence_text": "cryopreserved PBMCs were thawed",
+          "reason": "The scATAC-seq methods explicitly state that cryopreserved PBMCs were used."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "single-cell chromatin accessibility profiles",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S24"
+          ],
+          "evidence_text": "∼50,000 single chromatin accessibility profiles",
+          "reason": "The paper explicitly describes scATAC-seq output as single chromatin accessibility profiles."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "methods",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S404",
+            "S405"
+          ],
+          "evidence_text": "## scATAC-seq  [methods]",
+          "reason": "source 'methods' agrees with S404 in [methods], S405 in [methods]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "scATAC-seq was performed by using the Chromium Next GEM Single Cell ATAC Reagent Kits version 1.1 (10x Genomics; PN-1000175) and following the demonstrated protocol (nuclei isolation for scATAC-seq) provided by 10x Genomics. Briefly, cryopreserved PBMCs were thawed, and 50,000–500,000 cells were aliquoted, washed with PBS, and then lysed with 100 µl lysis buffer for 4 min.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S404",
+            "S405"
+          ],
+          "evidence_text": "scATAC-seq was performed by using the Chromium Next GEM Single Cell ATAC Reagent Kits version 1.1 (10x Genomics; PN-1000175) and following the demonstrated protocol (nuclei isolation for scATAC-seq) provided by 10x Genomics. Briefly, cryopreserved PBMCs were thawed, and 50,000–500,000 cells were aliquoted, washed with PBS, and then lysed with 100 µl lysis buffer for 4 min.",
+          "reason": "quote found in sentences S404, S405"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S404",
+            "S405"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S404",
+            "S405"
+          ],
+          "evidence_text": "S404 S405",
+          "reason": "Both cited sentence IDs exist and correspond to the quoted evidence."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S404, S405",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'methods' agrees with S404 in [methods], S405 in [methods]"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Hi-C data",
+      "assay_name": "Hi-C data",
+      "assay_identity_verdict": "NOT_SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Hi-C data",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "The text mentions Hi-C data taken from a prior study rather than a Hi-C assay performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "chromosome conformation capture Hi-C data",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S142"
+          ],
+          "evidence_text": "chromosome conformation capture Hi-C data",
+          "reason": "This exact phrase appears verbatim in the cited sentence."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "monocytes",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "The cited text specifies a THP-1 monocytic cell line, not monocytes as the assay specimen in this study."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "chromatin contact frequencies",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S523"
+          ],
+          "evidence_text": "the bottom Virtual 4C track in D shows Knight-Ruiz–normalized contact frequencies to the IL1B promoter in THP-1 monocytic cells",
+          "reason": "The figure caption explicitly states that the Hi-C-derived track shows contact frequencies."
+        },
+        {
+          "field_name": "source",
+          "proposed_value": "results",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "source 'results' agrees with S141 in [results], S142 in [results]"
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "We identified a putative enhancer downstream of IL1B , which shows linkage to the IL1B promoter via single-cell coaccessibility analysis and chromosome conformation capture Hi-C data from the THP-1 monocytic cell line ( Fig. 5 D ; see Materials and methods; Phanstiel et al., 2017 ).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S141",
+            "S142"
+          ],
+          "evidence_text": null,
+          "reason": "quote found in sentences S141, S142"
+        },
+        {
+          "field_name": "evidence.sentence_ids",
+          "proposed_value": [
+            "S141",
+            "S142"
+          ],
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S141",
+            "S142"
+          ],
+          "evidence_text": "[S141] We identified a putative enhancer downstream of IL1B , which shows linkage to the IL1B promoter via single-cell coaccessibility analysis and chromosome conformation capture Hi-C data from the THP-1 monocytic cell line ( Fig. [S142] 5 D ; see Materials and methods; Phanstiel et al., 2017 ).",
+          "reason": "Both cited sentence IDs exist and contain the referenced passage."
+        }
+      ],
+      "quote_check": {
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S141, S142",
+        "unknown_sentence_ids": []
+      },
+      "source_check": {
+        "status": "aligned",
+        "verdict": "SUPPORTED",
+        "detail": "source 'results' agrees with S141 in [results], S142 in [results]"
+      },
+      "conflict_detected": true,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REJECT"
+    }
+  ]
+}
