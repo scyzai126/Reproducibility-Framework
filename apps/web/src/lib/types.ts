@@ -259,7 +259,7 @@ export interface AssayBenchmarkEntry {
   source?: string | null;
   evidence?: AssayEvidence | null;
   additional_evidence?: { name_in_paper?: string; evidence?: AssayEvidence }[];
-  /** Only on the full seven-field record. */
+  /** Only on the full ten-field record. */
   normalized_name?: string | null;
   platform?: string | null;
   sample_type?: string | null;

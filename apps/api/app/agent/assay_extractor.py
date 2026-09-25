@@ -12,9 +12,9 @@ assay_verifier judges, assay_corrector repairs, and load_verified_registry hands
 resolve_experiment_accession as platform/sample_type/readouts context. Nothing here feeds
 claim extraction.
 
-The output is validated on the way out rather than trusted. A model that returns eight fields,
+The output is validated on the way out rather than trusted. A model that returns extra fields,
 or an entry with no evidence, has broken the contract every downstream step relies on: the
-seven-field shape is what assay_obi_mapper and query_builder read, and `evidence.quote` is
+ten-field shape is what assay_obi_mapper and query_builder read, and `evidence.quote` is
 what check_quote_verbatim compares character by character. Extra keys are dropped and missing
 ones defaulted, so a partially malformed answer costs its bad fields rather than the paper.
 """
@@ -29,7 +29,7 @@ from app.config import settings
 
 logger = logging.getLogger(__name__)
 
-#: The eight-field contract, in the order extract_assays.txt documents them. Anything else a
+#: The ten-field contract, in the order extract_assays.txt documents them. Anything else a
 #: model returns is dropped: `confidence` and `claim_role` are the two it reaches for
 #: unprompted, and both were removed from this schema on purpose.
 #:
@@ -40,15 +40,24 @@ logger = logging.getLogger(__name__)
 #: cytokine staining"), acronyms ("CBA") and study aims ("Direct ex vivo PBMC immune cell
 #: phenotyping"), none of which retrieve the OBI term they belong to. Because it asserts
 #: nothing about the text it is excluded from verification -- see assay_verifier._NOT_PROPOSED.
+#:
+#: `measurement_role` and `parent_hint` are judgements for the same reason. The registry lists
+#: every technique the paper performed; the role says what the paper did with each one, so a
+#: reader can narrow to what was reported without the extraction deleting anything. `claim_role`
+#: was removed because it graded an assay's importance; this records only what the paper presents.
 ENTRY_FIELDS = ("name_in_paper", "normalized_name", "aliases", "platform", "sample_type",
-                "readouts", "source", "evidence")
+                "readouts", "measurement_role", "parent_hint", "source", "evidence")
+
+#: What the paper does with an assay's output -- see `measurement_role` in extract_assays.txt.
+ROLE_VALUES = ("reported", "sub_step", "screening", "unreported")
 
 #: What the finished registry is projected onto for `assays_benchmark.json`: the assay's name,
-#: its aliases, and its evidence source kept as both the label and the traceability. The other
-#: three fields stay in `assays.json` because the pipeline needs them -- the verifier rules on
+#: its aliases, its evidence source kept as both the label and the traceability, and its
+#: `measurement_role`, so the deliverable can be narrowed to what the paper reported. The other
+#: fields stay in `assays.json` because the pipeline needs them -- the verifier rules on
 #: a specimen, the corrector repairs one, and merge_verified hands them to claim resolution.
 #: Trimming the deliverable is a reading concern; trimming the schema broke all three.
-TRIMMED_FIELDS = ("name_in_paper", "aliases", "source", "evidence")
+TRIMMED_FIELDS = ("name_in_paper", "aliases", "measurement_role", "source", "evidence")
 
 #: An eighth field, written only by round 5 (app.agent.assay_merger) and only on an entry that
 #: absorbed another: the merged-away write-up's own record, so folding two entries into one never
@@ -94,7 +103,7 @@ def _clean_evidence(raw: object) -> dict:
 
 
 def clean_entry(key: str, raw: dict) -> dict:
-    """Reduce one model-returned entry to the eight-field contract.
+    """Reduce one model-returned entry to the ten-field contract.
 
     `name_in_paper` falls back to the registry key, which is what the skill says the key is:
     the same string.
@@ -106,9 +115,14 @@ def clean_entry(key: str, raw: dict) -> dict:
     outside _SOURCE_VALUES, so contract_warnings surfaces it rather than the registry
     recording a provenance nobody asserted. An invented value is likewise not corrected to a
     valid one, because that would hide the classification pass going wrong.
+
+    `measurement_role` gets the same treatment: anything outside ROLE_VALUES becomes None, and
+    contract_warnings reports it rather than a guess at the nearest valid role.
     """
     aliases = raw.get("aliases")
     source = raw.get("source")
+    role = raw.get("measurement_role")
+    parent = raw.get("parent_hint")
     return {
         "name_in_paper": raw.get("name_in_paper") if isinstance(raw.get("name_in_paper"), str)
                          and raw["name_in_paper"].strip() else key,
@@ -123,6 +137,8 @@ def clean_entry(key: str, raw: dict) -> dict:
         "platform": raw.get("platform") or None,
         "sample_type": raw.get("sample_type") or None,
         "readouts": raw.get("readouts") or None,
+        "measurement_role": role if role in ROLE_VALUES else None,
+        "parent_hint": parent.strip() if isinstance(parent, str) and parent.strip() else None,
         "source": source if isinstance(source, str) and source.strip() else None,
         "evidence": _clean_evidence(raw.get("evidence")),
     }
@@ -143,12 +159,18 @@ def clean_registry(parsed: object) -> dict:
             for key, entry in parsed.items() if isinstance(entry, dict)}
 
 
-def contract_warnings(registry: dict) -> list[str]:
+def contract_warnings(registry: dict, *, expect_sentence_ids: bool = True) -> list[str]:
     """Contract violations worth telling a human about, without failing the extraction.
 
     None of these are recoverable here -- fixing them means re-extracting or repairing, which
     are other passes' jobs. They are surfaced so a bad run is visible immediately rather than
     at OBI-mapping time.
+
+    `expect_sentence_ids=False` for a registry built from a PDF (assay_extractor_pdf), where
+    `sentence_ids` is empty on every entry by contract because the source carries no `[S<n>]`
+    markers to cite. Reporting that per entry would fire on all of them at once and bury the
+    warnings that mean something. Every other check still runs -- a PDF entry with no quote is
+    exactly as broken as an XML one.
 
     Every field is read with .get(), because this also runs over registries that did not come
     straight from clean_registry: run_assay_pipeline reports on the *corrected* registry, and
@@ -163,7 +185,7 @@ def contract_warnings(registry: dict) -> list[str]:
         evidence = entry.get("evidence") or {}
         if not evidence.get("quote"):
             warnings.append(f"{key}: no evidence quote")
-        if not evidence.get("sentence_ids"):
+        if expect_sentence_ids and not evidence.get("sentence_ids"):
             warnings.append(f"{key}: evidence cites no sentence_ids")
         if entry.get("source") not in _SOURCE_VALUES:
             warnings.append(f"{key}: source is {entry.get('source')!r}, not 'methods' or 'results'")
@@ -178,15 +200,39 @@ def contract_warnings(registry: dict) -> list[str]:
         names = paper_names(entry)
         if key not in names and not entry.get(MERGED_FIELD) and len(names) < 2:
             warnings.append(f"{key}: name_in_paper is {entry.get('name_in_paper')!r}, not the key")
+        warnings += _role_warnings(key, entry, registry)
     return warnings
+
+
+def _role_warnings(key: str, entry: dict, registry: dict) -> list[str]:
+    """Check `measurement_role` and `parent_hint` against the contract and against the registry.
+
+    A parent is looked up by wording, never by key: round 5 re-keys the registry by OBI label but
+    keeps every wording in `name_in_paper`, so a hint written before the re-key still resolves.
+    """
+    role = entry.get("measurement_role")
+    parent = entry.get("parent_hint")
+    if role not in ROLE_VALUES:
+        return [f"{key}: measurement_role is {role!r}, not one of {', '.join(ROLE_VALUES)}"]
+    if role != "sub_step":
+        return [f"{key}: parent_hint {parent!r} set on a {role!r} entry"] if parent else []
+    if not parent:
+        return [f"{key}: sub_step has no parent_hint"]
+    target = parent.strip().lower()
+    for other_key, other in registry.items():
+        if other_key == key or not isinstance(other, dict):
+            continue
+        if target in {n.strip().lower() for n in paper_names(other)} | {other_key.strip().lower()}:
+            return []
+    return [f"{key}: parent_hint {parent!r} names no other entry"]
 
 
 def trim_registry(registry: dict) -> dict:
     """Project a finished registry onto TRIMMED_FIELDS, for `assays_benchmark.json`.
 
-    A reading view, not a schema: `assays.json` keeps all seven fields, and every pass in the
-    chain works from that. This exists because the three dropped fields answer a different
-    question -- what the assay ran on and produced -- than the one the deliverable is for.
+    A reading view, not a schema: `assays.json` keeps every field, and every pass in the chain
+    works from that. This exists because the dropped fields answer a different question -- what
+    the assay ran on and produced -- than the one the deliverable is for.
 
     Read with .get() and never raising, for the reason contract_warnings gives: this also runs
     over registries stored before the current schema, which carry `evidence_location` instead

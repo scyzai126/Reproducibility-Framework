@@ -67,7 +67,7 @@ class AssayRequest(BaseModel):
     a `platform` inferred from what a technique usually runs on looks exactly like one copied
     from Methods. Turn them off only to inspect an intermediate round.
 
-    Every request runs all three rounds and costs 1 + N + F model calls; nothing is served
+    Every request runs all five rounds and costs 1 + N + F + O model calls; nothing is served
     from a previous run.
     """
 
@@ -82,7 +82,7 @@ class AssayResponse(BaseModel):
     pubmed_id: str = ""
     paper_title: str = ""
     paper_source: str = ""
-    #: name_in_paper -> the seven-field entry: the CORRECTED registry, as assays.json holds it.
+    #: canonical key -> the ten-field entry: the CORRECTED registry, as assays.json holds it.
     assays: dict = {}
     #: The same registry with OBI terms attached: assay key -> entry plus obi_id, obi_label,
     #: resource and obi_confidence. Null when round 4 was skipped or failed -- null and {} say
@@ -101,7 +101,7 @@ class AssayResponse(BaseModel):
     merges: dict | None = None
     #: assay id -> {entry, reason} for assays round 3 set aside as never performed.
     dropped: dict = {}
-    #: What each of the three rounds did, and what it cost.
+    #: What each of the five rounds did, and what it cost.
     rounds: dict = {}
     #: Entries that broke the extraction contract; report these, do not skim them.
     contract_warnings: list[str] = []
@@ -270,7 +270,7 @@ class AssayRegistryResponse(BaseModel):
     """What a previous run left on disk. Free to read, and never a substitute for a run.
 
     `benchmark` is the deliverable -- keyed by OBI label, four fields per entry. `assays` is the
-    full seven-field record every pass in the chain works from. Both are returned because the
+    full ten-field record every pass in the chain works from. Both are returned because the
     reading view and the working record answer different questions.
     """
 
@@ -388,11 +388,10 @@ class AssayImmportResponse(BaseModel):
 
 
 class AssayImmportCheckRequest(BaseModel):
-    """Check a specific set of rows against ImmPort. Free.
+    """Check a specific set of rows against ImmPort: SQL, then the cached LLM fallback.
 
-    The corpus sweep reads every row on disk; this takes the rows for one paper. No
-    acknowledgement field, and deliberately none: unlike the resolve request it cannot reach a
-    model, so there is no bill to agree to.
+    The corpus sweep reads every row on disk; this takes the rows for one paper. A row SQL
+    cannot place costs one model call the first time and is answered from the cache after that.
     """
 
     rows: list[dict] = []

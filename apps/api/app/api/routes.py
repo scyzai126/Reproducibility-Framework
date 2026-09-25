@@ -148,7 +148,7 @@ async def agent_assays(request: AssayRequest):
          refused to support, and sets aside rejected assays
 
     `assays` in the response is the corrected registry, and it is what assays.json now holds.
-    All three rounds run on every request -- asking again about the same paper pays again --
+    All five rounds run on every request -- asking again about the same paper pays again --
     so this is not an endpoint to put behind a page load. `rounds` reports what each round did
     and what it cost.
     """
@@ -188,8 +188,8 @@ def _identifiers(request: AssayPaperRequest) -> tuple[str, str]:
 async def agent_assay_papers():
     """Every paper the assay pipeline can run on. Free.
 
-    The JATS XML is the gate -- assay_report reads nothing else to find a paper -- so a study
-    without one is not offered rather than offered and then failed at.
+    A source on disk is the gate -- the JATS XML, or the PDF for a paper with no XML -- so a
+    study with neither is not offered rather than offered and then failed at.
     """
     return AssayPaperListResponse(papers=available_papers())
 
@@ -459,19 +459,18 @@ def _corpus_rows() -> list[dict]:
 
 @router.get("/assay-immport", response_model=AssayImmportResponse)
 async def agent_assay_immport(session: AsyncSession = Depends(get_session)):
-    """For every corpus assay, does ImmPort record an experiment for that study? Free.
+    """For every corpus assay, does ImmPort record an experiment for that study?
 
-    The SQL half of the same resolver the query builder uses, so an assay called present here is
-    one a claim query would find. No model call: `use_llm=False` stops each lookup after the
-    free step, and the rows it could not place are reported as such rather than resolved at a
-    call apiece.
+    The same resolver the query builder uses, so an assay called present here is one a claim
+    query would find. SQL first; a row SQL cannot place goes to the LLM fallback, one call per
+    row, cached on disk so a reload does not pay for it again.
 
     A database that is down degrades to empty rather than 500 -- the corpus table is readable
     without ImmPort, it simply cannot say anything about coverage.
     """
     rows = _corpus_rows()
     try:
-        report = await assay_immport.check_rows(session, rows, use_llm=False)
+        report = await assay_immport.check_rows(session, rows, use_llm=True)
     except Exception as exc:
         logger.warning("ImmPort coverage sweep failed: %s", exc)
         return AssayImmportResponse(
@@ -487,19 +486,16 @@ async def agent_assay_immport_check(
     request: AssayImmportCheckRequest,
     session: AsyncSession = Depends(get_session),
 ):
-    """Does ImmPort register experiments for these specific assays? Free.
+    """Does ImmPort register experiments for these specific assays?
 
-    The same free SQL pass GET /agent/assay-immport runs over the whole corpus, pointed at the
-    rows for one paper -- so a "yes" here and a "yes" in the corpus table mean the same thing,
-    because they are the same function with `use_llm=False`.
-
-    Takes no acknowledgement because it cannot spend: that is what separates it from
-    /assay-immport/resolve, which asks a model about the rows this one could not place.
+    The same pass GET /agent/assay-immport runs over the whole corpus (SQL, then the cached LLM
+    fallback), pointed at the rows for one paper -- so a "yes" here and a "yes" in the corpus
+    table mean the same thing, because they are the same function with the same cache.
     """
     if not request.rows:
         return AssayImmportResponse()
     try:
-        report = await assay_immport.check_rows(session, request.rows, use_llm=False)
+        report = await assay_immport.check_rows(session, request.rows, use_llm=True)
     except Exception as exc:
         logger.warning("ImmPort coverage check failed: %s", exc)
         return AssayImmportResponse(

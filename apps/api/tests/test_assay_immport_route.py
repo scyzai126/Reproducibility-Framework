@@ -1,8 +1,9 @@
-"""GET /agent/assay-immport and its paid counterpart.
+"""GET /agent/assay-immport, the per-paper check, and the acknowledged resolve.
 
-The sweep runs on a page load over the whole corpus, so the properties that matter are that it
-costs nothing, that a dead database degrades instead of 500ing, and that the endpoint which does
-spend refuses to until it has been told the bill.
+The sweep runs on a page load over the whole corpus, so the properties that matter are that a
+row SQL resolves costs nothing, that a row SQL misses costs one model call and then comes from
+the cache, that a dead database degrades instead of 500ing, and that /resolve still refuses to
+run until it has been told the bill. No test here reaches a real model.
 """
 
 import json
@@ -11,6 +12,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 import app.api.routes as routes
+from app.agent import assay_immport
 from app.database import get_session
 from app.main import app
 
@@ -23,6 +25,19 @@ class _NeverCalled:
     async def create(self, **_):
         self.calls += 1
         raise AssertionError("a free endpoint made a model call")
+
+
+class _FakeModel:
+    """The experiment resolver's model: answers "NONE" to everything and counts the calls."""
+
+    def __init__(self):
+        self.calls = 0
+        self.chat = type("c", (), {"completions": self})()
+
+    async def create(self, **_):
+        self.calls += 1
+        message = type("m", (), {"content": "NONE"})()
+        return type("r", (), {"choices": [type("ch", (), {"message": message})()]})()
 
 
 class _FakeSession:
@@ -40,6 +55,9 @@ class _FakeSession:
             wanted = params.get("acc", "")
             rows = [(tech,) for e in self.experiments.values()
                     for acc, tech in e if acc == wanted]
+        elif "pattern" not in params:
+            # The LLM fallback's candidate list: every experiment in the study.
+            rows = list(self.experiments.get(params.get("study_accession", ""), []))
         else:
             pattern = (params.get("pattern") or "").strip("%").lower()
             rows = [(acc, tech)
@@ -57,6 +75,15 @@ def no_spending(monkeypatch):
     client = _NeverCalled()
     monkeypatch.setattr(routes, "_get_client", lambda: client)
     return client
+
+
+@pytest.fixture(autouse=True)
+def resolver_model(monkeypatch, tmp_path):
+    """The fallback's model, faked, and a cache of its own so none touches the one under data/."""
+    fake = _FakeModel()
+    monkeypatch.setattr("app.agent.query_builder._get_openai_client", lambda: fake)
+    monkeypatch.setattr(assay_immport, "LLM_CACHE_PATH", tmp_path / "immport_llm_cache.json")
+    return fake
 
 
 @pytest.fixture
@@ -88,7 +115,7 @@ def client():
 _EXPERIMENTS = {"SDY1264": [("EXP16737", "Virus Neutralization")]}
 
 
-def test_the_sweep_reports_coverage_for_every_corpus_row(corpus, client, no_spending):
+def test_the_sweep_reports_coverage_for_every_corpus_row(corpus, client, resolver_model):
     response = client(_FakeSession(_EXPERIMENTS)).get("/agent/assay-immport")
 
     assert response.status_code == 200
@@ -98,7 +125,15 @@ def test_the_sweep_reports_coverage_for_every_corpus_row(corpus, client, no_spen
     assert body["stats"]["absent"] == 1
     assert body["rows"][0]["experiment_accession"] == "EXP16737"
     assert body["rows"][0]["measurement_technique"] == "Virus Neutralization"
-    assert no_spending.calls == 0
+    # Only the row SQL missed went to the model.
+    assert resolver_model.calls == 1
+
+
+def test_a_reload_does_not_pay_again(corpus, client, resolver_model):
+    client(_FakeSession(_EXPERIMENTS)).get("/agent/assay-immport")
+    client(_FakeSession(_EXPERIMENTS)).get("/agent/assay-immport")
+
+    assert resolver_model.calls == 1
 
 
 def test_the_rows_survive_the_response_model(corpus, client):
@@ -110,13 +145,14 @@ def test_the_rows_survive_the_response_model(corpus, client):
     assert body["stats"]["total"] == len(body["rows"])
 
 
-def test_a_study_with_nothing_registered_is_reported_as_such(corpus, client):
+def test_a_study_with_nothing_registered_is_reported_as_such(corpus, client, resolver_model):
     body = client(_FakeSession({"SDY1264": []})).get("/agent/assay-immport").json()
 
     assert body["stats"]["no_experiments"] == 2
     assert body["stats"]["studies_without_experiments"] == ["SDY1264"]
-    # Nothing a model could rescue, so nothing to offer to pay for.
+    # Nothing a model could rescue, so nothing was paid for.
     assert body["stats"]["resolvable"] == 0
+    assert resolver_model.calls == 0
 
 
 def test_an_unreachable_database_degrades_rather_than_failing_the_page(corpus, client):
@@ -136,11 +172,10 @@ def test_a_missing_corpus_file_is_a_404(tmp_path, client, monkeypatch):
     assert client(_FakeSession()).get("/agent/assay-immport").status_code == 404
 
 
-# ── the per-paper check, which does not spend ─────────────────────────────────
+# ── the per-paper check ───────────────────────────────────────────────────────
 
-def test_checking_one_paper_s_rows_needs_no_acknowledgement(corpus, client, no_spending):
-    """It cannot reach a model, so there is no bill to agree to — which is exactly what
-    separates it from /assay-immport/resolve."""
+def test_checking_one_paper_s_rows_falls_back_to_the_model(corpus, client, resolver_model):
+    """SQL places the first row; the second goes to the model, which says none match."""
     response = client(_FakeSession(_EXPERIMENTS)).post(
         "/agent/assay-immport/check",
         json={"rows": [{"study": "19029902_SDY1264", "assay": "Neut Ab",
@@ -152,11 +187,11 @@ def test_checking_one_paper_s_rows_needs_no_acknowledgement(corpus, client, no_s
     body = response.json()
     assert [r["status"] for r in body["rows"]] == ["matched", "absent"]
     assert body["rows"][0]["measurement_technique"] == "Virus Neutralization"
-    assert no_spending.calls == 0
+    assert resolver_model.calls == 1
 
 
 def test_a_yes_here_means_what_a_yes_in_the_corpus_table_means(corpus, client):
-    """Both run assay_immport.check_rows with use_llm=False, so the two must agree."""
+    """Both run assay_immport.check_rows the same way, so the two must agree."""
     session = _FakeSession(_EXPERIMENTS)
     swept = client(session).get("/agent/assay-immport").json()
     matched = [r for r in swept["rows"] if r["status"] == "matched"][0]

@@ -23,7 +23,7 @@ from app.agent.assay_corrector import (
     uncorrectable_flags,
 )
 
-_SOURCE = "[S1] Cells were analyzed on the LSRII flow cytometer (BD). [S2] PBMCs were thawed."
+_SOURCE = "[S1] Cells were analyzed on the LSRII flow cytometer (BD). [S2] PBMCs were thawed and rested overnight."
 
 
 def _entry(**over) -> dict:
@@ -169,11 +169,11 @@ def test_a_replacement_quote_that_is_not_verbatim_is_rejected():
 
 def test_a_verbatim_replacement_quote_lands():
     entry = _entry()
-    blind = {"quote": "PBMCs were thawed.", "sentence_ids": ["S2"]}
+    blind = {"quote": "PBMCs were thawed and rested overnight.", "sentence_ids": ["S2"]}
     record = apply_correction(entry, "evidence", blind, _SOURCE)
 
     assert record["action"] == REPLACED
-    assert entry["evidence"]["quote"] == "PBMCs were thawed."
+    assert entry["evidence"]["quote"] == "PBMCs were thawed and rested overnight."
     assert entry["evidence"]["sentence_ids"] == ["S2"]
 
 
@@ -400,14 +400,14 @@ async def test_every_field_is_asked_against_the_entry_as_extraction_left_it():
             {"field_name": "evidence.quote", "verdict": "NOT_SUPPORTED", "reason": "..."},
         ],
     }]}
-    body = json.dumps({"value": "PBMCs were thawed.", "sentence_ids": ["S2"], "reason": "..."})
+    body = json.dumps({"value": "PBMCs were thawed and rested overnight.", "sentence_ids": ["S2"], "reason": "..."})
     client = _RecordingClient(body)
 
     corrected, _ = await correct_registry(
         {"flow cytometry": _entry()}, verification, _SOURCE, "Paper", client)
 
     # The evidence quote really was replaced...
-    assert corrected["flow cytometry"]["evidence"]["quote"] == "PBMCs were thawed."
+    assert corrected["flow cytometry"]["evidence"]["quote"] == "PBMCs were thawed and rested overnight."
     # ...and the platform question was still asked against the quote extraction wrote.
     platform_prompt = next(p for p in client.prompts if "instrument, chip, kit" in p)
     assert original_quote in platform_prompt
@@ -500,3 +500,36 @@ def test_the_normalized_name_has_no_repair_question():
     returning None is what keeps a future schema field from silently acquiring a wrong
     corrector question -- pinned here so the eighth field's arrival stays deliberate."""
     assert field_group("normalized_name") is None
+
+
+# ── evidence is compared quote to quote ───────────────────────────────────────
+
+def test_an_identical_re_extracted_quote_is_reaffirmed():
+    """The blind answer is {"quote", "sentence_ids"}; the value on file is the quote string.
+    Comparing the two whole meant an identical quote never read as REAFFIRMED."""
+    entry = _entry()
+    blind = {"quote": entry["evidence"]["quote"], "sentence_ids": ["S1"]}
+
+    assert apply_correction(entry, "evidence", blind, _SOURCE)["action"] == REAFFIRMED
+
+
+def test_a_verbatim_quote_with_wrong_ids_lands_with_the_ids_it_was_found_in():
+    entry = _entry()
+    blind = {"quote": "PBMCs were thawed and rested overnight.", "sentence_ids": ["S9"]}
+
+    record = apply_correction(entry, "evidence", blind, _SOURCE)
+
+    assert record["action"] == REPLACED
+    assert entry["evidence"]["sentence_ids"] == ["S2"]
+    assert "sentence_ids set" in record["note"]
+
+
+def test_a_pdf_replacement_quote_drops_the_ids_it_invented():
+    source = "Cells were analyzed on the LSRII flow cytometer (BD). PBMCs were thawed overnight."
+    entry = _entry()
+    blind = {"quote": "PBMCs were thawed overnight.", "sentence_ids": ["S2"]}
+
+    record = apply_correction(entry, "evidence", blind, source)
+
+    assert record["action"] == REPLACED
+    assert entry["evidence"]["sentence_ids"] == []

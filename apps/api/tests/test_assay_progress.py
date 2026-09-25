@@ -40,6 +40,11 @@ def paper(tmp_path, monkeypatch):
     xml_root.mkdir()
     (xml_root / "SDY1_111.xml").write_text(_XML, encoding="utf-8")
     monkeypatch.setattr(assay_service, "XML_ROOT", xml_root)
+    # PDF_ROOT is redirected at an empty directory so the listing cannot pick up the
+    # repo's real PDFs: available_papers offers PDF-only papers too.
+    _pdf_root = tmp_path / "pdf"
+    _pdf_root.mkdir(exist_ok=True)
+    monkeypatch.setattr(assay_service, "PDF_ROOT", _pdf_root)
     monkeypatch.setattr(assay_service, "REGISTRY_ROOT", registry_root)
     return registry_root / "111_SDY1"
 

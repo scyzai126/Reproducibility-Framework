@@ -11,12 +11,15 @@ it is the one used here, so an assay this module calls present is one the query 
 find. All this module adds is which search terms to hand it, and the arithmetic over a whole
 corpus.
 
-**The sweep is free.** `use_llm=False` stops each lookup after the SQL step, so a caller can ask
-about 171 rows without paying for one model call, and then spend only on the entries that did not
-resolve. Answering "is it in ImmPort?" for a study with no experiments at all costs nothing and
-should never reach a model.
+**SQL first, then the model.** Each row tries the free SQL step. With `use_llm=True`, a row the SQL
+step cannot place goes to the same LLM fallback the query builder uses for claims, one call per
+row. That answer is cached on disk (`LLM_CACHE_PATH`), including a "none of these", so reloading
+the table doesn't pay for the same row again. A row SQL resolves never reaches the model, and a
+study with no experiments at all is answered before any lookup. `use_llm=False` still gives a
+sweep that costs nothing.
 """
 
+import json
 import logging
 import re
 from collections.abc import Iterable, Sequence
@@ -24,7 +27,7 @@ from collections.abc import Iterable, Sequence
 from sqlalchemy import bindparam, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.agent.assay_service import split_stem
+from app.agent.assay_service import REGISTRY_ROOT, split_stem
 from app.agent.query_builder import (
     get_assay_method_for_experiment,
     resolve_experiment_accession,
@@ -50,6 +53,30 @@ _SUFFIX_RE = re.compile(r"\s+(assay|analysis|analyses)$", re.IGNORECASE)
 #: Below this a LIKE pattern matches most of the table. "PCR" is a real assay name and only three
 #: characters, but `%PCR%` against a study's experiments is noise, not a resolution.
 _MIN_TERM = 4
+
+#: The model's answer per `<SDY>::<assay>`: `{"experiment_accession": str | None}`. A None is
+#: cached too -- "none of this study's experiments" is an answer that was paid for.
+LLM_CACHE_PATH = REGISTRY_ROOT / "immport_llm_cache.json"
+
+
+def _load_cache() -> dict[str, dict]:
+    try:
+        return json.loads(LLM_CACHE_PATH.read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        return {}
+    except (OSError, ValueError) as exc:
+        logger.warning("ImmPort LLM cache unreadable, starting empty: %s", exc)
+        return {}
+
+
+def _save_cache(cache: dict[str, dict]) -> None:
+    LLM_CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
+    LLM_CACHE_PATH.write_text(json.dumps(cache, indent=2, sort_keys=True) + "\n",
+                              encoding="utf-8")
+
+
+def _cache_key(study: str, assay: str) -> str:
+    return f"{study}::{assay}"
 
 
 def search_terms(
@@ -121,7 +148,7 @@ async def check_rows(
     *,
     use_llm: bool = False,
 ) -> dict:
-    """Resolve every row against ImmPort's experiments. Free unless `use_llm` is set.
+    """Resolve every row against ImmPort's experiments: SQL, then the LLM when `use_llm` is set.
 
     Returns `{"rows": [...], "stats": {...}}` -- keyed "rows" to match AssayImmportResponse,
     because a name that disagrees with the schema is silently dropped by the response model
@@ -131,6 +158,8 @@ async def check_rows(
     registered for this study".
     """
     counts = await _experiment_counts(session, (study_accession_of(r) for r in rows))
+    cache = _load_cache() if use_llm else {}
+    cache_dirty = False
 
     results: list[dict] = []
     for row in rows:
@@ -163,16 +192,33 @@ async def check_rows(
         )
         resolved = None
         if terms:
-            resolved = await resolve_experiment_accession(
-                session,
-                terms[0],
-                study,
+            lookup = dict(
                 original_name=terms[1] if len(terms) > 1 else "",
                 readouts=row.get("readouts") or "",
                 platform=row.get("platform") or "",
                 extra_terms=terms[2:],
-                use_llm=use_llm,
             )
+            resolved = await resolve_experiment_accession(
+                session, terms[0], study, use_llm=False, **lookup)
+
+            if resolved is None and use_llm:
+                key = _cache_key(study, entry["assay"])
+                if key in cache:
+                    accession = cache[key].get("experiment_accession")
+                    resolved = (accession, "LLM") if accession else None
+                else:
+                    try:
+                        # Repeats the SQL step before the call; a few cheap queries, and the
+                        # resolver stays the one the query builder uses.
+                        resolved = await resolve_experiment_accession(
+                            session, terms[0], study, use_llm=True, **lookup)
+                    except Exception as exc:
+                        # A failed call is not an answer: leave the row absent and uncached so
+                        # the next load asks again.
+                        logger.warning("LLM experiment fallback failed for %s: %s", key, exc)
+                    else:
+                        cache[key] = {"experiment_accession": resolved[0] if resolved else None}
+                        cache_dirty = True
 
         if resolved:
             entry["experiment_accession"], entry["method"] = resolved
@@ -185,6 +231,11 @@ async def check_rows(
             entry["status"] = ABSENT
         results.append(entry)
 
+    if cache_dirty:
+        try:
+            _save_cache(cache)
+        except OSError as exc:
+            logger.warning("Could not write ImmPort LLM cache: %s", exc)
     return {"rows": results, "stats": summarize(results)}
 
 

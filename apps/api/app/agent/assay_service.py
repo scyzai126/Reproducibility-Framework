@@ -5,7 +5,13 @@ question needs — prompts/extract_assays.txt to build the registry, prompts/ver
 to judge it — with the free deterministic quote check in between, and finishes by resolving
 the corrected registry against the OBI vocabulary in data/OBI.
 
-**Every request runs all four rounds.** Results are written to disk under
+A paper with no JATS XML falls back to its PDF, and round 1 then reads prompts/
+extract_assays_pdf.txt with the PDF attached instead. Only that round differs; the rest of the
+chain is the same code on the same files. Entries from a PDF carry `sentence_ids: []`, because
+there are no `[S<n>]` markers in a PDF to cite, so the quote check searches the whole document
+and check_source_section reports "unknown" for them.
+
+**Every request runs all five rounds.** Results are written to disk under
 data/claims/assay_registries, and the files are the same ones the CLI scripts read and write,
 so a registry built here is visible to run_assay_verify.py and vice versa — but a stored one
 is never served back. A request costs 1 + N + F calls every time.
@@ -37,7 +43,6 @@ from app.agent.assay_corrector import (
     correct_registry,
     drop_rejected,
     flagged_groups,
-    promote_registry,
     rejected_assays,
     uncorrectable_flags,
 )
@@ -47,8 +52,15 @@ from app.agent.assay_extractor import (
     paper_names,
     trim_registry,
 )
-from app.agent.assay_merger import build_merge_report, canonical_groups, canonicalize_registry
+from app.agent.assay_extractor_pdf import extract_assays_from_pdf
+from app.agent.assay_merger import (
+    build_merge_report,
+    canonical_groups,
+    canonicalize_registry,
+    key_map,
+)
 from app.agent.assay_obi_mapper import _build_lookup, enrich_assays_with_obi
+from app.agent.assay_registry import normalize_assay_name
 from app.agent.assay_verifier import (
     build_report,
     check_quote_verbatim,
@@ -61,17 +73,27 @@ from app.agent.jats_parser import (
     parse_jats_xml,
     sentence_sections,
 )
+from app.agent.paper_reader import extract_pdf_text
 from app.config import settings
 
 logger = logging.getLogger(__name__)
 
 _REPO_ROOT = Path(__file__).resolve().parents[4]
 XML_ROOT = _REPO_ROOT / "data" / "JAT_XML"
+#: Searched only when a paper has no JATS XML. Both roots are module-level and re-read at call
+#: time so tests can monkeypatch either.
+PDF_ROOT = _REPO_ROOT / "data" / "pdf"
 REGISTRY_ROOT = _REPO_ROOT / "data" / "claims" / "assay_registries"
+
+#: A PDF text layer is only ever the verification haystack, never the extraction input, so it
+#: is capped far above any real paper rather than at paper_reader's 120k default. Truncation
+#: here would be silent and would read as fabrication: every assay evidenced past the cut would
+#: fail check_quote_verbatim with its quote "missing" from a document that really contains it.
+_PDF_TEXT_CAP = 2_000_000
 
 
 class PaperNotFoundError(LookupError):
-    """No JATS XML on disk for the requested paper."""
+    """No paper on disk for the request -- neither JATS XML nor a PDF."""
 
 
 class NothingToDoError(RuntimeError):
@@ -127,6 +149,68 @@ def locate_paper_xml(pubmed_id: str, study_accession: str) -> Path | None:
     return None
 
 
+def locate_paper_pdf(pubmed_id: str, study_accession: str) -> Path | None:
+    """Find a paper's PDF under data/pdf/, searched recursively.
+
+    Filenames follow `{study_accession}_{pubmed_id}.pdf` and sit in one of several
+    subdirectories, one of which has a space in its name, so this walks rather than joining a
+    path. The same convention and the same walk as orchestrator._find_local_pdf, duplicated
+    rather than imported: that module pulls in SQLAlchemy, app.database and query_builder, and
+    nothing else in this one needs them.
+    """
+    pmid, sdy = (pubmed_id or "").strip(), (study_accession or "").strip()
+    if not pmid or not sdy or not PDF_ROOT.exists():
+        return None
+    target = f"{sdy}_{pmid}.pdf".lower()
+    for candidate in sorted(PDF_ROOT.rglob("*.pdf")):
+        if candidate.name.lower() == target:
+            return candidate
+    return None
+
+
+def locate_paper_source(pubmed_id: str, study_accession: str) -> tuple[str, Path] | None:
+    """The best source on disk for a paper: `("xml", path)`, `("pdf", path)`, or None.
+
+    XML wins whenever it exists. It carries the section tags and sentence markers the PDF route
+    has to do without, so a paper that has both is never routed through the lossier one.
+    """
+    xml_path = locate_paper_xml(pubmed_id, study_accession)
+    if xml_path is not None:
+        return ("xml", xml_path)
+    pdf_path = locate_paper_pdf(pubmed_id, study_accession)
+    if pdf_path is not None:
+        return ("pdf", pdf_path)
+    return None
+
+
+def paper_source(kind: str, path: Path) -> tuple[str, str]:
+    """(title, source text) for either kind of paper.
+
+    For XML this is paper_source_text unchanged -- the sentence-numbered parse that rounds 1, 2
+    and 3 all read. For a PDF the text is the PyMuPDF layer, and it is *only* the verification
+    haystack: round 1 sends the PDF itself, because the layout is exactly what the text layer
+    loses. There is no article title to parse without XML, so the filename stem stands in.
+    """
+    if kind == "xml":
+        return paper_source_text(path)
+
+    text = extract_pdf_text(path.read_bytes(), max_chars=_PDF_TEXT_CAP)
+    if not text.strip():
+        raise PaperNotFoundError(f"{path.name} yielded no text")
+    if len(text) >= _PDF_TEXT_CAP:
+        logger.warning(
+            "%s hit the %d-char cap: quote checks past the cut will read as missing",
+            path.name, _PDF_TEXT_CAP)
+    return path.stem, text
+
+
+def _not_found(pubmed_id: str, study_accession: str) -> PaperNotFoundError:
+    """The one message for "this paper is not on disk", naming both places looked."""
+    return PaperNotFoundError(
+        f"No paper for pubmed_id={pubmed_id!r} study_accession={study_accession!r}: "
+        f"no JATS XML under {XML_ROOT} and no PDF under {PDF_ROOT}")
+
+
 def registry_dir(pubmed_id: str, study_accession: str) -> Path:
     """Where this paper's registry lives. One canonical location, per the skill."""
     return REGISTRY_ROOT / f"{(pubmed_id or '').strip()}_{(study_accession or '').strip()}"
@@ -161,6 +245,8 @@ def quote_report(assays: dict, source_text: str) -> dict:
     return {
         "verified": statuses.count("found"),
         "missing": statuses.count("missing"),
+        # Verbatim but cited wrongly, or too short to pin down: NOT_SUPPORTED, not fabricated.
+        "misattributed": statuses.count("misattributed") + statuses.count("too_short"),
         "no_quote": statuses.count("no_quote"),
         "total": len(per_assay),
         "per_assay": per_assay,
@@ -185,17 +271,37 @@ def quote_report(assays: dict, source_text: str) -> dict:
 _OBI_FREE_RESOURCES = ("exact_original", "exact_normalized_llm")
 
 
+def _obi_query(key: str, entry: dict) -> tuple[str, str]:
+    """(paper name, normalized name) exactly as enrich_assays_with_obi queries them.
+
+    The first wording only -- a canonicalized entry carries a list, and the mapper looks up one
+    name -- falling back to the registry key when the entry has no name at all.
+    """
+    names = paper_names(entry)
+    return (names[0] if names else key).strip(), str(entry.get("normalized_name") or "").strip()
+
+
+def obi_query_calls(key: str, entry: dict) -> int:
+    """What step 2 of the mapper spends on this entry: 2 calls, or 3 with a second query.
+
+    One embedding for the paper's name, one chat call to pick, and one more embedding when a
+    `normalized_name` differs from the name (_embedding_llm_match retrieves on both and merges
+    the pools). Counting a flat 2 under-billed every entry the extractor normalized.
+    """
+    original, normalized = _obi_query(key, entry)
+    return 3 if normalized and original and normalized.lower() != original.lower() else 2
+
+
 def obi_calls(obi: dict) -> int:
     """What the OBI round spent, counted back from the resources it returned.
 
-    An over-count in one case: when obi_generic_embeddings.json is absent,
+    An over-count in two cases: when obi_generic_embeddings.json is absent,
     _embedding_llm_match bails before calling anything and every miss still reads
-    "unresolved". Over-reporting a bill is the safer direction to be wrong in, and the
-    alternative -- having the mapper report its own calls -- is a change to a module this
-    round is meant to leave alone.
+    "unresolved"; and an entry whose lookup raised ("error") is billed as though every call it
+    would have made went through. Over-reporting a bill is the safer direction to be wrong in.
     """
-    return 2 * sum(1 for entry in (obi or {}).values()
-                   if entry.get("resource") not in _OBI_FREE_RESOURCES)
+    return sum(obi_query_calls(key, entry) for key, entry in (obi or {}).items()
+               if entry.get("resource") not in _OBI_FREE_RESOURCES)
 
 
 def obi_summary(obi: dict) -> dict:
@@ -216,6 +322,10 @@ def obi_summary(obi: dict) -> dict:
         "total": len(obi or {}),
         "resources": resources,
         "unresolved": sorted(k for k, e in (obi or {}).items() if not e.get("obi_id")),
+        # A subset of `unresolved`: the lookup raised rather than finding no term, so the name
+        # is not evidence of a vocabulary gap and a re-run may well map it.
+        "errors": {k: e.get("obi_error") or "lookup failed"
+                   for k, e in (obi or {}).items() if e.get("resource") == "error"},
     }
 
 
@@ -223,38 +333,57 @@ def obi_summary(obi: dict) -> dict:
 def obi_misses(assays: dict) -> list[str]:
     """Which assays would fall through to the OBI mapper's paid step. No API call.
 
-    Mirrors assay_obi_mapper's step 1 -- both halves of it. `normalized_name` is an exact-match
-    key in its own right (step 1b), and omitting it here would bill the 40-odd entries per 171
-    that only it resolves, overstating the round by roughly the 23-point hit-rate gain it buys.
-    Anything neither key carries verbatim is paid. The registry key is tried alongside
-    name_in_paper because contract_warnings only reports a registry where the two disagree; it
-    does not repair one.
-
-    Unlike rounds 2 and 3 this is not sized from the previous run -- the vocabulary is a file on
-    disk and the names are already known, so the count is exact for any registry whose assay
-    names this run reproduces.
+    Mirrors assay_obi_mapper.map_assay_to_obi step for step: step 1a looks up the *first*
+    wording, step 1b the `normalized_name`, and nothing else. It used to also count any later
+    wording and the registry key as a free hit -- and after round 5 the key of every mapped entry
+    is an OBI label, which the vocabulary always knows, so a finished paper estimated almost no
+    OBI calls at all.
     """
     lookup = _build_lookup()
     missed = []
     for key, entry in assays.items():
-        # Every wording, because a canonicalized entry carries a list and the vocabulary may
-        # know any one of them verbatim -- and its key is an OBI label, which it always knows.
-        candidates = {n.strip().lower() for n in paper_names(entry)} | {key.strip().lower()}
-        # Not a paper name -- the extractor's technique judgement, which step 1b looks up too.
-        candidates.add(str(entry.get("normalized_name") or "").strip().lower())
-        if not any(lookup.get(c) for c in candidates if c):
+        original, normalized = _obi_query(key, entry)
+        if not any(lookup.get(c.lower()) for c in (original, normalized) if c):
             missed.append(key)
     return missed
+
+
+def _recover_key_map(extracted: dict, canonical: dict) -> dict[str, str]:
+    """Which canonical key each extracted entry landed under, for a run that stored no key_map.
+
+    Registries canonicalized before assays_merges.json carried a `key_map` can still be joined:
+    round 5 keeps every member's wording in the survivor's `name_in_paper`, so an extracted
+    entry is found by its own first wording. An entry that matches nothing maps to itself.
+    """
+    by_name: dict[str, str] = {}
+    for canon_key, entry in canonical.items():
+        for name in paper_names(entry) or [canon_key]:
+            by_name.setdefault(normalize_assay_name(name), canon_key)
+    recovered = {}
+    for key, entry in extracted.items():
+        names = paper_names(entry) or [key]
+        recovered[key] = by_name.get(normalize_assay_name(names[0]), key)
+    return recovered
+
+
+def stored_key_map(out_dir: Path, extracted: dict | None = None,
+                   canonical: dict | None = None) -> dict[str, str]:
+    """The extracted-key -> canonical-key map for a finished run: stored, else recovered."""
+    merges = _read_json(out_dir / "assays_merges.json") or {}
+    if isinstance(merges.get("key_map"), dict):
+        return merges["key_map"]
+    if extracted and canonical:
+        return _recover_key_map(extracted, canonical)
+    return {}
 
 
 #: Why rounds 2 and 3 carry a "~", in one paragraph. Returned as data rather than printed so the
 #: caller decides how to wrap it; scripts/run_assay_pipeline.py prints its own hard-wrapped
 #: rendering of these same three sentences, because its column layout is a printer's concern.
 ESTIMATE_CAVEAT = (
-    "Rounds 2 and 3 are sized from the previous run's output, which this run re-extracts rather "
-    "than reuses. The shape rarely moves; it is not guaranteed. Round 4 carries no ~: its "
-    "vocabulary is on disk, so the only uncertainty is whether this run re-extracts the same "
-    "assay names."
+    "Rounds 2-4 are sized from the previous run's output, which this run re-extracts rather "
+    "than reuses. The shape rarely moves; it is not guaranteed -- round 4 in particular "
+    "depends on whether this run re-extracts the same assay names."
 )
 
 
@@ -283,59 +412,81 @@ def estimate_run(pubmed_id: str, study_accession: str) -> dict:
     `calls: None` rather than guessing: an invented number on a cost gate is worse than no
     number.
 
-    `exact` is False exactly where the CLI prints "~". Rounds 4 and 5 are exact whenever a
-    registry exists, because the vocabulary and the collision check are a file and some code,
-    not a model's answer. `total_calls` is None unless every round is known, so a caller cannot
-    accidentally present a partial sum as the bill.
+    `exact` is False exactly where the CLI prints "~": rounds 2-4, which all scale with what the
+    extraction finds. Round 4's count is exact for the names the last run found -- the
+    vocabulary is a file -- but this run re-extracts those names. `total_calls` is None unless
+    every round is known, so a caller cannot accidentally present a partial sum as the bill.
 
-    Raises PaperNotFoundError when no XML is on disk.
+    Raises PaperNotFoundError when neither an XML nor a PDF is on disk. The round sizes do not
+    depend on which one it is -- the PDF rides along as a file part on round 1's single call
+    rather than adding one -- so a PDF paper is estimated exactly as an XML paper is.
     """
-    xml_path = locate_paper_xml(pubmed_id, study_accession)
-    if xml_path is None:
-        raise PaperNotFoundError(
-            f"No JATS XML for pubmed_id={pubmed_id!r} study_accession={study_accession!r}")
+    source = locate_paper_source(pubmed_id, study_accession)
+    if source is None:
+        raise _not_found(pubmed_id, study_accession)
+    kind, paper_path = source
 
     out_dir = registry_dir(pubmed_id, study_accession)
-    title, source_text = paper_source_text(xml_path)
+    title, source_text = paper_source(kind, paper_path)
 
+    # Each round is sized from the file that round actually read last time, because round 5
+    # re-keys assays.json by OBI label and the earlier files keep the extractor's wording. Sizing
+    # the verifier from the folded registry under-counted it; joining the verification to OBI
+    # keys matched nothing and billed round 3 at zero; checking OBI keys against the OBI
+    # vocabulary found every one of them free. A registry from before the snapshot existed has
+    # only assays.json, which is then the best there is.
     assays = _read_json(out_dir / "assays.json")
+    extracted = _read_json(out_dir / "assays_precorrection.json") or assays
     verification = _read_json(out_dir / "assays_verification.json")
+    corrected = _read_json(out_dir / "assays_corrected.json")
     obi = _read_json(out_dir / "assays_OBI.json")
+
+    kept = extracted
+    if extracted is not None and verification is not None:
+        kept, _ = drop_rejected(extracted, verification)
+    mapped_input = corrected if corrected is not None else kept
 
     rounds: list[dict] = [
         {"round": 1, "name": "extract", "calls": 1, "exact": True, "basis": "always"},
     ]
 
-    if assays is not None:
-        rounds.append({"round": 2, "name": "verify", "calls": len(assays), "exact": False,
-                       "basis": "last_run", "assays": len(assays)})
+    if extracted is not None:
+        rounds.append({"round": 2, "name": "verify", "calls": len(extracted), "exact": False,
+                       "basis": "last_run", "assays": len(extracted)})
     else:
         rounds.append({"round": 2, "name": "verify", "calls": None, "exact": False,
                        "basis": "unknown", "assays": None})
 
-    if verification is not None:
-        pending = corrections_available(assays or {}, verification)
+    if verification is not None and extracted is not None:
+        pending = corrections_available(kept, verification)
         rounds.append({"round": 3, "name": "correct", "calls": pending["calls"], "exact": False,
-                       "basis": "last_run", "rejected": pending["rejected"]})
+                       "basis": "last_run",
+                       "rejected": len(extracted) - len(kept)})
     else:
         rounds.append({"round": 3, "name": "correct", "calls": None, "exact": False,
                        "basis": "unknown", "rejected": None})
 
-    if assays is not None:
-        missed = obi_misses(assays)
-        rounds.append({"round": 4, "name": "obi", "calls": 2 * len(missed), "exact": True,
-                       "basis": "vocabulary", "assays": len(assays),
-                       "free_matches": len(assays) - len(missed), "misses": missed})
+    if mapped_input is not None:
+        missed = obi_misses(mapped_input)
+        rounds.append({"round": 4, "name": "obi",
+                       "calls": sum(obi_query_calls(k, mapped_input[k]) for k in missed),
+                       "exact": False, "basis": "last_run", "assays": len(mapped_input),
+                       "free_matches": len(mapped_input) - len(missed), "misses": missed})
     else:
         rounds.append({"round": 4, "name": "obi", "calls": None, "exact": False,
                        "basis": "unknown", "assays": None, "free_matches": None, "misses": []})
 
-    if assays is not None:
-        groups = canonical_groups(assays, obi)
+    if mapped_input is not None:
+        # The stored mapping is keyed canonically; the fold is computed on the pre-canonical
+        # registry, so each entry is given the mapping of the key it landed under.
+        keys = stored_key_map(out_dir, mapped_input, assays)
+        obi_by_entry = ({k: obi[keys.get(k, k)] for k in mapped_input if keys.get(k, k) in obi}
+                        if obi else None)
+        groups = canonical_groups(mapped_input, obi_by_entry)
         folds = [{"key": g["key"], "members": g["members"]}
                  for g in groups if len(g["members"]) > 1]
         rounds.append({"round": 5, "name": "canonicalize", "calls": 0, "exact": True,
-                       "basis": "deterministic", "entries": len(assays),
+                       "basis": "deterministic", "entries": len(mapped_input),
                        "groups": len(groups), "folds": folds})
     else:
         # Free whether or not it can be sized, so the call count is 0 rather than None: "we
@@ -347,13 +498,14 @@ def estimate_run(pubmed_id: str, study_accession: str) -> dict:
     return {
         "pubmed_id": pubmed_id,
         "study_accession": study_accession,
-        "paper_source": xml_path.name,
+        "paper_source": paper_path.name,
+        "paper_source_kind": kind,
         "paper_title": title,
         "source_chars": len(source_text),
         # Absolute: the CLI prints this path. The display form is what a browser should show.
         "registry_dir": str(out_dir),
         "registry_dir_display": _display_path(out_dir),
-        "has_registry": assays is not None,
+        "has_registry": extracted is not None,
         "has_verification": verification is not None,
         "has_obi": obi is not None,
         "rounds": rounds,
@@ -361,7 +513,7 @@ def estimate_run(pubmed_id: str, study_accession: str) -> dict:
         "total_calls_known": known,
         # Only meaningful once a stored run has sized rounds 2 and 3; there is no "~" to explain
         # on a paper that has never been run.
-        "caveat": ESTIMATE_CAVEAT if assays is not None else None,
+        "caveat": ESTIMATE_CAVEAT if extracted is not None else None,
     }
 
 
@@ -424,11 +576,12 @@ def stored_registry(pubmed_id: str, study_accession: str) -> dict:
              for name, filename in _STORED_FILES.items()
              if (out_dir / filename).exists()}
 
-    xml_path = locate_paper_xml(pubmed_id, study_accession)
+    source = locate_paper_source(pubmed_id, study_accession)
     title, quote_check = None, None
-    if xml_path is not None:
+    if source is not None:
+        kind, paper_path = source
         try:
-            title, source_text = paper_source_text(xml_path)
+            title, source_text = paper_source(kind, paper_path)
         except PaperNotFoundError:
             title = None
         else:
@@ -439,7 +592,8 @@ def stored_registry(pubmed_id: str, study_accession: str) -> dict:
         "pubmed_id": pubmed_id,
         "study_accession": study_accession,
         "paper_title": title,
-        "paper_source": xml_path.name if xml_path is not None else None,
+        "paper_source": source[1].name if source is not None else None,
+        "paper_source_kind": source[0] if source is not None else None,
         # The deliverable first. Falls back to projecting the registry for a directory written
         # before assays_benchmark.json existed, rather than handing back nothing to read.
         "benchmark": stored["benchmark"] if stored["benchmark"] is not None
@@ -468,22 +622,30 @@ def stored_registry(pubmed_id: str, study_accession: str) -> dict:
 
 
 def available_papers() -> list[dict]:
-    """Every paper the assay pipeline can run on: one entry per JATS XML on disk.
+    """Every paper the assay pipeline can run on: one entry per JATS XML, plus each PDF that
+    has no XML.
 
-    The XML is the gate -- assay_report reads nothing else to find a paper -- so a study without
-    one is not offered rather than offered and then failed at. Each is paired with its registry
-    directory, so a caller can tell a paper that has already been run from one that has not
-    without opening anything heavier than the benchmark.
+    Having a source on disk is the gate -- assay_report reads nothing else to find a paper --
+    so a study with neither is not offered rather than offered and then failed at, and a study
+    with only a PDF *is* offered rather than hidden despite being runnable. `paper_source_kind`
+    says which route it will take. Each is paired with its registry directory, so a caller can
+    tell a paper that has already been run from one that has not without opening anything
+    heavier than the benchmark.
 
     Free: a directory walk, one cached title parse per paper, and one small JSON read per
     finished paper.
     """
     papers = []
-    for path in sorted(XML_ROOT.glob("*.xml")):
+    seen: set[tuple[str, str]] = set()
+
+    def _add(path: Path, kind: str) -> None:
         split = split_stem(path.stem)
         if split is None:
-            continue
+            return
         pubmed_id, study_accession = split
+        if (pubmed_id, study_accession) in seen:
+            return
+        seen.add((pubmed_id, study_accession))
         out_dir = registry_dir(pubmed_id, study_accession)
         benchmark = out_dir / "assays_benchmark.json"
         stat = path.stat()
@@ -491,7 +653,10 @@ def available_papers() -> list[dict]:
             "pubmed_id": pubmed_id,
             "study_accession": study_accession,
             "paper_source": path.name,
-            "paper_title": _cached_title(str(path), stat.st_mtime, stat.st_size),
+            "paper_source_kind": kind,
+            # Only XML carries an article title to parse; a PDF is listed under its stem.
+            "paper_title": (_cached_title(str(path), stat.st_mtime, stat.st_size)
+                            if kind == "xml" else path.stem),
             "has_registry": (out_dir / "assays.json").exists(),
             "assays": None,
             "updated_at": None,
@@ -502,6 +667,15 @@ def available_papers() -> list[dict]:
             entry["updated_at"] = datetime.fromtimestamp(
                 benchmark.stat().st_mtime, tz=timezone.utc).isoformat()
         papers.append(entry)
+
+    for path in sorted(XML_ROOT.glob("*.xml")):
+        _add(path, "xml")
+    # PDF-only papers are offered too, on the same invariant read the other way: assay_report
+    # can run them, so leaving them off the list would hide a paper that works. XML is walked
+    # first, so a paper with both is listed once, as the XML it will actually be run from.
+    if PDF_ROOT.exists():
+        for path in sorted(PDF_ROOT.rglob("*.pdf")):
+            _add(path, "pdf")
     return papers
 
 
@@ -515,26 +689,25 @@ async def assay_report(
     model: str = settings.OPENAI_MODEL,
     on_progress: Callable[[dict], None] | None = None,
 ) -> dict:
-    """Answer "what assays did this paper use?" in four rounds, and return the accurate set.
+    """Answer "what assays did this paper use?" in five rounds, and return the accurate set.
 
-    Round 1 extracts (prompts/extract_assays.txt, 1 call). Round 2 verifies each entry
+    Round 1 extracts (prompts/extract_assays.txt, or prompts/extract_assays_pdf.txt for a
+    paper that has only a PDF; 1 call either way). Round 2 verifies each entry
     against the paper with a model that has none of the extraction's reasoning in view
     (prompts/verify_assays.txt, 1 call per assay). Round 3 repairs what round 2 refused to
     support (prompts/correct_assay_field.txt, 1 call per flagged FIELD) and sets aside assays
-    whose identity it rejected. Round 4 maps the surviving assays onto OBI terms, into
-    assays_OBI.json.
+    whose identity it rejected. Round 4 maps the surviving assays onto OBI terms (free on an
+    exact match, 2-3 calls otherwise). Round 5 re-keys the registry by OBI label and folds
+    entries that share a term or technique (free).
 
-    **Round 4 runs last for a reason**, not merely for convenience: it reads the corrected
-    registry. See the comment at the round itself.
+    **assays.json is written last.** Round 1 clears every file the previous run left and writes
+    its extraction to assays_precorrection.json; only when round 5 is done is the corrected,
+    canonical registry written to assays.json, with assays_OBI.json and assays_benchmark.json
+    beside it. A run that dies part-way therefore leaves no assays.json at all rather than one
+    that cannot be told apart from a verified registry.
 
-    **Round 3 promotes.** The `assays` this returns are the corrected ones, and they are what
-    assays.json now holds -- otherwise "the accurate assay" and the registry the resolver
-    reads would disagree. The pre-correction registry is kept beside it as
-    assays_precorrection.json, so an extracted value and a repaired one are still tellable
-    apart; that distinction moves into the filename rather than being lost.
-
-    Every paper costs 1 + N + F calls, every time. Nothing is served from disk: asking twice
-    pays twice, and the second answer is the one that reflects the current prompts.
+    Every paper costs 1 + N + F + O calls, every time. Nothing is served from disk: asking
+    twice pays twice, and the second answer is the one that reflects the current prompts.
 
     `on_progress` is fired at each round boundary, and once per assay during round 2, for a
     caller watching a run it did not block on. It is a listener, not a participant: it cannot
@@ -544,10 +717,10 @@ async def assay_report(
     and the OBI mapper runs in a worker thread, so neither can be watched from here, and a
     caller must show that as indeterminate rather than invent a position.
 
-    Raises PaperNotFoundError when no XML is on disk. Extraction failures propagate as
-    AssayExtractionError; verification, correction and OBI-mapping failures do not, because
-    each turns a failed call into a per-item ERROR record, or a failed round, rather than
-    losing the paper.
+    Raises PaperNotFoundError when neither an XML nor a PDF is on disk. Extraction failures
+    propagate as AssayExtractionError; verification, correction and OBI-mapping failures do
+    not, because each turns a failed call into a per-item ERROR record, or a failed round,
+    rather than losing the paper.
     """
     def _emit(**event) -> None:
         if on_progress is None:
@@ -556,36 +729,54 @@ async def assay_report(
             on_progress(event)
         except Exception:
             logger.exception("assay progress listener raised; the run continues")
-    xml_path = locate_paper_xml(pubmed_id, study_accession)
-    if xml_path is None:
-        raise PaperNotFoundError(
-            f"No JATS XML for pubmed_id={pubmed_id!r} study_accession={study_accession!r} "
-            f"under {XML_ROOT}"
-        )
+    source = locate_paper_source(pubmed_id, study_accession)
+    if source is None:
+        raise _not_found(pubmed_id, study_accession)
+    kind, paper_path = source
 
-    title, source_text = paper_source_text(xml_path)
+    title, source_text = paper_source(kind, paper_path)
     out_dir = registry_dir(pubmed_id, study_accession)
     registry_path = out_dir / "assays.json"
+    precorrection_path = out_dir / "assays_precorrection.json"
     verification_path = out_dir / "assays_verification.json"
     corrections_path = out_dir / "assays_corrections.json"
+    corrected_path = out_dir / "assays_corrected.json"
+    rejected_path = out_dir / "assays_rejected.json"
+    obi_path = out_dir / "assays_OBI.json"
+    merges_path = out_dir / "assays_merges.json"
+    benchmark_path = out_dir / "assays_benchmark.json"
 
     calls = 0
     rounds: dict = {}
 
     # ── Round 1: extract ──────────────────────────────────────────────────────
+    # The only round that cares which kind of source this is. A PDF goes to the model whole --
+    # `source_text` for that kind is just the text layer, kept back for the quote checks below,
+    # because the layout it loses is exactly what the extraction needs to read sections from.
     _emit(round="extract", state="running")
-    assays = await extract_assays(source_text, title, client, model)
+    if kind == "pdf":
+        assays = await extract_assays_from_pdf(
+            paper_path.read_bytes(), paper_path.name, title, client, model)
+    else:
+        assays = await extract_assays(source_text, title, client, model)
+
+    # Every file the previous run left now describes a different extraction. They go before
+    # anything of this run's is written -- assays.json and the deliverable included -- so a run
+    # that fails or is cancelled part-way leaves no file that reads as its findings, and never an
+    # assays.json that looks verified. The registry is only written once the chain is done; until
+    # then this run's extraction lives in assays_precorrection.json, which is what it is.
+    for stale in (registry_path, benchmark_path, verification_path, corrections_path,
+                  corrected_path, rejected_path, obi_path, merges_path):
+        if stale.exists():
+            stale.unlink()
     out_dir.mkdir(parents=True, exist_ok=True)
-    registry_path.write_text(json.dumps(assays, indent=2, ensure_ascii=False) + "\n",
-                             encoding="utf-8")
+    precorrection_path.write_text(json.dumps(assays, indent=2, ensure_ascii=False) + "\n",
+                                  encoding="utf-8")
     calls += 1
     rounds["extract"] = {"source": "extracted", "calls": 1, "assays": len(assays)}
     _emit(round="extract", state="done", calls=1, assays=len(assays))
-    extracted = assays
 
-    warnings = contract_warnings(assays)
-    for warning in warnings:
-        logger.warning("assay extraction: %s", warning)
+    warnings = contract_warnings(assays, expect_sentence_ids=(kind == "xml"))
 
     # ── Round 2: verify ───────────────────────────────────────────────────────
     verification = None
@@ -610,7 +801,7 @@ async def assay_report(
         _emit(round="verify", state="done", calls=len(assays),
               summary=verification.get("summary", {}))
 
-    # ── Round 3: correct, then promote ────────────────────────────────────────
+    # ── Round 3: correct ──────────────────────────────────────────────────────
     dropped: dict = {}
     corrections: dict | None = None
     if not correct or not verification:
@@ -629,28 +820,13 @@ async def assay_report(
         corrections = report
         spent = report["summary"]["fields_re_extracted"]
 
-        (out_dir / "assays_corrected.json").write_text(
+        corrected_path.write_text(
             json.dumps(corrected, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
         corrections_path.write_text(
             json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-        # Removed rather than left behind when this run rejected nothing: a stale file from an
-        # earlier run would read as this run's findings. Same reason the snapshot below is
-        # rewritten -- every one of these files now describes one specific run.
-        rejected_path = out_dir / "assays_rejected.json"
         if dropped:
             rejected_path.write_text(
                 json.dumps(dropped, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-        elif rejected_path.exists():
-            rejected_path.unlink()
-
-        # This run's extraction is what "pre-correction" means. promote_registry writes the
-        # snapshot only when absent, which was right while a finished paper was served from
-        # cache -- the first extraction really was the only unrepaired version there would
-        # ever be. Now that every run re-extracts, that guard would pin the snapshot to
-        # whichever run happened to be first, so it is written here instead.
-        (out_dir / "assays_precorrection.json").write_text(
-            json.dumps(extracted, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-        promote_registry(out_dir)
         assays = corrected
         calls += spent
         rounds["correct"] = {"source": "corrected", "calls": spent,
@@ -660,18 +836,15 @@ async def assay_report(
               actions=report["summary"]["actions"])
 
     # ── Round 4: map to OBI ───────────────────────────────────────────────────
-    # After promotion, deliberately. The mapper's paid step reads sample_type and readouts as
+    # After correction, deliberately. The mapper's paid step reads sample_type and readouts as
     # disambiguating context (prompts/resolver_obi_assay.txt), and those are two of the fields
     # round 3 re-extracts -- so mapping the extracted registry would resolve assays against
     # values the verifier had already refused to support, and would pay to map assays that
-    # drop_rejected then removes. The free exact-match steps are name-only, and name_in_paper is
-    # never corrected, so those land the same either way: it is only the expensive path that
-    # moves. Same argument this module's docstring makes for not reusing round 1 on its own.
+    # drop_rejected then removes.
     #
     # Written to its own file, never back into assays.json: enrichment adds normalized_name and
     # four obi_* keys, none of them in ENTRY_FIELDS, so a merged registry would trip
     # contract_warnings on the way out and lose them to trim_registry anyway.
-    obi_path = out_dir / "assays_OBI.json"
     obi = None
     if not assays:
         rounds["obi"] = {"source": "skipped", "calls": 0}
@@ -682,20 +855,17 @@ async def assay_report(
         try:
             # to_thread because enrich_assays_with_obi is synchronous and drives a blocking
             # OpenAI client; calling it inline would stall the event loop for the whole round.
-            obi = await asyncio.to_thread(enrich_assays_with_obi, assays)
+            obi = await asyncio.to_thread(enrich_assays_with_obi, assays, model=model)
         except Exception:
-            # Soft on purpose, and this round is the only one that can afford to be: rounds 1-3
-            # have already cost 1+N+F calls and every one of their files is on disk by now, so
-            # raising here would throw away a paid run over an ontology lookup. Nothing later
-            # depends on the mapping, and its input is the promoted registry -- so
-            # scripts/run_obi_map.py can finish the job without re-paying for the earlier rounds.
+            # Soft on purpose. The mapper already turns a failed lookup into an "error" entry,
+            # so reaching here means the round could not run at all (a missing vocabulary file,
+            # say). Rounds 1-3 have cost 1+N+F calls; raising would throw that away over an
+            # ontology lookup. `run_assay_merge.py --map` finishes the job without re-paying.
             logger.exception("OBI mapping failed; rounds 1-3 output is intact at %s",
                              _display_path(out_dir))
             rounds["obi"] = {"source": "failed", "calls": 0}
             _emit(round="obi", state="failed", calls=0)
         else:
-            obi_path.write_text(json.dumps(obi, indent=2, ensure_ascii=False) + "\n",
-                                encoding="utf-8")
             spent_obi = obi_calls(obi)
             calls += spent_obi
             rounds["obi"] = {"source": "mapped", "calls": spent_obi, **obi_summary(obi)}
@@ -709,42 +879,36 @@ async def assay_report(
     #
     # Runs whether or not anything folds: re-keying is the point, and `name_in_paper` becomes a
     # list of every wording on every entry so no reader has to branch on whether a fold happened.
+    # assays_merges.json is written every time for its key_map, which is the only join from the
+    # verification and corrections (keyed by the extractor's wording) to the canonical registry.
     merges: dict | None = None
-    merges_path = out_dir / "assays_merges.json"
     if not assays or obi is None:
         # Without a mapping there is nothing to key on. Leaving the registry in its extracted
-        # shape is the honest degradation: run_assay_merge.py finishes the job once OBI has.
+        # shape is the honest degradation: run_assay_merge.py --map finishes the job.
         rounds["canonicalize"] = {"source": "skipped", "calls": 0}
         _emit(round="canonicalize", state="skipped", calls=0)
     else:
         _emit(round="canonicalize", state="running", total=len(assays))
+        keys = key_map(assays, obi)
         assays, obi, folds = canonicalize_registry(assays, obi)
-        merges = build_merge_report(folds)
+        merges = build_merge_report(folds, keys)
         rounds["canonicalize"] = {"source": "canonical", "calls": 0,
                                   "assays": len(assays), **merges["summary"]}
         _emit(round="canonicalize", state="done", calls=0, assays=len(assays),
               **merges["summary"])
-        registry_path.write_text(
-            json.dumps(assays, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-        # Rewritten rather than left as round 4 wrote it: the two files are looked up across each
-        # other by key, and a mapping still keyed by a wording no longer in the registry reads as
-        # an assay this paper never reported.
-        obi_path.write_text(
-            json.dumps(obi, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-        if folds:
-            merges_path.write_text(
-                json.dumps(merges, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    # Removed when this run folded nothing: a stale file from an earlier run would read as this
-    # run's findings, the same reason assays_rejected.json is unlinked above.
-    if not (merges or {}).get("results") and merges_path.exists():
-        merges_path.unlink()
+        merges_path.write_text(
+            json.dumps(merges, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
-    # The deliverable, written from the final registry on every request, so it can never
-    # lag assays.json. Deliberately not inside promote_registry(): that would make
-    # assay_corrector import assay_extractor, and it would skip the rounds that never promote.
-    # The consequence is that `run_assay_correct.py --promote` alone does not refresh this file.
-    benchmark_path = out_dir / "assays_benchmark.json"
-    out_dir.mkdir(parents=True, exist_ok=True)
+    # ── Promote ───────────────────────────────────────────────────────────────
+    # Only now, with every round done, is assays.json written -- the corrected, canonical
+    # registry -- and the OBI mapping and the deliverable beside it, keyed the same way. The
+    # consequence is that `run_assay_correct.py --promote` alone does not refresh the
+    # deliverable, and does not re-canonicalize.
+    if obi is not None:
+        obi_path.write_text(json.dumps(obi, indent=2, ensure_ascii=False) + "\n",
+                            encoding="utf-8")
+    registry_path.write_text(json.dumps(assays, indent=2, ensure_ascii=False) + "\n",
+                             encoding="utf-8")
     benchmark_path.write_text(
         json.dumps(trim_registry(assays), indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
@@ -752,7 +916,8 @@ async def assay_report(
         "study_accession": study_accession,
         "pubmed_id": pubmed_id,
         "paper_title": title,
-        "paper_source": xml_path.name,
+        "paper_source": paper_path.name,
+        "paper_source_kind": kind,
         "assays": assays,
         "obi": obi,
         "quote_check": quote_report(assays, source_text),
@@ -806,84 +971,3 @@ def corrections_available(assays: dict, verification: dict | None) -> dict:
         }
     return {"fields": fields, "calls": fields,
             "rejected": sum(1 for k in assays if k in reasons), "per_assay": per_assay}
-
-
-async def correct_report(
-    pubmed_id: str,
-    study_accession: str,
-    client: AsyncOpenAI,
-    drop_rejected_entries: bool = True,
-    model: str = settings.OPENAI_MODEL,
-) -> dict:
-    """Repair the fields a verification flagged, and set aside the assays it rejected.
-
-    Costs one call per flagged field. Writes assays_corrected.json, assays_corrections.json
-    and (when anything was rejected) assays_rejected.json. **Nothing downstream reads those**
-    -- promote() is a separate deliberate step, so a corrected value reaches the resolver
-    because someone reviewed it rather than because a request ran.
-    """
-    xml_path = locate_paper_xml(pubmed_id, study_accession)
-    if xml_path is None:
-        raise PaperNotFoundError(f"No JATS XML for {pubmed_id!r}/{study_accession!r}")
-
-    out_dir = registry_dir(pubmed_id, study_accession)
-    registry_path = out_dir / "assays.json"
-    verification_path = out_dir / "assays_verification.json"
-    if not registry_path.exists():
-        raise NothingToDoError(f"no assays.json in {_display_path(out_dir)}; extract first")
-    if not verification_path.exists():
-        raise NothingToDoError(
-            f"no assays_verification.json in {_display_path(out_dir)}; verify first -- "
-            "correction acts on verdicts and has nothing to act on without them"
-        )
-
-    assays = json.loads(registry_path.read_text(encoding="utf-8"))
-    verification = json.loads(verification_path.read_text(encoding="utf-8"))
-    title, source_text = paper_source_text(xml_path)
-
-    kept, dropped = (drop_rejected(assays, verification) if drop_rejected_entries
-                     else (assays, {}))
-
-    corrected, records = await correct_registry(kept, verification, source_text, title,
-                                                client, model)
-    report = build_correction_report(records)
-
-    (out_dir / "assays_corrected.json").write_text(
-        json.dumps(corrected, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    (out_dir / "assays_corrections.json").write_text(
-        json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    if dropped:
-        (out_dir / "assays_rejected.json").write_text(
-            json.dumps(dropped, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-
-    return {
-        "study_accession": study_accession,
-        "pubmed_id": pubmed_id,
-        "corrected": corrected,
-        "corrections": report,
-        "dropped": dropped,
-        "meta": {
-            "llm_calls": report["summary"]["fields_re_extracted"],
-            "dropped_count": len(dropped),
-            "promoted": False,
-            "registry_path": _display_path(registry_path),
-        },
-    }
-
-
-def promote(pubmed_id: str, study_accession: str) -> dict:
-    """Install the corrected registry as the one the pipeline reads. Free, no API call."""
-    out_dir = registry_dir(pubmed_id, study_accession)
-    try:
-        result = promote_registry(out_dir)
-    except FileNotFoundError as exc:
-        raise NothingToDoError(f"{exc}; run the correction first") from exc
-
-    return {
-        "study_accession": study_accession,
-        "pubmed_id": pubmed_id,
-        "assays": json.loads((out_dir / "assays.json").read_text(encoding="utf-8")),
-        "meta": {**result, "registry_path": _display_path(out_dir / "assays.json"),
-                 "note": "assays_verification.json still describes the pre-correction "
-                         "registry; re-verify to judge the promoted values"},
-    }

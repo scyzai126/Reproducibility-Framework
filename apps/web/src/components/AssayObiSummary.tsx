@@ -52,8 +52,8 @@ export default function AssayObiSummary({ stats }: { stats: AssayObiStats }) {
   return (
     <div className="space-y-5">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <StatTile value={String(stats.total_rows)} label="assay rows" />
         <StatTile value={String(stats.papers)} label="papers" />
+        <StatTile value={String(stats.total_rows)} label="assay rows" />
         <StatTile value={String(stats.obi_terms)} label="distinct OBI terms" />
         <StatTile
           value={`${stats.coverage_pct}%`}

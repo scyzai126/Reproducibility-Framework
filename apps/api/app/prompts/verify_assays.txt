@@ -61,8 +61,16 @@ Do not accept assays that are:
 - mentioned as background knowledge,
 - cited from another study,
 - described only as previous work,
+- the source of a reused public dataset the authors analysed but did not generate,
 - discussed hypothetically,
 - or proposed for future experiments.
+
+**When the source text explicitly shows the study did not perform the assay — any of the cases
+above — the identity verdict is CONTRADICTED, not NOT_SUPPORTED.** Text establishing that the
+assay was someone else's work contradicts the claim that this study performed it. Reserve
+NOT_SUPPORTED for text that is silent or ambiguous about whether the study performed it. A
+cited protocol is not the same as not performing the assay: "measured as previously described"
+still describes a measurement made in this study.
 
 If the proposed assay name is more specific than the source text supports, assign
 NOT_SUPPORTED. Example — source: "Gene expression was measured." Candidate: "RNA sequencing".
@@ -76,11 +84,12 @@ procedure that could be looked up or reproduced.
 Four categories are not assays at all. If the proposed name is one of these, assign
 CONTRADICTED on assay identity and say which category it falls into:
 
-- **Downstream computational/statistical analyses** — GSEA, GO enrichment, pathway analysis,
-  differential expression testing, clustering, module scoring. These are computations run *on*
-  an assay's output.
+- **Downstream computational/statistical analyses** — GSEA, ssGSEA, GO enrichment, pathway
+  analysis, differential expression testing, clustering, WGCNA, module scoring, deconvolution,
+  batch correction, classifiers. These are computations run *on* an assay's output.
 - **Sample-prep / cell-isolation steps** — MACS, FACS sorting for isolation, density-gradient
-  separation, magnetic/column enrichment. These purify a sample for a later measurement.
+  separation, magnetic/column enrichment, RNA purification. These purify a sample for a later
+  measurement and produce no readout of their own.
 - **Sample quality/quantity checks** — NanoDrop, BioAnalyzer/TapeStation, Qubit.
 - **Endpoints, readouts and measured quantities** — an assay is a *procedure*, not the number
   it produces. "Viremia", "CD8+ T-cell responses", "anti-CHIKV antibody titer" are results, not
@@ -97,7 +106,9 @@ Verify each of the following fields the extraction proposed, when it is present 
   alias separately, as `aliases[0]`, `aliases[1]`, and so on. An alias must (a) appear verbatim
   in the source text and (b) refer to the same measurement as the assay. An instrument, chip,
   or kit name is NOT an alias — if one appears here, that is CONTRADICTED, because the
-  extractor was told product names belong in `platform`. A phrase that does not appear verbatim
+  extractor was told product names belong in `platform`. The exception is a brand name that
+  *is* the field's standard name for a technique (Luminex, CyTOF, ELISpot, TaqMan): the
+  extractor was told these stay as names, so they are valid aliases too. A phrase that does not appear verbatim
   in the source is NOT_SUPPORTED, even if a near-variant does.
 - **`platform`** — the instrument, chip, kit, or vendor product this assay ran on. Verify that
   the source ties this product to *this* assay, not merely to the same paragraph or the same
@@ -122,7 +133,9 @@ Verify each of the following fields the extraction proposed, when it is present 
 Older extractions may carry `evidence_location` instead of `evidence`, and `original_name`
 instead of `name_in_paper`. Treat them as the same fields under different names, and report
 them under the field name the extraction actually used. Ignore `confidence` and `claim_role`
-entirely if present — they are not proposed values and are not yours to verify.
+entirely if present — they are not proposed values and are not yours to verify. Ignore
+`measurement_role` and `parent_hint` too: they are the extractor's judgement of what the paper
+does with an assay, not values copied from the text.
 
 ## Evidence requirements
 

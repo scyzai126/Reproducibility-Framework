@@ -1,3 +1,5 @@
+import pytest
+
 from app.agent.assay_obi_mapper import enrich_assays_with_obi, map_assay_to_obi
 
 
@@ -95,7 +97,9 @@ def test_an_absent_normalized_name_leaves_step_1_exactly_as_it_was(monkeypatch):
     assert assay_obi_mapper.map_assay_to_obi("XYZZY_unknown", "   ") is None
 
 
-def test_enrich_assays_preserves_registry_fields():
+def test_enrich_assays_preserves_registry_fields(monkeypatch):
+    # Stubbed: unstubbed, the unknown name reached step 2 and called OpenAI for real.
+    _no_step3(monkeypatch)
     assays = {
         "Bulk RNA-seq": {
             "sample_type": "whole blood",
@@ -740,3 +744,35 @@ def test_the_aliases_are_evidence_not_an_override():
 
     assert "do not outrank the assay name" in prompt
     assert "does not justify choosing a broader term" in prompt
+
+
+# ── one failed lookup, and a reply the picker cannot read ─────────────────────
+
+def test_one_failed_lookup_leaves_the_other_entries_mapped(monkeypatch):
+    """The round used to be all-or-nothing: one raised embedding call lost every mapping."""
+    from app.agent import assay_obi_mapper
+
+    def flaky(name, *args, **kwargs):
+        if name == "boom":
+            raise TimeoutError("embedding timed out")
+        return {"obi_id": "OBI:1", "obi_label": "flow cytometry", "resource": "exact_original",
+                "confidence": "high"}
+
+    monkeypatch.setattr(assay_obi_mapper, "map_assay_to_obi", flaky)
+
+    enriched = enrich_assays_with_obi({"flow cytometry": {}, "boom": {}})
+
+    assert enriched["flow cytometry"]["obi_id"] == "OBI:1"
+    assert enriched["boom"]["resource"] == "error"
+    assert enriched["boom"]["obi_id"] is None
+    assert "TimeoutError" in enriched["boom"]["obi_error"]
+
+
+@pytest.mark.parametrize("reply, expected", [
+    ("3", 2), ("#3", 2), ("3.", 2), ("**3**", 2),
+    ("none", None), ("OBI:0000661", None), ("3 or 5", None), ("12", None), ("0", None),
+])
+def test_the_pick_reply_is_read_strictly(reply, expected):
+    from app.agent.assay_obi_mapper import parse_pick
+
+    assert parse_pick(reply, 10) == expected

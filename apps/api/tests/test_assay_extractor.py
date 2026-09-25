@@ -22,6 +22,8 @@ def _raw(**over) -> dict:
         "platform": "BD LSRFortessa",
         "sample_type": "PBMCs",
         "readouts": "cell frequencies",
+        "measurement_role": "reported",
+        "parent_hint": None,
         "source": "methods",
         "evidence": {"section": "Methods", "sentence_ids": ["S318"], "quote": "…"},
     }
@@ -29,7 +31,7 @@ def _raw(**over) -> dict:
     return entry
 
 
-def test_an_entry_is_reduced_to_exactly_the_eight_fields():
+def test_an_entry_is_reduced_to_exactly_the_contract_fields():
     """confidence and claim_role are what a model reaches for unprompted; both were removed
     from this schema on purpose and must not come back through the extractor."""
     entry = clean_entry("flow cytometry", _raw(confidence=0.95, claim_role="primary"))
@@ -243,3 +245,64 @@ def test_the_prompt_carries_the_paper_and_leaves_no_placeholders():
     # The JSON example's braces must survive -- this prompt is rendered with .replace(),
     # not .format(), precisely so they can.
     assert '"name_in_paper"' in prompt
+
+
+# ── measurement_role / parent_hint ────────────────────────────────────────────
+
+def test_an_invented_role_becomes_none_and_is_reported():
+    """Not corrected to the nearest valid role: that would hide the model going wrong."""
+    registry = clean_registry({"ELISA": _raw(name_in_paper="ELISA", measurement_role="primary")})
+
+    assert registry["ELISA"]["measurement_role"] is None
+    assert any("ELISA: measurement_role is None" in w for w in contract_warnings(registry))
+
+
+def test_every_documented_role_is_kept():
+    for role in ("reported", "sub_step", "screening", "unreported"):
+        assert clean_entry("x", _raw(measurement_role=role))["measurement_role"] == role
+
+
+def test_a_sub_step_must_name_its_parent():
+    registry = clean_registry({
+        "flow cytometry": _raw(),
+        "tandem MS": _raw(name_in_paper="tandem MS", measurement_role="sub_step"),
+    })
+
+    assert "tandem MS: sub_step has no parent_hint" in contract_warnings(registry)
+
+
+def test_a_parent_hint_resolves_by_wording_even_after_the_registry_is_rekeyed():
+    """Round 5 keys entries by OBI label but keeps every wording in name_in_paper."""
+    registry = {
+        "liquid chromatography mass spectrometry assay": {
+            **_raw(name_in_paper=["LC-MS analysis"])},
+        "tandem mass spectrometry assay": _raw(
+            name_in_paper="tandem mass spectrometry assay", measurement_role="sub_step",
+            parent_hint="LC-MS analysis"),
+    }
+
+    assert not any("parent_hint" in w for w in contract_warnings(registry))
+
+
+def test_a_parent_hint_naming_nothing_is_reported():
+    registry = clean_registry({
+        "flow cytometry": _raw(),
+        "tandem MS": _raw(name_in_paper="tandem MS", measurement_role="sub_step",
+                          parent_hint="LC-MS"),
+    })
+
+    assert "tandem MS: parent_hint 'LC-MS' names no other entry" in contract_warnings(registry)
+
+
+def test_a_parent_hint_on_a_non_sub_step_is_reported():
+    registry = clean_registry({"flow cytometry": _raw(parent_hint="ELISA")})
+
+    assert any("parent_hint 'ELISA' set on a 'reported' entry" in w
+               for w in contract_warnings(registry))
+
+
+def test_the_deliverable_carries_the_role_but_not_the_parent_hint():
+    trimmed = trim_registry(clean_registry({"flow cytometry": _raw()}))
+
+    assert trimmed["flow cytometry"]["measurement_role"] == "reported"
+    assert "parent_hint" not in trimmed["flow cytometry"]

@@ -24,6 +24,11 @@ def corpus(tmp_path, monkeypatch):
     xml_root, registry_root = tmp_path / "JAT_XML", tmp_path / "assay_registries"
     xml_root.mkdir()
     monkeypatch.setattr(assay_service, "XML_ROOT", xml_root)
+    # PDF_ROOT is redirected at an empty directory so the listing cannot pick up the
+    # repo's real PDFs: available_papers offers PDF-only papers too.
+    _pdf_root = tmp_path / "pdf"
+    _pdf_root.mkdir(exist_ok=True)
+    monkeypatch.setattr(assay_service, "PDF_ROOT", _pdf_root)
     monkeypatch.setattr(assay_service, "REGISTRY_ROOT", registry_root)
     return xml_root
 

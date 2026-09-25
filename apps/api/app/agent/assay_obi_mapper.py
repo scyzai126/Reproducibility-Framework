@@ -23,6 +23,7 @@ and web UI still render it.
 from __future__ import annotations
 
 import json
+import logging
 import re
 from functools import lru_cache
 from pathlib import Path
@@ -33,6 +34,8 @@ from openai import OpenAI
 
 from app.agent.assay_extractor import paper_names
 from app.config import settings
+
+logger = logging.getLogger(__name__)
 
 _REPO_ROOT = Path(__file__).resolve().parents[4]
 _OBI_DIR = _REPO_ROOT / "data" / "OBI"
@@ -212,6 +215,24 @@ def build_pick_prompt(
     )
 
 
+#: The whole reply the pick prompt asks for: a candidate number, optionally "#3" or "3." --
+#: nothing else. The old `re.search(r"\d+")` read "OBI:0000661" as candidate 0000661 and
+#: "3 or 5" as a confident 3.
+_PICK_REPLY = re.compile(r"#?\s*(\d+)\s*[.)]?")
+
+
+def parse_pick(reply: str, n_candidates: int) -> int | None:
+    """The 0-based candidate index the reply names, or None for "none" or anything ambiguous."""
+    reply = reply.strip().strip("*`'\"").strip().lower()
+    match = _PICK_REPLY.fullmatch(reply)
+    if not match:
+        if reply not in ("none", "none."):
+            logger.warning("OBI pick reply not understood, treated as none: %r", reply[:80])
+        return None
+    idx = int(match.group(1)) - 1
+    return idx if 0 <= idx < n_candidates else None
+
+
 def _llm_pick(
     assay_name: str,
     candidates: list[dict[str, Any]],
@@ -241,13 +262,9 @@ def _llm_pick(
         temperature=0,
     )
     reply = (resp.choices[0].message.content or "").strip().lower()
-
-    if reply == "none":
+    idx = parse_pick(reply, len(candidates))
+    if idx is None:
         return None
-    match = re.search(r"\d+", reply)
-    if not match:
-        return None
-    idx = int(match.group()) - 1
     if not (0 <= idx < len(candidates)):
         return None
     chosen = candidates[idx]
@@ -342,7 +359,7 @@ def map_assay_to_obi(
     model: str = settings.OPENAI_MODEL,
     aliases: list[str] | None = None,
 ) -> dict[str, Any] | None:
-    """Return OBI metadata for an assay, or None if nothing passes the threshold.
+    """Return OBI metadata for an assay, or None when no candidate fits.
 
     terms_path selects the standard vocabulary used for exact-match lookup and
     restricts the embedding fallback's candidate pool to that vocabulary's ids
@@ -459,11 +476,20 @@ def enrich_assays_with_obi(
         readouts = str(entry.get("readouts") or "")
         raw_aliases = entry.get("aliases")
         normalized_name = str(entry.get("normalized_name") or "")
-        mapped = map_assay_to_obi(
-            original, normalized_name, terms_path=terms_path,
-            sample_type=sample_type, readouts=readouts, model=model,
-            aliases=raw_aliases if isinstance(raw_aliases, list) else None,
-        )
+        try:
+            mapped = map_assay_to_obi(
+                original, normalized_name, terms_path=terms_path,
+                sample_type=sample_type, readouts=readouts, model=model,
+                aliases=raw_aliases if isinstance(raw_aliases, list) else None,
+            )
+        except Exception as exc:  # noqa: BLE001 - one failed lookup must not cost the others
+            # Per entry, because the round used to be all-or-nothing: one timed-out embedding
+            # call threw away every mapping the paper had already paid for.
+            logger.warning("%s: OBI lookup failed - %s", canonical, exc)
+            entry.update({"obi_id": None, "obi_label": None, "resource": "error",
+                          "obi_confidence": None, "obi_error": f"{type(exc).__name__}: {exc}"})
+            enriched[canonical] = entry
+            continue
         if mapped:
             entry["obi_id"] = mapped["obi_id"]
             entry["obi_label"] = mapped["obi_label"]

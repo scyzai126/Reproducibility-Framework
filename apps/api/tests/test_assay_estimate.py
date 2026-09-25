@@ -41,6 +41,11 @@ def paper(tmp_path, monkeypatch):
     xml_root.mkdir()
     (xml_root / "SDY1_111.xml").write_text(_XML, encoding="utf-8")
     monkeypatch.setattr(assay_service, "XML_ROOT", xml_root)
+    # PDF_ROOT is redirected at an empty directory so the listing cannot pick up the
+    # repo's real PDFs: available_papers offers PDF-only papers too.
+    _pdf_root = tmp_path / "pdf"
+    _pdf_root.mkdir(exist_ok=True)
+    monkeypatch.setattr(assay_service, "PDF_ROOT", _pdf_root)
     monkeypatch.setattr(assay_service, "REGISTRY_ROOT", registry_root)
     return registry_root / "111_SDY1"
 
@@ -154,15 +159,25 @@ def test_a_rejected_assay_is_counted_as_set_aside_rather_than_re_extracted(paper
 # ── round 4: the only round whose count is exact ──────────────────────────────
 
 def test_obi_charges_two_calls_for_every_name_the_vocabulary_misses(paper, vocabulary):
-    """Exact, and marked exact: the vocabulary is a file on disk, so nothing here is sized
-    from a previous run's luck."""
+    """One embedding plus one pick per miss. Not exact: the count is right for the names the
+    last run found, but this run re-extracts them."""
     _store(paper, {"flow cytometry": _ENTRY, "SIMoA": {**_ENTRY, "name_in_paper": "SIMoA"}})
 
     obi = [r for r in estimate_run("111", "SDY1")["rounds"] if r["name"] == "obi"][0]
 
     assert obi["calls"] == 2
-    assert obi["exact"] is True
+    assert obi["exact"] is False
     assert (obi["free_matches"], obi["misses"]) == (1, ["SIMoA"])
+
+
+def test_obi_charges_a_third_call_when_the_normalized_name_is_a_second_query(paper, vocabulary):
+    """_embedding_llm_match embeds the normalized name too when it differs from the paper's."""
+    _store(paper, {"SIMoA": {**_ENTRY, "name_in_paper": "SIMoA",
+                             "normalized_name": "single molecule array"}})
+
+    obi = [r for r in estimate_run("111", "SDY1")["rounds"] if r["name"] == "obi"][0]
+
+    assert obi["calls"] == 3
 
 
 def test_the_extractors_normalized_name_resolves_for_free(vocabulary):
@@ -173,11 +188,43 @@ def test_the_extractors_normalized_name_resolves_for_free(vocabulary):
     assert obi_misses({"FACS": entry}) == []
 
 
-def test_a_canonicalized_entry_matches_on_any_of_its_wordings(vocabulary):
-    """After round 5 name_in_paper is a list, and the vocabulary may know any one of them."""
+def test_only_the_first_wording_is_looked_up_as_the_mapper_does(vocabulary):
+    """The mapper queries names[0] and normalized_name, nothing else. Counting a later wording
+    -- or the key, which after round 5 is an OBI label -- as free under-billed the round."""
     entry = {**_ENTRY, "name_in_paper": ["FACS", "flow cytometry"]}
 
-    assert obi_misses({"cytometry": entry}) == []
+    assert obi_misses({"flow cytometry": entry}) == ["flow cytometry"]
+
+
+def test_a_finished_paper_is_sized_from_its_extraction_not_its_canonical_registry(
+        paper, vocabulary):
+    """Round 5 re-keys assays.json by OBI label and folds entries; the verification keeps the
+    extractor's keys. Sizing from assays.json under-counted verify, matched no verification id
+    for correct, and found every OBI label free -- 10 calls quoted for a paper that cost 36."""
+    extracted = {"FACS": {**_ENTRY, "name_in_paper": "FACS"},
+                 "SIMoA": {**_ENTRY, "name_in_paper": "SIMoA"},
+                 "SIMoA kit": {**_ENTRY, "name_in_paper": "SIMoA kit"}}
+    verification = {"summary": {}, "results": [{
+        "assay_id": "SIMoA", "record_verdict": "REVIEW", "assay_identity_verdict": "SUPPORTED",
+        "field_verifications": [
+            {"field_name": "platform", "verdict": "NOT_SUPPORTED", "reason": "unstated"}]}]}
+    canonical = {"flow cytometry": {**_ENTRY, "name_in_paper": ["FACS"]},
+                 "digital ELISA": {**_ENTRY, "name_in_paper": ["SIMoA", "SIMoA kit"]}}
+    obi = {"flow cytometry": {"obi_id": "OBI:1", "obi_label": "flow cytometry"},
+           "digital ELISA": {"obi_id": "OBI:2", "obi_label": "digital ELISA"}}
+    _store(paper, canonical, verification=verification, obi=obi)
+    (paper / "assays_precorrection.json").write_text(json.dumps(extracted), encoding="utf-8")
+    (paper / "assays_corrected.json").write_text(json.dumps(extracted), encoding="utf-8")
+
+    rounds = {r["name"]: r for r in estimate_run("111", "SDY1")["rounds"]}
+
+    assert rounds["verify"]["calls"] == 3
+    assert rounds["correct"]["calls"] == 1
+    assert rounds["obi"]["misses"] == ["FACS", "SIMoA", "SIMoA kit"]
+    assert rounds["obi"]["calls"] == 6
+    # Recovered without a stored key_map, through the wordings the survivor keeps.
+    assert rounds["canonicalize"]["folds"] == [
+        {"key": "digital ELISA", "members": ["SIMoA", "SIMoA kit"]}]
 
 
 # ── round 5: what would fold ──────────────────────────────────────────────────
@@ -267,7 +314,11 @@ def pipeline_script():
 def test_the_dry_run_still_prints_the_format_it_always_has(paper, vocabulary, pipeline_script,
                                                            monkeypatch, capsys):
     """--dry-run is the documented cost gate, and its wording is in the script's own docstring.
-    estimate_run moved the counting out; it must not have moved the output."""
+    estimate_run moved the counting out; it must not have moved the output.
+
+    The source kind in brackets was added with the PDF route: which of the two prompts round 1
+    will read is part of what a reader is deciding on before paying, so it belongs on the gate.
+    """
     monkeypatch.setattr(pipeline_script, "estimate_run", estimate_run)
     _store(paper, {"flow cytometry": _ENTRY, "SIMoA": {**_ENTRY, "name_in_paper": "SIMoA"}},
            verification={"summary": {}, "results": []})
@@ -275,18 +326,18 @@ def test_the_dry_run_still_prints_the_format_it_always_has(paper, vocabulary, pi
     pipeline_script._dry_run("111", "SDY1")
 
     out = capsys.readouterr().out
-    assert "SDY1_111.xml: " in out and "title 'A Paper'" in out
+    assert "SDY1_111.xml [xml]: " in out and "title 'A Paper'" in out
     assert "  round 1 extract: will run                            1 call" in out
     assert ("  round 2 verify:  will run                            ~2 calls"
             "   (the last run found that many)") in out
     assert ("  round 3 correct: will run                            ~0 calls"
             "   (0 assay(s) set aside last run)") in out
-    assert ("  round 4 OBI:     will run                            2 calls"
+    assert ("  round 4 OBI:     will run                            ~2 calls"
             "   (1 of 2 match the vocabulary for free)") in out
     assert "      needs embedding + LLM: SIMoA" in out
     assert ("  round 5 canon:   will run                            0 calls"
             "   (2 entries → 2, keyed by OBI term)") in out
-    assert "~ because rounds 2 and 3 are sized from the previous run's output" in out
+    assert "~ because rounds 2-4 are sized from the previous run's output" in out
     assert out.rstrip().endswith("--dry-run: nothing called.")
 
 
@@ -300,7 +351,7 @@ def test_the_dry_run_reports_an_unsized_paper_with_question_marks(paper, vocabul
     out = capsys.readouterr().out
     assert "  round 2 verify:  will run, 1 call per assay found    ? calls" in out
     assert "  round 3 correct: will run, 1 call per flagged field  ? calls" in out
-    assert "  round 4 OBI:     will run, 2 calls per unmatched name ? calls" in out
+    assert "  round 4 OBI:     will run, 2-3 calls per unmatched   ? calls" in out
     assert "  round 5 canon:   will run, free                       0 calls" in out
     # No "~" paragraph: nothing on this paper was sized from a previous run.
     assert "~ because rounds 2 and 3" not in out
@@ -309,11 +360,18 @@ def test_the_dry_run_reports_an_unsized_paper_with_question_marks(paper, vocabul
 def test_the_dry_run_exits_with_the_scripts_own_wording_for_a_missing_paper(paper,
                                                                            pipeline_script,
                                                                            monkeypatch):
-    """PaperNotFoundError is a library concern; a CLI exits. The message is the one users of
-    this script have always seen."""
+    """PaperNotFoundError is a library concern; a CLI exits.
+
+    The message changed with the PDF route and had to: "No JATS XML" was the whole truth when
+    XML was the only source, and would now send someone looking for the wrong file. It names
+    both roots it searched instead.
+    """
     monkeypatch.setattr(pipeline_script, "estimate_run", estimate_run)
 
     with pytest.raises(SystemExit) as exc:
         pipeline_script._dry_run("999", "SDY999")
 
-    assert str(exc.value) == "No JATS XML for pubmed_id='999' study_accession='SDY999'"
+    message = str(exc.value)
+    assert message.startswith(
+        "No paper for pubmed_id='999' study_accession='SDY999': ")
+    assert "no JATS XML under " in message and "no PDF under " in message

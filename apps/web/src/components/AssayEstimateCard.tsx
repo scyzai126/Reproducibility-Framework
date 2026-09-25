@@ -103,7 +103,7 @@ export default function AssayEstimateCard({ estimate, onConfirm, busy }: Props) 
         {paidMisses.length > 0 && (
           <div className="mt-3 text-xs">
             <p className="text-gray-500 mb-1">
-              Names the OBI vocabulary misses — two calls each:
+              Names the OBI vocabulary misses — two or three calls each:
             </p>
             <ul className="space-y-0.5">
               {paidMisses.map((name) => (

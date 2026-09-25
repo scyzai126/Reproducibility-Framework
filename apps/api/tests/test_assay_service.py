@@ -11,7 +11,6 @@ from app.agent.assay_service import (
     NothingToDoError,
     PaperNotFoundError,
     assay_report,
-    correct_report,
     locate_paper_xml,
     quote_report,
     registry_dir,
@@ -50,11 +49,19 @@ def stub_obi(monkeypatch):
 
 @pytest.fixture
 def paper(tmp_path, monkeypatch):
-    """A one-paper repo: XML on disk under both roots redirected into tmp_path."""
+    """A one-paper repo: XML on disk under all three roots redirected into tmp_path.
+
+    PDF_ROOT is redirected too, and at an empty directory: without that these tests would walk
+    the real data/pdf on every lookup, and a paper that happens to have a PDF there would take
+    the PDF route inside a test that means to exercise the XML one.
+    """
     xml_root, registry_root = tmp_path / "JAT_XML", tmp_path / "assay_registries"
+    pdf_root = tmp_path / "pdf"
     xml_root.mkdir()
+    pdf_root.mkdir()
     (xml_root / "SDY1_111.xml").write_text(_XML, encoding="utf-8")
     monkeypatch.setattr(assay_service, "XML_ROOT", xml_root)
+    monkeypatch.setattr(assay_service, "PDF_ROOT", pdf_root)
     monkeypatch.setattr(assay_service, "REGISTRY_ROOT", registry_root)
     return registry_root / "111_SDY1"
 
@@ -239,57 +246,6 @@ def _flagged_verification() -> dict:
         ]}]}
 
 
-# ── correcting ────────────────────────────────────────────────────────────────
-
-@pytest.mark.asyncio
-async def test_correcting_sets_rejected_assays_aside_without_calling_for_them(paper):
-    """A rejected assay is removed, not re-extracted -- so it costs no call."""
-    paper.mkdir(parents=True)
-    (paper / "assays.json").write_text(json.dumps({"GSEA": _ENTRY}))
-    (paper / "assays_verification.json").write_text(json.dumps({"results": [{
-        "assay_id": "GSEA", "record_verdict": "REJECT",
-        "assay_identity_verdict": "CONTRADICTED",
-        "field_verifications": [{"field_name": "name_in_paper", "verdict": "CONTRADICTED",
-                                 "reason": "not an assay"}]}]}))
-    client = _Client("SHOULD NOT BE CALLED")
-
-    result = await correct_report("111", "SDY1", client)
-
-    assert client.calls == 0
-    assert result["corrected"] == {}
-    assert result["dropped"]["GSEA"]["reason"] == "not an assay"
-    assert json.loads((paper / "assays_rejected.json").read_text())["GSEA"]["reason"] == "not an assay"
-
-
-@pytest.mark.asyncio
-async def test_keep_rejected_retains_the_entry(paper):
-    paper.mkdir(parents=True)
-    (paper / "assays.json").write_text(json.dumps({"GSEA": _ENTRY}))
-    (paper / "assays_verification.json").write_text(json.dumps({"results": [{
-        "assay_id": "GSEA", "record_verdict": "REJECT",
-        "assay_identity_verdict": "CONTRADICTED", "field_verifications": []}]}))
-
-    result = await correct_report("111", "SDY1", _Client("{}"), drop_rejected_entries=False)
-
-    assert list(result["corrected"]) == ["GSEA"]
-    assert not (paper / "assays_rejected.json").exists()
-
-
-@pytest.mark.asyncio
-async def test_correcting_does_not_touch_the_live_registry(paper):
-    """The corrected registry is a separate file until promoted."""
-    paper.mkdir(parents=True)
-    (paper / "assays.json").write_text(json.dumps({"flow cytometry": _ENTRY}))
-    (paper / "assays_verification.json").write_text(json.dumps(_flagged_verification()))
-
-    await correct_report("111", "SDY1", _Client('{"value": null, "sentence_ids": []}'))
-
-    live = json.loads((paper / "assays.json").read_text())
-    assert live["flow cytometry"]["platform"] == "LSRII"
-    assert json.loads((paper / "assays_corrected.json").read_text())["flow cytometry"]["platform"] is None
-
-
-
 def test_the_route_returns_the_corrected_registry(paper):
     """One endpoint, four rounds: what comes back is the post-correction set."""
     import app.api.routes as routes
@@ -428,8 +384,9 @@ async def test_two_entries_on_one_obi_term_leave_one_entry_keyed_by_that_term(pa
 
 
 @pytest.mark.asyncio
-async def test_a_stale_merges_file_does_not_survive_a_run_that_folds_nothing(paper):
-    """Same reason as assays_rejected.json: it would read as this run's findings."""
+async def test_a_run_that_folds_nothing_still_writes_its_own_merges_file(paper):
+    """Rewritten, never left over: the key_map joins this run's verification to its registry,
+    and a stale file from an earlier run would read as this run's findings."""
     paper.mkdir(parents=True)
     (paper / "assays_merges.json").write_text('{"summary": {"groups_merged": 9}}')
 
@@ -438,4 +395,95 @@ async def test_a_stale_merges_file_does_not_survive_a_run_that_folds_nothing(pap
 
     assert result["rounds"]["canonicalize"]["source"] == "canonical"
     assert result["merges"]["results"] == []
-    assert not (paper / "assays_merges.json").exists()
+    stored = json.loads((paper / "assays_merges.json").read_text())
+    assert stored["summary"]["groups_merged"] == 0
+    assert set(stored["key_map"]) == {"flow cytometry"}
+
+
+# ── Source resolution: XML first, PDF as the fallback ─────────────────────────
+
+@pytest.fixture
+def pdf_only_paper(tmp_path, monkeypatch):
+    """A repo where SDY2/222 exists only as a PDF -- the shape of the four corpus papers PMC
+    will not serve as full text."""
+    xml_root, registry_root = tmp_path / "JAT_XML", tmp_path / "assay_registries"
+    pdf_root = tmp_path / "pdf"
+    xml_root.mkdir()
+    (pdf_root / "26papers").mkdir(parents=True)
+    (pdf_root / "26papers" / "SDY2_222.pdf").write_bytes(b"%PDF-1.4 fake")
+    monkeypatch.setattr(assay_service, "XML_ROOT", xml_root)
+    monkeypatch.setattr(assay_service, "PDF_ROOT", pdf_root)
+    monkeypatch.setattr(assay_service, "REGISTRY_ROOT", registry_root)
+    return pdf_root / "26papers" / "SDY2_222.pdf"
+
+
+def test_xml_wins_when_a_paper_has_both(paper, tmp_path):
+    """The PDF route loses the section tags and sentence markers, so it is only ever a
+    fallback: a paper with an XML must never be routed through it."""
+    (assay_service.PDF_ROOT / "SDY1_111.pdf").write_bytes(b"%PDF-1.4 fake")
+
+    kind, path = assay_service.locate_paper_source("111", "SDY1")
+
+    assert (kind, path.name) == ("xml", "SDY1_111.xml")
+
+
+def test_a_pdf_is_found_when_there_is_no_xml(pdf_only_paper):
+    kind, path = assay_service.locate_paper_source("222", "SDY2")
+
+    assert (kind, path.name) == ("pdf", "SDY2_222.pdf")
+
+
+def test_a_pdf_is_found_in_a_nested_directory_whose_name_has_a_space(tmp_path, monkeypatch):
+    """data/pdf/19 papers/ is a real directory. A locator that joined a path instead of
+    walking would miss everything in it."""
+    pdf_root = tmp_path / "pdf"
+    (pdf_root / "19 papers").mkdir(parents=True)
+    (pdf_root / "19 papers" / "SDY3_333.pdf").write_bytes(b"%PDF-1.4 fake")
+    monkeypatch.setattr(assay_service, "XML_ROOT", tmp_path / "empty")
+    monkeypatch.setattr(assay_service, "PDF_ROOT", pdf_root)
+
+    assert assay_service.locate_paper_pdf("333", "SDY3").name == "SDY3_333.pdf"
+
+
+def test_a_paper_with_neither_source_resolves_to_nothing(paper):
+    assert assay_service.locate_paper_source("999", "SDY9") is None
+
+
+def test_estimate_run_prices_a_pdf_only_paper_instead_of_raising(pdf_only_paper, monkeypatch):
+    """The cost gate is the reason this matters: before the PDF route these four papers could
+    not even be quoted, so there was no way to decide whether to run them."""
+    monkeypatch.setattr(assay_service, "extract_pdf_text",
+                        lambda *_a, **_k: "Cells were analyzed on an LSRII.")
+
+    estimate = assay_service.estimate_run("222", "SDY2")
+
+    assert estimate["paper_source_kind"] == "pdf"
+    assert estimate["paper_source"] == "SDY2_222.pdf"
+    # Round 1 is one call whichever source it reads; the PDF rides along as a file part.
+    assert estimate["rounds"][0]["calls"] == 1
+
+
+def test_estimate_run_still_refuses_a_paper_with_no_source_at_all(paper):
+    with pytest.raises(PaperNotFoundError) as exc:
+        assay_service.estimate_run("999", "SDY9")
+
+    # Both places looked are named, so the message says what to do about it.
+    assert "JATS XML" in str(exc.value) and "PDF" in str(exc.value)
+
+
+def test_available_papers_offers_a_pdf_only_paper(pdf_only_paper):
+    """assay_report can run it, so hiding it would be the listing invariant broken the other
+    way round: runnable but not offered."""
+    listed = {p["study_accession"]: p for p in assay_service.available_papers()}
+
+    assert listed["SDY2"]["paper_source_kind"] == "pdf"
+    assert listed["SDY2"]["paper_source"] == "SDY2_222.pdf"
+
+
+def test_available_papers_lists_a_paper_with_both_sources_once_as_xml(paper):
+    (assay_service.PDF_ROOT / "SDY1_111.pdf").write_bytes(b"%PDF-1.4 fake")
+
+    listed = [p for p in assay_service.available_papers() if p["study_accession"] == "SDY1"]
+
+    assert len(listed) == 1
+    assert listed[0]["paper_source_kind"] == "xml"

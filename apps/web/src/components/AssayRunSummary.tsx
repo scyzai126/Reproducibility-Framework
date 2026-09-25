@@ -20,8 +20,8 @@ interface Props {
  * answers "what did this paper use, and how did each one land?" without scrolling through nine
  * evidence cards to find out.
  *
- * Free. The rows are a mapping of the result already in hand, and the ImmPort column is the same
- * SQL-only pass the corpus column runs.
+ * The rows are a mapping of the result already in hand, and the ImmPort column is the same pass
+ * the corpus column runs: SQL, then the cached LLM fallback for what SQL misses.
  */
 export default function AssayRunSummary({ result, pubmedId, studyAccession }: Props) {
   const rows = useMemo(

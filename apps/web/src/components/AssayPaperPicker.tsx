@@ -53,7 +53,9 @@ export default function AssayPaperPicker({ papers, value, onSelect, disabled }: 
       />
 
       <div className="border border-gray-200 rounded-xl overflow-hidden">
-        <div className="max-h-[280px] overflow-y-auto divide-y divide-gray-100">
+        {/* Sized to the window rather than to a fixed height: 280px showed four of 35 papers and
+            left most of the page empty, so the list scrolled while the page did not. */}
+        <div className="max-h-[70vh] overflow-y-auto divide-y divide-gray-100">
           {visible.length === 0 && (
             <p className="px-4 py-6 text-sm text-gray-400">No paper matches that.</p>
           )}

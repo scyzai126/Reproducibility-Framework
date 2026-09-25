@@ -73,11 +73,16 @@ def test_quote_check_contradicts_a_fabricated_quote():
 
 
 def test_quote_check_rejects_a_quote_lifted_from_an_uncited_sentence():
-    """A real sentence is still wrong evidence when it is not the one cited."""
+    """A real sentence is still wrong evidence when it is not the one cited -- but it is a
+    miscitation, not a fabrication, and the sentence that does hold it is reported."""
     entry = {**ENTRY, "evidence": {**ENTRY["evidence"],
                                    "quote": "Serum antibody titers were measured by ELISA."}}
 
-    assert check_quote_verbatim(entry, SOURCE)["status"] == "missing"
+    check = check_quote_verbatim(entry, SOURCE)
+
+    assert check["status"] == "misattributed"
+    assert check["verdict"] == NOT_SUPPORTED
+    assert check["located_ids"] == ["S3"]
 
 
 def test_quote_check_tolerates_whitespace_and_line_breaks():
@@ -120,7 +125,9 @@ def test_quote_check_still_catches_a_reconstructed_quote():
                           "quote": "Expression profiles of 594 genes ... were found to "
                                    "change significantly"}}
 
-    assert check_quote_verbatim(entry, source)["status"] == "missing"
+    check = check_quote_verbatim(entry, source)
+    assert check["status"] == "misattributed"
+    assert check["verdict"] != SUPPORTED
 
 
 def test_quote_check_tolerates_a_trailing_period_the_excerpt_added():
@@ -136,8 +143,9 @@ def test_quote_check_tolerates_a_trailing_period_the_excerpt_added():
     assert "trailing punctuation" in check["detail"]
 
 
-def test_quote_check_falls_back_to_the_whole_document_without_sentence_ids():
-    """Every registry on disk predates sentence_ids, so this is the common path."""
+def test_quote_check_on_a_numbered_source_requires_sentence_ids():
+    """A sentence-numbered source can be cited, so an entry that cites nothing is misattributed
+    -- verbatim, but untraceable -- and the ids it should have carried are recovered."""
     entry = {
         "name_in_paper": "ELISA",
         "evidence_location": {"type": "text", "section": "Methods",
@@ -146,8 +154,29 @@ def test_quote_check_falls_back_to_the_whole_document_without_sentence_ids():
 
     check = check_quote_verbatim(entry, SOURCE)
 
+    assert check["status"] == "misattributed"
+    assert check["located_ids"] == ["S3"]
+
+
+def test_quote_check_searches_the_whole_document_when_the_source_has_no_markers():
+    """A PDF text layer has no [S<n>] markers, so no ids is the correct citation there."""
+    entry = {"evidence": {"sentence_ids": [],
+                          "quote": "Serum antibody titers were measured by ELISA."}}
+
+    check = check_quote_verbatim(entry, "Serum antibody titers were measured by ELISA.")
+
     assert check["status"] == "found"
     assert "whole document" in check["detail"]
+
+
+def test_quote_check_on_a_source_without_markers_refuses_invented_ids():
+    entry = {"evidence": {"sentence_ids": ["S4"],
+                          "quote": "Serum antibody titers were measured by ELISA."}}
+
+    check = check_quote_verbatim(entry, "Serum antibody titers were measured by ELISA.")
+
+    assert check["status"] == "misattributed"
+    assert check["located_ids"] == []
 
 
 def test_quote_check_flags_a_sentence_id_that_does_not_exist():
@@ -156,7 +185,27 @@ def test_quote_check_flags_a_sentence_id_that_does_not_exist():
     check = check_quote_verbatim(entry, SOURCE)
 
     assert check["unknown_sentence_ids"] == ["S999"]
-    assert check["status"] == "found"  # found by fallback, but the bad id is reported
+    # Verbatim, so not a fabrication -- but an id the source lacks is not a citation.
+    assert check["status"] == "misattributed"
+    assert check["verdict"] == NOT_SUPPORTED
+    assert check["located_ids"] == ["S2"]
+
+
+def test_a_quote_too_short_to_pin_down_is_not_supported():
+    """"ELISA ... performed" matches almost any paper once whitespace is ignored."""
+    source = "[S1] Antibodies were measured by ELISA and the assay was performed in duplicate."
+    entry = {"evidence": {"sentence_ids": ["S1"], "quote": "ELISA ... performed"}}
+
+    check = check_quote_verbatim(entry, source)
+
+    assert check["status"] == "too_short"
+    assert check["verdict"] == NOT_SUPPORTED
+
+
+def test_a_quote_of_nothing_but_an_ellipsis_is_not_found():
+    entry = {"evidence": {"sentence_ids": ["S1"], "quote": "..."}}
+
+    assert check_quote_verbatim(entry, SOURCE)["status"] != "found"
 
 
 def test_quote_check_reports_an_entry_with_no_quote_at_all():
@@ -581,3 +630,13 @@ async def test_the_judge_keeps_the_field_when_the_check_cannot_run(monkeypatch):
     assert source["verdict"] == "NOT_SUPPORTED"
     assert source["reason"] == "judge's own doubt"
     assert result["source_check"]["verdict"] is None
+
+
+def test_measurement_role_and_parent_hint_are_not_proposed_values():
+    """Both say what the paper *does* with an assay, not what its text states, so there is no
+    span to check them against -- the same reason normalized_name is skipped."""
+    entry = {**ENTRY, "measurement_role": "sub_step", "parent_hint": "LC-MS"}
+
+    fields = dict(proposed_fields(entry))
+    assert "measurement_role" not in fields
+    assert "parent_hint" not in fields

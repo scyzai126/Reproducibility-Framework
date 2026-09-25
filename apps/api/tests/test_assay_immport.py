@@ -39,6 +39,9 @@ class _FakeSession:
             wanted = params.get("acc", "")
             rows = [(tech,) for e in self.experiments.values()
                     for acc, tech in e if acc == wanted]
+        elif "pattern" not in params:
+            # The LLM fallback's candidate list: every experiment in the study.
+            rows = list(self.experiments.get(params.get("study_accession", ""), []))
         else:
             study = params.get("study_accession", "")
             pattern = (params.get("pattern") or "").strip("%").lower()
@@ -51,6 +54,36 @@ class _FakeSession:
             "fetchone": lambda self: rows[0] if rows else None,
             "keys": lambda self: ["experiment_accession", "measurement_technique"],
         })()
+
+
+@pytest.fixture(autouse=True)
+def llm_cache(tmp_path, monkeypatch):
+    """Every test gets an empty cache of its own; none touches the one under data/."""
+    path = tmp_path / "immport_llm_cache.json"
+    monkeypatch.setattr(assay_immport, "LLM_CACHE_PATH", path)
+    return path
+
+
+class _FakeModel:
+    """Stands in for the OpenAI client; answers every call with `answer` and counts them."""
+
+    def __init__(self, answer):
+        self.answer, self.calls = answer, 0
+        self.chat = type("c", (), {"completions": self})()
+
+    async def create(self, **_):
+        self.calls += 1
+        message = type("m", (), {"content": self.answer})()
+        return type("r", (), {"choices": [type("ch", (), {"message": message})()]})()
+
+
+@pytest.fixture
+def model(monkeypatch):
+    def _install(answer):
+        fake = _FakeModel(answer)
+        monkeypatch.setattr("app.agent.query_builder._get_openai_client", lambda: fake)
+        return fake
+    return _install
 
 
 def _row(**kw):
@@ -187,6 +220,83 @@ async def test_a_later_wording_can_rescue_a_row_the_first_one_missed():
 
     assert report["rows"][0]["status"] == MATCHED
     assert report["rows"][0]["experiment_accession"] == "EXP1"
+
+
+# ── the LLM fallback, when asked for ──────────────────────────────────────────
+
+_PRNT = {"normalized_name": "plaque reduction neutralization test",
+         "assay": "plaque reduction neutralization test (PRNT)"}
+
+
+@pytest.mark.asyncio
+async def test_a_row_sql_misses_is_handed_to_the_model(model):
+    """PRNT shares no whole phrase with "Virus Neutralization"; the model is what places it."""
+    fake = model("EXP16737")
+    session = _FakeSession({"SDY1264": [("EXP16737", "Virus Neutralization")]})
+
+    report = await check_rows(session, [_row(**_PRNT)], use_llm=True)
+
+    row = report["rows"][0]
+    assert row["status"] == MATCHED
+    assert row["experiment_accession"] == "EXP16737"
+    assert row["method"] == "LLM"
+    assert row["measurement_technique"] == "Virus Neutralization"
+    assert fake.calls == 1
+
+
+@pytest.mark.asyncio
+async def test_a_row_sql_resolves_never_reaches_the_model(model):
+    fake = model("EXP16737")
+    session = _FakeSession({"SDY1264": [("EXP16737", "Virus Neutralization")]})
+
+    report = await check_rows(session, [_row(normalized_name="Virus Neutralization")],
+                              use_llm=True)
+
+    assert report["rows"][0]["method"] == "SQL"
+    assert fake.calls == 0
+
+
+@pytest.mark.asyncio
+async def test_a_second_look_is_answered_from_the_cache(model, llm_cache):
+    fake = model("EXP16737")
+    experiments = {"SDY1264": [("EXP16737", "Virus Neutralization")]}
+
+    await check_rows(_FakeSession(experiments), [_row(**_PRNT)], use_llm=True)
+    report = await check_rows(_FakeSession(experiments), [_row(**_PRNT)], use_llm=True)
+
+    assert fake.calls == 1
+    assert report["rows"][0]["method"] == "LLM"
+    assert report["rows"][0]["experiment_accession"] == "EXP16737"
+    assert llm_cache.exists()
+
+
+@pytest.mark.asyncio
+async def test_a_none_from_the_model_is_cached_as_absent(model):
+    """"None of these" was paid for; asking again would buy the same answer."""
+    fake = model("NONE")
+    experiments = {"SDY1264": [("EXP1", "Flow Cytometry")]}
+
+    first = await check_rows(_FakeSession(experiments), [_row(**_PRNT)], use_llm=True)
+    second = await check_rows(_FakeSession(experiments), [_row(**_PRNT)], use_llm=True)
+
+    assert first["rows"][0]["status"] == ABSENT
+    assert second["rows"][0]["status"] == ABSENT
+    assert fake.calls == 1
+
+
+@pytest.mark.asyncio
+async def test_a_failed_call_leaves_the_row_absent_and_uncached(monkeypatch, llm_cache):
+    """An error is not an answer, so the next load asks again rather than trusting it."""
+    def _broken():
+        raise RuntimeError("openai is down")
+
+    monkeypatch.setattr("app.agent.query_builder._get_openai_client", _broken)
+    session = _FakeSession({"SDY1264": [("EXP16737", "Virus Neutralization")]})
+
+    report = await check_rows(session, [_row(**_PRNT)], use_llm=True)
+
+    assert report["rows"][0]["status"] == ABSENT
+    assert not llm_cache.exists()
 
 
 # ── the arithmetic a caller pays against ──────────────────────────────────────

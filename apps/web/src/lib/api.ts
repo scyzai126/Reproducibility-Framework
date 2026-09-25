@@ -235,15 +235,15 @@ export async function resolvePaper(query: string): Promise<ResolveResponse> {
 }
 
 /**
- * Whether ImmPort records an experiment for each corpus assay. Free.
+ * Whether ImmPort records an experiment for each corpus assay.
  *
- * The SQL half of the same resolver the query builder uses, so an assay this calls present is
- * one a claim query would find. Kept a separate call from the assay table rather than folded
+ * The same resolver the query builder uses — SQL first, then one LLM call per row SQL cannot
+ * place, cached server-side — so an assay this calls present is one a claim query would find. Kept a separate call from the assay table rather than folded
  * into it, so the table still renders when ImmPort is unreachable.
  */
 export async function fetchAssayImmport(): Promise<AssayImmportResponse> {
-  // A sweep over the whole corpus is many small queries; give it longer than a file read.
-  return getJson<AssayImmportResponse>('/agent/assay-immport', {}, 60_000);
+  // An uncached corpus sweep makes one sequential model call per row SQL misses.
+  return getJson<AssayImmportResponse>('/agent/assay-immport', {}, 600_000);
 }
 
 /** Ask the resolver about rows the free pass could not place. **One model call per row.** */
@@ -258,11 +258,11 @@ export async function resolveAssayImmport(
   }, 600_000);
 }
 
-/** Does ImmPort register experiments for these specific assays? Free — no model call. */
+/** Does ImmPort register experiments for these specific assays? SQL, then the cached LLM fallback. */
 export async function checkAssayImmport(rows: unknown[]): Promise<AssayImmportResponse> {
   return getJson<AssayImmportResponse>('/agent/assay-immport/check', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ rows }),
-  }, 60_000);
+  }, 600_000);
 }

@@ -77,7 +77,10 @@ _QUOTE_FOLD = str.maketrans({"\u2018": "'", "\u2019": "'", "\u201a": "'",
 
 #: Registry keys that are structure or removed cruft, not proposed values to verify.
 #: `confidence` and `claim_role` are old-schema fields the current skill dropped on purpose.
+#: `measurement_role` and `parent_hint` are judgements, like `normalized_name`: they say what the
+#: paper does with an assay, not what its text states, so there is no span to check them against.
 _NOT_PROPOSED = frozenset({"confidence", "claim_role", "normalized_name",
+                           "measurement_role", "parent_hint",
                            "obi_id", "obi_label", "resource", "obi_confidence"})
 
 #: Name and evidence each moved between schema versions. Older registries on disk use the
@@ -111,6 +114,11 @@ def _squash(text: str) -> str:
     text = "".join("" if unicodedata.category(c) == "Pd" else c for c in text)
     text = text.translate(_QUOTE_FOLD)
     return re.sub(r"\s+", "", text)
+
+
+def has_sentence_markers(text: str) -> bool:
+    """Whether the source is sentence-numbered (JATS XML) rather than a bare PDF text layer."""
+    return _MARKER.search(text) is not None
 
 
 def strip_markers(text: str) -> str:
@@ -245,6 +253,39 @@ def _fragments_in_order(quote: str, haystack: str) -> bool:
     return True
 
 
+#: The shortest a quote's longest fragment may be, in squashed characters. Whitespace and
+#: dashes are dropped before comparing, so a few-word fragment ("ELISA ... performed") matches
+#: almost anywhere once the search widens to the whole document; about four words is the least
+#: that pins a quote to one place. No quote in the 160 on disk falls under it.
+MIN_QUOTE_CHARS = 20
+
+#: The longest run of consecutive sentences locate_sentence_ids will try. A quote spanning more
+#: than this is not an excerpt, and an unbounded search is quadratic in the paper's length.
+_MAX_LOCATE_SPAN = 8
+
+
+def _matches(quote: str, haystack: str) -> bool:
+    """The fragment test, forgiving trailing punctuation the source does not carry."""
+    return _fragments_in_order(quote, haystack) or _fragments_in_order(quote.rstrip(".,;:"), haystack)
+
+
+def locate_sentence_ids(quote: str, source_text: str) -> list[str]:
+    """The shortest run of consecutive `S<n>` sentences that contains `quote`, or [].
+
+    What the ids *should* have been, recovered for free. Used when a quote is verbatim but cites
+    the wrong sentences -- which a survey of the registries on disk found four times in 160, each
+    a real excerpt reported as a fabrication because it spanned a sentence it did not list.
+    """
+    index = sentence_index(source_text)
+    ids = list(index)
+    squashed = [_squash(index[sid]) for sid in ids]
+    for span in range(1, _MAX_LOCATE_SPAN + 1):
+        for start in range(len(ids) - span + 1):
+            if _matches(quote, "".join(squashed[start:start + span])):
+                return ids[start:start + span]
+    return []
+
+
 def check_quote_verbatim(entry: dict, source_text: str) -> dict:
     """Confirm the evidence quote appears in the sentences it cites. No API call.
 
@@ -252,10 +293,17 @@ def check_quote_verbatim(entry: dict, source_text: str) -> dict:
     so a quote that is absent from the source is a fabrication rather than a judgement
     call — which is why this returns CONTRADICTED rather than deferring to the model.
 
-    When the entry cites no `sentence_ids` (every registry currently on disk predates that
-    field), the search falls back to the whole document. That still catches an invented
-    quote; it just cannot catch one lifted from an unrelated part of the paper, which is
-    left to the judge.
+    Statuses:
+
+    * `found` — in the cited sentences, or in the document when the source has no `[S<n>]`
+      markers to cite (a PDF text layer) and the entry rightly cites none.
+    * `misattributed` — verbatim, but not where the entry says: it cites ids the source does not
+      have, cites none although the source is numbered, or cites sentences the quote is not in.
+      NOT_SUPPORTED rather than CONTRADICTED, because the words are the paper's; `located_ids`
+      carries the sentences that actually hold it, so a correction can fix the citation.
+    * `too_short` — no fragment reaches MIN_QUOTE_CHARS, so a match would prove nothing.
+    * `missing` — nowhere in the document. A fabrication.
+    * `no_quote` — nothing to check.
 
     A quote that elides its own middle ("A ... B") is checked fragment by fragment, in order:
     excerpting is a quoting convention rather than a fabrication, and comparing the joined
@@ -269,33 +317,49 @@ def check_quote_verbatim(entry: dict, source_text: str) -> dict:
     sentence_ids = [str(s) for s in (evidence.get("sentence_ids") or [])]
     index = sentence_index(source_text)
     unknown = [sid for sid in sentence_ids if sid not in index]
+    result = {"unknown_sentence_ids": unknown, "located_ids": []}
 
-    if sentence_ids and not unknown:
-        haystack = _squash(" ".join(index[sid] for sid in sentence_ids))
-        scope = f"sentences {', '.join(sentence_ids)}"
-    else:
-        haystack = _squash(strip_markers(source_text))
-        scope = "the whole document" if not sentence_ids else (
-            f"the whole document ({', '.join(unknown)} not in the source)"
-        )
+    # Absence first: a quote the paper does not contain is a fabrication however short it is.
+    if not _matches(quote, _squash(strip_markers(source_text))):
+        return {**result, "status": "missing", "verdict": CONTRADICTED,
+                "detail": "quote does not appear anywhere in the document"}
 
-    if _fragments_in_order(quote, haystack):
-        status, detail = "found", f"quote found in {scope}"
-    elif _fragments_in_order(quote.rstrip(".,;:"), haystack):
+    longest = max((len(_squash(f)) for f in _ELLIPSIS.split(quote)), default=0)
+    if longest < MIN_QUOTE_CHARS:
+        return {**result, "status": "too_short", "verdict": NOT_SUPPORTED,
+                "detail": f"no fragment of the quote reaches {MIN_QUOTE_CHARS} characters, "
+                          "so finding it in the source would not pin it to one place"}
+
+    trailing = "" if _fragments_in_order(quote, _squash(strip_markers(source_text))) else (
         # Excerpting a clause and closing it with a period the source does not carry is an
         # artifact of quoting, not a claim about content -- the words are still the paper's.
-        # Reported, because the contract says copied, but not treated as a fabrication.
-        status = "found"
-        detail = f"quote found in {scope}, except for trailing punctuation not in the source"
-    else:
-        status, detail = "missing", f"quote does not appear in {scope}"
+        ", except for trailing punctuation not in the source")
 
-    return {
-        "status": status,
-        "verdict": SUPPORTED if status == "found" else CONTRADICTED,
-        "detail": detail,
-        "unknown_sentence_ids": unknown,
-    }
+    if not index:
+        # No markers to cite: a PDF text layer. The whole document is the only scope there is.
+        if not sentence_ids:
+            return {**result, "status": "found", "verdict": SUPPORTED,
+                    "detail": f"quote found in the whole document{trailing}"}
+        return {**result, "status": "misattributed", "verdict": NOT_SUPPORTED,
+                "detail": f"quote is verbatim but cites {', '.join(sentence_ids)}, and this "
+                          "source has no sentence markers to cite"}
+
+    if sentence_ids and not unknown:
+        cited = _squash(" ".join(index[sid] for sid in sentence_ids))
+        if _matches(quote, cited):
+            return {**result, "status": "found", "verdict": SUPPORTED,
+                    "detail": f"quote found in sentences {', '.join(sentence_ids)}{trailing}"}
+
+    located = locate_sentence_ids(quote, source_text)
+    if unknown:
+        why = f"cites {', '.join(unknown)}, which the source does not have"
+    elif not sentence_ids:
+        why = "cites no sentence ids"
+    else:
+        why = f"is not in the sentences it cites ({', '.join(sentence_ids)})"
+    where = f"; it is in {', '.join(located)}" if located else ""
+    return {**result, "located_ids": located, "status": "misattributed",
+            "verdict": NOT_SUPPORTED, "detail": f"quote is verbatim but {why}{where}"}
 
 
 def proposed_fields(entry: dict) -> list[tuple[str, object]]:
@@ -497,10 +561,16 @@ async def verify_assay(
             temperature=0,
         )
         raw = _strip_fences((resp.choices[0].message.content or "").strip())
-        parsed = json.loads(raw) if raw else {}
+        parsed = json.loads(raw) if raw else None
     except Exception as exc:  # noqa: BLE001 - any failure becomes a per-assay error report
         logger.warning("%s: verification call failed - %s", assay_key, exc)
         return _error_result(assay_key, entry, quote_check, f"{type(exc).__name__}: {exc}",
+                             source_check)
+
+    # An empty reply is a failed call, not a verdict. Scoring it as {} used to turn every field
+    # NOT_REPORTED and the record REVIEW, which reads as the judge having looked and objected.
+    if parsed is None:
+        return _error_result(assay_key, entry, quote_check, "verifier returned an empty reply",
                              source_check)
 
     if not isinstance(parsed, dict):
@@ -592,6 +662,10 @@ def build_summary(results: list[dict]) -> dict:
         "errors": verdicts.count("ERROR"),
         "quotes_missing": sum(
             1 for r in results if (r.get("quote_check") or {}).get("status") == "missing"
+        ),
+        "quotes_misattributed": sum(
+            1 for r in results
+            if (r.get("quote_check") or {}).get("status") in ("misattributed", "too_short")
         ),
         "quotes_absent": sum(
             1 for r in results if (r.get("quote_check") or {}).get("status") == "no_quote"

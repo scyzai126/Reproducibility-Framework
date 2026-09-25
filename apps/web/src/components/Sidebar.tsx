@@ -18,7 +18,9 @@ interface Props {
 export default function Sidebar({ sessions, currentId, isOpen, onToggle, onNewChat, onSelectSession, cachedPmids, onSelectPaper }: Props) {
   // Collapsed by default: the list is 16 PMIDs and pushes the rest of the sidebar off-screen.
   const [papersExpanded, setPapersExpanded] = useState(false);
-  const [historyExpanded, setHistoryExpanded] = useState(true);
+  // Collapsed too: the session list grows to 20 and buries "New analysis" and the Papers
+  // section under a wall of past queries. One click on the header brings it back.
+  const [historyExpanded, setHistoryExpanded] = useState(false);
   const formatDate = (iso: string) => {
     const d = new Date(iso);
     return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });

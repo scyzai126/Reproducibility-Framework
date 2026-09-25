@@ -8,8 +8,8 @@ A lexical exact match on the normalized name used to sit between them, reported 
 "exact_normalized". It was removed; 40 rows of all_assays_full_OBI.json still carry that
 value from before, and the route and UI still render it.
 
-The existing CLIs (run_obi_map.py, map_assays_obi.py) both
-take a per-study registry dict keyed by assay name; this one takes the flat corpus-wide
+The per-paper pipeline (run_assay_pipeline.py, run_assay_merge.py --map)
+maps a per-study registry dict keyed by assay name; this one takes the flat corpus-wide
 table checked in at data/claims/all_assays_full.json.
 
 Each distinct (assay, normalized_name) pair is mapped once and the result fanned back out

@@ -1,7 +1,7 @@
 """Blind-re-extract the assay fields a verification pass refused to support.
 
 Reads <registry_dir>/assays.json and <registry_dir>/assays_verification.json, and writes
-assays_corrected.json (a clean registry, same seven-field shape) plus assays_corrections.json
+assays_corrected.json (a clean registry, same ten-field shape) plus assays_corrections.json
 (what changed, and what it was before). The input registry is never modified -- an extracted
 value and a repaired one have to stay distinguishable, which they would not be if this wrote
 back in place.

@@ -43,6 +43,13 @@ const IMMPORT_DETAIL: Record<ImmportStatus, string> = {
   unknown_study: 'the study identifier could not be read',
 };
 
+/** ImmPort's search reads `text` client-side. The corpus spells a study `<pmid>_<SDY>`, and the
+ *  backend has already split the SDY half onto every coverage row as `study_accession`, so there
+ *  is nothing to parse here. */
+function immportSearchUrl(studyAccession: string): string {
+  return `https://www.immport.org/shared/search?text=${encodeURIComponent(studyAccession.toLowerCase())}`;
+}
+
 /** study + assay is unique across the corpus, so it is the join between the two fetches. */
 function immportKey(study: string, assay: string): string {
   return `${study}\u0000${assay}`;
@@ -297,12 +304,36 @@ export default function AssayObiTable({
                           className={IMMPORT_TONE[hit.status]}
                           title={IMMPORT_DETAIL[hit.status]}
                         >
-                          {IMMPORT_LABEL[hit.status]}
+                          {/* Both answers link to the same place — the study in ImmPort. A "no"
+                              is the one worth clicking: it is where you go to see what the study
+                              does hold. Tone stays on the span, so yes/no keep their colours and
+                              only the underline marks the link. */}
+                          {hit.study_accession ? (
+                            <a
+                              href={immportSearchUrl(hit.study_accession)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="hover:underline"
+                              title={`${IMMPORT_DETAIL[hit.status]} — search ImmPort for ${hit.study_accession}`}
+                            >
+                              {IMMPORT_LABEL[hit.status]}
+                            </a>
+                          ) : (
+                            IMMPORT_LABEL[hit.status]
+                          )}
                           {/* What it matched, in ImmPort's own vocabulary — the point of a
                               "yes" is which technique the study registered. */}
                           {hit.measurement_technique && (
                             <span className="block text-gray-500 mt-0.5">
                               {hit.measurement_technique}
+                              {hit.method === 'LLM' && (
+                                <span
+                                  className="ml-1 text-gray-400"
+                                  title="SQL found no match; the model picked this experiment"
+                                >
+                                  · via LLM
+                                </span>
+                              )}
                             </span>
                           )}
                         </span>

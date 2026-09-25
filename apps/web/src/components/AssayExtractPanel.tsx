@@ -1,7 +1,6 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import AssayAddPaper from './AssayAddPaper';
 import AssayBenchmarkView from './AssayBenchmarkView';
 import AssayEstimateCard from './AssayEstimateCard';
 import AssayFindingsPanel from './AssayFindingsPanel';
@@ -206,25 +205,6 @@ export default function AssayExtractPanel() {
     [loadRegistry, stopPolling]
   );
 
-  /**
-   * A paper that was just fetched into the corpus.
-   *
-   * The list is reloaded rather than appended to, so the new row is the one the backend actually
-   * offers rather than a client-side guess at it, and then the ordinary selection path runs —
-   * which loads its (absent) registry and its estimate, both free.
-   */
-  const adoptNewPaper = useCallback(
-    async (added: AssayPaperSummary) => {
-      try {
-        setPapers(await fetchAssayPapers());
-      } catch {
-        // A failed refresh costs the list its new row, not the fetch its result.
-      }
-      await selectPaper(added);
-    },
-    [selectPaper]
-  );
-
   /** The only thing on this page that spends. Reached solely from the estimate card. */
   const confirmRun = useCallback(async () => {
     if (!paper || !estimate) return;
@@ -286,21 +266,12 @@ export default function AssayExtractPanel() {
         disabled={running}
       />
 
-      <AssayAddPaper onAdded={adoptNewPaper} disabled={running} />
-
       {error && <Notice tone="rose">{error}</Notice>}
       {notice && <Notice tone="gray">{notice}</Notice>}
       {lostContact && (
         <Notice tone="amber">
           Lost contact with the backend. The run may still be going — its calls are being paid
           for either way. Still trying.
-        </Notice>
-      )}
-
-      {!paper && (
-        <Notice tone="gray">
-          Pick a paper to see what a run would cost and what a previous run already found.
-          Nothing on this page spends anything until you press Run.
         </Notice>
       )}
 

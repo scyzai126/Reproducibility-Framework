@@ -43,6 +43,7 @@ from app.agent.assay_verifier import (
     SUPPORTED,
     check_quote_verbatim,
     get_name,
+    has_sentence_markers,
     name_field,
 )
 from app.agent.claim_parser import _load_prompt, _strip_fences
@@ -85,8 +86,9 @@ _QUESTIONS = {
         "What other exact wordings does the paper use for THIS assay itself? Set `value` to a "
         "JSON list of strings, each appearing verbatim in the source text -- the list goes "
         "inside the `value` field, do not return it on its own. An instrument, chip, or kit "
-        "name is NOT an alias -- exclude product names. Set `value` to an empty list if the "
-        "paper only ever uses one wording."
+        "name is NOT an alias -- exclude product names, except a brand name that is the "
+        "field's standard name for a technique (Luminex, CyTOF, ELISpot, TaqMan). Set `value` "
+        "to an empty list if the paper only ever uses one wording."
     ),
     "evidence": (
         "Which sentence or sentences establish that THIS assay was actually performed in this "
@@ -228,7 +230,12 @@ def apply_correction(entry: dict, group: str, blind: object, source_text: str,
     was told to copy rather than paraphrase, and check_quote_verbatim settles that for free;
     a quote that fails is rejected outright rather than trading one bad quote for another.
     """
-    action = decide(_current(entry, group), blind)
+    # Evidence is compared quote to quote. _current reads the quote string while the blind
+    # answer is {"quote", "sentence_ids"}, and comparing the two directly meant an identical
+    # re-extraction was never REAFFIRMED and an empty one never CLEARED.
+    compared = (blind or {}).get("quote") if group == "evidence" and isinstance(blind, dict) \
+        else blind
+    action = decide(_current(entry, group), compared)
     record = {"field": group, "action": action,
               "previous": _current(entry, group), "blind_answer": blind}
 
@@ -245,7 +252,14 @@ def apply_correction(entry: dict, group: str, blind: object, source_text: str,
         quote, ids = (blind or {}).get("quote"), (blind or {}).get("sentence_ids") or []
         probe = {"evidence": {"quote": quote, "sentence_ids": ids}}
         check = check_quote_verbatim(probe, source_text)
-        if check["status"] != "found":
+        if check["status"] == "misattributed" and (
+                check["located_ids"] or not has_sentence_markers(source_text)):
+            # Verbatim, cited wrongly. The ids the model wrote are not trusted -- they are
+            # replaced by the sentences the quote was actually found in, which is free and
+            # exact. On a source with no markers that is [], which is the only honest answer.
+            ids = check["located_ids"]
+            record["note"] = f"sentence_ids set to where the quote was found: {check['detail']}"
+        elif check["status"] != "found":
             record["action"] = UNCHANGED
             record["note"] = f"replacement quote rejected: {check['detail']}"
             return record

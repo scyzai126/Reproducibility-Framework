@@ -100,7 +100,9 @@ def report_quotes(assays: dict, source_text: str) -> None:
     missing = mismatched = 0
     for key, entry in assays.items():
         check = check_quote_verbatim(entry, source_text)
-        flag = {"found": "ok     ", "missing": "MISSING", "no_quote": "no quote"}[check["status"]]
+        flag = {"found": "ok     ", "missing": "MISSING", "no_quote": "no quote",
+                "misattributed": "MISCITED", "too_short": "TOO SHORT"}.get(
+                    check["status"], check["status"].upper())
         if check["status"] != "found":
             missing += 1
         print(f"  {flag}  {key}: {check['detail']}")

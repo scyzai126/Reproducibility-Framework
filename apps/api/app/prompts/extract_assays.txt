@@ -142,13 +142,19 @@ Methods wording to defer to.
   pairs ("Luminex" / "bead-based multiplex assay"), and generic result-phrase mentions as
   aliases of one entry, never separate entries.
 
-**One entry per distinct procedure.** Split two procedures when they differ substantially in
-any of: specimen, purpose, biological target or analyte, platform, or protocol — so a Luminex
-antibody-titer assay and a separate Luminex cytokine panel stay two entries despite the shared
-instrument. Do **not** split merely because one experiment used several reagents, targets or
-panels, or because the same technique was run on two cohorts, at two timepoints, or in two
-batches: that is one technique run more than once. Check the inventory for near-duplicates
-before returning it — `ELISA` and `ELISA kits` are one entry, not two.
+**One entry per distinct measurement.** Three things identify a measurement: the
+**technique** (what `normalized_name` would say), the **analyte or biological target** it
+measures, and the **specimen** it measures it in. Two descriptions that share all three are one
+entry; split them only when at least one of the three differs. So a Luminex antibody-titer
+assay and a separate Luminex cytokine panel stay two entries despite the shared instrument —
+the analyte differs.
+
+Everything else is the same measurement run more than once, and never a reason to split: a
+different kit, instrument model or protocol variant, a different purpose, several reagents,
+targets or panels within one experiment, or runs on two cohorts, at two timepoints or in two
+batches. Record the second wording in `aliases` and the product in `platform`. Check the
+inventory for near-duplicates before returning it — `ELISA` and `ELISA kits` are one entry,
+not two.
 
 ## Filling the other fields
 
@@ -179,6 +185,8 @@ Return ONLY a JSON object with one key per deduplicated assay — the key is the
     "platform": "BD LSRFortessa",
     "sample_type": "PBMCs",
     "readouts": "intracellular cytokine production",
+    "measurement_role": "reported",
+    "parent_hint": null,
     "source": "methods",
     "evidence": {
       "section": "Materials and Methods",
@@ -188,7 +196,7 @@ Return ONLY a JSON object with one key per deduplicated assay — the key is the
   }
 }
 
-**Eight fields, no more.** Do not add a claims array, a confidence score, or a role judgement.
+**Ten fields, no more.** Do not add a claims array, a claim role, or a confidence score.
 
 - `normalized_name` — the **measurement technique**: what class of method or instrument
   produced the data. This is the one field that is not a report of what the paper says. Every
@@ -226,6 +234,20 @@ Return ONLY a JSON object with one key per deduplicated assay — the key is the
 - `readouts` — the key measurement(s) it produces, in your own words. What the instrument
   measured, **not** what the paper concluded from it: "miRNA expression levels", never "miRNA
   correlations with the antibody response".
+- `measurement_role` — what the paper does with this measurement's output. Exactly one of:
+  - `"reported"` — the paper presents results from it on the study's samples: a figure, a
+    table, a statistic, or a sentence stating what it found. A validation experiment whose
+    result is shown counts.
+  - `"sub_step"` — a technique run only as a step inside another entry's workflow. Its output
+    feeds that entry and is never presented on its own.
+  - `"screening"` — its only output is who was enrolled, or which group a participant was
+    assigned to.
+  - `"unreported"` — performed, but the paper presents no result from it.
+  Decide from what the paper presents, never from how important the technique seems. `null`
+  when the text does not let you tell. This field labels an entry; it never removes one — an
+  `"unreported"` or `"screening"` technique still belongs in the inventory.
+- `parent_hint` — for a `"sub_step"`, the `name_in_paper` of the entry whose workflow it belongs
+  to, copied exactly; that entry must be in this same inventory. `null` for every other role.
 - `source` — where the paper establishes the technique, not which pass found it:
   `"methods"` when its evidence sits in a `[methods]` section, `"results"` when the technique
   appears only outside one. A later step re-derives this from your `sentence_ids` and reports

@@ -5,7 +5,7 @@ import type { AssayBenchmarkEntry, AssayEvidence, AssayObiEntry } from '@/lib/ty
 
 interface Props {
   benchmark: Record<string, AssayBenchmarkEntry>;
-  /** The seven-field record every pass in the chain works from. */
+  /** The ten-field record every pass in the chain works from. */
   registry?: Record<string, AssayBenchmarkEntry> | null;
   obi?: Record<string, AssayObiEntry> | null;
   meta?: { benchmark_path?: string; registry_path?: string; obi_path?: string | null };
@@ -62,7 +62,7 @@ function Row({ label, value }: { label: string; value: unknown }) {
  *
  * `assays_benchmark.json` is the file to read, per CLAUDE.md — keyed by the assay's OBI label,
  * carrying only `name_in_paper`, `aliases`, `source` and `evidence`, plus `additional_evidence`
- * where round 5 folded another write-up onto the same term. The full seven-field record behind
+ * where round 5 folded another write-up onto the same term. The full ten-field record behind
  * it is a toggle rather than the default, because it is what the pipeline works from rather
  * than what a reader is being asked to check.
  *
@@ -203,7 +203,7 @@ export default function AssayBenchmarkView({ benchmark, registry, obi, meta, not
           {meta.registry_path && (
             <p className="text-xs text-gray-400 font-mono">
               {meta.registry_path}{' '}
-              <span className="font-sans">full seven-field registry the pipeline works from</span>
+              <span className="font-sans">full ten-field registry the pipeline works from</span>
             </p>
           )}
           {meta.obi_path && (

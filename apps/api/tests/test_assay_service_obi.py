@@ -38,6 +38,11 @@ def paper(tmp_path, monkeypatch):
     xml_root.mkdir()
     (xml_root / "SDY1_111.xml").write_text(_XML, encoding="utf-8")
     monkeypatch.setattr(assay_service, "XML_ROOT", xml_root)
+    # PDF_ROOT is redirected at an empty directory so the listing cannot pick up the
+    # repo's real PDFs: available_papers offers PDF-only papers too.
+    _pdf_root = tmp_path / "pdf"
+    _pdf_root.mkdir(exist_ok=True)
+    monkeypatch.setattr(assay_service, "PDF_ROOT", _pdf_root)
     monkeypatch.setattr(assay_service, "REGISTRY_ROOT", registry_root)
     return registry_root / "111_SDY1"
 
@@ -201,7 +206,7 @@ async def test_a_mapping_failure_does_not_throw_away_a_paid_run(paper, monkeypat
     """Rounds 1-3 are already on disk and already billed when round 4 starts.
 
     Raising here would lose 1+N+F calls to an ontology lookup, and every input round 4 needs
-    is persisted -- so scripts/run_obi_map.py can finish the job without re-paying.
+    is persisted -- so scripts/run_assay_merge.py --map can finish the job without re-paying.
     """
     def _boom(*_args, **_kwargs):
         raise RuntimeError("no embeddings")
@@ -218,6 +223,58 @@ async def test_a_mapping_failure_does_not_throw_away_a_paid_run(paper, monkeypat
     assert not (paper / "assays_OBI.json").exists()
     for name in ("assays.json", "assays_verification.json", "assays_benchmark.json"):
         assert (paper / name).exists(), f"{name} was lost to an OBI failure"
+
+
+@pytest.mark.asyncio
+async def test_a_failed_mapping_does_not_leave_the_previous_runs_mapping_behind(paper, monkeypatch):
+    """A stale assays_OBI.json beside a new registry was served as this run's mapping, keyed by
+    labels the new registry does not have."""
+    paper.mkdir(parents=True)
+    (paper / "assays_OBI.json").write_text('{"old assay": {"obi_id": "OBI:9"}}')
+    (paper / "assays_merges.json").write_text('{"summary": {}, "results": []}')
+
+    def _boom(*_args, **_kwargs):
+        raise RuntimeError("no embeddings")
+
+    monkeypatch.setattr(assay_service, "enrich_assays_with_obi", _boom)
+    client = _Client(json.dumps({"flow cytometry": _entry()}),
+                     {"flow cytometry": json.dumps(_verdict("flow cytometry"))})
+
+    await assay_report("111", "SDY1", client)
+
+    assert not (paper / "assays_OBI.json").exists()
+    assert not (paper / "assays_merges.json").exists()
+
+
+@pytest.mark.asyncio
+async def test_a_run_that_dies_after_extraction_leaves_no_registry_that_looks_verified(
+        paper, monkeypatch):
+    """assays.json is written last. Written at round 1, a crash in round 2 left an unverified
+    registry that nothing on disk told apart from a verified one."""
+    paper.mkdir(parents=True)
+    (paper / "assays.json").write_text('{"old assay": {}}')
+    (paper / "assays_benchmark.json").write_text('{"old assay": {}}')
+
+    async def _dies(*_args, **_kwargs):
+        raise KeyboardInterrupt
+
+    monkeypatch.setattr(assay_service, "verify_registry", _dies)
+    client = _Client(json.dumps({"flow cytometry": _entry()}), {})
+
+    with pytest.raises(KeyboardInterrupt):
+        await assay_report("111", "SDY1", client)
+
+    assert not (paper / "assays.json").exists()
+    assert not (paper / "assays_benchmark.json").exists()
+    assert "flow cytometry" in json.loads((paper / "assays_precorrection.json").read_text())
+
+
+def test_an_errored_lookup_is_reported_apart_from_a_vocabulary_gap():
+    summary = obi_summary({"a": {"obi_id": None, "resource": "unresolved"},
+                           "b": {"obi_id": None, "resource": "error", "obi_error": "Timeout"}})
+
+    assert summary["unresolved"] == ["a", "b"]
+    assert summary["errors"] == {"b": "Timeout"}
 
 
 @pytest.mark.asyncio

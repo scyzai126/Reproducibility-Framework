@@ -13,14 +13,23 @@ by OBI label, with every wording in `name_in_paper` and every folded write-up in
 
 `--dry-run` prints what would change without writing.
 
+`--map` runs round 4 first -- **the one thing here that costs**: 2-3 calls per assay name the OBI
+vocabulary does not carry verbatim. It is the recovery path when a pipeline run's OBI round
+failed, and it maps `assays_corrected.json` when there is one (the registry round 4 reads),
+else `assays.json`. `--map --dry-run` prints the call count without calling anything.
+
+`assays_merges.json` is always written, with a `key_map` from every key the extractor used to
+the key it is delivered under -- composed with the stored one, so canonicalizing twice still
+maps the original wordings. Earlier fold records are kept when this pass folds nothing new.
+
 Usage:
-    python3 scripts/run_assay_merge.py <registry_dir> [--dry-run]
-    python3 scripts/run_assay_merge.py --all [--dry-run]
+    python3 scripts/run_assay_merge.py <registry_dir> [--dry-run] [--map]
+    python3 scripts/run_assay_merge.py --all [--dry-run] [--map]
 
 Example:
     python3 scripts/run_assay_merge.py data/claims/assay_registries/24336226_SDY1260 --dry-run
 
-Reads  : <registry_dir>/{assays.json,assays_OBI.json}
+Reads  : <registry_dir>/{assays.json,assays_OBI.json,assays_corrected.json (with --map)}
 Writes : <registry_dir>/{assays.json,assays_OBI.json,assays_benchmark.json,assays_merges.json}
 """
 
@@ -33,23 +42,43 @@ _REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_REPO_ROOT / "apps" / "api"))
 
 from app.agent.assay_extractor import trim_registry
-from app.agent.assay_merger import build_merge_report, canonical_groups, canonicalize_registry
+from app.agent.assay_merger import (
+    build_merge_report,
+    canonical_groups,
+    canonicalize_registry,
+    compose_key_maps,
+    key_map,
+)
+from app.agent.assay_service import obi_misses, obi_query_calls
 
 REGISTRY_ROOT = _REPO_ROOT / "data" / "claims" / "assay_registries"
 
 
-def _load(registry_dir: Path) -> tuple[dict, dict | None]:
-    registry_path = registry_dir / "assays.json"
-    if not registry_path.exists():
+def _read(path: Path) -> dict | None:
+    return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
+
+
+def _load(registry_dir: Path, remap: bool = False) -> tuple[dict, dict | None]:
+    """(registry, OBI mapping). With `remap`, the registry round 4 reads and no mapping."""
+    registry = _read(registry_dir / "assays.json")
+    if registry is None:
         raise SystemExit(f"no assays.json in {registry_dir}")
-    obi_path = registry_dir / "assays_OBI.json"
-    return (json.loads(registry_path.read_text(encoding="utf-8")),
-            json.loads(obi_path.read_text(encoding="utf-8")) if obi_path.exists() else None)
+    if remap:
+        return _read(registry_dir / "assays_corrected.json") or registry, None
+    return registry, _read(registry_dir / "assays_OBI.json")
 
 
-def dry_run(registry_dir: Path) -> int:
+def dry_run(registry_dir: Path, remap: bool = False) -> int:
     """Print what canonicalizing would change. Returns the number of entries that would fold."""
-    assays, obi = _load(registry_dir)
+    assays, obi = _load(registry_dir, remap)
+    if remap:
+        missed = obi_misses(assays)
+        calls = sum(obi_query_calls(key, assays[key]) for key in missed)
+        print(f"{registry_dir.name}: --map would cost {calls} call(s) "
+              f"({len(assays) - len(missed)} of {len(assays)} match the vocabulary for free)")
+        for key in missed:
+            print(f"    needs embedding + LLM: {key}")
+        return 0
     groups = canonical_groups(assays, obi)
     folds = [g for g in groups if len(g["members"]) > 1]
     print(f"{registry_dir.name}: {len(assays)} entry(ies) → {len(groups)}, keyed by OBI term")
@@ -58,35 +87,43 @@ def dry_run(registry_dir: Path) -> int:
     return len(assays) - len(groups)
 
 
-def canonicalize_one(registry_dir: Path) -> None:
-    """Canonicalize this registry and rewrite the three files that are keyed together."""
-    assays, obi = _load(registry_dir)
+def canonicalize_one(registry_dir: Path, remap: bool = False) -> None:
+    """Canonicalize this registry and rewrite the files that are keyed together."""
+    assays, obi = _load(registry_dir, remap)
+    stored = _read(registry_dir / "assays_merges.json") or {}
+    if remap:
+        # Imported here, not at the top: it is the one paid step, and a plain canonicalize
+        # should not even load the client.
+        from app.agent.assay_obi_mapper import enrich_assays_with_obi
+        obi = enrich_assays_with_obi(assays)
+        # A fresh mapping of the pre-canonical registry: nothing earlier to compose with.
+        stored = {}
+        for key, entry in obi.items():
+            if entry.get("resource") == "error":
+                print(f"  OBI ERROR  {key}: {entry.get('obi_error')}")
+            elif not entry.get("obi_id"):
+                print(f"  UNMAPPED  {key}: no OBI term")
     if obi is None:
-        print(f"{registry_dir.name}: no assays_OBI.json; run scripts/run_obi_map.py first")
+        print(f"{registry_dir.name}: no assays_OBI.json; pass --map to run the OBI round first")
         return
 
+    keys = compose_key_maps(stored.get("key_map"), key_map(assays, obi))
     merged, obi_out, folds = canonicalize_registry(assays, obi)
-    report = build_merge_report(folds)
+    # Folds found by an earlier pass are findings too; a second pass over an already-folded
+    # registry finds none, and used to delete the only record of the first.
+    report = build_merge_report(list(stored.get("results") or []) + folds, keys)
     print(f"{registry_dir.name}: {len(assays)} → {len(merged)} entry(ies)")
     for record in folds:
         print(f"  MERGED  {', '.join(record['folded'])} → {record['key']} "
               f"({record.get('obi_id') or 'no term'})")
 
-    # Only these three: the pipeline's other files describe rounds this script did not re-run,
+    # Only these four: the pipeline's other files describe rounds this script did not re-run,
     # and rewriting them from a registry they were not derived from would misreport those rounds.
-    (registry_dir / "assays.json").write_text(
-        json.dumps(merged, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    (registry_dir / "assays_OBI.json").write_text(
-        json.dumps(obi_out, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    (registry_dir / "assays_benchmark.json").write_text(
-        json.dumps(trim_registry(merged), indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    merges_path = registry_dir / "assays_merges.json"
-    if folds:
-        merges_path.write_text(
-            json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    elif merges_path.exists():
-        # A stale file from an earlier run would read as this run's findings.
-        merges_path.unlink()
+    for name, payload in (("assays.json", merged), ("assays_OBI.json", obi_out),
+                          ("assays_benchmark.json", trim_registry(merged)),
+                          ("assays_merges.json", report)):
+        (registry_dir / name).write_text(
+            json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
 def main() -> None:
@@ -97,6 +134,8 @@ def main() -> None:
                         help=f"Every registry under {REGISTRY_ROOT.relative_to(_REPO_ROOT)}")
     parser.add_argument("--dry-run", action="store_true",
                         help="Print what would change; write nothing")
+    parser.add_argument("--map", action="store_true",
+                        help="Run the OBI round first (paid: 2-3 calls per vocabulary miss)")
     args = parser.parse_args()
 
     if args.all:
@@ -108,13 +147,13 @@ def main() -> None:
         raise SystemExit("pass a registry directory or --all")
 
     if args.dry_run:
-        total = sum(dry_run(target) for target in targets)
+        total = sum(dry_run(target, args.map) for target in targets)
         print(f"\n{len(targets)} registry(ies), {total} entry(ies) would fold."
               "\n--dry-run: nothing written.")
         return
 
     for target in targets:
-        canonicalize_one(target)
+        canonicalize_one(target, args.map)
 
 
 if __name__ == "__main__":

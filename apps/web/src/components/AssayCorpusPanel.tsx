@@ -56,7 +56,7 @@ export default function AssayCorpusPanel() {
                   all ({immport.stats.studies_without_experiments.join(', ')}).{' '}
                 </>
               )}
-              Matched by SQL only — no model call was made.
+              Matched by SQL first; the rest were asked of the model.
             </p>
           )}
           {immport?.degraded && (

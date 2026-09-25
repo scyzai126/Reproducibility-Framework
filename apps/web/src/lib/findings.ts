@@ -84,7 +84,7 @@ export function collectFindings(result: AssayRunResult | null | undefined): Find
       kind: 'OBI FAILED',
       subject: '',
       detail:
-        'mapping did not run; rounds 1-3 are intact. Re-run: scripts/run_obi_map.py <registry_dir>',
+        'mapping did not run; rounds 1-3 are intact. Re-run: scripts/run_assay_merge.py --map <registry_dir>',
     });
   }
   for (const key of (obiRound.unresolved as string[] | undefined) ?? []) {

@@ -1,4 +1,4 @@
-"""The corpus batch runner: one flat deliverable per paper, and no paper lost to another's failure.
+"""The corpus batch runner: every runnable paper, resumable, and no paper lost to another's failure.
 
 Every test here stubs `assay_report`. A real run is upwards of 600 calls, and none of what this
 script decides -- which papers to run, where the deliverable lands, what a failure does to the
@@ -37,7 +37,10 @@ def corpus(tmp_path, runner, monkeypatch):
     (xml_dir / "SDY2_222.xml").write_text("<article/>", encoding="utf-8")
 
     registry_root = tmp_path / "assay_registries"
+    pdf_dir = tmp_path / "pdf"
+    pdf_dir.mkdir()
     monkeypatch.setattr(runner, "REGISTRY_ROOT", registry_root)
+    monkeypatch.setattr(runner, "PDF_ROOT", pdf_dir)
     monkeypatch.setattr(runner, "registry_dir",
                         lambda pmid, sdy: registry_root / f"{pmid}_{sdy}")
     monkeypatch.setattr(runner, "_get_client", lambda: object())
@@ -66,7 +69,7 @@ def _fake_report(runner, registry_root, calls, *, fails=()):
 # ── the deliverable ───────────────────────────────────────────────────────────
 
 @pytest.mark.asyncio
-async def test_each_paper_lands_as_one_flat_file_named_by_pmid(corpus, runner, monkeypatch):
+async def test_each_paper_is_run_into_its_own_registry_directory(corpus, runner, monkeypatch):
     xml_dir, registry_root = corpus
     seen = []
     monkeypatch.setattr(runner, "assay_report", _fake_report(runner, registry_root, seen))
@@ -74,24 +77,9 @@ async def test_each_paper_lands_as_one_flat_file_named_by_pmid(corpus, runner, m
     await runner.main(xml_dir, [], force=False, dry=False)
 
     assert sorted(seen) == ["111", "222"]
-    assert (registry_root / "assays_OBI_111.json").exists()
-    assert (registry_root / "assays_OBI_222.json").exists()
-    assert json.loads((registry_root / "assays_OBI_111.json").read_text())[
-        "flow cytometry"]["obi_id"] == "OBI:111"
-
-
-@pytest.mark.asyncio
-async def test_the_per_paper_trail_survives_the_copy(corpus, runner, monkeypatch):
-    """The flat file is a copy. The verification and correction trail cost money to produce."""
-    xml_dir, registry_root = corpus
-    monkeypatch.setattr(runner, "assay_report", _fake_report(runner, registry_root, []))
-
-    await runner.main(xml_dir, [], force=False, dry=False)
-
-    paper_dir = registry_root / "111_SDY1"
-    assert (paper_dir / "assays_OBI.json").exists(), "the source was moved, not copied"
-    for name in ("assays.json", "assays_verification.json", "assays_corrections.json"):
-        assert (paper_dir / name).exists(), name
+    assert (registry_root / "111_SDY1" / "assays_benchmark.json").exists()
+    # No flat copy: the ones this script used to write drifted from their registries.
+    assert not list(registry_root.glob("assays_OBI_*.json"))
 
 
 @pytest.mark.asyncio
@@ -106,16 +94,33 @@ async def test_the_pmid_is_taken_from_the_sdy_prefixed_half(corpus, runner, monk
     await runner.main(xml_dir, [], force=False, dry=False)
 
     assert "333" in seen
-    assert (registry_root / "assays_OBI_333.json").exists()
+    assert (registry_root / "333_SDY3" / "assays_benchmark.json").exists()
+
+
+def test_a_pdf_only_paper_is_in_the_queue_and_a_pdf_of_an_xml_paper_is_not(
+        corpus, runner, tmp_path):
+    """The pipeline falls back to a paper's PDF, so a PDF-only paper is runnable."""
+    xml_dir, _ = corpus
+    (tmp_path / "pdf" / "SDY4_444.pdf").write_bytes(b"%PDF")
+    (tmp_path / "pdf" / "SDY1_111.pdf").write_bytes(b"%PDF")
+
+    papers = runner.discover(xml_dir, [])
+
+    assert [(pmid, path.suffix) for pmid, _, path in papers] == [
+        ("111", ".xml"), ("222", ".xml"), ("444", ".pdf")]
 
 
 # ── resuming ──────────────────────────────────────────────────────────────────
 
+def _finish(registry_root: Path, stem: str) -> None:
+    (registry_root / stem).mkdir(parents=True, exist_ok=True)
+    (registry_root / stem / "assays_benchmark.json").write_text("{}\n", encoding="utf-8")
+
+
 @pytest.mark.asyncio
 async def test_a_finished_paper_is_not_paid_for_twice(corpus, runner, monkeypatch):
     xml_dir, registry_root = corpus
-    registry_root.mkdir(parents=True, exist_ok=True)
-    (registry_root / "assays_OBI_111.json").write_text("{}\n", encoding="utf-8")
+    _finish(registry_root, "111_SDY1")
     seen = []
     monkeypatch.setattr(runner, "assay_report", _fake_report(runner, registry_root, seen))
 
@@ -128,8 +133,7 @@ async def test_a_finished_paper_is_not_paid_for_twice(corpus, runner, monkeypatc
 async def test_force_re_runs_a_finished_paper(corpus, runner, monkeypatch):
     """The pipeline never reuses anything; --force is how you get that after a prompt edit."""
     xml_dir, registry_root = corpus
-    registry_root.mkdir(parents=True, exist_ok=True)
-    (registry_root / "assays_OBI_111.json").write_text("{}\n", encoding="utf-8")
+    _finish(registry_root, "111_SDY1")
     seen = []
     monkeypatch.setattr(runner, "assay_report", _fake_report(runner, registry_root, seen))
 
@@ -162,35 +166,23 @@ async def test_a_failing_paper_does_not_stop_the_queue(corpus, runner, monkeypat
     await runner.main(xml_dir, [], force=False, dry=False)
 
     assert sorted(seen) == ["111", "222"], "the second paper was skipped after the first failed"
-    assert not (registry_root / "assays_OBI_111.json").exists()
-    assert (registry_root / "assays_OBI_222.json").exists()
-
-
-@pytest.mark.asyncio
-async def test_a_soft_obi_failure_leaves_no_flat_file(corpus, runner, monkeypatch):
-    """Round 4 fails soft, so assay_report returns without writing assays_OBI.json."""
-    xml_dir, registry_root = corpus
-
-    async def _no_obi(pmid, sdy, client, verify=True, correct=True):
-        (registry_root / f"{pmid}_{sdy}").mkdir(parents=True, exist_ok=True)
-        return {"meta": {"llm_calls": 3}, "rounds": {}}
-
-    monkeypatch.setattr(runner, "assay_report", _no_obi)
-
-    await runner.main(xml_dir, [], force=False, dry=False)
-
-    assert not list(registry_root.glob("assays_OBI_*.json"))
+    assert not (registry_root / "111_SDY1" / "assays_benchmark.json").exists()
+    assert (registry_root / "222_SDY2" / "assays_benchmark.json").exists()
 
 
 # ── the dry run spends nothing ────────────────────────────────────────────────
 
 @pytest.mark.asyncio
-async def test_the_dry_run_makes_no_call(corpus, runner, monkeypatch):
+async def test_the_dry_run_makes_no_call(corpus, runner, monkeypatch, capsys):
     xml_dir, registry_root = corpus
     seen = []
     monkeypatch.setattr(runner, "assay_report", _fake_report(runner, registry_root, seen))
+    # The same estimator the single-paper CLI and the web cost gate use.
+    monkeypatch.setattr(runner, "estimate", lambda pmid, sdy: 30 if pmid == "111" else None)
 
     await runner.main(xml_dir, [], force=False, dry=True)
 
     assert seen == []
-    assert not registry_root.exists() or not list(registry_root.glob("assays_OBI_*.json"))
+    out = capsys.readouterr().out
+    assert "~30 calls for the 1 that have run before" in out
+    assert "plus 1 that cannot be sized" in out
