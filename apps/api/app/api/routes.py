@@ -6,13 +6,21 @@ from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from fastapi.responses import JSONResponse, PlainTextResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.agent import assay_immport, assay_jobs, paper_resolver
+from app.agent import (
+    assay_immport,
+    assay_jobs,
+    assay_service,
+    assay_table,
+    data_availability_service,
+    paper_resolver,
+)
 from app.agent.assay_extractor import AssayExtractionError
 from app.agent.jats_fetcher import (
     PaperFetchError,
     PaperNotInPMCError,
     PaperUnavailableError,
     fetch_jats,
+    validate_identifiers,
 )
 from app.agent.assay_service import (
     NothingToDoError,
@@ -250,6 +258,52 @@ async def agent_assay_paper_add(request: AssayPaperAddRequest):
     )
 
 
+@router.post("/assay-papers/upload", response_model=AssayPaperAddResponse)
+async def agent_assay_paper_upload(
+    pubmed_id: str = Form(...),
+    study_accession: str = Form(...),
+    file: UploadFile = File(...),
+    force: bool = Form(False),
+):
+    """Add a paper by uploading its PDF -- for one PMC will not serve. Free: no model call.
+
+    The file is filed as `data/pdf/uploads/<SDY>_<PMID>.pdf`, where the pipeline already looks
+    for a PDF, so the assay chain and the data-availability step then read it like any PDF paper.
+    Same response as POST /agent/assay-papers, so a caller continues exactly as after a fetch.
+
+      400  the identifiers cannot be filed under their own name
+      409  the paper's JATS XML is already on disk (it would be used instead of the PDF)
+      413  the file is too large
+      415  the file is not a PDF
+    A PDF already on disk comes back 200 with `created: false` unless `force` replaces it.
+    """
+    try:
+        pmid, sdy = validate_identifiers(pubmed_id, study_accession)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    data = await file.read()
+    try:
+        path, created = assay_service.store_uploaded_pdf(pmid, sdy, data, force=force)
+    except assay_service.UploadRejectedError as exc:
+        raise HTTPException(status_code=exc.status, detail=str(exc))
+
+    summary = next((p for p in available_papers()
+                    if (p["pubmed_id"], p["study_accession"]) == (pmid, sdy)), None)
+    if summary is None:
+        raise HTTPException(
+            status_code=500,
+            detail=f"{path.name} was written but is not being offered; "
+                   "the PDF directory may have moved mid-request",
+        )
+    return AssayPaperAddResponse(
+        created=created,
+        paper=summary,
+        message=(f"Stored the uploaded PDF as {path.name}." if created
+                 else f"A PDF of this paper is already on disk ({path.name}); nothing was "
+                      "replaced. Upload again with force to replace it."),
+    )
+
+
 @router.post("/assays/estimate", response_model=AssayEstimateResponse)
 async def agent_assay_estimate(request: AssayPaperRequest):
     """What a run would cost, without calling anything. Free.
@@ -260,9 +314,25 @@ async def agent_assay_estimate(request: AssayPaperRequest):
     """
     pubmed_id, study_accession = _identifiers(request)
     try:
-        return AssayEstimateResponse(**estimate_run(pubmed_id, study_accession))
+        return AssayEstimateResponse(**_run_estimate(pubmed_id, study_accession))
     except PaperNotFoundError as exc:
         raise HTTPException(status_code=404, detail=str(exc))
+
+
+def _run_estimate(pubmed_id: str, study_accession: str) -> dict:
+    """The assay chain's estimate plus the data-availability step every web run also makes.
+
+    The CLI's `run_assay_pipeline.py --dry-run` prints the assay rounds alone, because that
+    script runs them alone; a run from the Extract tab runs both, so its bill has both. The data
+    step is exact -- one call when the paper names an accession, none otherwise -- so it never
+    turns a known total unknown.
+    """
+    estimate = estimate_run(pubmed_id, study_accession)
+    rounds = estimate["rounds"] + [data_availability_service.estimate(pubmed_id, study_accession)]
+    known = all(r["calls"] is not None for r in rounds)
+    return {**estimate, "rounds": rounds,
+            "total_calls": sum(r["calls"] for r in rounds) if known else None,
+            "total_calls_known": known}
 
 
 @router.post("/assays/resolve", response_model=AssayResolveResponse)
@@ -287,6 +357,24 @@ async def agent_assay_resolve(
     except paper_resolver.UnrecognizedQueryError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
     return AssayResolveResponse(**resolution)
+
+
+@router.get("/assays/table")
+async def agent_assay_table(study_accession: str = "", pubmed_id: str = ""):
+    """One paper's rows in the Corpus table's shape -- benchmark pairing, paper link and all. Free.
+
+    Built by app.agent.assay_table, the same function scripts/build_assay_table.py runs over the
+    whole corpus, so the Extract tab's table and the Corpus tab's cannot differ. An empty list
+    when the paper has no registry yet.
+    """
+    pubmed_id, study_accession = pubmed_id.strip(), study_accession.strip()
+    if not (pubmed_id and study_accession):
+        raise HTTPException(status_code=400, detail="both pubmed_id and study_accession are needed")
+    # A new paper's registry sits under the cache root, not the benchmark one; its benchmark
+    # pairing simply finds nothing, which is right.
+    registry = assay_service.registry_dir(pubmed_id, study_accession)
+    rows = assay_table.table_rows(registry.parent, assay_table.BENCHMARK_DIR, only=registry.name)
+    return JSONResponse(content={"rows": rows})
 
 
 @router.get("/assays/registry", response_model=AssayRegistryResponse)
@@ -318,10 +406,16 @@ async def _run_job(job_id: str, pubmed_id: str, study_accession: str,
     event loop with the job stuck on "running" forever.
     """
     try:
-        result = await assay_report(
-            pubmed_id, study_accession, _get_client(), verify=verify, correct=correct,
-            on_progress=lambda event: assay_jobs.record_progress(job_id, event),
+        # The data-availability step runs alongside the assay chain rather than after it: the two
+        # read the same paper and share nothing else, so neither waits on the other.
+        result, data = await asyncio.gather(
+            assay_report(
+                pubmed_id, study_accession, _get_client(), verify=verify, correct=correct,
+                on_progress=lambda event: assay_jobs.record_progress(job_id, event),
+            ),
+            _run_data_availability(job_id, pubmed_id, study_accession),
         )
+        result = {**result, "data_availability": data}
     except asyncio.CancelledError:
         # Terminal, and not a refund: the calls already sent are already billed, and every file
         # the run wrote before this point stays on disk.
@@ -335,6 +429,43 @@ async def _run_job(job_id: str, pubmed_id: str, study_accession: str,
         assay_jobs.fail(job_id, f"{type(exc).__name__}: {exc}")
     else:
         assay_jobs.finish(job_id, result)
+
+
+async def _run_data_availability(job_id: str, pubmed_id: str, study_accession: str) -> dict:
+    """The data step of a run. Its failure is reported in the result, never fails the assays.
+
+    The assay registry is the run's main product and is paid for either way; losing it because
+    a repository lookup timed out would be the wrong trade. Cancellation still propagates, so
+    Stop halts both halves.
+    """
+    progress = lambda **kw: assay_jobs.record_progress(  # noqa: E731
+        job_id, {"round": assay_jobs.DATA_STEP, **kw})
+    progress(state="running", calls=0)
+    try:
+        data = await data_availability_service.run_for_paper(
+            pubmed_id, study_accession, _get_client())
+    except asyncio.CancelledError:
+        raise
+    except Exception as exc:
+        logger.warning("data availability failed for %s/%s: %s", study_accession, pubmed_id, exc)
+        progress(state="failed", calls=0)
+        return {"error": f"{type(exc).__name__}: {exc}", "llm_calls": 0}
+    progress(state="done", calls=data["llm_calls"],
+             repositories=len(data.get("data_repositories") or []))
+    return data
+
+
+@router.get("/data-availability/corpus")
+async def agent_data_availability_corpus():
+    """Every paper's data repositories as previous runs wrote them, keyed `<PMID>_<SDY>`. Free."""
+    return JSONResponse(content={"papers": data_availability_service.stored_all()})
+
+
+@router.get("/data-availability")
+async def agent_data_availability(pubmed_id: str, study_accession: str):
+    """Where a paper's own data lives, as a previous run wrote it. Free; null when never run."""
+    return JSONResponse(content=data_availability_service.stored(pubmed_id.strip(),
+                                                                 study_accession.strip()))
 
 
 @router.post("/assays/runs", response_model=AssayJobResponse, status_code=202)
@@ -364,7 +495,7 @@ async def agent_assay_run(request: AssayRunRequest):
         )
 
     try:
-        estimate = estimate_run(pubmed_id, study_accession)
+        estimate = _run_estimate(pubmed_id, study_accession)
     except PaperNotFoundError as exc:
         raise HTTPException(status_code=404, detail=str(exc))
 
@@ -446,15 +577,20 @@ async def get_completeness_report():
 
 
 def _corpus_rows() -> list[dict]:
-    """The same rows GET /agent/assay-obi serves, so the two tables line up row for row."""
+    """Our assays from the table GET /agent/assay-obi serves, so the two tables line up row for row.
+
+    A `benchmark_only` row is a curator assay we did not find: there is no assay of ours to look
+    up in ImmPort, so it is left out of the sweep and of the stored-coverage check.
+    """
     if not _ASSAY_OBI_PATH.exists():
         raise HTTPException(
             status_code=404,
-            detail="No assay/OBI table found at data/claims/all_assays_full_OBI.json.",
+            detail="No assay/OBI table found at data/31paper_assays/all_assays_OBI.json.",
         )
     import json
 
-    return json.loads(_ASSAY_OBI_PATH.read_text(encoding="utf-8"))
+    rows = json.loads(_ASSAY_OBI_PATH.read_text(encoding="utf-8"))
+    return [row for row in rows if not row.get("benchmark_only")]
 
 
 @router.get("/assay-immport", response_model=AssayImmportResponse)
@@ -462,15 +598,20 @@ async def agent_assay_immport(session: AsyncSession = Depends(get_session)):
     """For every corpus assay, does ImmPort record an experiment for that study?
 
     The same resolver the query builder uses, so an assay called present here is one a claim
-    query would find. SQL first; a row SQL cannot place goes to the LLM fallback, one call per
-    row, cached on disk so a reload does not pay for it again.
+    query would find. Served from the file scripts/build_immport_coverage.py stores when it
+    matches the current table -- no database, no model. Otherwise a live sweep runs SQL only:
+    the paid LLM fallback happens in the script, never on a page load.
 
     A database that is down degrades to empty rather than 500 -- the corpus table is readable
     without ImmPort, it simply cannot say anything about coverage.
     """
     rows = _corpus_rows()
+    stored = _stored_coverage(rows)
+    if stored is not None:
+        return AssayImmportResponse(rows=stored["rows"], stats=stored["stats"])
     try:
-        report = await assay_immport.check_rows(session, rows, use_llm=True)
+        # No stored coverage for this table: a live sweep, SQL only, so a page load never spends.
+        report = await assay_immport.check_rows(session, rows, use_llm=False)
     except Exception as exc:
         logger.warning("ImmPort coverage sweep failed: %s", exc)
         return AssayImmportResponse(
@@ -478,7 +619,35 @@ async def agent_assay_immport(session: AsyncSession = Depends(get_session)):
             warning="The ImmPort database could not be reached, so no coverage could be "
                     "checked. The assay table itself is unaffected.",
         )
-    return AssayImmportResponse(**report)
+    return AssayImmportResponse(
+        **report,
+        warning="Live SQL-only check: no stored coverage matches this table, so rows SQL could "
+                "not place were not asked of the model. Run scripts/build_immport_coverage.py "
+                "(add --llm for the model fallback) to store the full result.",
+    )
+
+
+def _stored_coverage(rows: list[dict]) -> dict | None:
+    """The file scripts/build_immport_coverage.py wrote, if it covers exactly these table rows.
+
+    A table rebuilt since has different (study, assay) rows, and serving the old coverage would
+    attach answers to the wrong assays, so a mismatch reads as no file at all.
+    """
+    if not _ASSAY_IMMPORT_PATH.exists():
+        return None
+    import json
+
+    try:
+        stored = json.loads(_ASSAY_IMMPORT_PATH.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        logger.warning("Stored ImmPort coverage unreadable, sweeping live: %s", exc)
+        return None
+    wanted = sorted((r.get("study", ""), r.get("assay", "")) for r in rows)
+    have = sorted((r.get("study", ""), r.get("assay", "")) for r in stored.get("rows", []))
+    if wanted != have:
+        logger.info("Stored ImmPort coverage is for a different table; sweeping live")
+        return None
+    return stored
 
 
 @router.post("/assay-immport/check", response_model=AssayImmportResponse)
@@ -538,8 +707,13 @@ async def agent_assay_immport_resolve(
 _RESOURCE_ORDER = ["exact_original", "exact_normalized", "exact_normalized_llm",
                    "embedding_llm", "embedding_llm_normalized", "unresolved"]
 
+#: Built by scripts/build_assay_table.py from every registry's assays_OBI.json -- one row per assay.
 _ASSAY_OBI_PATH = (
-    Path(__file__).resolve().parents[4] / "data" / "claims" / "all_assays_full_OBI.json"
+    Path(__file__).resolve().parents[4] / "data" / "31paper_assays" / "all_assays_OBI.json"
+)
+#: Built by scripts/build_immport_coverage.py from that table; GET /agent/assay-immport serves it.
+_ASSAY_IMMPORT_PATH = (
+    Path(__file__).resolve().parents[4] / "data" / "31paper_assays" / "assay_immport.json"
 )
 
 
@@ -547,8 +721,10 @@ def _assay_obi_stats(rows: list[dict]) -> dict:
     """Summary counts for the assay registry table.
 
     Computed here rather than in the browser so the arithmetic is testable and the
-    frontend stays a renderer.
+    frontend stays a renderer. Counts our assays only: a `benchmark_only` row is a curator assay
+    we missed, shown in the table but not an assay of ours.
     """
+    rows = [row for row in rows if not row.get("benchmark_only")]
     by_resource = {resource: 0 for resource in _RESOURCE_ORDER}
     for row in rows:
         resource = row.get("resource") or "unresolved"
@@ -580,7 +756,8 @@ async def get_assay_obi():
         raise HTTPException(
             status_code=404,
             detail=(
-                "No assay/OBI table found at data/claims/all_assays_full_OBI.json."
+                "No assay/OBI table found at data/31paper_assays/all_assays_OBI.json -- "
+                "run scripts/build_assay_table.py."
             ),
         )
     import json

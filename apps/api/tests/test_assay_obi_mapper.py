@@ -29,7 +29,7 @@ def test_the_normalized_name_is_an_exact_match_key_of_its_own(monkeypatch):
     That test pinned the opposite rule, and it was right about the round it was written for:
     the old normalization was *lexical* (strip a trailing " assay") and earned nothing. This
     field holds an LLM's judgement of which technique the assay is, and looking it up takes the
-    step-1 hit rate over the 171 curated rows of all_assays_full.json from 39% to 62%.
+    step-1 hit rate over the 171 curated rows of the retired all_assays_full.json from 39% to 62%.
 
     "enzyme-linked immunosorbent assay" is a verbatim OBI label, so a paper name the vocabulary
     has never heard of still resolves through it -- without reaching the paid round at all.
@@ -305,7 +305,7 @@ def _no_step3(monkeypatch):
 def test_enrich_writes_obi_confidence_and_never_the_bare_confidence_key():
     """`confidence` means the *extraction* confidence in a registry; the OBI score is its own key.
 
-    scripts/map_assays_to_obi.py, data/claims/all_assays_full_OBI.json and the UI were already
+    scripts/build_assay_table.py, the corpus table it writes and the UI were already
     on `obi_confidence`; enrich_assays_with_obi was the last path still overwriting.
     """
     enriched = enrich_assays_with_obi({"ELISA": {"sample_type": "serum", "readouts": "titers"}})
@@ -596,7 +596,7 @@ def test_index_is_reproducible_from_the_full_source():
 
     from app.agent.assay_obi_mapper import _OBI_DIR, _is_generic_assay_label
 
-    # scripts/ is not an importable package — same loader shim as test_map_assays_to_obi.py
+    # scripts/ is not an importable package — same loader shim as test_compare_assay_benchmark.py
     script = Path(__file__).resolve().parents[3] / "scripts" / "prune_obi_domain.py"
     spec = importlib.util.spec_from_file_location("prune_obi_domain", script)
     prune = importlib.util.module_from_spec(spec)

@@ -30,7 +30,6 @@ def _entry(**over) -> dict:
     entry = {
         "name_in_paper": "flow cytometry",
         "aliases": ["FACS analysis", "Flow cytometry"],
-        "platform": "NextSeq 2000",
         "sample_type": "PBMCs",
         "readouts": "cell frequencies",
         "source": "methods",
@@ -59,7 +58,7 @@ def test_alias_indices_collapse_into_one_question():
 
 def test_supported_fields_are_not_reopened():
     groups = flagged_groups(_verification(
-        ("platform", "SUPPORTED"), ("sample_type", "CONTRADICTED"),
+        ("readouts", "SUPPORTED"), ("sample_type", "CONTRADICTED"),
     ))
     assert groups == ["sample_type"]
 
@@ -106,13 +105,13 @@ def test_null_blind_answer_over_an_already_empty_field_changes_nothing():
 
 # ── applying it ───────────────────────────────────────────────────────────────
 
-def test_a_cleared_platform_becomes_null_rather_than_a_guess():
+def test_a_cleared_specimen_becomes_null_rather_than_a_guess():
     entry = _entry()
-    record = apply_correction(entry, "platform", None, _SOURCE)
+    record = apply_correction(entry, "sample_type", None, _SOURCE)
 
     assert record["action"] == CLEARED
-    assert record["previous"] == "NextSeq 2000"
-    assert entry["platform"] is None
+    assert record["previous"] == "PBMCs"
+    assert entry["sample_type"] is None
 
 
 def test_a_flagged_alias_the_blind_read_did_not_confirm_is_dropped():
@@ -188,13 +187,13 @@ def test_evidence_is_never_blanked():
 
 # ── blindness ─────────────────────────────────────────────────────────────────
 
-@pytest.mark.parametrize("group", ["platform", "sample_type", "readouts"])
+@pytest.mark.parametrize("group", ["sample_type", "readouts"])
 def test_the_prompt_never_shows_the_disputed_value(group):
     """The whole premise: a corrector shown the rejected string edits the string.
 
     The fixture values are deliberately unlike the examples the questions carry, so a hit
     means the entry leaked rather than that the question named a common specimen."""
-    entry = _entry(platform="NextSeq 2000", sample_type="bronchoalveolar lavage fluid",
+    entry = _entry(sample_type="bronchoalveolar lavage fluid",
                    readouts="tetramer-positive clonotype counts")
     prompt = build_prompt(entry, group, _SOURCE, "A Paper")
 
@@ -307,7 +306,7 @@ def test_the_paper_is_the_same_prefix_for_every_question():
     source text makes every correction call a cache miss on the bulk of the prompt.
     """
     prompts = [build_prompt(_entry(), group, _SOURCE, "Paper")
-               for group in ("platform", "sample_type", "aliases", "evidence")]
+               for group in ("sample_type", "readouts", "aliases", "evidence")]
 
     heads = {p[: p.index(_SOURCE) + len(_SOURCE)] for p in prompts}
     assert len(heads) == 1, "the paper is not in a shared prefix"
@@ -317,7 +316,7 @@ def test_the_paper_is_the_same_prefix_for_every_question():
 
 
 def test_correct_prompt_leaves_no_placeholder_unrendered():
-    prompt = build_prompt(_entry(), "platform", _SOURCE, "Paper")
+    prompt = build_prompt(_entry(), "sample_type", _SOURCE, "Paper")
     for token in ("{assay_name}", "{locator}", "{question}", "{paper_title}", "{source_text}"):
         assert token not in prompt
 
@@ -345,7 +344,7 @@ class _RecordingClient:
         self.chat = type("Chat", (), {"completions": _Completions()})()
 
 
-def _flagged(*keys, field: str = "platform") -> dict:
+def _flagged(*keys, field: str = "sample_type") -> dict:
     return {"results": [
         {"assay_id": key, "record_verdict": "REVIEW",
          "field_verifications": [{"field_name": field, "verdict": "NOT_SUPPORTED",
@@ -354,7 +353,7 @@ def _flagged(*keys, field: str = "platform") -> dict:
     ]}
 
 
-_BLIND_BODY = json.dumps({"value": "LSRII", "sentence_ids": ["S1"], "reason": "..."})
+_BLIND_BODY = json.dumps({"value": "whole blood", "sentence_ids": ["S1"], "reason": "..."})
 
 
 @pytest.mark.asyncio
@@ -369,7 +368,7 @@ async def test_corrected_registry_keeps_registry_order_when_calls_finish_out_of_
 
     assert list(corrected) == list(keys)
     assert [r["assay_id"] for r in records] == list(keys)
-    assert all(entry["platform"] == "LSRII" for entry in corrected.values())
+    assert all(entry["sample_type"] == "whole blood" for entry in corrected.values())
     assert client.peak_in_flight > 1, "calls did not actually overlap"
 
 
@@ -396,7 +395,7 @@ async def test_every_field_is_asked_against_the_entry_as_extraction_left_it():
     verification = {"results": [{
         "assay_id": "flow cytometry", "record_verdict": "REVIEW",
         "field_verifications": [
-            {"field_name": "platform", "verdict": "NOT_SUPPORTED", "reason": "..."},
+            {"field_name": "sample_type", "verdict": "NOT_SUPPORTED", "reason": "..."},
             {"field_name": "evidence.quote", "verdict": "NOT_SUPPORTED", "reason": "..."},
         ],
     }]}
@@ -408,9 +407,9 @@ async def test_every_field_is_asked_against_the_entry_as_extraction_left_it():
 
     # The evidence quote really was replaced...
     assert corrected["flow cytometry"]["evidence"]["quote"] == "PBMCs were thawed and rested overnight."
-    # ...and the platform question was still asked against the quote extraction wrote.
-    platform_prompt = next(p for p in client.prompts if "instrument, chip, kit" in p)
-    assert original_quote in platform_prompt
+    # ...and the specimen question was still asked against the quote extraction wrote.
+    specimen_prompt = next(p for p in client.prompts if "tissue or specimen" in p)
+    assert original_quote in specimen_prompt
 
 
 # ── A bare-list alias answer is the answer, not an error ──────────────────────
@@ -476,11 +475,11 @@ async def test_a_bare_list_for_evidence_still_errors():
 
 @pytest.mark.asyncio
 async def test_a_bare_list_for_a_scalar_field_still_errors():
-    """A list is not an answer to "what instrument did this assay run on"."""
+    """A list is not an answer to "what specimen was this assay performed on"."""
     from app.agent.assay_corrector import correct_field
 
     value, error = await correct_field(
-        _entry(), "platform", _SOURCE, "Paper", _CannedClient('["LSRII", "NextSeq"]'))
+        _entry(), "sample_type", _SOURCE, "Paper", _CannedClient('["PBMCs", "serum"]'))
 
     assert value is None
     assert error == "corrector returned list, not an object"

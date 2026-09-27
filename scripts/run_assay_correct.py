@@ -29,7 +29,7 @@ Usage:
     python scripts/run_assay_correct.py <registry_dir> [--xml PATH] [--dry-run | --promote]
 
 Example:
-    python scripts/run_assay_correct.py data/claims/assay_registries/26682988_SDY1119 --dry-run
+    python scripts/run_assay_correct.py data/31paper_assays/26682988_SDY1119 --dry-run
 """
 
 import argparse

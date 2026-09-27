@@ -215,7 +215,8 @@ def test_a_newly_added_paper_cannot_be_sized_and_says_so(corpus, ncbi, client):
     assert estimate["total_calls_known"] is False
     assert estimate["total_calls"] is None
     assert estimate["caveat"] is None
-    assert [r["calls"] for r in estimate["rounds"]] == [1, None, None, None, 0]
+    # Five assay rounds, then the web run's data step (this paper names no accession: 0).
+    assert [r["calls"] for r in estimate["rounds"]] == [1, None, None, None, 0, 0]
 
 
 def test_a_newly_added_paper_still_has_to_pass_the_cost_gate(corpus, ncbi, client):
@@ -227,3 +228,80 @@ def test_a_newly_added_paper_still_has_to_pass_the_cost_gate(corpus, ncbi, clien
 
     assert response.status_code == 400
     assert "estimate" in response.json()["detail"]
+
+
+# ── uploading a PDF (for a paper PMC will not serve) ──────────────────────────
+
+_PDF = b"%PDF-1.4\n% a paper\n%%EOF\n"
+
+
+def _upload(client, data=_PDF, pubmed_id="34252919", study_accession="SDY2189", force=False):
+    return client.post(
+        "/agent/assay-papers/upload",
+        data={"pubmed_id": pubmed_id, "study_accession": study_accession,
+              "force": "true" if force else "false"},
+        files={"file": ("paper.pdf", data, "application/pdf")},
+    )
+
+
+def test_an_uploaded_pdf_is_filed_where_the_pipeline_looks_for_one(corpus, client):
+    response = _upload(client)
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["created"] is True
+    assert body["paper"]["study_accession"] == "SDY2189"
+    assert body["paper"]["paper_source"] == "SDY2189_34252919.pdf"
+    stored = assay_service.PDF_ROOT / "uploads" / "SDY2189_34252919.pdf"
+    assert stored.read_bytes() == _PDF
+    # From here the paper runs as a PDF paper: its registry is the _pdf directory.
+    assert assay_service.locate_paper_pdf("34252919", "SDY2189") == stored
+    assert assay_service.registry_dir("34252919", "SDY2189").name == "34252919_SDY2189_pdf"
+
+
+def test_a_file_that_is_not_a_pdf_is_refused(corpus, client):
+    response = _upload(client, data=b"<html>not a paper</html>")
+
+    assert response.status_code == 415
+    assert not (assay_service.PDF_ROOT / "uploads").exists()
+
+
+def test_an_upload_with_identifiers_that_cannot_be_filed_is_refused(corpus, client):
+    assert _upload(client, pubmed_id="PMC123").status_code == 400
+    assert _upload(client, study_accession="2189").status_code == 400
+
+
+def test_an_upload_for_a_paper_whose_xml_is_on_disk_is_refused(corpus, client):
+    """The XML always wins, so a stored PDF would silently never be read."""
+    (corpus / "SDY2189_34252919.xml").write_text("<article/>", encoding="utf-8")
+
+    response = _upload(client)
+
+    assert response.status_code == 409
+    assert "already on disk" in response.json()["detail"]
+
+
+def test_an_existing_pdf_is_kept_unless_forced(corpus, client):
+    _upload(client)
+    stored = assay_service.PDF_ROOT / "uploads" / "SDY2189_34252919.pdf"
+
+    again = _upload(client, data=_PDF + b"% second\n")
+    assert again.json()["created"] is False
+    assert stored.read_bytes() == _PDF
+
+    forced = _upload(client, data=_PDF + b"% second\n", force=True)
+    assert forced.json()["created"] is True
+    assert stored.read_bytes() == _PDF + b"% second\n"
+
+
+def test_forcing_replaces_the_pdf_already_in_use_rather_than_adding_a_shadowed_copy(corpus,
+                                                                                    client):
+    """locate_paper_pdf returns the first match, so a second copy elsewhere would never be read."""
+    existing = assay_service.PDF_ROOT / "26papers" / "SDY2189_34252919.pdf"
+    existing.parent.mkdir()
+    existing.write_bytes(_PDF)
+
+    _upload(client, data=_PDF + b"% new\n", force=True)
+
+    assert existing.read_bytes() == _PDF + b"% new\n"
+    assert not (assay_service.PDF_ROOT / "uploads").exists()

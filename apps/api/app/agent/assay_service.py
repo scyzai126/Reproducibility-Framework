@@ -7,12 +7,12 @@ the corrected registry against the OBI vocabulary in data/OBI.
 
 A paper with no JATS XML falls back to its PDF, and round 1 then reads prompts/
 extract_assays_pdf.txt with the PDF attached instead. Only that round differs; the rest of the
-chain is the same code on the same files. Entries from a PDF carry `sentence_ids: []`, because
-there are no `[S<n>]` markers in a PDF to cite, so the quote check searches the whole document
-and check_source_section reports "unknown" for them.
+chain is the same code on the same files. Entries from a PDF carry `sentence_ids: []` and a null
+`source`, because there are no `[S<n>]` markers in a PDF to locate a quote against, so the quote
+check searches the whole document and neither field can be derived.
 
 **Every request runs all five rounds.** Results are written to disk under
-data/claims/assay_registries, and the files are the same ones the CLI scripts read and write,
+data/31paper_assays, and the files are the same ones the CLI scripts read and write,
 so a registry built here is visible to run_assay_verify.py and vice versa — but a stored one
 is never served back. A request costs 1 + N + F calls every time.
 
@@ -49,6 +49,7 @@ from app.agent.assay_corrector import (
 from app.agent.assay_extractor import (
     contract_warnings,
     extract_assays,
+    has_methods_section,
     paper_names,
     trim_registry,
 )
@@ -65,6 +66,7 @@ from app.agent.assay_verifier import (
     build_report,
     check_quote_verbatim,
     check_source_section,
+    derive_evidence_fields,
     verify_registry,
 )
 from app.agent.jats_parser import (
@@ -83,7 +85,14 @@ XML_ROOT = _REPO_ROOT / "data" / "JAT_XML"
 #: Searched only when a paper has no JATS XML. Both roots are module-level and re-read at call
 #: time so tests can monkeypatch either.
 PDF_ROOT = _REPO_ROOT / "data" / "pdf"
-REGISTRY_ROOT = _REPO_ROOT / "data" / "claims" / "assay_registries"
+REGISTRY_ROOT = _REPO_ROOT / "data" / "31paper_assays"
+#: Where a paper outside the benchmark keeps its results: `<pmid>_<SDY>[_pdf]/`, holding its
+#: assay registry and its data-repository files together. Benchmark papers stay in REGISTRY_ROOT,
+#: so the corpus table (built from REGISTRY_ROOT alone) never picks up a new paper.
+CACHE_ROOT = _REPO_ROOT / "data" / "cache" / "assays"
+#: Marks a registry built from a PDF because the paper has no JATS XML: `<pmid>_<SDY>_pdf`.
+#: Its entries carry no sentence ids, so the folder name says so up front.
+PDF_DIR_SUFFIX = "_pdf"
 
 #: A PDF text layer is only ever the verification haystack, never the extraction input, so it
 #: is capped far above any real paper rather than at paper_reader's 120k default. Truncation
@@ -121,6 +130,8 @@ def split_stem(stem: str) -> tuple[str, str] | None:
     independently. Returns None when there is no second half -- the caller decides whether that
     is fatal, because a CLI wants to exit and a directory walk wants to skip.
     """
+    if stem.lower().endswith(PDF_DIR_SUFFIX):
+        stem = stem[: -len(PDF_DIR_SUFFIX)]
     left, _, right = stem.partition("_")
     if not right:
         return None
@@ -168,6 +179,57 @@ def locate_paper_pdf(pubmed_id: str, study_accession: str) -> Path | None:
     return None
 
 
+#: Where a PDF the user uploaded is filed. Under PDF_ROOT, so locate_paper_pdf finds it unchanged.
+UPLOAD_SUBDIR = "uploads"
+#: A paper PDF is a few MB; this only stops a mistaken upload from filling the disk.
+MAX_UPLOAD_BYTES = 50 * 1024 * 1024
+
+
+class UploadRejectedError(ValueError):
+    """An uploaded file that must not be stored. `status` is the HTTP status the route returns."""
+
+    def __init__(self, message: str, status: int):
+        super().__init__(message)
+        self.status = status
+
+
+def store_uploaded_pdf(pubmed_id: str, study_accession: str, data: bytes,
+                       force: bool = False) -> tuple[Path, bool]:
+    """File a user-uploaded PDF where the pipeline looks for one. Returns (path, created).
+
+    For a paper PMC will not serve: once the PDF is at `data/pdf/uploads/<SDY>_<PMID>.pdf`,
+    locate_paper_pdf finds it, registry_dir files the paper as `<pmid>_<SDY>_pdf`, and both the
+    assay chain and the data-availability step read it -- nothing downstream needs to know it was
+    uploaded. The identifiers must already be validated (jats_fetcher.validate_identifiers).
+
+    Refused: bytes that are not a PDF, an oversized file, and a paper whose JATS XML is on disk
+    (the XML always wins, so the upload would silently do nothing). A PDF already on disk is kept
+    unless `force` -- then *that* file is replaced, since any other copy would shadow a new one.
+    Written to a temp name and renamed, so a failed write leaves nothing half-written.
+    """
+    if not data.startswith(b"%PDF-"):
+        raise UploadRejectedError("that file is not a PDF", 415)
+    if len(data) > MAX_UPLOAD_BYTES:
+        raise UploadRejectedError(
+            f"the PDF is {len(data) // (1024 * 1024)} MB; the limit is "
+            f"{MAX_UPLOAD_BYTES // (1024 * 1024)} MB", 413)
+    xml = locate_paper_xml(pubmed_id, study_accession)
+    if xml is not None:
+        raise UploadRejectedError(
+            f"this paper's full text is already on disk as {xml.name}, which the pipeline reads "
+            "in preference to any PDF", 409)
+
+    existing = locate_paper_pdf(pubmed_id, study_accession)
+    if existing is not None and not force:
+        return existing, False
+    target = existing or (PDF_ROOT / UPLOAD_SUBDIR / f"{study_accession}_{pubmed_id}.pdf")
+    target.parent.mkdir(parents=True, exist_ok=True)
+    partial = target.with_name(target.name + ".part")
+    partial.write_bytes(data)
+    partial.replace(target)
+    return target, True
+
+
 def locate_paper_source(pubmed_id: str, study_accession: str) -> tuple[str, Path] | None:
     """The best source on disk for a paper: `("xml", path)`, `("pdf", path)`, or None.
 
@@ -212,8 +274,29 @@ def _not_found(pubmed_id: str, study_accession: str) -> PaperNotFoundError:
 
 
 def registry_dir(pubmed_id: str, study_accession: str) -> Path:
-    """Where this paper's registry lives. One canonical location, per the skill."""
-    return REGISTRY_ROOT / f"{(pubmed_id or '').strip()}_{(study_accession or '').strip()}"
+    """Where this paper's registry lives. One canonical location, per the skill.
+
+    `<pmid>_<SDY>`, or `<pmid>_<SDY>_pdf` for a paper whose registry comes from its PDF -- one
+    already built that way, or one with no JATS XML but a PDF on disk.
+
+    A benchmark paper -- one whose folder already exists under REGISTRY_ROOT -- stays there.
+    Any other paper lives under CACHE_ROOT, which is also where its data repositories go.
+    """
+    name = f"{(pubmed_id or '').strip()}_{(study_accession or '').strip()}"
+    for root in (REGISTRY_ROOT, CACHE_ROOT):
+        for existing in (root / (name + PDF_DIR_SUFFIX), root / name):
+            if existing.is_dir():
+                return existing
+    plain = CACHE_ROOT / name
+    if (locate_paper_xml(pubmed_id, study_accession) is None
+            and locate_paper_pdf(pubmed_id, study_accession) is not None):
+        return plain.with_name(name + PDF_DIR_SUFFIX)
+    return plain
+
+
+def is_cached(pubmed_id: str, study_accession: str) -> bool:
+    """True for a paper outside the benchmark, whose results live under CACHE_ROOT."""
+    return registry_dir(pubmed_id, study_accession).parent == CACHE_ROOT
 
 
 def paper_source_text(xml_path: Path) -> tuple[str, str]:
@@ -760,6 +843,13 @@ async def assay_report(
     else:
         assays = await extract_assays(source_text, title, client, model)
 
+    # `source` and `evidence.sentence_ids` are not asked of the model; they are worked out here
+    # from each quote, before the registry is written or judged. Free, and exact where the quote
+    # is: locate_sentence_ids finds the sentences it came from and the section map says whether
+    # they are Methods. On a PDF there are no markers, so both stay empty -- the same contract
+    # that route already had.
+    derive_evidence_fields(assays, source_text)
+
     # Every file the previous run left now describes a different extraction. They go before
     # anything of this run's is written -- assays.json and the deliverable included -- so a run
     # that fails or is cancelled part-way leaves no file that reads as its findings, and never an
@@ -774,6 +864,11 @@ async def assay_report(
                                   encoding="utf-8")
     calls += 1
     rounds["extract"] = {"source": "extracted", "calls": 1, "assays": len(assays)}
+    # Says why an empty or thin extraction may be: with no Methods section (a short report whose
+    # methods sit in a supplement) round 1 had only the main text to read. XML only -- a PDF's
+    # text layer carries no section tags to tell.
+    if kind == "xml" and not has_methods_section(source_text):
+        rounds["extract"]["no_methods"] = True
     _emit(round="extract", state="done", calls=1, assays=len(assays))
 
     warnings = contract_warnings(assays, expect_sentence_ids=(kind == "xml"))

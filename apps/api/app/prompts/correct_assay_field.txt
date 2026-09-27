@@ -27,13 +27,11 @@ Return ONLY valid JSON in exactly this shape — no prose, no markdown fences:
 
 {
   "value": <the answer, or null if the paper does not state it>,
-  "sentence_ids": ["S<n>", ...],
   "reason": "<one concise sentence>"
 }
 
-`sentence_ids` must be `[S<n>]` markers that exist in the supplied source text, given without
-the brackets (e.g. "S318"), and must be the sentences your answer actually comes from. When
-`value` is null, return an empty list. Do not fabricate evidence.
+Do not add a `sentence_ids` field. Where your answer came from is worked out from the text you
+return, not from ids you cite. Do not fabricate evidence.
 
 ---
 

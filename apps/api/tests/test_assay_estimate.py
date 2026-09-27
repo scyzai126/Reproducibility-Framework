@@ -27,8 +27,8 @@ _XML = """<article><front><article-meta><article-title>A Paper</article-title></
 </front><body><sec><title>Methods</title><p>Cells were analyzed on an LSRII.</p></sec></body></article>"""
 
 _ENTRY = {
-    "name_in_paper": "flow cytometry", "aliases": [], "platform": "LSRII",
-    "sample_type": None, "readouts": "cell frequencies", "source": "methods",
+    "name_in_paper": "flow cytometry", "aliases": [], "sample_type": "PBMCs",
+    "readouts": "cell frequencies",
     "evidence": {"section": "Methods", "sentence_ids": ["S1"],
                  "quote": "Cells were analyzed on an LSRII."},
 }
@@ -132,7 +132,7 @@ def test_correct_is_sized_from_the_flagged_fields_not_the_flagged_assays(paper, 
         "assay_id": "flow cytometry", "record_verdict": "REVIEW",
         "assay_identity_verdict": "SUPPORTED",
         "field_verifications": [
-            {"field_name": "platform", "verdict": "NOT_SUPPORTED", "reason": "unstated"},
+            {"field_name": "sample_type", "verdict": "NOT_SUPPORTED", "reason": "unstated"},
             {"field_name": "readouts", "verdict": "NOT_REPORTED", "reason": "absent"},
         ]}]})
 
@@ -207,7 +207,7 @@ def test_a_finished_paper_is_sized_from_its_extraction_not_its_canonical_registr
     verification = {"summary": {}, "results": [{
         "assay_id": "SIMoA", "record_verdict": "REVIEW", "assay_identity_verdict": "SUPPORTED",
         "field_verifications": [
-            {"field_name": "platform", "verdict": "NOT_SUPPORTED", "reason": "unstated"}]}]}
+            {"field_name": "sample_type", "verdict": "NOT_SUPPORTED", "reason": "unstated"}]}]}
     canonical = {"flow cytometry": {**_ENTRY, "name_in_paper": ["FACS"]},
                  "digital ELISA": {**_ENTRY, "name_in_paper": ["SIMoA", "SIMoA kit"]}}
     obi = {"flow cytometry": {"obi_id": "OBI:1", "obi_label": "flow cytometry"},

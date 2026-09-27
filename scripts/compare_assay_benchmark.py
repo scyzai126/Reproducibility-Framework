@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Compare the agent's assay registries against the human-curated benchmarks.
 
-`data/benchmark_assay/<SDY>_Assay_Hailong.json` holds a curator's assay list per paper, keyed by
-**OBI label**. `data/claims/assay_registries/<pmid>_<SDY>/assays_benchmark.json` holds ours, keyed by
+`data/benchmark_assay/<SDY>[_<pmid>]_*.json` holds a curator's assay list per paper, keyed by
+**OBI label**. Several curator suffixes are in use (`_Assay_Hailong`, `_assays_AS_v2`, ...); every
+file in the folder is scored, and the suffix is not read. `data/31paper_assays/<pmid>_<SDY>/assays_benchmark.json` holds ours, keyed by
 the paper's own wording, and the sibling `assays_OBI.json` carries an `obi_id` per entry. Most of the
 pairing is therefore ontology-ID equality; the rest falls through name/alias/quote tiers. No LLM call.
 
@@ -13,9 +14,9 @@ unmatched assays are listed as EXTRA with their paper evidence, for a human to j
 Usage:
     ./.venv/bin/python scripts/compare_assay_benchmark.py [--only SDY2189] [--stdout]
 
-Reads  : data/benchmark_assay/*_Assay_Hailong.json
-         data/claims/assay_registries/<pmid>_<SDY>/{assays_benchmark,assays_OBI}.json
-         data/OBI/{obi_generic_index.json,obi.obo}
+Reads  : data/benchmark_assay/*.json
+         data/31paper_assays/<pmid>_<SDY>/{assays_benchmark,assays_OBI}.json
+         data/OBI/{obi_assay_terms_full.json,obi.obo}
 Writes : data/benchmark_assay/comparison/{comparison.json,comparison.md}
 """
 
@@ -31,8 +32,13 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 BENCHMARK_DIR = REPO_ROOT / "data" / "benchmark_assay"
-REGISTRY_DIR = REPO_ROOT / "data" / "claims" / "assay_registries"
-OBI_INDEX = REPO_ROOT / "data" / "OBI" / "obi_generic_index.json"
+REGISTRY_DIR = REPO_ROOT / "data" / "31paper_assays"
+#: The benchmark side resolves against the FULL assay vocabulary, not `obi_generic_index.json`.
+#: That 700-term file is the pruned pool our own mapper retrieves from; a curator is free to use
+#: a term the prune dropped, and resolving their key against the pool would report a correct term
+#: as "not an OBI term". Coverage is nested (700 of these 1794 are the pool), so widening here
+#: changes nothing about what we map to.
+OBI_INDEX = REPO_ROOT / "data" / "OBI" / "obi_assay_terms_full.json"
 OBO_PATH = REPO_ROOT / "data" / "OBI" / "obi.obo"
 OUT_DIR = BENCHMARK_DIR / "comparison"
 
@@ -132,38 +138,104 @@ class ObiGraph:
         return None
 
 
+# ── reading the curator's side ────────────────────────────────────────────────
+
+#: Spellings seen across the 31 benchmark files for the block holding the curator's OBI term, and for
+#: the id inside it. Hand-curated files drift, and a reader that knows only one spelling silently
+#: loses the term.
+_OBI_CONTAINERS = ("OBI ontology", "OBI_ontology", "obi_ontology", "OBI", "obi")
+_OBI_ID_KEYS = ("obi_id", "id", "obi id")
+_OBI_ID = re.compile(r"^[A-Za-z]+:\d+$")
+
+
+def bench_obi_id(entry: dict) -> str | None:
+    """The OBI id the curator recorded, or None.
+
+    Preferred over re-resolving the entry's dictionary key, because the key is prose a curator edits:
+    `microarray assay` is an OBI label and `microarray` is not, so an innocuous rename silently
+    demoted a pairing from the ontology tier to a name match. The id is what they actually asserted.
+    """
+    blocks = [entry[name] for name in _OBI_CONTAINERS
+              if isinstance(entry.get(name), dict)] + [entry]
+    for block in blocks:
+        for key in _OBI_ID_KEYS:
+            value = block.get(key)
+            if isinstance(value, str) and _OBI_ID.match(value.strip()):
+                return value.strip()
+    return None
+
+
+def bench_evidence(entry: dict) -> dict:
+    """The curator's evidence block under either spelling (`evidence_location` or `evidence`)."""
+    for name in ("evidence_location", "evidence"):
+        block = entry.get(name)
+        if isinstance(block, dict):
+            return block
+    return {}
+
+
 # ── pairing papers ───────────────────────────────────────────────────────────
 
 
-def discover_pairs(only: str | None = None) -> list[dict]:
+#: A benchmark filename starts with the study accession, optionally followed by the PMID. Everything
+#: after that is the curator's own suffix -- `_Assay_Hailong`, `_assays_AS_v2`, `_assay_AS`,
+#: `_assaysAS_v2`, `_assays_AS_v2_edit` -- and carries no meaning here. Matching on the accession
+#: rather than on one curator's suffix is what lets every benchmark in the folder be scored.
+_BENCH_NAME = re.compile(r"^(SDY\d+)(?:_(\d{7,8}))?")
+
+
+def discover_pairs(only: str | None = None) -> tuple[list[dict], list[str]]:
     """Pair each benchmark file with its registry directory.
 
-    A benchmark filename is `<SDY>[_<pmid>]_Assay_Hailong.json`. The PMID is present only where it is
-    needed to disambiguate (SDY1364 has two registries); without one, exactly one registry directory
-    must end in `_<SDY>` or the pairing is ambiguous and we stop rather than guess.
+    The PMID is in the filename only where it is needed to disambiguate (SDY1364 and SDY1276 each
+    have two papers in the same study); without one, exactly one registry directory must end in
+    `_<SDY>` or the pairing is ambiguous.
+
+    Returns `(pairs, skipped)`. A benchmark that cannot be paired is skipped with a reason rather
+    than stopping the run: with 31 benchmark files, one unpairable file must not cost the other 30
+    papers their score. The caller reports `skipped` so a silent loss of coverage is impossible --
+    the failure this replaces was exactly that, a hard exit nobody saw because the glob had already
+    hidden 22 of the files from it.
     """
-    pairs = []
-    for path in sorted(BENCHMARK_DIR.glob("*_Assay_Hailong.json")):
-        parts = path.name.replace("_Assay_Hailong.json", "").split("_")
-        study = parts[0]
-        pmid = parts[1] if len(parts) > 1 else None
+    pairs: list[dict] = []
+    skipped: list[str] = []
+    paired_registries: dict[Path, str] = {}
+    for path in sorted(BENCHMARK_DIR.glob("*.json")):
+        matched = _BENCH_NAME.match(path.name)
+        if not matched:
+            skipped.append(f"{path.name}: filename does not start with an SDY accession")
+            continue
+        study, pmid = matched.group(1), matched.group(2)
         if only and study.upper() != only.upper():
             continue
         if pmid:
-            candidates = [REGISTRY_DIR / f"{pmid}_{study}"]
+            candidates = [REGISTRY_DIR / f"{pmid}_{study}", REGISTRY_DIR / f"{pmid}_{study}_pdf"]
         else:
-            candidates = sorted(d for d in REGISTRY_DIR.iterdir() if d.is_dir() and d.name.endswith(f"_{study}"))
+            candidates = sorted(d for d in REGISTRY_DIR.iterdir() if d.is_dir()
+                                and d.name.endswith((f"_{study}", f"_{study}_pdf")))
         candidates = [d for d in candidates if (d / "assays_benchmark.json").exists()]
         if len(candidates) != 1:
-            raise SystemExit(
+            skipped.append(
                 f"{path.name}: expected exactly one registry for {study}"
                 f"{f' (pmid {pmid})' if pmid else ''}, found {[d.name for d in candidates]}"
             )
+            continue
         registry = candidates[0]
-        pairs.append({"study": study, "pmid": registry.name.split("_")[0], "benchmark": path, "registry": registry})
+        # Two curators' files for the same paper would each score the same registry and double it in
+        # the totals. Score the first and name both, rather than silently inflating recall.
+        if registry in paired_registries:
+            skipped.append(
+                f"{path.name}: {registry.name} is already scored against "
+                f"{paired_registries[registry]}; two benchmarks for one paper cannot both count"
+            )
+            continue
+        paired_registries[registry] = path.name
+        pairs.append({"study": study, "pmid": registry.name.split("_")[0],
+                      "benchmark": path, "registry": registry})
     if only and not pairs:
-        raise SystemExit(f"no benchmark file for {only}")
-    return pairs
+        raise SystemExit(f"no benchmark file for {only}"
+                         + (f" (skipped: {'; '.join(skipped)})" if skipped else ""))
+    return pairs, skipped
 
 
 # ── matching ─────────────────────────────────────────────────────────────────
@@ -196,7 +268,7 @@ def match_tier(bench: dict, bench_id: str | None, ours: dict, obi: ObiGraph) -> 
     # related at all — that is a different assay being named in the same sentence.
     if bench_id and ours_id and not obi.relation(bench_id, ours_id):
         return None
-    quote = normalize(bench.get("evidence_location", {}).get("quote", ""))
+    quote = normalize(bench_evidence(bench).get("quote", ""))
     for our_name in _surface_forms(ours["name_in_paper"], None):
         if quote and len(our_name) >= 6 and our_name in quote:
             return "quote", "benchmark quote names our assay"
@@ -257,7 +329,8 @@ def compare_paper(pair: dict, obi: ObiGraph) -> dict:
     rows: list[dict] = []
     claimed: set[str] = set()
     for bench_key, bench_entry in bench.items():
-        bench_id = obi.resolve(bench_key)
+        # The curator's own id first; their key only as a fallback for an entry that carries none.
+        bench_id = bench_obi_id(bench_entry) or obi.resolve(bench_key)
         hits: list[tuple[str, str | None, dict]] = []
         for key, row in our_rows.items():
             hit = match_tier(bench_entry, bench_id, row, obi)
@@ -269,7 +342,7 @@ def compare_paper(pair: dict, obi: ObiGraph) -> dict:
             "obi_id": bench_id,
             "name_in_paper": bench_entry["name_in_paper"],
             "aliases": bench_entry.get("aliases", []),
-            "evidence_location": bench_entry.get("evidence_location", {}),
+            "evidence_location": bench_evidence(bench_entry),
         }
         if not hits:
             rows.append({
@@ -436,6 +509,17 @@ def render_markdown(report: dict) -> str:
     return "\n".join(lines).rstrip() + "\n"
 
 
+def _report_coverage(scored: int, available: int, skipped: list[str], stream=sys.stdout) -> None:
+    """Say how many benchmark files were scored out of how many exist, and why any were not.
+
+    Printed before the metrics on purpose: a recall figure over a subset of the benchmark is the one
+    number that must never be read without knowing it is a subset.
+    """
+    print(f"scored {scored}/{available} benchmark files", file=stream)
+    for reason in skipped:
+        print(f"  SKIPPED  {reason}", file=stream)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--only", help="Restrict to one study accession, e.g. SDY2189")
@@ -443,9 +527,13 @@ def main() -> None:
     args = parser.parse_args()
 
     obi = ObiGraph()
-    papers = [compare_paper(pair, obi) for pair in discover_pairs(args.only)]
+    pairs, skipped = discover_pairs(args.only)
+    papers = [compare_paper(pair, obi) for pair in pairs]
+    benchmark_files = len(list(BENCHMARK_DIR.glob("*.json")))
     totals = {
         "papers": len(papers),
+        "benchmark_files": benchmark_files,
+        "skipped": skipped,
         "benchmark_total": sum(p["metrics"]["benchmark_total"] for p in papers),
         "ours_total": sum(p["metrics"]["ours_total"] for p in papers),
         "matched": sum(p["metrics"]["matched"] for p in papers),
@@ -465,6 +553,7 @@ def main() -> None:
 
     markdown = render_markdown(report)
     if args.stdout:
+        _report_coverage(len(papers), benchmark_files, skipped, stream=sys.stderr)
         print(markdown)
         return
 
@@ -472,6 +561,7 @@ def main() -> None:
     (OUT_DIR / "comparison.json").write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     (OUT_DIR / "comparison.md").write_text(markdown, encoding="utf-8")
 
+    _report_coverage(len(papers), benchmark_files, skipped)
     print(f"{totals['papers']} papers | benchmark {totals['benchmark_total']} | ours {totals['ours_total']}")
     print(f"matched {totals['matched']} | missed {totals['missed']} | extra {totals['extra']} "
           f"| recall {totals['recall']:.1%}")

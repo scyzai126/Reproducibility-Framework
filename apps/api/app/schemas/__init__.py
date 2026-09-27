@@ -55,6 +55,8 @@ class AgentResponse(BaseModel):
     # Populated when the backend needs more information from the user
     type: str | None = None
     question: str | None = None
+    # type == "paper_choice": the study's papers, one of which the user picks to analyze
+    paper_options: list[dict] = []
     # ImmPort field resolution completeness summary
     completeness: CompletnessSummary | None = None
 

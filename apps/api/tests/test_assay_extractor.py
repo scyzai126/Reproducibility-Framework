@@ -6,6 +6,7 @@ from app.agent.assay_extractor import (
     AssayExtractionError,
     ENTRY_FIELDS,
     TRIMMED_FIELDS,
+    NO_METHODS_NOTE,
     build_prompt,
     clean_entry,
     clean_registry,
@@ -19,12 +20,8 @@ def _raw(**over) -> dict:
         "name_in_paper": "flow cytometry",
         "normalized_name": "flow cytometry",
         "aliases": ["FACS"],
-        "platform": "BD LSRFortessa",
         "sample_type": "PBMCs",
         "readouts": "cell frequencies",
-        "measurement_role": "reported",
-        "parent_hint": None,
-        "source": "methods",
         "evidence": {"section": "Methods", "sentence_ids": ["S318"], "quote": "…"},
     }
     entry.update(over)
@@ -75,11 +72,11 @@ def test_an_old_schema_entry_without_the_field_still_parses():
 
 def test_absent_optional_fields_become_null_not_empty_string():
     """`null` and "" are not the same downstream: merge_verified copies only truthy values,
-    and an empty string would read as a stated-but-blank platform."""
-    entry = clean_entry("ELISA", _raw(platform="", sample_type=None))
+    and an empty string would read as a stated-but-blank specimen."""
+    entry = clean_entry("ELISA", _raw(sample_type="", readouts=None))
 
-    assert entry["platform"] is None
     assert entry["sample_type"] is None
+    assert entry["readouts"] is None
 
 
 def test_aliases_that_are_not_strings_are_dropped():
@@ -100,31 +97,63 @@ def test_evidence_is_always_the_three_field_shape():
     assert entry["evidence"] == {"section": None, "sentence_ids": [], "quote": None}
 
 
-def test_sentence_ids_are_stringified():
+def test_sentence_ids_a_model_volunteers_are_dropped_not_kept():
+    """They are derived from the quote afterwards, so a guess is only a worse value to overwrite."""
     entry = clean_entry("ELISA", _raw(evidence={"sentence_ids": [318, "S9"], "quote": "x"}))
 
-    assert entry["evidence"]["sentence_ids"] == ["318", "S9"]
+    assert entry["evidence"]["sentence_ids"] == []
 
 
-def test_an_invented_source_value_is_preserved_not_silently_corrected():
-    """Rewriting it to "methods" would hide the classification pass going wrong."""
+def test_a_source_a_model_volunteers_is_dropped_not_kept():
+    """`source` is derived from where the quote sits. Accepting an unasked-for answer would let a
+    judgement outrank the document, which is the disagreement deriving it exists to remove."""
     entry = clean_entry("ELISA", _raw(source="discussion"))
 
-    assert entry["source"] == "discussion"
-    assert contract_warnings({"ELISA": entry})
+    assert entry["source"] is None
 
 
-def test_an_omitted_source_becomes_null_and_warns():
-    """Defaulting to "methods" asserted the stronger provenance claim on exactly the entries
-    where the model declined to say. The null is not the point; the warning is."""
-    entry = clean_entry("ELISA", _raw(source=None))
+def test_source_starts_null_so_a_registry_never_asserts_an_underived_provenance():
+    entry = clean_entry("ELISA", _raw())
 
     assert entry["source"] is None
-    assert any("source is None" in w for w in contract_warnings({"ELISA": entry}))
 
 
-def test_a_blank_source_is_treated_as_omitted():
-    assert clean_entry("ELISA", _raw(source="   "))["source"] is None
+def test_generate_claim_keeps_a_real_boolean_either_way():
+    assert clean_entry("ELISA", _raw(generate_claim=True))["generate_claim"] is True
+    assert clean_entry("ELISA", _raw(generate_claim=False))["generate_claim"] is False
+
+
+@pytest.mark.parametrize("answer", ["true", "yes", 1, 0, None, {}, []])
+def test_generate_claim_accepts_nothing_but_a_boolean(answer):
+    """A value in a shape the contract does not define is not an answer.
+
+    `1` is the trap: `1 in (True, False)` is True in Python, so a truthiness or membership
+    check would read a formatting slip as the paper having reported a finding it may not have.
+    """
+    assert clean_entry("ELISA", _raw(generate_claim=answer))["generate_claim"] is None
+
+
+def test_an_unanswered_generate_claim_stays_null_rather_than_defaulting_to_false():
+    """"The paper drew nothing from this assay" and "nobody said" must stay distinguishable:
+    the first is a finding about the paper, the second is a gap in our own extraction."""
+    assert clean_entry("ELISA", _raw())["generate_claim"] is None
+
+
+def test_generate_claim_reaches_the_deliverable():
+    """It is in TRIMMED_FIELDS because assays_benchmark.json is the file held against the
+    curated benchmark, which carries the same field."""
+    trimmed = trim_registry(clean_registry({"ELISA": _raw(generate_claim=False)}))
+
+    assert trimmed["ELISA"]["generate_claim"] is False
+
+
+def test_an_old_registry_without_generate_claim_trims_to_null_rather_than_raising():
+    """The 38 registries on disk predate the field. Every reader uses .get(), so they keep
+    working and read as "not answered" -- the same tolerance platform and measurement_role get."""
+    trimmed = trim_registry({"ELISA": {"name_in_paper": "ELISA", "aliases": [],
+                                       "evidence": {"quote": "..."}}})
+
+    assert trimmed["ELISA"]["generate_claim"] is None
 
 
 def test_contract_warnings_report_an_old_schema_entry_instead_of_raising():
@@ -144,8 +173,8 @@ def test_contract_warnings_report_an_old_schema_entry_instead_of_raising():
     warnings = contract_warnings(old_schema)
 
     assert any("no evidence quote" in w for w in warnings)
-    assert any("cites no sentence_ids" in w for w in warnings)
-    assert any("source is None" in w for w in warnings)
+    assert any("quote could not be located" in w for w in warnings)
+    assert any("source could not be derived" in w for w in warnings)
 
 
 def test_a_non_object_answer_is_an_error_not_an_empty_registry():
@@ -171,10 +200,11 @@ def test_contract_warnings_name_the_unusable_entries():
                       evidence={"section": "Methods", "sentence_ids": [], "quote": None}),
         "flow cytometry": _raw(),
     })
-    warnings = contract_warnings(registry)
+    # The derived fields are filled in later by derive_evidence_fields, so they are checked
+    # separately; this pins the quote check, which is the one the extraction can fail.
+    warnings = contract_warnings(registry, expect_sentence_ids=False)
 
-    assert any("no evidence quote" in w for w in warnings)
-    assert any("cites no sentence_ids" in w for w in warnings)
+    assert any("ELISA" in w and "no evidence quote" in w for w in warnings)
     assert not any("flow cytometry" in w for w in warnings)
 
 
@@ -188,7 +218,7 @@ def test_contract_warnings_flag_aliases_that_are_not_a_list():
         "Luminex": {**_raw(name_in_paper="Luminex"), "aliases": "FACS"},
         "flow cytometry": _raw(),
     }
-    warnings = contract_warnings(registry)
+    warnings = contract_warnings(registry, expect_sentence_ids=False)
 
     assert any("ELISA: aliases is None" in w for w in warnings)
     assert any("Luminex: aliases is 'FACS'" in w for w in warnings)
@@ -196,20 +226,20 @@ def test_contract_warnings_flag_aliases_that_are_not_a_list():
 
 
 def test_trim_registry_keeps_only_the_deliverable_fields():
-    """The trimmed view answers "which assay, called what else, established where". platform,
+    """The trimmed view answers "which assay, called what else, established where".
     sample_type and readouts answer a different question and stay in assays.json."""
     trimmed = trim_registry(clean_registry({"flow cytometry": _raw()}))
 
     assert tuple(trimmed["flow cytometry"]) == TRIMMED_FIELDS
     assert trimmed["flow cytometry"]["aliases"] == ["FACS"]
-    assert trimmed["flow cytometry"]["evidence"]["sentence_ids"] == ["S318"]
+    assert "sample_type" not in trimmed["flow cytometry"]
 
 
 def test_trim_registry_carries_a_merged_entrys_second_write_up():
     """`additional_evidence` is round 5's only output, and the deliverable is where it is read.
 
-    It is carried only where it exists: an entry nothing merged into keeps exactly the four
-    fields it had before the round existed, so no stored deliverable gains a null key.
+    It is carried only where it exists: an entry nothing merged into keeps exactly the fields
+    it had before the round existed, so no stored deliverable gains a null key.
     """
     merged = {**clean_entry("ELISA", _raw()), "name_in_paper": "ELISA",
               "additional_evidence": [{"name_in_paper": "ELISA kits", "source": "methods",
@@ -249,60 +279,38 @@ def test_the_prompt_carries_the_paper_and_leaves_no_placeholders():
 
 # ── measurement_role / parent_hint ────────────────────────────────────────────
 
-def test_an_invented_role_becomes_none_and_is_reported():
-    """Not corrected to the nearest valid role: that would hide the model going wrong."""
-    registry = clean_registry({"ELISA": _raw(name_in_paper="ELISA", measurement_role="primary")})
 
-    assert registry["ELISA"]["measurement_role"] is None
-    assert any("ELISA: measurement_role is None" in w for w in contract_warnings(registry))
+# ── a paper with no Methods section (structure 3) ─────────────────────────────
 
+def test_a_paper_with_no_methods_section_is_told_structure_3_applies():
+    """SDY1171: a short report whose methods sit in a supplement. Left to infer it, the model
+    took the Methods-only path and returned {} for a paper that names its assay."""
+    prompt = build_prompt("## Abstract  [abstract]\n[S1] a\n\n## Main text  [other]\n[S2] b",
+                          "A Paper")
 
-def test_every_documented_role_is_kept():
-    for role in ("reported", "sub_step", "screening", "unreported"):
-        assert clean_entry("x", _raw(measurement_role=role))["measurement_role"] == role
-
-
-def test_a_sub_step_must_name_its_parent():
-    registry = clean_registry({
-        "flow cytometry": _raw(),
-        "tandem MS": _raw(name_in_paper="tandem MS", measurement_role="sub_step"),
-    })
-
-    assert "tandem MS: sub_step has no parent_hint" in contract_warnings(registry)
+    assert NO_METHODS_NOTE + "## Abstract" in prompt
 
 
-def test_a_parent_hint_resolves_by_wording_even_after_the_registry_is_rekeyed():
-    """Round 5 keys entries by OBI label but keeps every wording in name_in_paper."""
-    registry = {
-        "liquid chromatography mass spectrometry assay": {
-            **_raw(name_in_paper=["LC-MS analysis"])},
-        "tandem mass spectrometry assay": _raw(
-            name_in_paper="tandem mass spectrometry assay", measurement_role="sub_step",
-            parent_hint="LC-MS analysis"),
-    }
+def test_a_paper_with_a_methods_section_gets_the_prompt_unchanged():
+    source = "## Methods  [methods]\n[S1] Cells were analyzed."
 
-    assert not any("parent_hint" in w for w in contract_warnings(registry))
+    assert NO_METHODS_NOTE not in build_prompt(source, "A Paper")
+    assert source in build_prompt(source, "A Paper")
 
 
-def test_a_parent_hint_naming_nothing_is_reported():
-    registry = clean_registry({
-        "flow cytometry": _raw(),
-        "tandem MS": _raw(name_in_paper="tandem MS", measurement_role="sub_step",
-                          parent_hint="LC-MS"),
-    })
+# ── an answer wrapped in an envelope is never mistaken for "no assays" ─────────
 
-    assert "tandem MS: parent_hint 'LC-MS' names no other entry" in contract_warnings(registry)
+def test_a_registry_wrapped_in_an_object_is_unwrapped():
+    assert list(clean_registry({"assays": {"ELISA": _raw()}})) == ["ELISA"]
 
 
-def test_a_parent_hint_on_a_non_sub_step_is_reported():
-    registry = clean_registry({"flow cytometry": _raw(parent_hint="ELISA")})
+def test_a_registry_wrapped_as_a_list_is_keyed_by_name_in_paper():
+    registry = clean_registry({"assays": [_raw(name_in_paper="iELISA"),
+                                          _raw(name_in_paper="RT-PCR")]})
 
-    assert any("parent_hint 'ELISA' set on a 'reported' entry" in w
-               for w in contract_warnings(registry))
+    assert list(registry) == ["iELISA", "RT-PCR"]
 
 
-def test_the_deliverable_carries_the_role_but_not_the_parent_hint():
-    trimmed = trim_registry(clean_registry({"flow cytometry": _raw()}))
-
-    assert trimmed["flow cytometry"]["measurement_role"] == "reported"
-    assert "parent_hint" not in trimmed["flow cytometry"]
+def test_an_object_with_keys_but_no_entries_is_an_error_not_an_empty_registry():
+    with pytest.raises(AssayExtractionError, match="no assay entries"):
+        clean_registry({"note": "the paper has no Methods section"})

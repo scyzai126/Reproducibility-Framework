@@ -35,7 +35,6 @@ SOURCE = (
 ENTRY = {
     "name_in_paper": "flow cytometry",
     "aliases": ["FACS"],
-    "platform": "BD LSRFortessa",
     "sample_type": "PBMCs",
     "readouts": "cytokine-producing cell frequencies",
     "source": "methods",
@@ -246,7 +245,46 @@ def test_proposed_fields_enumerates_aliases_and_skips_nulls():
     assert fields["aliases[0]"] == "FACS"
     assert fields["aliases[1]"] == "flow"
     assert "platform" not in fields
-    assert fields["evidence.sentence_ids"] == ["S2"]
+    assert fields["evidence.quote"] == ENTRY["evidence"]["quote"]
+
+
+def test_the_derived_sentence_ids_are_never_sent_for_verification():
+    """They are derived from the quote by code, so there is nothing for a judge to rule on.
+
+    The prompt has told the judge to skip them for a while; this set had not, so every entry of
+    an XML paper came back NOT_REPORTED on the field, derive_record_verdict forced the record to
+    REVIEW, and assay_corrector.field_group billed one round-3 evidence correction per assay for
+    a value nobody had objected to. Measured on SDY1264 and SDY1669: 9/9 REVIEW on both.
+    """
+    entry = {**ENTRY, "evidence": {**ENTRY["evidence"], "sentence_ids": ["S2"]}}
+
+    fields = dict(proposed_fields(entry))
+
+    assert "evidence.sentence_ids" not in fields
+    # The quote is still verified: whether it appears verbatim is round 2's core check.
+    assert "evidence.quote" in fields
+
+
+def test_an_old_registrys_evidence_location_ids_are_held_back_too():
+    """Registries on disk spell it `evidence_location`; the flattened name is what is checked,
+    so the other spelling has to be in the set as well or it slips straight past."""
+    entry = {"name_in_paper": "ELISA",
+             "evidence_location": {"quote": "Titers were measured by ELISA.",
+                                   "sentence_ids": ["S7"]}}
+
+    fields = dict(proposed_fields(entry))
+
+    assert "evidence_location.sentence_ids" not in fields
+    assert "evidence_location.quote" in fields
+
+
+def test_a_record_with_every_field_supported_reaches_accept():
+    """The regression this guards: one unanswerable field is enough to hold every record at
+    REVIEW, which leaves the verdict carrying no information at all."""
+    supported = [{"field_name": f, "verdict": SUPPORTED}
+                 for f in ("name_in_paper", "sample_type", "evidence.quote")]
+
+    assert derive_record_verdict(SUPPORTED, supported) == ACCEPT
 
 
 def test_the_normalized_name_is_never_verified_against_the_paper():
@@ -261,6 +299,18 @@ def test_the_normalized_name_is_never_verified_against_the_paper():
     entry = {**ENTRY, "normalized_name": "flow cytometry"}
 
     assert "normalized_name" not in dict(proposed_fields(entry))
+
+
+def test_generate_claim_is_never_a_proposed_field():
+    """The other judgement field, and excluded for the same reason as normalized_name.
+
+    "The paper reports no finding drawn from this assay" is a statement about the whole paper;
+    no single span supports or contradicts it, so a judge asked to rule can only guess. Keeping
+    it out is also what keeps it free -- a flagged field bills one correction call each, so
+    verifying it would cost up to one call per assay in round 3.
+    """
+    for answer in (True, False):
+        assert "generate_claim" not in dict(proposed_fields({**ENTRY, "generate_claim": answer}))
 
 
 def test_record_verdict_derivation():
@@ -311,8 +361,8 @@ async def test_verify_assay_reports_a_field_the_judge_skipped():
         "field_verifications": [
             {"field_name": "name_in_paper", "proposed_value": "flow cytometry",
              "verdict": SUPPORTED, "reason": "stated in Methods"},
-            {"field_name": "platform", "proposed_value": "BD LSRFortessa",
-             "verdict": SUPPORTED, "reason": "named in S2"},
+            {"field_name": "readouts", "proposed_value": "cytokine-producing cell frequencies",
+             "verdict": SUPPORTED, "reason": "named in S4"},
         ],
         "record_verdict": ACCEPT,
     })
@@ -320,7 +370,7 @@ async def test_verify_assay_reports_a_field_the_judge_skipped():
     result = await verify_assay("flow cytometry", ENTRY, SOURCE, "Paper", _FakeClient(body))
 
     by_name = {v["field_name"]: v for v in result["field_verifications"]}
-    assert by_name["platform"]["verdict"] == SUPPORTED
+    assert by_name["readouts"]["verdict"] == SUPPORTED
     assert by_name["sample_type"]["verdict"] == NOT_REPORTED
     # Skipped fields keep the record out of ACCEPT even though the judge asked for it.
     assert result["record_verdict"] == REVIEW
@@ -561,81 +611,79 @@ _SOURCE_ENTRY = {
 }
 
 
-def _judge_says_source_is_fine() -> str:
-    """A verifier answer that supports every field, `source` included."""
+def _judge_says_every_field_is_fine() -> str:
+    """A verifier answer that supports every field the extraction still proposes."""
     return json.dumps({
         "assay_id": "phosphoflow analysis", "assay_identity_verdict": "SUPPORTED",
         "field_verifications": [
             {"field_name": f, "verdict": "SUPPORTED", "reason": "ok"}
-            for f in ("name_in_paper", "sample_type", "readouts", "source",
-                      "evidence.quote", "evidence.sentence_ids")],
+            for f in ("name_in_paper", "sample_type", "readouts", "evidence.quote")],
         "conflict_detected": False, "record_verdict": "ACCEPT",
     })
 
 
-@pytest.mark.asyncio
-async def test_a_source_claim_its_evidence_contradicts_is_overruled(monkeypatch):
-    """The real SDY212 defect: source "methods", evidence in [results], judge said fine.
+def test_source_is_derived_from_where_the_quote_sits_not_asked_for():
+    """`source` used to be extracted and then overruled by this same arithmetic.
 
-    Over a 30-paper run the judge returned 2 `source` verdicts across 171 assays while the free
-    check found 2 mismatches on different entries -- which then reached the finished registry
-    because nothing flagged them for correction.
+    The real SDY212 defect was source "methods" on evidence sitting in [results], which the judge
+    called fine. Deriving it removes the disagreement rather than adjudicating it.
     """
-    from app.agent import assay_verifier
+    from app.agent.assay_verifier import derive_evidence_fields
 
     source_text = "## Results  [results]\n[S10] cell subset frequencies and function were assessed."
-    result = await assay_verifier.verify_assay(
-        "phosphoflow analysis", _SOURCE_ENTRY, source_text, "A Paper",
-        _FakeClient(_judge_says_source_is_fine()))
+    assays = {"phosphoflow analysis": {
+        "name_in_paper": "phosphoflow analysis",
+        "source": "methods",          # a stale value, or one a model volunteered
+        "evidence": {"section": "Methods", "sentence_ids": [],
+                     "quote": "cell subset frequencies and function"},
+    }}
 
-    source = next(v for v in result["field_verifications"] if v["field_name"] == "source")
-    assert source["verdict"] == "CONTRADICTED", "the judge's SUPPORTED was allowed to stand"
-    assert "evidence sits in results" in source["reason"]
-    # And it must pull the record down, which is what queues round 3 to repair the field.
-    assert result["record_verdict"] == "REVIEW"
+    derive_evidence_fields(assays, source_text)
+    entry = assays["phosphoflow analysis"]
+    assert entry["source"] == "results", "the document must outrank the proposed value"
+    assert entry["evidence"]["sentence_ids"] == ["S10"], "ids come from locating the quote"
 
 
-@pytest.mark.asyncio
-async def test_an_aligned_source_is_confirmed_not_merely_left_alone(monkeypatch):
-    from app.agent import assay_verifier
+def test_a_methods_quote_derives_methods():
+    from app.agent.assay_verifier import derive_evidence_fields
 
-    entry = {**_SOURCE_ENTRY}
     source_text = ("## Materials and Methods  [methods]\n"
                    "[S10] cell subset frequencies and function were assessed.")
-    result = await assay_verifier.verify_assay(
-        "phosphoflow analysis", entry, source_text, "A Paper",
-        _FakeClient(_judge_says_source_is_fine()))
+    assays = {"phosphoflow analysis": {
+        "evidence": {"section": "Methods", "sentence_ids": [], "quote": "frequencies and function"},
+    }}
 
-    source = next(v for v in result["field_verifications"] if v["field_name"] == "source")
-    assert source["verdict"] == "SUPPORTED"
-    assert result["source_check"]["status"] == "aligned"
-
-
-@pytest.mark.asyncio
-async def test_the_judge_keeps_the_field_when_the_check_cannot_run(monkeypatch):
-    """No sentence_ids -- every registry predating that field must pass through quietly."""
-    from app.agent import assay_verifier
-
-    entry = {**_SOURCE_ENTRY, "evidence": {"section": "x", "sentence_ids": [], "quote": "q"}}
-    judged = json.loads(_judge_says_source_is_fine())
-    judged["field_verifications"] = [
-        {"field_name": "source", "verdict": "NOT_SUPPORTED", "reason": "judge's own doubt"}
-        if v["field_name"] == "source" else v for v in judged["field_verifications"]]
-
-    result = await assay_verifier.verify_assay(
-        "phosphoflow analysis", entry, "## Results  [results]\n[S10] text.", "A Paper",
-        _FakeClient(json.dumps(judged)))
-
-    source = next(v for v in result["field_verifications"] if v["field_name"] == "source")
-    assert source["verdict"] == "NOT_SUPPORTED"
-    assert source["reason"] == "judge's own doubt"
-    assert result["source_check"]["verdict"] is None
+    derive_evidence_fields(assays, source_text)
+    assert assays["phosphoflow analysis"]["source"] == "methods"
 
 
-def test_measurement_role_and_parent_hint_are_not_proposed_values():
-    """Both say what the paper *does* with an assay, not what its text states, so there is no
-    span to check them against -- the same reason normalized_name is skipped."""
-    entry = {**ENTRY, "measurement_role": "sub_step", "parent_hint": "LC-MS"}
+def test_a_quote_that_cannot_be_placed_derives_nothing_rather_than_guessing():
+    """A PDF text layer carries no markers, and "methods" is the stronger claim to assert blindly."""
+    from app.agent.assay_verifier import derive_evidence_fields
+
+    assays = {"phosphoflow analysis": {
+        "evidence": {"section": "Methods", "sentence_ids": [], "quote": "nowhere in this paper"},
+    }}
+
+    derive_evidence_fields(assays, "## Results  [results]\n[S10] unrelated text.")
+    entry = assays["phosphoflow analysis"]
+    assert entry["source"] is None
+    assert entry["evidence"]["sentence_ids"] == []
+
+
+def test_source_is_no_longer_a_field_the_judge_is_asked_about():
+    """It is derived, so asking the judge to rule on it would be second-guessing arithmetic."""
+    from app.agent.assay_verifier import proposed_fields as _proposed
+
+    fields = dict(_proposed({**ENTRY, "source": "methods"}))
+    assert "source" not in fields
+    assert "sample_type" in fields
+
+
+def test_removed_fields_on_an_older_registry_are_not_proposed_values():
+    """A registry written before the trim still carries these; none is a value to verify."""
+    entry = {**ENTRY, "measurement_role": "sub_step", "parent_hint": "LC-MS",
+             "platform": "BD LSRFortessa"}
 
     fields = dict(proposed_fields(entry))
     assert "measurement_role" not in fields

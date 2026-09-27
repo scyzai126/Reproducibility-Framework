@@ -27,7 +27,7 @@ Usage:
     python3 scripts/run_assay_merge.py --all [--dry-run] [--map]
 
 Example:
-    python3 scripts/run_assay_merge.py data/claims/assay_registries/24336226_SDY1260 --dry-run
+    python3 scripts/run_assay_merge.py data/31paper_assays/24336226_SDY1260 --dry-run
 
 Reads  : <registry_dir>/{assays.json,assays_OBI.json,assays_corrected.json (with --map)}
 Writes : <registry_dir>/{assays.json,assays_OBI.json,assays_benchmark.json,assays_merges.json}
@@ -51,7 +51,7 @@ from app.agent.assay_merger import (
 )
 from app.agent.assay_service import obi_misses, obi_query_calls
 
-REGISTRY_ROOT = _REPO_ROOT / "data" / "claims" / "assay_registries"
+REGISTRY_ROOT = _REPO_ROOT / "data" / "31paper_assays"
 
 
 def _read(path: Path) -> dict | None:

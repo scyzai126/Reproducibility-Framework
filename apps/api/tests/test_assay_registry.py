@@ -1,6 +1,9 @@
 """The assay registry is now derived from the claims instead of extracted separately, so
 these tests pin the de-duplication rule the old reconciliation step used to enforce."""
 
+import json
+
+from app.agent import assay_registry
 from app.agent.assay_registry import (
     claim_assay_name,
     load_verified_registry,
@@ -186,3 +189,13 @@ def test_merge_verified_reaches_an_entry_through_a_folded_wording():
     })
 
     assert merged["ELISA kits"]["platform"] == "BD"
+
+
+def test_load_verified_registry_reads_a_registry_built_from_a_pdf(tmp_path, monkeypatch):
+    """A PDF-only paper's registry lives in `<pmid>_<SDY>_pdf`, not `<pmid>_<SDY>`."""
+    folder = tmp_path / "222_SDY2_pdf"
+    folder.mkdir()
+    (folder / "assays.json").write_text(json.dumps({"flow cytometry": {}}), encoding="utf-8")
+    monkeypatch.setattr(assay_registry, "_REGISTRY_ROOT", tmp_path)
+
+    assert load_verified_registry("222", "SDY2") == {"flow cytometry": {}}

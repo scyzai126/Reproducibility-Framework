@@ -7,8 +7,8 @@ are about the shaping rules and nothing else.
 
 The rule is deliberately coarser than the paper's language: one OBI term covers every ELISA a
 paper runs. What keeps that from costing a measurement is that each folded write-up's specimen,
-platform, readouts and quote move to `additional_evidence`, so most of what follows is about
-nothing being dropped on the way.
+readouts and quote move to `additional_evidence`, so most of what follows is about nothing being
+dropped on the way.
 """
 
 from app.agent.assay_extractor import MERGED_FIELD, paper_names, trim_registry
@@ -22,9 +22,12 @@ from app.agent.assay_merger import (
 ELISA = {
     "name_in_paper": "ELISA",
     "aliases": [],
+    # An older registry's field: the extraction no longer produces it, and a fold must not choke
+    # on one that is still on disk. It is simply not carried onto the survivor.
     "platform": "ELx808 plate reader",
     "sample_type": "serum samples",
     "readouts": "polysaccharide-specific IgG",
+    "generate_claim": True,
     "source": "methods",
     "evidence": {"section": "Measurement of anti-Meningococcal antibodies by ELISA",
                  "sentence_ids": ["S1"], "quote": "Serum titers were measured by ELISA."},
@@ -36,6 +39,7 @@ ELISA_KITS = {
     "platform": "BD Biosciences",
     "sample_type": "Cell supernatants",
     "readouts": "IL-6, TNF and IL-12p40 levels",
+    "generate_claim": False,
     "source": "methods",
     "evidence": {"section": "In vitro DC activation", "sentence_ids": ["S2"],
                  "quote": "Supernatants were assessed for IL-6 using ELISA kits."},
@@ -119,10 +123,14 @@ def test_aliases_that_are_not_names_are_kept_and_unioned():
 
 
 def test_the_first_entrys_own_fields_are_untouched():
-    """A fold is not a re-extraction: nothing picks field-by-field between two records."""
+    """A fold is not a re-extraction: nothing picks field-by-field between two records.
+
+    `generate_claim` is the one exception, and is tested separately below: it describes the assay
+    rather than the write-up, so it is the one field a fold has to decide.
+    """
     merged = merge_entries(ELISA, [ELISA_KITS])
 
-    for field in ("platform", "sample_type", "readouts", "source", "evidence"):
+    for field in ("sample_type", "readouts", "source", "evidence"):
         assert merged[field] == ELISA[field]
 
 
@@ -131,14 +139,43 @@ def test_each_folded_entrys_whole_record_survives_as_additional_evidence():
 
     assert merged[MERGED_FIELD] == [{
         "name_in_paper": "ELISA kits",
-        "platform": "BD Biosciences",
         "sample_type": "Cell supernatants",
         "readouts": "IL-6, TNF and IL-12p40 levels",
-        "measurement_role": None,
-        "parent_hint": None,
+        # Kept on the member because the survivor's value is the fold's: without this, a member's
+        # own answer would be the one thing the fold destroyed rather than recorded.
+        "generate_claim": False,
         "source": "methods",
         "evidence": ELISA_KITS["evidence"],
     }]
+
+
+def test_a_fold_reports_a_finding_when_any_member_did():
+    """Two wordings of one assay are one assay, so a finding drawn from either was drawn from it.
+
+    The winner is the `False` one here on purpose: taking the survivor's value would lose the
+    finding the other member recorded, and the survivor is chosen by registry order, not by what
+    it says.
+    """
+    merged = merge_entries({**ELISA, "generate_claim": False},
+                           [{**ELISA_KITS, "generate_claim": True}])
+
+    assert merged["generate_claim"] is True
+
+
+def test_a_fold_reports_no_finding_only_when_no_member_did():
+    merged = merge_entries({**ELISA, "generate_claim": False},
+                           [{**ELISA_KITS, "generate_claim": None}])
+
+    assert merged["generate_claim"] is False
+
+
+def test_a_fold_of_unanswered_entries_stays_unanswered():
+    """An old registry on disk carries the field nowhere. Re-canonicalizing one must not turn
+    "nobody said" into "the paper drew nothing from it"."""
+    merged = merge_entries({k: v for k, v in ELISA.items() if k != "generate_claim"},
+                           [{k: v for k, v in ELISA_KITS.items() if k != "generate_claim"}])
+
+    assert merged["generate_claim"] is None
 
 
 def test_three_entries_on_one_term_leave_two_evidence_blocks():
@@ -236,39 +273,6 @@ def test_the_report_counts_groups_and_entries():
 
     assert report["summary"] == {"groups_merged": 1, "entries_folded": 1}
     assert report["results"][0]["key"] == "enzyme-linked immunosorbent assay"
-
-
-# ── measurement_role across a fold ────────────────────────────────────────────
-
-def test_a_fold_is_reported_if_any_member_was():
-    """A fold says the members are one assay; results from any write-up are results from it."""
-    winner = {**ELISA, "measurement_role": "sub_step", "parent_hint": "flow cytometry"}
-    loser = {**ELISA_KITS, "measurement_role": "reported", "parent_hint": None}
-
-    merged = merge_entries(winner, [loser])
-
-    assert merged["measurement_role"] == "reported"
-    assert merged["parent_hint"] is None
-
-
-def test_a_fold_of_sub_steps_keeps_the_winners_parent_hint():
-    winner = {**ELISA, "measurement_role": "sub_step", "parent_hint": "flow cytometry"}
-    loser = {**ELISA_KITS, "measurement_role": "sub_step", "parent_hint": "microarray"}
-
-    merged = merge_entries(winner, [loser])
-
-    assert merged["measurement_role"] == "sub_step"
-    assert merged["parent_hint"] == "flow cytometry"
-
-
-def test_the_losers_own_role_survives_in_its_evidence_block():
-    winner = {**ELISA, "measurement_role": "reported", "parent_hint": None}
-    loser = {**ELISA_KITS, "measurement_role": "screening", "parent_hint": None}
-
-    merged = merge_entries(winner, [loser])
-
-    assert merged[MERGED_FIELD][0]["measurement_role"] == "screening"
-
 
 # ── linking on normalized_name ───────────────────────────────────────────────
 

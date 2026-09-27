@@ -1,0 +1,40 @@
+You are reading a biomedical research paper to find out where its data lives.
+
+Paper title: {paper_title}
+This paper's PubMed ID: {pmid}
+
+A pattern search found the strings below in the paper and guessed which repository each belongs to. For each one you get:
+- "pattern match": the repository the pattern guessed.
+- "in the Data Availability statement": whether an automatic search found it in the paper's Data Availability section (or a labelled "Data availability:" / "Accession codes:" statement). The search can miss a statement that has no such heading or label, e.g. an untitled footnote saying "The accession numbers for ... are ...".
+- "note", sometimes: the Data Availability statement itself marks the ID as previously published or reused data.
+- Every sentence that names it ("sentence"), with the sentence before and after ("context"), and the section it sits in.
+
+{candidates}
+
+For each ID, decide three things.
+
+1. "is_accession": is this string really an identifier in a data repository or registry?
+   Answer false when it only looks like one, for example a grant number, a catalogue or clone number, a gene or protein name, a year, a figure label, or a four-character code that is not a PDB structure.
+
+2. "in_da_statement", only when is_accession is true: does the paper's data availability / data deposition / accession statement name this ID? Judge this yourself from the full paper, wherever that statement sits (its own section, a footnote, the Methods, the acknowledgments). true or false.
+
+3. "role", only when is_accession is true. Pick exactly one:
+   - "this_study": the repository stores this study's own data. The authors deposited their samples, measurements, sequences or code there, including when the paper also re-analyses it.
+   - "public_data": public data from another study, which this paper downloaded, re-analysed, combined, validated against or compared with.
+   - "reference": named only as a reference and not used, for example as background, a pointer to related work, or a resource others may consult.
+   - "registration": a clinical-trial registration (ClinicalTrials.gov, EudraCT, ISRCTN, ChiCTR). This is not a data repository.
+
+How to decide:
+- Read the whole paper below, not just the quoted sentences. The Methods say what was analysed; the Data Availability statement says what was deposited.
+- An ID the data availability statement names is very likely "this_study": that statement is where authors say where they put their own data. Choose otherwise only when the statement or the paper says the data is previously published, downloaded, or someone else's.
+- An ID named only outside that statement can still be "this_study" (e.g. "sequencing data were deposited in GEO under ..." in the Methods), but needs wording that says the authors deposited it.
+- Data from the same authors' earlier study, reused here, is "public_data", not "this_study".
+- An ID listed in a table of external datasets used in an analysis is "public_data".
+- A GitHub repository holding this paper's own analysis code is "this_study". A third-party tool's repository is "public_data" if the paper ran the tool, otherwise "reference".
+- "repository" is the name of the repository the ID belongs to. Repeat the pattern match when it is right. Correct it only if the ID clearly belongs to another repository in this list: {repositories}.
+
+Return only a JSON object, with no commentary and no code fences. Each key is an ID exactly as listed above, and there must be no other keys:
+{"<ID>": {"is_accession": true or false, "repository": "<repository name>", "in_da_statement": true or false or null, "role": "this_study" or "public_data" or "reference" or "registration" or null, "reason": "<one short sentence naming the wording you relied on>"}}
+
+===== FULL PAPER TEXT =====
+{paper_text}

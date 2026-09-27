@@ -97,12 +97,16 @@ def registry_from_claims(claims: dict) -> dict:
     return registry
 
 
-#: Fields the verified registry carries that a claims-derived entry cannot.
-#: `platform` is new to the entry shape; `sample_type` and `readouts` exist but are empty.
+#: Fields the verified registry carries that a claims-derived entry cannot: `sample_type` and
+#: `readouts` exist on one but are empty. `platform` is no longer extracted and stays listed only
+#: so a registry written before it was dropped still contributes it -- the copy is conditional on
+#: the value being there, so a current registry simply has nothing to give.
 _ENRICHED_FIELDS = ("platform", "sample_type", "readouts")
 
 #: Where scripts/run_assay_extract.py writes its registries.
-_REGISTRY_ROOT = Path(__file__).resolve().parents[4] / "data" / "claims" / "assay_registries"
+_REGISTRY_ROOT = Path(__file__).resolve().parents[4] / "data" / "31paper_assays"
+#: Where a paper outside the benchmark keeps its registry (assay_service.CACHE_ROOT).
+_CACHE_ROOT = Path(__file__).resolve().parents[4] / "data" / "cache" / "assays"
 
 
 def load_verified_registry(pubmed_id: str, study_accession: str) -> dict:
@@ -119,8 +123,10 @@ def load_verified_registry(pubmed_id: str, study_accession: str) -> dict:
     if not pmid or not sdy:
         return {}
 
-    for stem in (f"{pmid}_{sdy}", f"{sdy}_{pmid}"):
-        path = _REGISTRY_ROOT / stem / "assays.json"
+    # `_pdf` marks a registry built from the paper's PDF (assay_service.PDF_DIR_SUFFIX).
+    stems = (f"{pmid}_{sdy}", f"{sdy}_{pmid}", f"{pmid}_{sdy}_pdf", f"{sdy}_{pmid}_pdf")
+    for path in (root / stem / "assays.json" for root in (_REGISTRY_ROOT, _CACHE_ROOT)
+                 for stem in stems):
         if not path.exists():
             continue
         try:
@@ -130,6 +136,32 @@ def load_verified_registry(pubmed_id: str, study_accession: str) -> dict:
             return {}
         return loaded if isinstance(loaded, dict) else {}
     return {}
+
+
+def surface_forms(name: str, entry: dict) -> list[str]:
+    """Every wording a registry entry answers to: its key, `name_in_paper`, and its aliases."""
+    return [name] + paper_names(entry) + [
+        a for a in (entry.get("aliases") or []) if isinstance(a, str)]
+
+
+def index_registry(registry: dict) -> dict[str, str]:
+    """Map the normalized form of every entry's surface forms to that entry's registry key.
+
+    Indexed by every surface form, not by the key alone: round 5 re-keys the verified registry
+    by its OBI term, so its keys are labels like "enzyme-linked immunosorbent assay" while a
+    claim still says "ELISA". The wordings are all still there, in `name_in_paper` and
+    `aliases` -- matching on the key alone would silently stop matching claims the day that
+    round ran. The first entry to claim a form keeps it.
+    """
+    index: dict[str, str] = {}
+    for name, entry in (registry or {}).items():
+        if not isinstance(entry, dict):
+            continue
+        for form in surface_forms(name, entry):
+            key = normalize_assay_name(form)
+            if key:
+                index.setdefault(key, name)
+    return index
 
 
 def merge_verified(claims_registry: dict, verified: dict) -> dict:
@@ -145,20 +177,7 @@ def merge_verified(claims_registry: dict, verified: dict) -> dict:
     keep its entry or that claim loses its resolution path entirely. A verified entry with no
     claim referencing it is likewise ignored: nothing would ever look it up.
     """
-    # Indexed by every surface form, not by the key alone: round 5 re-keys the verified registry
-    # by its OBI term, so its keys are labels like "enzyme-linked immunosorbent assay" while a
-    # claim still says "ELISA". The wordings are all still there, in `name_in_paper` and
-    # `aliases` -- matching on the key alone would silently stop enriching claims the day that
-    # round ran.
-    by_key: dict[str, dict] = {}
-    for name, entry in (verified or {}).items():
-        if not isinstance(entry, dict):
-            continue
-        for form in [name] + paper_names(entry) + [
-                a for a in (entry.get("aliases") or []) if isinstance(a, str)]:
-            key = normalize_assay_name(form)
-            if key:
-                by_key.setdefault(key, entry)
+    by_key = {norm: verified[key] for norm, key in index_registry(verified).items()}
 
     merged: dict = {}
     for name, entry in (claims_registry or {}).items():

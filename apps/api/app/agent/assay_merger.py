@@ -30,21 +30,17 @@ the same way.
 
 import logging
 
-from app.agent.assay_extractor import ROLE_VALUES, paper_names
+from app.agent.assay_extractor import paper_names
 from app.agent.assay_registry import normalize_assay_name
 
 logger = logging.getLogger(__name__)
 
 #: What a folded-away entry keeps on the survivor. Its wordings are not here -- those join the
-#: survivor's `name_in_paper` and `aliases` -- but everything that describes the run itself is.
-_KEPT_ON_MEMBER = ("name_in_paper", "platform", "sample_type", "readouts", "measurement_role",
-                   "parent_hint", "source", "evidence")
-
-#: How a folded entry's role is chosen: the first of these any member carries. `reported` leads
-#: because a fold says the members are one assay, and if the paper presented results from any
-#: write-up of it, it presented results from that assay.
-_ROLE_PRECEDENCE = ("reported", "unreported", "screening", "sub_step")
-assert set(_ROLE_PRECEDENCE) == set(ROLE_VALUES)
+#: survivor's `name_in_paper` and `aliases` -- but everything that describes the run itself is,
+#: `generate_claim` included: the survivor's is the fold's, so a member's own answer would
+#: otherwise be the one thing the fold destroyed rather than recorded.
+_KEPT_ON_MEMBER = ("name_in_paper", "sample_type", "readouts", "generate_claim", "source",
+                   "evidence")
 
 
 def _technique_key(entry: dict, mapped: dict) -> str:
@@ -136,6 +132,10 @@ def merge_entries(winner: dict, losers: list[dict]) -> dict:
     The winner's own fields are left exactly as the verifier and corrector left them: a fold is not
     a re-extraction, and picking field-by-field between two records would be one. What the losers
     contribute is their wordings, as names, and their records, as evidence blocks.
+
+    `generate_claim` is the single exception, because it is the one field that is about the assay
+    rather than about the write-up: two wordings of one assay are one assay, so a finding drawn
+    from either was drawn from it.
     """
     merged = dict(winner)
 
@@ -162,15 +162,11 @@ def merge_entries(winner: dict, losers: list[dict]) -> dict:
                 aliases.append(alias)
     merged["aliases"] = aliases
 
-    # The one field taken across members rather than from the winner. The others describe a run,
-    # and the losers' runs are kept whole below; a role describes the assay, and a fold is exactly
-    # the statement that the members are one assay.
-    roles = {entry.get("measurement_role") for entry in [winner] + losers}
-    role = next((r for r in _ROLE_PRECEDENCE if r in roles), winner.get("measurement_role"))
-    if "measurement_role" in winner or role is not None:
-        merged["measurement_role"] = role
-    if role != "sub_step" and merged.get("parent_hint"):
-        merged["parent_hint"] = None
+    # True if any member reported a finding; False only when no member did and at least one said
+    # so; None when nobody answered, which must not collapse into False -- see clean_entry.
+    answers = [entry.get("generate_claim") for entry in [winner] + losers]
+    merged["generate_claim"] = (True if any(a is True for a in answers)
+                                else False if any(a is False for a in answers) else None)
 
     blocks = list(winner.get("additional_evidence") or [])
     for loser in losers:

@@ -44,7 +44,8 @@ def paper(tmp_path, monkeypatch):
     _pdf_root.mkdir(exist_ok=True)
     monkeypatch.setattr(assay_service, "PDF_ROOT", _pdf_root)
     monkeypatch.setattr(assay_service, "REGISTRY_ROOT", registry_root)
-    return registry_root / "111_SDY1"
+    # Not a benchmark paper (no folder under REGISTRY_ROOT), so its run lands in the cache.
+    return assay_service.CACHE_ROOT / "111_SDY1"
 
 
 @pytest.fixture

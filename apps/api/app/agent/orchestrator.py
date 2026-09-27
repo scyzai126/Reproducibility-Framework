@@ -13,6 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.agent.assay_registry import load_verified_registry, merge_verified
 from app.agent.claim_parser import fetch_paper_content_async, parse_paper_claims_from_text, parse_paper_claims_step1_only, parse_paper_claims_noimmport, PaperNotAvailableError
 from app.agent.ncbi_utils import pmid_to_pmc_url, pmc_to_pmid
+from app.agent.paper_resolver import normalize_row_pmid
 from app.agent.description_analyzer import analyze_claims_batch, analyze_descriptions
 from app.agent.file_reader import read_file
 from app.agent.paper_reader import extract_pdf_text, extract_pubmed_id_from_filename
@@ -35,7 +36,11 @@ logger = logging.getLogger(__name__)
 _FILTER_FIELDS = {"disease", "disease_stage", "cohort", "assay_method",
                   "tissue_type", "gender", "age", "time_point", "study_design"}
 
-_DISK_CACHE_DIR = Path(__file__).resolve().parents[4] / "data" / "ValidatedPapersCache" / "paper_claims"
+#: Curated results for the benchmark papers. Read-only: nothing the pipeline runs writes here.
+_DISK_CACHE_DIR = Path(__file__).resolve().parents[4] / "data" / "benchmark_claims" / "paper_claims"
+#: Where every other paper's results go after a run, as `<pubmed_id>/{claims,groups}.json`,
+#: so the next request for that paper is served from disk instead of paying for the run again.
+_CLAIMS_CACHE_DIR = Path(__file__).resolve().parents[4] / "data" / "cache" / "claims"
 
 _DEDUP_SKIP = {"group_id", "study_accession", "study_design"}
 
@@ -58,23 +63,81 @@ def _dedup_groups(groups: list[dict]) -> list[dict]:
 
 
 def _load_disk_cache(pubmed_id: str | int, step: str) -> dict | None:
-    path = _DISK_CACHE_DIR / str(pubmed_id) / f"{step}.json"
-    if path.exists():
-        try:
-            return json.loads(path.read_text(encoding="utf-8"))
-        except Exception:
-            logger.warning("Corrupt disk cache at %s — ignoring", path)
+    """The benchmark copy when there is one, else the copy a previous run cached."""
+    for root in (_DISK_CACHE_DIR, _CLAIMS_CACHE_DIR):
+        path = root / str(pubmed_id) / f"{step}.json"
+        if path.exists():
+            try:
+                data = json.loads(path.read_text(encoding="utf-8"))
+            except Exception:
+                logger.warning("Corrupt disk cache at %s — ignoring", path)
+                continue
+            # Both steps key their output by claim_N. A file in another layout would otherwise
+            # be read as a paper with zero claims, and that empty result cached over it.
+            if isinstance(data, dict) and any(str(k).startswith("claim_") for k in data):
+                return data
+            logger.warning("Disk cache at %s has no claim_N entries — ignoring", path)
     return None
 
 
 def _save_disk_cache(pubmed_id: str | int, step: str, data: dict) -> None:
-    path = _DISK_CACHE_DIR / str(pubmed_id) / f"{step}.json"
+    """Always to _CLAIMS_CACHE_DIR, never over a benchmark result."""
+    path = _CLAIMS_CACHE_DIR / str(pubmed_id) / f"{step}.json"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
     logger.info("Disk cache written: %s", path)
 
 
 _PDF_DIR = Path(__file__).resolve().parents[4] / "data" / "pdf"
+
+#: "PMID:23266342" / "PMID 23266342" -- how the chat names which of a study's papers to run.
+_CHOSEN_PMID_RE = re.compile(r"\bPMID\s*:?\s*(\d+)\b", re.I)
+
+
+def _choose_sdy_paper(
+    sdy_accession: str, rows: list[dict], message: str
+) -> tuple[list[str], dict | None]:
+    """Which of a study's papers to analyze. `(pubmed_ids, None)`, or `([], paper_choice)`.
+
+    A study can have several papers, and each is a separate paid run, so a study with more
+    than one never runs them all: it returns the list for the user to pick from. The pick comes
+    back as "<SDY> PMID:<id>". rows are study_pubmed rows with pubmed_id, title and year.
+    """
+    options = []
+    for row in rows:
+        pubmed_id, unusable_reason = normalize_row_pmid(row.get("pubmed_id"))
+        options.append({
+            "pubmed_id": pubmed_id,
+            "title": row.get("title"),
+            "year": row.get("year"),
+            "cached": unusable_reason is None and _load_disk_cache(pubmed_id, "groups") is not None,
+            "local_pdf": unusable_reason is None and _find_local_pdf(sdy_accession, pubmed_id) is not None,
+            "usable": unusable_reason is None,
+            "unusable_reason": unusable_reason,
+        })
+
+    chosen = _CHOSEN_PMID_RE.search(message)
+    if chosen:
+        pubmed_id = chosen.group(1)
+        if not any(o["usable"] and o["pubmed_id"] == pubmed_id for o in options):
+            listed = ", ".join(o["pubmed_id"] for o in options if o["usable"]) or "none"
+            raise ValueError(
+                f"PMID {pubmed_id} is not one of {sdy_accession}'s papers in ImmPort ({listed})."
+            )
+        return [pubmed_id], None
+
+    if len(options) == 1:
+        return [options[0]["pubmed_id"]], None
+
+    return [], {
+        "type": "paper_choice",
+        "study_accession": sdy_accession,
+        "question": (
+            f"{sdy_accession} has {len(options)} papers in ImmPort. "
+            "Which one should I extract claims from?"
+        ),
+        "paper_options": options,
+    }
 
 
 def _find_local_pdf(study_accession: str, pubmed_id: str) -> Path | None:
@@ -609,11 +672,13 @@ async def _run_full_paper_analysis(
     elif step1_claims is not None:
         # Vision-extracted or PDF-direct step1 provided — skip step1, run step2 only
         logger.info("Using provided step1 claims for pubmed_id=%s — running step2 only", pubmed_id)
+        _save_disk_cache(pubmed_id, "claims", step1_claims)
         step1_json, step2_json = await parse_paper_claims_from_text(
             paper_text, study_accession,
             cached_step1=step1_claims,
         )
         assay_registry = step1_json.get("assays", {})
+        _save_disk_cache(pubmed_id, "groups", step2_json)
     elif not skip_cache and (disk1 := _load_disk_cache(pubmed_id, "claims")) is not None:
         # Step1 on disk — skip step1, run step2 only
         logger.info("Disk-cache hit (step1 only) for pubmed_id=%s — running step2", pubmed_id)
@@ -622,12 +687,15 @@ async def _run_full_paper_analysis(
             cached_step1=disk1
         )
         assay_registry = disk1.get("assays", {})
+        _save_disk_cache(pubmed_id, "groups", step2_json)
     else:
         # No cache — run both steps fresh
         step1_json, step2_json = await parse_paper_claims_from_text(
             paper_text, study_accession
         )
         assay_registry = step1_json.get("assays", {})
+        _save_disk_cache(pubmed_id, "claims", step1_json)
+        _save_disk_cache(pubmed_id, "groups", step2_json)
 
     # Enrich with the independently-extracted registry for this paper, when one exists on
     # disk. Claims name their assay but carry no platform/sample_type/readouts, and those are
@@ -776,14 +844,6 @@ async def _run_full_paper_analysis(
         r.pop("resolution_failures", None)
         r.pop("data_gaps", None)
 
-    claims_results = [
-        r for r in claims_results
-        if any(len(sr.get("subjects", sr.get("samples", []))) > 0 for sr in r.get("subject_results", []))
-    ]
-
-    for i, r in enumerate(claims_results):
-        r["claim_id"] = i + 1
-
     return {"study_accession": study_accession, "claims": claims_results, "completeness": completeness}
 
 
@@ -910,11 +970,6 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
             r.pop("resolution_failures", None)
             r.pop("data_gaps", None)
 
-        claims_results = [
-            r for r in claims_results
-            if any(len(sr.get("subjects", sr.get("samples", []))) > 0 for sr in r.get("subject_results", []))
-        ]
-
         _write_workflow_log(log_sections)
         result = {
             "study_accession": study_accession or "",
@@ -969,6 +1024,10 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
         else:
             # Try to extract pubmed_id + URL from the question
             pmc_id, paper_url, question = _extract_pubmed_id_from_text(file_content)
+            # "SDY1364 PMID:23266342" is a pick from a study's paper list: the SDY branch below
+            # runs it, so the PMID must not send it down the PMID path instead.
+            if re.search(r"\bSDY\d+\b", file_content, re.I):
+                pmc_id = paper_url = None
             # Bare PMID (e.g. "PMID:32788292") has no URL yet — check cache first
             if pmc_id and not paper_url:
                 # pmc_id is the PubMed ID here — check disk cache before any network call
@@ -1062,23 +1121,29 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
                 sdy_match = re.search(r"\bSDY\d+\b", file_content, re.I)
                 if sdy_match:
                     sdy_accession = sdy_match.group(0).upper()
-                    sdy_question = re.sub(r"\bSDY\d+\b", "", file_content, flags=re.I).strip()
+                    sdy_question = re.sub(r"\bSDY\d+\b", "", file_content, flags=re.I)
+                    sdy_question = _CHOSEN_PMID_RE.sub("", sdy_question).strip()
                     sdy_rows = (await session.execute(
-                        text("SELECT pubmed_id FROM study_pubmed WHERE study_accession = :sa"),
+                        text("SELECT pubmed_id, title, year FROM study_pubmed "
+                             "WHERE study_accession = :sa ORDER BY pubmed_id"),
                         {"sa": sdy_accession},
-                    )).fetchall()
+                    )).mappings().all()
                     if sdy_rows:
-                        sdy_pubmed_ids = [str(r[0]) for r in sdy_rows]
+                        sdy_pubmed_ids, paper_choice = _choose_sdy_paper(
+                            sdy_accession, [dict(r) for r in sdy_rows], file_content
+                        )
+                        if paper_choice is not None:
+                            return paper_choice
                         paper_results = []
 
                         for sdy_pubmed_id in sdy_pubmed_ids:
                             paper_log = list(log_sections)
 
-                            # Local PDF already on disk → parallel PDF-direct assay+claim
-                            # extraction instead of fetching JATS XML from PMC. Always a
-                            # fresh run (skip_cache=True) — not wired to the disk cache yet.
+                            # Local PDF already on disk → PDF-direct claim extraction instead
+                            # of fetching JATS XML from PMC. A paper whose groups are already
+                            # cached skips this and falls through to the cache-hit branch below.
                             local_pdf = _find_local_pdf(sdy_accession, sdy_pubmed_id)
-                            if local_pdf is not None:
+                            if local_pdf is not None and _load_disk_cache(sdy_pubmed_id, "groups") is None:
                                 from openai import AsyncOpenAI
                                 from app.agent.pdf_direct import extract_step1_from_pdf_direct
                                 from app.config import settings
@@ -1087,15 +1152,19 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
                                     f"--- Step 2: SDY → local PDF ---\n"
                                     f"study_accession: {sdy_accession} → pubmed_id: {sdy_pubmed_id} → {local_pdf}"
                                 )
-                                pdf_bytes = local_pdf.read_bytes()
-                                pdf_client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
-                                step1_claims = await extract_step1_from_pdf_direct(
-                                    pdf_bytes, local_pdf.name, pdf_client
-                                )
+                                # Claims cached by a run whose grouping step failed are reused,
+                                # so that run's paid extraction is not repeated.
+                                step1_claims = _load_disk_cache(sdy_pubmed_id, "claims")
+                                if step1_claims is None:
+                                    pdf_bytes = local_pdf.read_bytes()
+                                    pdf_client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+                                    step1_claims = await extract_step1_from_pdf_direct(
+                                        pdf_bytes, local_pdf.name, pdf_client
+                                    )
                                 result = await _run_paper_pipeline(
                                     "", sdy_pubmed_id, sdy_accession,
                                     session, sdy_question or None, paper_log,
-                                    step1_claims=step1_claims, skip_cache=True,
+                                    step1_claims=step1_claims,
                                 )
                                 result["pubmed_id"] = sdy_pubmed_id
                                 paper_results.append(result)

@@ -31,9 +31,10 @@ before Results, and a paper may have no heading literally named either. Rely on 
 on position or on matching a heading word.
 
 **Every sentence is prefixed with an `[S<n>]` marker.** Section headings and `[Figure 1]`
-labels carry no marker; caption and table-body text does. These are the ids your `evidence`
-cites, and they are what lets a later step confirm an extracted value points at a real
-sentence rather than a paraphrase.
+labels carry no marker; caption and table-body text does. **You never cite these ids.** They
+are there so that a later step can take the quote you copied, find the sentence it came from,
+and record the id itself — which is why the quote has to be verbatim. Drop the marker from any
+text you quote.
 
 The Introduction, the Discussion/Conclusions, the reference list, supplementary containers,
 and publisher boilerplate are already removed. Do not expect them, and do not treat their
@@ -66,12 +67,12 @@ work out which sections those are; the tags name them.
 and `[other]` sections and the figure/table caption blocks — **then classify every candidate
 against the Pass 1 inventory.** Exactly one label each:
 
-- `SAME_AS_METHODS` — a paraphrase, abbreviation, or platform alias of an entry you already
+- `SAME_AS_METHODS` — a paraphrase, abbreviation, or product alias of an entry you already
   have. Add the wording to that entry's `aliases`. NEVER create a second entry.
 - `NOT_AN_ASSAY` — a computational analysis, a sample-prep step, a QC check, or an endpoint
   (see the four exclusions below), or a technique the paper did not perform.
 - `NEW_ASSAY` — a real wet-lab measurement technique with no counterpart in the inventory.
-  **Only this label is admitted**, and its entry carries `source: "results"`.
+  **Only this label is admitted.**
 
 Do not skip the classification step and merge the two lists directly.
 
@@ -82,12 +83,26 @@ Do not skip the classification step and merge the two lists directly.
    descriptively, so they are tagged `[other]`. Run Pass 1 on the `[methods]` sections exactly
    as usual, and let Pass 2 sweep the `[other]` sections in place of Results. Nothing else
    changes: the inventory and the names still come from Methods.
-3. **No `[methods]` section at all** — the publisher omitted it. Only then build the inventory
-   from the remaining text and the captions directly, and set `source: "results"` on every
-   entry. Precision is lower here; do not compensate by guessing details the text lacks.
+3. **No `[methods]` section at all** — the publisher omitted it, typically a short-format report
+   whose methods sit in a supplement that is not included here. The two passes collapse into
+   one: build the inventory from the abstract, the untagged main text and the captions.
+   - **Admit** a technique when a sentence says it was performed on this study's own samples
+     ("titers were measured with the inhibition ELISA", "samples were tested using RT-PCR").
+     Without a Methods section, "performed here" is the test that replaces "described in
+     Methods".
+   - **Exclude** the same things as always: cited or background use ("in vitro and in animal
+     models, X has been observed (8, 9)"), computational or statistical analyses, endpoints and
+     case definitions, and sample preparation.
+   - **Deduplicate** exactly as Pass 2 does: one entry per technique, every other wording of it
+     in `aliases`.
+   - Quote the performed-here sentence; `section` is the heading as printed (e.g. "Main text").
+   - Precision is lower here; do not compensate by guessing details the text lacks. But if any
+     sentence states a measurement was performed here, `{}` is the wrong answer.
 
-Do not fall back to structure 3 because you could not find a Methods *heading*. If any section
-is tagged `[methods]`, you are in structure 1 or 2.
+The section tags are computed for you, so which structure applies is a fact, not a judgement:
+when a section is tagged `[methods]` you are in structure 1 or 2 — never fall back to structure
+3 there. When no section is tagged `[methods]`, a line above the paper text says STRUCTURE 3
+APPLIES.
 
 ## What counts as an entry
 
@@ -136,9 +151,9 @@ Methods wording to defer to.
   "Gene expression profiling" does not become "RNA-seq" unless the paper says so. The specific
   identity has to be earned from the text, not supplied from what is usually true.
 - **A product name is not the assay name, and not an alias either.** When the paper names an
-  instrument/chip/kit *and* the technique it runs, the technique is the name and the product
-  goes in `platform`.
-- Treat abbreviation/expansion pairs ("FACS" / "flow cytometry"), platform/descriptive-name
+  instrument/chip/kit *and* the technique it runs, the technique is the name and the product is
+  not recorded at all.
+- Treat abbreviation/expansion pairs ("FACS" / "flow cytometry"), product/descriptive-name
   pairs ("Luminex" / "bead-based multiplex assay"), and generic result-phrase mentions as
   aliases of one entry, never separate entries.
 
@@ -152,7 +167,7 @@ the analyte differs.
 Everything else is the same measurement run more than once, and never a reason to split: a
 different kit, instrument model or protocol variant, a different purpose, several reagents,
 targets or panels within one experiment, or runs on two cohorts, at two timepoints or in two
-batches. Record the second wording in `aliases` and the product in `platform`. Check the
+batches. Record the second wording in `aliases` and drop the product. Check the
 inventory for near-duplicates before returning it — `ELISA` and `ELISA kits` are one entry,
 not two.
 
@@ -162,15 +177,15 @@ Two rules govern every field other than the name. The failure they prevent is in
 output: a fabricated detail reads exactly like an extracted one.
 
 **Co-occurrence is not association.** A term in the same paragraph is not evidence about *this*
-assay. A paragraph naming both a NovaSeq 6000 and flow cytometry supports neither `platform`
-unless the text says which belongs to which. Before writing `platform`, `sample_type`, or
-`readouts`, find the sentence that ties that value to this specific assay. If only proximity
-ties them, you do not have it.
+assay. A paragraph naming both PBMCs and whole blood ties neither specimen to a given assay
+unless the text says which belongs to which. Before writing `sample_type` or `readouts`, find
+the sentence that ties that value to this specific assay. If only proximity ties them, you do
+not have it.
 
 **Say nothing rather than say what's typical.** When the paper does not state a field, emit
 `null`. Do not infer a specimen, instrument, kit, vendor, or readout because it is what this
 assay usually runs on — a plausible guess is worse than a gap, because nothing downstream can
-tell them apart. `sample_type` and `platform` invite this most.
+tell them apart. `sample_type` invites this most.
 
 ## Output
 
@@ -182,43 +197,64 @@ Return ONLY a JSON object with one key per deduplicated assay — the key is the
     "name_in_paper": "flow cytometry",
     "normalized_name": "flow cytometry",
     "aliases": ["FACS"],
-    "platform": "BD LSRFortessa",
     "sample_type": "PBMCs",
     "readouts": "intracellular cytokine production",
-    "measurement_role": "reported",
-    "parent_hint": null,
-    "source": "methods",
+    "generate_claim": true,
     "evidence": {
       "section": "Materials and Methods",
-      "sentence_ids": ["S318"],
       "quote": "PBMCs were stimulated for 6 h and stained for intracellular IFN-y prior to acquisition on a BD LSRFortessa."
     }
   }
 }
 
-**Ten fields, no more.** Do not add a claims array, a claim role, or a confidence score.
+**Seven fields, no more.** Do not add a claims array, a confidence score, an instrument or
+vendor field, or a sentence id. Where the assay sits in the paper and which sentences the quote
+came from are worked out from your `quote` after you answer; an answer of your own for either is
+discarded.
 
 - `normalized_name` — the **measurement technique**: what class of method or instrument
   produced the data. This is the one field that is not a report of what the paper says. Every
-  other field copies or summarises the text; this one is your judgement, and it is expected to
-  use words the paper never wrote.
+  other field copies or summarises the text; this one is your judgement, and it may use words
+  the paper never wrote. When the paper already names the technique in standard terms
+  ("flow cytometry", "ELISA"), that name is the answer — keep it.
   **Papers name assays after protocol sections, acronyms and study aims. Name the technique
   instead.** "Surface and intracellular cytokine staining" → `"flow cytometry"`, because the
   cells were stained and then acquired on a cytometer. "Direct ex vivo PBMC immune cell
   phenotyping" → `"flow cytometry"`. "CBA" → `"cytometric bead array"`. "Whole transcriptome
-  profiling of NK cell subsets" → `"RNA sequencing"`.
+  profiling of NK cell subsets", in a paper that elsewhere calls it RNA-seq → `"RNA sequencing"`.
   **Re-spelling the name is the failure mode to avoid.** "intracellular cytokine staining" →
   `"intracellular cytokine staining"` is a non-answer: it tidies the wording and names no
   technique. Ask what machine the numbers came off, and write that.
-  Read `platform` for the answer when the name does not give it — a cytometer means flow
-  cytometry, a sequencer means sequencing — but never emit the instrument itself: `"LSR-II"`
-  is wrong, `"flow cytometry"` is right. Two or three words, no analyte, no vendor, no model
-  number. `null` when the text identifies no technique at all; a wrong guess here is worse than
-  none, because a later step trusts an exact match on this field without further checking.
+  Let the instrument the paper names point to the answer when the name does not give it — a
+  cytometer means flow cytometry, a sequencer means sequencing — but never emit the instrument
+  itself: `"LSR-II"` is wrong, `"flow cytometry"` is right.
+  **Write the acronym out in full words.** This field is matched against an ontology written in
+  full words, and an acronym matches nothing there: `"PCR"` → `"polymerase chain reaction"`,
+  `"16S rRNA gene sequencing"` → `"16S ribosomal gene sequencing"`. Where the ontology spells a
+  technique its own way, use its spelling: `"RIA"` → `"radio immuno assay"`, not
+  "radioimmunoassay". The acronym still belongs in `aliases`; it is not lost.
+  **Never add a qualifier the paper does not state**, even when it would make the string read
+  as more official: not `real time`, `reverse-transcription`, `multiplex`, `viral`, `serum`,
+  `binding` or `quantitative` unless the paper says so, and never a more specific technique
+  than the text earns. A later step accepts an exact match on this field without adjudication,
+  so an over-specified string becomes an unchallenged wrong answer — and the vocabulary holds
+  whole families of near-identical terms separated by exactly those words (seven for
+  polymerase chain reaction alone, four for neutralization).
+  **The letters of an acronym are the paper stating them.** "qPCR" says real time, so it is
+  `"real time polymerase chain reaction"`; "qRT-PCR" says both, so it is `"real time
+  reverse-transcription polymerase chain reaction"` — dropping a qualifier the acronym carries
+  is as wrong as adding one it does not. A bare "RT-PCR" is ambiguous between the two: write
+  `"reverse transcription polymerase chain reaction"` only when the text says RNA or cDNA was
+  the template, and plain `"polymerase chain reaction"` otherwise.
+  Two to six words, no analyte, no antigen, no vendor, no model number, no specimen, no
+  purpose. `null` when the text identifies no technique at all; a wrong guess here is worse
+  than none, because a later step trusts an exact match on this field without further checking.
 
 - `aliases` — other **names** the paper uses for the assay itself; `[]` if none. Quote them as
-  the paper writes them; do not tidy up or complete a phrase. Instrument and chip names are not
-  aliases — they belong in `platform`.
+  the paper writes them; do not tidy up or complete a phrase. Instrument, chip, and kit names are
+  not aliases: they name the equipment an assay ran on, not the technique, so leave them out
+  entirely. The exception is a brand name that *is* the field's standard name for a technique
+  (Luminex, CyTOF, ELISpot, TaqMan) — those are names and belong here.
   **The test is substitution: an alias must be able to replace `name_in_paper` in a sentence
   like "we performed ___".** "FACS", "HAI assay", "cellular indexing of transcriptomes and
   epitopes by sequencing" all pass — length is not the issue, and a long formal name is still a
@@ -228,39 +264,25 @@ Return ONLY a JSON object with one key per deduplicated assay — the key is the
   A quantity the assay produced — "Plasma ELISA titers to SARS-CoV-2 spike RBD" — is an
   endpoint, and fails the same test. `[]` is a perfectly good answer; a wrong alias costs more
   than a missing one, because a later step reads these as evidence of what the technique is.
-- `platform` — the instrument, chip, kit, or vendor product, as the paper writes it. `null`
-  when the paper names none for this assay.
 - `sample_type` — the tissue/specimen the assay was performed on. `null` if unstated.
 - `readouts` — the key measurement(s) it produces, in your own words. What the instrument
   measured, **not** what the paper concluded from it: "miRNA expression levels", never "miRNA
   correlations with the antibody response".
-- `measurement_role` — what the paper does with this measurement's output. Exactly one of:
-  - `"reported"` — the paper presents results from it on the study's samples: a figure, a
-    table, a statistic, or a sentence stating what it found. A validation experiment whose
-    result is shown counts.
-  - `"sub_step"` — a technique run only as a step inside another entry's workflow. Its output
-    feeds that entry and is never presented on its own.
-  - `"screening"` — its only output is who was enrolled, or which group a participant was
-    assigned to.
-  - `"unreported"` — performed, but the paper presents no result from it.
-  Decide from what the paper presents, never from how important the technique seems. `null`
-  when the text does not let you tell. This field labels an entry; it never removes one — an
-  `"unreported"` or `"screening"` technique still belongs in the inventory.
-- `parent_hint` — for a `"sub_step"`, the `name_in_paper` of the entry whose workflow it belongs
-  to, copied exactly; that entry must be in this same inventory. `null` for every other role.
-- `source` — where the paper establishes the technique, not which pass found it:
-  `"methods"` when its evidence sits in a `[methods]` section, `"results"` when the technique
-  appears only outside one. A later step re-derives this from your `sentence_ids` and reports
-  any entry where the two disagree, so an entry quoting a `[results]` sentence must not claim
-  `"methods"`.
+- `generate_claim` — `true` when the paper reports a finding drawn from this assay's data,
+  `false` when the paper performed the assay but reports no finding from it. `null` when the text
+  does not let you tell. **This does not change what belongs in the inventory** — an assay the
+  paper performed is an entry either way, and marking it `false` is not a reason to leave it out.
 - `evidence` — **required on every entry**, and its only traceability.
-  - `sentence_ids` are the `[S<n>]` markers the quote spans, given without brackets ("S318").
-    List every one it spans, and list them contiguously — a quote joining non-adjacent
-    sentences cannot be checked.
-  - `quote` is **copied, not paraphrased or reconstructed**: it must appear verbatim in those
-    sentences, with the `[S<n>]` marker itself dropped. Keep it short. A later step compares
-    this string against the source character by character, so a reconstructed quote will be
-    reported as a fabrication.
+  - `section` is the paper's own heading for the place the quote came from, written as printed
+    ("Materials and Methods", "RNA Isolation and Microarray Analysis", "Figure 3 caption").
+    Give the heading, not its `[methods]`/`[results]` tag.
+  - `quote` is **copied, not paraphrased or reconstructed**: it must appear verbatim in the
+    source, with any `[S<n>]` marker dropped. Keep it short, and keep it inside one sentence
+    span where you can — a quote joining non-adjacent sentences cannot be placed.
+    **The quote is the whole of the entry's traceability.** A later step compares it against the
+    source character by character and works out from it both which sentences it came from and
+    whether the assay sits in Methods or Results, so a reconstructed quote is reported as a
+    fabrication and takes those two derived values down with it.
   - Quote the sentence showing the technique was *performed here*, not one citing someone
     else's use of it.
 

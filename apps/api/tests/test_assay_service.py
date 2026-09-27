@@ -21,8 +21,8 @@ _XML = """<article><front><article-meta><article-title>A Paper</article-title></
 </front><body><sec><title>Methods</title><p>Cells were analyzed on an LSRII.</p></sec></body></article>"""
 
 _ENTRY = {
-    "name_in_paper": "flow cytometry", "aliases": [], "platform": "LSRII",
-    "sample_type": None, "readouts": "cell frequencies", "source": "methods",
+    "name_in_paper": "flow cytometry", "aliases": [], "sample_type": None,
+    "readouts": "cell frequencies",
     "evidence": {"section": "Methods", "sentence_ids": ["S1"],
                  "quote": "Cells were analyzed on an LSRII."},
 }
@@ -63,7 +63,8 @@ def paper(tmp_path, monkeypatch):
     monkeypatch.setattr(assay_service, "XML_ROOT", xml_root)
     monkeypatch.setattr(assay_service, "PDF_ROOT", pdf_root)
     monkeypatch.setattr(assay_service, "REGISTRY_ROOT", registry_root)
-    return registry_root / "111_SDY1"
+    # Not a benchmark paper (no folder under REGISTRY_ROOT), so its run lands in the cache.
+    return assay_service.CACHE_ROOT / "111_SDY1"
 
 
 class _Client:
@@ -290,7 +291,7 @@ def test_the_route_returns_the_obi_terms_corrections_and_merges_it_computed(pape
 
 @pytest.mark.asyncio
 async def test_the_run_writes_a_benchmark_registry_beside_the_full_one(paper):
-    """assays.json keeps all seven fields because every pass in the chain works from them;
+    """assays.json keeps every field because every pass in the chain works from them;
     assays_benchmark.json is the reading view and carries only the four."""
     await assay_report("111", "SDY1", _Client(_extraction_body(), _verification_body()))
 
@@ -301,8 +302,10 @@ async def test_the_run_writes_a_benchmark_registry_beside_the_full_one(paper):
     assert trimmed["flow cytometry assay"]["evidence"]["sentence_ids"] == ["S1"]
     assert trimmed["flow cytometry assay"]["name_in_paper"] == ["flow cytometry"]
     # The pipeline's own record is untouched -- the trim is a projection, not a schema.
-    assert full["flow cytometry assay"]["platform"] == "LSRII"
     assert full["flow cytometry assay"]["readouts"] == "cell frequencies"
+    assert full["flow cytometry assay"]["normalized_name"] is None
+    # And `source` is derived, not taken from the extraction: the fixture never proposes one.
+    assert full["flow cytometry assay"]["source"] == "methods"
 
 
 @pytest.mark.asyncio
@@ -445,6 +448,70 @@ def test_a_pdf_is_found_in_a_nested_directory_whose_name_has_a_space(tmp_path, m
     assert assay_service.locate_paper_pdf("333", "SDY3").name == "SDY3_333.pdf"
 
 
+def test_a_pdf_only_paper_gets_a_registry_dir_marked_pdf(pdf_only_paper):
+    """A registry built from a PDF has no sentence ids, so its folder says where it came from."""
+    assert assay_service.registry_dir("222", "SDY2").name == "222_SDY2_pdf"
+
+
+def test_an_xml_paper_keeps_the_plain_registry_dir_even_with_a_pdf(paper):
+    (assay_service.PDF_ROOT / "SDY1_111.pdf").write_bytes(b"%PDF-1.4 fake")
+
+    assert assay_service.registry_dir("111", "SDY1").name == "111_SDY1"
+
+
+def test_an_existing_pdf_registry_dir_is_found_without_the_pdf(tmp_path, monkeypatch):
+    """The registry outlives its source: deleting the PDF must not orphan what it built."""
+    registry_root = tmp_path / "assay_registries"
+    (registry_root / "444_SDY4_pdf").mkdir(parents=True)
+    monkeypatch.setattr(assay_service, "XML_ROOT", tmp_path / "empty")
+    monkeypatch.setattr(assay_service, "PDF_ROOT", tmp_path / "empty")
+    monkeypatch.setattr(assay_service, "REGISTRY_ROOT", registry_root)
+
+    assert assay_service.registry_dir("444", "SDY4").name == "444_SDY4_pdf"
+
+
+# ── Benchmark papers stay put; any other paper lives in the cache ─────────────
+
+def test_a_benchmark_paper_keeps_its_folder_under_the_registry_root(paper):
+    (assay_service.REGISTRY_ROOT / "111_SDY1").mkdir(parents=True)
+
+    assert assay_service.registry_dir("111", "SDY1") == assay_service.REGISTRY_ROOT / "111_SDY1"
+    assert not assay_service.is_cached("111", "SDY1")
+
+
+def test_a_new_paper_lives_in_the_cache(paper):
+    assert assay_service.registry_dir("111", "SDY1") == assay_service.CACHE_ROOT / "111_SDY1"
+    assert assay_service.is_cached("111", "SDY1")
+
+
+def test_a_new_pdf_only_paper_gets_a_pdf_folder_in_the_cache(pdf_only_paper):
+    assert assay_service.registry_dir("222", "SDY2") == assay_service.CACHE_ROOT / "222_SDY2_pdf"
+
+
+def test_a_cached_paper_is_found_again_after_its_source_is_gone(tmp_path, monkeypatch):
+    (assay_service.CACHE_ROOT / "555_SDY5_pdf").mkdir(parents=True)
+    monkeypatch.setattr(assay_service, "XML_ROOT", tmp_path / "empty")
+    monkeypatch.setattr(assay_service, "PDF_ROOT", tmp_path / "empty")
+    monkeypatch.setattr(assay_service, "REGISTRY_ROOT", tmp_path / "registries")
+
+    assert assay_service.registry_dir("555", "SDY5") == assay_service.CACHE_ROOT / "555_SDY5_pdf"
+
+
+def test_a_new_paper_s_run_is_listed_as_having_a_registry(paper):
+    registry = assay_service.registry_dir("111", "SDY1")
+    registry.mkdir(parents=True)
+    (registry / "assays.json").write_text("{}", encoding="utf-8")
+
+    [listed] = [p for p in assay_service.available_papers() if p["study_accession"] == "SDY1"]
+    assert listed["has_registry"]
+
+
+@pytest.mark.parametrize("stem", ["21357945_SDY1276_pdf", "21357945_SDY1276_PDF",
+                                  "SDY1276_21357945_pdf"])
+def test_split_stem_ignores_the_pdf_marker(stem):
+    assert assay_service.split_stem(stem) == ("21357945", "SDY1276")
+
+
 def test_a_paper_with_neither_source_resolves_to_nothing(paper):
     assert assay_service.locate_paper_source("999", "SDY9") is None
 
@@ -487,3 +554,28 @@ def test_available_papers_lists_a_paper_with_both_sources_once_as_xml(paper):
 
     assert len(listed) == 1
     assert listed[0]["paper_source_kind"] == "xml"
+
+
+
+# ── a paper with no Methods section ───────────────────────────────────────────
+
+_XML_NO_METHODS = """<article><front><article-meta><article-title>A Report</article-title>
+</article-meta></front><body><p>Titers were measured with the inhibition ELISA.</p></body></article>"""
+
+
+@pytest.mark.asyncio
+async def test_round_one_says_when_the_paper_has_no_methods_section(paper):
+    """So a run that finds little or nothing can say why, instead of just skipping four rounds."""
+    (assay_service.XML_ROOT / "SDY1_111.xml").write_text(_XML_NO_METHODS, encoding="utf-8")
+
+    result = await assay_report("111", "SDY1", _Client("{}"))
+
+    assert result["rounds"]["extract"]["assays"] == 0
+    assert result["rounds"]["extract"]["no_methods"] is True
+
+
+@pytest.mark.asyncio
+async def test_a_paper_with_methods_carries_no_such_flag(paper):
+    result = await assay_report("111", "SDY1", _Client(_extraction_body(), _verification_body()))
+
+    assert "no_methods" not in result["rounds"]["extract"]

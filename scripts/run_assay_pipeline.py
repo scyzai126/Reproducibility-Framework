@@ -15,9 +15,8 @@ like one copied out of Methods.
 
 Round 3 promotes, so `assays.json` ends up holding the corrected registry with the extracted
 one kept beside it as `assays_precorrection.json`. The run then projects that onto
-`assays_benchmark.json` -- name_in_paper, aliases, measurement_role, source, evidence -- **which
-is the file to read**. All ten fields stay in `assays.json` because every pass in the chain works
-from them. assays.json is written only once every round is done, so a run that dies part-way
+`assays_benchmark.json` -- name_in_paper, aliases, source, evidence -- **which is the file to
+read**. Every field stays in `assays.json` because each pass in the chain works from them. assays.json is written only once every round is done, so a run that dies part-way
 leaves none rather than one that looks verified.
 
 Round 5 runs last because the OBI term from round 4 is the assay's identity: the registry is
@@ -58,7 +57,7 @@ Usage:
     python3 scripts/run_assay_pipeline.py --pmid 34252919 --sdy SDY2189 [--dry-run]
 
 Example:
-    python3 scripts/run_assay_pipeline.py data/claims/assay_registries/34252919_SDY2189 --dry-run
+    python3 scripts/run_assay_pipeline.py data/31paper_assays/34252919_SDY2189 --dry-run
 """
 
 import argparse
@@ -81,7 +80,7 @@ from app.agent.claim_parser import _get_client
 
 
 def split_registry_dir(path: Path) -> tuple[str, str]:
-    """`assay_registries/34252919_SDY2189` -> ("34252919", "SDY2189").
+    """`31paper_assays/34252919_SDY2189` -> ("34252919", "SDY2189").
 
     The halves are identified by which one starts with "SDY" rather than by position, so a
     directory named the other way round still resolves instead of silently producing a paper we
@@ -286,8 +285,8 @@ def report_result(result: dict) -> None:
     meta = result["meta"]
     print(f"\n{meta['llm_calls']} call(s) spent."
           f"\n  {meta['benchmark_path']}  <- the deliverable: name_in_paper, aliases, "
-          "measurement_role, source, evidence"
-          f"\n  {meta['registry_path']}  full ten-field registry the pipeline works from")
+          "source, evidence"
+          f"\n  {meta['registry_path']}  the full registry the pipeline works from")
     if meta.get("obi_path"):
         print(f"  {meta['obi_path']}  the same registry with OBI terms attached")
 

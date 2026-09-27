@@ -1,9 +1,10 @@
 """GET /agent/assay-immport, the per-paper check, and the acknowledged resolve.
 
-The sweep runs on a page load over the whole corpus, so the properties that matter are that a
-row SQL resolves costs nothing, that a row SQL misses costs one model call and then comes from
-the cache, that a dead database degrades instead of 500ing, and that /resolve still refuses to
-run until it has been told the bill. No test here reaches a real model.
+The corpus sweep runs on a page load, so the properties that matter are that it serves the
+coverage scripts/build_immport_coverage.py stored when that matches the table, that without one
+it sweeps SQL only and never pays, that a dead database degrades instead of 500ing, that the
+per-paper check pays once per missed row and then reads the cache, and that /resolve still refuses
+to run until it has been told the bill. No test here reaches a real model.
 """
 
 import json
@@ -88,8 +89,8 @@ def resolver_model(monkeypatch, tmp_path):
 
 @pytest.fixture
 def corpus(tmp_path, monkeypatch):
-    """A two-row corpus file standing in for data/claims/all_assays_full_OBI.json."""
-    path = tmp_path / "all_assays_full_OBI.json"
+    """A two-row corpus file standing in for data/31paper_assays/all_assays_OBI.json."""
+    path = tmp_path / "all_assays_OBI.json"
     path.write_text(json.dumps([
         {"study": "19029902_SDY1264", "assay": "Neut Ab", "normalized_name": "Virus Neutralization",
          "obi_label": "serum neutralization assay"},
@@ -97,6 +98,8 @@ def corpus(tmp_path, monkeypatch):
          "obi_label": "mass spectrometry assay"},
     ]), encoding="utf-8")
     monkeypatch.setattr(routes, "_ASSAY_OBI_PATH", path)
+    # No stored coverage unless a test writes one: the live sweep is what most tests exercise.
+    monkeypatch.setattr(routes, "_ASSAY_IMMPORT_PATH", tmp_path / "assay_immport.json")
     return path
 
 
@@ -125,15 +128,73 @@ def test_the_sweep_reports_coverage_for_every_corpus_row(corpus, client, resolve
     assert body["stats"]["absent"] == 1
     assert body["rows"][0]["experiment_accession"] == "EXP16737"
     assert body["rows"][0]["measurement_technique"] == "Virus Neutralization"
-    # Only the row SQL missed went to the model.
-    assert resolver_model.calls == 1
+    # Without stored coverage the sweep is SQL only: the row SQL missed stays absent, unpaid.
+    assert resolver_model.calls == 0
+    assert "build_immport_coverage.py" in body["warning"]
 
 
-def test_a_reload_does_not_pay_again(corpus, client, resolver_model):
+def test_a_page_load_never_pays(corpus, client, resolver_model):
     client(_FakeSession(_EXPERIMENTS)).get("/agent/assay-immport")
     client(_FakeSession(_EXPERIMENTS)).get("/agent/assay-immport")
 
-    assert resolver_model.calls == 1
+    assert resolver_model.calls == 0
+
+
+def _store(corpus, rows_for):
+    """Write stored coverage beside the corpus fixture's table, as the script would."""
+    stored = {"generated_at": "2026-09-26T00:00:00+00:00", "llm": True,
+              "rows": [{"study": s, "study_accession": "SDY1264", "assay": a,
+                        "experiment_accession": None, "measurement_technique": None,
+                        "method": None, "status": "absent", "study_experiments": 1}
+                       for s, a in rows_for],
+              "stats": {"total": len(rows_for), "matched": 0, "absent": len(rows_for),
+                        "no_experiments": 0, "unknown_study": 0, "resolvable": len(rows_for),
+                        "studies_without_experiments": []}}
+    routes._ASSAY_IMMPORT_PATH.write_text(json.dumps(stored), encoding="utf-8")
+
+
+def test_stored_coverage_for_this_table_is_served_without_touching_immport(corpus, client):
+    _store(corpus, [("19029902_SDY1264", "Neut Ab"), ("19029902_SDY1264", "Mass spec")])
+
+    # A session that raises proves the database was never queried.
+    body = client(_FakeSession(raises=RuntimeError("must not be queried"))).get(
+        "/agent/assay-immport").json()
+
+    assert body["degraded"] is False
+    assert body["warning"] is None
+    assert [r["assay"] for r in body["rows"]] == ["Neut Ab", "Mass spec"]
+
+
+def test_a_benchmark_only_row_is_not_swept_counted_or_used_for_staleness(corpus, client):
+    """A curator assay we missed is shown in the table but is not an assay of ours."""
+    rows = json.loads(corpus.read_text(encoding="utf-8"))
+    rows.append({"study": "19029902_SDY1264", "assay": "", "normalized_name": "", "obi_id": None,
+                 "obi_label": None, "resource": None, "benchmark_assay": "YFV neutralization",
+                 "benchmark_only": True})
+    corpus.write_text(json.dumps(rows), encoding="utf-8")
+
+    swept = client(_FakeSession(_EXPERIMENTS)).get("/agent/assay-immport").json()
+    assert len(swept["rows"]) == 2
+
+    # Stored coverage for our two assays still matches the table.
+    _store(corpus, [("19029902_SDY1264", "Neut Ab"), ("19029902_SDY1264", "Mass spec")])
+    stored = client(_FakeSession(raises=RuntimeError("must not be queried"))).get(
+        "/agent/assay-immport").json()
+    assert stored["warning"] is None
+
+    stats = routes._assay_obi_stats(rows)
+    assert stats["total_rows"] == 2
+    assert "" not in stats["unresolved_names"]
+
+
+def test_stored_coverage_for_a_different_table_is_ignored(corpus, client, resolver_model):
+    _store(corpus, [("19029902_SDY1264", "an assay the table no longer has")])
+
+    body = client(_FakeSession(_EXPERIMENTS)).get("/agent/assay-immport").json()
+
+    assert body["stats"]["matched"] == 1  # the live sweep's answer, not the stored one
+    assert "build_immport_coverage.py" in body["warning"]
+    assert resolver_model.calls == 0
 
 
 def test_the_rows_survive_the_response_model(corpus, client):

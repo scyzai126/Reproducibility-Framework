@@ -280,23 +280,69 @@ def test_a_benchmark_filename_with_a_pmid_picks_that_registry(cmp_mod, tmp_path,
     monkeypatch.setattr(cmp_mod, "REGISTRY_DIR", registries)
     monkeypatch.setattr(cmp_mod, "REPO_ROOT", tmp_path)
 
-    pairs = cmp_mod.discover_pairs()
+    pairs, skipped = cmp_mod.discover_pairs()
     assert [(p["study"], p["pmid"]) for p in pairs] == [("SDY1364", "23266342")]
+    assert skipped == []
 
 
-def test_an_ambiguous_pairing_stops_rather_than_guesses(cmp_mod, tmp_path, monkeypatch):
+def test_every_curator_suffix_is_discovered_not_just_one(cmp_mod, tmp_path, monkeypatch):
+    """The folder carries several curators' naming conventions; all of them must be scored.
+
+    Matching on `_Assay_Hailong.json` alone hid 22 of 31 benchmark files from the report.
+    """
     bench_dir = tmp_path / "benchmark_assay"
     bench_dir.mkdir()
-    (bench_dir / "SDY1364_Assay_Hailong.json").write_text("{}", encoding="utf-8")
+    for name in ("SDY1_Assay_Hailong.json", "SDY2_assays_AS_v2.json",
+                 "SDY3_assay_AS.json", "SDY4_assaysAS_v2.json", "SDY5_assays_AS_v2_edit.json"):
+        (bench_dir / name).write_text("{}", encoding="utf-8")
     registries = tmp_path / "assay_registries"
-    for name in ("23266342_SDY1364", "23844129_SDY1364"):
+    for name in ("111_SDY1", "222_SDY2", "333_SDY3", "444_SDY4", "555_SDY5"):
         (registries / name).mkdir(parents=True)
         (registries / name / "assays_benchmark.json").write_text("{}", encoding="utf-8")
     monkeypatch.setattr(cmp_mod, "BENCHMARK_DIR", bench_dir)
     monkeypatch.setattr(cmp_mod, "REGISTRY_DIR", registries)
 
-    with pytest.raises(SystemExit, match="expected exactly one registry"):
-        cmp_mod.discover_pairs()
+    pairs, skipped = cmp_mod.discover_pairs()
+    assert [p["study"] for p in pairs] == ["SDY1", "SDY2", "SDY3", "SDY4", "SDY5"]
+    assert skipped == []
+
+
+def test_an_ambiguous_pairing_is_skipped_with_a_reason_not_a_hard_exit(cmp_mod, tmp_path, monkeypatch):
+    """One unpairable benchmark must not cost the other papers their score."""
+    bench_dir = tmp_path / "benchmark_assay"
+    bench_dir.mkdir()
+    (bench_dir / "SDY1364_Assay_Hailong.json").write_text("{}", encoding="utf-8")
+    (bench_dir / "SDY1_assays_AS_v2.json").write_text("{}", encoding="utf-8")
+    registries = tmp_path / "assay_registries"
+    for name in ("23266342_SDY1364", "23844129_SDY1364", "111_SDY1"):
+        (registries / name).mkdir(parents=True)
+        (registries / name / "assays_benchmark.json").write_text("{}", encoding="utf-8")
+    monkeypatch.setattr(cmp_mod, "BENCHMARK_DIR", bench_dir)
+    monkeypatch.setattr(cmp_mod, "REGISTRY_DIR", registries)
+
+    pairs, skipped = cmp_mod.discover_pairs()
+    assert [p["study"] for p in pairs] == ["SDY1"]
+    assert len(skipped) == 1
+    assert "expected exactly one registry" in skipped[0]
+    assert "SDY1364_Assay_Hailong.json" in skipped[0]
+
+
+def test_two_benchmarks_for_one_paper_do_not_both_count(cmp_mod, tmp_path, monkeypatch):
+    """Two curators' files for the same registry would double that paper in the totals."""
+    bench_dir = tmp_path / "benchmark_assay"
+    bench_dir.mkdir()
+    (bench_dir / "SDY1_Assay_Hailong.json").write_text("{}", encoding="utf-8")
+    (bench_dir / "SDY1_assays_AS_v2.json").write_text("{}", encoding="utf-8")
+    registries = tmp_path / "assay_registries"
+    (registries / "111_SDY1").mkdir(parents=True)
+    (registries / "111_SDY1" / "assays_benchmark.json").write_text("{}", encoding="utf-8")
+    monkeypatch.setattr(cmp_mod, "BENCHMARK_DIR", bench_dir)
+    monkeypatch.setattr(cmp_mod, "REGISTRY_DIR", registries)
+
+    pairs, skipped = cmp_mod.discover_pairs()
+    assert len(pairs) == 1
+    assert len(skipped) == 1
+    assert "already scored against" in skipped[0]
 
 
 def test_our_side_matches_through_any_wording_of_a_canonicalized_entry(cmp_mod, obi):

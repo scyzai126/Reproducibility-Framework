@@ -9,7 +9,7 @@ This is NOT the full-paper assay pass that app.agent.assay_registry's docstring 
 removed. That one existed to be reconciled against the claims, and it is gone because every
 claim now names its own assay. This produces the *independent* registry — the one
 assay_verifier judges, assay_corrector repairs, and load_verified_registry hands to
-resolve_experiment_accession as platform/sample_type/readouts context. Nothing here feeds
+resolve_experiment_accession as sample_type/readouts context. Nothing here feeds
 claim extraction.
 
 The output is validated on the way out rather than trusted. A model that returns extra fields,
@@ -29,7 +29,7 @@ from app.config import settings
 
 logger = logging.getLogger(__name__)
 
-#: The ten-field contract, in the order extract_assays.txt documents them. Anything else a
+#: The seven-field contract, in the order extract_assays.txt documents them. Anything else a
 #: model returns is dropped: `confidence` and `claim_role` are the two it reaches for
 #: unprompted, and both were removed from this schema on purpose.
 #:
@@ -41,25 +41,40 @@ logger = logging.getLogger(__name__)
 #: phenotyping"), none of which retrieve the OBI term they belong to. Because it asserts
 #: nothing about the text it is excluded from verification -- see assay_verifier._NOT_PROPOSED.
 #:
-#: `measurement_role` and `parent_hint` are judgements for the same reason. The registry lists
-#: every technique the paper performed; the role says what the paper did with each one, so a
-#: reader can narrow to what was reported without the extraction deleting anything. `claim_role`
-#: was removed because it graded an assay's importance; this records only what the paper presents.
-ENTRY_FIELDS = ("name_in_paper", "normalized_name", "aliases", "platform", "sample_type",
-                "readouts", "measurement_role", "parent_hint", "source", "evidence")
-
-#: What the paper does with an assay's output -- see `measurement_role` in extract_assays.txt.
-ROLE_VALUES = ("reported", "sub_step", "screening", "unreported")
+#: `source` and `evidence.sentence_ids` are in the contract but are NOT asked of the model. Both
+#: are derived from the quote after extraction by assay_verifier.derive_evidence_fields, because
+#: both already were: locate_sentence_ids recovered the ids a quote really came from, and
+#: check_source_section re-derived the section and overruled the model on it. Asking for a value
+#: the code computes anyway bought nothing and cost a correction call whenever the answers
+#: differed -- 12 such defects across the 38 registries on disk.
+#:
+#: `platform`, `measurement_role` and `parent_hint` were removed. `platform` fed no step that
+#: needed it -- the OBI resolver never read it -- while costing verification and correction calls.
+#: `measurement_role` was meant to narrow the deliverable to what a paper reported, but nothing
+#: filtered on it, the verifier was told to skip it and the corrector had no question for it, so a
+#: wrong value was unreachable; `parent_hint` existed only to point a `sub_step` at its parent.
+#:
+#: `generate_claim` is asked again on purpose, and is the nearest thing to `measurement_role`
+#: above -- so read this before deleting it citing that paragraph. It is here to be compared
+#: against the curated `generate_claim` in data/benchmark_assay/, which is why it rides into the
+#: deliverable rather than staying in assays.json. It is deliberately NOT a filter: nothing drops
+#: a `false` entry, because extract_assays.txt rules that an assay the paper performed is an entry
+#: whether or not the paper concluded from it, and that rule is what the recall score rests on.
+#: Like `normalized_name` it is a judgement rather than a value copied from a span, so it is
+#: excluded from verification -- see assay_verifier._NOT_PROPOSED.
+ENTRY_FIELDS = ("name_in_paper", "normalized_name", "aliases", "sample_type",
+                "readouts", "generate_claim", "source", "evidence")
 
 #: What the finished registry is projected onto for `assays_benchmark.json`: the assay's name,
-#: its aliases, its evidence source kept as both the label and the traceability, and its
-#: `measurement_role`, so the deliverable can be narrowed to what the paper reported. The other
-#: fields stay in `assays.json` because the pipeline needs them -- the verifier rules on
-#: a specimen, the corrector repairs one, and merge_verified hands them to claim resolution.
-#: Trimming the deliverable is a reading concern; trimming the schema broke all three.
-TRIMMED_FIELDS = ("name_in_paper", "aliases", "measurement_role", "source", "evidence")
+#: its aliases, whether the paper drew a finding from it, and its evidence source kept as both the
+#: label and the traceability. The other fields stay in `assays.json` because the pipeline needs
+#: them -- the verifier rules on a specimen, the corrector repairs one, and merge_verified hands
+#: them to claim resolution. Trimming the deliverable is a reading concern; trimming the schema
+#: broke all three. `generate_claim` is here rather than there because the file this projects to is
+#: the one held against the curated benchmark, which carries the same field.
+TRIMMED_FIELDS = ("name_in_paper", "aliases", "generate_claim", "source", "evidence")
 
-#: An eighth field, written only by round 5 (app.agent.assay_merger) and only on an entry that
+#: A further field, written only by round 5 (app.agent.assay_merger) and only on an entry that
 #: absorbed another: the merged-away write-up's own record, so folding two entries into one never
 #: costs a quote. Deliberately outside ENTRY_FIELDS -- clean_entry runs on model output, which is
 #: never allowed to assert a merge -- and carried into the deliverable only where it exists, so an
@@ -92,37 +107,36 @@ class AssayExtractionError(RuntimeError):
 
 
 def _clean_evidence(raw: object) -> dict:
-    """Coerce one entry's evidence to {section, sentence_ids, quote}."""
+    """Coerce one entry's evidence to {section, sentence_ids, quote}.
+
+    `sentence_ids` always starts empty. The model is not asked for it and a volunteered answer is
+    dropped: the ids are located from the quote afterwards, which is exact, so accepting a guess
+    would only give the pipeline a worse value to overwrite.
+    """
     raw = raw if isinstance(raw, dict) else {}
-    ids = raw.get("sentence_ids")
     return {
         "section": raw.get("section") or None,
-        "sentence_ids": [str(s) for s in ids] if isinstance(ids, list) else [],
+        "sentence_ids": [],
         "quote": raw.get("quote") if isinstance(raw.get("quote"), str) else None,
     }
 
 
 def clean_entry(key: str, raw: dict) -> dict:
-    """Reduce one model-returned entry to the ten-field contract.
+    """Reduce one model-returned entry to the contract.
 
     `name_in_paper` falls back to the registry key, which is what the skill says the key is:
     the same string.
 
-    An omitted `source` becomes None, not "methods". Defaulting it to "methods" asserted the
-    stronger claim -- that the paper established the technique in its Methods section -- on
-    exactly the entries where the model declined to say, and the papers where the model is
-    least sure are the ones with no heading named "Methods" or "Results" at all. None is
-    outside _SOURCE_VALUES, so contract_warnings surfaces it rather than the registry
-    recording a provenance nobody asserted. An invented value is likewise not corrected to a
-    valid one, because that would hide the classification pass going wrong.
+    `source` is left as None here even if the model volunteered one. It is not asked for any
+    more and is derived from the quote afterwards, so accepting a stray answer would let an
+    unasked-for judgement outrank the document. `evidence.sentence_ids` is emptied by
+    _clean_evidence for the same reason.
 
-    `measurement_role` gets the same treatment: anything outside ROLE_VALUES becomes None, and
-    contract_warnings reports it rather than a guess at the nearest valid role.
+    `generate_claim` has no fallback either: an entry the model left unanswered stays None rather
+    than defaulting to False, so "the paper drew nothing from this assay" and "nobody said" are
+    still distinguishable downstream.
     """
     aliases = raw.get("aliases")
-    source = raw.get("source")
-    role = raw.get("measurement_role")
-    parent = raw.get("parent_hint")
     return {
         "name_in_paper": raw.get("name_in_paper") if isinstance(raw.get("name_in_paper"), str)
                          and raw["name_in_paper"].strip() else key,
@@ -134,12 +148,14 @@ def clean_entry(key: str, raw: dict) -> dict:
                            and raw["normalized_name"].strip() else None,
         "aliases": [a for a in aliases if isinstance(a, str) and a.strip()]
                    if isinstance(aliases, list) else [],
-        "platform": raw.get("platform") or None,
         "sample_type": raw.get("sample_type") or None,
         "readouts": raw.get("readouts") or None,
-        "measurement_role": role if role in ROLE_VALUES else None,
-        "parent_hint": parent.strip() if isinstance(parent, str) and parent.strip() else None,
-        "source": source if isinstance(source, str) and source.strip() else None,
+        # A real boolean or nothing. "true", "yes" and 1 are answers in a shape the contract does
+        # not define, and reading one as True would turn a formatting slip into a finding the paper
+        # may not report. `isinstance` is the check that says so: `1 in (True, False)` is True.
+        "generate_claim": raw.get("generate_claim")
+                          if isinstance(raw.get("generate_claim"), bool) else None,
+        "source": None,
         "evidence": _clean_evidence(raw.get("evidence")),
     }
 
@@ -155,8 +171,33 @@ def clean_registry(parsed: object) -> dict:
         raise AssayExtractionError(
             f"model returned {type(parsed).__name__}, not an assay registry object"
         )
-    return {key: clean_entry(key, entry)
-            for key, entry in parsed.items() if isinstance(entry, dict)}
+    parsed = _unwrap(parsed)
+    registry = {key: clean_entry(key, entry)
+                for key, entry in parsed.items() if isinstance(entry, dict)}
+    if parsed and not registry:
+        # Keys, but not one entry among them: a shape this function does not know. Returning {}
+        # would read as "the paper describes no assay", which is exactly what must not be said
+        # on the strength of a formatting slip.
+        raise AssayExtractionError(
+            f"model returned an object with keys {sorted(parsed)[:5]} but no assay entries"
+        )
+    return registry
+
+
+def _unwrap(parsed: dict) -> dict:
+    """`{"assays": {...}}` / `{"assays": [{...}, ...]}` -> the registry the wrapper holds.
+
+    Only a single top-level key whose value is itself entries is unwrapped; a list is keyed by
+    each entry's `name_in_paper`. Anything else is returned as it came.
+    """
+    if len(parsed) != 1:
+        return parsed
+    (value,) = parsed.values()
+    if isinstance(value, list) and value and all(isinstance(v, dict) for v in value):
+        return {str(v.get("name_in_paper") or f"assay {i + 1}"): v for i, v in enumerate(value)}
+    if isinstance(value, dict) and value and all(isinstance(v, dict) for v in value.values()):
+        return value
+    return parsed
 
 
 def contract_warnings(registry: dict, *, expect_sentence_ids: bool = True) -> list[str]:
@@ -185,10 +226,12 @@ def contract_warnings(registry: dict, *, expect_sentence_ids: bool = True) -> li
         evidence = entry.get("evidence") or {}
         if not evidence.get("quote"):
             warnings.append(f"{key}: no evidence quote")
+        # Both of these are derived from the quote, so a gap means the quote could not be placed
+        # in the document -- worth reporting for the same reason a missing quote is.
         if expect_sentence_ids and not evidence.get("sentence_ids"):
-            warnings.append(f"{key}: evidence cites no sentence_ids")
-        if entry.get("source") not in _SOURCE_VALUES:
-            warnings.append(f"{key}: source is {entry.get('source')!r}, not 'methods' or 'results'")
+            warnings.append(f"{key}: quote could not be located in any sentence")
+        if expect_sentence_ids and entry.get("source") not in _SOURCE_VALUES:
+            warnings.append(f"{key}: source could not be derived, it is {entry.get('source')!r}")
         # `[]` is a valid answer -- plenty of assays are named one way only. A non-list is not:
         # a correction round that cleared the field to null, or an extraction that returned a
         # bare string, both read as "no aliases" downstream instead of as the defect they are.
@@ -200,31 +243,7 @@ def contract_warnings(registry: dict, *, expect_sentence_ids: bool = True) -> li
         names = paper_names(entry)
         if key not in names and not entry.get(MERGED_FIELD) and len(names) < 2:
             warnings.append(f"{key}: name_in_paper is {entry.get('name_in_paper')!r}, not the key")
-        warnings += _role_warnings(key, entry, registry)
     return warnings
-
-
-def _role_warnings(key: str, entry: dict, registry: dict) -> list[str]:
-    """Check `measurement_role` and `parent_hint` against the contract and against the registry.
-
-    A parent is looked up by wording, never by key: round 5 re-keys the registry by OBI label but
-    keeps every wording in `name_in_paper`, so a hint written before the re-key still resolves.
-    """
-    role = entry.get("measurement_role")
-    parent = entry.get("parent_hint")
-    if role not in ROLE_VALUES:
-        return [f"{key}: measurement_role is {role!r}, not one of {', '.join(ROLE_VALUES)}"]
-    if role != "sub_step":
-        return [f"{key}: parent_hint {parent!r} set on a {role!r} entry"] if parent else []
-    if not parent:
-        return [f"{key}: sub_step has no parent_hint"]
-    target = parent.strip().lower()
-    for other_key, other in registry.items():
-        if other_key == key or not isinstance(other, dict):
-            continue
-        if target in {n.strip().lower() for n in paper_names(other)} | {other_key.strip().lower()}:
-            return []
-    return [f"{key}: parent_hint {parent!r} names no other entry"]
 
 
 def trim_registry(registry: dict) -> dict:
@@ -252,12 +271,29 @@ def trim_registry(registry: dict) -> dict:
     return trimmed
 
 
+#: Put above the paper text when no section is tagged `[methods]`. The tags are computed by
+#: code, so whether a paper has a Methods section is a fact to state, not something to leave the
+#: model to infer -- left to infer it, the model took the Methods-only path on a short report
+#: with no Methods section (SDY1171) and returned `{}` for a paper that names its assays.
+NO_METHODS_NOTE = (
+    "STRUCTURE 3 APPLIES: this paper has no [methods] section -- its methods are likely in a "
+    "supplement not included here. Build the inventory from the abstract, the main text and the "
+    "captions, as structure 3 describes.\n\n"
+)
+
+
+def has_methods_section(source_text: str) -> bool:
+    """Whether any heading of the tagged source text is a Methods section. Free."""
+    return "[methods]" in source_text
+
+
 def build_prompt(source_text: str, paper_title: str) -> str:
-    """Render extract_assays.txt for one paper."""
+    """Render extract_assays.txt for one paper, stating structure 3 when there is no Methods."""
+    text = source_text if has_methods_section(source_text) else NO_METHODS_NOTE + source_text
     return (
         _load_prompt("extract_assays.txt")
         .replace("{paper_title}", paper_title)
-        .replace("{source_text}", source_text)
+        .replace("{source_text}", text)
     )
 
 
@@ -290,6 +326,11 @@ async def extract_assays(
         raise AssayExtractionError(f"model returned unparseable JSON: {exc}") from exc
 
     registry = clean_registry(parsed)
-    for warning in contract_warnings(registry):
+    # `expect_sentence_ids=False` here, not because this route lacks markers, but because
+    # derive_evidence_fields has not run yet: the ids and `source` are filled in from the quote
+    # after this function returns, so warning about them now would fire on every entry of every
+    # paper. assay_service re-runs this check once they are derived, which is where a real gap
+    # surfaces.
+    for warning in contract_warnings(registry, expect_sentence_ids=False):
         logger.warning("assay extraction: %s", warning)
     return registry

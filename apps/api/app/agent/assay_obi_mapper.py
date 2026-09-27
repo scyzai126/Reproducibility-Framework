@@ -14,10 +14,10 @@ paper's own wording ranks 44th out of 700.
 Step 1b replaces an earlier step of the same shape but a different mechanism: an exact match on
 the *lexically* normalized name (trailing " assay"/" analysis" stripped), reported as resource
 "exact_normalized". That one caught 7 of 156 names and was removed. This one, measured over the
-171 curated rows of all_assays_full.json, takes the step-1 hit rate from 39% to 62%. The two are
-kept apart under different resource values on purpose: "exact_normalized" is still carried by 40
-rows of data/claims/all_assays_full_OBI.json with the retired lexical meaning, and the API route
-and web UI still render it.
+171 curated rows of the retired all_assays_full.json, takes the step-1 hit rate from 39% to 62%. The two are
+kept apart under different resource values on purpose: "exact_normalized" was carried by 40
+rows of the retired August corpus table (all_assays_full_OBI.json) with the old lexical meaning,
+and the API route and web UI still accept it.
 """
 
 from __future__ import annotations
@@ -280,7 +280,7 @@ def _merge_candidates(*pools: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """Union several retrieval pools into one top-K list, keeping each term's best score.
 
     Neither query dominates, which is the whole reason to merge rather than choose. Measured
-    over the 101 distinct (paper name, normalized name) pairs in all_assays_full.json that
+    over the 101 distinct (paper name, normalized name) pairs in the retired all_assays_full.json that
     reach this round, the normalized name retrieves a better top-1 on 52% of them and a *worse*
     one on 32%. The losses are systematic, not noise: "hemagglutination inhibition (HAI)
     assays" scores 0.809 against OBI's `viral hemagglutination inhibition assay` and its
@@ -377,7 +377,7 @@ def map_assay_to_obi(
     up -- and it was removed for catching only 7 of 156 names. This is a different mechanism:
     the field now holds an LLM's judgement of *which technique* the assay is, made while reading
     the whole paper, not a string with a suffix chopped off. Measured over the 171 curated rows
-    of all_assays_full.json it takes the step-1 hit rate from 39% to 62% -- 40 entries that cost
+    of the retired all_assays_full.json it takes the step-1 hit rate from 39% to 62% -- 40 entries that cost
     two paid calls each now cost none. That is a large enough difference in kind to justify
     reviving the step the lexical version did not earn.
 
@@ -394,7 +394,7 @@ def map_assay_to_obi(
     judgement about the technique, not a claim about the text. The extraction prompt's wording
     is the only guard, and `resource: "exact_normalized_llm"` is the only way to audit which
     answers took the unguarded path; keep that value distinct from "exact_normalized", which 40
-    rows of all_assays_full_OBI.json still carry with the retired lexical meaning.
+    rows of the retired August corpus table carried with the old lexical meaning.
     """
     lookup = _build_lookup(terms_path)
 
@@ -439,7 +439,7 @@ def enrich_assays_with_obi(
 
     The OBI score is written as `obi_confidence`, never `confidence`: registries carry the
     *extraction* confidence under the latter (how clearly the paper identifies the technique),
-    and overwriting it destroys that. scripts/map_assays_to_obi.py, data/claims/all_assays_full_OBI.json
+    and overwriting it destroys that. scripts/build_assay_table.py, the corpus table it writes,
     and the UI (apps/web/src/lib/types.ts) are all already on `obi_confidence`.
     Whatever `confidence` the caller passed in is left exactly as it was.
 

@@ -300,12 +300,13 @@ async def _run_two_step_pipeline(
     """
     client = _get_client()
 
-    step1_system = _load_prompt("extract_claims.txt")
-
     if step1_override is not None:
         step1_json = step1_override
         logger.info("Step 1 skipped (using override): %d claims", len(step1_json))
     else:
+        # Loaded only here: an override never uses it, and the PDF-direct path must not
+        # depend on this prompt existing.
+        step1_system = _load_prompt("extract_claims.txt")
         logger.info("Step 1: extracting claims for study %s", study_accession)
         resp1 = await client.chat.completions.create(
             model=settings.OPENAI_MODEL,
@@ -343,7 +344,7 @@ async def _run_two_step_pipeline(
             temperature=0,
         )
         raw = _strip_fences((resp.choices[0].message.content or "").strip())
-        result: dict = json.loads(raw)
+        result: dict = json.loads(raw, strict=False)
         # Merge step1 fields into step2 output
         val = result.get(key, {})
         step1_entry = step1_json[key]

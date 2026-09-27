@@ -60,11 +60,6 @@ UNCHANGED = "UNCHANGED"
 #: apps/api/app/prompts/extract_assays.txt, so a blind re-read is held to the same
 #: standard as the original pass rather than a looser one.
 _QUESTIONS = {
-    "platform": (
-        "What instrument, chip, kit, or vendor product does the paper state THIS assay ran "
-        "on? Answer with the product as the paper writes it (e.g. \"Illumina HumanHT-12v3 "
-        "Expression BeadChips\"). Answer null if the paper never ties a product to this assay."
-    ),
     "sample_type": (
         "What tissue or specimen does the paper state THIS assay was performed on (e.g. whole "
         "blood, PBMCs, serum, plasma)? Answer null if the paper never states the specimen for "
@@ -75,12 +70,6 @@ _QUESTIONS = {
         "What does the paper state THIS assay measures, detects, profiles, or evaluates? "
         "Summarise the measured quantities in your own words -- what the instrument measured, "
         "not what the authors concluded from it. Answer null if the paper never says."
-    ),
-    "source": (
-        "Is this technique established in the paper's Methods section (whatever the paper "
-        "calls it -- Methods, Materials and Methods, Experimental Procedures), or does it "
-        "appear only in the Results, the Abstract, or a figure/table caption? Answer exactly "
-        "\"methods\" or \"results\"."
     ),
     "aliases": (
         "What other exact wordings does the paper use for THIS assay itself? Set `value` to a "
@@ -93,13 +82,14 @@ _QUESTIONS = {
     "evidence": (
         "Which sentence or sentences establish that THIS assay was actually performed in this "
         "study? Answer with a short quote copied verbatim from those sentences -- not a "
-        "paraphrase -- and list their sentence ids. Do not quote a sentence that cites someone "
-        "else's use of the technique."
+        "paraphrase. Do not quote a sentence that cites someone else's use of the technique."
     ),
 }
 
 #: Verifier field names map onto the question groups above. `aliases[0]`, `aliases[3]` and so
-#: on are one question, and `evidence.quote` / `evidence.sentence_ids` fail together.
+#: on are one question. `evidence.sentence_ids` is kept in the evidence group for an older
+#: verification report on disk that still carries such a verdict; a current one cannot, because
+#: the ids are derived rather than proposed.
 _ALIAS_PREFIX = "aliases["
 _EVIDENCE_SUFFIXES = (".quote", ".sentence_ids")
 

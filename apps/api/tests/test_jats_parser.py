@@ -265,3 +265,46 @@ def test_tagging_a_heading_does_not_renumber_the_prose():
     assert strip_sentence_ids(numbered) == parsed
     assert SENTENCE_MARKER.findall(numbered) == SENTENCE_MARKER.findall(numbered_untagged)
     assert "[S3] Cells were stained." in numbered
+
+
+def test_an_unsectioned_article_keeps_its_main_text():
+    """SDY1171's shape: a Science report, all body text as bare <p>, the only <sec> being the
+    supplementary material. Without this the parse is the abstract alone."""
+    xml = """
+    <article>
+      <front><article-meta><abstract><p>Abstract text.</p></abstract></article-meta></front>
+      <body>
+        <p>First main-text paragraph.</p>
+        <fig><caption><p>Figure caption text.</p></caption></fig>
+        <p>We measured titers by iELISA.</p>
+        <sec><title>Supplementary Material</title>
+          <supplementary-material><p>Supplement text.</p></supplementary-material></sec>
+      </body>
+    </article>
+    """
+
+    parsed = parse_jats_xml(xml)
+
+    assert parsed.index("## Abstract") < parsed.index("## Main text  [other]")
+    assert "## Main text  [other]\nFirst main-text paragraph.\nWe measured titers by iELISA." in parsed
+    # The caption belongs to the Figures block, not the main text (the exact match above).
+    assert "Supplement text" not in parsed
+
+
+def test_a_sectioned_article_still_drops_its_loose_intro_paragraphs():
+    """A sectioned paper's bare <p> are its unlabelled introduction -- excluded, and its parse
+    (and every sentence id stored against it) unchanged."""
+    xml = """
+    <article>
+      <body>
+        <p>Loose introduction paragraph.</p>
+        <sec><title>Results</title><p>A result.</p></sec>
+      </body>
+    </article>
+    """
+
+    parsed = parse_jats_xml(xml)
+
+    assert "A result." in parsed
+    assert "Loose introduction paragraph" not in parsed
+    assert "Main text" not in parsed

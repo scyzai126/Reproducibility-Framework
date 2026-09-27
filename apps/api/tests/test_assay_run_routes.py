@@ -1,6 +1,7 @@
 """The assay workspace endpoints: which of them spend, and what stops the one that does.
 
-`assay_report` is stubbed in every test that reaches it. A real run is upwards of twenty calls,
+`assay_report` is stubbed in every test that reaches it, and so is the data-availability step a
+web run makes alongside it (one call plus network lookups). A real run is upwards of twenty calls,
 and nothing these routes decide -- whether a run is allowed to start, what a poller sees, what a
 free read returns -- depends on what the pipeline actually answers.
 
@@ -15,7 +16,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 import app.api.routes as routes
-from app.agent import assay_jobs, assay_service
+from app.agent import assay_jobs, assay_service, data_availability_service
 from app.main import app
 
 _XML = """<article><front><article-meta><article-title>A Paper</article-title></article-meta>
@@ -54,6 +55,25 @@ def no_spending(monkeypatch):
     client = _NeverCalled()
     monkeypatch.setattr(routes, "_get_client", lambda: client)
     return client
+
+
+_DATA = {"pmid": "111", "study": "SDY1", "title": "A Paper",
+         "data_repositories": [{"accession": "GSE1", "repository": "GEO"}], "unconfirmed": [],
+         "reviews": [], "dropped": [], "warnings": [], "notes": [], "roles": {},
+         "llm_calls": 1, "llm_model": "stub"}
+
+
+@pytest.fixture(autouse=True)
+def data_step(monkeypatch):
+    """The data-availability half of a run, instant and offline. `calls` records each run."""
+    calls = []
+
+    async def _fake(pubmed_id, study_accession, _client):
+        calls.append((pubmed_id, study_accession))
+        return dict(_DATA)
+
+    monkeypatch.setattr(data_availability_service, "run_for_paper", _fake)
+    return calls
 
 
 @pytest.fixture(autouse=True)
@@ -162,8 +182,10 @@ def test_the_estimate_costs_nothing_and_sizes_what_it_can(extracted, client, no_
 
     assert response.status_code == 200
     body = response.json()
+    # The web run's data step is priced beside the assay rounds; this paper names no accession.
     assert {r["name"]: r["calls"] for r in body["rounds"]} == {
-        "extract": 1, "verify": 1, "correct": 0, "obi": 0, "canonicalize": 0}
+        "extract": 1, "verify": 1, "correct": 0, "obi": 0, "canonicalize": 0,
+        "data_availability": 0}
     assert body["total_calls_known"] is True
     assert no_spending.calls == 0
 
@@ -282,7 +304,62 @@ def test_the_result_is_attached_once_the_run_finishes(extracted, client, monkeyp
 
     finished = _poll(client, job_id)
     assert list(finished["result"]["assays"]) == ["flow cytometry assay"]
-    assert finished["progress"]["calls"] == 4
+    # The assay chain's 4 calls plus the data step's 1.
+    assert finished["progress"]["calls"] == 5
+
+
+def test_a_run_finds_the_data_repositories_alongside_the_assays(extracted, client, monkeypatch,
+                                                                 data_step):
+    _stub_report(monkeypatch)
+
+    job_id = client.post("/agent/assays/runs",
+                         json={"pubmed_id": "111", "study_accession": "SDY1",
+                               "acknowledged_calls": 2}).json()["id"]
+
+    finished = _poll(client, job_id)
+    assert data_step == [("111", "SDY1")]
+    assert finished["result"]["data_availability"]["data_repositories"][0]["accession"] == "GSE1"
+    assert finished["progress"]["rounds"]["data_availability"]["state"] == "done"
+
+
+def test_a_failed_data_step_is_reported_without_losing_the_assays(extracted, client,
+                                                                   monkeypatch):
+    """The registry is the run's main product and is paid for either way."""
+    _stub_report(monkeypatch)
+
+    async def _broken(*_args):
+        raise RuntimeError("GEO is down")
+
+    monkeypatch.setattr(data_availability_service, "run_for_paper", _broken)
+
+    job_id = client.post("/agent/assays/runs",
+                         json={"pubmed_id": "111", "study_accession": "SDY1",
+                               "acknowledged_calls": 2}).json()["id"]
+
+    finished = _poll(client, job_id)
+    assert finished["state"] == "done"
+    assert list(finished["result"]["assays"]) == ["flow cytometry assay"]
+    assert "GEO is down" in finished["result"]["data_availability"]["error"]
+    assert finished["progress"]["rounds"]["data_availability"]["state"] == "failed"
+
+
+def test_the_stored_data_repositories_are_served_for_free(client, tmp_path, monkeypatch,
+                                                         no_spending):
+    monkeypatch.setattr(data_availability_service, "OUT_DIR", tmp_path)
+    # A benchmark paper: its folder exists, so its data repositories are read from OUT_DIR.
+    monkeypatch.setattr(assay_service, "REGISTRY_ROOT", tmp_path / "registries")
+    (tmp_path / "registries" / "111_SDY1").mkdir(parents=True)
+    (tmp_path / "SDY1_111.json").write_text(json.dumps({"data_repositories": [], "pmid": "111"}),
+                                            encoding="utf-8")
+
+    stored = client.get("/agent/data-availability",
+                        params={"pubmed_id": "111", "study_accession": "SDY1"})
+    never_run = client.get("/agent/data-availability",
+                           params={"pubmed_id": "222", "study_accession": "SDY2"})
+
+    assert stored.json() == {"data_repositories": [], "pmid": "111"}
+    assert never_run.json() is None
+    assert no_spending.calls == 0
 
 
 def test_an_estimate_that_moved_is_recorded_rather_than_blocking_the_run(
@@ -374,8 +451,9 @@ def test_stopping_a_run_is_terminal_and_keeps_what_it_already_spent(extracted, c
     assert response.status_code == 200
     finished = _poll(client, job_id)
     assert finished["state"] == "cancelled"
-    # Round 1 reported before the stub hung. Stopping is not a refund.
-    assert finished["progress"]["calls"] == 1
+    # Round 1 reported before the stub hung, and the parallel data step had already finished
+    # its one call. Stopping is not a refund.
+    assert finished["progress"]["calls"] == 2
 
 
 def test_stopping_a_finished_run_says_there_was_nothing_to_stop(extracted, client, monkeypatch):
@@ -399,3 +477,42 @@ def test_polling_a_run_the_backend_no_longer_remembers_points_at_the_files_it_wr
 
 def test_stopping_a_run_the_backend_no_longer_remembers_is_a_404(client):
     assert client.post("/agent/assays/runs/nosuchjob/cancel").status_code == 404
+
+
+# ── the per-paper table (Extract tab) ─────────────────────────────────────────
+
+def test_one_paper_s_table_rows_are_built_like_the_corpus_rows(extracted, client, monkeypatch,
+                                                             no_spending):
+    """Free, and the same builder as scripts/build_assay_table.py, scoped to one paper."""
+    from app.agent import assay_table
+
+    monkeypatch.setattr(assay_table, "BENCHMARK_DIR", extracted.parent / "no_benchmarks")
+    (extracted / "assays_OBI.json").write_text(json.dumps({
+        "flow cytometry assay": {**_ENTRY, "name_in_paper": ["flow cytometry", "FACS"],
+                                 "obi_id": "OBI:0000916", "obi_label": "flow cytometry assay",
+                                 "resource": "exact_original", "obi_confidence": "high"}}),
+        encoding="utf-8")
+    # Another paper's registry beside it must not leak into this paper's table.
+    other = extracted.parent / "222_SDY2"
+    other.mkdir()
+    (other / "assays_OBI.json").write_text(json.dumps({"x": _ENTRY}), encoding="utf-8")
+
+    rows = client.get("/agent/assays/table",
+                      params={"pubmed_id": "111", "study_accession": "SDY1"}).json()["rows"]
+
+    assert [(r["study"], r["assay"], r["obi_id"]) for r in rows] == [
+        ("111_SDY1", "flow cytometry / FACS", "OBI:0000916")]
+    assert rows[0]["benchmark_assay"] is None
+    assert rows[0]["paper_url"] == "https://pubmed.ncbi.nlm.nih.gov/111/"
+    assert no_spending.calls == 0
+
+
+def test_a_paper_never_run_has_an_empty_table(paper, client):
+    rows = client.get("/agent/assays/table",
+                      params={"pubmed_id": "111", "study_accession": "SDY1"}).json()["rows"]
+
+    assert rows == []
+
+
+def test_the_table_needs_both_identifiers(client):
+    assert client.get("/agent/assays/table", params={"pubmed_id": "111"}).status_code == 400

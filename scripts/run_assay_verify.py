@@ -21,7 +21,7 @@ Usage:
     python scripts/run_assay_verify.py <registry_dir> [--xml PATH] [--limit N] [--check-quotes]
 
 Example:
-    python scripts/run_assay_verify.py data/claims/assay_registries/36988326_SDY2618 --limit 2
+    python scripts/run_assay_verify.py data/31paper_assays/36988326_SDY2618 --limit 2
 """
 
 import argparse
@@ -54,7 +54,7 @@ _XML_ROOT = _REPO_ROOT / "data" / "JAT_XML"
 def locate_xml(registry_dir: Path) -> Path | None:
     """Find the paper XML for a registry directory by naming convention.
 
-    `assay_registries/23878721_SDY1276` -> `data/JAT_XML/SDY1276_23878721.xml`. The halves
+    `31paper_assays/23878721_SDY1276` -> `data/JAT_XML/SDY1276_23878721.xml`. The halves
     are swapped rather than matched in order, because the two directory schemes were named
     independently and disagree.
     """

@@ -49,8 +49,8 @@ assay actually measured CD8. A term in the same paragraph is not evidence about 
 **Say nothing rather than say what's typical.** The extractor was instructed to emit `null`
 when the paper does not state a field, and never to infer a specimen, instrument, kit, vendor,
 or readout because it is what this assay usually runs on. A plausible guess is worse than a
-gap, because nothing downstream can tell them apart. `sample_type` and `platform` are the two
-fields that invite this most — hold them to the strictest reading.
+gap, because nothing downstream can tell them apart. `sample_type` is the field that invites
+this most — hold it to the strictest reading.
 
 ## Assay identity verification
 
@@ -105,14 +105,11 @@ Verify each of the following fields the extraction proposed, when it is present 
 - **`aliases`** — other exact wordings the paper uses **for the assay itself**. Verify each
   alias separately, as `aliases[0]`, `aliases[1]`, and so on. An alias must (a) appear verbatim
   in the source text and (b) refer to the same measurement as the assay. An instrument, chip,
-  or kit name is NOT an alias — if one appears here, that is CONTRADICTED, because the
-  extractor was told product names belong in `platform`. The exception is a brand name that
-  *is* the field's standard name for a technique (Luminex, CyTOF, ELISpot, TaqMan): the
-  extractor was told these stay as names, so they are valid aliases too. A phrase that does not appear verbatim
-  in the source is NOT_SUPPORTED, even if a near-variant does.
-- **`platform`** — the instrument, chip, kit, or vendor product this assay ran on. Verify that
-  the source ties this product to *this* assay, not merely to the same paragraph or the same
-  study. Do not infer a vendor or a kit version from a product family name.
+  or kit name is NOT an alias — if one appears here, that is CONTRADICTED, because the extractor
+  was told a product names the equipment, not the technique, and is not recorded. The exception is
+  a brand name that *is* the field's standard name for a technique (Luminex, CyTOF, ELISpot,
+  TaqMan): the extractor was told these stay as names, so they are valid aliases too. A phrase
+  that does not appear verbatim in the source is NOT_SUPPORTED, even if a near-variant does.
 - **`sample_type`** — the tissue/specimen the assay was performed on. Verify the specimen was
   used in *this* assay. Do not accept a specimen merely because it appears elsewhere in the
   passage or is the study's main specimen.
@@ -121,21 +118,22 @@ Verify each of the following fields the extraction proposed, when it is present 
   source states this assay measured, detected, profiled, or evaluated these quantities. A
   readout describing what the paper *concluded* rather than what the instrument measured is
   NOT_SUPPORTED.
-- **`source`** — `"methods"` if the technique is established in the paper's Methods section,
-  `"results"` if it appears only in Results, the Abstract, or a caption. Verify the label
-  against where the technique is actually described in the supplied text.
 - **`evidence.quote`** — verify the quote appears verbatim in the source AND that it shows the
   technique was *performed here*, rather than citing someone else's use of it. A quote that
   exists in the text but establishes nothing about this assay being performed is NOT_SUPPORTED.
-- **`evidence.sentence_ids`** — verify each cited ID exists in the supplied source text and
-  that the quote actually comes from those sentences.
 
 Older extractions may carry `evidence_location` instead of `evidence`, and `original_name`
 instead of `name_in_paper`. Treat them as the same fields under different names, and report
-them under the field name the extraction actually used. Ignore `confidence` and `claim_role`
-entirely if present — they are not proposed values and are not yours to verify. Ignore
-`measurement_role` and `parent_hint` too: they are the extractor's judgement of what the paper
-does with an assay, not values copied from the text.
+them under the field name the extraction actually used.
+
+**Some fields in a record are not yours to verify.** `normalized_name` is the extractor's
+judgement of which technique produced the data, not a value copied from the text.
+`generate_claim` is its judgement of whether the paper reported a finding drawn from the assay
+— a statement about the whole paper, which no single span either supports or contradicts.
+`source` and `evidence.sentence_ids` are derived from the quote by code after extraction, so they
+are facts about the document rather than claims anyone made. An older record may also carry `platform`,
+`measurement_role`, `parent_hint`, `confidence` or `claim_role`, none of which are extracted any
+more. Verify none of these, and do not count one as a defect.
 
 ## Evidence requirements
 
@@ -152,8 +150,8 @@ without the brackets (e.g. `"S318"`). Do not fabricate evidence.
 
 ## Do not correct the extraction
 
-If a candidate value is wrong, DO NOT provide the correct value. If the proposed instrument is
-"NextSeq 2000" but the text states "NovaSeq 6000", return CONTRADICTED — do not return
+If a candidate value is wrong, DO NOT provide the correct value. If the proposed specimen is
+"whole blood" but the text states "PBMCs", return CONTRADICTED — do not return
 "NovaSeq 6000" as a replacement. Another extraction step would be required to generate
 replacement information. Your role is verification only.
 
@@ -182,7 +180,7 @@ Return ONLY valid JSON in exactly this shape — no prose, no markdown fences:
   "assay_identity_verdict": "SUPPORTED|NOT_SUPPORTED|CONTRADICTED",
   "field_verifications": [
     {
-      "field_name": "<e.g. platform, sample_type, aliases[0], evidence.quote>",
+      "field_name": "<e.g. sample_type, readouts, aliases[0], evidence.quote>",
       "proposed_value": "<the value as given to you>",
       "verdict": "SUPPORTED|NOT_SUPPORTED|CONTRADICTED",
       "evidence_sentence_ids": ["S<n>", ...],

@@ -75,12 +75,25 @@ _QUOTE_FOLD = str.maketrans({"\u2018": "'", "\u2019": "'", "\u201a": "'",
                              "\u201c": '"', "\u201d": '"', "\u201e": '"',
                              "\u2032": "'", "\u2033": '"'})
 
-#: Registry keys that are structure or removed cruft, not proposed values to verify.
-#: `confidence` and `claim_role` are old-schema fields the current skill dropped on purpose.
-#: `measurement_role` and `parent_hint` are judgements, like `normalized_name`: they say what the
-#: paper does with an assay, not what its text states, so there is no span to check them against.
-_NOT_PROPOSED = frozenset({"confidence", "claim_role", "normalized_name",
-                           "measurement_role", "parent_hint",
+#: Registry keys that are structure, derived values, or removed cruft -- not proposed values to
+#: verify. `normalized_name` is the extractor's judgement of which technique produced the data, so
+#: there is no span to check it against. `generate_claim` is the other judgement, and about the
+#: paper as a whole rather than any one sentence: no span supports "the paper reported nothing
+#: from this assay", so a judge asked to rule on it can only guess. Keeping it out is also what
+#: keeps it free -- a flagged field costs a correction call each (assay_service.corrections_
+#: available), so verifying it would bill up to one call per assay. `source` is derived from the
+#: quote by derive_evidence_fields, which makes it a fact about the document rather than anyone's
+#: claim -- verifying it would be asking the judge to second-guess arithmetic.
+#: `evidence.sentence_ids` is the same value under the other half of the same derivation and is
+#: listed under both evidence spellings, because proposed_fields checks the flattened name. The
+#: prompt already tells the judge not to rule on it; while this set did not, every entry of an XML
+#: paper came back NOT_REPORTED on it, which forced REVIEW on the record and billed one round-3
+#: evidence correction per assay for a field nobody had objected to. `confidence`, `claim_role`,
+#: `platform`, `measurement_role` and `parent_hint` are fields the extraction no longer produces;
+#: they are listed so an older registry on disk still verifies cleanly.
+_NOT_PROPOSED = frozenset({"confidence", "claim_role", "normalized_name", "generate_claim",
+                           "source", "platform", "measurement_role", "parent_hint",
+                           "evidence.sentence_ids", "evidence_location.sentence_ids",
                            "obi_id", "obi_label", "resource", "obi_confidence"})
 
 #: Name and evidence each moved between schema versions. Older registries on disk use the
@@ -140,6 +153,49 @@ def sentence_index(source_text: str) -> dict[str, str]:
         end = matches[i + 1].start() if i + 1 < len(matches) else len(source_text)
         index[f"S{match.group(1)}"] = strip_markers(source_text[match.end():end]).strip()
     return index
+
+
+def derive_source(entry: dict, sections: dict[str, str]) -> str | None:
+    """"methods" or "results" for one entry, from where its located sentences sit. Or None.
+
+    The extraction is not asked where the assay sits; this works it out. An entry is "methods"
+    when any sentence its quote was found in lies in a `[methods]` section, and "results" when
+    none do -- the same "at least one" rule check_source_section audits with, because an entry may
+    legitimately quote a Methods sentence and a Results sentence together.
+
+    None when the quote could not be placed: on a PDF text layer there are no markers to place it
+    against, and inventing "methods" there would assert the stronger claim on exactly the entries
+    nothing can check. contract_warnings reports a None on a route that should have produced one.
+    """
+    ids = [str(s) for s in (get_evidence(entry).get("sentence_ids") or [])]
+    buckets = [sections[sid] for sid in ids if sid in sections]
+    if not buckets:
+        return None
+    return "methods" if "methods" in buckets else "results"
+
+
+def derive_evidence_fields(assays: dict, source_text: str) -> dict:
+    """Fill in every entry's `evidence.sentence_ids` and `source` from its quote. No API call.
+
+    Runs between extraction and verification, so the judge and the corrector both see a registry
+    whose derived fields are already right. Both values were previously asked of the model and then
+    overruled by exactly this arithmetic -- locate_sentence_ids for the ids, the section map for
+    `source` -- which cost a correction call on every disagreement and taught the model nothing.
+
+    Mutates `assays` in place and returns it, the way the round-3 corrector does.
+    """
+    sections = sentence_sections(source_text)
+    for entry in assays.values():
+        if not isinstance(entry, dict):
+            continue
+        evidence_key = next((k for k in _EVIDENCE_KEYS if isinstance(entry.get(k), dict)),
+                            _EVIDENCE_KEYS[0])
+        evidence = dict(entry.get(evidence_key) or {})
+        quote = evidence.get("quote")
+        evidence["sentence_ids"] = locate_sentence_ids(quote, source_text) if quote else []
+        entry[evidence_key] = evidence
+        entry["source"] = derive_source(entry, sections)
+    return assays
 
 
 def check_source_section(entry: dict, sections: dict[str, str]) -> dict:
@@ -367,8 +423,9 @@ def proposed_fields(entry: dict) -> list[tuple[str, object]]:
 
     Aliases are enumerated individually — one bad alias in a list of five is a specific
     defect, and a single verdict over the whole list cannot say which one. Evidence is
-    flattened to its parts for the same reason: the quote and the sentence ids fail
-    independently.
+    flattened for the same reason, but only `quote` survives the flattening: the ids beside it
+    are derived from that quote by code, so _NOT_PROPOSED holds them back and the judge rules on
+    the one part of the evidence anyone actually proposed.
     """
     fields: list[tuple[str, object]] = []
     for key, value in entry.items():
@@ -382,6 +439,11 @@ def proposed_fields(entry: dict) -> list[tuple[str, object]]:
     evidence_key = next((k for k in _EVIDENCE_KEYS if isinstance(entry.get(k), dict)), None)
     if evidence_key:
         for sub in ("quote", "sentence_ids"):
+            # Flattened names go through _NOT_PROPOSED too, so the set is the single answer to
+            # "what is not sent for verification" rather than a rule the top level obeys and the
+            # evidence parts quietly do not.
+            if f"{evidence_key}.{sub}" in _NOT_PROPOSED:
+                continue
             value = entry[evidence_key].get(sub)
             if value not in (None, "", []):
                 fields.append((f"{evidence_key}.{sub}", value))
@@ -440,10 +502,8 @@ def derive_record_verdict(identity_verdict: str, verifications: list[dict]) -> s
     return ACCEPT
 
 
-def _normalize_result(
-    assay_key: str, entry: dict, raw: dict, quote_check: dict, source_check: dict | None = None
-) -> dict:
-    """Build one assay's report from the judge's answer plus the two deterministic checks.
+def _normalize_result(assay_key: str, entry: dict, raw: dict, quote_check: dict) -> dict:
+    """Build one assay's report from the judge's answer plus the quote check.
 
     `assay_id` is forced to the real registry key — a per-assay call gives the model no way
     to know it beyond the echo we asked for.
@@ -469,18 +529,6 @@ def _normalize_result(
                 verification["verdict"] = quote_check["verdict"]
                 verification["reason"] = quote_check["detail"]
 
-    # And the section check outranks it on `source`, for the same reason: where the cited
-    # sentences sit is a fact about the document. Measured need -- over a 30-paper run the judge
-    # returned two `source` verdicts across 171 assays while this check found two mismatches on
-    # *different* entries, which then survived into the finished registry because nothing
-    # flagged them for round 3. A None verdict means the check could not run, and leaves the
-    # judge's answer alone.
-    if source_check and source_check.get("verdict") is not None:
-        for verification in verifications:
-            if verification["field_name"] == "source":
-                verification["verdict"] = source_check["verdict"]
-                verification["reason"] = source_check["detail"]
-
     identity_key = name_field(entry)
     identity = raw.get("assay_identity_verdict")
     if identity not in _MODEL_VERDICTS:
@@ -494,15 +542,13 @@ def _normalize_result(
         "assay_identity_verdict": identity,
         "field_verifications": verifications,
         "quote_check": quote_check,
-        "source_check": source_check,
         "conflict_detected": bool(raw.get("conflict_detected")),
         "record_verdict": derive_record_verdict(identity, verifications),
         "model_record_verdict": model_verdict if model_verdict in (ACCEPT, REVIEW, REJECT) else None,
     }
 
 
-def _error_result(assay_key: str, entry: dict, quote_check: dict, message: str,
-                  source_check: dict | None = None) -> dict:
+def _error_result(assay_key: str, entry: dict, quote_check: dict, message: str) -> dict:
     """Report shape for an assay whose verifier call failed outright."""
     return {
         "assay_id": assay_key,
@@ -512,7 +558,6 @@ def _error_result(assay_key: str, entry: dict, quote_check: dict, message: str,
             _missing_verification(field, value) for field, value in proposed_fields(entry)
         ],
         "quote_check": quote_check,
-        "source_check": source_check,
         "conflict_detected": False,
         "record_verdict": "ERROR",
         "model_record_verdict": None,
@@ -527,7 +572,6 @@ async def verify_assay(
     paper_title: str,
     client: AsyncOpenAI,
     model: str = settings.OPENAI_MODEL,
-    sections: dict[str, str] | None = None,
 ) -> dict:
     """Verify one registry entry against the paper. One LLM call, one assay.
 
@@ -539,11 +583,6 @@ async def verify_assay(
     bad entry cannot cost a whole paper's verdicts.
     """
     quote_check = check_quote_verbatim(entry, source_text)
-    # Both free checks run before the call, so the judge's answer on either field can be
-    # overruled by fact. `sections` is passed in by verify_registry, which builds it once for
-    # the paper rather than once per assay.
-    source_check = check_source_section(
-        entry, sections if sections is not None else sentence_sections(source_text))
 
     candidate = json.dumps({assay_key: entry}, indent=2, ensure_ascii=False)
     prompt = (
@@ -564,23 +603,20 @@ async def verify_assay(
         parsed = json.loads(raw) if raw else None
     except Exception as exc:  # noqa: BLE001 - any failure becomes a per-assay error report
         logger.warning("%s: verification call failed - %s", assay_key, exc)
-        return _error_result(assay_key, entry, quote_check, f"{type(exc).__name__}: {exc}",
-                             source_check)
+        return _error_result(assay_key, entry, quote_check, f"{type(exc).__name__}: {exc}")
 
     # An empty reply is a failed call, not a verdict. Scoring it as {} used to turn every field
     # NOT_REPORTED and the record REVIEW, which reads as the judge having looked and objected.
     if parsed is None:
-        return _error_result(assay_key, entry, quote_check, "verifier returned an empty reply",
-                             source_check)
+        return _error_result(assay_key, entry, quote_check, "verifier returned an empty reply")
 
     if not isinstance(parsed, dict):
         return _error_result(
             assay_key, entry, quote_check,
             f"verifier returned {type(parsed).__name__}, not an object",
-            source_check,
         )
 
-    return _normalize_result(assay_key, entry, parsed, quote_check, source_check)
+    return _normalize_result(assay_key, entry, parsed, quote_check)
 
 
 async def verify_registry(
@@ -616,15 +652,12 @@ async def verify_registry(
 
     semaphore = asyncio.Semaphore(max(1, max_concurrency))
     done = 0
-    # Parsed once for the paper, not once per assay: it is the same map for every entry, and
-    # sentence_sections walks the whole document to build it.
-    sections = sentence_sections(source_text)
 
     async def _verify_one(key: str) -> dict:
         nonlocal done
         async with semaphore:
             result = await verify_assay(key, assays[key], source_text, paper_title,
-                                        client, model, sections=sections)
+                                        client, model)
         done += 1
         print(f"  [{done}/{len(keys)}] {key}: {result['record_verdict']} "
               f"(identity {result['assay_identity_verdict']})")

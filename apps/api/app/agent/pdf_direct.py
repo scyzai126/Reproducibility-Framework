@@ -61,7 +61,7 @@ async def extract_claims_from_pdf_direct(
     )
 
     raw = _strip_fences((resp.choices[0].message.content or "").strip())
-    result: dict = json.loads(raw)
+    result: dict = json.loads(raw, strict=False)
     abstract_unmatched = result.pop("abstract_unmatched_findings", [])
     claims = {k: v for k, v in result.items() if k.startswith("claim_")}
     return claims, abstract_unmatched

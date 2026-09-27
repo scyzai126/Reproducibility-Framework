@@ -27,11 +27,8 @@ def _entry(**over) -> dict:
         "name_in_paper": "microarray",
         "normalized_name": "transcription profiling by array",
         "aliases": ["Illumina Human HT12v3 Expression BeadChip"],
-        "platform": "Illumina Human HT12v3 Expression BeadChip",
         "sample_type": "PBMCs",
         "readouts": "genome-wide gene expression",
-        "measurement_role": "reported",
-        "parent_hint": None,
         "source": "methods",
         "evidence": {
             "section": "Materials and Methods",
@@ -103,10 +100,10 @@ def test_the_shared_rules_are_byte_identical_to_the_xml_prompt():
     rules = ("## What counts as an entry", "## Output")
     assert between(xml, *rules) == between(pdf, *rules)
 
-    # The per-field rules after the JSON example, up to `source` -- where the two legitimately
-    # part company. The example itself is skipped: its `sentence_ids` line is one of exactly
-    # two intended differences in this stretch, the other being the `source`/`evidence` rules.
-    fields = ("**Ten fields, no more.**", "- `source` — where the paper establishes")
+    # The per-field rules after the JSON example, up to `evidence` -- where the two legitimately
+    # part company, because only that bullet depends on whether the source carries sentence
+    # markers. Everything before it is about assays, not about the file format.
+    fields = ("**Seven fields, no more.**", "- `evidence` — **required on every entry**")
     assert between(xml, *fields) == between(pdf, *fields)
 
 
@@ -162,7 +159,8 @@ def test_empty_sentence_ids_are_the_contract_on_this_route_and_do_not_warn():
 
     assert contract_warnings(registry, expect_sentence_ids=False) == []
     # The XML default still reports them, so the 34 XML papers are unaffected.
-    assert contract_warnings(registry) == ["microarray: evidence cites no sentence_ids"]
+    assert contract_warnings(registry) == [
+        "microarray: quote could not be located in any sentence"]
 
 
 def test_a_missing_quote_still_warns_on_the_pdf_route():

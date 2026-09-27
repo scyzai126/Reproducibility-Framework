@@ -34,6 +34,8 @@ TERMINAL = ("done", "error", "cancelled")
 #: The rounds, in the order assay_service runs them. Named here so a caller can lay out five rows
 #: before the first event arrives, rather than growing the list as rounds report.
 ROUND_NAMES = ("extract", "verify", "correct", "obi", "canonicalize")
+#: Not a round of the assay chain: the data-availability step a web run makes in parallel with it.
+DATA_STEP = "data_availability"
 
 #: How many finished jobs to remember. Enough that a poller which was asleep still finds its
 #: result; small enough that a long-lived dev server does not accumulate whole registries in RAM.
@@ -151,9 +153,12 @@ def finish(job_id: str, result: dict) -> None:
     if job is None or job.state in TERMINAL:
         return
     job.state, job.finished_at, job.result = "done", _now(), result
-    # From the finished report, not from the events: this is the number that gets quoted.
-    job.progress["calls"] = int((result.get("meta") or {}).get("llm_calls") or
-                                job.progress["calls"])
+    # From the finished report, not from the events: this is the number that gets quoted. A web
+    # run also carries the data-availability step's calls, reported beside the assay chain's.
+    assay_calls = (result.get("meta") or {}).get("llm_calls")
+    data_calls = int((result.get("data_availability") or {}).get("llm_calls") or 0)
+    job.progress["calls"] = (int(assay_calls) + data_calls if assay_calls is not None
+                             else job.progress["calls"])
     job.progress["current"] = None
 
 

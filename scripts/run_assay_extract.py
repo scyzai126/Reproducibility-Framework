@@ -3,7 +3,7 @@
 The rules live in apps/api/app/prompts/extract_assays.txt and are applied as a single call
 over the sentence-numbered paper rather than an interactive read.
 
-Writes data/claims/assay_registries/<pmid>_<SDY>/assays.json -- the canonical location the
+Writes data/31paper_assays/<pmid>_<SDY>/assays.json -- the canonical location the
 rest of the chain reads. Re-running overwrites it in place.
 
 The paper text is the same parse the verifier reads (parse_jats_xml + number_sentences), so
@@ -20,7 +20,7 @@ Usage:
 
 Example:
     python scripts/run_assay_extract.py data/JAT_XML/SDY1119_26682988.xml \\
-        data/claims/assay_registries/26682988_SDY1119
+        data/31paper_assays/26682988_SDY1119
 """
 
 import argparse
@@ -66,8 +66,11 @@ async def main(xml_path: Path, out_dir: Path, dry_run: bool) -> None:
 
     print(f"\n{len(registry)} assay(s):")
     for key, entry in registry.items():
+        # `source` and the ids are derived by assay_service, not by this script, so an
+        # extraction printed here legitimately has neither yet.
         ids = ",".join(entry["evidence"]["sentence_ids"]) or "-"
-        print(f"  {entry['source']:8s} {key}  [{ids}]  platform={entry['platform']!r}")
+        print(f"  {str(entry.get('source') or '-'):8s} {key}  [{ids}]  "
+              f"specimen={entry.get('sample_type')!r}")
 
     for warning in contract_warnings(registry):
         print(f"  WARNING  {warning}")

@@ -169,8 +169,9 @@ def _local_state() -> dict[tuple[str, str], dict]:
     for paper in assay_service.available_papers():
         state[(paper["pubmed_id"], paper["study_accession"])] = paper
 
-    root = assay_service.REGISTRY_ROOT
-    if root.exists():
+    for root in (assay_service.REGISTRY_ROOT, assay_service.CACHE_ROOT):
+        if not root.exists():
+            continue
         for directory in sorted(root.glob("*_*")):
             if not (directory / "assays.json").exists():
                 continue

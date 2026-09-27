@@ -338,6 +338,7 @@ def parse_jats_xml(xml_text: str) -> str:
         return ""
     section_records: list[tuple[int, str, str, str]] = []
     order = 0
+    body_text_found = False
 
     # Abstract often sits outside <sec>.
     for abstract in _primary_abstracts(root):
@@ -409,6 +410,26 @@ def parse_jats_xml(xml_text: str) -> str:
             continue
         section_records.append((order, canon, str(header), "\n".join(paragraphs)))
         order += 1
+        if _has_ancestor(sec, "body"):
+            body_text_found = True
+
+    # An unsectioned article (a Science report, say) keeps its whole main text as bare <p>
+    # under <body>, which the section walk above never sees -- leaving only the abstract. Only
+    # then are those paragraphs read, as one "Main text" section after the abstract: a sectioned
+    # paper's loose <p> are its unlabelled introduction, excluded like any Introduction, and its
+    # output (and every sentence id stored against it) must not move.
+    if not body_text_found:
+        loose = [
+            _strip_extended_data_refs(_text_content(p))
+            for body in _descendants(root, "body")
+            for p in _descendants(body, "p")
+            if not _has_ancestor(p, {"sec", "fig", "table-wrap", "supplementary-material"})
+            and not _is_in_excluded_container(p)
+        ]
+        loose = [txt for txt in loose if txt]
+        if loose:
+            after_abstract = sum(1 for record in section_records if record[1] == "abstract")
+            section_records.insert(after_abstract, (-1, "other", "Main text", "\n".join(loose)))
 
     section_blocks: list[str] = []
     for _, canon, header, body in section_records:
