@@ -5,7 +5,7 @@ const backendOrigin = process.env.NEXT_PUBLIC_BACKEND_ORIGIN || 'http://localhos
 const nextConfig: NextConfig = {
   devIndicators: false,
   experimental: {
-    proxyTimeout: 300_000, // 5 minutes — LLM + PDF analysis can take a while
+    proxyTimeout: 900_000, // 15 minutes — a v8 paper run (13 LLM calls) plus grouping
   },
   async rewrites() {
     return [

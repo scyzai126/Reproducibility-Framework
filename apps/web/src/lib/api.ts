@@ -15,8 +15,9 @@ import type {
 } from './types';
 
 const BASE = '/backend';
-const CHAT_TIMEOUT_MS = 120_000;
-const PAPER_TIMEOUT_MS = 420_000;
+// A chat message can start a full paper run (v8 extraction: 13 LLM calls, then grouping).
+const CHAT_TIMEOUT_MS = 900_000;
+const PAPER_TIMEOUT_MS = 900_000;
 
 async function parseErrorDetail(res: Response): Promise<string> {
   const contentType = res.headers.get('content-type') || '';
