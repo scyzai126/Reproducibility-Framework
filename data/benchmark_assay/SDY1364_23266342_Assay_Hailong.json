@@ -1,35 +1,50 @@
 {
-  "enzyme-linked immunospot assay": {
-    "name_in_paper": "ex vivo IFNγ ELISpot",
+  "ELISpot": {
+    "name_in_paper": "ELISpot",
     "aliases": [
       "IFNγ ELISpot",
       "ex vivo ELISpot",
-      "interferon-gamma ELISpot"
+      "interferon-gamma ELISpot",
+      "ex vivo IFNγ ELISpot"
     ],
+    "generate_claim": true,
+    "OBI ontology": {
+      "id": "OBI:0600031",
+      "label": "enzyme-linked immunospot assay"
+    },
     "evidence_location": {
       "type": "text",
       "section": "Methods",
       "quote": "IFN ELISpot assays were performed on freshly isolated PBMC from all 24 subjects at screening and at 1, 2, 4, 12 and 24 weeks post-vaccination, using the Human IFN ELISpot(ALP) kit(Mabtech). "
     }
   },
-  "flow cytometry assay": {
+  "flow cytometry": {
     "name_in_paper": "flow cytometry",
     "aliases": [
       "Surface and intracellular cytokine staining"
     ],
+    "generate_claim": true,
+    "OBI ontology": {
+      "obi_id": "OBI:0000916",
+      "obi_label": "flow cytometry assay"
+    },
     "evidence_location": {
       "type": "text",
       "section": "Methods",
       "quote": " Exploratory predefined immunological analyses included multi-parameter flow cytometry as detailed below."
     }
   },
-  "enzyme-linked immunosorbent assay": {
+  "ELISA": {
     "name_in_paper": "ELISA",
     "aliases": [
       "enzyme-linked immunosorbent assay",
-      "IgG enzyme linked immunosorbent assay",
-      "ELISA"
+      "IgG enzyme linked immunosorbent assay"
     ],
+    "generate_claim": true,
+    "OBI ontology": {
+      "id": "OBI:0000661",
+      "label": "enzyme-linked immunosorbent assay"
+    },
     "evidence_location": {
       "type": "text",
       "section": "Methods",

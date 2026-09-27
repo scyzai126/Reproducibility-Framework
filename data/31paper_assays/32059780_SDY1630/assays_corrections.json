@@ -1,0 +1,82 @@
+{
+  "summary": {
+    "assays": 4,
+    "fields_re_extracted": 2,
+    "actions": {
+      "CLEARED": 1,
+      "REPLACED": 1
+    },
+    "reported_not_corrected": 3
+  },
+  "results": [
+    {
+      "assay_id": "Flow cytometry analysis and cell sorting",
+      "assay_name": "Flow cytometry analysis and cell sorting",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "sample_type",
+          "action": "CLEARED",
+          "previous": "cells from blood, BM, spleen, lung, intestinal, tonsil, and LN samples",
+          "blind_answer": null
+        },
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "flow cytometric analysis",
+            "flow cytometry",
+            "high-dimensional flow cytometry profiling"
+          ],
+          "blind_answer": [
+            "flow cytometric analysis",
+            "flow cytometry"
+          ],
+          "dropped": [
+            "high-dimensional flow cytometry profiling"
+          ]
+        }
+      ],
+      "reported_not_corrected": [
+        {
+          "field_name": "name_in_paper",
+          "verdict": "NOT_SUPPORTED",
+          "reason": "This is a section heading combining analysis and sorting rather than a clearly stated assay name performed as such."
+        }
+      ]
+    },
+    {
+      "assay_id": "In vitro cytokine stimulation and functional assays of NK cells",
+      "assay_name": "In vitro cytokine stimulation and functional assays of NK cells",
+      "record_verdict": "REVIEW",
+      "corrections": [],
+      "reported_not_corrected": [
+        {
+          "field_name": "name_in_paper",
+          "verdict": "NOT_SUPPORTED",
+          "reason": "This is a section heading describing multiple procedures rather than a specific assay identity."
+        }
+      ]
+    },
+    {
+      "assay_id": "For measuring degranulation by NK cells",
+      "assay_name": "For measuring degranulation by NK cells",
+      "record_verdict": "REVIEW",
+      "corrections": [],
+      "reported_not_corrected": [
+        {
+          "field_name": "name_in_paper",
+          "verdict": "NOT_SUPPORTED",
+          "reason": "This is a purpose statement rather than a specific assay name."
+        }
+      ]
+    },
+    {
+      "assay_id": "Whole transcriptome profiling of NK cell subsets",
+      "assay_name": "Whole transcriptome profiling of NK cell subsets",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    }
+  ]
+}

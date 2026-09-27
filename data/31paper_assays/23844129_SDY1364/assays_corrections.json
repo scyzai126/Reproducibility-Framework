@@ -1,0 +1,76 @@
+{
+  "summary": {
+    "assays": 5,
+    "fields_re_extracted": 2,
+    "actions": {
+      "REPLACED": 2
+    },
+    "reported_not_corrected": 1
+  },
+  "results": [
+    {
+      "assay_id": "IFN-γ ELISpot",
+      "assay_name": "IFN-γ ELISpot",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Gene Expression Analysis",
+      "assay_name": "Gene Expression Analysis",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "microarray",
+            "Illumina microarrays"
+          ],
+          "blind_answer": [
+            "gene expression analysis",
+            "microarray analysis"
+          ],
+          "dropped": [
+            "microarray"
+          ]
+        }
+      ],
+      "reported_not_corrected": [
+        {
+          "field_name": "name_in_paper",
+          "verdict": "NOT_SUPPORTED",
+          "reason": "This is a section heading rather than a specific assay name actually used as the procedure name in the text."
+        }
+      ]
+    },
+    {
+      "assay_id": "Quantitative PCR",
+      "assay_name": "Quantitative PCR",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "sample_type",
+          "action": "REPLACED",
+          "previous": "cDNA",
+          "blind_answer": "PBMC"
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Flow cytometry",
+      "assay_name": "Flow cytometry",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Western blot",
+      "assay_name": "Western blot",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    }
+  ]
+}

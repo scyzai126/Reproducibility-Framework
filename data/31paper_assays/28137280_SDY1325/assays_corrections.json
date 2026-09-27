@@ -1,0 +1,102 @@
+{
+  "summary": {
+    "assays": 5,
+    "fields_re_extracted": 3,
+    "actions": {
+      "REPLACED": 1,
+      "REAFFIRMED": 2
+    },
+    "reported_not_corrected": 0
+  },
+  "results": [
+    {
+      "assay_id": "microarray",
+      "assay_name": "microarray",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "flow cytometric characterisation of B cells and plasma cells",
+      "assay_name": "flow cytometric characterisation of B cells and plasma cells",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "flow cytometry",
+            "Flow cytometry",
+            "FACS"
+          ],
+          "blind_answer": [
+            "flow cytometry",
+            "flow cytometric data",
+            "Phenotypic characterisation of peripheral blood plasma cells (PBMCs) following immunisation",
+            "Flow cytometric analysis of IgM memory ( left ) and switched memory ( right ) B cell populations"
+          ],
+          "dropped": [
+            "FACS"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "serum bactericidal assay",
+      "assay_name": "serum bactericidal assay",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "B-cell enzyme-linked immunospot assay",
+      "assay_name": "B-cell enzyme-linked immunospot assay",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REAFFIRMED",
+          "previous": [
+            "ELISpot",
+            "enzyme-linked immunospot (ELISpot)",
+            "cultured ELISpot",
+            "B mem ELISpots"
+          ],
+          "blind_answer": [
+            "cultured ELISpot",
+            "B mem ELISpots",
+            "enzyme-linked immunospot (ELISpot)",
+            "cultured antibody-secreting cell (ASC) ELISpots",
+            "ex vivo antibody-secreting cell (ASC) ELISpots",
+            "cultured MenA-specific ASC ELISpot frequencies"
+          ],
+          "dropped": []
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Quantitative real-time PCR",
+      "assay_name": "Quantitative real-time PCR",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REAFFIRMED",
+          "previous": [
+            "RT-PCR",
+            "quantitative PCR"
+          ],
+          "blind_answer": [
+            "real-time PCR",
+            "RT-PCR",
+            "quantitative PCR"
+          ],
+          "dropped": []
+        }
+      ],
+      "reported_not_corrected": []
+    }
+  ]
+}

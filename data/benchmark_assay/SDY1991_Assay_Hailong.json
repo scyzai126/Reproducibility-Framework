@@ -1,24 +1,64 @@
 {
-  "RNA-seq assay": {
+  "RNA-Sequencing Assay": {
     "name_in_paper": "RNA-Sequencing Assay",
     "aliases": [
       "RNA-Seq"
     ],
+    "generate_claim": true,
+    "OBI ontology": {
+      "id": "OBI:0001271",
+      "label": "RNA-seq assay"
+    },
     "evidence_location": {
       "type": "text",
       "section": "Methods",
       "quote": "Microscaled RNA-Sequencing Assay"
     }
   },
-  "flow cytometry assay": {
-    "name_in_paper": "flow cytometry",
+  "ELISA": {
+    "name_in_paper": "ELISA",
     "aliases": [
-      "flow cytometry"
     ],
+    "generate_claim": false,
+    "OBI ontology": {
+      "id": "OBI:0000661",
+      "label": "enzyme-linked immunosorbent assay"
+    },
     "evidence_location": {
       "type": "text",
       "section": "Methods",
-      "quote": "The serology was performed by DENV-specific IgG ELISAs and flow cytometry-based neutralization assays, as previously described"
+      "quote": "The serology was performed by DENV-specific IgG ELISAs and flow cytometry-based neutralization assays"
+    }
+  },
+  "flow cytometry": {
+    "name_in_paper": "flow cytometry",
+    "aliases": [
+    ],
+    "generate_claim": false,
+    "OBI ontology": {
+      "obi_id": "OBI:0000916",
+      "obi_label": "flow cytometry assay"
+    },
+    "evidence_location": {
+      "type": "text",
+      "section": "Methods",
+      "quote": "The serology was performed by DENV-specific IgG ELISAs and flow cytometry-based neutralization assays"
+    }
+  },
+  "IFN-γ Capture Assay": {
+    "name_in_paper": "flow cytometry",
+    "aliases": [
+      "cytokine capture assay"
+    ],
+    "generate_claim": true,
+    "OBI ontology": {
+      "obi_id": "OBI:0000916",
+      "obi_label": "flow cytometry assay"
+    },
+    "evidence_location": {
+      "type": "text",
+      "section": "Methods",
+      "quote": "Two hundred cells each from CD8+ IFNγ+ and CD8+ IFNγ− cell populations were sorted using a FACSAria cell sorter"
     }
   }
 }

@@ -1,0 +1,105 @@
+{
+  "summary": {
+    "assays": 4,
+    "fields_re_extracted": 5,
+    "actions": {
+      "REAFFIRMED": 2,
+      "REPLACED": 3
+    },
+    "reported_not_corrected": 0
+  },
+  "results": [
+    {
+      "assay_id": "ELISA",
+      "assay_name": "ELISA",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "sample_type",
+          "action": "REAFFIRMED",
+          "previous": "acute phase serum",
+          "blind_answer": "acute phase serum"
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "reverse transcription-PCR",
+      "assay_name": "reverse transcription-PCR",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "sample_type",
+          "action": "REAFFIRMED",
+          "previous": "acute phase serum",
+          "blind_answer": "acute phase serum"
+        },
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "reverse transcription polymerase chain reaction (RT-PCR)",
+            "PCR tests"
+          ],
+          "blind_answer": [
+            "RT-PCR",
+            "PCR"
+          ],
+          "dropped": [
+            "PCR tests"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "flow cytometry",
+      "assay_name": "flow cytometry",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "Flow Cytometry Analysis",
+            "flowcytometry",
+            "Initial phenotyping of peripheral blood mononuclear cells (PBMC) from the two groups (D+L and D-L) was determined by flow cytometry."
+          ],
+          "blind_answer": [
+            "flowcytometry"
+          ],
+          "dropped": [
+            "Flow Cytometry Analysis"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "RNA Sequencing",
+      "assay_name": "RNA Sequencing",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "RNA-sequencing",
+            "RNA-seq",
+            "transcriptomic analysis",
+            "bulk RNA-seq datasets"
+          ],
+          "blind_answer": [
+            "RNA-sequencing",
+            "RNA-seq",
+            "bulk RNA-seq datasets"
+          ],
+          "dropped": [
+            "transcriptomic analysis"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    }
+  ]
+}

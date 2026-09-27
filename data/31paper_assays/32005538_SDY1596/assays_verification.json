@@ -1,0 +1,222 @@
+{
+  "summary": {
+    "total": 3,
+    "accept": 1,
+    "review": 2,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {
+      "readouts": {
+        "NOT_SUPPORTED": 1
+      },
+      "aliases[]": {
+        "NOT_SUPPORTED": 1
+      }
+    }
+  },
+  "results": [
+    {
+      "assay_id": "flow cytometry",
+      "assay_name": "flow cytometry",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "flow cytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S17"
+          ],
+          "evidence_text": "flow cytometry",
+          "reason": "The methods explicitly state that flow cytometry was used in this study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "BCG vaccines",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S15",
+            "S17"
+          ],
+          "evidence_text": "Volumes of BCG vaccines estimated to carry 2×10^6 colony-forming units (CFU, calculated based on vaccine label) were stained immediately after reconstitution ... Cell membrane integrity was assessed by flow cytometry",
+          "reason": "The flow cytometry assay in the cited section was performed on stained BCG vaccine samples."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "mycobacterial membrane integrity and bacterial RNA fluorescence intensity",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "The cited assay section supports membrane integrity by flow cytometry, but bacterial RNA fluorescence intensity is described in a separate flow cytometry procedure rather than unambiguously as the same assay."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Cell membrane integrity was assessed by flow cytometry (LSR Fortessa, BD Biosciences).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S17"
+          ],
+          "evidence_text": "Cell membrane integrity was assessed by flow cytometry (LSR Fortessa, BD Biosciences).",
+          "reason": "quote found in sentences S17"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S17"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    },
+    {
+      "assay_id": "culturable microbial count assay",
+      "assay_name": "culturable microbial count assay",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "culturable microbial count assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S23"
+          ],
+          "evidence_text": "culturable microbial count assay",
+          "reason": "The methods explicitly state this assay was used to obtain actual CFU counts."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "CFU counts",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "This phrase does not appear verbatim in the source as an alternate name for the assay."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "formation of CFU",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S50"
+          ],
+          "evidence_text": "formation of CFU",
+          "reason": "The paper uses this exact wording to refer to the same viability assessment approach."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "BCG vials",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S25"
+          ],
+          "evidence_text": "BCG vials were reconstituted",
+          "reason": "The assay was performed on reconstituted BCG vials."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "colony-forming units as a proxy for mycobacterial viability",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S23"
+          ],
+          "evidence_text": "Actual CFU counts were obtained by the culturable microbial count assay and used as a proxy for mycobacterial viability.",
+          "reason": "The source explicitly states that actual CFU counts were the readout and were used as a proxy for viability."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Actual CFU counts were obtained by the culturable microbial count assay and used as a proxy for mycobacterial viability.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S23"
+          ],
+          "evidence_text": "Actual CFU counts were obtained by the culturable microbial count assay and used as a proxy for mycobacterial viability.",
+          "reason": "quote found in sentences S23"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S23"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "fluorescent bead-based multianalyte xMAP technology cytokine kit",
+      "assay_name": "fluorescent bead-based multianalyte xMAP technology cytokine kit",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "fluorescent bead-based multianalyte xMAP technology cytokine kit",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S37"
+          ],
+          "evidence_text": "A fluorescent bead-based multianalyte xMAP technology cytokine kit",
+          "reason": "The text explicitly names this assay as the kit employed for measurement."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "Milliplex Human Cytokine/Chemokine Immunoassay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S37"
+          ],
+          "evidence_text": "Milliplex Human Cytokine/Chemokine Immunoassay",
+          "reason": "This exact phrase appears in parentheses as the specific assay used."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "whole blood supernatants",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S34",
+            "S36",
+            "S37"
+          ],
+          "evidence_text": "whole blood diluted 1:1 in RPMI medium was stimulated... After 6 h and 18 h incubation at 37 °C, supernatants were collected... was employed to measure the concentration of 41 cytokines/chemokines",
+          "reason": "The assay measured cytokines/chemokines in supernatants collected from stimulated whole blood."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "concentrations of 41 cytokines and chemokines",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S37"
+          ],
+          "evidence_text": "measure the concentration of 41 cytokines/chemokines",
+          "reason": "The source explicitly states the assay measured concentrations of 41 cytokines/chemokines."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "A fluorescent bead-based multianalyte xMAP technology cytokine kit (Milliplex Human Cytokine/Chemokine Immunoassay, Millipore Corp, Billerica, MA, USA) was employed to measure the concentration of 41 cytokines/chemokines covering the spectrum of Th1, Th2, Th17, chemoattractants and hematopoietic factors.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S37"
+          ],
+          "evidence_text": "A fluorescent bead-based multianalyte xMAP technology cytokine kit (Milliplex Human Cytokine/Chemokine Immunoassay, Millipore Corp, Billerica, MA, USA) was employed to measure the concentration of 41 cytokines/chemokines covering the spectrum of Th1, Th2, Th17, chemoattractants and hematopoietic factors.",
+          "reason": "quote found in sentences S37"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S37"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

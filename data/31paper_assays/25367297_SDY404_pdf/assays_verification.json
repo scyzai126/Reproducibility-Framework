@@ -1,0 +1,214 @@
+{
+  "summary": {
+    "total": 3,
+    "accept": 2,
+    "review": 1,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {
+      "aliases[]": {
+        "NOT_SUPPORTED": 1
+      }
+    }
+  },
+  "results": [
+    {
+      "assay_id": "Flow Cytometry",
+      "assay_name": "Flow Cytometry",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Flow Cytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Flow Cytometry",
+          "reason": "The source explicitly names this assay section as Flow Cytometry."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "intracellular staining",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "as measured by intracellular staining",
+          "reason": "This exact phrase appears and refers to the cytokine measurement performed by flow cytometry."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "intracytoplasmic staining",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "as assessed with intracytoplasmic staining",
+          "reason": "This exact phrase appears and refers to the same cytokine measurement assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "PBMCs",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "freshly isolated PBMCs were surface stained",
+          "reason": "The flow cytometry procedure was explicitly performed on freshly isolated PBMCs."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "percentages of monocyte subsets and intracellular IL-6, TNF-α, and IL-10 expression",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "For cytokine analysis, files were batch processed using a quadrant drawn on prevaccine baseline samples; the same region was applied to all time points. Intracellular cytokine expression was calculated as percentage of the parent population.",
+          "reason": "The text supports measurement of monocyte subset proportions and intracellular IL-6, TNF-α, and IL-10 as percentages."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Samples were washed and analyzed together using a Fortessa instrument (Becton Dickinson) fitted with an automated sampler in 96-well plates and with FlowJo 9.2 software (FlowJo, LLC).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Samples were washed and analyzed together using a Fortessa instrument (Becton Dickinson) fitted with an automated sampler in 96-well plates and with FlowJo 9.2 software (FlowJo, LLC).",
+          "reason": "quote found in the whole document"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in the whole document"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Hemagglutination Inhibition Titer Measurement",
+      "assay_name": "Hemagglutination Inhibition Titer Measurement",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Hemagglutination Inhibition Titer Measurement",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Hemagglutination Inhibition Titer Measurement",
+          "reason": "This exact assay heading appears in the source and the assay was performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "hemagglutination inhibition (HAI) assays",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Hemagglutination inhibition (HAI) assays were performed",
+          "reason": "This exact phrase appears and refers to the same assay performed here."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "HAI titer",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "The text mentions HAI titer as a measurement/result, not as an alias for the assay itself."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "serum samples",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "on serum samples collected at day 0 (before vaccination) and day 28 after vaccination",
+          "reason": "The assay is explicitly stated to be performed on serum samples."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "antibody titers against each strain in the 2011–2012 vaccine",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "to determine antibody titers against each strain in the 2011–2012 vaccine",
+          "reason": "The source explicitly states this assay determined antibody titers against each vaccine strain."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Hemagglutination inhibition (HAI) assays were performed as described elsewhere [12] on serum samples collected at day 0 (before vaccination) and day 28 after vaccination to determine antibody titers against each strain in the 2011–2012 vaccine",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Hemagglutination inhibition (HAI) assays were performed as described elsewhere [12] on serum samples collected at day 0 (before vaccination) and day 28 after vaccination to determine antibody titers against each strain in the 2011–2012 vaccine",
+          "reason": "quote found in the whole document"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in the whole document"
+      },
+      "conflict_detected": true,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    },
+    {
+      "assay_id": "Western Blot Analysis",
+      "assay_name": "Western Blot Analysis",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Western Blot Analysis",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Western Blot Analysis",
+          "reason": "This exact assay heading appears in the Methods and describes a procedure performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "Western blot analyses",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Western blot analyses",
+          "reason": "This exact phrase appears in the Results referring to the same assay."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "Western analyses",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Western analyses",
+          "reason": "This exact phrase appears in Figure 5 legend referring to the same western blot measurement."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "PBMCs or purified monocyte lysates",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Analysis of PBMCs or purified monocyte lysates harvested at baseline",
+          "reason": "The Methods explicitly state these were the lysate sources used for the western blot analysis."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "total and phosphorylated STAT3 and DUSP1 protein levels",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "used antibodies against human signal transducer and activator of transcription-3 (STAT3), phosphorylated-STAT3 (p-STAT3) Y705, and p-STAT3 S727 ... dual-specificity phosphatase 1 (DUSP1) ... phospho-DUSP1 (p-DUSP1) S359 ... and p-DUSP1 S296",
+          "reason": "The assay measured STAT3 and DUSP1 proteins including phosphorylated forms."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Analysis of PBMCs or purified monocyte lysates harvested at baseline used antibodies against human signal transducer and activator of transcription-3 (STAT3), phosphorylated-STAT3 ( p-STAT3) Y705, and p-STAT3 S727",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "quote found in the whole document"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in the whole document"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

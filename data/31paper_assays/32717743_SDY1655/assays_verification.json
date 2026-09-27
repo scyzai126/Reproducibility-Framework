@@ -1,0 +1,334 @@
+{
+  "summary": {
+    "total": 5,
+    "accept": 3,
+    "review": 0,
+    "reject": 2,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {
+      "name_in_paper": {
+        "CONTRADICTED": 2
+      }
+    }
+  },
+  "results": [
+    {
+      "assay_id": "RT-qPCR",
+      "assay_name": "RT-qPCR",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "RT-qPCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S167"
+          ],
+          "evidence_text": "RT-qPCR",
+          "reason": "The methods explicitly state that RNA concentrations were measured by RT-qPCR in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "quantitative PCR with reverse tran- scription (RT–qPCR)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S13"
+          ],
+          "evidence_text": "quantified by quantitative PCR with reverse tran- scription (RT–qPCR)",
+          "reason": "This exact wording appears in the text and refers to the same viral RNA measurement assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "nasopharyngeal samples",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S167"
+          ],
+          "evidence_text": "from nasopharyngeal samples",
+          "reason": "The assay is explicitly described as being performed on nasopharyngeal samples."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "SARS-CoV-2 viral RNA concentration or genome copies",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S169",
+            "S170",
+            "S171"
+          ],
+          "evidence_text": "For SARS-CoV-2 RNA detection... Virus RNA copies were quantified... The lower limit of detection for SARS-CoV-2 genomes assayed by qPCR in nasopharyngeal specimens",
+          "reason": "The text states that the assay detected SARS-CoV-2 RNA and quantified virus RNA copies/genomes."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "RNA concentrations were measured from nasopharyngeal samples by RT-qPCR as previously described 23 .",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S167"
+          ],
+          "evidence_text": "RNA concentrations were measured from nasopharyngeal samples by RT-qPCR as previously described 23 .",
+          "reason": "quote found in sentences S167"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S167"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Human Cytokine Array/Chemokine Array 71–403 Plex Panel (HD71)",
+      "assay_name": "Human Cytokine Array/Chemokine Array 71–403 Plex Panel (HD71)",
+      "assay_identity_verdict": "CONTRADICTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Human Cytokine Array/Chemokine Array 71–403 Plex Panel (HD71)",
+          "verdict": "CONTRADICTED",
+          "evidence_sentence_ids": [
+            "S177"
+          ],
+          "evidence_text": "measured with Human Cytokine Array/Chemokine Array 71–403 Plex Panel (HD71)",
+          "reason": "This is a product/panel name rather than an assay technique name."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "sera",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S176",
+            "S177"
+          ],
+          "evidence_text": "Patient serum was isolated as before and aliquots were stored in −80°C. Sera were shipped to Eve Technologies (Calgary, Alberta, Canada) on dry ice, and levels of cytokines and chemokines were measured",
+          "reason": "The assay was performed on sera/serum samples."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "cytokine and chemokine levels",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S177"
+          ],
+          "evidence_text": "levels of cytokines and chemokines were measured",
+          "reason": "The text explicitly states the assay measured cytokine and chemokine levels."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Sera were shipped to Eve Technologies (Calgary, Alberta, Canada) on dry ice, and levels of cytokines and chemokines were measured with Human Cytokine Array/Chemokine Array 71–403 Plex Panel (HD71).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S177"
+          ],
+          "evidence_text": "Sera were shipped to Eve Technologies (Calgary, Alberta, Canada) on dry ice, and levels of cytokines and chemokines were measured with Human Cytokine Array/Chemokine Array 71–403 Plex Panel (HD71).",
+          "reason": "quote found in sentences S177"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S177"
+      },
+      "conflict_detected": true,
+      "record_verdict": "REJECT",
+      "model_record_verdict": "REJECT"
+    },
+    {
+      "assay_id": "Flow cytometry",
+      "assay_name": "Flow cytometry",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Flow cytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S184"
+          ],
+          "evidence_text": "## Flow cytometry",
+          "reason": "The source explicitly names a methods section for flow cytometry, indicating the assay was performed."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "intracellular cytokine staining",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S196"
+          ],
+          "evidence_text": "To quantify intracellular cytokines",
+          "reason": "The methods describe intracellular cytokine staining as part of the flow cytometry procedure used here."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "PBMCs",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S186"
+          ],
+          "evidence_text": "freshly isolated PBMCs were plated",
+          "reason": "The flow cytometry methods explicitly state that freshly isolated PBMCs were used."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "leukocyte subset frequencies, immune cell phenotypes, and intracellular cytokine-positive cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S13",
+            "S24",
+            "S196"
+          ],
+          "evidence_text": "leukocyte profiles (by flow cytometry using freshly isolated peripheral blood mononuclear cells; PBMCs)... by flow cytometry and ELISA to quantify leukocytes and soluble mediators, respectively... To quantify intracellular cytokines",
+          "reason": "The text supports flow-cytometric quantification of leukocytes and intracellular cytokines, consistent with these readouts."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Finally, intracellular staining cocktails were directly added to each sample for 1 hour at 4°C.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S199"
+          ],
+          "evidence_text": "Finally, intracellular staining cocktails were directly added to each sample for 1 hour at 4°C.",
+          "reason": "quote found in sentences S199"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S199"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Trypan blue staining",
+      "assay_name": "Trypan blue staining",
+      "assay_identity_verdict": "CONTRADICTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Trypan blue staining",
+          "verdict": "CONTRADICTED",
+          "evidence_sentence_ids": [
+            "S184"
+          ],
+          "evidence_text": "Percentage viability was estimated using standard Trypan blue staining",
+          "reason": "This is a sample quality/quantity check rather than an assay under the stated rules."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "PBMCs",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S179",
+            "S184"
+          ],
+          "evidence_text": "Peripheral blood mononuclear cells (PBMCs) were isolated from heparinized whole blood... Percentage viability was estimated using standard Trypan blue staining",
+          "reason": "The viability check was performed on the isolated PBMCs."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "cell viability percentage",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S184"
+          ],
+          "evidence_text": "Percentage viability was estimated",
+          "reason": "The text explicitly states that viability percentage was estimated."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Percentage viability was estimated using standard Trypan blue staining and an automated cell counter (Thermo-Fisher, #AMQAX1000).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S184"
+          ],
+          "evidence_text": "Percentage viability was estimated using standard Trypan blue staining and an automated cell counter (Thermo-Fisher, #AMQAX1000).",
+          "reason": "quote found in sentences S184"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S184"
+      },
+      "conflict_detected": true,
+      "record_verdict": "REJECT",
+      "model_record_verdict": "REJECT"
+    },
+    {
+      "assay_id": "ELISA",
+      "assay_name": "ELISA",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "ELISA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S23",
+            "S24"
+          ],
+          "evidence_text": "by flow cytometry and ELISA",
+          "reason": "The text explicitly states ELISA was performed in this study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "plasma",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S23",
+            "S24"
+          ],
+          "evidence_text": "We analysed PBMC and plasma samples from patients with moderate or severe COVID-19 and healthy HCW donors ( Fig. 1a , gating strategy in) by flow cytometry and ELISA to quantify leuko- cytes and soluble mediators, respectively.",
+          "reason": "The sentence links plasma to ELISA via the respective pairing with soluble mediators."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "soluble mediator levels",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S23",
+            "S24"
+          ],
+          "evidence_text": "to quantify leuko- cytes and soluble mediators, respectively",
+          "reason": "The text states ELISA was used to quantify soluble mediators."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "We analysed PBMC and plasma samples from patients with moderate or severe COVID-19 and healthy HCW donors ( Fig. 1a , gating strategy in) by flow cytometry and ELISA to quantify leuko- cytes and soluble mediators, respectively.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S23",
+            "S24"
+          ],
+          "evidence_text": "We analysed PBMC and plasma samples from patients with moderate or severe COVID-19 and healthy HCW donors ( Fig. [S24] 1a , gating strategy in) by flow cytometry and ELISA to quantify leuko- cytes and soluble mediators, respectively.",
+          "reason": "quote found in sentences S23, S24"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S23, S24"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

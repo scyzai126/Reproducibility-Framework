@@ -1,0 +1,55 @@
+{
+  "summary": {
+    "assays": 4,
+    "fields_re_extracted": 1,
+    "actions": {
+      "REPLACED": 1
+    },
+    "reported_not_corrected": 0
+  },
+  "results": [
+    {
+      "assay_id": "genotyping",
+      "assay_name": "genotyping",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "global transcript abundance",
+      "assay_name": "global transcript abundance",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Hemagglutination inhibition (HAI) tests",
+      "assay_name": "Hemagglutination inhibition (HAI) tests",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "HAI",
+            "HAI test"
+          ],
+          "blind_answer": [
+            "HAI"
+          ],
+          "dropped": [
+            "HAI test"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Neutralizing antibody tests",
+      "assay_name": "Neutralizing antibody tests",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    }
+  ]
+}

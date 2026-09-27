@@ -1,0 +1,130 @@
+{
+  "microarray assay": {
+    "name_in_paper": [
+      "microarray"
+    ],
+    "normalized_name": "microarray",
+    "aliases": [
+      "gene expression microarray",
+      "Transcriptomics"
+    ],
+    "sample_type": "peripheral blood",
+    "readouts": "whole-blood transcript expression levels",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Transcriptomic analysis",
+      "sentence_ids": [
+        "S27"
+      ],
+      "quote": "RNA was converted into biotin-labelled cRNA and hybridised to a BeadChip microarray."
+    },
+    "obi_id": "OBI:0001985",
+    "obi_label": "microarray assay",
+    "resource": "exact_original",
+    "obi_confidence": "high"
+  },
+  "flow cytometry assay": {
+    "name_in_paper": [
+      "flow cytometric characterisation of B cells and plasma cells"
+    ],
+    "normalized_name": "flow cytometry",
+    "aliases": [
+      "flow cytometry",
+      "Flow cytometry"
+    ],
+    "sample_type": "Purified, CD19 + B cells",
+    "readouts": "frequencies of plasma cells and memory B-cell subsets defined by surface-marker expression",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Flow cytometric characterisation of B cells and plasma cells",
+      "sentence_ids": [
+        "S54"
+      ],
+      "quote": "The cells were analysed on a Beckman-Coulter Cyan Flow Cytometer with 9-colour parameters."
+    },
+    "obi_id": "OBI:0000916",
+    "obi_label": "flow cytometry assay",
+    "resource": "exact_normalized_llm",
+    "obi_confidence": "high"
+  },
+  "bacterial neutralization assay": {
+    "name_in_paper": [
+      "serum bactericidal assay"
+    ],
+    "normalized_name": "serum bactericidal assay",
+    "aliases": [
+      "SBAs",
+      "SBA",
+      "human SBA activity"
+    ],
+    "sample_type": "Serum samples",
+    "readouts": "bactericidal antibody titres against meningococcal serogroups A and C",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Serum bactericidal assay",
+      "sentence_ids": [
+        "S57"
+      ],
+      "quote": "Serum samples collected at days 0, 28 and 56 were assessed for human SBA activity against serogroup A (F8238) and serogroup C (C11)."
+    },
+    "obi_id": "OBI:0003797",
+    "obi_label": "bacterial neutralization assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.6901
+  },
+  "enzyme-linked immunospot assay": {
+    "name_in_paper": [
+      "B-cell enzyme-linked immunospot assay"
+    ],
+    "normalized_name": "enzyme-linked immunospot",
+    "aliases": [
+      "ELISpot",
+      "enzyme-linked immunospot (ELISpot)",
+      "cultured ELISpot",
+      "B mem ELISpots"
+    ],
+    "sample_type": "PBMCs",
+    "readouts": "frequencies of antigen-specific antibody-secreting cells and memory B cells",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "B-cell enzyme-linked immunospot assay",
+      "sentence_ids": [
+        "S64"
+      ],
+      "quote": "Memory B cells were assessed using cultured ELISpot performed on blood samples collected at days 0, 28 and 56."
+    },
+    "obi_id": "OBI:0600031",
+    "obi_label": "enzyme-linked immunospot assay",
+    "resource": "exact_normalized_llm",
+    "obi_confidence": "high"
+  },
+  "real time reverse-transcription polymerase chain reaction assay": {
+    "name_in_paper": [
+      "Quantitative real-time PCR"
+    ],
+    "normalized_name": "real time reverse-transcription polymerase chain reaction",
+    "aliases": [
+      "RT-PCR",
+      "quantitative PCR"
+    ],
+    "sample_type": "Total RNA, extracted from PAXgene™ tubes",
+    "readouts": "spliced and unspliced XBP1 transcript levels relative to GAPDH",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Quantitative real-time PCR",
+      "sentence_ids": [
+        "S73"
+      ],
+      "quote": "The real-time PCR (RT-PCR) used the Platinum® SYBR® Green SuperMix-UDG detection system (with ROX) on a StepOnePlus™ instrument (Thermo Fisher scientific, Massachusetts)."
+    },
+    "obi_id": "OBI:0000911",
+    "obi_label": "real time reverse-transcription polymerase chain reaction assay",
+    "resource": "exact_normalized_llm",
+    "obi_confidence": "high"
+  }
+}

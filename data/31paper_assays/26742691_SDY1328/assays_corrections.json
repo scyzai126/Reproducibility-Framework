@@ -1,0 +1,110 @@
+{
+  "summary": {
+    "assays": 5,
+    "fields_re_extracted": 4,
+    "actions": {
+      "REPLACED": 4
+    },
+    "reported_not_corrected": 1
+  },
+  "results": [
+    {
+      "assay_id": "ELISA",
+      "assay_name": "ELISA",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "readouts",
+          "action": "REPLACED",
+          "previous": "anti-Cholera toxin B subunit IgG, anti-hepatitis B surface antigen total antibodies, anti-Diphtheria IgG, and anti-Tetanus IgG measured by optical density-based antibody titration",
+          "blind_answer": "Anti-Cholera toxin B subunit (CTB) IgG antibody titres in serum samples"
+        }
+      ],
+      "reported_not_corrected": [
+        {
+          "field_name": "name_in_paper",
+          "verdict": "NOT_SUPPORTED",
+          "reason": "The source describes specific ELISA methods for several antibody measurements but does not establish a single assay performed in the study simply named \"ELISA\"."
+        }
+      ]
+    },
+    {
+      "assay_id": "microarray",
+      "assay_name": "microarray",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "microarray data set",
+            "gene expression"
+          ],
+          "blind_answer": [
+            "microarrays",
+            "gene-expression signatures",
+            "transcriptional profiling"
+          ],
+          "dropped": [
+            "microarray data set",
+            "gene expression"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Polychromatic FCM",
+      "assay_name": "Polychromatic FCM",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "multiplex ELISA",
+      "assay_name": "multiplex ELISA",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "multianalyte profiling",
+            "Human Inflammation multianalyte profiling",
+            "cytokine profiling"
+          ],
+          "blind_answer": [
+            "multianalyte profiling"
+          ],
+          "dropped": [
+            "cytokine profiling"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "complete blood count",
+      "assay_name": "complete blood count",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "haematologic markers",
+            "haematologic measurements",
+            "RBC counts"
+          ],
+          "blind_answer": [
+            "haematologic markers"
+          ],
+          "dropped": [
+            "RBC counts"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    }
+  ]
+}

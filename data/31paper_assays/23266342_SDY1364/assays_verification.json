@@ -1,0 +1,231 @@
+{
+  "summary": {
+    "total": 3,
+    "accept": 3,
+    "review": 0,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {}
+  },
+  "results": [
+    {
+      "assay_id": "ex vivo IFNγ ELISpot assay",
+      "assay_name": "ex vivo IFNγ ELISpot assay",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "ex vivo IFNγ ELISpot assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S27",
+            "S30"
+          ],
+          "evidence_text": "the ex vivo interferon-gamma (IFNγ) ELISpot assay",
+          "reason": "The paper explicitly names and performs this assay."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "ELISpot",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S31"
+          ],
+          "evidence_text": "IFNγ ELISpot assays",
+          "reason": "The text uses ELISpot to refer to the same assay."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "IFNγ ELISpot assays",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S31"
+          ],
+          "evidence_text": "IFNγ ELISpot assays",
+          "reason": "This exact wording appears and refers to the assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "fresh peripheral blood mononuclear cells (PBMC)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S27",
+            "S31"
+          ],
+          "evidence_text": "performed on fresh peripheral blood mononuclear cells (PBMC)",
+          "reason": "The assay is explicitly stated to be performed on fresh PBMC."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "antigen-specific interferon-gamma spot-forming cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S42"
+          ],
+          "evidence_text": "Results are reported as spot-forming cells (SFC) per million PBMC",
+          "reason": "The assay reports IFNγ ELISpot results as spot-forming cells, i.e. antigen-specific IFNγ spots."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "IFNγ ELISpot assays were performed on freshly isolated PBMC from all 24 subjects at screening and at 1, 2, 4, 12 and 24 weeks post-vaccination, using the Human IFNγ ELISpot (ALP) kit (Mabtech).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S31"
+          ],
+          "evidence_text": "IFNγ ELISpot assays were performed on freshly isolated PBMC from all 24 subjects at screening and at 1, 2, 4, 12 and 24 weeks post-vaccination, using the Human IFNγ ELISpot (ALP) kit (Mabtech).",
+          "reason": "quote found in sentences S31"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S31"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Surface and intracellular cytokine staining",
+      "assay_name": "Surface and intracellular cytokine staining",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Surface and intracellular cytokine staining",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S44"
+          ],
+          "evidence_text": "Frozen PBMC were thawed and rested overnight in R10 with 10 U/ml Benzonaze (Merck Chemicals).",
+          "reason": "This heading names a procedure that is then described as performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "multi-parameter flow cytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S28"
+          ],
+          "evidence_text": "Exploratory pre-defined immunological analyses included multi-parameter flow cytometry as detailed below.",
+          "reason": "The text explicitly uses this phrase for the assay described below."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "Frozen PBMC",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S44"
+          ],
+          "evidence_text": "Frozen PBMC were thawed and rested overnight",
+          "reason": "The assay was performed on frozen PBMC."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "CD4+ and CD8+ cell cytokine responses and CD4+ T cell chemokine receptor expression",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S54",
+            "S55"
+          ],
+          "evidence_text": "Only live CD3+ cells were included in the analysis of CD4+ and CD8+ cell cytokine responses. To assess the effect of vaccination route on cell trafficking we measured the expression of chemokine receptors",
+          "reason": "The assay is explicitly described as analyzing CD4+/CD8+ cytokine responses and measuring chemokine receptor expression."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Stained cells were immediately acquired using an LSR-II (Becton Dickinson).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S51"
+          ],
+          "evidence_text": "Stained cells were immediately acquired using an LSR-II (Becton Dickinson).",
+          "reason": "quote found in sentences S51"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S51"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "IgG enzyme linked immunosorbent assay (ELISA)",
+      "assay_name": "IgG enzyme linked immunosorbent assay (ELISA)",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "IgG enzyme linked immunosorbent assay (ELISA)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S56",
+            "S57"
+          ],
+          "evidence_text": "Anti-r85A IgG was measured in serum samples collected at week 0, 2, 4 and 24. ELISA plates",
+          "reason": "The methods section explicitly describes an ELISA performed in this study to measure anti-r85A IgG."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "ELISA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S57"
+          ],
+          "evidence_text": "ELISA plates",
+          "reason": "The text explicitly uses the term ELISA in describing the assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "serum samples",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S56"
+          ],
+          "evidence_text": "serum samples",
+          "reason": "The assay is explicitly stated to measure anti-r85A IgG in serum samples."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "anti-r85A IgG optical density values",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S56",
+            "S63"
+          ],
+          "evidence_text": "Anti-r85A IgG was measured in serum samples collected at week 0, 2, 4 and 24. Background-subtracted optical density (OD) values are presented.",
+          "reason": "The assay measured anti-r85A IgG and reported background-subtracted OD values."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Anti-r85A IgG was measured in serum samples collected at week 0, 2, 4 and 24.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S56"
+          ],
+          "evidence_text": "Anti-r85A IgG was measured in serum samples collected at week 0, 2, 4 and 24.",
+          "reason": "quote found in sentences S56"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S56"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

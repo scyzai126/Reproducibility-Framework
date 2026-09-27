@@ -1,0 +1,67 @@
+{
+  "summary": {
+    "assays": 5,
+    "fields_re_extracted": 1,
+    "actions": {
+      "REPLACED": 1
+    },
+    "reported_not_corrected": 1
+  },
+  "results": [
+    {
+      "assay_id": "Microarray Assay",
+      "assay_name": "Microarray Assay",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Flow Cytometry",
+      "assay_name": "Flow Cytometry",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Hemagglutinin Inhibition",
+      "assay_name": "Hemagglutinin Inhibition",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "HAI"
+          ],
+          "blind_answer": [
+            "hemagglutinin [HAI] titers"
+          ],
+          "dropped": [
+            "HAI"
+          ]
+        }
+      ],
+      "reported_not_corrected": [
+        {
+          "field_name": "name_in_paper",
+          "verdict": "NOT_SUPPORTED",
+          "reason": "The source names the section with 'Hemagglutinin Inhibition' but does not explicitly state this exact assay name as a performed procedure distinct from the broader section heading."
+        }
+      ]
+    },
+    {
+      "assay_id": "Virus-Neutralization Assays",
+      "assay_name": "Virus-Neutralization Assays",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Multiplex Cytokine Analysis",
+      "assay_name": "Multiplex Cytokine Analysis",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    }
+  ]
+}

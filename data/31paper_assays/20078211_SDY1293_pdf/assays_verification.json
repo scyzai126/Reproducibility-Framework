@@ -1,0 +1,198 @@
+{
+  "summary": {
+    "total": 3,
+    "accept": 2,
+    "review": 1,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {
+      "aliases[]": {
+        "NOT_SUPPORTED": 2
+      }
+    }
+  },
+  "results": [
+    {
+      "assay_id": "GeneChip analysis",
+      "assay_name": "GeneChip analysis",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "GeneChip analysis",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Preparation of cellular RNA and subsequent processing for GeneChip analysis were performed",
+          "reason": "The text explicitly states that GeneChip analysis was performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "global gene expression profiling",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Using global gene expression profiling",
+          "reason": "This exact phrase appears and refers to the same measurement approach used in the study."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "gene chip data",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "Although the phrase appears, the text does not clearly establish it as an assay name or alias rather than a reference to resulting data."
+        },
+        {
+          "field_name": "aliases[2]",
+          "proposed_value": "Affymetrix GeneChip technology",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "The source mentions GeneChips from Affymetrix but does not use this exact phrase as an assay name."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "PBMCs",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "PBMCs were collected by gradient centrifugation in cell preparation tubes (Becton Dickinson) and cryopreserved. Samples obtained from vaccine recipients were assessed for gene expression patterns",
+          "reason": "The study states that PBMC samples were assessed for gene expression patterns in this assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "gene expression patterns and differential gene expression levels",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Samples obtained from vaccine recipients were assessed for gene expression patterns",
+          "reason": "The assay is explicitly described as assessing gene expression patterns, and the study repeatedly analyzes differential gene expression."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Preparation of cellular RNA and subsequent processing for GeneChip analysis were performed as described elsewhere [28], by use of the HG-U133 A 2.0 and HG-U133 Plus 2.0 GeneChips (Affymetrix)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Preparation of cellular RNA and subsequent processing for GeneChip analysis were performed as described elsewhere [28], by use of the HG-U133 A 2.0 and HG-U133 Plus 2.0 GeneChips (Affymetrix)",
+          "reason": "quote found in the whole document"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in the whole document"
+      },
+      "conflict_detected": true,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    },
+    {
+      "assay_id": "Real-time polymerase chain reaction",
+      "assay_name": "Real-time polymerase chain reaction",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Real-time polymerase chain reaction",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Real-time polymerase chain reaction.",
+          "reason": "The section heading explicitly names this assay as performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "reverse-transcriptase polymerase chain reaction",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Genes whose expression was independently confirmed by reverse-transcriptase polymerase chain reaction are highlighted in red.",
+          "reason": "The source uses this exact phrase to refer to the same PCR-based confirmation assay."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "RT-PCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Figure 6. Reverse-transcriptase polymerase chain reaction (RT-PCR) confirmation of the up-regulation of PSME2, PSMA4, PSMB6, and PSMB9 in protected individuals.",
+          "reason": "The source explicitly gives RT-PCR as the abbreviation for the same assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "fluorescence threshold values and fold changes in target gene expression",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "The fluorescence signals were measured in real time with the use of ABI HT7900, and critical threshold values were generated using the software SDS2.1 (Applied Biosystems). Glyceraldehyde 3-phosphate dehydrogenase was used as an internal control to calculate fold changes in target genes in samples obtained from protected versus nonprotected persons, by use of the 2−ΔΔCT method [34].",
+          "reason": "The text explicitly states that this assay generated fluorescence signals, critical threshold values, and fold changes in target genes."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "TaqMan Gene Expression Assays (Applied Biosystems) were used to detect genes in the immunoproteosome pathway (PSME2, PSMB9, PSMB6, and PSMA4) in 3 randomly chosen samples from protected and nonprotected persons",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "quote found in the whole document"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in the whole document"
+      },
+      "conflict_detected": true,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "REVIEW"
+    },
+    {
+      "assay_id": "malaria thick blood smears",
+      "assay_name": "malaria thick blood smears",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "malaria thick blood smears",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "detection of parasite in malaria thick blood smears",
+          "reason": "The text explicitly states malaria thick blood smears were used to determine infection in this study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "blood",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "malaria thick blood smears",
+          "reason": "A blood smear is explicitly named, supporting blood as the specimen for this assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "detection of parasite and parasitemia",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Infection with malaria was determined by detection of parasite in malaria thick blood smears during the 30 days after challenge. Protection was defined as failure to develop P. falciparum asexual-stage parasitemia.",
+          "reason": "The assay is explicitly used for parasite detection, and parasitemia is the infection outcome defined from that detection."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Infection with malaria was determined by detection of parasite in malaria thick blood smears during the 30 days after challenge.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Infection with malaria was determined by detection of parasite in malaria thick blood smears during the 30 days after challenge.",
+          "reason": "quote found in the whole document"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in the whole document"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

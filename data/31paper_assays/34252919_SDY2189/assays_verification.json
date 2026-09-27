@@ -1,0 +1,809 @@
+{
+  "summary": {
+    "total": 10,
+    "accept": 6,
+    "review": 4,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {
+      "aliases[]": {
+        "NOT_SUPPORTED": 5,
+        "CONTRADICTED": 1
+      },
+      "sample_type": {
+        "NOT_SUPPORTED": 1
+      }
+    }
+  },
+  "results": [
+    {
+      "assay_id": "Anti-spike binding enzyme-linked immunosorbent assay",
+      "assay_name": "Anti-spike binding enzyme-linked immunosorbent assay",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Anti-spike binding enzyme-linked immunosorbent assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S125"
+          ],
+          "evidence_text": "## Anti-spike binding enzyme-linked immunosorbent assay",
+          "reason": "This exact assay name appears as the methods section heading describing a procedure performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "enzyme-linked immunosorbent assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S320"
+          ],
+          "evidence_text": "measured by enzyme-linked immunosorbent assay",
+          "reason": "This exact phrase appears and refers to the same anti-spike binding assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "sera samples",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S129"
+          ],
+          "evidence_text": "Sera samples serially diluted in 1% non-fat milk containing PBST were added to the plates",
+          "reason": "The assay methods explicitly state that sera samples were used in this assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "anti-spike IgG binding measured as optical density and antibody titre",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S133",
+            "S320"
+          ],
+          "evidence_text": "The optical density at 450 nanometres was measured with a Biorad microplate reader.; Serum anti-S IgG titres ( a ) (half-maximal effective concentration (EC 50 )), measured by enzyme-linked immunosorbent assay",
+          "reason": "The text links this assay to serum anti-spike IgG titres and reports optical density as the measurement readout."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "The optical density at 450 nanometres was measured with a Biorad microplate reader.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S133"
+          ],
+          "evidence_text": "The optical density at 450 nanometres was measured with a Biorad microplate reader.",
+          "reason": "quote found in sentences S133"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S133"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Focus reduction neutralization titre assay",
+      "assay_name": "Focus reduction neutralization titre assay",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Focus reduction neutralization titre assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S133",
+            "S144"
+          ],
+          "evidence_text": "The focus reduction neutralization titre (FRNT)–mNeonGreen 50% (mNG 50 ) titres were interpolated",
+          "reason": "The methods section explicitly describes this FRNT assay as performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "FRNT assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S152"
+          ],
+          "evidence_text": "FRNT assays were performed",
+          "reason": "This exact alias appears in the methods and refers to the same assay."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "focus reduction neutralization titre assays",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S320"
+          ],
+          "evidence_text": "focus reduction neutralization titre assays",
+          "reason": "This exact phrase appears in the figure caption and names the same assay."
+        },
+        {
+          "field_name": "aliases[2]",
+          "proposed_value": "live-virus neutralizing antibody titres",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "This phrase is a readout description, not an assay name for the FRNT assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "sera samples",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S135"
+          ],
+          "evidence_text": "Sera samples were serially diluted",
+          "reason": "The assay methods explicitly state that sera samples were used."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "neutralizing antibody titres based on reduction in viral foci",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S141",
+            "S142",
+            "S144"
+          ],
+          "evidence_text": "foci were visualized on a fluorescence ELISPOT reader ... The neutralization titres were calculated as follows: 1 − (ratio of the mean number of foci in the presence of sera and foci at the highest dilution of respective sera sample). The focus reduction neutralization titre (FRNT)–mNeonGreen 50% (mNG 50 ) titres were interpolated",
+          "reason": "The assay measured neutralization titres derived from reduction in viral foci."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Neutralization assays with authentic SARS-CoV-2 virus (infectious clone SARS-CoV-2 derived from 2019-nCoV/USA_WA1/2020 strain) were performed as previously described.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "quote found in sentences S134, except for trailing punctuation not in the source"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S134, except for trailing punctuation not in the source"
+      },
+      "conflict_detected": true,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    },
+    {
+      "assay_id": "FRNT assay against the variants of concern",
+      "assay_name": "FRNT assay against the variants of concern",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "FRNT assay against the variants of concern",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S152"
+          ],
+          "evidence_text": "FRNT assays were performed as described for the wild-type FRNT assay.",
+          "reason": "The methods explicitly state that FRNT assays were performed for the variants."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "live-virus neutralizing antibody response against the wild-type (WA1) or B.1.351 variant",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S321"
+          ],
+          "evidence_text": "Live-virus neutralizing antibody response against the wild-type (WA1) or B.1.351 variant measured in day-42 sera.",
+          "reason": "This exact phrase appears and refers to the variant neutralization measurement shown for this assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "samples",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "The text mentions diluted samples and sera, but does not support the generic specimen label as the assay sample type."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "neutralizing antibody titres against wild-type and variant SARS-CoV-2 measured by reduction in viral foci",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S153",
+            "S155",
+            "S164",
+            "S165"
+          ],
+          "evidence_text": "The assay with each variant was performed simultaneously with wild-type controls. Serially diluted samples were incubated with an equal volume of SARS-CoV-2 (wild type or the variant) (100–200 foci per well) at 37 °C for 1 h in a round-bottomed 96-well culture plate. Foci were visualized using TrueBlue HRP substrate (KPL, no. 5510–0050) and imaged on an ELISPOT reader (CTL).",
+          "reason": "The assay measures neutralization against wild-type or variant virus via visualization of viral foci."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "FRNT assays were performed as described for the wild-type FRNT assay.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S152"
+          ],
+          "evidence_text": "FRNT assays were performed as described for the wild-type FRNT assay.",
+          "reason": "quote found in sentences S152"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S152"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    },
+    {
+      "assay_id": "Intracellular cytokine staining assay",
+      "assay_name": "Intracellular cytokine staining assay",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Intracellular cytokine staining assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S166"
+          ],
+          "evidence_text": "Antigen-specific T cell responses were measured using the intracellular cytokine staining assay",
+          "reason": "The methods explicitly state this assay was used in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "spike-specific T cell responses",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "This phrase refers to the measured response and is not used as an alias for the assay itself."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "Spike-specific CD4",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "This exact phrase is not used in the methods as a name for the assay itself."
+        },
+        {
+          "field_name": "aliases[2]",
+          "proposed_value": "Spike-specific CD8",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "This exact phrase is not used in the methods as a name for the assay itself."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "Live frozen PBMCs",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S167"
+          ],
+          "evidence_text": "Live frozen PBMCs were revived",
+          "reason": "The assay methods explicitly state that live frozen PBMCs were used."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "antigen-specific intracellular cytokine production in T cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S166",
+            "S179"
+          ],
+          "evidence_text": "Antigen-specific T cell responses were measured using the intracellular cytokine staining assay as previously described ... The permeabilized cells were stained with intracellular cytokine staining antibodies",
+          "reason": "The assay measured antigen-specific T cell responses via intracellular cytokine staining."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Antigen-specific T cell responses were measured using the intracellular cytokine staining assay as previously described.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S166"
+          ],
+          "evidence_text": "Antigen-specific T cell responses were measured using the intracellular cytokine staining assay as previously described.",
+          "reason": "quote found in sentences S166, except for trailing punctuation not in the source"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S166, except for trailing punctuation not in the source"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Bead-based antigen arrays",
+      "assay_name": "Bead-based antigen arrays",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Bead-based antigen arrays",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S182"
+          ],
+          "evidence_text": "We used an existing bead-based autoantigen array, and a cytokine array with expanded content",
+          "reason": "The methods explicitly describe bead-based autoantigen and cytokine arrays being used in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "55-plex antigen and 58-plex cytokine arrays",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S24"
+          ],
+          "evidence_text": "using a 55-plex antigen and 58-plex cytokine arrays",
+          "reason": "This exact wording appears and refers to the same array assay used on vaccinated sera."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "cytokine array",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S182"
+          ],
+          "evidence_text": "a cytokine array with expanded content",
+          "reason": "This exact phrase appears and names one component of the same bead-based array assay."
+        },
+        {
+          "field_name": "aliases[2]",
+          "proposed_value": "autoantigen array",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S182"
+          ],
+          "evidence_text": "bead-based autoantigen array",
+          "reason": "The proposed alias appears verbatim within the assay description and refers to the same measurement platform."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "Serum samples",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S189"
+          ],
+          "evidence_text": "Serum samples were tested at 1:100 dilution",
+          "reason": "The methods explicitly state that serum samples were tested in this assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "IgG binding to autoantigens and cytokines measured as mean fluorescence intensity",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S184",
+            "S185",
+            "S190",
+            "S192"
+          ],
+          "evidence_text": "The ‘COVID-19 Autoantigen Array’ included 55 commercial protein antigens associated with connective tissue diseases... The ‘COVID-19 Cytokine Array’ comprised 58 proteins including cytokines, chemokines, growth factors, acute phase proteins and cell surface proteins... Bound antibody was detected using R-phycoerythrin (R-PE) conjugated Fcγ-specific goat anti-human IgG F(ab′)2 fragment... Binding events were displayed as mean fluorescence intensity (MFI).",
+          "reason": "The assay measured IgG antibody binding to autoantigen and cytokine-array proteins and reported the signal as MFI."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Binding events were displayed as mean fluorescence intensity (MFI).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S192"
+          ],
+          "evidence_text": "Binding events were displayed as mean fluorescence intensity (MFI).",
+          "reason": "quote found in sentences S192"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S192"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "CyTOF analysis of whole-blood samples",
+      "assay_name": "CyTOF analysis of whole-blood samples",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "CyTOF analysis of whole-blood samples",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S195"
+          ],
+          "evidence_text": "CyTOF analysis of whole-blood samples",
+          "reason": "This exact assay name appears as the methods section heading for a procedure performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "cytometry by time of flight (CyTOF)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S30"
+          ],
+          "evidence_text": "cytometry by time of flight (CyTOF)",
+          "reason": "This exact phrase appears and refers to the same assay used on whole-blood samples."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "CyTOF",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S30"
+          ],
+          "evidence_text": "CyTOF",
+          "reason": "This exact alias appears in the source as the abbreviation for the assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "whole-blood samples",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S195"
+          ],
+          "evidence_text": "Fresh whole-blood samples",
+          "reason": "The methods explicitly state that this CyTOF assay was performed on whole-blood samples."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "immune cell population frequencies and intracellular phosphoprotein marker intensities",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S33",
+            "S35"
+          ],
+          "evidence_text": "The frequency of intermediate monocytes (CD14 + CD16 + monocytes) increased significantly two days after the primary vaccination, and was substantially higher two days after the secondary vaccination ... In addition, there were enhanced levels of phosphorylated (p)STAT3 and pSTAT1 in multiple cell types",
+          "reason": "The text states that CyTOF measured both cell population frequencies and phosphorylated intracellular markers."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Cells were then washed with CSM, stained with iridium-containing DNA intercalator (Fluidigm), washed with MilliQ water and acquired on Helios mass cytometer (Fluidigm) in MilliQ water supplemented with 1× EQ four element calibration beads (Fluidigm).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S203"
+          ],
+          "evidence_text": "Cells were then washed with CSM, stained with iridium-containing DNA intercalator (Fluidigm), washed with MilliQ water and acquired on Helios mass cytometer (Fluidigm) in MilliQ water supplemented with 1× EQ four element calibration beads (Fluidigm).",
+          "reason": "quote found in sentences S203"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S203"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Plasma protein profiling using multiplex Olink panel",
+      "assay_name": "Plasma protein profiling using multiplex Olink panel",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Plasma protein profiling using multiplex Olink panel",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S219"
+          ],
+          "evidence_text": "We measured cytokines in plasma using Olink multiplex proximity extension assay (PEA) inflammation panel",
+          "reason": "The section and sentence explicitly describe this assay being performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "Olink",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S38"
+          ],
+          "evidence_text": "using Olink",
+          "reason": "The text uses this exact term to refer to the assay platform used for measuring plasma cytokines."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "Olink multiplex proximity extension assay (PEA) inflammation panel",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S219"
+          ],
+          "evidence_text": "Olink multiplex proximity extension assay (PEA) inflammation panel",
+          "reason": "This exact phrase appears verbatim as the assay used."
+        },
+        {
+          "field_name": "aliases[2]",
+          "proposed_value": "PEA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S219",
+            "S220"
+          ],
+          "evidence_text": "PEA",
+          "reason": "The abbreviation appears in the assay name and is immediately defined as the assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "plasma",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S219"
+          ],
+          "evidence_text": "cytokines in plasma",
+          "reason": "The assay is explicitly stated to measure analytes in plasma."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "plasma cytokine and protein concentrations",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S38",
+            "S39",
+            "S43",
+            "S222"
+          ],
+          "evidence_text": "we measured plasma cytokines in 31 vaccinated individuals using Olink",
+          "reason": "The text states the assay measured plasma cytokines and that signal is quantitatively proportional to target protein concentration."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "We measured cytokines in plasma using Olink multiplex proximity extension assay (PEA) inflammation panel (Olink proteomics: www.olink.com ) according to the manufacturer’s instructions.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S219"
+          ],
+          "evidence_text": "We measured cytokines in plasma using Olink multiplex proximity extension assay (PEA) inflammation panel (Olink proteomics: www.olink.com ) according to the manufacturer’s instructions.",
+          "reason": "quote found in sentences S219"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S219"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Bulk transcriptomics",
+      "assay_name": "Bulk transcriptomics",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Bulk transcriptomics",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S223"
+          ],
+          "evidence_text": "## Bulk transcriptomics",
+          "reason": "This exact assay name appears as the methods section heading for a procedure performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "bulk mRNA sequencing",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S51"
+          ],
+          "evidence_text": "we performed bulk mRNA sequencing of whole blood from 31 participants",
+          "reason": "The alias appears verbatim and refers to the same assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "blood samples stored in Paxgene tubes",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S224"
+          ],
+          "evidence_text": "RNA was isolated from blood samples stored in Paxgene tubes",
+          "reason": "This exact specimen is explicitly stated for the bulk transcriptomics assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "whole-blood gene expression levels",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S51",
+            "S229"
+          ],
+          "evidence_text": "we performed bulk mRNA sequencing of whole blood from 31 participants",
+          "reason": "Bulk mRNA sequencing of whole blood supports that the assay measured whole-blood gene expression."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Libraries were validated by capillary electrophoresis on an Agilent 4200 TapeStation, pooled at equimolar concentrations, and sequenced on an Illumina NovaSeq6000 at 100SR, yielding 25–30 million reads per sample.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S228"
+          ],
+          "evidence_text": "Libraries were validated by capillary electrophoresis on an Agilent 4200 TapeStation, pooled at equimolar concentrations, and sequenced on an Illumina NovaSeq6000 at 100SR, yielding 25–30 million reads per sample.",
+          "reason": "quote found in sentences S228"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S228"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "CITE-seq",
+      "assay_name": "CITE-seq",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "CITE-seq",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S249"
+          ],
+          "evidence_text": "CITE-seq analysis of PBMCs were assayed exactly as previously described 4 .",
+          "reason": "The methods explicitly state that CITE-seq was assayed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "cellular indexing of transcriptomes and epitopes by sequencing (CITE-seq)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S69"
+          ],
+          "evidence_text": "We performed cellular indexing of transcriptomes and epitopes by sequencing (CITE-seq) of 45 peripheral blood mononuclear cell (PBMC) samples from 6 individuals",
+          "reason": "This exact phrase appears and refers to the same assay performed here."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "single-cell transcriptional profiling",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S356"
+          ],
+          "evidence_text": "single-cell transcriptional profiling",
+          "reason": "This exact wording appears in the figure caption and refers to the CITE-seq assay output."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "PBMCs",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S69"
+          ],
+          "evidence_text": "45 peripheral blood mononuclear cell (PBMC) samples",
+          "reason": "The assay is explicitly described as being performed on PBMC samples."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "single-cell transcriptomes and antibody-derived epitope tags",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S71",
+            "S257",
+            "S259"
+          ],
+          "evidence_text": "we obtained 242,479 high-quality transcriptomes",
+          "reason": "The text explicitly supports transcriptomes and describes amplification and library generation of antibody barcodes, consistent with antibody-derived tags."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "10x Genomics scRNA-seq and TotalSeq-A libraries were pooled and sequenced on an Illumina HiSeq 4000 using the recommended sequencing read lengths of 28 bp (read 1), 8 bp (i7IndexRead) and 91 bp (read 2).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S262"
+          ],
+          "evidence_text": "10x Genomics scRNA-seq and TotalSeq-A libraries were pooled and sequenced on an Illumina HiSeq 4000 using the recommended sequencing read lengths of 28 bp (read 1), 8 bp (i7IndexRead) and 91 bp (read 2).",
+          "reason": "quote found in sentences S262"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S262"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "RNA isolation and qPCR",
+      "assay_name": "RNA isolation and qPCR",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "RNA isolation and qPCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S307"
+          ],
+          "evidence_text": "## RNA isolation and qPCR",
+          "reason": "This exact assay section title appears in the source and the methods describe it being performed."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "qPCR",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "The exact alias 'qPCR' does not appear verbatim in the source text."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "real-time PCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S315"
+          ],
+          "evidence_text": "real-time PCR",
+          "reason": "This exact phrase appears in the assay description and refers to the same measurement procedure."
+        },
+        {
+          "field_name": "aliases[2]",
+          "proposed_value": "enzyme-linked immunosorbent assay",
+          "verdict": "CONTRADICTED",
+          "evidence_sentence_ids": [
+            "S304",
+            "S315"
+          ],
+          "evidence_text": "as measured by enzyme-linked immunosorbent assay",
+          "reason": "This names a different assay elsewhere in the methods, not an alias for RNA isolation and qPCR."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "gene expression measured from cDNA amplification",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S311",
+            "S314",
+            "S315"
+          ],
+          "evidence_text": "cDNA was synthesized using iScript Advanced cDNA synthesis kit... 5 μl of cDNA was used for PCR reaction. The PCRs were carried out using Biorad Prime PCR reagents and SYBR green chemistry",
+          "reason": "The text supports PCR measurement on synthesized cDNA, consistent with gene expression readout."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "The PCRs were carried out using Biorad Prime PCR reagents and SYBR green chemistry (SsoAdvanced Universal SYBR Green Supermix (cat. no. 1725272)) in Biorad CFX384 real-time PCR.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "quote found in sentences S315, S316, S317"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S315, S316, S317"
+      },
+      "conflict_detected": true,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    }
+  ]
+}

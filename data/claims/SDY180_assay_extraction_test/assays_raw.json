@@ -1,0 +1,192 @@
+{
+  "paper_title": "Systems Scale Interactive Exploration Reveals Quantitative and Qualitative Differences in Response to Influenza and Pneumococcal Vaccines",
+  "overall_main_claims": [
+    "Influenza and pneumococcal vaccines induce distinct blood transcriptional responses with different magnitudes and kinetics.",
+    "Influenza vaccination elicits an early interferon-dominated innate transcriptional signature detectable within hours.",
+    "Pneumococcal vaccination elicits a stronger inflammation-associated innate signature and a more prominent day 7 plasmablast signature.",
+    "Day 1 and day 7 blood transcriptional/module signatures correlate with later antibody responses."
+  ],
+  "assays": [
+    {
+      "assay_id": "A1",
+      "assay_name": "Microarray Assay",
+      "claim_role": "primary",
+      "assay_type": "transcriptomics",
+      "sample_type": "whole blood collected in Tempus blood RNA tubes; capillary blood collected by finger stick for early time-course profiling; isolated neutrophils, monocytes, CD4+ T cells, and CD8+ T cells for subset profiling",
+      "readout": [
+        "whole-genome transcript abundance",
+        "probe signal-intensity values",
+        "module-level expression/activity scores",
+        "differentially expressed transcripts over time after vaccination"
+      ],
+      "downstream_analysis": [
+        "background subtraction, log2 transformation, quantile normalization",
+        "differential expression versus prevaccination baseline using linear mixed models with FDR control",
+        "fold-change filtering",
+        "heatmap visualization of 239 responsive transcripts",
+        "circular plot overlap analysis of differentially expressed gene lists across groups and time points",
+        "modular repertoire analysis using preexisting transcriptional modules",
+        "counting proportion of significant transcripts per module and defining responsive modules",
+        "module-level averaging of baseline-normalized expression",
+        "comparison of in vivo vaccine signatures with in vitro stimulation signatures by overlap/circular plots",
+        "Pearson correlation of module averages across validation cohorts",
+        "correlation of day 1/day 7 module signatures with serology results",
+        "pathway/functional interpretation of responsive modules"
+      ],
+      "is_claim_generating": true,
+      "confidence": "high"
+    },
+    {
+      "assay_id": "A2",
+      "assay_name": "Flow Cytometry",
+      "claim_role": "validation",
+      "assay_type": "flow_cytometry",
+      "sample_type": "whole blood",
+      "readout": [
+        "frequencies and absolute numbers of leukocyte/B cell subsets",
+        "identification of plasmablasts/plasma cells as CD19+/lo CD20−CD27+CD38hi plasmablasts and plasma cells",
+        "absolute numbers of CD19+ B cells and plasmablasts over time"
+      ],
+      "downstream_analysis": [
+        "log2 transformation of continuous flow variables",
+        "linear mixed model testing across time points",
+        "kinetic plotting of absolute cell numbers",
+        "comparison of plasmablast expansion between influenza and pneumococcal vaccine groups"
+      ],
+      "is_claim_generating": true,
+      "confidence": "high"
+    },
+    {
+      "assay_id": "A3",
+      "assay_name": "Hemagglutinin Inhibition and Virus-Neutralization Assays for Quantitating Seasonal Influenza Virus Neutralizing Antibodies",
+      "claim_role": "outcome_variable",
+      "assay_type": "functional_assay",
+      "sample_type": "human sera",
+      "readout": [
+        "hemagglutination inhibition titers",
+        "influenza virus-neutralizing antibody titers"
+      ],
+      "downstream_analysis": [
+        "comparison of day 0 and day 28 titers to assess seroconversion",
+        "correlation of antibody titers with day 1 and day 7 transcriptional/module signatures",
+        "strain-specific correlation analysis"
+      ],
+      "is_claim_generating": true,
+      "confidence": "high"
+    },
+    {
+      "assay_id": "A4",
+      "assay_name": "commercial immunoassays",
+      "claim_role": "outcome_variable",
+      "assay_type": "immunoassay",
+      "sample_type": "human sera",
+      "readout": [
+        "antibody response to 14 pneumococcal polysaccharides",
+        "serology values for pneumococcal vaccine response"
+      ],
+      "downstream_analysis": [
+        "comparison of pre- and postvaccination antibody levels",
+        "correlation of serology results with day 1 and day 7 module signatures across serotypes",
+        "heatmap display of correlation coefficients across serotypes"
+      ],
+      "is_claim_generating": true,
+      "confidence": "high"
+    },
+    {
+      "assay_id": "A5",
+      "assay_name": "Multiplex Cytokine Analysis",
+      "claim_role": "validation",
+      "assay_type": "immunoassay",
+      "sample_type": "sera",
+      "readout": [
+        "cytokine and chemokine concentrations",
+        "serum CXCL10 (IP-10) levels"
+      ],
+      "downstream_analysis": [
+        "statistical comparison across time points",
+        "integration with transcriptional interferon-module findings",
+        "identification of day 1 increase in CXCL10 after influenza vaccination"
+      ],
+      "is_claim_generating": true,
+      "confidence": "high"
+    },
+    {
+      "assay_id": "A6",
+      "assay_name": "In Vitro Stimulation with Innate Immune Ligands",
+      "claim_role": "reference_annotation",
+      "assay_type": "cell_culture",
+      "sample_type": "fresh whole blood from healthy subjects incubated with innate immune stimuli or left unstimulated",
+      "readout": [
+        "stimulus-induced blood transcriptional responses after 6 hr incubation"
+      ],
+      "downstream_analysis": [
+        "microarray-based profiling of stimulated samples",
+        "quantile normalization and filtering by detection p value",
+        "identification of probes with fold change >2 or <0.5 versus unstimulated controls",
+        "construction of in vitro gene lists for each stimulus",
+        "overlap analysis between in vitro stimulation signatures and in vivo vaccine signatures using circular plots"
+      ],
+      "is_claim_generating": true,
+      "confidence": "high"
+    },
+    {
+      "assay_id": "A7",
+      "assay_name": "Isolation of WBC Subsets",
+      "claim_role": "input_prep",
+      "assay_type": "sample_prep",
+      "sample_type": "freshly ficolled PBMC and whole blood-derived leukocytes",
+      "readout": [
+        "purified neutrophils, monocytes (CD14+), CD4+ T cells, and CD8+ T cells"
+      ],
+      "downstream_analysis": [
+        "used as input material for subset-specific microarray profiling to assign cellular contributors to the interferon signature"
+      ],
+      "is_claim_generating": false,
+      "confidence": "high"
+    },
+    {
+      "assay_id": "A8",
+      "assay_name": "CBC",
+      "claim_role": "qc_context",
+      "assay_type": "clinical_measurement",
+      "sample_type": "blood",
+      "readout": [
+        "complete blood count parameters"
+      ],
+      "downstream_analysis": [],
+      "is_claim_generating": false,
+      "confidence": "medium"
+    }
+  ],
+  "assay_role_summary": {
+    "primary": [
+      "A1"
+    ],
+    "outcome_variable": [
+      "A3",
+      "A4"
+    ],
+    "validation": [
+      "A2",
+      "A5"
+    ],
+    "mechanistic_test": [],
+    "reference_annotation": [
+      "A6"
+    ],
+    "input_prep": [
+      "A7"
+    ],
+    "qc_context": [
+      "A8"
+    ]
+  },
+  "notes_for_later_claim_extraction": [
+    "Do not create separate assay entries for module analysis, pathway analysis, circular plots, heatmaps, or correlation analysis; these are downstream analyses of microarray or serology outputs.",
+    "The in vitro stimulation experiment is best treated as a reference/annotation assay because it was used to interpret in vivo vaccine transcriptional signatures rather than as the main endpoint.",
+    "Subset-specific transcript profiling of neutrophils/monocytes/CD4+/CD8+ cells appears to use the same microarray platform as the whole-blood profiling; kept under the same Microarray Assay entry rather than split into a separate assay instance.",
+    "Flow cytometry is claim-supporting mainly for validating the plasmablast signature inferred from transcriptomics.",
+    "Serology comprises two distinct performed assay families in this paper: influenza HAI/virus-neutralization and pneumococcal commercial immunoassays.",
+    "CBC is mentioned in Methods as part of sample analysis but no explicit Results claim from CBC was visible in the provided pages."
+  ]
+}

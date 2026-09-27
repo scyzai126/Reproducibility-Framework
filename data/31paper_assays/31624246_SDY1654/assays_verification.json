@@ -1,0 +1,235 @@
+{
+  "summary": {
+    "total": 3,
+    "accept": 3,
+    "review": 0,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {}
+  },
+  "results": [
+    {
+      "assay_id": "Single-Cell RNA-seq",
+      "assay_name": "Single-Cell RNA-seq",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Single-Cell RNA-seq",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S259",
+            "S260"
+          ],
+          "evidence_text": "cell isolation for single-cell RNA-seq. Single-cell suspensions were loaded onto a Chromium Single Cell Chip",
+          "reason": "The methods explicitly describe performing single-cell RNA-seq in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "scRNA-seq",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S2"
+          ],
+          "evidence_text": "single cell RNA-sequencing (scRNA-seq)",
+          "reason": "The paper explicitly uses this alias for the assay."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "Chromium 3′-scRNA-seq",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S14"
+          ],
+          "evidence_text": "Chromium 3′-scRNA-seq",
+          "reason": "This exact phrase appears and refers to the same single-cell RNA-seq assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "CD3 + enriched cells from donor tissue and blood",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S257",
+            "S258",
+            "S259"
+          ],
+          "evidence_text": "T cells were enriched from all samples using magnetic negative selection for CD3 + T cells... We cultured 0.5–1 × 10 6 CD3 + enriched cells from each donor tissue... After stimulation, dead cells were removed as above before cell isolation for single-cell RNA-seq.",
+          "reason": "The text links CD3-enriched cells from tissues and blood to the single-cell RNA-seq workflow."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "single-cell transcript sequences and gene expression profiles",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S261",
+            "S265"
+          ],
+          "evidence_text": "read 2 containing transcript sequences... Cell counts and transcript detection rates",
+          "reason": "The assay generated transcript sequences and was used for gene expression profiling at single-cell resolution."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "We pooled all of the libraries for a given donor, each of which was barcoded with a unique Illumina sample index, for sequencing in a single Illumina flow cell.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S263"
+          ],
+          "evidence_text": "We pooled all of the libraries for a given donor, each of which was barcoded with a unique Illumina sample index, for sequencing in a single Illumina flow cell.",
+          "reason": "quote found in sentences S263"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S263"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "flow cytometry",
+      "assay_name": "flow cytometry",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "flow cytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S405"
+          ],
+          "evidence_text": "by flow cytometry",
+          "reason": "The methods explicitly state that flow cytometry was used in this study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "tissue and blood cell suspensions",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S405"
+          ],
+          "evidence_text": "tissue and blood cell suspensions",
+          "reason": "The flow cytometry staining was explicitly performed on tissue and blood cell suspensions."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "T cell surface marker expression and intracellular NME1 protein expression",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S405",
+            "S407"
+          ],
+          "evidence_text": "To evaluate the expression of T cell surface markers by flow cytometry ... we performed intercellular staining of NME1",
+          "reason": "The text states that flow cytometry evaluated T cell surface markers and included intracellular staining of NME1."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "To evaluate the expression of T cell surface markers by flow cytometry, we incubated tissue and blood cell suspensions with Human TruStain FcX (BioLegend) and stained with following fluorochrome-conjugated antibodies",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S405"
+          ],
+          "evidence_text": "To evaluate the expression of T cell surface markers by flow cytometry, we incubated tissue and blood cell suspensions with Human TruStain FcX (BioLegend) and stained with following fluorochrome-conjugated antibodies",
+          "reason": "quote found in sentences S405"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S405"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Quantitative real-time PCR",
+      "assay_name": "Quantitative real-time PCR",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Quantitative real-time PCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S418"
+          ],
+          "evidence_text": "performed quantitative real-time PCR (qPCR)",
+          "reason": "The methods explicitly state that quantitative real-time PCR was performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "qPCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S418"
+          ],
+          "evidence_text": "quantitative real-time PCR (qPCR)",
+          "reason": "The text explicitly gives qPCR as the assay abbreviation."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "Quntitative PCR (qPCR)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S419"
+          ],
+          "evidence_text": "Quntitative PCR (qPCR)",
+          "reason": "This exact wording appears verbatim in the source text and refers to the same assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "sorted live CD4 + and CD8 + T cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S412",
+            "S414",
+            "S417",
+            "S418"
+          ],
+          "evidence_text": "PBMC were magnetically enriched for CD3 + T cells, and sorted for live CD4 + and CD8 + T cells",
+          "reason": "The qPCR assay was performed on RNA from sorted live CD4+ and CD8+ T cells."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "NME1, IL2RA, IFIT3 and TBP mRNA expression fold changes",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S418",
+            "S419"
+          ],
+          "evidence_text": "using TaqMan Gene Expression Assays (NME1 Hs00264824_m1; IL2RA Hs00907777_m1; IFIT3 Hs00155468_m1; TBP Hs00427620_m1) ... fold changes between stimulated and unstimulated cells at each time point were calculated using the ∆∆ cycle threshold method",
+          "reason": "The assay measured these transcripts and reported fold changes between stimulated and unstimulated cells."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "We converted RNA to cDNA via SuperScript IV VILO Master Mix (Invitrogen) and performed quantitative real-time PCR (qPCR) on a Viia 7 Real-Time PCR system (Applied Biosystems) using TaqMan Gene Expression Assays (NME1 Hs00264824_m1; IL2RA Hs00907777_m1; IFIT3 Hs00155468_m1; TBP Hs00427620_m1) and TaqMan Fast Advanced Master Mix, all from ThermoFisher Scientific.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S418"
+          ],
+          "evidence_text": "We converted RNA to cDNA via SuperScript IV VILO Master Mix (Invitrogen) and performed quantitative real-time PCR (qPCR) on a Viia 7 Real-Time PCR system (Applied Biosystems) using TaqMan Gene Expression Assays (NME1 Hs00264824_m1; IL2RA Hs00907777_m1; IFIT3 Hs00155468_m1; TBP Hs00427620_m1) and TaqMan Fast Advanced Master Mix, all from ThermoFisher Scientific.",
+          "reason": "quote found in sentences S418"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S418"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

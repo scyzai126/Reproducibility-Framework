@@ -1,0 +1,216 @@
+{
+  "summary": {
+    "assays": 9,
+    "fields_re_extracted": 13,
+    "actions": {
+      "REPLACED": 7,
+      "REAFFIRMED": 5,
+      "UNCHANGED": 1
+    },
+    "reported_not_corrected": 1
+  },
+  "results": [
+    {
+      "assay_id": "Multiplex analysis",
+      "assay_name": "Multiplex analysis",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "evidence",
+          "action": "REPLACED",
+          "previous": "Assays were performed with the Beadlyte Human 22-Plex Multi-Cytokine Detection System with the addition of interferon-α2 and IL-1 receptor-α Beadmates to make a 24-plex assay (Upstate).",
+          "blind_answer": {
+            "quote": "First, we studied the protein cytokine response in the blood of vaccinees at days 0, 1, 3, 7 and 21 after vaccination, using a 24-plex Luminex assay.",
+            "sentence_ids": []
+          },
+          "note": "sentence_ids set to where the quote was found: quote is verbatim but cites no sentence ids; it is in S8"
+        }
+      ],
+      "reported_not_corrected": [
+        {
+          "field_name": "name_in_paper",
+          "verdict": "NOT_SUPPORTED",
+          "reason": "This is a section heading rather than a clearly stated assay name performed in the study."
+        }
+      ]
+    },
+    {
+      "assay_id": "Flow cytometric analysis",
+      "assay_name": "Flow cytometric analysis",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REAFFIRMED",
+          "previous": [
+            "Flow cytometry",
+            "flow cytometry"
+          ],
+          "blind_answer": [
+            "flow cytometry",
+            "flow cytometry data",
+            "Flow cytometry"
+          ],
+          "dropped": []
+        },
+        {
+          "field": "evidence",
+          "action": "REPLACED",
+          "previous": "PBMCs from all time points for an individual were thawed, stained and acquired in parallel.",
+          "blind_answer": {
+            "quote": "Next we evaluated the frequency and activation status of antigen-presenting cells, including DCs and monocytes, in the blood at various times after vaccination.",
+            "sentence_ids": []
+          },
+          "note": "sentence_ids set to where the quote was found: quote is verbatim but cites no sentence ids; it is in S11"
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "cytopathic effect (CPE)",
+      "assay_name": "cytopathic effect (CPE)",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "evidence",
+          "action": "REAFFIRMED",
+          "previous": "YFV neutralizing antibodies were measured by cytopathic effect (CPE) (trial 1) or by plaque reduction neutralization test (PRNT) (trial 2).",
+          "blind_answer": {
+            "quote": "YFV neutralizing antibodies were measured by cytopathic effect (CPE) (trial 1) or by plaque reduction neutralization test (PRNT) (trial 2).",
+            "sentence_ids": []
+          }
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "plaque reduction neutralization test (PRNT)",
+      "assay_name": "plaque reduction neutralization test (PRNT)",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "sample_type",
+          "action": "REAFFIRMED",
+          "previous": "sera",
+          "blind_answer": "sera"
+        },
+        {
+          "field": "evidence",
+          "action": "UNCHANGED",
+          "previous": "YFV neutralizing antibodies were measured by cytopathic effect (CPE) (trial 1) or by plaque reduction neutralization test (PRNT) (trial 2).",
+          "blind_answer": {
+            "quote": "“YFV neutralizing antibodies were measured by cytopathic effect (CPE) (trial 1) or by plaque reduction neutralization test (PRNT) (trial 2).”",
+            "sentence_ids": []
+          },
+          "note": "replacement quote rejected: quote does not appear anywhere in the document"
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "microarray",
+      "assay_name": "microarray",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "evidence",
+          "action": "REPLACED",
+          "previous": "After hybridization on Human U133 Plus 2.0 Arrays for 16 h at 45 °C and 60 r.p.m.",
+          "blind_answer": {
+            "quote": "To gain a global perspective of the innate response to YF-17D, we performed transcriptional profiling of total peripheral blood mono-nuclear cells (PBMCs) from the 15 subjects (trial 1).",
+            "sentence_ids": []
+          },
+          "note": "sentence_ids set to where the quote was found: quote is verbatim but cites no sentence ids; it is in S14"
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "RT-PCR",
+      "assay_name": "RT-PCR",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "sample_type",
+          "action": "REPLACED",
+          "previous": "total RNA",
+          "blind_answer": "PBMCs"
+        },
+        {
+          "field": "evidence",
+          "action": "REPLACED",
+          "previous": "Two-step RT-PCR was performed.",
+          "blind_answer": {
+            "quote": "For an independent verification of these genes, we assayed 10 day 3/day 0 and 15 day 7/day 0 changes in trial 1 by RT-PCR.",
+            "sentence_ids": []
+          },
+          "note": "sentence_ids set to where the quote was found: quote is verbatim but cites no sentence ids; it is in S47"
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Immunofluorescence",
+      "assay_name": "Immunofluorescence",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "evidence",
+          "action": "REPLACED",
+          "previous": "Immunofluorescence signal was detected using a LSM510 confocal microscope (Zeiss), and images were captured and analyzed using the Zeiss LSM Image Browser.",
+          "blind_answer": {
+            "quote": "Immunofluorescence, immunoblot analysis and ELISA.",
+            "sentence_ids": []
+          },
+          "note": "sentence_ids set to where the quote was found: quote is verbatim but cites no sentence ids; it is in S207"
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "immunoblot analysis",
+      "assay_name": "immunoblot analysis",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "Immunoblot"
+          ],
+          "blind_answer": [],
+          "dropped": [
+            "Immunoblot"
+          ]
+        },
+        {
+          "field": "evidence",
+          "action": "REAFFIRMED",
+          "previous": "For immunoblot analysis, human total PBMC or BHK cells were lysed with 100 μl of M-PER mammalian protein extraction reagent (Pierce) containing Halt pro-tease inhibitor, EDTA and phosphatase inhibitor (Pierce).",
+          "blind_answer": {
+            "quote": "For immunoblot analysis, human total PBMC or BHK cells were lysed with 100 μl of M-PER mammalian protein extraction reagent (Pierce) containing Halt pro-tease inhibitor, EDTA and phosphatase inhibitor (Pierce).",
+            "sentence_ids": []
+          }
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "ELISA",
+      "assay_name": "ELISA",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "evidence",
+          "action": "REAFFIRMED",
+          "previous": "C3a in plasma was measured by ELISA (Quidel A015).",
+          "blind_answer": {
+            "quote": "C3a in plasma was measured by ELISA (Quidel A015).",
+            "sentence_ids": []
+          }
+        }
+      ],
+      "reported_not_corrected": []
+    }
+  ]
+}

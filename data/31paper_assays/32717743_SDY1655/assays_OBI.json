@@ -1,0 +1,73 @@
+{
+  "real time reverse-transcription polymerase chain reaction assay": {
+    "name_in_paper": [
+      "RT-qPCR"
+    ],
+    "normalized_name": "real time reverse-transcription polymerase chain reaction",
+    "aliases": [
+      "quantitative PCR with reverse tran- scription (RT–qPCR)"
+    ],
+    "sample_type": "nasopharyngeal samples",
+    "readouts": "SARS-CoV-2 viral RNA concentration or genome copies",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Viral RNA measurements",
+      "sentence_ids": [
+        "S167"
+      ],
+      "quote": "RNA concentrations were measured from nasopharyngeal samples by RT-qPCR as previously described 23 ."
+    },
+    "obi_id": "OBI:0000911",
+    "obi_label": "real time reverse-transcription polymerase chain reaction assay",
+    "resource": "exact_normalized_llm",
+    "obi_confidence": "high"
+  },
+  "flow cytometry assay": {
+    "name_in_paper": [
+      "Flow cytometry"
+    ],
+    "normalized_name": "flow cytometry",
+    "aliases": [
+      "intracellular cytokine staining"
+    ],
+    "sample_type": "PBMCs",
+    "readouts": "leukocyte subset frequencies, immune cell phenotypes, and intracellular cytokine-positive cells",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Flow cytometry",
+      "sentence_ids": [
+        "S199"
+      ],
+      "quote": "Finally, intracellular staining cocktails were directly added to each sample for 1 hour at 4°C."
+    },
+    "obi_id": "OBI:0000916",
+    "obi_label": "flow cytometry assay",
+    "resource": "exact_original",
+    "obi_confidence": "high"
+  },
+  "enzyme-linked immunosorbent assay": {
+    "name_in_paper": [
+      "ELISA"
+    ],
+    "normalized_name": "enzyme linked immunosorbent assay",
+    "aliases": [],
+    "sample_type": "plasma",
+    "readouts": "soluble mediator levels",
+    "generate_claim": true,
+    "source": "results",
+    "evidence": {
+      "section": "Overview of COVID-19 immunological features",
+      "sentence_ids": [
+        "S23",
+        "S24"
+      ],
+      "quote": "We analysed PBMC and plasma samples from patients with moderate or severe COVID-19 and healthy HCW donors ( Fig. 1a , gating strategy in) by flow cytometry and ELISA to quantify leuko- cytes and soluble mediators, respectively."
+    },
+    "obi_id": "OBI:0000661",
+    "obi_label": "enzyme-linked immunosorbent assay",
+    "resource": "exact_original",
+    "obi_confidence": "high"
+  }
+}

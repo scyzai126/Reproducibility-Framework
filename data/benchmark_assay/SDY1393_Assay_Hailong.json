@@ -1,32 +1,46 @@
 {
-  "flow cytometry assay": {
+  "flow cytometry": {
     "name_in_paper": "flow cytometry",
     "aliases": [
-      "flow cytometry",
       "FACS"
     ],
+    "generate_claim": true,
+    "OBI ontology": {
+      "obi_id": "OBI:0000916",
+      "obi_label": "flow cytometry assay"
+    },
     "evidence_location": {
       "type": "text",
       "section": "Methods",
       "quote": "An antibody cocktail for platelet flow cytometry analyses"
     }
   },
-  "RNA-seq assay": {
+  "RNA-seq": {
     "name_in_paper": "RNA-seq",
     "aliases": [
     ],
+    "generate_claim": true,
+    "OBI ontology": {
+      "id": "OBI:0001271",
+      "label": "RNA-seq assay"
+    },
     "evidence_location": {
       "type": "text",
       "section": "Methods",
       "quote": "RNA‐seq libraries were prepared using the Takara Bio SMARTer Stranded Total RNA‐Seq‐kit ‐ Pico Input Mammalian per the manufacturer's instructions. Libraries were sequenced on an Illumina NovaSeq 6000, S4 flowcell, 2 × 100 paired‐end, following the manufacturer's protocols."
     }
   },
-  "viral hemagglutination inhibition assay": {
+  "HAI": {
     "name_in_paper": "HAI",
     "aliases": [
       "hemagglutination inhibition assay",
       "HAI"
     ],
+     "generate_claim": false,
+    "OBI ontology": {
+      "id": "OBI:0000875",
+      "label": "viral hemagglutination inhibition assay"
+    },
     "evidence_location": {
       "type": "text",
       "section": "Results",

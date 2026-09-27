@@ -1,0 +1,89 @@
+{
+  "global gene expression analysis": {
+    "name_in_paper": "global gene expression analysis",
+    "aliases": [
+      "transcript abundance",
+      "expression profiling",
+      "RNA profiling",
+      "microarray",
+      "Illumina HumanHT-12 Expression BeadChip"
+    ],
+    "generate_claim": true,
+    "OBI ontology": {
+      "obi_id": "OBI:0001463",
+      "obi_label": "transcription profiling by array assay"
+    },
+    "evidence_location": {
+      "type": "text",
+      "section": "Materials and Methods",
+      "quote": "In vitro transcription was performed using Ambion Illumina TotalPrep RNA Amplification Kits (Applied Biosystems/Ambion, Austin, TX). cRNA was hybridized onto Illumina HumanHT-12v3 or HumanHT-12v4 Expression BeadChips (Illumina, Inc.), following the manufacturer's protocol. All samples for a given individual were processed on the same slide. The arrays have 48,742 (v3) and 47,301 (v4) reporters, representing approximately 25,000 genes and non-annotated gene candidates."
+    }
+  },
+   "genotyping_by_array": {
+    "name_in_paper": "whole-genome genotyping",
+    "aliases": [
+      "genome-wide SNP genotyping",
+      "SNP genotyping",
+      "genotyping",
+      "Illumina HumanOmniExpress microarray",
+      "genotype data",
+      "genotype effect",
+      "SNP markers",
+      "eQTL"
+    ],
+    "source": "methods",
+    "generate_claim": true,
+    "OBI ontology": {
+      "obi_id": "OBI:0001274",
+      "obi_label": "genotyping by array assay"
+    },
+    "evidence": {
+      "section": "Materials and Methods",
+      "subsection": "Whole-genome genotyping",
+      "quote": "Genotyping was performed on Illumina HumanOmniExpress microarrays (Illumina, Inc., San Diego, CA) following the manufacturer's instructions. The arrays include 730,525 SNP markers."
+    }
+  },
+  "hemagglutination inhibition (HAI) test": {
+    "name_in_paper": "hemagglutination inhibition (HAI) test",
+    "aliases": [
+      "HAI",
+      "HAI test",
+      "hemagglutination inhibition",
+      "HAI titer",
+      "antibody titer",
+      "titer response",
+      "Titer Response Index",
+      "TRI"
+    ],
+    "generate_claim": true,
+    "OBI ontology": {
+      "obi_id": "OBI:0000875",
+      "obi_label": "viral hemagglutination inhibition assay"
+    },
+    "evidence_location": {
+      "type": "text",
+      "section": "Materials and Methods",
+      "quote": "Hemagglutination inhibition (HAI) tests were performed as previously described (Dowdle et al., 1979), except for a starting serum dilution of 1:4 and the use of turkey red blood cells. HAI test antigens were allantoic fluid harvests from infected embryonated hen's eggs (whole-virus antigens)."
+    }
+  },
+  "neutralizing antibody test": {
+    "name_in_paper": "neutralizing antibody test",
+    "aliases": [
+      "neutralizing antibody titer",
+      "neutralization test",
+      "antibody titer",
+      "Titer Response Index",
+      "TRI"
+    ],
+    "generate_claim": false,
+    "OBI ontology": {
+      "obi_id": "OBI:0000872",
+      "obi_label": "serum neutralization of viral infectivity assay"
+    },
+    "evidence_location": {
+      "type": "text",
+      "section": "Materials and Methods",
+      "quote": "Neutralizing antibody tests were performed as previously described (Frank et al., 1980) except that hamster serum was not included. Test strains were the same as those used in the vaccine."
+    }
+  }
+}

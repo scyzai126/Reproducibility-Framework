@@ -1,0 +1,96 @@
+{
+  "summary": {
+    "assays": 5,
+    "fields_re_extracted": 3,
+    "actions": {
+      "REPLACED": 3
+    },
+    "reported_not_corrected": 1
+  },
+  "results": [
+    {
+      "assay_id": "Affymetrix Exon Arrays",
+      "assay_name": "Affymetrix Exon Arrays",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "gene-level analysis of Affymetrix exon microarrays",
+            "Human Exon ST 1.0 microarray platform"
+          ],
+          "blind_answer": [],
+          "dropped": [
+            "Human Exon ST 1.0 microarray platform"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Agilent 3′ Arrays",
+      "assay_name": "Agilent 3′ Arrays",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "Agilent SurePrint G3 Human GE 8 × 60K microarray platform"
+          ],
+          "blind_answer": [],
+          "dropped": [
+            "Agilent SurePrint G3 Human GE 8 × 60K microarray platform"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Quantitative real-time PCR",
+      "assay_name": "Quantitative real-time PCR",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Multiplex Cytokine Analysis",
+      "assay_name": "Multiplex Cytokine Analysis",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "multiplex serum analyte analysis",
+            "Luminex"
+          ],
+          "blind_answer": [
+            "multiplex serum analyte analysis",
+            "multiplex analyte analysis",
+            "serum analytes",
+            "multiplex serum cytokine analysis"
+          ],
+          "dropped": [
+            "Luminex"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Enumeration and Phenotyping of Fresh Blood Cell Populations",
+      "assay_name": "Enumeration and Phenotyping of Fresh Blood Cell Populations",
+      "record_verdict": "REVIEW",
+      "corrections": [],
+      "reported_not_corrected": [
+        {
+          "field_name": "name_in_paper",
+          "verdict": "NOT_SUPPORTED",
+          "reason": "This is a section heading describing an activity, not a specific assay name stated as the technique performed."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,383 @@
+{
+  "summary": {
+    "total": 5,
+    "accept": 3,
+    "review": 2,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {
+      "name_in_paper": {
+        "NOT_SUPPORTED": 1
+      },
+      "aliases[]": {
+        "NOT_SUPPORTED": 1
+      },
+      "sample_type": {
+        "NOT_SUPPORTED": 1
+      }
+    }
+  },
+  "results": [
+    {
+      "assay_id": "IFN-γ ELISpot",
+      "assay_name": "IFN-γ ELISpot",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "IFN-γ ELISpot",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S93"
+          ],
+          "evidence_text": "IFN-γ ELISpots were performed ex-vivo",
+          "reason": "The text explicitly states that IFN-γ ELISpots were performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "IFN-γ ELISpots",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S93"
+          ],
+          "evidence_text": "IFN-γ ELISpots",
+          "reason": "This exact wording appears in the source and refers to the same assay."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "ELISpot",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S15"
+          ],
+          "evidence_text": "IFN-γ ELISpots",
+          "reason": "The source repeatedly refers to this assay as ELISpot/ELISpots in the context of IFN-γ measurement."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "PBMC",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S15",
+            "S92",
+            "S93"
+          ],
+          "evidence_text": "IFN-γ ELISpots to antigen 85A peptide pools were done on fresh PBMC",
+          "reason": "The assay is explicitly stated to be performed on PBMC."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "antigen-specific interferon-γ spot-forming responses",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S15"
+          ],
+          "evidence_text": "IFN-γ ELISpots to antigen 85A peptide pools",
+          "reason": "The assay measured IFN-γ responses to antigen 85A peptide pools, supporting antigen-specific IFN-γ spot-forming responses."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "IFN-γ ELISpots were performed ex-vivo at screening and weeks 1,2,4,12, and 24 post-vaccination as previously described [ 29 ].",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S93"
+          ],
+          "evidence_text": "IFN-γ ELISpots were performed ex-vivo at screening and weeks 1,2,4,12, and 24 post-vaccination as previously described [ 29 ].",
+          "reason": "quote found in sentences S93"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S93"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Gene Expression Analysis",
+      "assay_name": "Gene Expression Analysis",
+      "assay_identity_verdict": "NOT_SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Gene Expression Analysis",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "This is a section heading rather than a specific assay name actually used as the procedure name in the text."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "microarray",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "The exact alias does not appear verbatim in the source text."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "Illumina microarrays",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S16"
+          ],
+          "evidence_text": "gene expression analysis on Illumina microarrays",
+          "reason": "This exact phrase appears and refers to the assay performed."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "PBMC",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S16"
+          ],
+          "evidence_text": "unstimulated PBMC from day of vaccination (day 0) and two and seven days later (day 2, day 7) were thawed and lysed for gene expression analysis on Illumina microarrays",
+          "reason": "The text explicitly states PBMC were used for this gene expression assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "gene expression levels",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S16",
+            "S134"
+          ],
+          "evidence_text": "gene expression analysis on Illumina microarrays",
+          "reason": "The assay is explicitly described as gene expression analysis."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Amplified RNA (750ng per array) was hybridized to the Illumina HumanHT-12 version 4 expression beadchip according to manufacturer’s instructions.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S106"
+          ],
+          "evidence_text": "Amplified RNA (750ng per array) was hybridized to the Illumina HumanHT-12 version 4 expression beadchip according to manufacturer’s instructions.",
+          "reason": "quote found in sentences S106"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S106"
+      },
+      "conflict_detected": true,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    },
+    {
+      "assay_id": "Quantitative PCR",
+      "assay_name": "Quantitative PCR",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Quantitative PCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S107"
+          ],
+          "evidence_text": "## Quantitative PCR",
+          "reason": "The paper explicitly names and performs this assay in a methods section heading."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "qPCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S109"
+          ],
+          "evidence_text": "qPCR",
+          "reason": "This exact alias appears verbatim and refers to the assay performed."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "real-time RT-PCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S150"
+          ],
+          "evidence_text": "real-time RT-PCR",
+          "reason": "This exact alias appears verbatim and refers to the same assay data."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "cDNA",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "The text states cDNA was generated and used for qPCR, but cDNA is a preparation/product rather than a specimen type for this assay field."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "gene transcript copy number",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S111",
+            "S151"
+          ],
+          "evidence_text": "Cycle number values were converted to copy number using these curves. Expression levels for each gene were normalised by dividing copy number of gene by copy number of the housekeeping gene HPRT.",
+          "reason": "The assay output is explicitly described as gene copy number and normalized expression levels."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "cDNA was stored at -20°C until qPCR was performed, using the Roche LightCycler® 480 and Quantitect mastermix (Qiagen).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S109"
+          ],
+          "evidence_text": "cDNA was stored at -20°C until qPCR was performed, using the Roche LightCycler® 480 and Quantitect mastermix (Qiagen).",
+          "reason": "quote found in sentences S109"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S109"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    },
+    {
+      "assay_id": "Flow cytometry",
+      "assay_name": "Flow cytometry",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Flow cytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S114"
+          ],
+          "evidence_text": "A FACSCalibur (Becton Dickinson) was used for flow cytometry event collection",
+          "reason": "The text explicitly states that flow cytometry was performed."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "flow cytometry of Treg markers",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S166"
+          ],
+          "evidence_text": "flow cytometry of Treg markers was done",
+          "reason": "This exact phrase appears and refers to the same assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "PBMC",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S45",
+            "S64",
+            "S65"
+          ],
+          "evidence_text": "The number of Tregs (CD4+ CD25+ Foxp3+) in unstimulated PBMC from day of vaccination and 7 days later were quantified by flow cytometry.",
+          "reason": "PBMC are explicitly stated as the specimen quantified by flow cytometry."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "Treg frequencies and TLR1 surface expression",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S45",
+            "S46",
+            "S64",
+            "S66"
+          ],
+          "evidence_text": "The number of Tregs (CD4+ CD25+ Foxp3+) in unstimulated PBMC from day of vaccination and 7 days later were quantified by flow cytometry.",
+          "reason": "The text states flow cytometry quantified Tregs and assessed TLR1 fluorescence intensity."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "A FACSCalibur (Becton Dickinson) was used for flow cytometry event collection and events were analysed using FlowJo (Tree Star Inc.).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S114"
+          ],
+          "evidence_text": "A FACSCalibur (Becton Dickinson) was used for flow cytometry event collection and events were analysed using FlowJo (Tree Star Inc.).",
+          "reason": "quote found in sentences S114"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S114"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Western blot",
+      "assay_name": "Western blot",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Western blot",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S80"
+          ],
+          "evidence_text": "HMGB1 is detectable by western blot",
+          "reason": "The text explicitly states western blot was used in this study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "cell supernatant",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S80"
+          ],
+          "evidence_text": "in the supernatant of infected cells",
+          "reason": "The western blot readout is explicitly described as being measured in cell supernatant."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "HMGB1 protein in supernatant",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S80"
+          ],
+          "evidence_text": "HMGB1 is detectable by western blot in the supernatant of infected cells",
+          "reason": "The assay is explicitly used to detect HMGB1 in supernatant."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "The membrane was incubated sequentially for 1 hour with PBS with 3% BSA alone, primary antibody (mouse anti-human HMGB1, Biolegend, UK) and finally secondary antibody (Alkaline Phosphatase-AffiniPure Donkey Anti-Mouse IgG, Stratech Scientific Limited).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S119"
+          ],
+          "evidence_text": "The membrane was incubated sequentially for 1 hour with PBS with 3% BSA alone, primary antibody (mouse anti-human HMGB1, Biolegend, UK) and finally secondary antibody (Alkaline Phosphatase-AffiniPure Donkey Anti-Mouse IgG, Stratech Scientific Limited).",
+          "reason": "quote found in sentences S119"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S119"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

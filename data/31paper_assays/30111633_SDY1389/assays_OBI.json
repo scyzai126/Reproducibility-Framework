@@ -1,0 +1,122 @@
+{
+  "flow cytometry assay": {
+    "name_in_paper": [
+      "Flow cytometry and sorting",
+      "T cell proliferation assays"
+    ],
+    "normalized_name": "flow cytometry",
+    "aliases": [],
+    "sample_type": "cells",
+    "readouts": "surface and intracellular protein expression",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Flow cytometry and sorting",
+      "sentence_ids": [
+        "S18"
+      ],
+      "quote": "Cells were acquired on an LSRII flow cytometer or sorted with Influx cell sorter (BD Biosciences) and analyzed using FlowJo (Treestar, Ashland, OR)."
+    },
+    "obi_id": "OBI:0000916",
+    "obi_label": "flow cytometry assay",
+    "resource": "exact_normalized_llm",
+    "obi_confidence": "high"
+  },
+  "RNA sequencing assay": {
+    "name_in_paper": [
+      "RNA-Sequencing"
+    ],
+    "normalized_name": "RNA sequencing",
+    "aliases": [
+      "RNAseq",
+      "RNA-seq"
+    ],
+    "sample_type": "sorted cells",
+    "readouts": "whole transcriptome gene expression profiles",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Whole-Transcriptome Profiling by RNA-Sequencing",
+      "sentence_ids": [
+        "S21"
+      ],
+      "quote": "Library was prepared using a poly-A pull-down and Illumina TruSeq RNA kit, and sequenced using Illumina HiSeq2000."
+    },
+    "obi_id": "OBI:0001177",
+    "obi_label": "RNA sequencing assay",
+    "resource": "exact_normalized_llm",
+    "obi_confidence": "high"
+  },
+  "cytometry time of flight assay": {
+    "name_in_paper": [
+      "CyTOF"
+    ],
+    "normalized_name": "mass cytometry",
+    "aliases": [
+      "cytometry by time-of-flight"
+    ],
+    "sample_type": "cryopreserved cell suspensions",
+    "readouts": "multiparameter protein marker expression on cells",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "CyTOF Sample Preparation and Analysis",
+      "sentence_ids": [
+        "S28"
+      ],
+      "quote": "Samples were then incubated in 0.125nM Ir intercalator and acquired on a CyTOF2 (Fluidigm)."
+    },
+    "obi_id": "OBI:0002115",
+    "obi_label": "cytometry time of flight assay",
+    "resource": "exact_original",
+    "obi_confidence": "high"
+  },
+  "HLA multimer reagents": {
+    "name_in_paper": [
+      "HLA multimer reagents"
+    ],
+    "normalized_name": "multimer staining",
+    "aliases": [
+      "CMV-multimer"
+    ],
+    "sample_type": "cells",
+    "readouts": "antigen-specific T cell staining",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "T cell proliferation assays",
+      "sentence_ids": [
+        "S36"
+      ],
+      "quote": "Cells were stained with HLA multimer reagents containing epitopes of CMV (CMV-multimer) ( Table S2 ) as previously described."
+    },
+    "obi_id": null,
+    "obi_label": null,
+    "resource": "unresolved",
+    "obi_confidence": null
+  },
+  "T cell receptor repertoire sequencing assay": {
+    "name_in_paper": [
+      "TCR sequencing"
+    ],
+    "normalized_name": "T cell receptor sequencing",
+    "aliases": [
+      "sequencing of the TCR CDR3β variable (V) regions"
+    ],
+    "sample_type": "DNA from cells",
+    "readouts": "TCR-Vβ sequence repertoires and clonal diversity/clonality",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Human T cell receptor (TCR) sequencing and analysis",
+      "sentence_ids": [
+        "S38"
+      ],
+      "quote": "TCR-Vβ sequences were amplified from the indicated DNA quantities ( Table S3 ) with specific primers as published."
+    },
+    "obi_id": "OBI:0002990",
+    "obi_label": "T cell receptor repertoire sequencing assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.7199
+  }
+}

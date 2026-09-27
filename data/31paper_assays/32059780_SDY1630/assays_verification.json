@@ -1,0 +1,305 @@
+{
+  "summary": {
+    "total": 4,
+    "accept": 1,
+    "review": 3,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {
+      "name_in_paper": {
+        "NOT_SUPPORTED": 3
+      },
+      "aliases[]": {
+        "NOT_SUPPORTED": 1
+      },
+      "sample_type": {
+        "NOT_SUPPORTED": 1
+      }
+    }
+  },
+  "results": [
+    {
+      "assay_id": "Flow cytometry analysis and cell sorting",
+      "assay_name": "Flow cytometry analysis and cell sorting",
+      "assay_identity_verdict": "NOT_SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Flow cytometry analysis and cell sorting",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "This is a section heading combining analysis and sorting rather than a clearly stated assay name performed as such."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "flow cytometric analysis",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S104"
+          ],
+          "evidence_text": "For flow cytometric analysis",
+          "reason": "The phrase appears verbatim and refers to the assay procedure."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "flow cytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S108"
+          ],
+          "evidence_text": "Flow cytometry data were acquired on a BD LSRII",
+          "reason": "The text explicitly refers to flow cytometry being performed."
+        },
+        {
+          "field_name": "aliases[2]",
+          "proposed_value": "high-dimensional flow cytometry profiling",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "This phrase names a different, more specific assay section and is not established as an alias for this assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "cells from blood, BM, spleen, lung, intestinal, tonsil, and LN samples",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "The cited section does not explicitly link this full specimen list to the flow cytometry analysis assay itself."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "NK cell frequencies, subset distribution, and surface and intracellular marker expression",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S104",
+            "S106",
+            "S151",
+            "S152",
+            "S154",
+            "S155"
+          ],
+          "evidence_text": "For flow cytometric analysis, cells were stained in 96-well U-bottom plates in the dark using antibody panels",
+          "reason": "The text supports flow-cytometric measurement of NK cell frequencies, subset distributions, and marker expression."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Flow cytometry data were acquired on a BD LSRII and analyzed using FCS express 6 ( De Novo Software) and custom Python scripts.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S108"
+          ],
+          "evidence_text": "Flow cytometry data were acquired on a BD LSRII and analyzed using FCS express 6 ( De Novo Software) and custom Python scripts.",
+          "reason": "quote found in sentences S108"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S108"
+      },
+      "conflict_detected": true,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    },
+    {
+      "assay_id": "In vitro cytokine stimulation and functional assays of NK cells",
+      "assay_name": "In vitro cytokine stimulation and functional assays of NK cells",
+      "assay_identity_verdict": "NOT_SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "In vitro cytokine stimulation and functional assays of NK cells",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "This is a section heading describing multiple procedures rather than a specific assay identity."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "sorted NK cells from freshly processed tissue sites",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S122"
+          ],
+          "evidence_text": "NK cells (CD45 + CD56 + CD3 − ) sorted from freshly processed tissue sites (see above)",
+          "reason": "The methods explicitly state the specimen used for this functional assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "intracellular IFN-γ production after cytokine stimulation",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S124",
+            "S125",
+            "S183"
+          ],
+          "evidence_text": "Vesicular transport was inhibited by GolgiStop (BD Biosciences, cat# 554724) and GolgiPlug (BD Bioscience cat# 555029) during the last 6 hours of the incubation. Cell surface and intracellular staining was performed as described above. IFN-γ secretion following culture of sorted NK cells from indicated sites with cytokines",
+          "reason": "The text supports measurement of IFN-γ after cytokine stimulation using intracellular staining."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "NK cells (CD45 + CD56 + CD3 − ) sorted from freshly processed tissue sites (see above) were cultured in 96-well u-bottom plates in RPMI-1640 medium containing fetal bovine serum (10%) with or without 10ng/ml IL-12 (PeproTech, cat# 200–12), 100ng/ml IL-15 (PeproTech, cat# 200–15) and 100ng/ml IL-18 (MBL International Corp.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S122",
+            "S123"
+          ],
+          "evidence_text": "NK cells (CD45 + CD56 + CD3 − ) sorted from freshly processed tissue sites (see above) were cultured in 96-well u-bottom plates in RPMI-1640 medium containing fetal bovine serum (10%) with or without 10ng/ml IL-12 (PeproTech, cat# 200–12), 100ng/ml IL-15 (PeproTech, cat# 200–15) and 100ng/ml IL-18 (MBL International Corp. cat# B001–5) for 18 hours.",
+          "reason": "quote found in sentences S122"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S122"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    },
+    {
+      "assay_id": "For measuring degranulation by NK cells",
+      "assay_name": "For measuring degranulation by NK cells",
+      "assay_identity_verdict": "NOT_SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "For measuring degranulation by NK cells",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "This is a purpose statement rather than a specific assay name."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "sorted, overnight rested NK cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S126"
+          ],
+          "evidence_text": "30,000–50,000 sorted, overnight rested NK cells",
+          "reason": "The text explicitly states these cells were used in this assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "CD107a expression as a measure of degranulation after co-culture with K562 cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S38",
+            "S126",
+            "S127",
+            "S184"
+          ],
+          "evidence_text": "staining for the expression of lysosomal-associated membrane protein 1 (LAMP-1: CD107a), a marker for degranulation",
+          "reason": "The source explicitly links CD107a expression to degranulation in the K562 co-culture assay."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "For measuring degranulation by NK cells, 30,000–50,000 sorted, overnight rested NK cells were incubated with K562 cells (ATCC: CCL-243; provided by Emily Mace, Columbia University) at a 2:1 effector to target (NK: K562) ratio in a 96-well tissue culture plate at 37°C at 5% CO 2 for 4 hours.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S126"
+          ],
+          "evidence_text": "For measuring degranulation by NK cells, 30,000–50,000 sorted, overnight rested NK cells were incubated with K562 cells (ATCC: CCL-243; provided by Emily Mace, Columbia University) at a 2:1 effector to target (NK: K562) ratio in a 96-well tissue culture plate at 37°C at 5% CO 2 for 4 hours.",
+          "reason": "quote found in sentences S126"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S126"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    },
+    {
+      "assay_id": "Whole transcriptome profiling of NK cell subsets",
+      "assay_name": "Whole transcriptome profiling of NK cell subsets",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Whole transcriptome profiling of NK cell subsets",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S129"
+          ],
+          "evidence_text": "## Whole transcriptome profiling of NK cell subsets",
+          "reason": "This exact section heading appears in the methods and names an assay performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "whole transcriptome profiling by RNA sequencing (RNA-seq)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S41"
+          ],
+          "evidence_text": "we performed whole transcriptome profiling by RNA sequencing (RNA-seq)",
+          "reason": "This exact phrase appears and refers to the same assay performed here."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "RNA-seq",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S41"
+          ],
+          "evidence_text": "RNA-seq",
+          "reason": "This exact alias appears in the description of the assay performed."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "sorted CD56 bright CD16 − and CD56 dim CD16 + NK cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S130"
+          ],
+          "evidence_text": "RNA was isolated from sorted CD56 bright CD16 − and CD56 dim CD16 + NK cells",
+          "reason": "The methods explicitly state these sorted NK cell subsets were used for this assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "whole transcriptome gene expression profiles",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S41",
+            "S42"
+          ],
+          "evidence_text": "we performed whole transcriptome profiling by RNA sequencing (RNA-seq) ... Analysis of the whole transcriptome identified global signatures of 1,083 genes differentially expressed (DE)",
+          "reason": "The assay is explicitly described as profiling the whole transcriptome and identifying differential gene expression."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Samples were sequenced at Genewiz (South Plainfield, NJ) using a HiSeq2500 system (Illumina).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S131"
+          ],
+          "evidence_text": "Samples were sequenced at Genewiz (South Plainfield, NJ) using a HiSeq2500 system (Illumina).",
+          "reason": "quote found in sentences S131"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S131"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

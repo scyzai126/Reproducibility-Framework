@@ -1,0 +1,50 @@
+{
+  "summary": {
+    "assays": 4,
+    "fields_re_extracted": 0,
+    "actions": {},
+    "reported_not_corrected": 2
+  },
+  "results": [
+    {
+      "assay_id": "Flow Cytometry Analysis",
+      "assay_name": "Flow Cytometry Analysis",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Cytokine and Chemokine Multiplex Analysis",
+      "assay_name": "Cytokine and Chemokine Multiplex Analysis",
+      "record_verdict": "REVIEW",
+      "corrections": [],
+      "reported_not_corrected": [
+        {
+          "field_name": "name_in_paper",
+          "verdict": "NOT_SUPPORTED",
+          "reason": "This is a section heading, not the explicit name of the assay performed."
+        }
+      ]
+    },
+    {
+      "assay_id": "RNA Extraction and Next-Generation RNA Sequencing",
+      "assay_name": "RNA Extraction and Next-Generation RNA Sequencing",
+      "record_verdict": "REVIEW",
+      "corrections": [],
+      "reported_not_corrected": [
+        {
+          "field_name": "name_in_paper",
+          "verdict": "NOT_SUPPORTED",
+          "reason": "This section title combines sample-prep and assay steps rather than naming the performed assay itself."
+        }
+      ]
+    },
+    {
+      "assay_id": "ELISA",
+      "assay_name": "ELISA",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    }
+  ]
+}

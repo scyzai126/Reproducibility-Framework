@@ -1,0 +1,85 @@
+{
+  "single cell RNA-sequencing (scRNA-seq)": {
+    "name_in_paper": "single cell RNA-sequencing (scRNA-seq)",
+    "aliases": [
+      "scRNA-seq",
+      "single-cell RNA-seq",
+      "single-cell transcriptome profiling",
+      "Chromium 3'-scRNA-seq",
+      "10x Genomics Chromium scRNA-seq",
+      "single-cell transcriptomics",
+      "scRNAseq"
+    ],
+    "generate_claim": true,
+    "OBI ontology": {
+      "obi_id": "OBI:0002631",
+      "obi_label": "single-cell RNA sequencing assay"
+    },
+    "evidence_location": {
+      "type": "text",
+      "section": "Methods",
+      "quote": "Single-cell suspensions were loaded onto a Chromium Single Cell Chip (10x Genomics) according to the manufacturer's instructions for co-encapsulation with barcoded Gel Beads at a target capture rate of ~5000 individual cells per sample. We barcoded captured mRNA was barcoded during cDNA synthesis and converted the barcoded cDNA into pooled single-cell RNA-seq libraries for Illumina sequencing using the Chromium Single Cell 3' Solution (10x Genomics) according to the manufacturer's instructions."
+    }
+  },
+  "flow cytometry": {
+    "name_in_paper": "flow cytometry",
+    "aliases": [
+      "flow cytometry assay",
+      "FACS",
+      "intracellular staining",
+      "surface marker staining",
+      "cell fluorescence data"
+    ],
+    "generate_claim": true,
+    "OBI ontology": {
+      "obi_id": "OBI:0000916",
+      "obi_label": "flow cytometry assay"
+    },
+    "evidence_location": {
+      "type": "text",
+      "section": "Methods",
+      "quote": "To evaluate the expression of T cell surface markers by flow cytometry, we incubated tissue and blood cell suspensions with Human TruStain FcX (BioLegend) and stained with following fluorochrome-conjugated antibodies: CD3 (UCHT1, BD Biosciences; OKT3, BioLegend), CD4 (SK3, BD Biosciences; SK3, Tonbo Biosciences), CD8 (SK1, BioLegend; RPA-T8, BD Biosciences), CCR7 (G043H7; BioLegend), CD45RA (HI100; BioLegend), CD25 (BC96; BioLegend), CD127 (A019D5; BioLegend), CD69 (FN50; BioLegend), CD103 (Ber-ACT8; BioLegend), CD45 (HI30; BioLegend), and Fixable Viability Dye eFluor 780 (eBioscience). [...] We acquired cell fluorescence data using a BD LSR II flow cytometer and used FCS Express (De Novo Software) for analysis."
+    }
+  },
+  "proliferation assay": {
+    "name_in_paper": "proliferation assay",
+    "aliases": [
+      "stimulation/proliferation assay",
+      "proliferation dye assay",
+      "Cell Proliferation Dye eFluor 450",
+      "NME1 protein expression by flow cytometry",
+      "intracellular NME1 protein expression"
+    ],
+    "generate_claim": true,
+    "OBI ontology": {
+      "obi_id": "OBI:0000891",
+      "obi_label": "cell proliferation assay"
+    },
+    "evidence_location": {
+      "type": "text",
+      "section": "Methods",
+      "quote": "For stimulation/proliferation assays, we magnetically enriched for CD3+ T cells from single cell suspensions, stained cells with Cell Proliferation Dye eFluor 450 (eBioscience), and cultured cells for up to 120 h with or without TCR stimulation as above. At indicated time points, we performed intercellular staining of NME1 (11615-H07E; Sino Biological) using a Foxp3/Transcription Factor Staining Buffer Kit (Tonbo Biosciences) for fixation and permeabilization of cells according to manufacturer's instructions."
+    }
+  },
+  "quantitative real-time PCR (qPCR)": {
+    "name_in_paper": "quantitative real-time PCR (qPCR)",
+    "aliases": [
+      "qPCR",
+      "RT-qPCR",
+      "quantitative PCR",
+      "Quantitative PCR",
+      "qRT-PCR",
+      "TaqMan Gene Expression Assay"
+    ],
+    "generate_claim": true,
+    "OBI ontology": {
+      "obi_id": "OBI:0000911",
+      "obi_label": "real time reverse-transcription polymerase chain reaction assay"
+    },
+    "evidence_location": {
+      "type": "text",
+      "section": "Methods",
+      "quote": "We converted RNA to cDNA via SuperScript IV VILO Master Mix (Invitrogen) and performed quantitative real-time PCR (qPCR) on a Viia 7 Real-Time PCR system (Applied Biosystems) using TaqMan Gene Expression Assays (NME1 Hs00264824_m1; IL2RA Hs00907777_m1; IFIT3 Hs00155468_m1; TBP Hs00427620_m1) and TaqMan Fast Advanced Master Mix, all from ThermoFisher Scientific."
+    }
+  }
+}

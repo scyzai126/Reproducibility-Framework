@@ -1,0 +1,424 @@
+{
+  "summary": {
+    "total": 5,
+    "accept": 0,
+    "review": 4,
+    "reject": 1,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {
+      "sample_type": {
+        "NOT_SUPPORTED": 2
+      },
+      "aliases[]": {
+        "NOT_SUPPORTED": 5
+      },
+      "name_in_paper": {
+        "CONTRADICTED": 1
+      },
+      "readouts": {
+        "CONTRADICTED": 1
+      }
+    }
+  },
+  "results": [
+    {
+      "assay_id": "ELISA",
+      "assay_name": "ELISA",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "ELISA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S32"
+          ],
+          "evidence_text": "anti-DENV IgG and IgM ELISA",
+          "reason": "The text explicitly states that ELISA was performed for DENV serology tests."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "anti-DENV IgG and IgM ELISA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S32"
+          ],
+          "evidence_text": "anti-DENV IgG and IgM ELISA",
+          "reason": "This exact phrase appears verbatim and names the same assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "acute phase serum",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "Although acute phase serum is mentioned elsewhere for diagnosis criteria, it is not explicitly linked to the ELISA in section 2.2."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "dengue IgG and IgM serology",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S32"
+          ],
+          "evidence_text": "DENV serology tests were performed with anti-DENV IgG and IgM ELISA",
+          "reason": "The assay is explicitly described as measuring DENV IgG and IgM serology."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "DENV serology tests were performed with anti-DENV IgG and IgM ELISA as previously described [ 12 ].",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S32"
+          ],
+          "evidence_text": "DENV serology tests were performed with anti-DENV IgG and IgM ELISA as previously described [ 12 ].",
+          "reason": "quote found in sentences S32"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S32"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    },
+    {
+      "assay_id": "reverse transcription-PCR",
+      "assay_name": "reverse transcription-PCR",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "reverse transcription-PCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S33"
+          ],
+          "evidence_text": "Reverse transcription-PCR was performed",
+          "reason": "The text explicitly states this assay was performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "reverse transcription polymerase chain reaction (RT-PCR)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S13"
+          ],
+          "evidence_text": "positive reverse transcription polymerase chain reaction (RT-PCR) of DENV RNA",
+          "reason": "This exact phrase appears and refers to the same PCR assay used for dengue confirmation."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "PCR tests",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "The exact alias does not appear verbatim in the source text."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "acute phase serum",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "Acute phase serum is linked to diagnostic confirmation criteria in S13, but S33 does not state the specimen used for this performed RT-PCR assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "DENV RNA detection",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S13",
+            "S33"
+          ],
+          "evidence_text": "positive reverse transcription polymerase chain reaction (RT-PCR) of DENV RNA",
+          "reason": "The source explicitly links RT-PCR to detection of DENV RNA."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Reverse transcription-PCR was performed by using the DV1 and DV3 primer set [ 13 ] and the ALD 1 and ALD 2 primer set [ 14 ] in one reaction with details specified previously [ 15 ].",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S33"
+          ],
+          "evidence_text": "Reverse transcription-PCR was performed by using the DV1 and DV3 primer set [ 13 ] and the ALD 1 and ALD 2 primer set [ 14 ] in one reaction with details specified previously [ 15 ].",
+          "reason": "quote found in sentences S33"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S33"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    },
+    {
+      "assay_id": "flow cytometry",
+      "assay_name": "flow cytometry",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "flow cytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S9"
+          ],
+          "evidence_text": "by RNA-sequencing and flow cytometry",
+          "reason": "The text explicitly states flow cytometry was used in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "Flow Cytometry Analysis",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "This exact capitalization and wording do not appear verbatim in the source text."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "flowcytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S38"
+          ],
+          "evidence_text": "flowcytometry",
+          "reason": "This exact term appears in the source and refers to the same assay context."
+        },
+        {
+          "field_name": "aliases[2]",
+          "proposed_value": "Initial phenotyping of peripheral blood mononuclear cells (PBMC) from the two groups (D+L and D-L) was determined by flow cytometry.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S72"
+          ],
+          "evidence_text": "Initial phenotyping of peripheral blood mononuclear cells (PBMC) from the two groups (D+L and D-L) was determined by flow cytometry.",
+          "reason": "This exact sentence appears and describes the flow cytometry measurement performed here."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "PBMCs",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S72"
+          ],
+          "evidence_text": "Initial phenotyping of peripheral blood mononuclear cells (PBMC) from the two groups (D+L and D-L) was determined by flow cytometry.",
+          "reason": "The source explicitly links PBMCs to the flow cytometry assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "frequencies and proportions of CD4+CD8+ double-positive, CD4+ single-positive, and CD8+ single-positive T cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S73",
+            "S75"
+          ],
+          "evidence_text": "Specifically, the proportions of CD4 + CD8 + double-positive (DP), CD4 + single-positive (SP), and CD8 + SP T cells in acute DENV infection was assessed, using the gating strategy illustrated in Figure 1 A. As shown in Figure 1 C, we observed a significant higher proportion ( p < 0.0001) of CD4 + CD8 + DP T cells",
+          "reason": "The text states flow cytometry assessed proportions of these T-cell subsets."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "The aim of this study was to investigate the association of the gene expression profiles and phenotypic attributes of CD4 + CD8 + double-positive (DP) cells with plasma leakage in dengue diseases by RNA-sequencing and flow cytometry.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S9"
+          ],
+          "evidence_text": "The aim of this study was to investigate the association of the gene expression profiles and phenotypic attributes of CD4 + CD8 + double-positive (DP) cells with plasma leakage in dengue diseases by RNA-sequencing and flow cytometry.",
+          "reason": "quote found in sentences S9"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S9"
+      },
+      "conflict_detected": true,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    },
+    {
+      "assay_id": "cell sorting",
+      "assay_name": "cell sorting",
+      "assay_identity_verdict": "CONTRADICTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "cell sorting",
+          "verdict": "CONTRADICTED",
+          "evidence_sentence_ids": [
+            "S35"
+          ],
+          "evidence_text": "cells were sorted into TRIzol LS Reagent",
+          "reason": "This describes a sample-isolation step rather than an assay producing a measurement readout."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "sort",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "The exact alias does not appear verbatim in the source text."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "sorted",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S35"
+          ],
+          "evidence_text": "sorted",
+          "reason": "The exact word appears in the source and refers to the same sorting step."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "PBMCs",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S34"
+          ],
+          "evidence_text": "PBMCs were stained",
+          "reason": "The sorting procedure was performed on PBMCs."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "isolation of live CD4+ single-positive, CD8+ single-positive, and CD4+CD8+ double-positive T-cell subsets for downstream RNA sequencing",
+          "verdict": "CONTRADICTED",
+          "evidence_sentence_ids": [
+            "S35"
+          ],
+          "evidence_text": "cells were sorted",
+          "reason": "This is an isolation outcome of a sample-prep step, not a measurement readout."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Subsequently, live CD4 + single positive (SP) (CD14 − CD19 − CD56 − CD3 + CD4 + CD8 − ), CD8 + SP (CD14 − CD19 − CD56 − CD3 + CD4 − CD8 + ), and CD4 + CD8 + DP (CD14 − CD19 − CD56 − CD3 + CD4 + CD8 + ) cells were sorted into TRIzol LS Reagent (Invitrogen, Carlsbad, CA, USA) using a BD FACSAria cell sorter (BD Biosciences, San Jose, CA, USA).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S35"
+          ],
+          "evidence_text": "Subsequently, live CD4 + single positive (SP) (CD14 − CD19 − CD56 − CD3 + CD4 + CD8 − ), CD8 + SP (CD14 − CD19 − CD56 − CD3 + CD4 − CD8 + ), and CD4 + CD8 + DP (CD14 − CD19 − CD56 − CD3 + CD4 + CD8 + ) cells were sorted into TRIzol LS Reagent (Invitrogen, Carlsbad, CA, USA) using a BD FACSAria cell sorter (BD Biosciences, San Jose, CA, USA).",
+          "reason": "quote found in sentences S35"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S35"
+      },
+      "conflict_detected": true,
+      "record_verdict": "REJECT",
+      "model_record_verdict": "REJECT"
+    },
+    {
+      "assay_id": "RNA Sequencing",
+      "assay_name": "RNA Sequencing",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "RNA Sequencing",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S40"
+          ],
+          "evidence_text": "RNA Sequencing",
+          "reason": "The source explicitly names this methods section as RNA Sequencing."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "RNA-sequencing",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S9"
+          ],
+          "evidence_text": "RNA-sequencing",
+          "reason": "This exact phrase appears in the text and refers to the assay performed in the study."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "RNA-seq",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S103"
+          ],
+          "evidence_text": "bulk RNA-seq datasets",
+          "reason": "The text explicitly uses RNA-seq to refer to the sequencing data generated in this study."
+        },
+        {
+          "field_name": "aliases[2]",
+          "proposed_value": "transcriptomic analysis",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "This phrase names downstream analysis rather than the assay itself."
+        },
+        {
+          "field_name": "aliases[3]",
+          "proposed_value": "bulk RNA-seq datasets",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "This phrase refers to the resulting datasets, not the assay name itself."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "sorted CD4+ single-positive, CD8+ single-positive, and CD4+CD8+ double-positive T cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S35",
+            "S81"
+          ],
+          "evidence_text": "live CD4 + single positive (SP) ... CD8 + SP ... and CD4 + CD8 + DP ... cells were sorted into TRIzol LS Reagent ...; Cell subsets were sorted and RNA-seq performed",
+          "reason": "The text links RNA-seq to sorted CD4+ SP, CD8+ SP, and CD4+CD8+ DP T-cell subsets."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "gene expression profiles and transcriptomic signatures",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S9",
+            "S93",
+            "S108"
+          ],
+          "evidence_text": "gene expression profiles ...; we compared transcriptomic profiles ...; Comparison of transcriptomic signatures",
+          "reason": "The study states that RNA sequencing was used to assess gene expression and transcriptomic profiles/signatures."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Samples were sequenced in 3 batches using a NovaSeq 6000 system (Illumina, San Diego, CA, USA) to obtain 50-bp paired-end reads.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S44"
+          ],
+          "evidence_text": "Samples were sequenced in 3 batches using a NovaSeq 6000 system (Illumina, San Diego, CA, USA) to obtain 50-bp paired-end reads.",
+          "reason": "quote found in sentences S44"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S44"
+      },
+      "conflict_detected": true,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    }
+  ]
+}

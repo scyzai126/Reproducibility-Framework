@@ -1,0 +1,67 @@
+{
+  "summary": {
+    "assays": 3,
+    "fields_re_extracted": 3,
+    "actions": {
+      "REPLACED": 3
+    },
+    "reported_not_corrected": 0
+  },
+  "results": [
+    {
+      "assay_id": "Microarray Analysis",
+      "assay_name": "Microarray Analysis",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "sample_type",
+          "action": "REPLACED",
+          "previous": "whole blood",
+          "blind_answer": "peripheral blood samples for RNA purification"
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Hemagglutination inhibition (HAI) tests",
+      "assay_name": "Hemagglutination inhibition (HAI) tests",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "HAI",
+            "HAI assay"
+          ],
+          "blind_answer": [
+            "HAI"
+          ],
+          "dropped": [
+            "HAI assay"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Neutralizing antibody tests",
+      "assay_name": "Neutralizing antibody tests",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "neutralization assays"
+          ],
+          "blind_answer": [],
+          "dropped": [
+            "neutralization assays"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    }
+  ]
+}

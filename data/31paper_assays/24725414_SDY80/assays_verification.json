@@ -1,0 +1,287 @@
+{
+  "summary": {
+    "total": 4,
+    "accept": 3,
+    "review": 1,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {
+      "aliases[]": {
+        "NOT_SUPPORTED": 1
+      }
+    }
+  },
+  "results": [
+    {
+      "assay_id": "microarray",
+      "assay_name": "microarray",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "microarray",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S11"
+          ],
+          "evidence_text": "transcriptome analyses using microarrays",
+          "reason": "The study explicitly states that transcriptome analyses using microarrays were included."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "transcriptome analyses using microarrays",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S11"
+          ],
+          "evidence_text": "transcriptome analyses using microarrays",
+          "reason": "This exact phrase appears in the text and refers to the same assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "PBMCs",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S129"
+          ],
+          "evidence_text": "PBMCs were cryopreserved or lysed and stored at -80C for subsequent RNA extraction",
+          "reason": "The text explicitly links PBMCs to the RNA extraction and array hybridization workflow."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "gene expression levels",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S23"
+          ],
+          "evidence_text": "Transcript abundance for day 0 PBMCs also showed substantial variation",
+          "reason": "Transcript abundance unambiguously supports gene expression as the assay readout."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "PBMCs were cryopreserved or lysed and stored at -80C for subsequent RNA extraction using miRNeasy (Qiagen) and hybridization to HG 1.0 ST arrays (Affymetrix).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S129"
+          ],
+          "evidence_text": "PBMCs were cryopreserved or lysed and stored at -80C for subsequent RNA extraction using miRNeasy (Qiagen) and hybridization to HG 1.0 ST arrays (Affymetrix).",
+          "reason": "quote found in sentences S129"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S129"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "flow cytometric analyses",
+      "assay_name": "flow cytometric analyses",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "flow cytometric analyses",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S11"
+          ],
+          "evidence_text": "multiple 15-color flow cytometric analyses",
+          "reason": "The study explicitly lists flow cytometric analyses among the assays performed."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "cell population frequencies",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "This phrase refers to a readout rather than an explicit alternate name for the assay itself."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "PBMCs",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S155"
+          ],
+          "evidence_text": "Frozen PBMCs from all time points for a subject were stained for 5 panels",
+          "reason": "The text explicitly states that PBMCs were stained for this assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "frequencies of cell populations",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S156"
+          ],
+          "evidence_text": "Cell frequencies were expressed as percent of parent population.",
+          "reason": "The assay readout is explicitly described as cell frequencies."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Frozen PBMCs from all time points for a subject were stained for 5 panels (Figure S1A) ( Biancotto et al., 2011 ) using a common antibody mix on the same day.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S155"
+          ],
+          "evidence_text": "Frozen PBMCs from all time points for a subject were stained for 5 panels (Figure S1A) ( Biancotto et al., 2011 ) using a common antibody mix on the same day.",
+          "reason": "quote found in sentences S130"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S130"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Virus-neutralizing titers",
+      "assay_name": "Virus-neutralizing titers",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Virus-neutralizing titers",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S132"
+          ],
+          "evidence_text": "Virus-neutralizing titers",
+          "reason": "The methods explicitly state this measurement was performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "influenza-specific serum neutralization titers",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S11"
+          ],
+          "evidence_text": "influenza-specific serum neutralization titers",
+          "reason": "This exact phrase appears in the paper and refers to the same assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "sera",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S10",
+            "S11"
+          ],
+          "evidence_text": "Purified PBMCs and sera were frozen to allow subsequent assessments to be performed at the same time for a given individual, thereby minimizing batch effects. For the present study, assays included antibody-forming cell responses, influenza-specific serum neutralization titers",
+          "reason": "The text links serum neutralization titers to sera as the specimen used for subsequent assessments."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "neutralizing antibody titers reported as the highest dilution that completely suppressed virus replication",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S132",
+            "S133"
+          ],
+          "evidence_text": "Virus-neutralizing titers (A/California/07/2009 (H1N1pdm09), H1N1 A/Brisbane/59/07, H3N2 A/Uruguay/716/07, and B/Brisbane/60/2001) were determined according to ( Hancock et al., 2009 ). Reported titers were the highest dilution that completely suppressed virus replication.",
+          "reason": "The methods explicitly define the reported titer readout for this assay."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Virus-neutralizing titers (A/California/07/2009 (H1N1pdm09), H1N1 A/Brisbane/59/07, H3N2 A/Uruguay/716/07, and B/Brisbane/60/2001) were determined according to ( Hancock et al., 2009 ).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S132"
+          ],
+          "evidence_text": "Virus-neutralizing titers (A/California/07/2009 (H1N1pdm09), H1N1 A/Brisbane/59/07, H3N2 A/Uruguay/716/07, and B/Brisbane/60/2001) were determined according to ( Hancock et al., 2009 ).",
+          "reason": "quote found in sentences S132"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S132"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "ELISpot assays",
+      "assay_name": "ELISpot assays",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "ELISpot assays",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S134"
+          ],
+          "evidence_text": "measured by ELISpot assays",
+          "reason": "The methods explicitly state that ELISpot assays were used in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "ELISpot",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S189"
+          ],
+          "evidence_text": "measured by ELISpot",
+          "reason": "The text uses ELISpot as a name for the same assay."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "antibody-forming cell responses",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S11"
+          ],
+          "evidence_text": "assays included antibody-forming cell responses",
+          "reason": "This phrase is used in the paper to denote the assay included in the study and corresponds to the ELISpot measurement."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "total and influenza-specific IgG/A frequencies of antibody-secreting cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S134"
+          ],
+          "evidence_text": "Total and influenza-specific IgG/A frequencies of antibody-secreting cells were measured by ELISpot assays",
+          "reason": "The methods explicitly state these were the quantities measured by the ELISpot assays."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Total and influenza-specific IgG/A frequencies of antibody-secreting cells were measured by ELISpot assays modified for frozen samples ( Ho et al., 2011 ).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S134"
+          ],
+          "evidence_text": "Total and influenza-specific IgG/A frequencies of antibody-secreting cells were measured by ELISpot assays modified for frozen samples ( Ho et al., 2011 ).",
+          "reason": "quote found in sentences S134"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S134"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

@@ -1,0 +1,142 @@
+{
+  "microarray assay": {
+    "name_in_paper": [
+      "gene array"
+    ],
+    "aliases": [
+      "microarray",
+      "gene microarray"
+    ],
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Gene array analysis of whole-blood and VaxDesign samples.",
+      "sentence_ids": [
+        "S124"
+      ],
+      "quote": "The biotinylated cRNA was hybridized onto Illumina Human RefSeq-8 BeadChips v2 (Montreal and Lausanne samples) or v3 (VaxDesign samples) at 58°C for 20 h and quantified using Illumina BeadStation 500GX scanner and Illumina BeadStudio v3 software."
+    }
+  },
+  "real time polymerase chain reaction assay": {
+    "name_in_paper": [
+      "qPCR"
+    ],
+    "aliases": [
+      "quantitative real-time PCR"
+    ],
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "qPCR validation.",
+      "sentence_ids": [
+        "S133"
+      ],
+      "quote": "Changes in gene expression observed by microarray analyses were verified by qPCR."
+    }
+  },
+  "viral plaque assay": {
+    "name_in_paper": [
+      "lysis plaque assay"
+    ],
+    "aliases": [
+      "plaque assay"
+    ],
+    "generate_claim": false,
+    "source": "methods",
+    "evidence": {
+      "section": "In vitro infection of immature DCs with YF17D.",
+      "sentence_ids": [
+        "S149"
+      ],
+      "quote": "Viral stocks were titrated on Vero cells by lysis plaque assay."
+    }
+  },
+  "enzyme-linked immunosorbent assay": {
+    "name_in_paper": [
+      "IL-1β ELISA"
+    ],
+    "aliases": [
+      "ELISA"
+    ],
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "In vitro infection of immature DCs with YF17D.",
+      "sentence_ids": [
+        "S154"
+      ],
+      "quote": "After 24 and 48 h, supernatants were collected and analyzed using an IL-1β ELISA kit (BD)."
+    }
+  },
+  "flow cytometry assay": {
+    "name_in_paper": [
+      "CFSE labeling",
+      "flow cytometric analysis of IFN-γ/IL-2–producing activated CD4 T cells"
+    ],
+    "aliases": [
+      "polychromatic flow cytometry",
+      "flow cytometry",
+      "FACS analysis"
+    ],
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Proliferation and cytokine secretion assays.",
+      "sentence_ids": [
+        "S155"
+      ],
+      "quote": "PBMCs from vaccinated volunteers were labeled with CFSE (Invitrogen), as previously described ( 64 )."
+    },
+    "additional_evidence": [
+      {
+        "name_in_paper": "flow cytometric analysis of IFN-γ/IL-2–producing activated CD4 T cells",
+        "sample_type": "PBMCs from vaccinated subjects",
+        "readouts": "frequencies of activated CD4 T cells expressing CD154, IL-2, IFN-γ and Th1/Th2 phenotype markers",
+        "generate_claim": true,
+        "source": "methods",
+        "evidence": {
+          "section": "Flow cytometric analysis of IFN-γ/IL-2–producing activated CD4 T cells.",
+          "sentence_ids": [
+            "S162"
+          ],
+          "quote": "To assess the cytokine production ability of YF17D-specific helper T cells, 2 million PBMCs from vaccinated subjects (day 14 and 28) were stimulated for 6 h with YF17D-derived peptide pools, in the presence of Brefeldin A (Sigma-Aldrich), and then stained with anti-CD8 and -CD4 antibodies."
+        }
+      }
+    ]
+  },
+  "cytometric bead array assay": {
+    "name_in_paper": [
+      "BD Th1/Th2 CBA array",
+      "multiplex cytokine analysis"
+    ],
+    "aliases": [
+      "CBA",
+      "cytometric bead assay"
+    ],
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Proliferation and cytokine secretion assays.",
+      "sentence_ids": [
+        "S161"
+      ],
+      "quote": "The BD Th1/Th2 CBA array (BD) was used to measure levels of IL-2, IL-4, IL-5, IL-10, IFN-γ, and TNF in PBMCs supernatants, as suggested by the manufacturer."
+    },
+    "additional_evidence": [
+      {
+        "name_in_paper": "multiplex cytokine analysis",
+        "sample_type": "supernatants from DC/T cell co-cultures",
+        "readouts": "cytokine production levels",
+        "generate_claim": true,
+        "source": "methods",
+        "evidence": {
+          "section": "Multiplex cytokine analysis.",
+          "sentence_ids": [
+            "S179"
+          ],
+          "quote": "At the time the lymphocytes were harvested from DC/T cell co-cultures, the supernatants were also collected and stored frozen until analyzed for cytokine production using the Beadlyte human 22-plex Multi-cytokine Detection System (Millipore) on a Bio-Plex reader (Bio-Rad Laboratories)."
+        }
+      }
+    ]
+  }
+}
