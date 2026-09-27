@@ -40,7 +40,8 @@ claim set, exactly as in v7.
   SYS_PASS4 = PASS_4_ROLE                                # abstract coverage audit
   SYS_PASS5 = PASS_5_ROLE                                # reconciliation across the claim set
 
-Run passes 1-2 at temperature 1.0, 5 runs each, and take the modal claim count. Pass 2 must see
+Run passes 1-2 once each at temperature 0 (runs=1); runs>1 samples at 1.0 and keeps the modal
+claim count. Pass 2 must see
 the DRAFT + LEGENDS only — feeding the prose back alongside the draft measurably degraded both
 prose-detail capture and determinacy, and that finding is scope-independent.
 

@@ -25,12 +25,12 @@ panel split did that structurally. claim_abstraction_prompt_v8.md gives it a ste
 exactly that, and tells it to leave a claim alone rather than guess a panel by topic.
 
 Usage:
-    python scripts/run_claim_doc.py <raw.xml> <out_dir> [--runs 5] [--prompt <file.md>]
+    python scripts/run_claim_doc.py <raw.xml> <out_dir> [--runs 1] [--prompt <file.md>]
                                     [--audit] [--dry-run]
 
 Examples:
     python scripts/run_claim_doc.py data/JAT_XML/SDY1260_24336226.xml \
-        data/claims/new_26_studies/24336226_SDY1260_filtered --runs 5
+        data/claims/new_26_studies/24336226_SDY1260_filtered
 
 XML only. Five corpus papers PMC will not serve as full text (SDY1276/21357945,
 SDY1291/23151505, SDY1293/20078211, SDY404/25367297, SDY2618/36988326) have no JATS to
@@ -98,7 +98,8 @@ async def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("paper_path", type=Path, help="the paper's JATS XML")
     ap.add_argument("out_dir", type=Path)
-    ap.add_argument("--runs", type=int, default=5, help="samples for passes 1-2")
+    ap.add_argument("--runs", type=int, default=1,
+                    help="runs of passes 1-2 (1: one temperature-0 call; >1: sampled at 1.0, modal count)")
     ap.add_argument("--model", default=settings.OPENAI_MODEL)
     ap.add_argument("--prompt", default=DOCUMENT_PROMPT_FILE, help="prompt document in app/prompts/")
     ap.add_argument("--dry-run", action="store_true", help="split the document only, no LLM calls")

@@ -7,8 +7,9 @@ markdown changes the run.
     passes 1-3   per paper   prose -> draft, draft+legends -> claims, provenance audit
     passes 4-5   per paper   abstract coverage audit, claim-set de-duplication
 
-Passes 1 and 2 are self-consistency sampled: `runs` samples at temperature 1.0, keep the
-sample whose claim count is the mode. Passes 3-5 are single deterministic calls.
+Passes 1 and 2 run once each at temperature 0 by default (runs=1). With runs>1 they are
+self-consistency sampled instead: `runs` samples at temperature 1.0, keeping the sample whose
+claim count is the mode. Passes 3-5 are single deterministic calls.
 
 The paper arrives from `jats_parser.parse_jats_xml` as two blocks — its Abstract, Results
 and Methods prose, and every figure/table legend — so pass 1 drafts without seeing a legend
@@ -332,7 +333,7 @@ async def run_document(
     model: str,
     prompts: dict[str, str],
     doc: PaperDocument,
-    runs: int = 5,
+    runs: int = 1,
     tracker: UsageTracker | None = None,
     semaphore: asyncio.Semaphore | None = None,
 ) -> dict:
@@ -498,7 +499,7 @@ async def abstract_claims_from_document(
     xml_text: str,
     client: AsyncOpenAI,
     model: str,
-    runs: int = 5,
+    runs: int = 1,
     prompt_file: str = DOCUMENT_PROMPT_FILE,
 ) -> tuple[dict, dict]:
     """Run all five passes over a paper. Returns (claims, audit).
@@ -507,8 +508,8 @@ async def abstract_claims_from_document(
     classify_groups). `audit` holds everything the passes reported that is not itself a claim:
     demotions, provenance verdicts, coverage, proposed merges, and the sampling record.
 
-    13 calls: 2x`runs` sampled extraction passes, 1 provenance audit, and passes 4-5 over the
-    pooled set.
+    2x`runs` + 3 calls -- 5 at the default runs=1: the two extraction passes, 1 provenance
+    audit, and passes 4-5 over the pooled set.
     """
     prompts = system_prompts(load_v5_prompts(prompt_file))
     doc = split_document(xml_text)
