@@ -1,20 +1,28 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import AssayAccuracyBars from './AssayAccuracyBars';
+import { benchmarkCounts } from './AssayBenchmarkResults';
 import AssayObiSummary from './AssayObiSummary';
 import AssayObiTable from './AssayObiTable';
-import { fetchAssayImmport, fetchAssayObi } from '@/lib/api';
-import type { AssayImmportResponse, AssayObiResponse } from '@/lib/types';
+import { fetchAssayImmport, fetchAssayObi, fetchDataAvailabilityCorpus } from '@/lib/api';
+import type { AssayImmportResponse, AssayObiResponse, DataAvailabilityResult } from '@/lib/types';
 
 /**
  * The corpus-wide assay/OBI table, lifted out of the page unchanged.
  *
- * Reads one stored file (data/claims/all_assays_full_OBI.json) across every paper. It is the
+ * Reads one stored file (data/31paper_assays/all_assays_OBI.json, one row per assay, built by
+ * scripts/build_assay_table.py) across every paper. It is the
  * finished picture; the Extract tab is where one paper's registry is built.
  */
 export default function AssayCorpusPanel() {
   const [data, setData] = useState<AssayObiResponse | null>(null);
   const [immport, setImmport] = useState<AssayImmportResponse | null>(null);
+  const [immportFailed, setImmportFailed] = useState(false);
+  // Where each paper's own data lives, keyed like the rows' `study`. Empty until it loads.
+  const [dataAvailability, setDataAvailability] = useState<Record<string, DataAvailabilityResult>>({});
+  // The benchmark result picked in the accuracy bars, which filters the table below them.
+  const [view, setView] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -29,8 +37,29 @@ export default function AssayCorpusPanel() {
   useEffect(() => {
     fetchAssayImmport()
       .then(setImmport)
-      .catch(() => setImmport(null));
+      .catch(() => {
+        setImmport(null);
+        setImmportFailed(true);
+      });
   }, []);
+
+  // A third independent fetch, a file read: failing only leaves the Data availability column
+  // blank, never the table.
+  useEffect(() => {
+    fetchDataAvailabilityCorpus()
+      .then((res) => setDataAvailability(res.papers))
+      .catch(() => setDataAvailability({}));
+  }, []);
+
+  // The same counts the result cards below the table filters show, drawn as ratios.
+  const counts = useMemo(() => {
+    if (!data || !data.rows.some((r) => r.benchmark_items?.length)) return null;
+    const key = (study: string, assay: string) => `${study}\u0000${assay}`;
+    const coverage = new Map((immport?.rows ?? []).map((r) => [key(r.study, r.assay), r]));
+    return benchmarkCounts(data.rows, coverage, (r) => key(r.study, r.assay));
+  }, [data, immport]);
+  const immportState =
+    immportFailed || immport?.degraded ? 'unavailable' : immport === null ? 'loading' : 'ready';
 
   return (
     <>
@@ -44,8 +73,18 @@ export default function AssayCorpusPanel() {
 
       {data && (
         <div className="space-y-6">
-          <AssayObiSummary stats={data.stats} />
-          {immport && !immport.degraded && (
+          <AssayObiSummary stats={data.stats} dataAvailability={dataAvailability}>
+            {counts ? (
+              <AssayAccuracyBars
+                counts={counts}
+                immportState={immportState}
+                view={view}
+                onView={setView}
+              />
+            ) : undefined}
+          </AssayObiSummary>
+          {/* Without benchmark data there is no ImmPort bar, so the sentence carries it. */}
+          {!counts && immport && !immport.degraded && (
             <p className="text-xs text-gray-500">
               ImmPort registers an experiment for{' '}
               <span className="text-gray-900 font-medium">{immport.stats.matched}</span> of{' '}
@@ -59,10 +98,16 @@ export default function AssayCorpusPanel() {
               Matched by SQL first; the rest were asked of the model.
             </p>
           )}
-          {immport?.degraded && (
+          {immport?.warning && (
             <p className="text-xs text-amber-700">{immport.warning}</p>
           )}
-          <AssayObiTable rows={data.rows} immport={immport?.rows ?? []} />
+          <AssayObiTable
+            rows={data.rows}
+            immport={immport?.rows ?? []}
+            dataAvailability={dataAvailability}
+            view={view}
+            onViewChange={setView}
+          />
         </div>
       )}
     </>

@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import AssayBenchmarkView from './AssayBenchmarkView';
+import AssayRunSummary from './AssayRunSummary';
+import DataRepositoriesPanel from './DataRepositoriesPanel';
 import AssayEstimateCard from './AssayEstimateCard';
 import AssayFindingsPanel from './AssayFindingsPanel';
 import AssayPaperPicker from './AssayPaperPicker';
@@ -104,6 +106,16 @@ export default function AssayExtractPanel() {
     }
   }, []);
 
+  /** Re-read the paper list (free), so a paper whose run just wrote its first registry stays
+   *  listed after another paper is selected, and a re-run paper's assay count is current. */
+  const refreshPapers = useCallback(async () => {
+    try {
+      setPapers(await fetchAssayPapers());
+    } catch {
+      // The list already on screen stays; nothing here is worth an error banner.
+    }
+  }, []);
+
   /**
    * Poll one job to a terminal state.
    *
@@ -128,6 +140,7 @@ export default function AssayExtractPanel() {
             pubmed_id: next.pubmed_id,
             study_accession: next.study_accession,
           });
+          void refreshPapers();
           return;
         }
         pollTimer.current = setTimeout(step, POLL_MS);
@@ -136,6 +149,7 @@ export default function AssayExtractPanel() {
           // The normal case under `uvicorn --reload`, not an edge one.
           writeStoredJob(null);
           setJob(null);
+          void refreshPapers();
           setNotice(
             'That run’s progress was lost when the backend restarted — anything it wrote is ' +
               'still on disk, and is shown below.'
@@ -148,7 +162,7 @@ export default function AssayExtractPanel() {
       }
     };
     void step();
-  }, [loadRegistry, stopPolling]);
+  }, [loadRegistry, refreshPapers, stopPolling]);
 
   // On mount: the paper list, and any run this browser was watching before a refresh.
   useEffect(() => {
@@ -303,6 +317,15 @@ export default function AssayExtractPanel() {
 
       {result && (
         <>
+          {/* The same view a typed-in paper gets (PaperTurn): table, findings, evidence, data. */}
+          {paper && (
+            <AssayRunSummary
+              result={result}
+              pubmedId={paper.pubmed_id}
+              studyAccession={paper.study_accession}
+              dataAvailability={job?.result?.data_availability}
+            />
+          )}
           <AssayFindingsPanel findings={collectFindings(result)} />
           <AssayBenchmarkView
             benchmark={benchmark}
@@ -317,6 +340,13 @@ export default function AssayExtractPanel() {
               }
             }
           />
+          {paper && (
+            <DataRepositoriesPanel
+              pubmedId={paper.pubmed_id}
+              studyAccession={paper.study_accession}
+              result={job?.result?.data_availability}
+            />
+          )}
         </>
       )}
 

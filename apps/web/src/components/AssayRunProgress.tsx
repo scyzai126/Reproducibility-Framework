@@ -15,6 +15,8 @@ const ROUNDS: { name: AssayRoundName; label: string }[] = [
   { name: 'correct', label: 'correct' },
   { name: 'obi', label: 'OBI map' },
   { name: 'canonicalize', label: 'canonicalize' },
+  // Runs in parallel with the five rounds above, not after them.
+  { name: 'data_availability', label: 'data repositories' },
 ];
 
 function elapsed(startedAt: string | null, finishedAt: string | null): string {
@@ -54,6 +56,9 @@ function roundDetail(name: AssayRoundName, round: AssayRoundProgress | undefined
   if (round.state === 'done') {
     if (name === 'extract') return `${calls} · ${round.assays} assays`;
     if (name === 'correct' && round.dropped) return `${calls} · ${round.dropped} set aside`;
+    if (name === 'data_availability' && typeof round.repositories === 'number') {
+      return `${calls} · ${round.repositories} repositor${round.repositories === 1 ? 'y' : 'ies'}`;
+    }
     return calls || 'done';
   }
   if (name === 'verify' && round.total) return `${round.done ?? 0}/${round.total} assays`;

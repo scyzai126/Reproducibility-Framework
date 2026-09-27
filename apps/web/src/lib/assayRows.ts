@@ -45,7 +45,8 @@ export function toCorpusRows(
     study,
     // The key is the OBI label after canonicalisation; the paper's own wording is what a reader
     // recognises, so it leads and the key is the fallback.
-    assay: paperNames(entry).join(', ') || key,
+    // " / ", as the backend's table rows join them: the ImmPort check caches by this string.
+    assay: paperNames(entry).join(' / ') || key,
     normalized_name: entry.normalized_name ?? '',
     sample_type: entry.sample_type ?? '',
     readouts: entry.readouts ?? '',

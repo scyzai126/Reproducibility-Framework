@@ -1,10 +1,12 @@
 'use client';
 
+import { useState } from 'react';
 import AssayBenchmarkView from './AssayBenchmarkView';
 import AssayRunSummary from './AssayRunSummary';
 import AssayEstimateCard from './AssayEstimateCard';
 import AssayFindingsPanel from './AssayFindingsPanel';
 import AssayRunProgress from './AssayRunProgress';
+import DataRepositoriesPanel from './DataRepositoriesPanel';
 import PaperCandidates from './PaperCandidates';
 import { collectFindings } from '@/lib/findings';
 import { useJobPoll } from '@/lib/useJobPoll';
@@ -17,6 +19,8 @@ interface Props {
   onConfirm: () => void;
   onCancel: () => void;
   onRetry: (step: RetryStep) => void;
+  /** Store a PDF for a paper PMC will not serve, then continue as after a fetch. */
+  onUpload: (file: File) => void;
   onJob: (job: AssayJob) => void;
   onJobGone: () => void;
   onLostContact: (lost: boolean) => void;
@@ -45,7 +49,7 @@ function paperLabel(paper: PaperCandidate): string {
  * by its own unmount — which is what makes several runs at once need no coordination.
  */
 export default function PaperTurn({
-  turn, onChoose, onConfirm, onCancel, onRetry, onJob, onJobGone, onLostContact,
+  turn, onChoose, onConfirm, onCancel, onRetry, onUpload, onJob, onJobGone, onLostContact,
   busy, cancelling,
 }: Props) {
   const phase = turn.phase;
@@ -121,6 +125,11 @@ export default function PaperTurn({
                 />
               </>
             )}
+            {/* Read from disk, free: what the last run found, or "not looked for yet". */}
+            <DataRepositoriesPanel
+              pubmedId={phase.paper.pubmed_id}
+              studyAccession={phase.paper.study_accession}
+            />
           </>
         )}
 
@@ -154,12 +163,22 @@ export default function PaperTurn({
                 billed; what the run wrote is below.
               </Step>
             )}
+            {phase.result && extractedNothing(phase.result) && (
+              <Step>
+                Round 1 found no assays in this paper, so verify, correct, OBI map and
+                canonicalize had nothing to do.
+                {(phase.result.rounds?.extract as { no_methods?: boolean } | undefined)?.no_methods &&
+                  ' Its full text has no Methods section — the methods are likely in a supplement' +
+                    ' the XML does not include — so only the abstract and main text were read.'}
+              </Step>
+            )}
             {phase.result ? (
               <>
                 <AssayRunSummary
                   result={phase.result}
                   pubmedId={phase.paper.pubmed_id}
                   studyAccession={phase.paper.study_accession}
+                  dataAvailability={phase.result.data_availability}
                 />
                 <AssayFindingsPanel findings={collectFindings(phase.result)} />
                 <AssayBenchmarkView
@@ -176,6 +195,12 @@ export default function PaperTurn({
             ) : (
               <Step>This run produced no registry.</Step>
             )}
+            {/* The run's own answer when it carried one; otherwise whatever is on disk. */}
+            <DataRepositoriesPanel
+              pubmedId={phase.paper.pubmed_id}
+              studyAccession={phase.paper.study_accession}
+              result={phase.result?.data_availability}
+            />
           </>
         )}
 
@@ -190,6 +215,13 @@ export default function PaperTurn({
                 Try again
               </button>
             )}
+            {phase.upload && phase.paper && (
+              <PdfUpload
+                fileName={`${phase.paper.study_accession}_${phase.paper.pubmed_id}.pdf`}
+                busy={busy}
+                onUpload={onUpload}
+              />
+            )}
           </div>
         )}
 
@@ -201,4 +233,45 @@ export default function PaperTurn({
       </div>
     </article>
   );
+}
+
+
+/** The way forward for a paper PMC will not serve: pick its PDF and upload it. */
+function PdfUpload({
+  fileName,
+  busy,
+  onUpload,
+}: {
+  fileName: string;
+  busy?: boolean;
+  onUpload: (file: File) => void;
+}) {
+  const [file, setFile] = useState<File | null>(null);
+  return (
+    <div className="mt-3 flex flex-wrap items-center gap-2">
+      <input
+        type="file"
+        accept="application/pdf,.pdf"
+        onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+        className="text-xs text-gray-700 file:mr-2 file:px-2.5 file:py-1 file:rounded-md file:border file:border-gray-300 file:bg-white file:text-xs file:text-gray-700 hover:file:bg-gray-50"
+      />
+      <button
+        onClick={() => file && onUpload(file)}
+        disabled={!file || busy}
+        className="px-3 py-1.5 text-xs font-medium rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-50 transition-colors"
+      >
+        {busy ? 'Uploading…' : 'Upload PDF'}
+      </button>
+      <span className="text-[11px] text-rose-700/80 basis-full">
+        Stored as data/pdf/uploads/{fileName}; the assays and data repositories are then extracted
+        from it.
+      </span>
+    </div>
+  );
+}
+
+
+/** A finished run whose round 1 extracted nothing -- the reason every later round skipped. */
+function extractedNothing(result: { rounds?: Record<string, Record<string, unknown>> }): boolean {
+  return (result.rounds?.extract as { assays?: number } | undefined)?.assays === 0;
 }

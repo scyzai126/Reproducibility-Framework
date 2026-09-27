@@ -1,6 +1,7 @@
 'use client';
 
-import type { AssayObiStats, ObiResource } from '@/lib/types';
+import { useMemo, type ReactNode } from 'react';
+import type { AssayObiStats, DataAvailabilityResult, ObiResource } from '@/lib/types';
 
 /**
  * Colours for the mapping-method bar. Validated against the app's white surface
@@ -46,8 +47,41 @@ function StatTile({ value, label, hint }: { value: string; label: string; hint?:
   );
 }
 
-export default function AssayObiSummary({ stats }: { stats: AssayObiStats }) {
+/** Which repositories hold the corpus's own data, from the confirmed `data_repositories` only:
+ *  each repository with the number of studies using it (most-used first), distinct datasets
+ *  (two papers of one study can share a series), and the studies with any confirmed data. */
+function summarizeRepositories(records: Record<string, DataAvailabilityResult>) {
+  const studiesByRepo = new Map<string, Set<string>>();
+  const datasets = new Set<string>();
+  let studiesWithData = 0;
+  for (const [study, record] of Object.entries(records)) {
+    const repos = record.data_repositories ?? [];
+    if (repos.length) studiesWithData += 1;
+    for (const repo of repos) {
+      datasets.add(`${repo.repository}\u0000${repo.accession}`);
+      if (!studiesByRepo.has(repo.repository)) studiesByRepo.set(repo.repository, new Set());
+      studiesByRepo.get(repo.repository)!.add(study);
+    }
+  }
+  const repositories = Array.from(studiesByRepo, ([name, studies]) => ({ name, studies: studies.size }))
+    .sort((a, b) => b.studies - a.studies || a.name.localeCompare(b.name));
+  return { repositories, datasets: datasets.size, studiesWithData };
+}
+
+export default function AssayObiSummary({
+  stats,
+  dataAvailability = {},
+  children,
+}: {
+  stats: AssayObiStats;
+  /** Every paper's data-availability record, keyed `<PMID>_<SDY>`; empty until it loads. */
+  dataAvailability?: Record<string, DataAvailabilityResult>;
+  /** Replaces the resolver bar — the corpus tab shows its benchmark accuracy there instead. */
+  children?: ReactNode;
+}) {
   const total = stats.total_rows || 1;
+  const repos = useMemo(() => summarizeRepositories(dataAvailability), [dataAvailability]);
+  const hasRepos = repos.repositories.length > 0;
 
   return (
     <div className="space-y-5">
@@ -56,12 +90,18 @@ export default function AssayObiSummary({ stats }: { stats: AssayObiStats }) {
         <StatTile value={String(stats.total_rows)} label="assay rows" />
         <StatTile value={String(stats.obi_terms)} label="distinct OBI terms" />
         <StatTile
-          value={`${stats.coverage_pct}%`}
-          label="mapped to OBI"
-          hint={`${stats.mapped_rows} of ${stats.total_rows} rows`}
+          value={hasRepos ? String(repos.repositories.length) : '—'}
+          label="distinct data repositories"
+          hint={
+            hasRepos
+              ? `${repos.repositories.map((r) => `${r.name} ${r.studies}`).join(' · ')} — ` +
+                `${repos.datasets} datasets, ${repos.studiesWithData} of ${stats.papers} studies`
+              : 'not run yet'
+          }
         />
       </div>
 
+      {children ?? (
       <div className="rounded-xl border border-gray-200 px-5 py-4">
         <h2 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-3">
           How each row resolved
@@ -118,6 +158,7 @@ export default function AssayObiSummary({ stats }: { stats: AssayObiStats }) {
           </p>
         )}
       </div>
+      )}
     </div>
   );
 }

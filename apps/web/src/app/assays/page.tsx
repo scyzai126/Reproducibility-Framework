@@ -6,35 +6,38 @@ import AssayCorpusPanel from '@/components/AssayCorpusPanel';
 import AssayExtractPanel from '@/components/AssayExtractPanel';
 import PaperTurnFeed from '@/components/PaperTurnFeed';
 
-type Tab = 'corpus' | 'extract';
+type Tab = 'benchmark' | 'extract';
 
 const TABS: { id: Tab; label: string; blurb: string }[] = [
   {
-    id: 'corpus',
-    label: 'Corpus',
+    id: 'benchmark',
+    label: 'Benchmark',
     blurb:
-      'Every assay extracted from the paper corpus, mapped to its Ontology for Biomedical ' +
-      'Investigations term.',
+      'The 31 benchmark papers: every assay the agent extracted, mapped to its OBI term and ' +
+      "scored against the curators' benchmark — how many it found, missed and added, how its " +
+      'OBI terms compare, and which ImmPort registers.',
   },
   {
     id: 'extract',
     label: 'Extract',
     blurb:
-      'Type an identifier to fetch and run a paper, or pick one from the corpus below. The ' +
+      'Type an identifier to fetch and run a paper, or pick one from the list below. The ' +
       'deliverable is assays_benchmark.json. Nothing here spends until you press Run — except ' +
-      'a paper new to the corpus, which starts as soon as it is fetched.',
+      'a paper that has never been run, which starts as soon as it is fetched.',
   },
 ];
 
 export default function AssaysPage() {
-  const [tab, setTab] = useState<Tab>('corpus');
+  const [tab, setTab] = useState<Tab>('benchmark');
 
   // Read and write the tab through the URL directly rather than through useSearchParams, which
   // would force a Suspense boundary for prerender — a failure that only shows up at build time,
   // and this project does not build during development.
   useEffect(() => {
     const requested = new URLSearchParams(window.location.search).get('tab');
-    if (requested === 'extract' || requested === 'corpus') setTab(requested);
+    // `corpus` is the tab's old name; links and bookmarks that still use it land here too.
+    if (requested === 'extract') setTab('extract');
+    else if (requested === 'benchmark' || requested === 'corpus') setTab('benchmark');
   }, []);
 
   const select = (next: Tab) => {
@@ -78,7 +81,7 @@ export default function AssaysPage() {
           ))}
         </div>
 
-        {tab === 'corpus' ? (
+        {tab === 'benchmark' ? (
           <AssayCorpusPanel />
         ) : (
           <div className="space-y-6">
@@ -88,7 +91,7 @@ export default function AssaysPage() {
                 cards reads as a bug rather than as two ways in. */}
             <div className="flex items-center gap-3">
               <span className="h-px flex-1 bg-gray-200" />
-              <span className="text-xs text-gray-400">or pick from the corpus</span>
+              <span className="text-xs text-gray-400">or pick from the list</span>
               <span className="h-px flex-1 bg-gray-200" />
             </div>
             <AssayExtractPanel />

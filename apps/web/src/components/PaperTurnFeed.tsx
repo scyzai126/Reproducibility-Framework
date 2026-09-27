@@ -4,12 +4,14 @@ import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import PaperTurn from './PaperTurn';
 import {
   ActiveRunError,
+  PaperNotDownloadableError,
   addAssayPaper,
   cancelAssayRun,
   estimateAssayRun,
   fetchAssayRegistry,
   resolvePaper,
   startAssayRun,
+  uploadAssayPaper,
 } from '@/lib/api';
 import {
   type PaperTurn as Turn,
@@ -150,8 +152,16 @@ export default function PaperTurnFeed() {
           await addAssayPaper(paper);
         } catch (err) {
           // The backend's own wording: abstract-only, paywalled and unreachable are three
-          // different problems, and only the last is worth retrying.
+          // different problems, and only the last is worth retrying. The first two have one way
+          // forward -- the paper's PDF, uploaded by hand.
           const text = message(err);
+          if (err instanceof PaperNotDownloadableError) {
+            dispatch({
+              type: 'failed', id, retry: null, upload: true,
+              message: `This paper can't be downloaded from PMC: ${text} Upload its PDF to continue.`,
+            });
+            return;
+          }
           dispatch({
             type: 'failed', id, message: text,
             retry: text.includes('could not reach NCBI') ? 'fetch' : null,
@@ -238,6 +248,31 @@ export default function PaperTurnFeed() {
     [prepare, submit]
   );
 
+  /**
+   * Store the PDF the user picked, then carry on exactly as after a fetch: price it and, for a
+   * new paper, start the run -- assays and data repositories, both read from the PDF.
+   */
+  const upload = useCallback(
+    async (turn: Turn, file: File) => {
+      const paper = turn.phase.kind === 'error' ? turn.phase.paper : null;
+      if (!paper) return;
+      setBusy(turn.id);
+      try {
+        await uploadAssayPaper(paper, file);
+      } catch (err) {
+        dispatch({
+          type: 'failed', id: turn.id, retry: null, upload: true,
+          message: `Upload failed: ${message(err)}`,
+        });
+        return;
+      } finally {
+        setBusy(null);
+      }
+      await prepare(turn.id, { ...paper, has_xml: true }, { autoStart: true });
+    },
+    [prepare]
+  );
+
   const stop = useCallback(async (turn: Turn) => {
     if (turn.phase.kind !== 'running') return;
     setCancelling(turn.id);
@@ -315,6 +350,7 @@ export default function PaperTurnFeed() {
             }}
             onCancel={() => void stop(turn)}
             onRetry={(step) => void retry(turn, step)}
+            onUpload={(file) => void upload(turn, file)}
             onJob={(job: AssayJob) => dispatch({ type: 'job', id: turn.id, job })}
             onJobGone={() => {
               const paper = turnPaper(turn);

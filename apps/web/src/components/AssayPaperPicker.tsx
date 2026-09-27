@@ -16,31 +16,39 @@ function formatDate(iso: string | null): string {
 }
 
 /**
- * Every paper the pipeline can run on.
+ * The papers that have been extracted: those with a registry on disk.
  *
- * The list is the JATS corpus, not the registry: a paper that has never been extracted is still
- * offered, and one whose XML is missing is not offered at all rather than offered and then
- * failed at — the XML is the only thing assay_report reads to find a paper.
+ * The backend still returns every runnable paper (POST /agent/assay-papers looks a freshly
+ * fetched, never-run paper up in that same list), so the filter lives here. A new paper comes in
+ * through the identifier box; while it is selected it stays listed, marked "no registry yet",
+ * and once its run writes a registry it stays by the main rule.
  */
 export default function AssayPaperPicker({ papers, value, onSelect, disabled }: Props) {
   const [query, setQuery] = useState('');
 
+  const listed = useMemo(
+    () => papers.filter((p) =>
+      p.has_registry ||
+      (value?.pubmed_id === p.pubmed_id && value?.study_accession === p.study_accession)),
+    [papers, value]
+  );
+
   const visible = useMemo(() => {
     const needle = query.trim().toLowerCase();
-    if (!needle) return papers;
-    return papers.filter((p) =>
+    if (!needle) return listed;
+    return listed.filter((p) =>
       `${p.study_accession} ${p.pubmed_id} ${p.paper_title ?? ''}`.toLowerCase().includes(needle)
     );
-  }, [papers, query]);
+  }, [listed, query]);
 
   return (
     <section>
       <div className="flex items-baseline justify-between mb-2">
         <h2 className="text-sm font-medium text-gray-700">Paper</h2>
         <span className="text-xs text-gray-400">
-          {visible.length === papers.length
-            ? `${papers.length} papers`
-            : `${visible.length} of ${papers.length} papers`}
+          {visible.length === listed.length
+            ? `${listed.length} papers`
+            : `${visible.length} of ${listed.length} papers`}
         </span>
       </div>
 

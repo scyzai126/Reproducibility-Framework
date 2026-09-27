@@ -1,9 +1,12 @@
 import type {
   AgentResponse,
   AssayEstimate,
+  DataAvailabilityCorpusResponse,
+  DataAvailabilityResult,
   AssayImmportResponse,
   AssayJob,
   AssayObiResponse,
+  AssayObiRow,
   AssayPaperAddResult,
   AssayPaperSummary,
   AssayRegistryResponse,
@@ -114,6 +117,12 @@ export class ActiveRunError extends Error {
   }
 }
 
+/**
+ * PMC has no open-access record (404) or will not serve the full text (422). Not worth
+ * retrying: the way forward is uploading the paper's PDF.
+ */
+export class PaperNotDownloadableError extends Error {}
+
 async function getJson<T>(
   path: string,
   init: RequestInit = {},
@@ -155,6 +164,30 @@ export async function fetchAssayRegistry(paper: PaperRef): Promise<AssayRegistry
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(await parseErrorDetail(res));
   return res.json() as Promise<AssayRegistryResponse>;
+}
+
+/**
+ * One paper's rows in the Corpus table's shape — benchmark pairing and paper link included —
+ * built by the same backend function as the corpus file. Empty when never run. Free.
+ */
+export async function fetchAssayTable(paper: PaperRef): Promise<AssayObiRow[]> {
+  const res = await fetchWithTimeout(
+    `${BASE}/agent/assays/table?${paperQuery(paper)}`, {}, ASSAY_TIMEOUT_MS);
+  if (!res.ok) throw new Error(await parseErrorDetail(res));
+  return ((await res.json()) as { rows: AssayObiRow[] }).rows;
+}
+
+/** Where a paper's data lives, as a previous run wrote it; null when never run. Free. */
+export async function fetchDataAvailability(paper: PaperRef): Promise<DataAvailabilityResult | null> {
+  const res = await fetchWithTimeout(
+    `${BASE}/agent/data-availability?${paperQuery(paper)}`, {}, ASSAY_TIMEOUT_MS);
+  if (!res.ok) throw new Error(await parseErrorDetail(res));
+  return res.json() as Promise<DataAvailabilityResult | null>;
+}
+
+/** Every paper's stored data repositories, keyed `<PMID>_<SDY>` like the corpus rows. A file read. */
+export async function fetchDataAvailabilityCorpus(): Promise<DataAvailabilityCorpusResponse> {
+  return getJson<DataAvailabilityCorpusResponse>('/agent/data-availability/corpus', {}, 15_000);
 }
 
 /**
@@ -212,11 +245,33 @@ export async function addAssayPaper(
   paper: PaperRef,
   force = false
 ): Promise<AssayPaperAddResult> {
-  return getJson<AssayPaperAddResult>('/agent/assay-papers', {
+  const res = await fetchWithTimeout(`${BASE}/agent/assay-papers`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ ...paper, force }),
   }, 30_000);
+  if (res.status === 404 || res.status === 422) {
+    throw new PaperNotDownloadableError(await parseErrorDetail(res));
+  }
+  if (!res.ok) throw new Error(await parseErrorDetail(res));
+  return res.json() as Promise<AssayPaperAddResult>;
+}
+
+/** Add a paper PMC will not serve by uploading its PDF. Free: it is only stored. */
+export async function uploadAssayPaper(
+  paper: PaperRef,
+  file: File,
+  force = false
+): Promise<AssayPaperAddResult> {
+  const form = new FormData();
+  form.append('pubmed_id', paper.pubmed_id);
+  form.append('study_accession', paper.study_accession);
+  form.append('force', String(force));
+  form.append('file', file);
+  return getJson<AssayPaperAddResult>('/agent/assay-papers/upload', {
+    method: 'POST',
+    body: form,
+  }, 120_000);
 }
 
 /**

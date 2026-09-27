@@ -6,6 +6,9 @@ import CompletenessReport from '@/components/CompletenessReport';
 
 interface Props {
   message: ChatMessage;
+  /** Sends a follow-up message, e.g. the paper picked from a study's list. */
+  onSend?: (text: string) => void;
+  disabled?: boolean;
 }
 
 function UserMessage({ message }: Props) {
@@ -84,7 +87,7 @@ function WorkflowProgress() {
   );
 }
 
-function AssistantMessage({ message }: Props) {
+function AssistantMessage({ message, onSend, disabled }: Props) {
   return (
     <div className="flex gap-3">
       <div className="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center flex-shrink-0 mt-1 text-white text-xs font-bold">
@@ -98,6 +101,8 @@ function AssistantMessage({ message }: Props) {
             <span className="font-medium">Error: </span>
             {message.error}
           </div>
+        ) : message.result?.type === 'paper_choice' ? (
+          <PaperChoice result={message.result} onSend={onSend} disabled={disabled} />
         ) : message.result?.type === 'clarification' ? (
           <p className="text-sm text-gray-700 whitespace-pre-line">{message.result.question}</p>
         ) : message.result?.type === 'pdf_upload_required' ? (
@@ -151,6 +156,42 @@ function AssistantMessage({ message }: Props) {
           <ResultsDisplay result={message.result} />
         ) : null}
       </div>
+    </div>
+  );
+}
+
+function PaperChoice({ result, onSend, disabled }: { result: AgentResponse; onSend?: (text: string) => void; disabled?: boolean }) {
+  const options = result.paper_options ?? [];
+  return (
+    <div className="border border-gray-200 rounded-xl overflow-hidden">
+      <p className="px-4 py-2.5 border-b border-gray-200 text-sm text-gray-700">{result.question}</p>
+      <ul className="divide-y divide-gray-100">
+        {options.map((paper) => (
+          <li key={paper.pubmed_id}>
+            <button
+              onClick={() => onSend?.(`${result.study_accession} PMID:${paper.pubmed_id}`)}
+              disabled={disabled || !onSend || !paper.usable}
+              className="w-full text-left px-4 py-2.5 hover:bg-gray-50 transition-colors disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:opacity-60"
+            >
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="font-mono text-xs text-gray-500">PMID {paper.pubmed_id}</span>
+                {paper.year && <span className="text-xs text-gray-400">{paper.year}</span>}
+                {paper.cached ? (
+                  <span className="text-xs text-emerald-700">claims cached · free</span>
+                ) : paper.local_pdf ? (
+                  <span className="text-xs text-gray-400">PDF on disk · new run</span>
+                ) : paper.usable ? (
+                  <span className="text-xs text-gray-400">fetched from PMC · new run</span>
+                ) : null}
+              </div>
+              <p className="text-sm text-gray-800 mt-0.5">{paper.title ?? '(no title)'}</p>
+              {paper.unusable_reason && (
+                <p className="text-xs text-amber-700 mt-1">{paper.unusable_reason}</p>
+              )}
+            </button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -555,7 +596,7 @@ function ResultsDisplay({ result }: { result: AgentResponse }) {
   );
 }
 
-export default function ChatMessageComponent({ message }: Props) {
+export default function ChatMessageComponent({ message, onSend, disabled }: Props) {
   if (message.role === 'user') return <UserMessage message={message} />;
-  return <AssistantMessage message={message} />;
+  return <AssistantMessage message={message} onSend={onSend} disabled={disabled} />;
 }

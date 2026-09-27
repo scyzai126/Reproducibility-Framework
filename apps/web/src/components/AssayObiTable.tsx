@@ -1,21 +1,40 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import type { AssayImmportRow, AssayObiRow, ImmportStatus, ObiResource } from '@/lib/types';
+import type {
+  AssayImmportRow,
+  AssayObiRow,
+  DataAvailabilityResult,
+  DataRepository,
+  ImmportStatus,
+  ObiResource,
+} from '@/lib/types';
 import { RESOURCE_COLOR, RESOURCE_LABEL } from './AssayObiSummary';
+import { benchmarkViews } from './AssayBenchmarkResults';
 
-type SortKey = 'study' | 'assay' | 'normalized_name' | 'obi_label' | 'resource' | 'obi_confidence';
+/** The table's DOM id, so the accuracy bars above it can scroll it into view on a click. */
+export const ASSAY_TABLE_ID = 'assay-obi-table';
+
+type SortKey =
+  | 'study' | 'assay' | 'normalized_name' | 'obi_label' | 'benchmark_assay' | 'benchmark_obi_label'
+  | 'resource' | 'obi_confidence';
 type SortDir = 'asc' | 'desc';
+
+/** The corpus table's paper-level column: which repositories hold the study's own data. */
+const DATA_COLUMN = 'Data availability';
 
 const COLUMNS: { key: SortKey | null; label: string; className?: string }[] = [
   { key: 'study', label: 'Study' },
   { key: 'assay', label: 'Assay in paper' },
-  { key: 'normalized_name', label: 'Normalized' },
-  { key: null, label: 'Sample type' },
   { key: 'obi_label', label: 'OBI term' },
+  { key: 'benchmark_assay', label: 'Benchmark assay' },
+  { key: 'benchmark_obi_label', label: 'Benchmark OBI label' },
   { key: null, label: 'In ImmPort' },
+  { key: null, label: DATA_COLUMN },
   { key: 'resource', label: 'Resolved by' },
   { key: 'obi_confidence', label: 'Conf.', className: 'text-right' },
+  { key: 'normalized_name', label: 'Normalized' },
+  { key: null, label: 'Sample type' },
 ];
 
 /** The column answers one question, so it gives one word. */
@@ -94,6 +113,66 @@ function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
   );
 }
 
+function formatBytes(n: number): string {
+  const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+  let i = 0;
+  while (n >= 1024 && i < units.length - 1) {
+    n /= 1024;
+    i += 1;
+  }
+  return i === 0 ? `${n} B` : `${n.toFixed(1)} ${units[i]}`;
+}
+
+/** Hover text for a repository link: what is behind it, when the locator could tell. */
+function repositoryDetail(repo: DataRepository): string {
+  const parts = [
+    repo.access,
+    repo.file_count ? `${repo.file_count} file${repo.file_count === 1 ? '' : 's'}` : null,
+    repo.total_size_bytes ? formatBytes(repo.total_size_bytes) : null,
+  ].filter(Boolean);
+  return `Open ${repo.repository} ${repo.accession}${parts.length ? ` (${parts.join(', ')})` : ''}`;
+}
+
+/** Where this paper's own data lives: one link per confirmed repository, then any the
+ *  repository could not confirm as plain grey text -- only what passed validation is clickable.
+ *  A paper never run shows a dash, one run with nothing found says so. */
+function DataAvailabilityCell({ record }: { record: DataAvailabilityResult | undefined }) {
+  if (!record) {
+    return <span className="text-gray-300" title="Data availability has not been run for this paper">—</span>;
+  }
+  const repos = record.data_repositories ?? [];
+  const unconfirmed = record.unconfirmed ?? [];
+  if (!repos.length && !unconfirmed.length) {
+    return <span className="text-gray-400" title="No repository holding this study's own data was found">none</span>;
+  }
+  return (
+    <>
+      {repos.map((repo) => (
+        <a
+          key={repo.accession}
+          href={repo.landing_page ?? undefined}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block text-emerald-700 hover:text-emerald-900 hover:underline"
+          title={repositoryDetail(repo)}
+        >
+          {repo.repository} {repo.accession}
+          <span className="ml-0.5 text-gray-300" aria-hidden="true">↗</span>
+        </a>
+      ))}
+      {unconfirmed.map((item) => (
+        <span
+          key={item.accession}
+          className="block text-gray-400"
+          title={`Not confirmed by ${item.repository}: ${item.status ?? 'not checked'}${item.detail ? ` — ${item.detail}` : ''}`}
+        >
+          {item.repository} {item.accession} <span className="italic">(unconfirmed)</span>
+        </span>
+      ))}
+    </>
+  );
+}
+
 function ConfidenceCell({ value }: { value: string | number | null }) {
   if (value === null) return <span className="text-gray-300">—</span>;
   if (value === 'high') return <span className="text-gray-500">high</span>;
@@ -103,11 +182,23 @@ function ConfidenceCell({ value }: { value: string | number | null }) {
 export default function AssayObiTable({
   rows,
   immport = [],
+  view: controlledView,
+  onViewChange,
+  dataAvailability,
 }: {
   rows: AssayObiRow[];
   /** Coverage from a separate, free fetch — empty when ImmPort was unreachable. */
   immport?: AssayImmportRow[];
+  /** The benchmark result to filter to (a `benchmarkViews` id). Controlled by the corpus panel,
+   *  whose accuracy-bar legend selects it; uncontrolled elsewhere. */
+  view?: string | null;
+  onViewChange?: (id: string | null) => void;
+  /** Where each paper's own data lives, keyed like `row.study`. Given by the corpus panel and
+   *  by the Extract tab's AssayRunSummary, so both show the same columns: it adds Data
+   *  availability and drops Resolved by / Conf. A table without it keeps those two. */
+  dataAvailability?: Record<string, DataAvailabilityResult>;
 }) {
+  const isCorpus = dataAvailability !== undefined;
   const coverage = useMemo(
     () => new Map(immport.map((r) => [immportKey(r.study, r.assay), r])),
     [immport]
@@ -118,6 +209,9 @@ export default function AssayObiTable({
   const [resources, setResources] = useState<ObiResource[]>([]);
   const [sortKey, setSortKey] = useState<SortKey | null>(null);
   const [sortDir, setSortDir] = useState<SortDir>('asc');
+  const [ownView, setOwnView] = useState<string | null>(null);
+  const view = controlledView !== undefined ? controlledView : ownView;
+  const setView = onViewChange ?? setOwnView;
 
   const studies = useMemo(
     () => Array.from(new Set(rows.map((r) => r.study))).sort(),
@@ -127,10 +221,29 @@ export default function AssayObiTable({
   // and the Study column repeats the heading on every row. Derived, so the corpus view, which
   // has 35 studies, is untouched.
   const oneStudy = studies.length <= 1;
-  const visibleColumns = useMemo(
-    () => (oneStudy ? COLUMNS.filter((c) => c.key !== 'study') : COLUMNS),
-    [oneStudy]
+  // The curator columns exist only where rows carry benchmark data — the corpus table, not a
+  // single paper's run on the Extract tab.
+  const hasBenchmark = useMemo(
+    () => rows.some((r) => r.benchmark_assay || r.benchmark_only),
+    [rows]
   );
+  const visibleColumns = useMemo(
+    () => COLUMNS.filter((c) =>
+      // One paper's table keeps Study too wherever it mirrors the corpus table: the column
+      // carries the paper link. Only the bare, non-corpus table drops it.
+      !(oneStudy && !isCorpus && c.key === 'study') &&
+      !(!hasBenchmark && (c.key === 'benchmark_assay' || c.key === 'benchmark_obi_label')) &&
+      !(isCorpus && (c.key === 'resource' || c.key === 'obi_confidence')) &&
+      !(!isCorpus && c.label === DATA_COLUMN)),
+    [oneStudy, hasBenchmark, isCorpus]
+  );
+  // On the corpus table the accuracy-bar legend takes the place of the resolver chips: each
+  // legend word is a count, and selecting it filters the table to the rows behind that count.
+  const views = useMemo(
+    () => (hasBenchmark ? benchmarkViews(rows, coverage, (r) => immportKey(r.study, r.assay)) : []),
+    [hasBenchmark, rows, coverage]
+  );
+  const activeView = views.find((v) => v.id === view) ?? null;
   const presentResources = useMemo(
     () => (Object.keys(RESOURCE_LABEL) as ObiResource[]).filter((r) => rows.some((row) => row.resource === r)),
     [rows]
@@ -140,15 +253,18 @@ export default function AssayObiTable({
     const q = query.trim().toLowerCase();
     const filtered = rows.filter((r) => {
       if (study && r.study !== study) return false;
-      if (resources.length && !resources.includes(r.resource)) return false;
+      if (resources.length && !(r.resource && resources.includes(r.resource))) return false;
+      if (activeView && !activeView.matches(r, coverage.get(immportKey(r.study, r.assay)))) return false;
       if (!q) return true;
-      return [r.assay, r.normalized_name, r.obi_label, r.obi_id, r.study]
+      const repos = (dataAvailability?.[r.study]?.data_repositories ?? []).map((d) => d.accession);
+      return [r.assay, r.normalized_name, r.obi_label, r.obi_id, r.study,
+              r.benchmark_assay, r.benchmark_obi_label, r.benchmark_obi_id, ...repos]
         .some((field) => field?.toLowerCase().includes(q));
     });
     if (!sortKey) return filtered;
     const sorted = [...filtered].sort((a, b) => compare(a, b, sortKey));
     return sortDir === 'asc' ? sorted : sorted.reverse();
-  }, [rows, query, study, resources, sortKey, sortDir]);
+  }, [rows, query, study, resources, activeView, coverage, sortKey, sortDir, dataAvailability]);
 
   // Three-state cycle: asc → desc → unsorted.
   const toggleSort = (key: SortKey) => {
@@ -162,18 +278,34 @@ export default function AssayObiTable({
     }
   };
 
-  const hasFilters = Boolean(query.trim() || study || resources.length);
+  // Data availability is a per-study fact on a per-assay table, so its cell spans each run of
+  // adjacent rows from one study: spans[i] is the run's length on its first row, 0 after it.
+  // Runs are taken from what is on screen -- sorted by another column, a study's rows split and
+  // each piece gets its own cell.
+  const spans = useMemo(() => {
+    const out = new Array<number>(visible.length).fill(0);
+    let start = 0;
+    visible.forEach((row, i) => {
+      if (i > 0 && row.study !== visible[i - 1].study) start = i;
+      out[start] += 1;
+    });
+    return out;
+  }, [visible]);
+
+  const hasFilters = Boolean(query.trim() || study || resources.length || activeView);
 
   const clearFilters = () => {
     setQuery('');
     setStudy('');
     setResources([]);
+    setView(null);
   };
 
   /** Every active filter, phrased for the empty state so the culprit is never hidden. */
   const activeFilters = [
     study && `paper ${study}`,
     resources.length && `resolved by ${resources.map((r) => RESOURCE_LABEL[r]).join(' or ')}`,
+    activeView && `in “${activeView.label}”`,
     query.trim() && `matching “${query.trim()}”`,
   ].filter(Boolean) as string[];
 
@@ -184,14 +316,14 @@ export default function AssayObiTable({
   };
 
   return (
-    <div className="space-y-3">
+    <div id={ASSAY_TABLE_ID} className="space-y-3 scroll-mt-4">
       {/* Filters in one row above the table. */}
       <div className="flex flex-wrap items-center gap-2">
         <input
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search assay, OBI term, study…"
+          placeholder={isCorpus ? "Search assay, OBI term, benchmark, study, repository…" : "Search assay, OBI term, benchmark, study…"}
           className="flex-1 min-w-[200px] px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-400 focus:border-emerald-400"
         />
         {!oneStudy && (
@@ -206,7 +338,7 @@ export default function AssayObiTable({
             ))}
           </select>
         )}
-        {presentResources.map((resource) => {
+        {!hasBenchmark && presentResources.map((resource) => {
           const active = resources.includes(resource);
           return (
             <button
@@ -235,6 +367,19 @@ export default function AssayObiTable({
             ? `${rows.length} rows`
             : `${visible.length} of ${rows.length} rows`}
         </p>
+        {/* The benchmark result picked in the accuracy bars above, shown next to what it filters. */}
+        {activeView && (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded-md bg-emerald-50 text-emerald-900 ring-1 ring-emerald-500">
+            {activeView.label}
+            <button
+              onClick={() => setView(null)}
+              aria-label={`Stop filtering to ${activeView.label}`}
+              className="text-emerald-700 hover:text-emerald-950"
+            >
+              ✕
+            </button>
+          </span>
+        )}
         {/* Filters combine, so an empty result is easy to reach by accident — always offer the way out. */}
         {hasFilters && (
           <button
@@ -277,14 +422,36 @@ export default function AssayObiTable({
                   key={`${row.study}-${row.assay}-${i}`}
                   className="border-b border-gray-100 last:border-0 hover:bg-gray-50 transition-colors align-top"
                 >
-                  {oneStudy || (
+                  {(oneStudy && !isCorpus) || (
                     <td className="px-3 py-2 font-mono text-gray-500 whitespace-nowrap">
-                      {row.study}
+                      {row.paper_url ? (
+                        <a
+                          href={row.paper_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="hover:text-gray-900 hover:underline"
+                          title={`Open the paper in ${row.paper_source ?? 'a new tab'}`}
+                        >
+                          {row.study}
+                          <span className="ml-0.5 text-gray-300" aria-hidden="true">↗</span>
+                        </a>
+                      ) : (
+                        row.study
+                      )}
                     </td>
                   )}
-                  <td className="px-3 py-2 text-gray-900 max-w-[220px]">{row.assay}</td>
-                  <td className="px-3 py-2 text-gray-600 max-w-[180px]">{row.normalized_name}</td>
-                  <td className="px-3 py-2 text-gray-400 max-w-[180px]">{row.sample_type || '—'}</td>
+                  <td className="px-3 py-2 text-gray-900 max-w-[220px]">
+                    {row.benchmark_only ? (
+                      <span
+                        className="italic text-gray-400"
+                        title="The curator lists this assay; the agent's registry has no entry for it"
+                      >
+                        not found by the agent
+                      </span>
+                    ) : (
+                      row.assay
+                    )}
+                  </td>
                   <td className="px-3 py-2 max-w-[220px]">
                     {row.obi_id ? (
                       <>
@@ -295,8 +462,30 @@ export default function AssayObiTable({
                       <span className="text-gray-300">—</span>
                     )}
                   </td>
+                  {hasBenchmark && (
+                    <>
+                      <td className="px-3 py-2 text-gray-900 max-w-[220px]">
+                        {row.benchmark_assay || <span className="text-gray-300">—</span>}
+                      </td>
+                      <td className="px-3 py-2 max-w-[220px]">
+                        {row.benchmark_obi_label || row.benchmark_obi_id ? (
+                          <>
+                            <span className="text-gray-900">{row.benchmark_obi_label ?? '—'}</span>
+                            {row.benchmark_obi_id && (
+                              <span className="block font-mono text-gray-400 mt-0.5">
+                                {row.benchmark_obi_id}
+                              </span>
+                            )}
+                          </>
+                        ) : (
+                          <span className="text-gray-300">—</span>
+                        )}
+                      </td>
+                    </>
+                  )}
                   <td className="px-3 py-2 whitespace-nowrap">
                     {(() => {
+                      if (row.benchmark_only) return null;
                       const hit = coverage.get(immportKey(row.study, row.assay));
                       if (!hit) return <span className="text-gray-300">—</span>;
                       return (
@@ -340,19 +529,36 @@ export default function AssayObiTable({
                       );
                     })()}
                   </td>
-                  <td className="px-3 py-2 whitespace-nowrap">
-                    {/* Colour chip plus its text label — this table is the bar's accessible fallback. */}
-                    <span className="inline-flex items-center gap-1.5 text-gray-500">
-                      <span
-                        className="w-2 h-2 rounded-sm flex-shrink-0"
-                        style={{ backgroundColor: RESOURCE_COLOR[row.resource] }}
-                      />
-                      {RESOURCE_LABEL[row.resource]}
-                    </span>
-                  </td>
-                  <td className="px-3 py-2 text-right whitespace-nowrap">
-                    <ConfidenceCell value={row.obi_confidence} />
-                  </td>
+                  {isCorpus ? (
+                    spans[i] > 0 && (
+                      <td
+                        rowSpan={spans[i]}
+                        className="px-3 py-2 whitespace-nowrap border-l border-gray-100 bg-white"
+                      >
+                        <DataAvailabilityCell record={dataAvailability[row.study]} />
+                      </td>
+                    )
+                  ) : (
+                    <>
+                      <td className="px-3 py-2 whitespace-nowrap">
+                        {/* Colour chip plus its text label — this table is the bar's accessible fallback. */}
+                        {row.resource && (
+                          <span className="inline-flex items-center gap-1.5 text-gray-500">
+                            <span
+                              className="w-2 h-2 rounded-sm flex-shrink-0"
+                              style={{ backgroundColor: RESOURCE_COLOR[row.resource] }}
+                            />
+                            {RESOURCE_LABEL[row.resource]}
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-3 py-2 text-right whitespace-nowrap">
+                        {!row.benchmark_only && <ConfidenceCell value={row.obi_confidence} />}
+                      </td>
+                    </>
+                  )}
+                  <td className="px-3 py-2 text-gray-600 max-w-[180px]">{row.normalized_name || '—'}</td>
+                  <td className="px-3 py-2 text-gray-400 max-w-[180px]">{row.sample_type || '—'}</td>
                 </tr>
               ))}
             </tbody>

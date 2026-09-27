@@ -122,6 +122,21 @@ export interface AgentResponse {
   completeness?: CompletnessSummary;
   // Multi-paper response: one entry per paper when a study maps to multiple papers
   papers?: AgentResponse[];
+  // type === 'paper_choice': the study's papers, one of which the user picks
+  paper_options?: PaperOption[];
+}
+
+/** One of a study's papers, offered when the study has several and each run is paid. */
+export interface PaperOption {
+  pubmed_id: string;
+  title: string | null;
+  year: number | null;
+  /** Claims already on disk (benchmark or a previous run) — picking it costs nothing. */
+  cached: boolean;
+  local_pdf: boolean;
+  /** False when ImmPort's pubmed_id is not a PubMed ID ("TBD", a PMC id). */
+  usable: boolean;
+  unusable_reason: string | null;
 }
 
 export interface ChatMessage {
@@ -170,9 +185,33 @@ export interface AssayObiRow {
   readouts: string;
   obi_id: string | null;
   obi_label: string | null;
-  resource: ObiResource;
+  /** null only on a `benchmark_only` row, which has no assay of ours to resolve. */
+  resource: ObiResource | null;
   /** "high" for exact matches, a cosine similarity for LLM-picked ones, null when unresolved. */
   obi_confidence: string | number | null;
+  /** The curator's matching assay(s) from data/benchmark_assay, " / "-joined; corpus table only. */
+  benchmark_assay?: string | null;
+  benchmark_obi_label?: string | null;
+  benchmark_obi_id?: string | null;
+  /** A curator assay the agent did not find: only the benchmark fields are filled. */
+  benchmark_only?: boolean;
+  /** The same pairing, one entry per curator assay; `key` is unique within the paper. */
+  benchmark_items?: BenchmarkItem[];
+  /** Where to read the paper: its PMC page when the agent's JATS XML names one, else PubMed. */
+  paper_url?: string | null;
+  paper_source?: 'PMC' | 'PubMed' | null;
+}
+
+/** How our OBI term compares with the curator's for one paired assay. */
+export type BenchmarkObiMatch =
+  | 'same' | 'related' | 'differs' | 'curator_unmapped' | 'ours_unmapped' | 'missed';
+
+export interface BenchmarkItem {
+  key: string;
+  name: string;
+  obi_label: string | null;
+  obi_id: string | null;
+  obi_match: BenchmarkObiMatch;
 }
 
 export interface AssayObiStats {
@@ -209,7 +248,10 @@ export interface AssayPaperSummary extends PaperRef {
   updated_at: string | null;
 }
 
-export type AssayRoundName = 'extract' | 'verify' | 'correct' | 'obi' | 'canonicalize';
+export type AssayRoundName =
+  | 'extract' | 'verify' | 'correct' | 'obi' | 'canonicalize'
+  /** Not an assay round: the data-availability step a web run makes in parallel with them. */
+  | 'data_availability';
 
 export interface AssayEstimateRound {
   round: number;
@@ -298,6 +340,47 @@ export interface AssayRunResult {
     obi_path?: string | null;
     note?: string;
   };
+  /** The data-availability step a web run makes alongside the assays. */
+  data_availability?: DataAvailabilityResult;
+}
+
+/** One repository holding this study's own data, located (landing page, download, size). */
+export interface DataRepository {
+  accession: string;
+  repository: string;
+  landing_page?: string | null;
+  download?: { https?: string | null; ftp?: string | null } | null;
+  access?: string | null;
+  file_count?: number | null;
+  total_size_bytes?: number | null;
+  status?: string | null;
+  owner_pmids?: string[];
+  found_by?: string | null;
+  review?: string | null;
+}
+
+/**
+ * Where a paper's own data lives: data/data_availability/<SDY>_<PMID>.json, plus -- on a result
+ * from a run -- the lines to read and the step's cost. `error` is set when the step failed; the
+ * assays from the same run are unaffected.
+ */
+export interface DataAvailabilityResult {
+  pmid?: string;
+  study?: string;
+  title?: string | null;
+  data_repositories?: DataRepository[];
+  unconfirmed?: { accession: string; repository: string; url?: string; status?: string; detail?: string }[];
+  reviews?: string[];
+  dropped?: string[];
+  warnings?: string[];
+  notes?: string[];
+  llm_calls?: number;
+  error?: string;
+}
+
+/** Every paper's stored record, keyed `<PMID>_<SDY>` -- the corpus table's study spelling. */
+export interface DataAvailabilityCorpusResponse {
+  papers: Record<string, DataAvailabilityResult>;
 }
 
 export interface AssayRegistryResponse extends AssayRunResult {

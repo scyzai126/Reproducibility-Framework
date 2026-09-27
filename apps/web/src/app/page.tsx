@@ -322,7 +322,7 @@ export default function Home() {
             <div className="flex-1 overflow-y-auto">
               <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
                 {messages.map((msg) => (
-                  <ChatMessageComponent key={msg.id} message={msg} />
+                  <ChatMessageComponent key={msg.id} message={msg} onSend={handleTextMessage} disabled={isAnalyzing} />
                 ))}
                 <div ref={messagesEndRef} />
               </div>

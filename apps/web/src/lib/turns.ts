@@ -67,6 +67,8 @@ export type TurnPhase =
       at: TurnPhaseKind;
       retry: RetryStep | null;
       paper?: PaperCandidate;
+      /** PMC will not serve this paper: offer a PDF upload instead of a retry. */
+      upload?: boolean;
     };
 
 export interface PaperTurn {
@@ -95,7 +97,7 @@ export type TurnAction =
   | { type: 'job'; id: string; job: AssayJob }
   | { type: 'job_gone'; id: string; registry: AssayRegistryResponse | null }
   | { type: 'lost_contact'; id: string; lost: boolean }
-  | { type: 'failed'; id: string; message: string; retry: RetryStep | null }
+  | { type: 'failed'; id: string; message: string; retry: RetryStep | null; upload?: boolean }
   | { type: 'notice'; id: string; text: string | null }
   | { type: 'reset'; id: string }
   | { type: 'hydrate'; turns: PaperTurn[] };
@@ -253,6 +255,7 @@ export function turnsReducer(turns: PaperTurn[], action: TurnAction): PaperTurn[
           at: turn.phase.kind,
           retry: action.retry,
           paper: turnPaper(turn) ?? undefined,
+          upload: action.upload,
         },
       }));
 

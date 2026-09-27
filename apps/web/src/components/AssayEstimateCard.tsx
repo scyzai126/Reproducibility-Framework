@@ -14,6 +14,7 @@ const ROUND_LABEL: Record<string, string> = {
   correct: 'correct',
   obi: 'OBI map',
   canonicalize: 'canonicalize',
+  data_availability: 'data repositories',
 };
 
 const ROUND_DOES: Record<string, string> = {
@@ -22,6 +23,8 @@ const ROUND_DOES: Record<string, string> = {
   correct: 'repairs what verification refused, one call per flagged field',
   obi: 'resolves each name to an OBI term; exact matches are free',
   canonicalize: 'keys by OBI term and folds duplicates',
+  data_availability:
+    'runs alongside the assays: finds where the study deposited its data; one call when the paper names an accession, repository lookups free',
 };
 
 /** "~8", "?" or "0" — never a number the backend could not actually stand behind. */
@@ -41,6 +44,10 @@ function roundNote(round: AssayEstimateRound): string {
       return `${round.free_matches} of ${round.assays} match the vocabulary for free`;
     case 'canonicalize':
       return `${round.entries} entries → ${round.groups}, keyed by OBI term`;
+    case 'data_availability':
+      return round.entries
+        ? `${round.entries} accession-like ID${round.entries === 1 ? '' : 's'} named in the paper`
+        : 'the paper names no accession, so no call — repositories are still asked by PMID';
     default:
       return '';
   }
