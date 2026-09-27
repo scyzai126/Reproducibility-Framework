@@ -138,6 +138,51 @@ def _destination(pmid: str, sdy: str, out_dir: Path | None) -> Path:
     return root / f"{sdy}_{pmid}.xml"
 
 
+async def download_jats(pubmed_id: str) -> tuple[str, str]:
+    """Fetch one paper's full-text JATS XML from PMC without writing it anywhere.
+
+    Returns `(xml, pmcid)`. Raises PaperNotInPMCError / PaperUnavailableError when PMC will not
+    serve usable full text and PaperFetchError when NCBI could not be reached. fetch_jats files
+    the result under `<SDY>_<pmid>.xml`; a paper with no ImmPort study has no such name, so
+    claims-only extraction calls this directly.
+    """
+    pmid = (pubmed_id or "").strip()
+    async with _fetch_lock:
+        pmc_url = await pmid_to_pmc_url(pmid)
+        if not pmc_url:
+            raise PaperNotInPMCError(
+                f"Cannot fetch this paper's content online: PubMed ID {pmid} has no "
+                "open-access PubMed Central record, so there is no full text to download. "
+                "A paper behind a publisher's paywall cannot go through this pipeline."
+            )
+        pmcid = _extract_pmcid(pmc_url)
+
+        try:
+            async with httpx.AsyncClient(timeout=30, follow_redirects=True) as client:
+                response = await client.get(
+                    EFETCH_URL,
+                    params={"db": "pmc", "id": pmcid, "rettype": "full", "retmode": "xml"},
+                )
+                response.raise_for_status()
+        except httpx.HTTPError as exc:
+            raise PaperFetchError(f"could not reach NCBI for {pmcid}: {exc}") from exc
+        finally:
+            # Inside the lock, so the spacing applies between callers and not merely within one.
+            await asyncio.sleep(REQUEST_DELAY_S)
+
+    xml = response.text
+    reason = unavailable_reason(xml, BeautifulSoup(xml, "xml"))
+    if reason:
+        # Led by the plain statement, because this is shown to whoever typed the identifier and
+        # "PMC4049462: abstract-only XML (no <body>)" does not tell them the thing they need to
+        # know, which is that the paper cannot be fetched at all.
+        raise PaperUnavailableError(
+            f"Cannot fetch this paper's content online: {reason} ({pmcid})."
+        )
+
+    return xml, pmcid
+
+
 async def fetch_jats(
     pubmed_id: str,
     study_accession: str,
@@ -175,38 +220,7 @@ async def fetch_jats(
             "pmcid": None,
         }
 
-    async with _fetch_lock:
-        pmc_url = await pmid_to_pmc_url(pmid)
-        if not pmc_url:
-            raise PaperNotInPMCError(
-                f"Cannot fetch this paper's content online: PubMed ID {pmid} has no "
-                "open-access PubMed Central record, so there is no full text to download. "
-                "A paper behind a publisher's paywall cannot go through this pipeline."
-            )
-        pmcid = _extract_pmcid(pmc_url)
-
-        try:
-            async with httpx.AsyncClient(timeout=30, follow_redirects=True) as client:
-                response = await client.get(
-                    EFETCH_URL,
-                    params={"db": "pmc", "id": pmcid, "rettype": "full", "retmode": "xml"},
-                )
-                response.raise_for_status()
-        except httpx.HTTPError as exc:
-            raise PaperFetchError(f"could not reach NCBI for {pmcid}: {exc}") from exc
-        finally:
-            # Inside the lock, so the spacing applies between callers and not merely within one.
-            await asyncio.sleep(REQUEST_DELAY_S)
-
-    xml = response.text
-    reason = unavailable_reason(xml, BeautifulSoup(xml, "xml"))
-    if reason:
-        # Led by the plain statement, because this is shown to whoever typed the identifier and
-        # "PMC4049462: abstract-only XML (no <body>)" does not tell them the thing they need to
-        # know, which is that the paper cannot be fetched at all.
-        raise PaperUnavailableError(
-            f"Cannot fetch this paper's content online: {reason} ({pmcid})."
-        )
+    xml, pmcid = await download_jats(pmid)
 
     destination.parent.mkdir(parents=True, exist_ok=True)
     destination.write_text(xml, encoding="utf-8")

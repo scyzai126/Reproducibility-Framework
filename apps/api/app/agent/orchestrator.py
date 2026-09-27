@@ -153,6 +153,225 @@ def _find_local_pdf(study_accession: str, pubmed_id: str) -> Path | None:
     return None
 
 
+#: Runs of v8 passes 1-2: 2*V8_RUNS + 3 calls per paper. 1 is a single temperature-0 call per
+#: pass (5 calls in all); data/claims/new_26_studies was produced with 5 sampled runs.
+V8_RUNS = 1
+
+
+async def _v8_claims(xml_text: str) -> dict:
+    """All claims the v8 five-pass abstraction finds in a paper's JATS XML (2*V8_RUNS + 3 calls)."""
+    from app.agent import claim_abstraction_v5
+    from app.agent.claim_parser import _get_client
+    from app.config import settings
+
+    claims, _audit = await claim_abstraction_v5.abstract_claims_from_document(
+        xml_text, _get_client(), settings.OPENAI_MODEL, runs=V8_RUNS
+    )
+    return claims
+
+
+class PaperSourceUnavailable(ValueError):
+    """Neither PMC full-text XML nor a PDF is available for this paper."""
+
+
+async def _step1_claims_xml_first(
+    pubmed_id: str,
+    study_accession: str,
+    log_sections: list[str],
+    pdf_bytes: bytes | None = None,
+    pdf_name: str | None = None,
+) -> dict | None:
+    """Step-1 claims for a paper, from its JATS XML when PMC serves it, else from a PDF.
+
+    Returns None when the disk cache already holds this paper's claims or groups, so
+    _run_full_paper_analysis serves it from there and nothing is fetched or paid for.
+
+    XML: data/JAT_XML/<SDY>_<PMID>.xml, downloaded by jats_fetcher.fetch_jats if missing,
+    then the v8 five-pass abstraction, then claim_filter -- only the reproducible subset goes
+    on to step 2. PDF (fallback): the uploaded bytes, else data/pdf/<SDY>_<PMID>.pdf, through
+    PDF-direct extraction. Raises PaperSourceUnavailable when there is neither.
+    """
+    from app.agent import claim_abstraction_v5, jats_fetcher, pdf_direct
+    from app.agent.assay_obi_mapper import enrich_assays_with_obi
+    from app.agent.assay_registry import registry_from_claims
+    from app.agent.claim_filter import filter_claims_for_downstream
+    from app.agent.claim_parser import _get_client
+
+    if _load_disk_cache(pubmed_id, "groups") is not None or _load_disk_cache(pubmed_id, "claims") is not None:
+        log_sections.append(f"--- Paper Source ---\ndisk cache hit for pubmed_id {pubmed_id}")
+        return None
+
+    try:
+        fetched = await jats_fetcher.fetch_jats(pubmed_id, study_accession)
+    except (jats_fetcher.PaperUnavailableError, jats_fetcher.PaperFetchError, ValueError) as exc:
+        xml_reason = str(exc)
+    else:
+        claims = await _v8_claims(Path(fetched["path"]).read_text(encoding="utf-8"))
+        kept, dropped, _polarity = filter_claims_for_downstream(claims)
+        log_sections.append(
+            f"--- Paper Source ---\n"
+            f"source: JATS XML ({fetched['path']}, {'downloaded' if fetched['created'] else 'on disk'})\n"
+            f"v8 claims: {len(claims)}, kept by claim_filter: {len(kept)}, dropped by type: {dropped}"
+        )
+        # Registry from the unprojected claims: they carry `assay.name_in_paper`.
+        step1: dict = {"assays": enrich_assays_with_obi(registry_from_claims(kept))}
+        step1.update(claim_abstraction_v5.project_claims(kept))
+        return step1
+
+    if pdf_bytes is None:
+        local_pdf = _find_local_pdf(study_accession, pubmed_id)
+        if local_pdf is not None:
+            pdf_bytes, pdf_name = local_pdf.read_bytes(), local_pdf.name
+    if pdf_bytes is None:
+        raise PaperSourceUnavailable(
+            f"{xml_reason} No PDF found for {study_accession}_{pubmed_id} either -- "
+            "please upload the PDF."
+        )
+    log_sections.append(
+        f"--- Paper Source ---\n"
+        f"source: PDF ({pdf_name}) -- JATS XML unavailable: {xml_reason}"
+    )
+    return await pdf_direct.extract_step1_from_pdf_direct(
+        pdf_bytes, pdf_name or f"{pubmed_id}.pdf", _get_client()
+    )
+
+
+
+
+#: A reply that confirms claims-only extraction: "PMID:<id> claims-only".
+_CLAIMS_ONLY_RE = re.compile(r"\bclaims[- ]only\b", re.I)
+
+#: Where a PDF uploaded for a paper with no single ImmPort study waits for the user's answer,
+#: so a "yes" can fall back to it when PMC has no usable XML.
+_UPLOADED_PDF_NAME = "uploaded.pdf"
+_CLAIMS_ONLY_FILE = "claims_only.json"
+
+
+async def _studies_for_pmid(session: AsyncSession, pubmed_id: str) -> list[str]:
+    """Every ImmPort study this paper is linked to -- 0, 1, or several."""
+    rows = (await session.execute(
+        text("SELECT DISTINCT study_accession FROM study_pubmed "
+             "WHERE pubmed_id = :pid ORDER BY study_accession"),
+        {"pid": pubmed_id},
+    )).fetchall()
+    return [r[0] for r in rows]
+
+
+def _immport_confirm(pubmed_id: str, studies: list[str], pdf_bytes: bytes | None = None) -> dict:
+    """Ask before extracting claims from a paper that has no single ImmPort study.
+
+    Without exactly one study there is no subject data to group claims against, so the only
+    thing left to offer is the claims themselves -- and that is still a paid run, so the user
+    decides. An uploaded PDF is kept for the answer, since the reply carries only the PMID.
+    """
+    if pdf_bytes:
+        path = _CLAIMS_CACHE_DIR / str(pubmed_id) / _UPLOADED_PDF_NAME
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(pdf_bytes)
+    if studies:
+        situation = "multiple_studies"
+        why = (
+            f"PMID {pubmed_id} is linked to {len(studies)} ImmPort studies "
+            f"({', '.join(studies)}), so its claims cannot be matched to one study's subjects."
+        )
+    else:
+        situation = "not_in_immport"
+        why = (
+            f"PMID {pubmed_id} is not linked to any ImmPort study, so there is no subject "
+            "data to match its claims against."
+        )
+    return {
+        "type": "immport_confirm",
+        "situation": situation,
+        "study_accession": "",
+        "pubmed_id": pubmed_id,
+        "study_options": studies,
+        "question": (
+            f"{why} Do you want to extract the paper's claims anyway? Only the claims are "
+            f"extracted -- no grouping or subject matching. This is a paid run: "
+            f"{2 * V8_RUNS + 3} LLM calls from the PMC XML, or 1 from a PDF if PMC has no full text."
+        ),
+    }
+
+
+def _claims_only_pdf(pubmed_id: str) -> Path | None:
+    """A PDF for a claims-only run: the one uploaded with the question, else data/pdf/*_<PMID>.pdf."""
+    uploaded = _CLAIMS_CACHE_DIR / str(pubmed_id) / _UPLOADED_PDF_NAME
+    if uploaded.exists():
+        return uploaded
+    if _PDF_DIR.exists():
+        for candidate in _PDF_DIR.rglob("*.pdf"):
+            stem = candidate.stem.lower()
+            if stem == str(pubmed_id) or stem.endswith(f"_{pubmed_id}") or stem == f"pmid{pubmed_id}":
+                return candidate
+    return None
+
+
+async def run_claims_only(pubmed_id: str, log_sections: list[str]) -> dict:
+    """Extract a paper's claims and stop: no grouping, no study sync, no subject queries.
+
+    For a paper the user confirmed after being told it has no single ImmPort study. JATS XML
+    first (data/JAT_XML if already there, else PMC), then a PDF. Every claim is returned with
+    its claim_type -- claim_filter exists to pick what can be matched to subject data, and
+    nothing is matched here. The result is kept in data/cache/claims/<PMID>/claims_only.json,
+    which _load_disk_cache never reads, so a later ImmPort-backed run is not handed these.
+    """
+    from app.agent import jats_fetcher, pdf_direct
+    from app.agent.claim_abstraction_v5 import project_claims
+    from app.agent.claim_parser import _get_client
+
+    cache_path = _CLAIMS_CACHE_DIR / str(pubmed_id) / _CLAIMS_ONLY_FILE
+    claims: dict | None = None
+    if cache_path.exists():
+        claims = json.loads(cache_path.read_text(encoding="utf-8"))
+        log_sections.append(f"--- Claims Only ---\ncache hit: {cache_path}")
+    else:
+        on_disk = sorted(_xml_root().glob(f"*_{pubmed_id}.xml"))
+        try:
+            xml_text = (
+                on_disk[0].read_text(encoding="utf-8") if on_disk
+                else (await jats_fetcher.download_jats(pubmed_id))[0]
+            )
+        except (jats_fetcher.PaperUnavailableError, jats_fetcher.PaperFetchError) as exc:
+            pdf = _claims_only_pdf(pubmed_id)
+            if pdf is None:
+                raise PaperSourceUnavailable(f"{exc} No PDF found for PMID {pubmed_id} either -- please upload the PDF.")
+            log_sections.append(f"--- Claims Only ---\nsource: PDF ({pdf}) -- JATS XML unavailable: {exc}")
+            claims, _unmatched = await pdf_direct.extract_claims_from_pdf_direct(
+                pdf.read_bytes(), pdf.name, _get_client()
+            )
+        else:
+            log_sections.append(
+                f"--- Claims Only ---\nsource: JATS XML ({on_disk[0] if on_disk else 'PMC'})"
+            )
+            claims = project_claims(await _v8_claims(xml_text))
+        cache_path.parent.mkdir(parents=True, exist_ok=True)
+        cache_path.write_text(json.dumps(claims, indent=2, ensure_ascii=False), encoding="utf-8")
+
+    _write_workflow_log(log_sections)
+    return {
+        "type": "claims_only",
+        "study_accession": "",
+        "pubmed_id": pubmed_id,
+        "paper_claims": [
+            {
+                "claim_id": key,
+                "claim_text": val.get("claim", ""),
+                "claim_type": val.get("claim_type"),
+                "sources": val.get("sources") or [],
+            }
+            for key, val in claims.items()
+            if key.startswith("claim_") and isinstance(val, dict)
+        ],
+        "subject_results": [],
+        "claims": [],
+    }
+
+
+def _xml_root() -> Path:
+    """data/JAT_XML, read late so tests that move it are honoured."""
+    from app.agent import assay_service
+    return assay_service.XML_ROOT
 
 
 _URL_PATTERNS = [
@@ -1028,94 +1247,50 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
             # runs it, so the PMID must not send it down the PMID path instead.
             if re.search(r"\bSDY\d+\b", file_content, re.I):
                 pmc_id = paper_url = None
-            # Bare PMID (e.g. "PMID:32788292") has no URL yet — check cache first
-            if pmc_id and not paper_url:
-                # pmc_id is the PubMed ID here — check disk cache before any network call
-                if _load_disk_cache(pmc_id, "groups") is not None:
-                    row = (await session.execute(
-                        text("SELECT study_accession FROM study_pubmed WHERE pubmed_id = :pid LIMIT 1"),
-                        {"pid": pmc_id},
-                    )).fetchone()
-                    if row:
-                        log_sections.append(
-                            f"--- Step 2: PMID cache hit ---\n"
-                            f"pubmed_id: {pmc_id} → study_accession: {row[0]}"
+            if pmc_id:
+                # A PMC link carries a PMC id; a PubMed/Europe PMC link or a bare PMID is the PMID.
+                if paper_url and re.search(r"PMC", paper_url, re.I):
+                    pubmed_id = await pmc_to_pmid(pmc_id)
+                    if not pubmed_id:
+                        try:
+                            _, pubmed_id = await fetch_paper_content_async(paper_url)
+                        except PaperNotAvailableError:
+                            pubmed_id = None
+                    if not pubmed_id:
+                        raise ValueError(
+                            f"Could not find the PubMed ID for PMC{pmc_id}. "
+                            "Please send the PubMed ID instead (e.g. PMID:32788292)."
                         )
-                        return await _run_paper_pipeline(
-                            "", pmc_id, row[0], session, question or None, log_sections
-                        )
-                paper_url = await pmid_to_pmc_url(pmc_id)
-                if not paper_url:
-                    return {
-                        "type": "pdf_upload_required",
-                        "study_accession": "",
-                        "pubmed_id": pmc_id,
-                    }
-            if pmc_id and paper_url:
-                # pmc_id is the PMC numeric ID — resolve pubmed_id cheaply before fetching
-                resolved_pubmed_id = await pmc_to_pmid(pmc_id)
-                if resolved_pubmed_id and _load_disk_cache(resolved_pubmed_id, "groups") is not None:
-                    row = (await session.execute(
-                        text("SELECT study_accession FROM study_pubmed WHERE pubmed_id = :pid LIMIT 1"),
-                        {"pid": resolved_pubmed_id},
-                    )).fetchone()
-                    if row:
-                        log_sections.append(
-                            f"--- Step 2: PMC URL cache hit ---\n"
-                            f"pmc_id: {pmc_id} → pubmed_id: {resolved_pubmed_id} → study_accession: {row[0]}"
-                        )
-                        return await _run_paper_pipeline(
-                            "", resolved_pubmed_id, row[0], session, question or None, log_sections
-                        )
+                else:
+                    pubmed_id = pmc_id
 
-                # Cache miss — fetch full paper XML
-                try:
-                    fetched_paper_text, pubmed_id_from_paper = await fetch_paper_content_async(paper_url)
-                except PaperNotAvailableError:
-                    fallback_pid = resolved_pubmed_id or pmc_id
-                    sdy_row = (await session.execute(
-                        text("SELECT study_accession FROM study_pubmed WHERE pubmed_id = :pid LIMIT 1"),
-                        {"pid": fallback_pid},
-                    )).fetchone()
-                    return {
-                        "type": "pdf_upload_required",
-                        "study_accession": sdy_row[0] if sdy_row else "",
-                        "pubmed_id": fallback_pid,
-                    }
-                pubmed_id = pubmed_id_from_paper or resolved_pubmed_id or pmc_id
-                row = (await session.execute(
-                    text("SELECT study_accession FROM study_pubmed WHERE pubmed_id = :pid LIMIT 1"),
-                    {"pid": pubmed_id},
-                )).fetchone()
-                study_accession = row[0] if row else None
+                # The user's "yes" to a paper with no single ImmPort study: claims only.
+                if _CLAIMS_ONLY_RE.search(file_content):
+                    return await run_claims_only(pubmed_id, log_sections)
+
+                studies = await _studies_for_pmid(session, pubmed_id)
+                if len(studies) != 1:
+                    return _immport_confirm(pubmed_id, studies)
+                study_accession = studies[0]
                 log_sections.append(
-                    f"--- Step 2: Plain Text Input ---\n"
-                    f"PMC ID from URL: {pmc_id} → PubMed ID from paper: {pubmed_id} → study_accession: {study_accession}"
+                    f"--- Step 2: Paper Input ---\n"
+                    f"pubmed_id: {pubmed_id} → study_accession: {study_accession}"
                 )
-
-                if not study_accession:
-                    logger.info("PubMed ID %s not in ImmPort — running no-ImmPort claim extraction", pubmed_id)
-                    log_sections.append(
-                        f"--- No ImmPort Match ---\n"
-                        f"PubMed ID {pubmed_id} is not linked to any ImmPort study. "
-                        f"Running claim extraction without subject ID lookup."
+                try:
+                    step1_claims = await _step1_claims_xml_first(
+                        pubmed_id, study_accession, log_sections
                     )
-                    paper_claims = await parse_paper_claims_noimmport(fetched_paper_text, paper_url)
-                    _write_workflow_log(log_sections)
+                except PaperSourceUnavailable:
                     return {
-                        "type": "no_immport",
-                        "study_accession": "",
-                        "paper_claims": paper_claims,
-                        "subject_results": [],
-                        "claims": [],
+                        "type": "pdf_upload_required",
+                        "study_accession": study_accession,
+                        "pubmed_id": pubmed_id,
                     }
-
-                # ── Paper URL path: always do claim analysis ─────────────────
-                if study_accession:
-                    return await _run_paper_pipeline(
-                        fetched_paper_text, pubmed_id, study_accession,
-                        session, question or None, log_sections
-                    )
+                return await _run_paper_pipeline(
+                    "", pubmed_id, study_accession,
+                    session, question or None, log_sections,
+                    step1_claims=step1_claims,
+                )
             else:
                 # Check for SDY accession → look up all pubmed_ids → fetch each paper → claim analysis
                 sdy_match = re.search(r"\bSDY\d+\b", file_content, re.I)
@@ -1138,77 +1313,28 @@ async def _run_agent_core(file_content: str, session: AsyncSession, study_access
 
                         for sdy_pubmed_id in sdy_pubmed_ids:
                             paper_log = list(log_sections)
-
-                            # Local PDF already on disk → PDF-direct claim extraction instead
-                            # of fetching JATS XML from PMC. A paper whose groups are already
-                            # cached skips this and falls through to the cache-hit branch below.
-                            local_pdf = _find_local_pdf(sdy_accession, sdy_pubmed_id)
-                            if local_pdf is not None and _load_disk_cache(sdy_pubmed_id, "groups") is None:
-                                from openai import AsyncOpenAI
-                                from app.agent.pdf_direct import extract_step1_from_pdf_direct
-                                from app.config import settings
-
-                                paper_log.append(
-                                    f"--- Step 2: SDY → local PDF ---\n"
-                                    f"study_accession: {sdy_accession} → pubmed_id: {sdy_pubmed_id} → {local_pdf}"
-                                )
-                                # Claims cached by a run whose grouping step failed are reused,
-                                # so that run's paid extraction is not repeated.
-                                step1_claims = _load_disk_cache(sdy_pubmed_id, "claims")
-                                if step1_claims is None:
-                                    pdf_bytes = local_pdf.read_bytes()
-                                    pdf_client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
-                                    step1_claims = await extract_step1_from_pdf_direct(
-                                        pdf_bytes, local_pdf.name, pdf_client
-                                    )
-                                result = await _run_paper_pipeline(
-                                    "", sdy_pubmed_id, sdy_accession,
-                                    session, sdy_question or None, paper_log,
-                                    step1_claims=step1_claims,
-                                )
-                                result["pubmed_id"] = sdy_pubmed_id
-                                paper_results.append(result)
-                                continue
-
-                            # Check cache before any network calls
-                            if _load_disk_cache(sdy_pubmed_id, "groups") is not None:
-                                paper_log.append(
-                                    f"--- Step 2: SDY cache hit ---\n"
-                                    f"study_accession: {sdy_accession} → pubmed_id: {sdy_pubmed_id}"
-                                )
-                                result = await _run_paper_pipeline(
-                                    "", sdy_pubmed_id, sdy_accession,
-                                    session, sdy_question or None, paper_log
-                                )
-                                result["pubmed_id"] = sdy_pubmed_id
-                                paper_results.append(result)
-                                continue
-
-                            sdy_paper_url = await pmid_to_pmc_url(sdy_pubmed_id)
-                            if not sdy_paper_url:
-                                paper_results.append({
-                                    "type": "pdf_upload_required",
-                                    "study_accession": sdy_accession,
-                                    "pubmed_id": sdy_pubmed_id,
-                                })
-                                continue
-                            try:
-                                sdy_paper_text, _ = await fetch_paper_content_async(sdy_paper_url)
-                            except PaperNotAvailableError:
-                                paper_results.append({
-                                    "type": "pdf_upload_required",
-                                    "study_accession": sdy_accession,
-                                    "pubmed_id": sdy_pubmed_id,
-                                })
-                                continue
-
                             paper_log.append(
                                 f"--- Step 2: SDY → Paper ---\n"
                                 f"study_accession: {sdy_accession} → pubmed_id: {sdy_pubmed_id}"
                             )
+                            # JATS XML first, PDF only when PMC will not serve it; None means
+                            # the disk cache has this paper and nothing needs extracting.
+                            try:
+                                step1_claims = await _step1_claims_xml_first(
+                                    sdy_pubmed_id, sdy_accession, paper_log
+                                )
+                            except PaperSourceUnavailable as exc:
+                                logger.info("No paper source for %s: %s", sdy_pubmed_id, exc)
+                                paper_results.append({
+                                    "type": "pdf_upload_required",
+                                    "study_accession": sdy_accession,
+                                    "pubmed_id": sdy_pubmed_id,
+                                })
+                                continue
                             result = await _run_paper_pipeline(
-                                sdy_paper_text, sdy_pubmed_id, sdy_accession,
-                                session, sdy_question or None, paper_log
+                                "", sdy_pubmed_id, sdy_accession,
+                                session, sdy_question or None, paper_log,
+                                step1_claims=step1_claims,
                             )
                             result["pubmed_id"] = sdy_pubmed_id
                             paper_results.append(result)
@@ -1393,36 +1519,25 @@ async def run_agent_from_paper(
         )
     log_sections.append(f"--- Step 2: PubMed ID ---\npubmed_id: {pubmed_id}")
 
-    # ── 3. Study lookup ──────────────────────────────────────────────────────
-    row = (await session.execute(
-        text("SELECT study_accession FROM study_pubmed WHERE pubmed_id = :pid LIMIT 1"),
-        {"pid": pubmed_id},
-    )).fetchone()
-    if not row:
-        logger.info("PubMed ID %s not in ImmPort — running no-ImmPort claim extraction from PDF", pubmed_id)
-        log_sections.append(
-            f"--- Step 3: No ImmPort Match ---\n"
-            f"PubMed ID {pubmed_id} is not linked to any ImmPort study. "
-            f"Running claim extraction without subject ID lookup."
-        )
-        paper_claims = await parse_paper_claims_noimmport(paper_text, filename)
-        _write_workflow_log(log_sections)
-        return {
-            "type": "no_immport",
-            "study_accession": "",
-            "paper_claims": paper_claims,
-            "subject_results": [],
-            "claims": [],
-        }
-    study_accession: str = row[0]
+    # ── 3. Study lookup: anything but exactly one study asks before a claims-only run ──
+    studies = await _studies_for_pmid(session, pubmed_id)
+    if len(studies) != 1:
+        return _immport_confirm(pubmed_id, studies, pdf_bytes=pdf_bytes)
+    study_accession: str = studies[0]
     log_sections.append(
         f"--- Step 3: Study Lookup ---\n"
         f"pubmed_id: {pubmed_id} → study_accession: {study_accession}"
     )
 
-    # ── 4. Run shared pipeline (sync, assay extraction, filter extraction, claims/samples) ──────
+    # ── 4. Step-1 claims: PMC JATS XML first, the uploaded PDF only if PMC has none ──────
+    step1_claims = await _step1_claims_xml_first(
+        pubmed_id, study_accession, log_sections, pdf_bytes=pdf_bytes, pdf_name=filename
+    )
+
+    # ── 5. Run shared pipeline (sync, filter extraction, claims/samples) ──────
     return await _run_paper_pipeline(
-        paper_text, pubmed_id, study_accession, session, question, log_sections
+        paper_text, pubmed_id, study_accession, session, question, log_sections,
+        step1_claims=step1_claims,
     )
 
 
@@ -1433,59 +1548,26 @@ async def run_agent_from_pubmed_id(
 ) -> dict:
     """Entry point for PubMed-ID-only requests (no PDF upload).
 
-    Fetches full-text XML from PMC, then runs the same pipeline as run_agent_from_paper.
-    Raises ValueError if the paper is not available as open-access XML on PMC.
+    Looks the paper up in ImmPort first: with no study or several, it asks before a
+    claims-only run. Otherwise the paper text comes from PMC's JATS XML, or a local PDF.
     """
-    from app.agent.ncbi_utils import pmid_to_pmc_url
-    from app.agent.claim_parser import fetch_paper_content_async, PaperNotAvailableError
-
     log_sections: list[str] = []
 
-    # ── 1. Resolve PMC URL ───────────────────────────────────────────────────
-    pmc_url = await pmid_to_pmc_url(pubmed_id)
-    if not pmc_url:
-        raise ValueError(
-            f"PubMed ID {pubmed_id} has no open-access PMC record. "
-            "Please upload the PDF instead."
-        )
-    log_sections.append(f"--- Step 1: PMC URL ---\npubmed_id: {pubmed_id} → {pmc_url}")
-
-    # ── 2. Fetch paper text ──────────────────────────────────────────────────
-    try:
-        paper_text, _ = await fetch_paper_content_async(pmc_url)
-    except PaperNotAvailableError as exc:
-        raise ValueError(str(exc)) from exc
+    # ── 1. Study lookup ──────────────────────────────────────────────────────
+    studies = await _studies_for_pmid(session, pubmed_id)
+    if len(studies) != 1:
+        return _immport_confirm(pubmed_id, studies)
+    study_accession: str = studies[0]
     log_sections.append(
-        f"--- Step 2: Paper Text ---\nFetched {len(paper_text)} chars from {pmc_url}"
-    )
-
-    # ── 3. Study lookup ──────────────────────────────────────────────────────
-    row = (await session.execute(
-        text("SELECT study_accession FROM study_pubmed WHERE pubmed_id = :pid LIMIT 1"),
-        {"pid": pubmed_id},
-    )).fetchone()
-    if not row:
-        logger.info("PubMed ID %s not in ImmPort — running no-ImmPort extraction", pubmed_id)
-        log_sections.append(
-            f"--- Step 3: No ImmPort Match ---\n"
-            f"PubMed ID {pubmed_id} is not linked to any ImmPort study."
-        )
-        paper_claims = await parse_paper_claims_noimmport(paper_text, pmc_url)
-        _write_workflow_log(log_sections)
-        return {
-            "type": "no_immport",
-            "study_accession": "",
-            "paper_claims": paper_claims,
-            "subject_results": [],
-            "claims": [],
-        }
-    study_accession: str = row[0]
-    log_sections.append(
-        f"--- Step 3: Study Lookup ---\n"
+        f"--- Step 1: Study Lookup ---\n"
         f"pubmed_id: {pubmed_id} → study_accession: {study_accession}"
     )
 
-    # ── 4. Run shared pipeline ───────────────────────────────────────────────
+    # ── 2. Step-1 claims: PMC JATS XML (local PDF if the XML is unusable) ───────
+    step1_claims = await _step1_claims_xml_first(pubmed_id, study_accession, log_sections)
+
+    # ── 3. Run shared pipeline ───────────────────────────────────────────────
     return await _run_paper_pipeline(
-        paper_text, pubmed_id, study_accession, session, question, log_sections
+        "", pubmed_id, study_accession, session, question, log_sections,
+        step1_claims=step1_claims,
     )

@@ -50,6 +50,8 @@ export interface ClaimResult {
 export interface PaperClaim {
   claim_id: string;
   claim_text: string;
+  /** Set on claims-only results: the claim's type from the extraction vocabulary. */
+  claim_type?: string | null;
   sources: Array<{ type: string; section?: string; quote?: string; ref?: string }>;
 }
 
@@ -124,6 +126,9 @@ export interface AgentResponse {
   papers?: AgentResponse[];
   // type === 'paper_choice': the study's papers, one of which the user picks
   paper_options?: PaperOption[];
+  // type === 'immport_confirm': why the paper has no single ImmPort study, and those it has
+  situation?: 'not_in_immport' | 'multiple_studies';
+  study_options?: string[];
 }
 
 /** One of a study's papers, offered when the study has several and each run is paid. */

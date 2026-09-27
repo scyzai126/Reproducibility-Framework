@@ -253,18 +253,16 @@ class TestRunAgentFromTextNoPaperSource:
                 await run_agent_from_text("PMID:99999999 find healthy subjects", _mock_session())
 
     @pytest.mark.asyncio
-    async def test_pmid_not_linked_to_immport_returns_no_immport(self):
-        """Papers not in ImmPort return a no_immport response with extracted claims instead of raising."""
+    async def test_pmid_not_linked_to_immport_asks_before_claims_only(self):
+        """A paper not in ImmPort asks the user first, and nothing is fetched or extracted."""
         from app.agent.orchestrator import run_agent_from_text
-        from app.agent.ncbi_utils import _pmc_url_cache
-        _pmc_url_cache.clear()
 
-        fake_claims = [{"claim_id": "claim_1", "claim_text": "Some finding.", "sources": []}]
-        with patch("app.agent.orchestrator.pmid_to_pmc_url", return_value="https://pmc.ncbi.nlm.nih.gov/articles/PMC7665312/"), \
-             patch("app.agent.orchestrator.fetch_paper_content_async", return_value=("paper text", "32788292")), \
-             patch("app.agent.orchestrator.parse_paper_claims_noimmport", return_value=fake_claims):
-            result = await run_agent_from_text("PMID:32788292 find healthy subjects", _mock_session(fetchone_value=None))
+        with patch("app.agent.orchestrator._step1_claims_xml_first") as step1, \
+             patch("app.agent.orchestrator.run_claims_only") as claims_only:
+            result = await run_agent_from_text("PMID:32788292 find healthy subjects", _mock_session())
 
-        assert result["type"] == "no_immport"
-        assert result["paper_claims"] == fake_claims
-        assert result["subject_results"] == []
+        assert result["type"] == "immport_confirm"
+        assert result["situation"] == "not_in_immport"
+        assert result["pubmed_id"] == "32788292"
+        step1.assert_not_called()
+        claims_only.assert_not_called()

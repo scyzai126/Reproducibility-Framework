@@ -103,6 +103,8 @@ function AssistantMessage({ message, onSend, disabled }: Props) {
           </div>
         ) : message.result?.type === 'paper_choice' ? (
           <PaperChoice result={message.result} onSend={onSend} disabled={disabled} />
+        ) : message.result?.type === 'immport_confirm' ? (
+          <ImmportConfirm result={message.result} onSend={onSend} disabled={disabled} />
         ) : message.result?.type === 'clarification' ? (
           <p className="text-sm text-gray-700 whitespace-pre-line">{message.result.question}</p>
         ) : message.result?.type === 'pdf_upload_required' ? (
@@ -192,6 +194,39 @@ function PaperChoice({ result, onSend, disabled }: { result: AgentResponse; onSe
           </li>
         ))}
       </ul>
+    </div>
+  );
+}
+
+function ImmportConfirm({ result, onSend, disabled }: { result: AgentResponse; onSend?: (text: string) => void; disabled?: boolean }) {
+  const [answer, setAnswer] = useState<'yes' | 'no' | null>(null);
+  const title = result.situation === 'multiple_studies'
+    ? 'This paper maps to several ImmPort studies'
+    : 'This paper is not in ImmPort';
+  return (
+    <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 space-y-2">
+      <p className="text-sm font-medium text-amber-800">{title}</p>
+      <p className="text-xs text-amber-700 leading-relaxed">{result.question}</p>
+      {answer === null ? (
+        <div className="flex gap-2 pt-1">
+          <button
+            onClick={() => { setAnswer('yes'); onSend?.(`PMID:${result.pubmed_id} claims-only`); }}
+            disabled={disabled || !onSend}
+            className="text-xs font-medium text-white bg-amber-600 hover:bg-amber-700 rounded px-3 py-1.5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Yes, extract claims only
+          </button>
+          <button
+            onClick={() => setAnswer('no')}
+            disabled={disabled}
+            className="text-xs text-amber-700 border border-amber-300 hover:bg-amber-100 rounded px-3 py-1.5 transition-colors disabled:opacity-50"
+          >
+            No
+          </button>
+        </div>
+      ) : (
+        <p className="text-xs text-amber-600">{answer === 'yes' ? 'Extracting claims only…' : 'Cancelled — nothing was run.'}</p>
+      )}
     </div>
   );
 }
@@ -300,7 +335,10 @@ function PaperClaimCard({ claim, index }: { claim: PaperClaim; index: number }) 
         className="w-full flex items-start justify-between gap-3 px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors text-left"
       >
         <div className="flex-1 min-w-0">
-          <span className="text-xs font-medium text-gray-500 mb-1 block">Claim {index + 1}</span>
+          <span className="text-xs font-medium text-gray-500 mb-1 block">
+            Claim {index + 1}
+            {claim.claim_type && <span className="ml-2 font-mono font-normal text-gray-400">{claim.claim_type}</span>}
+          </span>
           <p className="text-xs text-gray-800">{claim.claim_text}</p>
         </div>
         {sources.length > 0 && (
@@ -416,7 +454,8 @@ function ResultsDisplay({ result }: { result: AgentResponse }) {
   const [claimFailures, setClaimFailures] = useState<ClaimFailures[]>([]);
 
   const json = JSON.stringify(result, null, 2);
-  const isNoImmport = result.type === 'no_immport';
+  const isClaimsOnly = result.type === 'claims_only';
+  const isNoImmport = result.type === 'no_immport' || isClaimsOnly;
   const isPaperQuestion = !isNoImmport && result.paper_claims && result.paper_claims.length > 0;
   const isClaims = !isNoImmport && !isPaperQuestion && result.claims && result.claims.length > 0;
   const hasCompleteness = !!result.completeness;
@@ -453,8 +492,14 @@ function ResultsDisplay({ result }: { result: AgentResponse }) {
             <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
           </svg>
           <div>
-            <p className="text-xs font-medium text-amber-700">This paper is not associated with any dataset in ImmPort</p>
-            <p className="text-xs text-amber-600 mt-0.5">Claims have been extracted from the paper, but no subject-level data is available for matching.</p>
+            <p className="text-xs font-medium text-amber-700">
+              {isClaimsOnly ? `Claims only — PMID ${result.pubmed_id}` : 'This paper is not associated with any dataset in ImmPort'}
+            </p>
+            <p className="text-xs text-amber-600 mt-0.5">
+              {isClaimsOnly
+                ? 'Claims were extracted from the paper. No grouping or subject matching was run.'
+                : 'Claims have been extracted from the paper, but no subject-level data is available for matching.'}
+            </p>
           </div>
         </div>
       )}

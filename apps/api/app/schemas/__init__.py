@@ -57,6 +57,10 @@ class AgentResponse(BaseModel):
     question: str | None = None
     # type == "paper_choice": the study's papers, one of which the user picks to analyze
     paper_options: list[dict] = []
+    pubmed_id: str | None = None
+    # type == "immport_confirm": "not_in_immport" or "multiple_studies", and the studies found
+    situation: str | None = None
+    study_options: list[str] = []
     # ImmPort field resolution completeness summary
     completeness: CompletnessSummary | None = None
 
