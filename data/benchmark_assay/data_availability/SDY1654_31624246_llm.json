@@ -1,0 +1,275 @@
+{
+  "pmid": "31624246",
+  "study": "SDY1654",
+  "title": "Single-cell transcriptomics of human T cells reveals tissue and activation signatures in health and disease",
+  "source_format": "xml",
+  "llm_called": true,
+  "llm_model": "gpt-5.4",
+  "da_accessions": [
+    "github.com/simslab/umap_projection",
+    "GSE126030",
+    "github.com/simslab/cluster_diffex2018",
+    "github.com/simslab/scHPF"
+  ],
+  "data_availability_statement": "All scRNA-seq data are available on the Gene Expression omnibus (GEO) under accession number GSE126030 [ https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE126030 ]. We have included a pre-processed and filterable data table containing a matrix of molecular counts for all cells profiled in our study. Cell-identifying barcodes, UMAP coordinates and other characteristics (tissue origin, stimulation condition, CD4 or CD8 status and CCL5 expression) for cells designated as T cells (as described in Methods) are included in the Source Data file for Fig. 6 of this study. The source data underlying Figs. 1c , 3a–e , 4a , 5a, c, d, e and 6 are provided in the Source Data file.\nThe computer code for marker selection, clustering, and differential expression is available at https://github.com/simslab/cluster_diffex2018 ; the code for scHPF is available at www.github.com/simslab/scHPF . The code for umap projection analysis is available at: https://github.com/simslab/umap_projection .",
+  "data_availability_source": "section",
+  "deposited": [
+    {
+      "accession": "github.com/simslab/umap_projection",
+      "repository": "GitHub",
+      "url": "https://github.com/simslab/umap_projection",
+      "kind": "code",
+      "llm": {
+        "is_accession": true,
+        "repository": "GitHub",
+        "role": "this_study",
+        "in_da_statement": true,
+        "reason": "The Code availability section states \"The code for umap projection analysis is available at: https://github.com/simslab/umap_projection.\""
+      },
+      "decided_by": "llm",
+      "reason": "The Code availability section states \"The code for umap projection analysis is available at: https://github.com/simslab/umap_projection.\"",
+      "found_by": "text",
+      "in_da_section": true,
+      "da_source": "section",
+      "llm_in_da": true,
+      "evidence": [
+        {
+          "section": "Blood projection analysis",
+          "quote": "We also note that a small modification to the UMAP source code was needed to accommodate the use of Spearman’s correlation as a similarity metric (available at https://github.com/simslab/umap_projection ).",
+          "context": "We note that the organ donor UMAP embeddings used for this analysis are slightly different from what appears in Fig. 1b, c , because a small number of genes in the highly variable gene set were eliminated due to lack of expression in the blood. We also note that a small modification to the UMAP source code was needed to accommodate the use of Spearman’s correlation as a similarity metric (available at https://github.com/simslab/umap_projection ).",
+          "in_da": false
+        },
+        {
+          "section": "Code availability",
+          "quote": "The code for umap projection analysis is available at: https://github.com/simslab/umap_projection .",
+          "context": "The computer code for marker selection, clustering, and differential expression is available at https://github.com/simslab/cluster_diffex2018 ; the code for scHPF is available at www.github.com/simslab/scHPF . The code for umap projection analysis is available at: https://github.com/simslab/umap_projection .",
+          "in_da": true
+        }
+      ]
+    },
+    {
+      "accession": "GSE126030",
+      "repository": "GEO",
+      "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE126030",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "GEO",
+        "role": "this_study",
+        "in_da_statement": true,
+        "reason": "The Data availability section says \"All scRNA-seq data are available on the Gene Expression omnibus (GEO) under accession number GSE126030.\""
+      },
+      "decided_by": "llm",
+      "reason": "The Data availability section says \"All scRNA-seq data are available on the Gene Expression omnibus (GEO) under accession number GSE126030.\"",
+      "found_by": "text",
+      "in_da_section": true,
+      "da_source": "section",
+      "llm_in_da": true,
+      "evidence": [
+        {
+          "section": "Data availability",
+          "quote": "All scRNA-seq data are available on the Gene Expression omnibus (GEO) under accession number GSE126030 [ https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE126030 ].",
+          "context": "All scRNA-seq data are available on the Gene Expression omnibus (GEO) under accession number GSE126030 [ https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE126030 ]. We have included a pre-processed and filterable data table containing a matrix of molecular counts for all cells profiled in our study.",
+          "in_da": true
+        }
+      ]
+    },
+    {
+      "accession": "github.com/simslab/cluster_diffex2018",
+      "repository": "GitHub",
+      "url": "https://github.com/simslab/cluster_diffex2018",
+      "kind": "code",
+      "llm": {
+        "is_accession": true,
+        "repository": "GitHub",
+        "role": "this_study",
+        "in_da_statement": true,
+        "reason": "The Code availability section says \"The computer code for marker selection, clustering, and differential expression is available at https://github.com/simslab/cluster_diffex2018\"."
+      },
+      "decided_by": "llm",
+      "reason": "The Code availability section says \"The computer code for marker selection, clustering, and differential expression is available at https://github.com/simslab/cluster_diffex2018\".",
+      "found_by": "text",
+      "in_da_section": true,
+      "da_source": "section",
+      "llm_in_da": true,
+      "evidence": [
+        {
+          "section": "Code availability",
+          "quote": "The computer code for marker selection, clustering, and differential expression is available at https://github.com/simslab/cluster_diffex2018 ; the code for scHPF is available at www.github.com/simslab/scHPF .",
+          "context": "The computer code for marker selection, clustering, and differential expression is available at https://github.com/simslab/cluster_diffex2018 ; the code for scHPF is available at www.github.com/simslab/scHPF . The code for umap projection analysis is available at: https://github.com/simslab/umap_projection .",
+          "in_da": true
+        }
+      ]
+    },
+    {
+      "accession": "github.com/simslab/scHPF",
+      "repository": "GitHub",
+      "url": "https://github.com/simslab/scHPF",
+      "kind": "code",
+      "llm": {
+        "is_accession": true,
+        "repository": "GitHub",
+        "role": "this_study",
+        "in_da_statement": true,
+        "reason": "The Code availability section says \"the code for scHPF is available at www.github.com/simslab/scHPF\"."
+      },
+      "decided_by": "llm",
+      "reason": "The Code availability section says \"the code for scHPF is available at www.github.com/simslab/scHPF\".",
+      "found_by": "text",
+      "in_da_section": true,
+      "da_source": "section",
+      "llm_in_da": true,
+      "evidence": [
+        {
+          "section": "Code availability",
+          "quote": "The computer code for marker selection, clustering, and differential expression is available at https://github.com/simslab/cluster_diffex2018 ; the code for scHPF is available at www.github.com/simslab/scHPF .",
+          "context": "The computer code for marker selection, clustering, and differential expression is available at https://github.com/simslab/cluster_diffex2018 ; the code for scHPF is available at www.github.com/simslab/scHPF . The code for umap projection analysis is available at: https://github.com/simslab/umap_projection .",
+          "in_da": true
+        }
+      ]
+    }
+  ],
+  "reused": [
+    {
+      "accession": "GSE120221",
+      "repository": "GEO",
+      "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE120221",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "GEO",
+        "role": "public_data",
+        "in_da_statement": false,
+        "reason": "Methods say they \"obtained\" bone marrow scRNA-seq profiles from GEO accession GSE120221 for analysis of other datasets."
+      },
+      "decided_by": "llm",
+      "reason": "Methods say they \"obtained\" bone marrow scRNA-seq profiles from GEO accession GSE120221 for analysis of other datasets.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "Analysis of tissue T cell signatures in other datasets",
+          "quote": "We obtained 10x Genomics Chromium scRNA-seq profiles of bone marrow from 20 individuals from GEO accession GSE120221 37 .",
+          "context": "We used Gene Set Enrichment Analysis (GSEA) to assess the enrichment of the tissue-associated T cell signature in T cells profiled from the bone marrow of living donors and its depletion in T cells profiled from two additional blood samples in Supplementary Fig. 6 . We obtained 10x Genomics Chromium scRNA-seq profiles of bone marrow from 20 individuals from GEO accession GSE120221 37 . We merged the data from all of the samples and clustered the merged scRNA-seq profiles using Phenograph as described above.",
+          "in_da": false
+        }
+      ]
+    },
+    {
+      "accession": "GSE114724",
+      "repository": "GEO",
+      "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE114724",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "GEO",
+        "role": "public_data",
+        "in_da_statement": false,
+        "reason": "Methods say tumor-associated T cells from breast cancer were \"obtained from ... GEO accession GSE114724\"."
+      },
+      "decided_by": "llm",
+      "reason": "Methods say tumor-associated T cells from breast cancer were \"obtained from ... GEO accession GSE114724\".",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "Tumor-associated T cell projection analysis",
+          "quote": "Tumor-associated T cells from non-small cell lung cancer (NSCLC) 53 and breast cancer (BC) 52 , which were profiled using the 10x Genomics Chromium platform, were obtained from https://gbiomed.kuleuven.be/scRNAseq-NSCLC and GEO accession GSE114724 (samples BC09, BC10, and BC11), respectively.",
+          "context": "We then projected the tumor-associated T cell profiles onto this embedding using the transform function in UMAP. Tumor-associated T cells from non-small cell lung cancer (NSCLC) 53 and breast cancer (BC) 52 , which were profiled using the 10x Genomics Chromium platform, were obtained from https://gbiomed.kuleuven.be/scRNAseq-NSCLC and GEO accession GSE114724 (samples BC09, BC10, and BC11), respectively. For these two data sets, we used the UMI-corrected molecular counts provided by the authors.",
+          "in_da": false
+        }
+      ]
+    },
+    {
+      "accession": "GSE108989",
+      "repository": "GEO",
+      "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE108989",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "GEO",
+        "role": "public_data",
+        "in_da_statement": false,
+        "reason": "Methods say colorectal cancer T cells \"were obtained from GEO accessions GSE108989 and GSE120575\"."
+      },
+      "decided_by": "llm",
+      "reason": "Methods say colorectal cancer T cells \"were obtained from GEO accessions GSE108989 and GSE120575\".",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "Tumor-associated T cell projection analysis",
+          "quote": "T cells from colorectal cancer (CRC) 51 and melanoma (MEL) 27 , which were profiled using SMART-seq, were obtained from GEO accessions GSE108989 and GSE120575 (pre-treated samples only).",
+          "context": "For these two data sets, we used the UMI-corrected molecular counts provided by the authors. T cells from colorectal cancer (CRC) 51 and melanoma (MEL) 27 , which were profiled using SMART-seq, were obtained from GEO accessions GSE108989 and GSE120575 (pre-treated samples only). For these two data sets, we used the TPM values provided by the authors.",
+          "in_da": false
+        }
+      ]
+    },
+    {
+      "accession": "GSE120575",
+      "repository": "GEO",
+      "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE120575",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "GEO",
+        "role": "public_data",
+        "in_da_statement": false,
+        "reason": "Methods say melanoma T cells \"were obtained from GEO accessions GSE108989 and GSE120575 (pre-treated samples only)\"."
+      },
+      "decided_by": "llm",
+      "reason": "Methods say melanoma T cells \"were obtained from GEO accessions GSE108989 and GSE120575 (pre-treated samples only)\".",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "Tumor-associated T cell projection analysis",
+          "quote": "T cells from colorectal cancer (CRC) 51 and melanoma (MEL) 27 , which were profiled using SMART-seq, were obtained from GEO accessions GSE108989 and GSE120575 (pre-treated samples only).",
+          "context": "For these two data sets, we used the UMI-corrected molecular counts provided by the authors. T cells from colorectal cancer (CRC) 51 and melanoma (MEL) 27 , which were profiled using SMART-seq, were obtained from GEO accessions GSE108989 and GSE120575 (pre-treated samples only). For these two data sets, we used the TPM values provided by the authors.",
+          "in_da": false
+        }
+      ]
+    },
+    {
+      "accession": "GSE116672",
+      "repository": "GEO",
+      "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE116672",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "GEO",
+        "role": "public_data",
+        "in_da_statement": false,
+        "reason": "Methods say they analyzed dengue patient peripheral blood scRNA-seq profiles \"(GSE116672)\"."
+      },
+      "decided_by": "llm",
+      "reason": "Methods say they analyzed dengue patient peripheral blood scRNA-seq profiles \"(GSE116672)\".",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "Analysis of T cells from dengue virus-infected patients",
+          "quote": "To analyze the expression of IFIT3 and NME1 in the context of virus infection, we analyzed scRNA-seq profiles of peripheral blood from dengue virus-infected patients ( GSE116672 ).",
+          "context": "To analyze the expression of IFIT3 and NME1 in the context of virus infection, we analyzed scRNA-seq profiles of peripheral blood from dengue virus-infected patients ( GSE116672 ). We clustered the data using the methodology described above and isolated T cell clusters based on enrichment of TRAC expression.",
+          "in_da": false
+        }
+      ]
+    }
+  ],
+  "referenced": [],
+  "registration": [],
+  "unclear": [],
+  "reviews": [],
+  "dropped": [],
+  "warnings": []
+}

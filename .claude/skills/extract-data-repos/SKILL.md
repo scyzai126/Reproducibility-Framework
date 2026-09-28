@@ -45,7 +45,7 @@ log.
 - `--no-locate` skips step 5.
 
 ### 4. Outputs
-These go in `data/data_availability/` and are overwritten in place.
+These go in `data/benchmark_assay/data_availability/` and are overwritten in place.
 - **`<SDY>_<PMID>_llm.json`**: written before validation. It has every ID with its evidence
   sentences (each flagged `in_da`), `in_da_section`, `da_source`, `llm_in_da`, and the LLM's
   answer, sorted into `deposited` / `reused` / `referenced` / `registration` / `unclear`. It

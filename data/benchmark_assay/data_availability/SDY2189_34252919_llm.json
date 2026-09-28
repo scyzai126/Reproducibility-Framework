@@ -1,0 +1,481 @@
+{
+  "pmid": "34252919",
+  "study": "SDY2189",
+  "title": "Systems vaccinology of the BNT162b2 mRNA vaccine in humans",
+  "source_format": "xml",
+  "llm_called": true,
+  "llm_model": "gpt-5.4",
+  "da_accessions": [
+    "GSE171964",
+    "GSE169159",
+    "github.com/scottmk777/PfizerCovid"
+  ],
+  "data_availability_statement": "CITE-seq and bulk RNA data are publicly accessible in the GEO under accession numbers GSE171964 and GSE169159 , respectively. Any other relevant data are available from the corresponding authors upon reasonable request. Source data are provided with this paper.\nThe codes used in the study are available in GitHub ( https://github.com/scottmk777/PfizerCovid ). Some codes used for meta-analysis can be obtained from the corresponding authors upon reasonable request.",
+  "data_availability_source": "section",
+  "deposited": [
+    {
+      "accession": "GSE171964",
+      "repository": "GEO",
+      "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE171964",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "GEO",
+        "role": "this_study",
+        "in_da_statement": true,
+        "reason": "The Data availability section states that CITE-seq data are publicly accessible in GEO under accession GSE171964."
+      },
+      "decided_by": "llm",
+      "reason": "The Data availability section states that CITE-seq data are publicly accessible in GEO under accession GSE171964.",
+      "found_by": "text",
+      "in_da_section": true,
+      "da_source": "section",
+      "llm_in_da": true,
+      "evidence": [
+        {
+          "section": "Data availability",
+          "quote": "CITE-seq and bulk RNA data are publicly accessible in the GEO under accession numbers GSE171964 and GSE169159 , respectively.",
+          "context": "CITE-seq and bulk RNA data are publicly accessible in the GEO under accession numbers GSE171964 and GSE169159 , respectively. Any other relevant data are available from the corresponding authors upon reasonable request.",
+          "in_da": true
+        }
+      ]
+    },
+    {
+      "accession": "GSE169159",
+      "repository": "GEO",
+      "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE169159",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "GEO",
+        "role": "this_study",
+        "in_da_statement": true,
+        "reason": "The Data availability section states that bulk RNA data are publicly accessible in GEO under accession GSE169159."
+      },
+      "decided_by": "llm",
+      "reason": "The Data availability section states that bulk RNA data are publicly accessible in GEO under accession GSE169159.",
+      "found_by": "text",
+      "in_da_section": true,
+      "da_source": "section",
+      "llm_in_da": true,
+      "evidence": [
+        {
+          "section": "Data availability",
+          "quote": "CITE-seq and bulk RNA data are publicly accessible in the GEO under accession numbers GSE171964 and GSE169159 , respectively.",
+          "context": "CITE-seq and bulk RNA data are publicly accessible in the GEO under accession numbers GSE171964 and GSE169159 , respectively. Any other relevant data are available from the corresponding authors upon reasonable request.",
+          "in_da": true
+        },
+        {
+          "section": "Table: Extended Data Table 3 |",
+          "quote": "BNT162b2 | SARS-CoV-2 | mRNA | mRNA-LNP | 0,1,7,21,22,28 | 31 | GSE169159",
+          "context": "BNT162b2 | SARS-CoV-2 | mRNA | mRNA-LNP | 0,1,7,21,22,28 | 31 | GSE169159",
+          "in_da": false
+        }
+      ]
+    },
+    {
+      "accession": "github.com/scottmk777/PfizerCovid",
+      "repository": "GitHub",
+      "url": "https://github.com/scottmk777/PfizerCovid",
+      "kind": "code",
+      "llm": {
+        "is_accession": true,
+        "repository": "GitHub",
+        "role": "this_study",
+        "in_da_statement": true,
+        "reason": "The Code availability section says the codes used in the study are available in this GitHub repository."
+      },
+      "decided_by": "llm",
+      "reason": "The Code availability section says the codes used in the study are available in this GitHub repository.",
+      "found_by": "text",
+      "in_da_section": true,
+      "da_source": "section",
+      "llm_in_da": true,
+      "evidence": [
+        {
+          "section": "Code availability",
+          "quote": "The codes used in the study are available in GitHub ( https://github.com/scottmk777/PfizerCovid ).",
+          "context": "The codes used in the study are available in GitHub ( https://github.com/scottmk777/PfizerCovid ). Some codes used for meta-analysis can be obtained from the corresponding authors upon reasonable request.",
+          "in_da": true
+        }
+      ]
+    }
+  ],
+  "reused": [
+    {
+      "accession": "GSE97590",
+      "repository": "GEO",
+      "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE97590",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "GEO",
+        "role": "public_data",
+        "in_da_statement": false,
+        "reason": "The Methods say datasets for the vaccine meta-analysis were obtained from GEO and specifically used GSE97590 as an external dataset."
+      },
+      "decided_by": "llm",
+      "reason": "The Methods say datasets for the vaccine meta-analysis were obtained from GEO and specifically used GSE97590 as an external dataset.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "Vaccine dataset meta-analysis",
+          "quote": "The only non-microarray dataset was GSE97590 , for which the normalized count matrix from GEO was used.",
+          "context": "Probes mapping to multiple genes were discarded, and the remaining probes were collapsed to gene level in each dataset by selecting the probe for each gene with the highest mean expression across all subjects. The only non-microarray dataset was GSE97590 , for which the normalized count matrix from GEO was used. Genes not present in all datasets were removed.",
+          "in_da": false
+        },
+        {
+          "section": "Table: Extended Data Table 3 |",
+          "quote": "rVSV-ZEBOV (high dose) | Ebola | Recombinant viral vector | VSV | 0,1,7 | 7 | GSE97590 /SDY1373",
+          "context": "rVSV-ZEBOV (high dose) | Ebola | Recombinant viral vector | VSV | 0,1,7 | 7 | GSE97590 /SDY1373",
+          "in_da": false
+        }
+      ]
+    },
+    {
+      "accession": "GSE74813",
+      "repository": "GEO",
+      "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE74813",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "GEO",
+        "role": "public_data",
+        "in_da_statement": false,
+        "reason": "Extended Data Table 3 lists GSE74813 as one of the published vaccine meta-analysis datasets compared with BNT162b2."
+      },
+      "decided_by": "llm",
+      "reason": "Extended Data Table 3 lists GSE74813 as one of the published vaccine meta-analysis datasets compared with BNT162b2.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "Table: Extended Data Table 3 |",
+          "quote": "TIV | Seasonal Influenza | Inactivated | None | 0,1,7 | 19 | GSE74813 /SDY56",
+          "context": "TIV | Seasonal Influenza | Inactivated | None | 0,1,7 | 19 | GSE74813 /SDY56",
+          "in_da": false
+        }
+      ]
+    },
+    {
+      "accession": "SDY56",
+      "repository": "ImmPort",
+      "url": "https://www.immport.org/shared/study/SDY56",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "ImmPort",
+        "role": "public_data",
+        "in_da_statement": false,
+        "reason": "Extended Data Table 3 lists SDY56 alongside GSE74813 as an external dataset used in the vaccine meta-analysis."
+      },
+      "decided_by": "llm",
+      "reason": "Extended Data Table 3 lists SDY56 alongside GSE74813 as an external dataset used in the vaccine meta-analysis.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "Table: Extended Data Table 3 |",
+          "quote": "TIV | Seasonal Influenza | Inactivated | None | 0,1,7 | 19 | GSE74813 /SDY56",
+          "context": "TIV | Seasonal Influenza | Inactivated | None | 0,1,7 | 19 | GSE74813 /SDY56",
+          "in_da": false
+        }
+      ]
+    },
+    {
+      "accession": "GSE79396",
+      "repository": "GEO",
+      "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE79396",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "GEO",
+        "role": "public_data",
+        "in_da_statement": false,
+        "reason": "Extended Data Table 3 lists GSE79396 as a published VZV dataset used for comparison in the meta-analysis."
+      },
+      "decided_by": "llm",
+      "reason": "Extended Data Table 3 lists GSE79396 as a published VZV dataset used for comparison in the meta-analysis.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "Table: Extended Data Table 3 |",
+          "quote": "VZV | Varicella zoster | Live attenuated | VZV | 0,1,7 | 31 | GSE79396 /SDY984",
+          "context": "VZV | Varicella zoster | Live attenuated | VZV | 0,1,7 | 31 | GSE79396 /SDY984",
+          "in_da": false
+        }
+      ]
+    },
+    {
+      "accession": "SDY984",
+      "repository": "ImmPort",
+      "url": "https://www.immport.org/shared/study/SDY984",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "ImmPort",
+        "role": "public_data",
+        "in_da_statement": false,
+        "reason": "Extended Data Table 3 lists SDY984 with GSE79396 as an external VZV dataset used in the meta-analysis."
+      },
+      "decided_by": "llm",
+      "reason": "Extended Data Table 3 lists SDY984 with GSE79396 as an external VZV dataset used in the meta-analysis.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "Table: Extended Data Table 3 |",
+          "quote": "VZV | Varicella zoster | Live attenuated | VZV | 0,1,7 | 31 | GSE79396 /SDY984",
+          "context": "VZV | Varicella zoster | Live attenuated | VZV | 0,1,7 | 31 | GSE79396 /SDY984",
+          "in_da": false
+        }
+      ]
+    },
+    {
+      "accession": "GSE13486",
+      "repository": "GEO",
+      "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE13486",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "GEO",
+        "role": "public_data",
+        "in_da_statement": false,
+        "reason": "Extended Data Table 3 lists GSE13486 as a published yellow fever vaccine dataset used in the comparative analysis."
+      },
+      "decided_by": "llm",
+      "reason": "Extended Data Table 3 lists GSE13486 as a published yellow fever vaccine dataset used in the comparative analysis.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "Table: Extended Data Table 3 |",
+          "quote": "YF17D | Yellow fever | Live attenuated | YF17D | 0,1,7 | 25 | GSE13486 /SDY1264",
+          "context": "YF17D | Yellow fever | Live attenuated | YF17D | 0,1,7 | 25 | GSE13486 /SDY1264",
+          "in_da": false
+        }
+      ]
+    },
+    {
+      "accession": "SDY1264",
+      "repository": "ImmPort",
+      "url": "https://www.immport.org/shared/study/SDY1264",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "ImmPort",
+        "role": "public_data",
+        "in_da_statement": false,
+        "reason": "Extended Data Table 3 lists SDY1264 with GSE13486 as an external dataset used in the vaccine meta-analysis."
+      },
+      "decided_by": "llm",
+      "reason": "Extended Data Table 3 lists SDY1264 with GSE13486 as an external dataset used in the vaccine meta-analysis.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "Table: Extended Data Table 3 |",
+          "quote": "YF17D | Yellow fever | Live attenuated | YF17D | 0,1,7 | 25 | GSE13486 /SDY1264",
+          "context": "YF17D | Yellow fever | Live attenuated | YF17D | 0,1,7 | 25 | GSE13486 /SDY1264",
+          "in_da": false
+        }
+      ]
+    },
+    {
+      "accession": "SDY1373",
+      "repository": "ImmPort",
+      "url": "https://www.immport.org/shared/study/SDY1373",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "ImmPort",
+        "role": "public_data",
+        "in_da_statement": false,
+        "reason": "Extended Data Table 3 lists SDY1373 with GSE97590 as an external Ebola vaccine dataset used in the meta-analysis."
+      },
+      "decided_by": "llm",
+      "reason": "Extended Data Table 3 lists SDY1373 with GSE97590 as an external Ebola vaccine dataset used in the meta-analysis.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "Table: Extended Data Table 3 |",
+          "quote": "rVSV-ZEBOV (high dose) | Ebola | Recombinant viral vector | VSV | 0,1,7 | 7 | GSE97590 /SDY1373",
+          "context": "rVSV-ZEBOV (high dose) | Ebola | Recombinant viral vector | VSV | 0,1,7 | 7 | GSE97590 /SDY1373",
+          "in_da": false
+        }
+      ]
+    },
+    {
+      "accession": "GSE22768",
+      "repository": "GEO",
+      "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE22768",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "GEO",
+        "role": "public_data",
+        "in_da_statement": false,
+        "reason": "Extended Data Table 3 lists GSE22768 as a published HIV vaccine dataset included in the comparative meta-analysis."
+      },
+      "decided_by": "llm",
+      "reason": "Extended Data Table 3 lists GSE22768 as a published HIV vaccine dataset included in the comparative meta-analysis.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "Table: Extended Data Table 3 |",
+          "quote": "MRKAd5/HIV | HIV | Recombinant viral vector | Ad5 | 0,1,7 | 10 | GSE22768 /SDY1291",
+          "context": "MRKAd5/HIV | HIV | Recombinant viral vector | Ad5 | 0,1,7 | 10 | GSE22768 /SDY1291",
+          "in_da": false
+        }
+      ]
+    },
+    {
+      "accession": "SDY1291",
+      "repository": "ImmPort",
+      "url": "https://www.immport.org/shared/study/SDY1291",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "ImmPort",
+        "role": "public_data",
+        "in_da_statement": false,
+        "reason": "Extended Data Table 3 lists SDY1291 with GSE22768 as an external dataset used in the vaccine meta-analysis."
+      },
+      "decided_by": "llm",
+      "reason": "Extended Data Table 3 lists SDY1291 with GSE22768 as an external dataset used in the vaccine meta-analysis.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "Table: Extended Data Table 3 |",
+          "quote": "MRKAd5/HIV | HIV | Recombinant viral vector | Ad5 | 0,1,7 | 10 | GSE22768 /SDY1291",
+          "context": "MRKAd5/HIV | HIV | Recombinant viral vector | Ad5 | 0,1,7 | 10 | GSE22768 /SDY1291",
+          "in_da": false
+        }
+      ]
+    },
+    {
+      "accession": "GSE102012",
+      "repository": "GEO",
+      "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE102012",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "GEO",
+        "role": "public_data",
+        "in_da_statement": false,
+        "reason": "Extended Data Table 3 lists GSE102012 as the published H5N1+AS03 dataset used for comparison in the meta-analysis."
+      },
+      "decided_by": "llm",
+      "reason": "Extended Data Table 3 lists GSE102012 as the published H5N1+AS03 dataset used for comparison in the meta-analysis.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "Table: Extended Data Table 3 |",
+          "quote": "H5N1+AS03 | H5N1 Influenza | Inactivated | AS03 | 0,1,7,21,22,28 | 33 | GSE102012",
+          "context": "H5N1+AS03 | H5N1 Influenza | Inactivated | AS03 | 0,1,7,21,22,28 | 33 | GSE102012",
+          "in_da": false
+        }
+      ]
+    },
+    {
+      "accession": "GSE52245",
+      "repository": "GEO",
+      "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE52245",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "GEO",
+        "role": "public_data",
+        "in_da_statement": false,
+        "reason": "Extended Data Table 3 lists GSE52245 as the published meningococcal vaccine dataset used in the comparative meta-analysis."
+      },
+      "decided_by": "llm",
+      "reason": "Extended Data Table 3 lists GSE52245 as the published meningococcal vaccine dataset used in the comparative meta-analysis.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "Table: Extended Data Table 3 |",
+          "quote": "MPSV4 | Meningococcus | Polysaccharide | None | 0,7 | 13 | GSE52245 /SDY1260",
+          "context": "MPSV4 | Meningococcus | Polysaccharide | None | 0,7 | 13 | GSE52245 /SDY1260",
+          "in_da": false
+        },
+        {
+          "section": "Table: Extended Data Table 3 |",
+          "quote": "MCV4 | Meningococcus | Conjugate | None | 0,7 | 17 | GSE52245 /SDY1260",
+          "context": "MCV4 | Meningococcus | Conjugate | None | 0,7 | 17 | GSE52245 /SDY1260",
+          "in_da": false
+        }
+      ]
+    },
+    {
+      "accession": "SDY1260",
+      "repository": "ImmPort",
+      "url": "https://www.immport.org/shared/study/SDY1260",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "ImmPort",
+        "role": "public_data",
+        "in_da_statement": false,
+        "reason": "Extended Data Table 3 lists SDY1260 with GSE52245 as an external dataset used in the vaccine meta-analysis."
+      },
+      "decided_by": "llm",
+      "reason": "Extended Data Table 3 lists SDY1260 with GSE52245 as an external dataset used in the vaccine meta-analysis.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "Table: Extended Data Table 3 |",
+          "quote": "MPSV4 | Meningococcus | Polysaccharide | None | 0,7 | 13 | GSE52245 /SDY1260",
+          "context": "MPSV4 | Meningococcus | Polysaccharide | None | 0,7 | 13 | GSE52245 /SDY1260",
+          "in_da": false
+        },
+        {
+          "section": "Table: Extended Data Table 3 |",
+          "quote": "MCV4 | Meningococcus | Conjugate | None | 0,7 | 17 | GSE52245 /SDY1260",
+          "context": "MCV4 | Meningococcus | Conjugate | None | 0,7 | 17 | GSE52245 /SDY1260",
+          "in_da": false
+        }
+      ]
+    }
+  ],
+  "referenced": [],
+  "registration": [],
+  "unclear": [],
+  "reviews": [],
+  "dropped": [],
+  "warnings": []
+}

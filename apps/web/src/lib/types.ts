@@ -365,7 +365,7 @@ export interface DataRepository {
 }
 
 /**
- * Where a paper's own data lives: data/data_availability/<SDY>_<PMID>.json, plus -- on a result
+ * Where a paper's own data lives: data/benchmark_assay/data_availability/<SDY>_<PMID>.json, plus -- on a result
  * from a run -- the lines to read and the step's cost. `error` is set when the step failed; the
  * assays from the same run are unaffected.
  */
