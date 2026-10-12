@@ -1,0 +1,127 @@
+{
+  "transcription profiling by array assay": {
+    "name_in_paper": [
+      "Microarray Assay"
+    ],
+    "normalized_name": "microarray",
+    "aliases": [
+      "whole-genome transcriptional profiles",
+      "whole-genome arrays"
+    ],
+    "sample_type": "whole-blood lysate",
+    "readouts": "global transcript abundance and gene expression signal intensities",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Microarray Assay",
+      "sentence_ids": [
+        "S120"
+      ],
+      "quote": "Amplified RNA was hybridized to Illumina HT-12 V3 beadchips (48,803 probes) and scanned on an Illumina Beadstation 500."
+    },
+    "obi_id": "OBI:0001463",
+    "obi_label": "transcription profiling by array assay",
+    "resource": "exact_original_llm",
+    "obi_confidence": 0.71,
+    "obi_granularity": "EXACT"
+  },
+  "flow cytometry assay": {
+    "name_in_paper": [
+      "Flow Cytometry"
+    ],
+    "normalized_name": "flow cytometry",
+    "aliases": [
+      "polychromatic flow cytometry",
+      "multi-parameter flow cytometry"
+    ],
+    "sample_type": "whole blood",
+    "readouts": "blood cell population abundance including B cells and plasmablasts",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Flow Cytometry",
+      "sentence_ids": [
+        "S127"
+      ],
+      "quote": "We incubated 200 uL of whole blood with pretitrated monoclonal antibodies for 15 min at room temperature followed by lysis of red blood cells (BD FACS Lyse)."
+    },
+    "obi_id": "OBI:0000916",
+    "obi_label": "flow cytometry assay",
+    "resource": "exact_original_llm",
+    "obi_confidence": "high",
+    "obi_granularity": "EXACT"
+  },
+  "viral hemagglutination inhibition assay": {
+    "name_in_paper": [
+      "Hemagglutinin Inhibition"
+    ],
+    "normalized_name": "hemagglutination inhibition assay",
+    "aliases": [],
+    "sample_type": "human sera",
+    "readouts": "neutralizing antibody titers against influenza virus strains measured as the reciprocal of the highest dilution with no hemagglutinating activity",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Hemagglutinin Inhibition and Virus-Neutralization Assays for Quantitating Seasonal Influenza Virus Neutralizing Antibodies",
+      "sentence_ids": [
+        "S133"
+      ],
+      "quote": "Briefly, 2-fold serial dilutions of human sera were mixed and preincubated in 96-well plates for 30 min at room temperature with 8 hemagglutinin units of virus (H1N1 A/Brisbane/59/2007 and H3N2 A/Brisbane/10/2007) per well."
+    },
+    "obi_id": "OBI:0000875",
+    "obi_label": "viral hemagglutination inhibition assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.737,
+    "obi_granularity": "EXACT"
+  },
+  "serum neutralization of viral infectivity assay": {
+    "name_in_paper": [
+      "Virus-Neutralization Assays"
+    ],
+    "normalized_name": "neutralization assay",
+    "aliases": [
+      "VN"
+    ],
+    "sample_type": "human sera",
+    "readouts": "neutralizing antibody titers against influenza virus strains",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Hemagglutinin Inhibition and Virus-Neutralization Assays for Quantitating Seasonal Influenza Virus Neutralizing Antibodies",
+      "sentence_ids": [
+        "S137"
+      ],
+      "quote": "Virus-neutralization assays were performed by using the same virus strains and as reported earlier ( Steel et al., 2009 )."
+    },
+    "obi_id": "OBI:0000872",
+    "obi_label": "serum neutralization of viral infectivity assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.6831,
+    "obi_granularity": "EXACT"
+  },
+  "antigen detection by cytometric bead array assay": {
+    "name_in_paper": [
+      "Multiplex Cytokine Analysis"
+    ],
+    "normalized_name": "cytometric bead array",
+    "aliases": [
+      "Luminex"
+    ],
+    "sample_type": "sera",
+    "readouts": "cytokine and chemokine levels",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Multiplex Cytokine Analysis",
+      "sentence_ids": [
+        "S139"
+      ],
+      "quote": "Sera were analyzed for cytokine production by using the Multiplex 42-human cytokine and chemokine panel of antibodies conjugated beads and biotin pairs."
+    },
+    "obi_id": "OBI:0003115",
+    "obi_label": "antigen detection by cytometric bead array assay",
+    "resource": "embedding_llm_normalized",
+    "obi_confidence": 0.7614,
+    "obi_granularity": "EXACT"
+  }
+}

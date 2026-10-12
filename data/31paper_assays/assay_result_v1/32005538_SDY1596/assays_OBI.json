@@ -1,0 +1,76 @@
+{
+  "flow cytometry assay": {
+    "name_in_paper": [
+      "flow cytometry"
+    ],
+    "normalized_name": "flow cytometry",
+    "aliases": [],
+    "sample_type": "BCG vaccines",
+    "readouts": "Cell membrane integrity and the fluorescence signal from an RNA-selective dye, including mean fluorescence intensity and the percentage of RNA-positive cells.",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Bacterial viability stain/Assessment of mycobacterial membrane integrity",
+      "sentence_ids": [
+        "S17"
+      ],
+      "quote": "Cell membrane integrity was assessed by flow cytometry (LSR Fortessa, BD Biosciences)."
+    },
+    "obi_id": "OBI:0000916",
+    "obi_label": "flow cytometry assay",
+    "resource": "exact_original_llm",
+    "obi_confidence": "high",
+    "obi_granularity": "EXACT"
+  },
+  "culturable microbial count assay": {
+    "name_in_paper": [
+      "culturable microbial count assay"
+    ],
+    "normalized_name": "colony counting",
+    "aliases": [
+      "CFU counts",
+      "formation of CFU"
+    ],
+    "sample_type": "BCG vials",
+    "readouts": "colony-forming units as a proxy for mycobacterial viability",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "BCG culture in vitro",
+      "sentence_ids": [
+        "S23"
+      ],
+      "quote": "Actual CFU counts were obtained by the culturable microbial count assay and used as a proxy for mycobacterial viability."
+    },
+    "obi_id": null,
+    "obi_label": null,
+    "resource": "unresolved",
+    "obi_confidence": null,
+    "obi_granularity": null
+  },
+  "cytometric bead array assay": {
+    "name_in_paper": [
+      "fluorescent bead-based multianalyte xMAP technology cytokine kit"
+    ],
+    "normalized_name": "Luminex",
+    "aliases": [
+      "Milliplex Human Cytokine/Chemokine Immunoassay"
+    ],
+    "sample_type": "whole blood supernatants",
+    "readouts": "concentrations of 41 cytokines and chemokines",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Whole blood assay and cytokine/chemokine measurements",
+      "sentence_ids": [
+        "S37"
+      ],
+      "quote": "A fluorescent bead-based multianalyte xMAP technology cytokine kit (Milliplex Human Cytokine/Chemokine Immunoassay, Millipore Corp, Billerica, MA, USA) was employed to measure the concentration of 41 cytokines/chemokines covering the spectrum of Th1, Th2, Th17, chemoattractants and hematopoietic factors."
+    },
+    "obi_id": "OBI:0000920",
+    "obi_label": "cytometric bead array assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.5991,
+    "obi_granularity": "EXACT"
+  }
+}

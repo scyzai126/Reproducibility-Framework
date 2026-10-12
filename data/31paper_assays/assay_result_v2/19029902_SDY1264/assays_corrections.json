@@ -1,0 +1,88 @@
+{
+  "summary": {
+    "assays": 9,
+    "fields_re_extracted": 1,
+    "actions": {
+      "REPLACED": 1
+    },
+    "reported_not_corrected": 1
+  },
+  "results": [
+    {
+      "assay_id": "Multiplex analysis",
+      "assay_name": "Multiplex analysis",
+      "record_verdict": "REVIEW",
+      "corrections": [],
+      "reported_not_corrected": [
+        {
+          "field_name": "name_in_paper",
+          "verdict": "NOT_SUPPORTED",
+          "reason": "This is only a section heading and does not by itself identify a specific assay technique performed."
+        }
+      ]
+    },
+    {
+      "assay_id": "Flow cytometric analysis",
+      "assay_name": "Flow cytometric analysis",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "cytopathic effect (CPE)",
+      "assay_name": "cytopathic effect (CPE)",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "sample_type",
+          "action": "REPLACED",
+          "previous": "serum or plasma",
+          "blind_answer": "plasma"
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "plaque reduction neutralization test (PRNT)",
+      "assay_name": "plaque reduction neutralization test (PRNT)",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "microarray",
+      "assay_name": "microarray",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "RT-PCR",
+      "assay_name": "RT-PCR",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Immunofluorescence",
+      "assay_name": "Immunofluorescence",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "immunoblot analysis",
+      "assay_name": "immunoblot analysis",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "ELISA",
+      "assay_name": "ELISA",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "summary": {
+    "assays": 5,
+    "fields_re_extracted": 2,
+    "actions": {
+      "CLEARED": 1,
+      "REAFFIRMED": 1
+    },
+    "reported_not_corrected": 0
+  },
+  "results": [
+    {
+      "assay_id": "DENV-specific IgG ELISAs",
+      "assay_name": "DENV-specific IgG ELISAs",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "flow cytometry-based neutralization assays",
+      "assay_name": "flow cytometry-based neutralization assays",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "readouts",
+          "action": "CLEARED",
+          "previous": "neutralizing antibody activity",
+          "blind_answer": null
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "IFN-γ Capture Assay",
+      "assay_name": "IFN-γ Capture Assay",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "flow cytometry",
+      "assay_name": "flow cytometry",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REAFFIRMED",
+          "previous": [
+            "Flow cytometry analysis"
+          ],
+          "blind_answer": [
+            "flow cytometry analysis",
+            "cytokine capture assay and flow cytometry analysis",
+            "flow cytometry-based neutralization assays"
+          ],
+          "dropped": []
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Microscaled RNA-Sequencing Assay",
+      "assay_name": "Microscaled RNA-Sequencing Assay",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    }
+  ]
+}

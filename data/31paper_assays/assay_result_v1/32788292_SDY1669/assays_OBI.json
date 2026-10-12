@@ -1,0 +1,197 @@
+{
+  "flow cytometry assay": {
+    "name_in_paper": [
+      "intracellular staining assay"
+    ],
+    "normalized_name": "flow cytometry",
+    "aliases": [],
+    "sample_type": "PBMCs",
+    "readouts": "intracellular cytokine responses after ex vivo TLR stimulation",
+    "generate_claim": true,
+    "source": "results",
+    "evidence": {
+      "section": "COVID-19 results in functional impairment of blood myeloid cells and pDCs",
+      "sentence_ids": [
+        "S44"
+      ],
+      "quote": "To test this, we performed ex vivo stimulation of PBMCs from healthy or COVID-19–infected individuals, using a mixture of synthetic TLR7 and TLR 8 (TLR7/8) and TLR3 ligands, which are known to be expressed by viruses, and we performed an intracellular staining assay to detect cytokine responses."
+    },
+    "obi_id": "OBI:0000916",
+    "obi_label": "flow cytometry assay",
+    "resource": "embedding_llm_normalized",
+    "obi_confidence": 0.7859,
+    "obi_granularity": "BROAD"
+  },
+  "Olink assay": {
+    "name_in_paper": [
+      "Olink multiplex inflammation panel"
+    ],
+    "normalized_name": "proximity extension assay",
+    "aliases": [],
+    "sample_type": "plasma",
+    "readouts": "cytokine and chemokine protein levels",
+    "generate_claim": true,
+    "source": "results",
+    "evidence": {
+      "section": "Enhanced concentrations of cytokines and inflammatory mediators in plasma from COVID-19 patients",
+      "sentence_ids": [
+        "S58"
+      ],
+      "quote": "Therefore, we evaluated cytokines and chemokines in plasma samples from the Atlanta cohort using the Olink multiplex inflammation panel that measures 92 different cytokines and chemokines."
+    },
+    "obi_id": "OBI:0003112",
+    "obi_label": "Olink assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.5797,
+    "obi_granularity": "EXACT"
+  },
+  "enzyme-linked immunosorbent assay": {
+    "name_in_paper": [
+      "enzyme-linked immunosorbent assay (ELISA)",
+      "highly sensitive ELISA enabled by single molecule array (SIMoA) technology"
+    ],
+    "normalized_name": "enzyme linked immunosorbent assay",
+    "aliases": [
+      "ELISA"
+    ],
+    "sample_type": "plasma",
+    "readouts": "plasma concentrations of TNFSF14, EN-RAGE, and oncostatin M (OSM)",
+    "generate_claim": true,
+    "source": "results",
+    "evidence": {
+      "section": "Enhanced concentrations of cytokines and inflammatory mediators in plasma from COVID-19 patients",
+      "sentence_ids": [
+        "S69"
+      ],
+      "quote": "Given the pronounced and unappreciated observations of the enhanced plasma concentrations of TNFSF14, EN-RAGE, and OSM and their correlation to disease severity, we used an enzyme-linked immunosorbent assay (ELISA) to independently validate these results."
+    },
+    "obi_id": "OBI:0000661",
+    "obi_label": "enzyme-linked immunosorbent assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.8462,
+    "obi_granularity": "EXACT"
+  },
+  "cellular indexing of transcriptomes and epitopes by sequencing": {
+    "name_in_paper": [
+      "cellular indexing of transcriptomes and epitopes by sequencing (CITE-seq)"
+    ],
+    "normalized_name": "single cell sequencing",
+    "aliases": [
+      "CITE-seq"
+    ],
+    "sample_type": "PBMC samples",
+    "readouts": "single-cell gene expression and DNA-labeled antibody-derived protein expression",
+    "generate_claim": true,
+    "source": "results",
+    "evidence": {
+      "section": "Single-cell transcriptional response to COVID-19 infection",
+      "sentence_ids": [
+        "S75"
+      ],
+      "quote": "To investigate the molecular and cellular processes that lead to the distinctive inflammatory program, we used cellular indexing of transcriptomes and epitopes by sequencing (CITE-seq) and profiled the gene and protein expression in PBMC samples of COVID-19–infected individuals."
+    },
+    "obi_id": "OBI:0003788",
+    "obi_label": "cellular indexing of transcriptomes and epitopes by sequencing",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.9076,
+    "obi_granularity": "EXACT"
+  },
+  "bulk RNA-seq assay": {
+    "name_in_paper": [
+      "bulk RNA sequencing (RNA-seq) analysis"
+    ],
+    "normalized_name": "RNA sequencing",
+    "aliases": [
+      "RNA-seq"
+    ],
+    "sample_type": "PBMCs",
+    "readouts": "bulk gene expression in PBMCs",
+    "generate_claim": true,
+    "source": "results",
+    "evidence": {
+      "section": "Single-cell transcriptional response to COVID-19 infection",
+      "sentence_ids": [
+        "S116"
+      ],
+      "quote": "To investigate this further and to independently validate the observations in the CITE-seq analysis, we performed bulk RNA sequencing (RNA-seq) analysis of PBMCs in an extended group of subjects (17 COVID-19 patients and 17 healthy controls) from the same cohort."
+    },
+    "obi_id": "OBI:0003090",
+    "obi_label": "bulk RNA-seq assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.7428,
+    "obi_granularity": "EXACT"
+  },
+  "real time polymerase chain reaction assay": {
+    "name_in_paper": [
+      "PCR quantitation of bacterial 16 S ribosomal RNA (rRNA) gene product"
+    ],
+    "normalized_name": "polymerase chain reaction",
+    "aliases": [
+      "qPCR"
+    ],
+    "sample_type": "plasma",
+    "readouts": "bacterial 16S ribosomal RNA gene product levels",
+    "generate_claim": true,
+    "source": "results",
+    "evidence": {
+      "section": "Severe COVID-19 infection is associated with the systemic release of bacterial products",
+      "sentence_ids": [
+        "S168"
+      ],
+      "quote": "Notably, the plasma of severe and ICU patients had significantly higher levels of bacterial DNA, as measured by PCR quantitation of bacterial 16 S ribosomal RNA (rRNA) gene product, and of LPS, as measured by a TLR4-based reporter assay ( Fig."
+    },
+    "obi_id": "OBI:0000893",
+    "obi_label": "real time polymerase chain reaction assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.6814,
+    "obi_granularity": "EXACT"
+  },
+  "bacterial lipopolysaccharide detection in plasma assay": {
+    "name_in_paper": [
+      "TLR4-based reporter assay"
+    ],
+    "normalized_name": "reporter assay",
+    "aliases": [],
+    "sample_type": "plasma",
+    "readouts": "lipopolysaccharide levels",
+    "generate_claim": true,
+    "source": "results",
+    "evidence": {
+      "section": "Severe COVID-19 infection is associated with the systemic release of bacterial products",
+      "sentence_ids": [
+        "S168"
+      ],
+      "quote": "Notably, the plasma of severe and ICU patients had significantly higher levels of bacterial DNA, as measured by PCR quantitation of bacterial 16 S ribosomal RNA (rRNA) gene product, and of LPS, as measured by a TLR4-based reporter assay ( Fig."
+    },
+    "obi_id": "OBI:0003793",
+    "obi_label": "bacterial lipopolysaccharide detection in plasma assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.471,
+    "obi_granularity": "EXACT"
+  },
+  "cytometry time of flight assay": {
+    "name_in_paper": [
+      "mass cytometry"
+    ],
+    "normalized_name": "mass cytometry",
+    "aliases": [
+      "phospho-CyTOF"
+    ],
+    "sample_type": "PBMCs",
+    "readouts": "immune cell phenotypes, cell subset frequencies, and intracellular signaling marker expression",
+    "generate_claim": true,
+    "source": "results",
+    "evidence": {
+      "section": "Analysis of peripheral blood leukocytes from COVID-19 patients by mass cytometry",
+      "sentence_ids": [
+        "S10"
+      ],
+      "quote": "We used mass cytometry to assess immune responses to SARS-CoV-2 infection in 52 COVID-19 patients, who were confirmed positive for viral RNA by polymerase chain reaction (PCR), and 62 age- and gender-matched healthy controls distributed between the two cohorts."
+    },
+    "obi_id": "OBI:0002115",
+    "obi_label": "cytometry time of flight assay",
+    "resource": "exact_original_llm",
+    "obi_confidence": "high",
+    "obi_granularity": "EXACT"
+  }
+}

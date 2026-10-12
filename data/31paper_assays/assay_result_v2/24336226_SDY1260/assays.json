@@ -1,0 +1,164 @@
+{
+  "transcription profiling by array assay": {
+    "name_in_paper": [
+      "DNA microarray"
+    ],
+    "normalized_name": "transcription profiling by array",
+    "aliases": [],
+    "sample_type": "PBMCs",
+    "readouts": "gene expression levels",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Blood transcriptome analysis",
+      "sentence_ids": [
+        "S269"
+      ],
+      "quote": "DNA microarray experiment was performed as previously described 6 , on Affymetrix human U133 Plus 2.0 arrays (GeneTitan platform)."
+    }
+  },
+  "enzyme-linked immunosorbent assay": {
+    "name_in_paper": [
+      "ELISA",
+      "ELISA kits"
+    ],
+    "normalized_name": "ELISA",
+    "aliases": [],
+    "sample_type": "serum",
+    "readouts": "meningococcal polysaccharide-specific IgG, IgM, IgG1 and IgG2 antibody levels",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Measurement of anti-Meningococcal antibodies by ELISA",
+      "sentence_ids": [
+        "S274"
+      ],
+      "quote": "Serum samples were pre-diluted 1:25 and then serially diluted (2-fold) seven times in SC buffer (PBS with 5% NBBS and 0.1% Brij35)."
+    },
+    "additional_evidence": [
+      {
+        "name_in_paper": "ELISA kits",
+        "sample_type": "cell supernatants",
+        "readouts": "IL-6, TNF and IL-12p40 protein levels",
+        "generate_claim": true,
+        "source": "methods",
+        "evidence": {
+          "section": "In vitro DC activation",
+          "sentence_ids": [
+            "S348"
+          ],
+          "quote": "Cell supernatants were harvested and assessed for IL-6, TNF and IL-12p40 using ELISA kits, according to manufacturer’s instructions (BD Biosciences, catalog numbers 555220, 555212, 555171)."
+        }
+      },
+      {
+        "name_in_paper": "ELISA",
+        "sample_type": "cell supernatants",
+        "readouts": "IL-6, TNF and IL-1b protein levels",
+        "generate_claim": true,
+        "source": "methods",
+        "evidence": {
+          "section": "In vitro DC activation",
+          "sentence_ids": [
+            "S352"
+          ],
+          "quote": "Cell supernatants were harvested and assessed for IL-6, TNF and IL-1b by ELISA (BD Biosciences, catalog numbers 555240, 555268, 559603)."
+        }
+      }
+    ]
+  },
+  "cytometric bead array assay": {
+    "name_in_paper": [
+      "anti-Diphtheria IgG by Luminex"
+    ],
+    "normalized_name": "Luminex",
+    "aliases": [
+      "anti- DT IgG capture microsphere assay"
+    ],
+    "sample_type": "sera",
+    "readouts": "diphtheria toxoid-specific IgG levels",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Measurement of anti-Diphtheria IgG by Luminex",
+      "sentence_ids": [
+        "S288"
+      ],
+      "quote": "Immune response to Diphtheria toxoid (DT) carrier protein was assessed at Days 0, 7 and 30 using anti- DT IgG capture microsphere assay."
+    }
+  },
+  "bacterial neutralization assay": {
+    "name_in_paper": [
+      "serum bactericidal titers (SBA)"
+    ],
+    "normalized_name": "serum bactericidal assay",
+    "aliases": [
+      "SBA"
+    ],
+    "sample_type": "serum",
+    "readouts": "bactericidal activity titers against meningococcal strains",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Measurement of serum bactericidal titers (SBA)",
+      "sentence_ids": [
+        "S292"
+      ],
+      "quote": "Serum samples collected at days 0, 7, 30, 180 and year 2 were added undiluted to microtiter plates (Costar) and then serially diluted (3-fold) in Hank’s balanced salt solution (HBSS, GIBCO/Invitrogen)."
+    }
+  },
+  "flow cytometry assay": {
+    "name_in_paper": [
+      "FACS",
+      "FACS staining"
+    ],
+    "normalized_name": "flow cytometry",
+    "aliases": [
+      "flow cytometry"
+    ],
+    "sample_type": "blood",
+    "readouts": "frequency of antibody secreting cells",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Measurement of antibody secreting cells by FACS and ELISpot",
+      "sentence_ids": [
+        "S304"
+      ],
+      "quote": "Blood ASC were identified by flow cytometry as CD3 neg , CD20 neg , CD38 hi , CD27 hi , CD19 + cells as described previously 56 ."
+    },
+    "additional_evidence": [
+      {
+        "name_in_paper": "FACS staining",
+        "sample_type": "mDC and moDC",
+        "readouts": "CD80, CD83, HLA-DR and CD86 surface staining",
+        "generate_claim": true,
+        "source": "methods",
+        "evidence": {
+          "section": "In vitro DC activation",
+          "sentence_ids": [
+            "S346"
+          ],
+          "quote": "Cells were stained with CD80-FITC, CD83-PE, HLA-DR-PerCP and CD86-APC (BD Biosciences, San Jose, CA), acquired on an LSR and analysed using FlowJo."
+        }
+      }
+    ]
+  },
+  "enzyme-linked immunospot assay": {
+    "name_in_paper": [
+      "ELISpot"
+    ],
+    "normalized_name": "ELISpot",
+    "aliases": [],
+    "sample_type": null,
+    "readouts": "numbers of antigen-specific and total IgG, IgM, and IgA secreting cells",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Measurement of antibody secreting cells by FACS and ELISpot",
+      "sentence_ids": [
+        "S305"
+      ],
+      "quote": "Antigen specific and total IgG, IgM, and IgA secreting cells were quantified by ELISpot."
+    }
+  }
+}

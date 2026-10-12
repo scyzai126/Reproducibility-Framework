@@ -1,0 +1,129 @@
+{
+  "real time reverse-transcription polymerase chain reaction assay": {
+    "name_in_paper": [
+      "real-time RT–PCR"
+    ],
+    "aliases": [],
+    "generate_claim": false,
+    "source": "methods",
+    "evidence": {
+      "section": "Study participants",
+      "sentence_ids": [
+        "S155"
+      ],
+      "quote": "Chikungunya cases were laboratory-confirmed by detection of CHIKV using real-time RT–PCR (Waggoner et al, 2016), in some cases followed by virus isolation, in acute-phase samples."
+    }
+  },
+  "enzyme-linked immunosorbent assay": {
+    "name_in_paper": [
+      "IgM capture ELISA",
+      "Inhibition ELISA",
+      "multiplex ELISA"
+    ],
+    "aliases": [
+      "Luminex"
+    ],
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Study participants",
+      "sentence_ids": [
+        "S156"
+      ],
+      "quote": "In addition, seroconversion by IgM capture ELISA and/or a >4-fold increase in antibody titer by Inhibition ELISA in paired acute and convalescent sera were evaluated (Galo et al , 2017 )."
+    },
+    "additional_evidence": [
+      {
+        "name_in_paper": "Inhibition ELISA",
+        "sample_type": "paired acute and convalescent sera",
+        "readouts": "anti-CHIKV antibody titer increase",
+        "generate_claim": false,
+        "source": "methods",
+        "evidence": {
+          "section": "Study participants",
+          "sentence_ids": [
+            "S156"
+          ],
+          "quote": "In addition, seroconversion by IgM capture ELISA and/or a >4-fold increase in antibody titer by Inhibition ELISA in paired acute and convalescent sera were evaluated (Galo et al , 2017 )."
+        }
+      },
+      {
+        "name_in_paper": "multiplex ELISA",
+        "sample_type": "serum",
+        "readouts": "cytokine and chemokine concentrations",
+        "generate_claim": true,
+        "source": "methods",
+        "evidence": {
+          "section": "Multiplex ELISA",
+          "sentence_ids": [
+            "S192"
+          ],
+          "quote": "Cytokines and chemokines were measured using a multiplex ELISA-based assay (Luminex)."
+        }
+      }
+    ]
+  },
+  "bulk RNA-seq assay": {
+    "name_in_paper": [
+      "RNA-seq"
+    ],
+    "aliases": [],
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Study participants",
+      "sentence_ids": [
+        "S159"
+      ],
+      "quote": "All selected cases had an acute-phase sample collected on days 1–2 of illness and a convalescent sample collected on days 15–17 post-illness for serum, whole blood in PAXgene solution, and PBMCs; these were subject to transcriptomic analysis via RNA-seq, CHIKV viral titer assays, multiplex ELISA for cytokines, and mass cytometry for cellular phenotyping as illustrated in Fig 1 ."
+    }
+  },
+  "cytometry time of flight assay": {
+    "name_in_paper": [
+      "mass cytometry"
+    ],
+    "aliases": [
+      "CyTOF",
+      "Cytometry time-of-flight"
+    ],
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Study participants",
+      "sentence_ids": [
+        "S159"
+      ],
+      "quote": "All selected cases had an acute-phase sample collected on days 1–2 of illness and a convalescent sample collected on days 15–17 post-illness for serum, whole blood in PAXgene solution, and PBMCs; these were subject to transcriptomic analysis via RNA-seq, CHIKV viral titer assays, multiplex ELISA for cytokines, and mass cytometry for cellular phenotyping as illustrated in Fig 1 ."
+    }
+  },
+  "infectious agent detection assay": {
+    "name_in_paper": [
+      "virus isolation"
+    ],
+    "aliases": [],
+    "generate_claim": false,
+    "source": "methods",
+    "evidence": {
+      "section": "Study participants",
+      "sentence_ids": [
+        "S155"
+      ],
+      "quote": "Chikungunya cases were laboratory-confirmed by detection of CHIKV using real-time RT–PCR (Waggoner et al, 2016), in some cases followed by virus isolation, in acute-phase samples."
+    }
+  },
+  "reverse transcription polymerase chain reaction assay": {
+    "name_in_paper": [
+      "viral titer assays"
+    ],
+    "aliases": [],
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Viral titer assays",
+      "sentence_ids": [
+        "S200"
+      ],
+      "quote": "Primers for the E1 gene were designed to quantify CHIKV copies in each patient and were used at 300 nM final concentration."
+    }
+  }
+}

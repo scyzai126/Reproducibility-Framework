@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>body{margin:0}</style>
+</head>
+<body>
+<title>Many-to-One Assay Pairings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#f6f7f8; --surface:#ffffff; --ink:#1b2430; --ink-2:#4a5664; --muted:#7b8794; --line:#dde2e7; --line-strong:#c5ccd4;
+  --agent:#eef3f8; --accent:#2f5d8a;
+  --same-bg:#e3f2ea; --same-fg:#1e6b45; --diff-bg:#fbeadf; --diff-fg:#9a4a16;
+  --rel-bg:#e6eefb; --rel-fg:#2c5aa0; --none-bg:#eceff2; --none-fg:#56616d;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#12171d; --surface:#1a2129; --ink:#e4e9ee; --ink-2:#b3bdc7; --muted:#8693a0; --line:#2b343e; --line-strong:#3a4550;
+    --agent:#1d2833; --accent:#8db7e0;
+    --same-bg:#173628; --same-fg:#8fd6b0; --diff-bg:#3d2617; --diff-fg:#f2b88c;
+    --rel-bg:#1c2b44; --rel-fg:#a9c6f2; --none-bg:#262e37; --none-fg:#aab4be;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#12171d; --surface:#1a2129; --ink:#e4e9ee; --ink-2:#b3bdc7; --muted:#8693a0; --line:#2b343e; --line-strong:#3a4550;
+  --agent:#1d2833; --accent:#8db7e0;
+  --same-bg:#173628; --same-fg:#8fd6b0; --diff-bg:#3d2617; --diff-fg:#f2b88c;
+  --rel-bg:#1c2b44; --rel-fg:#a9c6f2; --none-bg:#262e37; --none-fg:#aab4be;
+}
+body{background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px;line-height:1.45}
+.wrap{max-width:1500px;margin:0 auto;padding-inline:20px;padding-block:28px 48px;display:flex;flex-direction:column;gap:20px}
+h1{font-size:24px;font-weight:600;margin:0;text-wrap:balance}
+.lede{color:var(--ink-2);max-width:72ch;margin:0}
+.lede code,.src code{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12.5px}
+.tiles{display:flex;flex-wrap:wrap;gap:10px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:10px 14px;display:flex;flex-direction:column;min-width:120px}
+.tile .v{font-size:22px;font-weight:600;font-variant-numeric:tabular-nums}
+.tile .l{font-size:12px;color:var(--muted)}
+.scroller{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;min-width:1180px}
+th{position:sticky;top:0;background:var(--surface);text-align:left;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:10px 12px;border-bottom:2px solid var(--line-strong)}
+th.side-agent{color:var(--accent)}
+td{padding:9px 12px;vertical-align:top;border-bottom:1px solid var(--line)}
+tr.first td{border-top:2px solid var(--line-strong)}
+tbody tr:first-child td{border-top:none}
+td.grp{width:92px;font-variant-numeric:tabular-nums}
+.grp .n{font-size:11px;color:var(--muted)}
+.grp .sdy{font-weight:600}
+.grp .pmid{font-size:12px;color:var(--ink-2)}
+.grp .ratio{margin-top:6px;display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--accent);border:1px solid var(--line-strong);border-radius:4px;padding:1px 6px}
+td.agent{background:var(--agent)}
+.assay{font-weight:600;margin-bottom:6px}
+.field{font-size:12.5px;color:var(--ink-2);margin-top:4px}
+.field .k{display:block;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.field ul{margin:2px 0 0;padding-left:16px}
+.obi-id{display:block;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12.5px;font-weight:500}
+.obi-label{display:block;color:var(--ink-2)}
+.meta{margin-top:6px;font-size:11.5px;color:var(--muted);font-family:"IBM Plex Mono",monospace}
+.muted{color:var(--muted);font-style:italic}
+.pill{display:inline-block;white-space:nowrap;font-size:12px;font-weight:500;border-radius:999px;padding:2px 9px}
+.pill.same{background:var(--same-bg);color:var(--same-fg)}
+.pill.diff{background:var(--diff-bg);color:var(--diff-fg)}
+.pill.rel{background:var(--rel-bg);color:var(--rel-fg)}
+.pill.none{background:var(--none-bg);color:var(--none-fg)}
+td.note{width:240px;font-size:12.5px;color:var(--ink-2)}
+.src{font-size:12px;color:var(--muted);max-width:90ch;margin:0}
+</style>
+<div class="wrap">
+  <header style="display:flex;flex-direction:column;gap:8px">
+    <h1>Many-to-one assay pairings</h1>
+    <p class="lede">Where several curated benchmark assays pair with a single agent assay. The shaded columns are the agent's assay and its OBI mapping, shown once per group. The columns to their right are the benchmark assays that pair with it, one per row. <b>Match</b> compares the benchmark's OBI term with the agent's.</p>
+  </header>
+  <div class="tiles"><div class="tile"><span class="v">10</span><span class="l">agent assays</span></div><div class="tile"><span class="v">24</span><span class="l">benchmark assays paired to them</span></div><div class="tile"><span class="v">15</span><span class="l">same OBI term</span></div><div class="tile"><span class="v">7</span><span class="l">different OBI term</span></div><div class="tile"><span class="v">1</span><span class="l">related term (is_a)</span></div><div class="tile"><span class="v">1</span><span class="l">benchmark unmapped</span></div></div>
+  <div class="scroller">
+    <table>
+      <thead><tr>
+        <th>Paper</th>
+        <th class="side-agent">Agent assay</th>
+        <th class="side-agent">Agent OBI mapping</th>
+        <th>Benchmark assay</th>
+        <th>Benchmark OBI</th>
+        <th>Match</th>
+        <th>Reading</th>
+      </tr></thead>
+      <tbody>
+<tr class="first"><td rowspan="2" class="grp"><div class="n">1</div><div class="sdy">SDY1288</div><div class="pmid">PMID 30150281</div><div class="ratio">2 → 1</div></td><td rowspan="2" class="agent"><div class="assay">enzyme-linked immunosorbent assay</div><div class="field"><span class="k">Wording in paper</span><ul><li>IgM capture ELISA</li><li>Inhibition ELISA</li><li>multiplex ELISA</li></ul></div><div class="field"><span class="k">normalized_name</span> ELISA</div></td><td rowspan="2" class="agent"><span class="obi-id">OBI:0000661</span><span class="obi-label">enzyme-linked immunosorbent assay</span><div class="meta">exact_normalized_llm · high confidence</div></td><td class="bench">multiplex ELISA-based assay (Luminex)</td><td class="bench"><span class="muted">No OBI term</span></td><td class="bench"><span class="pill none">Benchmark unmapped</span></td><td rowspan="2" class="note">Agent mapping error: the Luminex multiplex bead assay was mapped to plain ELISA, so it merged with the ELISAs.</td></tr>
+<tr class=""><td class="bench">Inhibition ELISA</td><td class="bench"><span class="obi-id">OBI:0000661</span><span class="obi-label">enzyme-linked immunosorbent assay</span></td><td class="bench"><span class="pill same">Same term</span></td></tr>
+<tr class="first"><td rowspan="2" class="grp"><div class="n">2</div><div class="sdy">SDY1289</div><div class="pmid">PMID 19047440</div><div class="ratio">2 → 1</div></td><td rowspan="2" class="agent"><div class="assay">microarray assay</div><div class="field"><span class="k">Wording in paper</span><ul><li>gene array</li></ul></div><div class="field"><span class="k">normalized_name</span> microarray</div></td><td rowspan="2" class="agent"><span class="obi-id">OBI:0001985</span><span class="obi-label">microarray assay</span><div class="meta">exact_normalized_llm · high confidence</div></td><td class="bench">gene array</td><td class="bench"><span class="obi-id">OBI:0001463</span><span class="obi-label">transcription profiling by array assay</span></td><td class="bench"><span class="pill diff">Different term</span></td><td rowspan="2" class="note">Granularity: two array experiments on different samples. The two sides also chose different array terms.</td></tr>
+<tr class=""><td class="bench">microarray analysis (VaxDesign/MIMIC samples)</td><td class="bench"><span class="obi-id">OBI:0001463</span><span class="obi-label">transcription profiling by array assay</span></td><td class="bench"><span class="pill diff">Different term</span></td></tr>
+<tr class="first"><td rowspan="5" class="grp"><div class="n">3</div><div class="sdy">SDY1289</div><div class="pmid">PMID 19047440</div><div class="ratio">5 → 1</div></td><td rowspan="5" class="agent"><div class="assay">flow cytometry assay</div><div class="field"><span class="k">Wording in paper</span><ul><li>CFSE labeling</li><li>flow cytometric analysis of IFN-γ/IL-2–producing activated CD4 T cells</li></ul></div><div class="field"><span class="k">normalized_name</span> flow cytometry</div></td><td rowspan="5" class="agent"><span class="obi-id">OBI:0000916</span><span class="obi-label">flow cytometry assay</span><div class="meta">exact_normalized_llm · high confidence</div></td><td class="bench">flow cytometry (Ki67 proliferation assay)</td><td class="bench"><span class="obi-id">OBI:0000916</span><span class="obi-label">flow cytometry assay</span></td><td class="bench"><span class="pill same">Same term</span></td><td rowspan="5" class="note">Agent term too generic: five flow-based experiments all mapped to flow cytometry. The curator gave CFSE its own term.</td></tr>
+<tr class=""><td class="bench">CFSE labeling</td><td class="bench"><span class="obi-id">OBI:0002106</span><span class="obi-label">carboxyfluorescein succinimidyl ester staining assay</span></td><td class="bench"><span class="pill diff">Different term</span></td></tr>
+<tr class=""><td class="bench">polychromatic flow cytometry (intracellular cytokine staining)</td><td class="bench"><span class="obi-id">OBI:0000916</span><span class="obi-label">flow cytometry assay</span></td><td class="bench"><span class="pill same">Same term</span></td></tr>
+<tr class=""><td class="bench">FACS analysis of PBMCs (central memory Th1/Th2 phenotyping)</td><td class="bench"><span class="obi-id">OBI:0000916</span><span class="obi-label">flow cytometry assay</span></td><td class="bench"><span class="pill same">Same term</span></td></tr>
+<tr class=""><td class="bench">polychromatic flow cytometry (MIMIC DC/T cell co-culture)</td><td class="bench"><span class="obi-id">OBI:0000916</span><span class="obi-label">flow cytometry assay</span></td><td class="bench"><span class="pill same">Same term</span></td></tr>
+<tr class="first"><td rowspan="2" class="grp"><div class="n">4</div><div class="sdy">SDY1289</div><div class="pmid">PMID 19047440</div><div class="ratio">2 → 1</div></td><td rowspan="2" class="agent"><div class="assay">cytometric bead array assay</div><div class="field"><span class="k">Wording in paper</span><ul><li>BD Th1/Th2 CBA array</li><li>multiplex cytokine analysis</li></ul></div><div class="field"><span class="k">normalized_name</span> cytometric bead array</div></td><td rowspan="2" class="agent"><span class="obi-id">OBI:0000920</span><span class="obi-label">cytometric bead array assay</span><div class="meta">exact_normalized_llm · high confidence</div></td><td class="bench">cytometric bead assay (CBA)</td><td class="bench"><span class="obi-id">OBI:0000920</span><span class="obi-label">cytometric bead array assay</span></td><td class="bench"><span class="pill same">Same term</span></td><td rowspan="2" class="note">Granularity: two CBA experiments, same technique and term.</td></tr>
+<tr class=""><td class="bench">multiplex cytokine analysis</td><td class="bench"><span class="obi-id">OBI:0000920</span><span class="obi-label">cytometric bead array assay</span></td><td class="bench"><span class="pill same">Same term</span></td></tr>
+<tr class="first"><td rowspan="2" class="grp"><div class="n">5</div><div class="sdy">SDY1389</div><div class="pmid">PMID 30111633</div><div class="ratio">2 → 1</div></td><td rowspan="2" class="agent"><div class="assay">flow cytometry assay</div><div class="field"><span class="k">Wording in paper</span><ul><li>Flow cytometry and sorting</li><li>T cell proliferation assays</li></ul></div><div class="field"><span class="k">normalized_name</span> flow cytometry</div></td><td rowspan="2" class="agent"><span class="obi-id">OBI:0000916</span><span class="obi-label">flow cytometry assay</span><div class="meta">exact_normalized_llm · high confidence</div></td><td class="bench">Flow cytometry and sorting</td><td class="bench"><span class="obi-id">OBI:0000916</span><span class="obi-label">flow cytometry assay</span></td><td class="bench"><span class="pill same">Same term</span></td><td rowspan="2" class="note">Agent term too generic: the proliferation assay was mapped to flow cytometry.</td></tr>
+<tr class=""><td class="bench">T cell proliferation assays</td><td class="bench"><span class="obi-id">OBI:0000891</span><span class="obi-label">cell proliferation assay</span></td><td class="bench"><span class="pill diff">Different term</span></td></tr>
+<tr class="first"><td rowspan="2" class="grp"><div class="n">6</div><div class="sdy">SDY1630</div><div class="pmid">PMID 32059780</div><div class="ratio">2 → 1</div></td><td rowspan="2" class="agent"><div class="assay">flow cytometry assay</div><div class="field"><span class="k">Wording in paper</span><ul><li>Flow cytometry analysis and cell sorting</li><li>In vitro cytokine stimulation and functional assays of NK cells</li><li>For measuring degranulation by NK cells</li></ul></div><div class="field"><span class="k">normalized_name</span> flow cytometry</div></td><td rowspan="2" class="agent"><span class="obi-id">OBI:0000916</span><span class="obi-label">flow cytometry assay</span><div class="meta">exact_normalized_llm · high confidence</div></td><td class="bench">flow cytometry analysis</td><td class="bench"><span class="obi-id">OBI:0000916</span><span class="obi-label">flow cytometry assay</span></td><td class="bench"><span class="pill same">Same term</span></td><td rowspan="2" class="note">Agent term too generic: the NK stimulation and functional assays were mapped to flow cytometry.</td></tr>
+<tr class=""><td class="bench">in vitro cytokine stimulation and functional assays</td><td class="bench"><span class="obi-id">OBI:1110207</span><span class="obi-label">assay detecting IFN-gamma production</span></td><td class="bench"><span class="pill diff">Different term</span></td></tr>
+<tr class="first"><td rowspan="3" class="grp"><div class="n">7</div><div class="sdy">SDY1640</div><div class="pmid">PMID 32473127</div><div class="ratio">3 → 1</div></td><td rowspan="3" class="agent"><div class="assay">flow cytometry assay</div><div class="field"><span class="k">Wording in paper</span><ul><li>Direct ex vivo PBMC immune cell phenotyping</li><li>Activation induced cell marker assay</li><li>Intracellular cytokine staining assay</li></ul></div><div class="field"><span class="k">normalized_name</span> flow cytometry</div></td><td rowspan="3" class="agent"><span class="obi-id">OBI:0000916</span><span class="obi-label">flow cytometry assay</span><div class="meta">exact_normalized_llm · high confidence</div></td><td class="bench">Activation Induced Marker (AIM) assay</td><td class="bench"><span class="obi-id">OBI:0003230</span><span class="obi-label">T cell activation induced marker assay</span></td><td class="bench"><span class="pill rel">Related term</span></td><td rowspan="3" class="note">Agent term too generic: AIM and intracellular cytokine staining were mapped to flow cytometry.</td></tr>
+<tr class=""><td class="bench">intracellular cytokine staining assay</td><td class="bench"><span class="obi-id">OBI:0001632</span><span class="obi-label">immuno staining assay</span></td><td class="bench"><span class="pill diff">Different term</span></td></tr>
+<tr class=""><td class="bench">flow cytometry</td><td class="bench"><span class="obi-id">OBI:0000916</span><span class="obi-label">flow cytometry assay</span></td><td class="bench"><span class="pill same">Same term</span></td></tr>
+<tr class="first"><td rowspan="2" class="grp"><div class="n">8</div><div class="sdy">SDY1654</div><div class="pmid">PMID 31624246</div><div class="ratio">2 → 1</div></td><td rowspan="2" class="agent"><div class="assay">flow cytometry assay</div><div class="field"><span class="k">Wording in paper</span><ul><li>flow cytometry</li></ul></div><div class="field"><span class="k">normalized_name</span> flow cytometry</div></td><td rowspan="2" class="agent"><span class="obi-id">OBI:0000916</span><span class="obi-label">flow cytometry assay</span><div class="meta">exact_original · high confidence</div></td><td class="bench">flow cytometry</td><td class="bench"><span class="obi-id">OBI:0000916</span><span class="obi-label">flow cytometry assay</span></td><td class="bench"><span class="pill same">Same term</span></td><td rowspan="2" class="note">Agent term too generic: the proliferation assay was mapped to flow cytometry.</td></tr>
+<tr class=""><td class="bench">proliferation assay</td><td class="bench"><span class="obi-id">OBI:0000891</span><span class="obi-label">cell proliferation assay</span></td><td class="bench"><span class="pill diff">Different term</span></td></tr>
+<tr class="first"><td rowspan="2" class="grp"><div class="n">9</div><div class="sdy">SDY1991</div><div class="pmid">PMID 35455361</div><div class="ratio">2 → 1</div></td><td rowspan="2" class="agent"><div class="assay">flow cytometry assay</div><div class="field"><span class="k">Wording in paper</span><ul><li>flow cytometry</li></ul></div><div class="field"><span class="k">normalized_name</span> flow cytometry</div></td><td rowspan="2" class="agent"><span class="obi-id">OBI:0000916</span><span class="obi-label">flow cytometry assay</span><div class="meta">exact_original · high confidence</div></td><td class="bench">flow cytometry</td><td class="bench"><span class="obi-id">OBI:0000916</span><span class="obi-label">flow cytometry assay</span></td><td class="bench"><span class="pill same">Same term</span></td><td rowspan="2" class="note">Scorer error: the agent has its own IFN-γ Capture Assay entry, which was left as an extra.</td></tr>
+<tr class=""><td class="bench">IFN-γ Capture Assay</td><td class="bench"><span class="obi-id">OBI:0000916</span><span class="obi-label">flow cytometry assay</span></td><td class="bench"><span class="pill same">Same term</span></td></tr>
+<tr class="first"><td rowspan="2" class="grp"><div class="n">10</div><div class="sdy">SDY984</div><div class="pmid">PMID 28502771</div><div class="ratio">2 → 1</div></td><td rowspan="2" class="agent"><div class="assay">enzyme-linked immunospot assay</div><div class="field"><span class="k">Wording in paper</span><ul><li>Zostavax®-specific IFN-γ, IL-4 and IL-21 ELISPOT</li><li>Zostavax®-specific and total IgG B cell ELISPOT</li></ul></div><div class="field"><span class="k">normalized_name</span> ELISPOT</div></td><td rowspan="2" class="agent"><span class="obi-id">OBI:0600031</span><span class="obi-label">enzyme-linked immunospot assay</span><div class="meta">exact_normalized_llm · high confidence</div></td><td class="bench">Zostavax-specific IFN-γ, IL-4 and IL-21 ELISPOT</td><td class="bench"><span class="obi-id">OBI:0600031</span><span class="obi-label">enzyme-linked immunospot assay</span></td><td class="bench"><span class="pill same">Same term</span></td><td rowspan="2" class="note">Over-merged: a T cell cytokine ELISPOT and a B cell IgG ELISPOT share one term, so they were folded together.</td></tr>
+<tr class=""><td class="bench">Zostavax-specific and total IgG B cell ELISPOT</td><td class="bench"><span class="obi-id">OBI:0600031</span><span class="obi-label">enzyme-linked immunospot assay</span></td><td class="bench"><span class="pill same">Same term</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="src">Benchmark: <code>data/benchmark_assay/</code>, using the newer <code>*_v2</code> files for SDY1325, SDY1373 and SDY1389. Agent: <code>data/31paper_assays/&lt;pmid&gt;_&lt;SDY&gt;/assays_OBI.json</code>. Pairing: <code>scripts/compare_assay_benchmark.py</code>. The mapping method and confidence under each agent OBI term are the mapper's <code>resource</code> and <code>obi_confidence</code> fields.</p>
+</div>
+
+</body>
+</html>

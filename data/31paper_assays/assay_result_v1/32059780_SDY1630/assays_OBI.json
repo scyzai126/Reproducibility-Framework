@@ -1,0 +1,56 @@
+{
+  "flow cytometry assay": {
+    "name_in_paper": [
+      "Flow cytometry analysis and cell sorting",
+      "In vitro cytokine stimulation and functional assays of NK cells",
+      "For measuring degranulation by NK cells"
+    ],
+    "normalized_name": "flow cytometry",
+    "aliases": [
+      "flow cytometric analysis",
+      "flow cytometry"
+    ],
+    "sample_type": null,
+    "readouts": "NK cell frequencies, subset distribution, and surface and intracellular marker expression",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Flow cytometry analysis and cell sorting",
+      "sentence_ids": [
+        "S108"
+      ],
+      "quote": "Flow cytometry data were acquired on a BD LSRII and analyzed using FCS express 6 ( De Novo Software) and custom Python scripts."
+    },
+    "obi_id": "OBI:0000916",
+    "obi_label": "flow cytometry assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.7859,
+    "obi_granularity": "EXACT"
+  },
+  "bulk RNA-seq assay": {
+    "name_in_paper": [
+      "Whole transcriptome profiling of NK cell subsets"
+    ],
+    "normalized_name": "RNA sequencing",
+    "aliases": [
+      "whole transcriptome profiling by RNA sequencing (RNA-seq)",
+      "RNA-seq"
+    ],
+    "sample_type": "sorted CD56 bright CD16 − and CD56 dim CD16 + NK cells",
+    "readouts": "whole transcriptome gene expression profiles",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Whole transcriptome profiling of NK cell subsets",
+      "sentence_ids": [
+        "S131"
+      ],
+      "quote": "Samples were sequenced at Genewiz (South Plainfield, NJ) using a HiSeq2500 system (Illumina)."
+    },
+    "obi_id": "OBI:0003090",
+    "obi_label": "bulk RNA-seq assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.5874,
+    "obi_granularity": "EXACT"
+  }
+}
