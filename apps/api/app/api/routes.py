@@ -703,8 +703,10 @@ async def agent_assay_immport_resolve(
 # Fixed display order, so the UI's colours never shift when the data changes. Cheapest to
 # most expensive, which is also free-to-paid: the two exact tiers cost nothing, the two
 # embedding tiers cost two calls each. "exact_normalized" is the retired lexical round, kept
-# because 40 stored rows still carry it; "exact_normalized_llm" is the live one.
-_RESOURCE_ORDER = ["exact_original", "exact_normalized", "exact_normalized_llm",
+# because 40 stored rows still carry it; "exact_normalized_llm" (exact on normalized_name) was
+# retired on 2026-10-02 and is kept for the same reason. "exact_original_llm" is an exact hit on
+# a term with children, refined by the picker -- paid like the embedding tiers.
+_RESOURCE_ORDER = ["exact_original", "exact_original_llm", "exact_normalized", "exact_normalized_llm",
                    "embedding_llm", "embedding_llm_normalized", "unresolved"]
 
 #: Built by scripts/build_assay_table.py from every registry's assays_OBI.json -- one row per assay.

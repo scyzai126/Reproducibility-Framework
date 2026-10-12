@@ -63,8 +63,10 @@ measurement technique described under a Methods heading is an entry.
 table captions — **then classify every candidate against the Pass 1 inventory.** Exactly one
 label each:
 
-- `SAME_AS_METHODS` — a paraphrase, abbreviation, or product alias of an entry you already
-  have. Add the wording to that entry's `aliases`. NEVER create a second entry.
+- `SAME_AS_METHODS` — a paraphrase or abbreviation of an entry you already have, or a
+  product naming the equipment it ran on. NEVER create a second entry. Add the wording to that
+  entry's `aliases` only if it passes the alias test under `aliases` below; a product name or
+  a result phrase is absorbed and recorded nowhere.
 - `NOT_AN_ASSAY` — a computational analysis, a sample-prep step, a QC check, or an endpoint
   (see the four exclusions below), or a technique the paper did not perform.
 - `NEW_ASSAY` — a real wet-lab measurement technique with no counterpart in the inventory.
@@ -94,6 +96,11 @@ An entry is a procedure **this study carried out**. Exclude a technique that is 
 background knowledge; used in previously published work or merely cited; proposed as a future
 experiment; or the source of a reused public dataset the authors analysed but did not
 generate.
+A test named only as a criterion a participant or sample had to meet, such as a case
+definition or an inclusion or exclusion rule, is not an entry unless the text says this study
+ran it on its own samples. Listing several tests as alternatives that each satisfy the
+criterion is evidence that none of them was run here as a study measurement. A test this study
+did run to classify or group its participants is an entry like any other.
 
 **A technique performed but never concluded from still belongs in the inventory.** The test is
 whether the paper performed it, never whether it built an argument on it.
@@ -138,8 +145,9 @@ Methods wording to defer to.
   instrument/chip/kit *and* the technique it runs, the technique is the name and the product is
   not recorded at all.
 - Treat abbreviation/expansion pairs ("FACS" / "flow cytometry"), product/descriptive-name
-  pairs ("Luminex" / "bead-based multiplex assay"), and generic result-phrase mentions as
-  aliases of one entry, never separate entries.
+  pairs ("Luminex" / "bead-based multiplex assay") as aliases of one entry, never separate
+  entries. A generic result-phrase mention of the assay is not a separate entry either — but
+  it is not an alias, and is recorded nowhere.
 
 **One entry per distinct measurement.** Three things identify a measurement: the
 **technique** (what `normalized_name` would say), the **analyte or biological target** it
@@ -154,6 +162,12 @@ targets or panels within one experiment, or runs on two cohorts, at two timepoin
 batches. Record the second wording in `aliases` and drop the product. Check the
 inventory for near-duplicates before returning it — `ELISA` and `ELISA kits` are one entry,
 not two.
+
+**Every entry needs its own `name_in_paper`, because it is also the entry's JSON key.** When
+two entries split by analyte or specimen would strip to the same bare technique — a Luminex
+antibody assay and a Luminex cytokine panel are both "Luminex" — keep the paper's
+distinguishing words in each name ("Luminex antibody assay", "Luminex cytokine panel") rather
+than return a key twice. A repeated key is not two entries; it is one entry and a lost one.
 
 ## Filling the other fields
 
@@ -217,11 +231,28 @@ discarded.
   `"16S rRNA gene sequencing"` → `"16S ribosomal gene sequencing"`. Where the ontology spells a
   technique its own way, use its spelling: `"RIA"` → `"radio immuno assay"`, not
   "radioimmunoassay". The acronym still belongs in `aliases`; it is not lost.
+  **"Microarray" names a platform, not a technique — say what the array measured.** The
+  vocabulary holds one term per kind of array, so read the assay's name, aliases and evidence
+  for what was hybridized or captured and write that:
+  - RNA / gene expression / transcripts (GeneChip, HumanHT-12, "gene expression profiling" on
+    an array) → `"transcription profiling by array"`
+  - microRNA → `"microRNA profiling by array"`
+  - genomic DNA genotyped / SNPs (SNP chip, HumanOmniExpress, GWAS array) →
+    `"genotyping by array"`
+  - DNA methylation (450k, EPIC, methylation array) → `"DNA methylation profiling by array"`
+  - copy number (CGH, aCGH) → `"comparative genomic hybridization by array"`
+  - proteins, antibodies or peptides on the array (protein microarray, peptide array, antigen
+    array) → `"proteomic profiling by array"`
+  When the paper says only "microarray" and gives no hint what was on it, write
+  `"microarray"` — the vocabulary has a plain microarray term, and choosing a kind the text
+  does not state is the upgrade "never more specific than the text" forbids. A droplet
+  single-cell platform (10x Chromium) is not a microarray: it is `"single-cell RNA
+  sequencing"`.
   **Never add a qualifier the paper does not state**, even when it would make the string read
   as more official: not `real time`, `reverse-transcription`, `multiplex`, `viral`, `serum`,
   `binding` or `quantitative` unless the paper says so, and never a more specific technique
-  than the text earns. A later step accepts an exact match on this field without adjudication,
-  so an over-specified string becomes an unchallenged wrong answer — and the vocabulary holds
+  than the text earns. A later step retrieves ontology terms with this field,
+  so an over-specified string steers the match toward a wrong term — and the vocabulary holds
   whole families of near-identical terms separated by exactly those words (seven for
   polymerase chain reaction alone, four for neutralization).
   **The letters of an acronym are the paper stating them.** "qPCR" says real time, so it is
@@ -232,7 +263,7 @@ discarded.
   the template, and plain `"polymerase chain reaction"` otherwise.
   Two to six words, no analyte, no antigen, no vendor, no model number, no specimen, no
   purpose. `null` when the text identifies no technique at all; a wrong guess here is worse
-  than none, because a later step trusts an exact match on this field without further checking.
+  than none, because a later step retrieves ontology terms with this field.
 
 - `aliases` — other **names** the paper uses for the assay itself; `[]` if none. Quote them as
   the paper writes them; do not tidy up or complete a phrase. Instrument, chip, and kit names are
@@ -246,7 +277,11 @@ discarded.
   levels of STAT proteins in response to multiple stimulations" is a verbatim phrase from the
   paper and still not an alias, because nobody performs it. That content belongs in `readouts`.
   A quantity the assay produced — "Plasma ELISA titers to SARS-CoV-2 spike RBD" — is an
-  endpoint, and fails the same test. `[]` is a perfectly good answer; a wrong alias costs more
+  endpoint, and fails the same test.
+  A Methods heading that names the measurement several entries carry out together is an alias
+  of each of those entries, when it passes the same test: quote it verbatim in every one of
+  their `aliases`. A heading that names a broader topic than the measurement is not.
+  `[]` is a perfectly good answer; a wrong alias costs more
   than a missing one, because a later step reads these as evidence of what the technique is.
 - `sample_type` — the tissue/specimen the assay was performed on. `null` if unstated.
 - `readouts` — the key measurement(s) it produces, in your own words. What the instrument

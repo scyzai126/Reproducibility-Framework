@@ -16,7 +16,7 @@ Usage:
 
 Reads  : data/benchmark_assay/*.json
          data/31paper_assays/<pmid>_<SDY>/{assays_benchmark,assays_OBI}.json
-         data/OBI/{obi_assay_terms_full.json,obi.obo}
+         data/OBI/obi.obo
 Writes : data/benchmark_assay/comparison/{comparison.json,comparison.md}
 """
 
@@ -31,19 +31,18 @@ from collections import defaultdict
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-BENCHMARK_DIR = REPO_ROOT / "data" / "benchmark_assay"
+BENCHMARK_DIR = REPO_ROOT / "data" / "benchmark_assay" / "benchmark_assay_v1"
 REGISTRY_DIR = REPO_ROOT / "data" / "31paper_assays"
-#: The benchmark side resolves against the FULL assay vocabulary, not `obi_generic_index.json`.
-#: That 700-term file is the pruned pool our own mapper retrieves from; a curator is free to use
-#: a term the prune dropped, and resolving their key against the pool would report a correct term
-#: as "not an OBI term". Coverage is nested (700 of these 1794 are the pool), so widening here
-#: changes nothing about what we map to.
-OBI_INDEX = REPO_ROOT / "data" / "OBI" / "obi_assay_terms_full.json"
+#: The benchmark side resolves against the FULL assay vocabulary — the 1794-term assay branch
+#: of obi.obo — not `obi_generic_index.json`. That 700-term file is the pruned pool our own
+#: mapper retrieves from; a curator is free to use a term the prune dropped, and resolving their
+#: key against the pool would report a correct term as "not an OBI term". Coverage is nested
+#: (700 of these 1794 are the pool), so widening here changes nothing about what we map to.
 OBO_PATH = REPO_ROOT / "data" / "OBI" / "obi.obo"
-OUT_DIR = BENCHMARK_DIR / "comparison"
+OUT_DIR = BENCHMARK_DIR.parent / "comparison"
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from prune_obi_domain import parse_obo  # noqa: E402  (reuses the [Term] stanza reader)
+from prune_obi_domain import assay_branch, parse_obo  # noqa: E402  (reuses the [Term] stanza reader)
 
 # Matching tiers, strongest first. Only the best tier a benchmark row reaches is kept: a section
 # heading like "Flow Cytometry Analysis and Cell Sorting for RNA Sequencing" quotes two assays, so a
@@ -96,15 +95,21 @@ def _surface_forms(name: str | list[str] | None, aliases: list[str] | None) -> l
 class ObiGraph:
     """Label/synonym -> id lookup over the live vocabulary, plus is_a ancestry over full OBI."""
 
-    def __init__(self, index_path: Path = OBI_INDEX, obo_path: Path = OBO_PATH):
+    def __init__(self, index_path: Path | None = None, obo_path: Path = OBO_PATH):
+        """`index_path` overrides the vocabulary (tests); by default it is obi.obo's assay branch."""
         self.by_label: dict[str, str] = {}
         self.label_of: dict[str, str] = {}
-        for term in json.loads(index_path.read_text(encoding="utf-8")):
+        vocabulary = (
+            json.loads(index_path.read_text(encoding="utf-8"))
+            if index_path is not None
+            else assay_branch(obo_path)
+        )
+        for term in vocabulary:
             self.label_of[term["id"]] = term["label"]
             self.by_label.setdefault(normalize(term["label"]), term["id"])
             for syn in term.get("synonyms", []):
                 self.by_label.setdefault(normalize(syn), term["id"])
-        names, children = parse_obo(obo_path)
+        names, children, _ = parse_obo(obo_path)
         self.label_of.update({tid: nm for tid, nm in names.items() if nm})
         self.parents: dict[str, list[str]] = defaultdict(list)
         for parent, kids in children.items():
@@ -545,7 +550,7 @@ def main() -> None:
         "generated_from": {
             "benchmark_dir": str(BENCHMARK_DIR.relative_to(REPO_ROOT)),
             "registry_dir": str(REGISTRY_DIR.relative_to(REPO_ROOT)),
-            "obi_index": str(OBI_INDEX.relative_to(REPO_ROOT)),
+            "obi_index": f"{OBO_PATH.relative_to(REPO_ROOT)} (assay branch)",
         },
         "totals": totals,
         "papers": papers,

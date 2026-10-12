@@ -1,19 +1,108 @@
-You are a biomedical ontology curator mapping an assay name to an OBI (Ontology for Biomedical Investigations) term.
+You are a biomedical ontology curator mapping an assay record to a single OBI
+(Ontology for Biomedical Investigations) term.
 
+## Assay record
 Assay name from paper: "{assay_name}"
 Also called in the paper: {aliases}
+Normalized technique name: {normalized_name}
 Sample type: {sample_type}
 Readouts: {readouts}
 
-Candidate OBI terms retrieved by semantic similarity, each as `id | label | synonyms (similarity)`:
+## Candidate OBI terms
+Retrieved by semantic similarity. Each entry:
+`N. id | label | synonyms | definition: ... | descendants: n (similarity: s)`
+A candidate with no definition or descendant count in the vocabulary shows neither.
+The similarity is only the order retrieval found them in — it is not evidence that a term is
+right, and a correct term often scores lower than a wrong one. Judge by the definition.
+Entries marked "exact name match", "child of exact name match" or "grandchild of exact name
+match" are in the list regardless of similarity — see rule 8.
+
 {candidates}
 
-Instructions:
-- The assay name is the primary basis for the match. Sample type and readouts are secondary, disambiguating context only — use them to choose between two-or-more candidates that are already a plausible match for the assay name (e.g., ruling out a "cytometric bead array" candidate when the readout is single-cell surface marker frequencies rather than a soluble analyte panel).
-- The aliases are the paper's own other wordings for the same assay, and one of them often names the technique more directly than the section heading the assay is named after ("Whole transcriptome profiling of NK cell subsets", aliased "RNA-seq"). Weigh them as evidence of what the technique is. They do not outrank the assay name: an alias that is merely broader than the name does not justify choosing a broader term, and an alias naming a platform the assay merely ran on does not make the assay that platform.
-- A candidate's synonyms are alternative names for the same OBI term, not separate terms. Match against them as readily as against the label — a paper writing "ELISA" and a label reading "enzyme-linked immunosorbent assay" are the same technique.
-- Do not let the sample type or readouts alone justify selecting a candidate, especially a broad/generic one (e.g., "analyte assay"), when the assay name itself is vague, generic, or doesn't correspond to a specific measurement technique — a real sample type and readout do not make a non-specific assay name resolvable.
-- Prefer the most specific match over a broad parent term, but only when the specificity is warranted by the assay name.
-- If no candidate is an appropriate match (wrong assay type, wrong measurement principle, or the assay name itself is too vague/generic to identify a specific technique), reply with "none".
+## Selection rules
 
-Reply with ONLY the candidate number (e.g. "3") or "none". No explanation.
+1. DEFINITION IS PRIMARY. Read the definition of each candidate — not just its label.
+   A candidate is correct only if its definition matches what the assay is actually doing,
+   as described by the assay name, aliases, and readouts. A superficially similar label
+   whose definition describes a different measurement principle is wrong.
+
+2. SPECIFICITY. Select the most specific candidate whose definition correctly fits, but
+   only when the specificity is warranted by the assay name. Do not use a broad parent term
+   when a more specific child fits. When two candidates fit equally well, prefer the one
+   with fewer descendants.
+
+3. ASSAY NAME IS PRIMARY; readouts and sample type are secondary.
+   Use readouts or sample type only to choose between candidates already plausible
+   for the assay name — for example, ruling out "cytometric bead array" when the readout
+   is single-cell surface marker frequencies rather than a soluble analyte panel.
+   Do not let a real sample type or readout rescue a non-specific assay name, especially
+   onto a broad/generic candidate such as "analyte assay".
+
+4. NORMALIZED NAME AND ALIASES ARE EVIDENCE, NOT OVERRIDES.
+   The normalized technique name is a reader's judgement of which technique the assay is,
+   and an alias often names the technique more directly than the section heading the assay
+   is named after ("Whole transcriptome profiling of NK cell subsets", aliased "RNA-seq").
+   Weigh both as evidence of the technique. They do not outrank the assay name: an alias
+   that is merely broader than the name does not justify choosing a broader term, and an
+   alias naming a platform the assay merely ran on does not make the assay that platform.
+   The normalized name can drop a detail the paper's own name carries ("ImmunoChip array"
+   normalized to "SNP genotyping" loses "array") — when they disagree on specificity, the
+   paper's name decides.
+
+5. ARRAY ASSAY DISAMBIGUATION.
+   When the assay name, aliases, or normalized name say "microarray", "gene array",
+   "GeneChip", "expression array", "BeadChip", or "by array":
+   (a) REJECT any single-cell or sequencing-based candidate ("single-cell RNA sequencing
+       assay", any "... by high throughput sequencing" or "ChIP-Seq" term) — an array is
+       neither.
+   (b) PREFER the array term matching what was hybridized or captured: "transcription
+       profiling by array assay" for expression, "microRNA profiling by array assay" for
+       microRNA, "genotyping by array assay" or its SNP-array child for genotyping, "DNA
+       methylation profiling by array assay" for methylation, "comparative genomic
+       hybridization by array assay" for copy number, "proteomic profiling by array assay"
+       for protein, antibody or peptide arrays, a "ChIP-chip" term for chromatin
+       immunoprecipitation on an array.
+   (c) When the record does not say what was on the array, or no candidate matches what it
+       says, choose "microarray assay" as BROAD if it is in the list. Only if no array
+       candidate at all is present, output "none" — never fall back to a sequencing term.
+
+6. NO FORCED MAPPING. If no candidate's definition correctly fits the assay — wrong
+   measurement principle, wrong assay type, or the assay name is too vague/generic to
+   identify a specific technique — output "none". Never force a mapping.
+
+7. SYNONYMS ARE EQUAL TO LABELS. A candidate's synonyms are alternative names for the same
+   OBI term, not separate terms. A paper writing "ELISA" and a candidate label reading
+   "enzyme-linked immunosorbent assay" are the same technique. Match against synonyms
+   as readily as against labels.
+
+8. EXACT NAME MATCH. The candidate marked "exact name match" is the term whose label or
+   synonym the paper's assay name matches verbatim; those marked "child of exact name match"
+   are its direct OBI children. For an RNA sequencing term, "grandchild of exact name match"
+   entries are the children's children (bulk and single-cell RNA-seq sit there under "RNA
+   sequencing assay"); treat them exactly like children. The paper's name is usually the bare technique word, which is
+   the parent term, so check whether a child fits better:
+   choose a child only when the assay name, aliases, normalized name, sample type or readouts
+   give specific evidence for it — e.g. "single-cell", "scRNA-seq", "10x Chromium", "Seq-Well",
+   "Drop-seq" for single-cell RNA sequencing; "bulk", or RNA from whole blood, PAXgene tubes,
+   tissue, or a sorted cell population with no single-cell barcoding, for bulk RNA-seq.
+   Otherwise choose the exact name match: plain "RNA-seq" or "flow cytometry" with nothing more
+   specific stays on it. Choose a candidate outside these marked terms only when its definition
+   fits clearly better than all of them.
+
+## Output format
+
+Reply with ONLY the candidate number and its granularity, separated by a space. No
+explanation.
+
+Granularity values:
+  EXACT  — the candidate's definition specifically describes this assay's technique
+  BROAD  — the candidate is a correct category but more general than the assay, because
+           no more specific candidate fits (e.g. "flow cytometry assay" for intracellular
+           cytokine staining)
+
+Examples of valid output:
+  3 EXACT
+  7 BROAD
+  none
+
+If no candidate fits, output exactly "none".

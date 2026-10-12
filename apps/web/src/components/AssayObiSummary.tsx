@@ -22,6 +22,8 @@ export const RESOURCE_COLOR: Record<ObiResource, string> = {
   // need to be distinguished at a glance, re-run the palette analysis rather than nudging a
   // hex here.
   exact_normalized_llm: '#3987e5',
+  // Same reasoning: an exact original-name hit the picker refined, so the original tier's swatch.
+  exact_original_llm: '#184f95',
   embedding_llm: '#eb6834',
   embedding_llm_normalized: '#eb6834',
   unresolved: '#898781',
@@ -31,6 +33,7 @@ export const RESOURCE_LABEL: Record<ObiResource, string> = {
   exact_original: 'Exact — original name',
   exact_normalized: 'Exact — normalized name (retired)',
   exact_normalized_llm: 'Exact — normalized name',
+  exact_original_llm: 'Exact — refined by picker',
   embedding_llm: 'Embedding + LLM',
   embedding_llm_normalized: 'Embedding + LLM (via normalized name)',
   unresolved: 'Unresolved',

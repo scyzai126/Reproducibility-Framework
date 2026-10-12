@@ -18,6 +18,7 @@ from app.agent.assay_service import (
     available_papers,
     estimate_run,
     obi_misses,
+    obi_query_calls,
     split_stem,
 )
 
@@ -59,6 +60,8 @@ def vocabulary(monkeypatch):
     """
     monkeypatch.setattr(assay_service, "_build_lookup",
                         lambda: {"flow cytometry": "OBI:0000916"})
+    # A leaf here, so the hit stays free; the live index gives flow cytometry a child.
+    monkeypatch.setattr(assay_service, "_index_children", lambda: {})
 
 
 # ── splitting the two naming schemes ──────────────────────────────────────────
@@ -170,6 +173,18 @@ def test_obi_charges_two_calls_for_every_name_the_vocabulary_misses(paper, vocab
     assert (obi["free_matches"], obi["misses"]) == (1, ["SIMoA"])
 
 
+def test_an_exact_hit_on_a_term_with_children_is_billed(paper, vocabulary, monkeypatch):
+    """The picker refines such a hit ("exact_original_llm"), so the estimate must charge it."""
+    monkeypatch.setattr(assay_service, "_index_children",
+                        lambda: {"OBI:0000916": ("OBI:0003535",)})
+    _store(paper, {"flow cytometry": _ENTRY})
+
+    obi = [r for r in estimate_run("111", "SDY1")["rounds"] if r["name"] == "obi"][0]
+
+    assert obi["misses"] == ["flow cytometry"]
+    assert obi["calls"] >= 2
+
+
 def test_obi_charges_a_third_call_when_the_normalized_name_is_a_second_query(paper, vocabulary):
     """_embedding_llm_match embeds the normalized name too when it differs from the paper's."""
     _store(paper, {"SIMoA": {**_ENTRY, "name_in_paper": "SIMoA",
@@ -180,16 +195,17 @@ def test_obi_charges_a_third_call_when_the_normalized_name_is_a_second_query(pap
     assert obi["calls"] == 3
 
 
-def test_the_extractors_normalized_name_resolves_for_free(vocabulary):
-    """Step 1b is a dict lookup on a field the extractor already wrote. Omitting it from the
-    estimate bills a round that makes no call."""
+def test_a_normalized_name_that_exact_matches_is_still_a_paid_miss(vocabulary):
+    """The mapper no longer looks the normalized name up exactly (removed 2026-10-02), so an
+    entry only it would have resolved goes to step 2 and must be billed."""
     entry = {**_ENTRY, "name_in_paper": "FACS", "normalized_name": "flow cytometry"}
 
-    assert obi_misses({"FACS": entry}) == []
+    assert obi_misses({"FACS": entry}) == ["FACS"]
+    assert obi_query_calls("FACS", entry) == 3
 
 
 def test_only_the_first_wording_is_looked_up_as_the_mapper_does(vocabulary):
-    """The mapper queries names[0] and normalized_name, nothing else. Counting a later wording
+    """The mapper looks up names[0] exactly, nothing else. Counting a later wording
     -- or the key, which after round 5 is an OBI label -- as free under-billed the round."""
     entry = {**_ENTRY, "name_in_paper": ["FACS", "flow cytometry"]}
 

@@ -1,23 +1,36 @@
 """Map extracted assay names to OBI ontology terms.
 
 Matching chain (stops at first hit):
-  1a. Exact match on name_in_paper     → resource: exact_original,       confidence: "high"
-  1b. Exact match on normalized_name   → resource: exact_normalized_llm, confidence: "high"
-  2.  Embedding top-K + LLM pick       → resource: embedding_llm,        confidence: <float>
+  1. Exact match on name_in_paper, onto a term with no children in the index
+                                       → resource: exact_original,       confidence: "high"
+  1b. Exact match onto a term that has children: the hit and its direct children are pinned
+      into step 2's candidates, and the picker chooses
+                                       → resource: exact_original_llm
+  2. Embedding top-K + LLM pick        → resource: embedding_llm,        confidence: <float>
 
-Both names feed both rounds: each is tried as an exact key, and step 2 retrieves on each and
+Only the paper's own name is an exact key. Step 2 retrieves on it and on `normalized_name` and
 merges the two candidate pools. `normalized_name` is the extractor's judgement of which
 *technique* an assay is, written while reading the whole paper -- see extract_assays.txt. It is
-what lets "Surface and intracellular cytokine staining" reach `flow cytometry assay`, a term the
-paper's own wording ranks 44th out of 700.
+what pulls `flow cytometry assay` into the pool for "Surface and intracellular cytokine
+staining", a term the paper's own wording ranks 44th out of 700.
 
-Step 1b replaces an earlier step of the same shape but a different mechanism: an exact match on
-the *lexically* normalized name (trailing " assay"/" analysis" stripped), reported as resource
-"exact_normalized". That one caught 7 of 156 names and was removed. This one, measured over the
-171 curated rows of the retired all_assays_full.json, takes the step-1 hit rate from 39% to 62%. The two are
-kept apart under different resource values on purpose: "exact_normalized" was carried by 40
-rows of the retired August corpus table (all_assays_full_OBI.json) with the old lexical meaning,
-and the API route and web UI still accept it.
+Two exact rounds on a normalized name existed and were both removed, and their resource values
+stay known because stored registries carry them: "exact_normalized" (a lexical strip of
+" assay"/" analysis", 7 of 156 names, removed first) and "exact_normalized_llm" (an exact match
+on `normalized_name`, removed 2026-10-02). The second answered for free but too generally: it
+was the source of 33 of the 52 rows that disagreed with the curator benchmark, because the
+technique name drops exactly the words that pick a child term over its parent ("single-cell",
+"bulk", "reverse transcription", "transcription profiling") and an exact hit never reached the
+picker that could have chosen the child.
+
+Step 1 on the paper's own name has the same failure, less often: papers name an assay by the
+bare technique word ("RNA-seq", "microarray", "flow cytometry"), which is the *parent* label.
+In the 31-paper v1 results 29 of 39 exact hits landed on a term with children in the index --
+"RNA Sequencing" on the most generic `RNA sequencing assay`, every "RNA-seq" on `RNA-seq assay`
+and never on its bulk or single-cell child. So an exact hit only answers outright when the
+index holds nothing more specific under it (ELISA, ELISpot: their compositional children were
+pruned). Otherwise it becomes a guaranteed candidate, together with its direct children, which
+embedding retrieval on a bare "RNA-seq" does not reliably rank.
 """
 
 from __future__ import annotations
@@ -42,13 +55,23 @@ _OBI_DIR = _REPO_ROOT / "data" / "OBI"
 # Pruned vocabulary + matching vectors — see data/OBI/README.md for how they are built.
 _OBI_TERMS_PATH = _OBI_DIR / "obi_generic_index.json"
 _EMBEDDINGS_PATH = _OBI_DIR / "obi_generic_embeddings.json"
+#: Source of the `is_a` edges. The index carries no parent links, only `n_descendants`, which
+#: counts the full ontology and so calls ELISA (53) a parent though the index holds none of them.
+_OBO_PATH = _OBI_DIR / "obi.obo"
 _PROMPTS_DIR = _REPO_ROOT / "apps" / "api" / "app" / "prompts"
 
 #: Not settings.OPENAI_MODEL: this one names an *embedding* model, and the vectors in
 #: obi_generic_embeddings.json were built with it. Changing it silently invalidates every one
 #: of them -- a query embedded by a different model is not comparable to that matrix.
 EMBED_MODEL = "text-embedding-3-small"
-TOP_K = 10
+#: Candidates the picker sees. 20, not 10, since 2026-10-02: over 150 benchmark rows the
+#: curator's term is among the merged candidates 87% of the time at 10 and 91% at 20, and the
+#: rows 11-20 recovers are real misses (transcription profiling by array assay, bulk RNA-seq).
+TOP_K = 20
+#: Slots in the merged list reserved for the paper-wording query; the normalized query fills
+#: the rest. The technique name scores high against short generic labels, and a plain merge by
+#: score let those push the paper wording's specific candidates out.
+PRIMARY_SLOTS = 14
 
 
 # ── Vocabulary pruning ────────────────────────────────────────────────────────
@@ -117,6 +140,106 @@ def _term_ids(terms_path: Path) -> frozenset[str]:
     )
 
 
+_OBO_TERM_ID = re.compile(r"^id: (\S+)", re.MULTILINE)
+_OBO_IS_A = re.compile(r"^is_a: (\S+)", re.MULTILINE)
+
+
+@lru_cache(maxsize=8)
+def _index_children(terms_path: Path = _OBI_TERMS_PATH) -> dict[str, tuple[str, ...]]:
+    """Direct `is_a` children per term, both ends inside the index's generic vocabulary.
+
+    Direct only: walking further is _pinned_candidates' decision, and it does so for the RNA
+    sequencing family alone (_TWO_TIER_PIN_IDS).
+    An absent obi.obo gives {}, which leaves every exact hit answering outright as before.
+    """
+    if not _OBO_PATH.exists():
+        return {}
+    allowed = _term_ids(terms_path)
+    children: dict[str, list[str]] = {}
+    for block in _OBO_PATH.read_text(encoding="utf-8").split("\n\n"):
+        if not block.startswith("[Term]"):
+            continue
+        match = _OBO_TERM_ID.search(block)
+        if not match or match.group(1) not in allowed:
+            continue
+        for parent in _OBO_IS_A.findall(block):
+            if parent in allowed:
+                children.setdefault(parent, []).append(match.group(1))
+    return {parent: tuple(kids) for parent, kids in children.items()}
+
+
+@lru_cache(maxsize=8)
+def _index_entries(terms_path: Path) -> dict[str, dict[str, Any]]:
+    return {t["id"]: t for t in json.loads(terms_path.read_text(encoding="utf-8")) if t.get("id")}
+
+
+#: Exact hits whose grandchildren are pinned too. "RNA sequencing assay" is what a paper's
+#: "RNA Sequencing" hits, and bulk / single-cell RNA-seq sit two levels below it, under
+#: "RNA-seq assay". Only this family: on a broad term the second tier runs to 92 terms
+#: ("analyte assay") and buries the retrieved candidates.
+_TWO_TIER_PIN_IDS = frozenset({"OBI:0001177", "OBI:0001271"})  # RNA sequencing / RNA-seq assay
+
+
+def _pinned_candidates(hit_id: str, terms_path: Path = _OBI_TERMS_PATH) -> list[dict[str, Any]]:
+    """The exact hit and its direct children, as candidates the picker sees whatever they score
+    -- plus its grandchildren when the hit is in _TWO_TIER_PIN_IDS.
+
+    `similarity` is None: none of them was retrieved by similarity, and _candidate_line says
+    why each is there instead. `text` is built like the embedded rows ("label | syn | ...").
+    """
+    entries = _index_entries(terms_path)
+    details = _term_details()
+    children = _index_children(terms_path)
+    order = [(hit_id, "exact"), *((c, "child") for c in children.get(hit_id, ()))]
+    if hit_id in _TWO_TIER_PIN_IDS:
+        order += [(g, "grandchild") for c in children.get(hit_id, ()) for g in children.get(c, ())]
+    pinned, seen = [], set()
+    for obi_id, pin in order:
+        if obi_id in seen:
+            continue
+        seen.add(obi_id)
+        term = entries.get(obi_id)
+        if not term:
+            continue
+        pinned.append({
+            **details.get(obi_id, {}),
+            "id": obi_id,
+            "label": term["label"],
+            "text": " | ".join([term["label"], *(str(s) for s in term.get("synonyms") or [])]),
+            "similarity": None,
+            "pin": pin,
+        })
+    return pinned
+
+
+def _with_pinned(
+    candidates: list[dict[str, Any]], pinned: list[dict[str, Any]]
+) -> list[dict[str, Any]]:
+    """Pinned terms first, then the retrieved ones; a pinned term that was also retrieved keeps
+    its similarity. The list may run past TOP_K by the pinned count -- the pins are the point."""
+    retrieved = {c["id"]: c for c in candidates}
+    head = [{**p, "similarity": retrieved[p["id"]]["similarity"]} if p["id"] in retrieved else p
+            for p in pinned]
+    pinned_ids = {p["id"] for p in pinned}
+    return head + [c for c in candidates if c["id"] not in pinned_ids]
+
+
+@lru_cache(maxsize=1)
+def _term_details() -> dict[str, dict[str, Any]]:
+    """Definition and descendant count per id, from the index the embeddings were built over.
+
+    The embeddings file carries the definition only inside `embed_input`, joined to the label
+    and synonyms; the index keeps it as its own field, alongside `n_descendants`. The picker is
+    told to judge by definition and break ties on fewer descendants, so both have to reach it.
+    """
+    if not _OBI_TERMS_PATH.exists():
+        return {}
+    return {
+        t["id"]: {"definition": t.get("definition") or "", "n_descendants": t.get("n_descendants")}
+        for t in json.loads(_OBI_TERMS_PATH.read_text(encoding="utf-8")) if t.get("id")
+    }
+
+
 # ── Embedding helpers ─────────────────────────────────────────────────────────
 
 @lru_cache(maxsize=1)
@@ -160,13 +283,15 @@ def _top_k_candidates(
     scores = np.dot(matrix, vec)
     k = min(k, len(entries))
     top_indices = np.argsort(scores)[-k:][::-1]
+    details = _term_details()
     return [
         {
+            **details.get(entries[i]["id"], {}),
             "id": entries[i]["id"],
             "label": entries[i]["label"],
-            # The string this row was actually embedded from: "label | syn1 | syn2 | ...", per
-            # build_obi_embeddings.build_text. Carried so _llm_pick can show the model the same
-            # wording retrieval matched on, rather than the bare label.
+            # "label | syn1 | syn2 | ...", per build_obi_embeddings.build_text — the embedded
+            # string minus its definition. Carried so _llm_pick can show the model the wording
+            # retrieval matched on, rather than the bare label.
             "text": entries[i].get("text") or entries[i]["label"],
             "similarity": round(float(scores[i]), 4),
         }
@@ -175,8 +300,11 @@ def _top_k_candidates(
 
 
 #: How many of a candidate's synonyms to show. CHMO:0000089 carries nine; printing them all
-#: for ten candidates buries the labels the model is choosing between.
+#: for every candidate buries the labels the model is choosing between.
 _MAX_SHOWN_SYNONYMS = 4
+#: Characters of a definition to show. The longest in the index runs to ~1000; the median is
+#: ~110, so this trims only the outliers that would dominate twenty candidate lines.
+_MAX_DEFINITION_CHARS = 300
 
 
 def _candidate_line(index: int, candidate: dict[str, Any]) -> str:
@@ -191,7 +319,23 @@ def _candidate_line(index: int, candidate: dict[str, Any]) -> str:
     parts = [p.strip() for p in str(candidate.get("text") or label).split("|")]
     synonyms = [p for p in parts[1:] if p and p.lower() != label.lower()][:_MAX_SHOWN_SYNONYMS]
     shown = f"{label} | {' | '.join(synonyms)}" if synonyms else label
-    return f"{index}. {candidate['id']} | {shown} (similarity: {candidate['similarity']})"
+    definition = " ".join(str(candidate.get("definition") or "").split())
+    if definition:
+        if len(definition) > _MAX_DEFINITION_CHARS:
+            definition = definition[:_MAX_DEFINITION_CHARS].rstrip() + "..."
+        shown += f" | definition: {definition}"
+    if candidate.get("n_descendants") is not None:
+        shown += f" | descendants: {candidate['n_descendants']}"
+    marks = []
+    if candidate.get("pin") == "exact":
+        marks.append("exact name match")
+    elif candidate.get("pin") == "child":
+        marks.append("child of exact name match")
+    elif candidate.get("pin") == "grandchild":
+        marks.append("grandchild of exact name match")
+    if candidate.get("similarity") is not None:
+        marks.append(f"similarity: {candidate['similarity']}")
+    return f"{index}. {candidate['id']} | {shown} ({'; '.join(marks)})"
 
 
 def build_pick_prompt(
@@ -200,6 +344,7 @@ def build_pick_prompt(
     sample_type: str = "",
     readouts: str = "",
     aliases: list[str] | None = None,
+    normalized_name: str = "",
 ) -> str:
     """Render resolver_obi_assay.txt for one pick. Split out so a test can read it without
     reaching the network."""
@@ -208,6 +353,7 @@ def build_pick_prompt(
         (_PROMPTS_DIR / "resolver_obi_assay.txt").read_text(encoding="utf-8")
         .replace("{assay_name}", assay_name)
         .replace("{aliases}", ", ".join(named) if named else "none given")
+        .replace("{normalized_name}", normalized_name.strip() or "not given")
         .replace("{candidates}",
                  "\n".join(_candidate_line(i + 1, c) for i, c in enumerate(candidates)))
         .replace("{sample_type}", sample_type.strip() or "not specified")
@@ -215,22 +361,31 @@ def build_pick_prompt(
     )
 
 
-#: The whole reply the pick prompt asks for: a candidate number, optionally "#3" or "3." --
-#: nothing else. The old `re.search(r"\d+")` read "OBI:0000661" as candidate 0000661 and
-#: "3 or 5" as a confident 3.
-_PICK_REPLY = re.compile(r"#?\s*(\d+)\s*[.)]?")
+#: The whole reply the pick prompt asks for: a candidate number, optionally "#3" or "3.",
+#: optionally followed by its granularity -- nothing else. The old `re.search(r"\d+")` read
+#: "OBI:0000661" as candidate 0000661 and "3 or 5" as a confident 3. The granularity is
+#: optional so a bare number, the reply the prompt asked for before it existed, still parses.
+_PICK_REPLY = re.compile(r"#?\s*(\d+)\s*[.)]?(?:[\s\t]+(exact|broad))?")
 
 
-def parse_pick(reply: str, n_candidates: int) -> int | None:
-    """The 0-based candidate index the reply names, or None for "none" or anything ambiguous."""
+def parse_pick_reply(reply: str, n_candidates: int) -> tuple[int | None, str | None]:
+    """(0-based candidate index, "EXACT"/"BROAD" or None), or (None, None) for "none" or
+    anything ambiguous."""
     reply = reply.strip().strip("*`'\"").strip().lower()
     match = _PICK_REPLY.fullmatch(reply)
     if not match:
         if reply not in ("none", "none."):
             logger.warning("OBI pick reply not understood, treated as none: %r", reply[:80])
-        return None
+        return None, None
     idx = int(match.group(1)) - 1
-    return idx if 0 <= idx < n_candidates else None
+    if not 0 <= idx < n_candidates:
+        return None, None
+    return idx, match.group(2).upper() if match.group(2) else None
+
+
+def parse_pick(reply: str, n_candidates: int) -> int | None:
+    """The 0-based candidate index the reply names, or None for "none" or anything ambiguous."""
+    return parse_pick_reply(reply, n_candidates)[0]
 
 
 def _llm_pick(
@@ -240,20 +395,22 @@ def _llm_pick(
     readouts: str = "",
     model: str = settings.OPENAI_MODEL,
     aliases: list[str] | None = None,
+    normalized_name: str = "",
 ) -> dict[str, Any] | None:
     """Ask the LLM to pick the best OBI candidate, or say none.
 
     Runs on the configured model like every other call in the pipeline. It used to be pinned
-    to a cheap one on the reasoning that ten labels are already retrieved and the answer is a
-    single integer -- but this pick *is* the mapping. Retrieval only narrows to ten; which of
-    the ten is right, and whether none of them is, is the whole judgement, and it is the step
+    to a cheap one on the reasoning that the labels are already retrieved and the answer is a
+    single integer -- but this pick *is* the mapping. Retrieval only narrows to TOP_K; which of
+    them is right, and whether none of them is, is the whole judgement, and it is the step
     that produced this corpus's wrong answers (phosphoflow analysis onto an imaging-based
     term, whole-transcriptome profiling onto a targeted one). The prompt also asks for
     restraint -- prefer the specific match "only when the specificity is warranted", answer
     "none" when the name is too vague -- and abstention is the system's only defence, since
     _top_k_candidates applies no similarity threshold.
     """
-    prompt = build_pick_prompt(assay_name, candidates, sample_type, readouts, aliases)
+    prompt = build_pick_prompt(assay_name, candidates, sample_type, readouts, aliases,
+                               normalized_name)
 
     client = OpenAI(api_key=settings.OPENAI_API_KEY)
     resp = client.chat.completions.create(
@@ -262,10 +419,8 @@ def _llm_pick(
         temperature=0,
     )
     reply = (resp.choices[0].message.content or "").strip().lower()
-    idx = parse_pick(reply, len(candidates))
+    idx, granularity = parse_pick_reply(reply, len(candidates))
     if idx is None:
-        return None
-    if not (0 <= idx < len(candidates)):
         return None
     chosen = candidates[idx]
     return {
@@ -273,33 +428,70 @@ def _llm_pick(
         "obi_label": chosen["label"],
         "resource": "embedding_llm",
         "confidence": chosen["similarity"],
+        "granularity": granularity,
     }
 
 
-def _merge_candidates(*pools: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """Union several retrieval pools into one top-K list, keeping each term's best score.
+def _paper_query(name: str, aliases: list[str] | None) -> str:
+    """The paper-wording retrieval query: its name and every alias, "name | alias | ...".
+
+    Aliases are the paper's other names for the assay and often name the technique more
+    directly than a section-heading name does; adding them took benchmark recall@10 from 70% to
+    73%. Sample type and readouts are left out on purpose -- each made retrieval slightly worse
+    in the same measurement -- and stay in the pick prompt as disambiguating context.
+    """
+    seen: set[str] = set()
+    parts: list[str] = []
+    for part in [name, *(aliases or [])]:
+        part = part.strip() if isinstance(part, str) else ""
+        if part and part.lower() not in seen:
+            seen.add(part.lower())
+            parts.append(part)
+    return " | ".join(parts)
+
+
+def _merge_candidates(
+    primary: list[dict[str, Any]],
+    *others: list[dict[str, Any]],
+    k: int = TOP_K,
+    primary_slots: int = PRIMARY_SLOTS,
+) -> list[dict[str, Any]]:
+    """Union the retrieval pools into one top-k list, the paper-wording pool's best kept first.
 
     Neither query dominates, which is the whole reason to merge rather than choose. Measured
-    over the 101 distinct (paper name, normalized name) pairs in the retired all_assays_full.json that
-    reach this round, the normalized name retrieves a better top-1 on 52% of them and a *worse*
-    one on 32%. The losses are systematic, not noise: "hemagglutination inhibition (HAI)
-    assays" scores 0.809 against OBI's `viral hemagglutination inhibition assay` and its
-    normalized form "Hemagglutination Inhibition" only 0.658, because the verbose paper wording
-    is simply closer to the verbose label. Replacing one query with the other trades one set of
-    failures for another; the union takes the better of the two every time, for the price of a
-    second embedding call and no extra LLM call.
+    over 150 benchmark rows, the normalized name alone puts the curator's term in its top 10
+    79% of the time and the paper wording (name + aliases) 73%, and they miss different rows:
+    "hemagglutination inhibition (HAI) assays" scores 0.809 against OBI's `viral
+    hemagglutination inhibition assay` and its normalized form only 0.658, while a section
+    heading like "Surface and intracellular cytokine staining" ranks `flow cytometry assay`
+    44th and its normalization "flow cytometry" ranks it first. The merge reaches 87% at 10.
 
-    A term retrieved by both queries is kept once, at its higher similarity — the score is the
-    strength of the best evidence for it, not an average over how it was found.
+    The first `primary_slots` of `primary` are always kept; the other pools then fill to `k` in
+    rank order, and anything left over comes from the rest of `primary`. A plain merge by score
+    let the normalized query's broad, high-scoring terms push out the paper wording's specific
+    ones -- the parent-for-child failure in a milder form.
+
+    A term retrieved by more than one query is kept once, at its higher similarity -- the score
+    is the strength of the best evidence for it, not an average over how it was found. The
+    result is ordered by that similarity, which is the order the picker sees.
     """
-    best: dict[str, dict[str, Any]] = {}
-    for pool in pools:
-        for candidate in pool or []:
-            previous = best.get(candidate["id"])
-            if previous is None or candidate.get("similarity", 0) > previous.get("similarity", 0):
-                best[candidate["id"]] = candidate
-    ranked = sorted(best.values(), key=lambda c: c.get("similarity", 0), reverse=True)
-    return ranked[:TOP_K]
+    chosen: dict[str, dict[str, Any]] = {}
+
+    def take(candidate: dict[str, Any]) -> None:
+        previous = chosen.get(candidate["id"])
+        if previous is None or candidate.get("similarity", 0) > previous.get("similarity", 0):
+            chosen[candidate["id"]] = candidate
+
+    primary = primary or []
+    for candidate in primary[:primary_slots]:
+        take(candidate)
+    for candidate in [c for pool in others for c in pool or []] + primary[primary_slots:]:
+        if candidate["id"] in chosen:
+            take(candidate)
+        elif len(chosen) < k:
+            take(candidate)
+    ranked = sorted(chosen.values(), key=lambda c: c.get("similarity", 0), reverse=True)
+    return ranked[:k]
 
 
 def _embedding_llm_match(
@@ -311,34 +503,58 @@ def _embedding_llm_match(
     model: str = settings.OPENAI_MODEL,
     aliases: list[str] | None = None,
     normalized_query: str = "",
+    pinned: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any] | None:
     """Retrieve on `query` and `normalized_query`, but show the LLM `display_name`.
 
     Retrieval and display do different jobs. The normalized name is often the better
     *retrieval* query — it is the conventional technique wording, so it pulls the right
-    neighbourhood of OBI terms. But it is the worse thing to *show the model*, because
+    neighbourhood of OBI terms. But it is the worse thing to show the model *as the name*, so it
+    reaches the picker on its own "Normalized technique name" line, as evidence, because
     normalizing can drop the very detail that picks between a parent term and its child:
     "ImmunoChip array" normalized to "Genome-wide SNP genotyping" loses the word "array", and
     with it the evidence for `genotyping by SNP array assay` over plain `genotyping assay`.
 
-    Both strings are retrieved on and their pools merged — see _merge_candidates for why
-    neither can be dropped. The paper's name goes first so the normalized pool, which is the
-    one a caller supplies deliberately, is the last thing retrieved.
+    Both are retrieved on -- the paper's name joined with its aliases (_paper_query), and the
+    normalized name -- and their pools merged; see _merge_candidates for why neither can be
+    dropped and why the paper-wording pool gets reserved slots. The paper's name goes first so
+    the normalized pool, which is the one a caller supplies deliberately, is the last thing
+    retrieved.
+
+    `pinned` is step 1's exact hit and its direct children (_pinned_candidates). They lead the
+    list whatever they score, and the result is attributed "exact_original_llm". The exact hit
+    is also the floor: if the picker answers "none" -- or there are no embeddings to retrieve
+    with -- the verbatim match stands rather than being lost.
     """
+    exact_hit = next((p for p in pinned or [] if p.get("pin") == "exact"), None)
+    fallback = ({"obi_id": exact_hit["id"], "obi_label": exact_hit["label"],
+                 "resource": "exact_original", "confidence": "high"} if exact_hit else None)
     if not _EMBEDDINGS_PATH.exists():
-        return None
-    raw_pool = _top_k_candidates(query, allowed_ids=allowed_ids)
+        return fallback
+    raw_pool = _top_k_candidates(_paper_query(query, aliases), allowed_ids=allowed_ids)
     pools = [raw_pool]
     normalized = normalized_query.strip()
     if normalized and normalized.lower() != query.strip().lower():
         pools.append(_top_k_candidates(normalized, allowed_ids=allowed_ids))
     candidates = _merge_candidates(*pools)
+    if pinned:
+        candidates = _with_pinned(candidates, pinned)
     if not candidates:
         return None
     picked = _llm_pick(
         display_name or query, candidates,
         sample_type=sample_type, readouts=readouts, model=model, aliases=aliases,
+        normalized_name=normalized if normalized.lower() != (display_name or query).strip().lower()
+        else "",
     )
+    if exact_hit:
+        if not picked:
+            return {**fallback, "resource": "exact_original_llm"}
+        chosen = next(c for c in candidates if c["id"] == picked["obi_id"])
+        if chosen.get("pin") == "exact" or chosen.get("similarity") is None:
+            picked["confidence"] = "high"
+        picked["resource"] = "exact_original_llm"
+        return picked
     # Attribute the win when only the normalized query could reach the chosen term. Without
     # this, a benchmark run cannot tell whether the normalization earned its keep in step 2 or
     # merely rode along -- and the two justify very different things.
@@ -369,54 +585,36 @@ def map_assay_to_obi(
     disambiguating context for the LLM's pick among candidates — the exact match
     doesn't need them.
 
-    normalized_name is used in *both* rounds: as an exact-match key of its own (step 1b) and as
-    a second retrieval query alongside the paper's name (step 2).
+    normalized_name is used only in step 2: as a second retrieval query alongside the paper's
+    name, and on its own line of the pick prompt, beside the paper's name rather than folded
+    into it.
+    It is deliberately **not** an exact-match key. It was one from 2026-09 to 2026-10-02, and
+    that round accounted for 33 of the 52 rows disagreeing with the curator benchmark: the
+    technique name is the parent ("RNA sequencing", "microarray", "real time polymerase chain
+    reaction"), the curator's term is usually its child (single-cell RNA sequencing, transcription
+    profiling by array, real time reverse-transcription PCR), and an exact hit returned before
+    the picker -- which sees the paper's own wording and could choose the child -- was asked.
 
-    Step 1b reverses an earlier decision, so it is worth saying why. A lexical normalization
-    round used to sit here -- it stripped a trailing " assay"/" analysis" and looked the result
-    up -- and it was removed for catching only 7 of 156 names. This is a different mechanism:
-    the field now holds an LLM's judgement of *which technique* the assay is, made while reading
-    the whole paper, not a string with a suffix chopped off. Measured over the 171 curated rows
-    of the retired all_assays_full.json it takes the step-1 hit rate from 39% to 62% -- 40 entries that cost
-    two paid calls each now cost none. That is a large enough difference in kind to justify
-    reviving the step the lexical version did not earn.
-
-    The paper's own name wins when both keys hit. It is what the paper actually said; the
-    normalized form is derived from it, and deriving cannot outrank the source. Only 3 of those
-    171 rows disagree at all, and all three are the same pair -- "RNA-seq" resolving to
-    `RNA-seq assay` where "RNA sequencing" resolves to `RNA sequencing assay`, two live OBI
-    terms for one technique -- where the paper's wording is also the better answer.
-
-    Note what step 1b gives up: an exact match returns immediately, with no similarity score and
-    no LLM adjudication, so a confidently wrong normalized_name becomes an unchallenged answer
-    where the step-2 path would still have let the picker say "none". The verifier cannot catch
-    it either -- `normalized_name` sits in assay_verifier._NOT_PROPOSED because it is a
-    judgement about the technique, not a claim about the text. The extraction prompt's wording
-    is the only guard, and `resource: "exact_normalized_llm"` is the only way to audit which
-    answers took the unguarded path; keep that value distinct from "exact_normalized", which 40
-    rows of the retired August corpus table carried with the old lexical meaning.
+    An exact hit on the paper's own name answers outright only when the index holds no child of
+    that term; otherwise it is pinned into step 2 with its direct children (see the module
+    docstring).
     """
     lookup = _build_lookup(terms_path)
 
-    # Step 1a — exact on the paper's own name
+    # Step 1 — exact on the paper's own name
     result = lookup.get(name_in_paper.strip().lower())
+    pinned = None
     if result:
-        return {**result, "resource": "exact_original", "confidence": "high"}
-
-    # Step 1b — exact on the normalized technique name
+        if not _index_children(terms_path).get(result["obi_id"]):
+            return {**result, "resource": "exact_original", "confidence": "high"}
+        pinned = _pinned_candidates(result["obi_id"], terms_path)
     normalized = normalized_name.strip()
-    if normalized:
-        result = lookup.get(normalized.lower())
-        if result:
-            return {**result, "resource": "exact_normalized_llm", "confidence": "high"}
 
     # Step 2 — embedding candidates from both queries (restricted to terms_path's
     # vocabulary), merged into one top-K list, LLM picks best
     original = name_in_paper.strip()
     query = original or normalized
     display_name = query
-    if original and normalized and original.lower() != normalized.lower():
-        display_name = f"{original} (also described as: {normalized})"
     allowed_ids = _term_ids(terms_path)
     return _embedding_llm_match(
         query,
@@ -427,6 +625,7 @@ def map_assay_to_obi(
         model=model,
         aliases=aliases,
         normalized_query=normalized,
+        pinned=pinned,
     )
 
 
@@ -456,8 +655,8 @@ def enrich_assays_with_obi(
     `normalized_name` is read when the entry carries it and never written. Registries extracted
     before it joined assay_extractor.ENTRY_FIELDS do not have it, and neither do the ones
     assay_registry.registry_from_claims builds -- it lists the field among those a claims-derived
-    registry structurally cannot supply. Both cases pass the empty string, which makes step 1b a
-    no-op and leaves step 2 retrieving on `name_in_paper` alone: exactly the behaviour every
+    registry structurally cannot supply. Both cases pass the empty string, which leaves step 2
+    retrieving on `name_in_paper` alone: exactly the behaviour every
     existing registry had before this field existed. Nothing needs re-extracting to keep working;
     re-extraction is only how a registry starts benefiting.
     """
@@ -487,7 +686,8 @@ def enrich_assays_with_obi(
             # call threw away every mapping the paper had already paid for.
             logger.warning("%s: OBI lookup failed - %s", canonical, exc)
             entry.update({"obi_id": None, "obi_label": None, "resource": "error",
-                          "obi_confidence": None, "obi_error": f"{type(exc).__name__}: {exc}"})
+                          "obi_confidence": None, "obi_granularity": None,
+                          "obi_error": f"{type(exc).__name__}: {exc}"})
             enriched[canonical] = entry
             continue
         if mapped:
@@ -495,6 +695,9 @@ def enrich_assays_with_obi(
             entry["obi_label"] = mapped["obi_label"]
             entry["resource"] = mapped["resource"]
             entry["obi_confidence"] = mapped["confidence"]
+            # The picker's own EXACT/BROAD; None for an exact name match (no pick was asked)
+            # and for a reply that gave only a number.
+            entry["obi_granularity"] = mapped.get("granularity")
         else:
             entry["obi_id"] = None
             entry["obi_label"] = None
@@ -502,6 +705,7 @@ def enrich_assays_with_obi(
             # Unconditional, not setdefault: a stale extraction confidence sitting next to
             # resource="unresolved" reads as an OBI score.
             entry["obi_confidence"] = None
+            entry["obi_granularity"] = None
 
         enriched[canonical] = entry
     return enriched

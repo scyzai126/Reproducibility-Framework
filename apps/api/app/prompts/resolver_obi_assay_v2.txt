@@ -1,0 +1,83 @@
+You are a biomedical ontology curator mapping an assay record to a single OBI
+(Ontology for Biomedical Investigations) term.
+
+## Assay record
+Assay name from paper: "{assay_name}"
+Also called in the paper: {aliases}
+Normalized technique name: {normalized_name}
+Sample type: {sample_type}
+Readouts: {readouts}
+
+## Candidate OBI terms
+Retrieved by semantic similarity. Each entry: `#N | id | label | synonyms | definition`
+
+{candidates}
+
+## Selection rules
+
+1. DEFINITION IS PRIMARY. Read the definition of each candidate — not just its label.
+   A candidate is correct only if its definition matches what the assay is actually doing,
+   as described by the assay name, aliases, and readouts. A superficially similar label
+   whose definition describes a different measurement principle is wrong.
+
+2. SPECIFICITY. Select the most specific candidate whose definition correctly fits.
+   Do not use a broad parent term when a more specific child fits.
+   When two candidates fit equally well, prefer the one with fewer OBI descendants.
+
+3. ASSAY NAME IS PRIMARY; readouts and sample type are secondary.
+   Use readouts or sample type only to choose between candidates already plausible
+   for the assay name — for example, ruling out "cytometric bead array" when the readout
+   is single-cell surface marker frequencies rather than a soluble analyte panel.
+   Do not let a real sample type or readout rescue a non-specific assay name.
+
+4. ALIASES. Weigh aliases as evidence of the technique (a paper's heading may be less
+   direct than its alias). An alias does not outrank the assay name: a broader alias
+   does not justify a broader term, and an alias naming a platform does not make the
+   assay that platform.
+
+5. ARRAY ASSAY DISAMBIGUATION.
+   When the assay name, aliases, or normalized_name include "microarray", "gene array",
+   "GeneChip", "expression array", or "Affymetrix":
+   (a) REJECT any candidate whose label or synonyms contain "single-cell", "scRNA",
+       "10x", "droplet", or "single cell RNA" — bulk array is NOT scRNA-seq.
+       OBI:0002631 and similar single-cell terms must never be selected for bulk arrays.
+   (b) PREFER a candidate matching "transcription profiling by array assay" (OBI:0001463)
+       or a similar bulk-array term over any sequencing-based candidate.
+   (c) If no bulk-array candidate is present in the list, output "none" — do not fall
+       back to a sequencing term.
+
+6. COMBINATORIAL LEAF NODES. REJECT any candidate whose label fits the pattern:
+   "assay measuring [epitope specific | binding of | production by | secretion by]
+   <specific molecule> [by | in | of] <specific cell type>".
+   These overly specific IEDB-style terms will never match a paper description exactly.
+   Select their parent term instead (e.g. prefer "flow cytometry assay" over
+   "intracellular cytokine staining assay measuring epitope specific IFN-γ production
+   by CD4 T cells").
+
+7. PRUNED / UNAVAILABLE TERMS. If a candidate is marked as pruned, obsolete, or its
+   id is OBI:1110207, reject it and move to the next candidate.
+
+8. NO FORCED MAPPING. If no candidate's definition correctly fits the assay — wrong
+   measurement principle, wrong assay type, or the assay name is too vague/generic to
+   identify a specific technique — output "none". Never force a mapping.
+
+9. SYNONYMS ARE EQUAL TO LABELS. A paper writing "ELISA" and a candidate label reading
+   "enzyme-linked immunosorbent assay" are the same technique. Match against synonyms
+   as readily as against labels.
+
+## Output format
+
+Reply with ONLY the candidate number and granularity, separated by a tab. No explanation.
+
+Granularity values:
+  EXACT        — the candidate definition closely and specifically describes this assay
+  BROAD        — the candidate is a correct category but more general than the assay
+                 (e.g. "flow cytometry assay" for intracellular cytokine staining)
+  ANCESTOR_ONLY — nearest ancestor used; no specific OBI term exists for this assay
+
+Examples of valid output:
+  3\tEXACT
+  7\tBROAD
+  none
+
+If no candidate fits: output exactly "none" with no tab or granularity.

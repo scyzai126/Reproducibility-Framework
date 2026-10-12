@@ -27,7 +27,6 @@ hyphens a PDF text layer carries. What is genuinely lost is check_source_section
 ids to locate an entry and reports "unknown" without them.
 """
 
-import json
 import logging
 
 from openai import AsyncOpenAI
@@ -36,6 +35,7 @@ from app.agent.assay_extractor import (
     AssayExtractionError,
     clean_registry,
     contract_warnings,
+    parse_registry_json,
 )
 from app.agent.claim_parser import _load_prompt, _strip_fences
 from app.agent.pdf_direct import _pdf_file_content
@@ -92,10 +92,7 @@ async def extract_assays_from_pdf(
     if not raw:
         raise AssayExtractionError("model returned an empty response")
 
-    try:
-        parsed = json.loads(raw)
-    except json.JSONDecodeError as exc:
-        raise AssayExtractionError(f"model returned unparseable JSON: {exc}") from exc
+    parsed = parse_registry_json(raw)
 
     registry = clean_registry(parsed)
     # Empty sentence_ids are the contract here, not a defect -- see contract_warnings.

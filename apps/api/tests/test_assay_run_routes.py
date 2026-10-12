@@ -80,6 +80,8 @@ def data_step(monkeypatch):
 def vocabulary(monkeypatch):
     monkeypatch.setattr(assay_service, "_build_lookup",
                         lambda: {"flow cytometry": "OBI:0000916"})
+    # A leaf here, so the hit stays free; the live index gives flow cytometry a child.
+    monkeypatch.setattr(assay_service, "_index_children", lambda: {})
 
 
 @pytest.fixture

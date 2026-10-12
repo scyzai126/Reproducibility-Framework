@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pytest
 
-BENCHMARK_DIR = Path(__file__).resolve().parents[3] / "data" / "benchmark_assay"
+BENCHMARK_DIR = Path(__file__).resolve().parents[3] / "data" / "benchmark_assay" / "benchmark_assay_v1"
 
 
 def _benchmark_files() -> list[Path]:
@@ -48,7 +48,7 @@ def test_every_benchmark_filename_starts_with_its_study_accession(path: Path):
     is skipped, which is how a paper silently leaves the report."""
     import importlib.util
 
-    script = BENCHMARK_DIR.parents[1] / "scripts" / "compare_assay_benchmark.py"
+    script = BENCHMARK_DIR.parents[2] / "scripts" / "compare_assay_benchmark.py"
     spec = importlib.util.spec_from_file_location("compare_assay_benchmark", script)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)

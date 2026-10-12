@@ -60,7 +60,7 @@ from app.agent.assay_merger import (
     canonicalize_registry,
     key_map,
 )
-from app.agent.assay_obi_mapper import _build_lookup, enrich_assays_with_obi
+from app.agent.assay_obi_mapper import _build_lookup, _index_children, enrich_assays_with_obi
 from app.agent.assay_registry import normalize_assay_name
 from app.agent.assay_verifier import (
     build_report,
@@ -347,9 +347,9 @@ def quote_report(assays: dict, source_text: str) -> dict:
 #: "exact_normalized" is deliberately absent: it can no longer be produced, and counting a
 #: value from an older mapping as free here would under-report a re-run's bill.
 #:
-#: "exact_normalized_llm" *is* free and must be listed. It is step 1b -- a dict lookup on the
-#: normalized_name the extractor already wrote -- and it reaches the same `return` as
-#: exact_original without touching the network. Omitting it billed a 4-assay paper 8 calls for
+#: "exact_normalized_llm" *is* free and must be listed. It was the exact lookup on
+#: normalized_name (removed 2026-10-02, so only stored rows carry it), and it reached the same
+#: `return` as exact_original without touching the network. Omitting it billed a 4-assay paper 8 calls for
 #: a round that made none.
 _OBI_FREE_RESOURCES = ("exact_original", "exact_normalized_llm")
 
@@ -416,17 +416,22 @@ def obi_summary(obi: dict) -> dict:
 def obi_misses(assays: dict) -> list[str]:
     """Which assays would fall through to the OBI mapper's paid step. No API call.
 
-    Mirrors assay_obi_mapper.map_assay_to_obi step for step: step 1a looks up the *first*
-    wording, step 1b the `normalized_name`, and nothing else. It used to also count any later
+    Mirrors assay_obi_mapper.map_assay_to_obi: step 1 looks up the *first* wording and nothing
+    else -- not the `normalized_name`, which since 2026-10-02 is a retrieval query only. It used to also count any later
     wording and the registry key as a free hit -- and after round 5 the key of every mapped entry
     is an OBI label, which the vocabulary always knows, so a finished paper estimated almost no
     OBI calls at all.
+
+    An exact hit is free only on a term with no children in the index; one that has children is
+    pinned into the paid step for the picker to refine ("exact_original_llm"), so it is a miss.
     """
     lookup = _build_lookup()
+    children = _index_children()
     missed = []
     for key, entry in assays.items():
-        original, normalized = _obi_query(key, entry)
-        if not any(lookup.get(c.lower()) for c in (original, normalized) if c):
+        original, _ = _obi_query(key, entry)
+        hit = lookup.get(original.lower()) if original else None
+        if not hit or children.get(hit["obi_id"] if isinstance(hit, dict) else hit):
             missed.append(key)
     return missed
 

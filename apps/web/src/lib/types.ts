@@ -173,6 +173,8 @@ export interface ChatSession {
 /** How an assay name was resolved to its OBI term, in fixed display order. */
 export type ObiResource =
   | 'exact_original'
+  /** Exact hit on a term with children in the index; the picker chose it or a direct child. */
+  | 'exact_original_llm'
   /** Retired: the lexical round that stripped a trailing " assay". Still on 40 stored rows. */
   | 'exact_normalized'
   /** Exact hit on the extractor's technique judgement — the live normalized tier. */

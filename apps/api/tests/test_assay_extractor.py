@@ -11,6 +11,7 @@ from app.agent.assay_extractor import (
     clean_entry,
     clean_registry,
     contract_warnings,
+    parse_registry_json,
     trim_registry,
 )
 
@@ -314,3 +315,20 @@ def test_a_registry_wrapped_as_a_list_is_keyed_by_name_in_paper():
 def test_an_object_with_keys_but_no_entries_is_an_error_not_an_empty_registry():
     with pytest.raises(AssayExtractionError, match="no assay entries"):
         clean_registry({"note": "the paper has no Methods section"})
+
+
+def test_a_repeated_key_keeps_both_entries(caplog):
+    """Two analyte-split entries can strip to one bare name; json.loads would keep only the last."""
+    raw = ('{"Luminex": {"name_in_paper": "Luminex", "readouts": "antibody titers"},'
+           ' "Luminex": {"name_in_paper": "Luminex", "readouts": "cytokines"}}')
+
+    parsed = parse_registry_json(raw)
+
+    assert list(parsed) == ["Luminex", "Luminex (2)"]
+    assert parsed["Luminex (2)"]["readouts"] == "cytokines"
+    assert "duplicate key" in caplog.text
+
+
+def test_unparseable_registry_json_raises_the_extraction_error():
+    with pytest.raises(AssayExtractionError):
+        parse_registry_json("{not json")

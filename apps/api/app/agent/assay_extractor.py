@@ -160,6 +160,34 @@ def clean_entry(key: str, raw: dict) -> dict:
     }
 
 
+def _keep_duplicate_keys(pairs: list[tuple[str, object]]) -> dict:
+    """object_pairs_hook that renames a repeated key to "<key> (2)", "(3)", ... and warns.
+
+    The registry is keyed by `name_in_paper`, and the naming rules strip names to the bare
+    technique -- so two entries the prompt splits by analyte ("Luminex" antibody assay,
+    "Luminex" cytokine panel) can come back under one key. Plain json.loads keeps the last and
+    drops the other without a word; this keeps both so the verifier sees each.
+    """
+    out: dict = {}
+    for key, value in pairs:
+        unique, n = key, 1
+        while unique in out:
+            n += 1
+            unique = f"{key} ({n})"
+        if unique != key:
+            logger.warning("assay extraction: duplicate key %r kept as %r", key, unique)
+        out[unique] = value
+    return out
+
+
+def parse_registry_json(raw: str) -> object:
+    """json.loads for a model's registry answer, keeping entries that share a key."""
+    try:
+        return json.loads(raw, object_pairs_hook=_keep_duplicate_keys)
+    except json.JSONDecodeError as exc:
+        raise AssayExtractionError(f"model returned unparseable JSON: {exc}") from exc
+
+
 def clean_registry(parsed: object) -> dict:
     """Validate and normalize a whole model answer into a registry.
 
@@ -320,10 +348,7 @@ async def extract_assays(
     if not raw:
         raise AssayExtractionError("model returned an empty response")
 
-    try:
-        parsed = json.loads(raw)
-    except json.JSONDecodeError as exc:
-        raise AssayExtractionError(f"model returned unparseable JSON: {exc}") from exc
+    parsed = parse_registry_json(raw)
 
     registry = clean_registry(parsed)
     # `expect_sentence_ids=False` here, not because this route lacks markers, but because

@@ -11,7 +11,10 @@ def test_exact_original_match():
     assert mapped["confidence"] == "high"
 
 
-def test_ontology_synonym_maps_prompt_canonical_names():
+def test_ontology_synonym_maps_prompt_canonical_names(monkeypatch):
+    # CyTOF's term has children in the index, so its hit goes to the picker; the stub abstains
+    # and the exact hit stands.
+    _no_pick(monkeypatch)
     assert map_assay_to_obi("CyTOF", "CyTOF")["obi_id"] == "OBI:0002115"
     assert map_assay_to_obi("CITE-seq", "CITE-seq")["obi_id"] == "OBI:0003788"
     assert map_assay_to_obi("Olink", "Olink")["obi_id"] == "OBI:0003112"
@@ -23,48 +26,65 @@ def test_exact_match_confidence_is_always_high():
     assert original["resource"] == "exact_original"
 
 
-def test_the_normalized_name_is_an_exact_match_key_of_its_own(monkeypatch):
-    """Step 1b. Replaces test_the_normalized_name_is_never_tried_as_a_lookup_key.
+def test_the_normalized_name_is_not_an_exact_match_key(monkeypatch):
+    """Only the paper's own name is looked up exactly; the normalized name goes to step 2.
 
-    That test pinned the opposite rule, and it was right about the round it was written for:
-    the old normalization was *lexical* (strip a trailing " assay") and earned nothing. This
-    field holds an LLM's judgement of which technique the assay is, and looking it up takes the
-    step-1 hit rate over the 171 curated rows of the retired all_assays_full.json from 39% to 62%.
-
-    "enzyme-linked immunosorbent assay" is a verbatim OBI label, so a paper name the vocabulary
-    has never heard of still resolves through it -- without reaching the paid round at all.
+    It was an exact key until 2026-10-02 ("exact_normalized_llm") and was removed for answering
+    too generally: 33 of 52 benchmark disagreements were its hits. "enzyme-linked immunosorbent
+    assay" is a verbatim OBI label, so an exact round would have resolved this pair for free --
+    it must instead reach the embedding + LLM step, carrying the normalized name as a query.
     """
     from app.agent import assay_obi_mapper
-    _no_step3(monkeypatch)
 
-    mapped = assay_obi_mapper.map_assay_to_obi(
-        "XYZZY_unknown", "enzyme-linked immunosorbent assay")
+    calls = []
+    monkeypatch.setattr(
+        assay_obi_mapper, "_embedding_llm_match",
+        lambda query, **kwargs: calls.append((query, kwargs)) or None,
+    )
 
-    assert mapped["obi_id"] == "OBI:0000661"
-    assert mapped["resource"] == "exact_normalized_llm"
-    assert mapped["confidence"] == "high"
+    assert assay_obi_mapper.map_assay_to_obi(
+        "XYZZY_unknown", "enzyme-linked immunosorbent assay") is None
+    assert len(calls) == 1
+    query, kwargs = calls[0]
+    assert query == "XYZZY_unknown"
+    assert kwargs["normalized_query"] == "enzyme-linked immunosorbent assay"
 
 
-def test_the_normalized_name_reaches_flow_cytometry_for_a_staining_section(monkeypatch):
-    """The row this whole change exists for.
+def test_a_staining_section_reaches_flow_cytometry_through_the_picker(monkeypatch):
+    """The row normalized_name exists for, now decided by the picker rather than a lookup.
 
     The paper calls its assay "Surface and intracellular cytokine staining" -- a protocol
-    section heading. Against that string OBI:0000916 ranks 44th of 700, outside TOP_K, so the
-    picker never saw it and chose `immuno staining assay`. The curator gold files
-    (data/benchmark_assay/SDY2189_*.json, SDY1364_*.json) both say flow cytometry assay.
-
-    Normalized to the technique, it is an exact match: `_index_keys` strips the trailing
-    " assay" from the label, so "flow cytometry" is a key. No embedding, no LLM call.
+    section heading. Against that string OBI:0000916 ranks 44th of 700, outside TOP_K. The
+    normalized query "flow cytometry" retrieves it, so the merged pool holds it, and the picker
+    is shown the paper's wording with the technique alongside.
     """
     from app.agent import assay_obi_mapper
-    _no_step3(monkeypatch)
+
+    def fake_top_k(query, k=10, allowed_ids=None):
+        if query == "Surface and intracellular cytokine staining":
+            return [{"id": "OBI:0001632", "label": "immuno staining assay", "similarity": 0.52}]
+        return [{"id": "OBI:0000916", "label": "flow cytometry assay", "similarity": 0.88}]
+
+    seen = {}
+
+    def fake_pick(assay_name, candidates, normalized_name="", **_):
+        seen.update(name=assay_name, normalized=normalized_name,
+                    ids=[c["id"] for c in candidates])
+        flow = next(c for c in candidates if c["id"] == "OBI:0000916")
+        return {"obi_id": flow["id"], "obi_label": flow["label"],
+                "resource": "embedding_llm", "confidence": flow["similarity"]}
+
+    monkeypatch.setattr(assay_obi_mapper, "_top_k_candidates", fake_top_k)
+    monkeypatch.setattr(assay_obi_mapper, "_llm_pick", fake_pick)
 
     mapped = assay_obi_mapper.map_assay_to_obi(
         "Surface and intracellular cytokine staining", "flow cytometry")
 
     assert mapped["obi_id"] == "OBI:0000916"
-    assert mapped["obi_label"] == "flow cytometry assay"
-    assert mapped["resource"] == "exact_normalized_llm"
+    assert mapped["resource"] == "embedding_llm_normalized"
+    assert set(seen["ids"]) == {"OBI:0000916", "OBI:0001632"}
+    assert seen["name"] == "Surface and intracellular cytokine staining"
+    assert seen["normalized"] == "flow cytometry"
 
 
 def test_the_paper_name_wins_when_both_names_exact_match(monkeypatch):
@@ -76,19 +96,21 @@ def test_the_paper_name_wins_when_both_names_exact_match(monkeypatch):
     answer here, which is what makes step 1a-before-1b the right order rather than a coin toss.
     """
     from app.agent import assay_obi_mapper
-    _no_step3(monkeypatch)
+    _no_pick(monkeypatch)
 
     mapped = assay_obi_mapper.map_assay_to_obi("RNA-seq", "RNA sequencing")
 
-    assert mapped["resource"] == "exact_original"
+    # RNA-seq assay has children, so the picker is asked; it abstains here, and the paper's own
+    # exact hit -- not the normalized name's -- is what stands.
+    assert mapped["resource"] == "exact_original_llm"
     assert mapped["obi_label"] == "RNA-seq assay"
 
 
 def test_an_absent_normalized_name_leaves_step_1_exactly_as_it_was(monkeypatch):
     """The 44 registries on disk predate the field, and registry_from_claims cannot supply it.
 
-    An empty normalized name must make step 1b a no-op rather than matching something -- an
-    empty lookup key resolving to any term would silently remap every legacy entry.
+    An empty normalized name must not match anything -- an empty lookup key resolving to any
+    term would silently remap every legacy entry.
     """
     from app.agent import assay_obi_mapper
     _no_step3(monkeypatch)
@@ -136,8 +158,9 @@ def test_step3_retrieves_on_the_normalized_name_but_shows_the_llm_the_paper_name
         seen["query"] = query
         return [{"id": "OBI:0002031", "label": "genotyping by SNP array assay", "similarity": 0.67}]
 
-    def fake_llm_pick(assay_name, candidates, sample_type="", readouts="", **_):
-        seen["shown"] = assay_name
+    def fake_llm_pick(assay_name, candidates, sample_type="", readouts="", normalized_name="",
+                      **_):
+        seen.update(shown=assay_name, normalized=normalized_name)
         return {
             "obi_id": "OBI:0002031",
             "obi_label": candidates[0]["label"],
@@ -151,8 +174,8 @@ def test_step3_retrieves_on_the_normalized_name_but_shows_the_llm_the_paper_name
     assay_obi_mapper.map_assay_to_obi("ImmunoChip array", "Genome-wide SNP genotyping")
 
     assert seen["query"] == "Genome-wide SNP genotyping"
-    assert "ImmunoChip array" in seen["shown"]
-    assert "Genome-wide SNP genotyping" in seen["shown"]
+    assert seen["shown"] == "ImmunoChip array"
+    assert seen["normalized"] == "Genome-wide SNP genotyping"
 
 
 def test_step3_shows_one_name_when_normalization_changed_nothing(monkeypatch):
@@ -243,16 +266,25 @@ def test_term_ids_exclude_compositional_terms():
     assert "OBI:0000916" in ids  # flow cytometry assay
 
 
-def test_filter_still_guards_an_unpruned_vocabulary():
+def test_filter_still_guards_an_unpruned_vocabulary(tmp_path):
     """The default vocabulary is pre-pruned, so the load-time filter has nothing to do there.
 
     It still has to work, because --terms lets a caller point the mapper at any term list —
-    including the unpruned original kept alongside it for reference.
+    including the unpruned assay branch of obi.obo, written out here.
     """
+    import importlib.util
+    import json
+    from pathlib import Path
+
     from app.agent.assay_obi_mapper import _OBI_DIR, _term_ids
 
-    unpruned = _OBI_DIR / "obi_assay_terms_full.json"
-    assert unpruned.exists(), "reference copy of the unfiltered vocabulary is missing"
+    script = Path(__file__).resolve().parents[3] / "scripts" / "prune_obi_domain.py"
+    spec = importlib.util.spec_from_file_location("prune_obi_domain", script)
+    prune = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(prune)
+
+    unpruned = tmp_path / "obi_assay_branch.json"
+    unpruned.write_text(json.dumps(prune.assay_branch(prune.OBO_PATH)), encoding="utf-8")
 
     _term_ids.cache_clear()
     ids = _term_ids(unpruned)
@@ -288,6 +320,15 @@ def test_embedding_candidates_are_all_generic(monkeypatch):
 
 
 # ── Extraction confidence vs OBI confidence ───────────────────────────────────
+
+def _no_pick(monkeypatch):
+    """Run step 2 offline: retrieval returns nothing and the picker abstains, so only the
+    pinned exact hit and its children reach the (stubbed) picker."""
+    from app.agent import assay_obi_mapper
+
+    monkeypatch.setattr(assay_obi_mapper, "_top_k_candidates", lambda *a, **k: [])
+    monkeypatch.setattr(assay_obi_mapper, "_llm_pick", lambda *a, **k: None)
+
 
 def _no_step3(monkeypatch):
     """Stub the embedding+LLM fallback so a deliberately unmatchable name resolves to None.
@@ -474,6 +515,46 @@ def test_merged_pools_are_capped_at_top_k():
     assert len(_merge_candidates(left, right)) == TOP_K
 
 
+def test_the_paper_wordings_top_slots_survive_higher_scoring_normalized_hits():
+    """The normalized query's broad terms score higher, but cannot push the paper's out.
+
+    A plain merge by score kept the 20 best of both pools; here that would be all 20 from the
+    normalized query. With PRIMARY_SLOTS reserved, the paper wording's 14 best always stay.
+    """
+    from app.agent.assay_obi_mapper import PRIMARY_SLOTS, TOP_K, _merge_candidates
+
+    paper = [{"id": f"OBI:P{i}", "label": "p", "similarity": 0.4} for i in range(TOP_K)]
+    normalized = [{"id": f"OBI:N{i}", "label": "n", "similarity": 0.9} for i in range(TOP_K)]
+
+    merged = [c["id"] for c in _merge_candidates(paper, normalized)]
+
+    assert len(merged) == TOP_K
+    assert {f"OBI:P{i}" for i in range(PRIMARY_SLOTS)} <= set(merged)
+    assert sum(m.startswith("OBI:N") for m in merged) == TOP_K - PRIMARY_SLOTS
+    assert merged[0].startswith("OBI:N")  # still shown best-score first
+
+
+def test_the_paper_query_carries_the_aliases_but_not_sample_or_readouts(monkeypatch):
+    """Retrieval embeds "name | alias | ..."; sample type and readouts only reach the picker."""
+    from app.agent import assay_obi_mapper
+
+    queries = []
+    monkeypatch.setattr(
+        assay_obi_mapper, "_top_k_candidates",
+        lambda query, k=20, allowed_ids=None: (
+            queries.append(query), [{"id": "OBI:1", "label": "x", "similarity": 0.5}])[1],
+    )
+    monkeypatch.setattr(assay_obi_mapper, "_llm_pick", lambda *a, **k: None)
+
+    assay_obi_mapper.map_assay_to_obi(
+        "Whole transcriptome profiling", "RNA sequencing",
+        sample_type="PBMC", readouts="gene expression",
+        aliases=["RNA-seq", "whole transcriptome profiling", " "],
+    )
+
+    assert queries == ["Whole transcriptome profiling | RNA-seq", "RNA sequencing"]
+
+
 def test_a_term_only_the_normalized_query_could_reach_is_attributed_to_it(monkeypatch):
     """Otherwise a benchmark run cannot tell whether normalization earned its keep in step 2.
 
@@ -542,14 +623,14 @@ def test_the_picker_is_shown_both_names_but_retrieval_is_not_display(monkeypatch
     )
     monkeypatch.setattr(
         assay_obi_mapper, "_llm_pick",
-        lambda assay_name, candidates, sample_type="", readouts="", **_: seen.__setitem__(
-            "shown", assay_name),
+        lambda assay_name, candidates, sample_type="", readouts="", normalized_name="", **_:
+        seen.update(shown=assay_name, normalized=normalized_name),
     )
 
     assay_obi_mapper.map_assay_to_obi("ImmunoChip array", "Genome-wide SNP genotyping")
 
-    assert seen["shown"].startswith("ImmunoChip array")
-    assert "Genome-wide SNP genotyping" in seen["shown"]
+    assert seen["shown"] == "ImmunoChip array"
+    assert seen["normalized"] == "Genome-wide SNP genotyping"
 
 
 # ── domain prune guards (scripts/prune_obi_domain.py) ────────────────────────────────
@@ -586,15 +667,15 @@ def test_index_is_reproducible_from_the_full_source():
     """The committed index must be exactly what re-running the prune produces.
 
     Neither set of removed terms is committed, so this is what keeps the vocabulary honest: the
-    index is a *derived* file, and `obi_assay_terms_full.json` + `obi.obo` + the roots in
-    scripts/prune_obi_domain.py are its source. If they ever disagree, someone hand-edited the
-    index or changed the roots without rebuilding, and the difference is otherwise invisible.
+    index is a *derived* file, and `obi.obo` + the roots in scripts/prune_obi_domain.py are its
+    source. If they ever disagree, someone hand-edited the index or changed the roots without
+    rebuilding, and the difference is otherwise invisible.
     """
     import importlib.util
     import json
     from pathlib import Path
 
-    from app.agent.assay_obi_mapper import _OBI_DIR, _is_generic_assay_label
+    from app.agent.assay_obi_mapper import _OBI_DIR
 
     # scripts/ is not an importable package — same loader shim as test_compare_assay_benchmark.py
     script = Path(__file__).resolve().parents[3] / "scripts" / "prune_obi_domain.py"
@@ -602,11 +683,7 @@ def test_index_is_reproducible_from_the_full_source():
     prune = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(prune)
 
-    source = json.loads((_OBI_DIR / "obi_assay_terms_full.json").read_text(encoding="utf-8"))
-    generic = [t for t in source if _is_generic_assay_label(t["label"])]
-    _, children = prune.parse_obo(prune.OBO_PATH)
-    dropped = prune.out_of_scope_ids(generic, children)
-    rebuilt = [t for t in generic if t["id"] not in dropped]
+    _, _, rebuilt, _ = prune.build_index(prune.OBO_PATH)
 
     committed = json.loads((_OBI_DIR / "obi_generic_index.json").read_text(encoding="utf-8"))
 
@@ -771,8 +848,189 @@ def test_one_failed_lookup_leaves_the_other_entries_mapped(monkeypatch):
 @pytest.mark.parametrize("reply, expected", [
     ("3", 2), ("#3", 2), ("3.", 2), ("**3**", 2),
     ("none", None), ("OBI:0000661", None), ("3 or 5", None), ("12", None), ("0", None),
+    ("3 EXACT", 2), ("3\tBROAD", 2), ("3 maybe", None), ("12 EXACT", None),
 ])
 def test_the_pick_reply_is_read_strictly(reply, expected):
     from app.agent.assay_obi_mapper import parse_pick
 
     assert parse_pick(reply, 10) == expected
+
+
+@pytest.mark.parametrize("reply, expected", [
+    ("3 EXACT", (2, "EXACT")), ("**7 broad**", (6, "BROAD")), ("3", (2, None)),
+    ("none", (None, None)), ("3 ANCESTOR_ONLY", (None, None)),
+])
+def test_the_pick_reply_carries_its_granularity(reply, expected):
+    """The prompt asks for "<n> EXACT|BROAD"; a bare number still parses, with no granularity."""
+    from app.agent.assay_obi_mapper import parse_pick_reply
+
+    assert parse_pick_reply(reply, 10) == expected
+
+
+def test_the_prompt_shows_the_definition_and_descendant_count():
+    """The picker is told the definition is primary and to break ties on fewer descendants,
+    so both have to be on the candidate line -- a rule about text it cannot see is no rule."""
+    from app.agent.assay_obi_mapper import _MAX_DEFINITION_CHARS, build_pick_prompt
+
+    prompt = build_pick_prompt("x", [
+        {"id": "OBI:0000916", "label": "flow cytometry assay", "text": "flow cytometry assay | FACS",
+         "similarity": 0.55, "definition": "A cytometry assay in which cells pass a laser.",
+         "n_descendants": 50},
+        {"id": "OBI:2", "label": "long", "text": "long", "similarity": 0.4,
+         "definition": "word " * 200, "n_descendants": 0},
+    ])
+
+    assert ("1. OBI:0000916 | flow cytometry assay | FACS | definition: A cytometry assay in "
+            "which cells pass a laser. | descendants: 50 (similarity: 0.55)") in prompt
+    long_line = next(line for line in prompt.splitlines() if line.startswith("2. "))
+    assert "..." in long_line and len(long_line) < _MAX_DEFINITION_CHARS + 100
+    assert "descendants: 0" in long_line
+
+
+def test_the_prompt_carries_the_normalized_name_on_its_own_line():
+    from app.agent.assay_obi_mapper import build_pick_prompt
+
+    assert "Normalized technique name: flow cytometry" in build_pick_prompt(
+        "Surface and intracellular cytokine staining", _candidates(),
+        normalized_name="flow cytometry")
+    prompt = build_pick_prompt("SIMoA", _candidates())
+    assert "Normalized technique name: not given" in prompt
+    assert "{normalized_name}" not in prompt
+
+
+def test_retrieved_candidates_carry_definition_and_descendants():
+    """Every live candidate gets them from the index; the embeddings file has neither field."""
+    from app.agent import assay_obi_mapper
+
+    details = assay_obi_mapper._term_details()
+    assert details["OBI:0001463"]["n_descendants"] is not None
+    assert details["OBI:0001463"]["definition"]
+
+
+def test_enrich_records_the_pickers_granularity(monkeypatch):
+    from app.agent import assay_obi_mapper
+
+    monkeypatch.setattr(assay_obi_mapper, "map_assay_to_obi", lambda name, *a, **k: None if name == "x" else {
+        "obi_id": "OBI:0000916", "obi_label": "flow cytometry assay", "resource": "embedding_llm",
+        "confidence": 0.6, "granularity": "BROAD"})
+
+    enriched = enrich_assays_with_obi({"intracellular cytokine staining": {}, "x": {}})
+
+    assert enriched["intracellular cytokine staining"]["obi_granularity"] == "BROAD"
+    assert enriched["x"]["obi_granularity"] is None
+
+
+# ── exact hits on terms with children ─────────────────────────────────────────
+
+def test_an_exact_hit_on_a_leaf_term_answers_without_the_picker(monkeypatch):
+    """ELISA has no child left in the index (its 53 OBI descendants were pruned), so there is
+    nothing more specific to choose and the hit stays free."""
+    from app.agent import assay_obi_mapper
+
+    monkeypatch.setattr(assay_obi_mapper, "_embedding_llm_match",
+                        lambda *a, **k: pytest.fail("a leaf hit must not reach step 2"))
+
+    mapped = assay_obi_mapper.map_assay_to_obi("ELISA", "ELISA")
+
+    assert mapped["resource"] == "exact_original"
+    assert mapped["obi_id"] == "OBI:0000661"
+
+
+def test_index_children_are_direct_and_inside_the_index():
+    from app.agent.assay_obi_mapper import _index_children, _term_ids, _OBI_TERMS_PATH
+
+    children = _index_children()
+    allowed = _term_ids(_OBI_TERMS_PATH)
+    assert all(p in allowed and set(c) <= allowed for p, c in children.items())
+    # RNA sequencing assay -> RNA-seq assay -> bulk RNA-seq assay: direct only.
+    assert "OBI:0001271" in children["OBI:0001177"]
+    assert "OBI:0003090" not in children["OBI:0001177"]
+    assert {"OBI:0003090", "OBI:0002631"} <= set(children["OBI:0001271"])
+    assert "OBI:0000661" not in children
+
+
+def test_an_rna_seq_hit_pins_its_children_and_the_picker_can_choose_bulk(monkeypatch):
+    from app.agent import assay_obi_mapper
+
+    monkeypatch.setattr(assay_obi_mapper, "_top_k_candidates", lambda *a, **k: [
+        {"id": "OBI:0001177", "label": "RNA sequencing assay", "similarity": 0.8}])
+    seen = {}
+
+    def fake_pick(assay_name, candidates, **_):
+        seen["candidates"] = candidates
+        bulk = next(c for c in candidates if c["id"] == "OBI:0003090")
+        return {"obi_id": bulk["id"], "obi_label": bulk["label"], "resource": "embedding_llm",
+                "confidence": bulk["similarity"], "granularity": "EXACT"}
+
+    monkeypatch.setattr(assay_obi_mapper, "_llm_pick", fake_pick)
+
+    mapped = assay_obi_mapper.map_assay_to_obi("RNA-seq", "RNA sequencing",
+                                               sample_type="whole blood in PAXgene")
+
+    pins = {c["id"]: c.get("pin") for c in seen["candidates"]}
+    assert seen["candidates"][0]["id"] == "OBI:0001271"
+    assert pins["OBI:0001271"] == "exact"
+    assert pins["OBI:0003090"] == pins["OBI:0002631"] == "child"
+    assert pins["OBI:0001177"] is None  # retrieved, not pinned
+    assert mapped == {"obi_id": "OBI:0003090", "obi_label": "bulk RNA-seq assay",
+                      "resource": "exact_original_llm", "confidence": "high",
+                      "granularity": "EXACT"}
+
+
+def test_the_exact_hit_stands_when_the_picker_abstains(monkeypatch):
+    _no_pick(monkeypatch)
+
+    mapped = map_assay_to_obi("RNA Sequencing", "RNA sequencing")
+
+    assert mapped == {"obi_id": "OBI:0001177", "obi_label": "RNA sequencing assay",
+                      "resource": "exact_original_llm", "confidence": "high"}
+
+
+def test_pinned_candidates_are_labelled_in_the_pick_prompt():
+    from app.agent.assay_obi_mapper import _pinned_candidates, build_pick_prompt
+
+    pinned = _pinned_candidates("OBI:0001271")
+    prompt = build_pick_prompt("RNA-seq", pinned)
+
+    assert "OBI:0001271 | RNA-seq assay" in prompt
+    assert "(exact name match)" in prompt
+    assert "single-cell RNA sequencing assay | scRNA-seq" in prompt
+    assert "(child of exact name match)" in prompt
+    assert "similarity: None" not in prompt
+    assert "8. EXACT NAME MATCH" in prompt
+
+
+def test_an_rna_sequencing_hit_also_pins_its_grandchildren():
+    """Bulk and single-cell RNA-seq sit under RNA-seq assay, two levels below the term a paper's
+    "RNA Sequencing" hits; only the RNA sequencing family walks that far."""
+    from app.agent.assay_obi_mapper import _pinned_candidates
+
+    pins = {c["id"]: c["pin"] for c in _pinned_candidates("OBI:0001177")}
+
+    assert pins["OBI:0001177"] == "exact"
+    assert pins["OBI:0001271"] == "child"
+    assert pins["OBI:0003090"] == pins["OBI:0002631"] == "grandchild"
+
+
+def test_other_hits_pin_direct_children_only():
+    """microarray assay has a grandchild in the index (genotyping by SNP array, under genotyping
+    by array) that must not be pinned."""
+    from app.agent.assay_obi_mapper import _index_children, _pinned_candidates
+
+    children = _index_children()
+    direct = set(children["OBI:0001985"])
+    grand = {g for c in direct for g in children.get(c, ())} - direct
+    pinned = {c["id"]: c["pin"] for c in _pinned_candidates("OBI:0001985")}
+
+    assert grand and not grand & set(pinned)
+    assert set(pinned) == direct | {"OBI:0001985"}
+    assert "grandchild" not in pinned.values()
+
+
+def test_grandchildren_are_labelled_in_the_pick_prompt():
+    from app.agent.assay_obi_mapper import _pinned_candidates, build_pick_prompt
+
+    prompt = build_pick_prompt("RNA Sequencing", _pinned_candidates("OBI:0001177"))
+
+    assert "bulk RNA-seq assay" in prompt
+    assert "(grandchild of exact name match)" in prompt

@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 """Derive the live OBI assay vocabulary from the full assay branch.
 
-Builds `obi_generic_index.json` from `obi_assay_terms_full.json` in two stages:
+Builds `obi_generic_index.json` from `obi.obo` in three stages:
 
-    1794  --[ measuring/detecting compositional filter ]-->  1248  --[ tier A-I subtrees ]-->  700
+    5218  --[ assay branch ]-->  1794  --[ measuring/detecting compositional filter ]-->  1248
+          --[ tier A-I subtrees ]-->  700
+
+**Stage 0** keeps the `is_a` descendants of `OBI:0000070 assay`. Each kept term then gets its
+`definition` and `n_descendants` from `obi.obo` (see `annotate`).
 
 **Stage 1** drops the IEDB-style compositional labels (*"… assay measuring epitope specific X
 production by Y cells"*). It reuses `_is_generic_assay_label` from the mapper so the rule has one
@@ -19,7 +23,7 @@ bump.
 
 Removed terms are **not** persisted. The root list below plus `data/OBI/README.md` record what
 goes and why; `--show-dropped` reprints the terms themselves on demand. Because the whole index is
-derived from `obi_assay_terms_full.json` + `obi.obo`, it is reproducible and verified as such by
+derived from `obi.obo` and the roots below, it is reproducible and verified as such by
 `apps/api/tests/test_assay_obi_mapper.py::test_index_is_reproducible_from_the_full_source`.
 
 Idempotent — rebuilding from source always lands on the same 700 terms in the same order.
@@ -39,7 +43,6 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 OBI_DIR = REPO_ROOT / "data" / "OBI"
 OBO_PATH = OBI_DIR / "obi.obo"
-SOURCE_PATH = OBI_DIR / "obi_assay_terms_full.json"
 INDEX_PATH = OBI_DIR / "obi_generic_index.json"
 
 sys.path.insert(0, str(REPO_ROOT / "apps" / "api"))
@@ -105,28 +108,71 @@ KEEP_WHITELIST = {
 }
 
 
-def parse_obo(path: Path) -> tuple[dict[str, str], dict[str, list[str]]]:
-    """Return ({id: name}, {parent_id: [child_id, ...]}) for every [Term] stanza."""
-    names: dict[str, str] = {}
-    children: dict[str, list[str]] = defaultdict(list)
+# `def: "text" [xrefs]` / `synonym: "text" EXACT []` — the text may carry escaped quotes.
+_OBO_QUOTED_RE = re.compile(r'^(def|synonym): "((?:[^"\\]|\\.)*)"')
+
+#: OBI's `assay` class. Its is_a descendants are the assay branch every stage starts from.
+ASSAY_ROOT = "OBI:0000070"
+
+
+def read_terms(path: Path) -> list[dict]:
+    """Every [Term] stanza in file order, as {id, name, synonyms, definition, parents}."""
+    terms: list[dict] = []
     for stanza in path.read_text(encoding="utf-8").split("\n[")[1:]:
         if not stanza.startswith("Term]"):
             continue
-        term_id = name = None
-        parents = []
+        term = {"id": None, "name": "", "synonyms": [], "definition": "", "parents": []}
         for line in stanza.split("\n"):
             if line.startswith("id: "):
-                term_id = line[4:].strip()
+                term["id"] = line[4:].strip()
             elif line.startswith("name: "):
-                name = line[6:].strip()
+                term["name"] = line[6:].strip()
             elif line.startswith("is_a: "):
-                parents.append(line[6:].split("!")[0].strip())
-        if not term_id:
-            continue
-        names[term_id] = name or ""
-        for parent in parents:
-            children[parent].append(term_id)
-    return names, children
+                term["parents"].append(line[6:].split("!")[0].strip())
+            elif match := _OBO_QUOTED_RE.match(line):
+                text = re.sub(r"\\(.)", r"\1", match.group(2))
+                if match.group(1) == "def":
+                    term["definition"] = text
+                else:
+                    term["synonyms"].append(text)
+        if term["id"]:
+            terms.append(term)
+    return terms
+
+
+def parse_obo(
+    path: Path,
+) -> tuple[dict[str, str], dict[str, list[str]], dict[str, str]]:
+    """Return ({id: name}, {parent_id: [child_id, ...]}, {id: definition}) for every [Term]."""
+    names: dict[str, str] = {}
+    children: dict[str, list[str]] = defaultdict(list)
+    definitions: dict[str, str] = {}
+    for term in read_terms(path):
+        names[term["id"]] = term["name"]
+        if term["definition"]:
+            definitions[term["id"]] = term["definition"]
+        for parent in term["parents"]:
+            children[parent].append(term["id"])
+    return names, children, definitions
+
+
+def assay_branch(path: Path) -> list[dict]:
+    """The full assay vocabulary: every descendant of `assay` (root excluded), in file order.
+
+    Each entry is {id, label, synonyms}. This is the 1794-term list every prune starts from, and
+    the vocabulary scripts/compare_assay_benchmark.py resolves curator keys against.
+    """
+    terms = read_terms(path)
+    children: dict[str, list[str]] = defaultdict(list)
+    for term in terms:
+        for parent in term["parents"]:
+            children[parent].append(term["id"])
+    branch = subtree(ASSAY_ROOT, children) - {ASSAY_ROOT}
+    return [
+        {"id": t["id"], "label": t["name"], "synonyms": t["synonyms"]}
+        for t in terms
+        if t["id"] in branch
+    ]
 
 
 def subtree(root: str, children: dict[str, list[str]]) -> set[str]:
@@ -156,6 +202,45 @@ def out_of_scope_ids(terms: list[dict], children: dict[str, list[str]]) -> set[s
     return (dropped & present) - KEEP_WHITELIST
 
 
+def annotate(
+    terms: list[dict], definitions: dict[str, str], children: dict[str, list[str]]
+) -> list[dict]:
+    """Add `definition` and `n_descendants` to each term, both read from obi.obo.
+
+    `n_descendants` counts distinct `is_a` descendants in the full ontology (self excluded), not
+    within the pruned index — the compositional children it counts are gone from the index, so a
+    family term like ELISPOT can be broad in OBI and a leaf here. A term with no `def:` gets "".
+    """
+    return [
+        {
+            **term,
+            "definition": definitions.get(term["id"], ""),
+            "n_descendants": len(subtree(term["id"], children)) - 1,
+        }
+        for term in terms
+    ]
+
+
+def build_index(obo_path: Path = OBO_PATH) -> tuple[list[dict], list[dict], list[dict], list[dict]]:
+    """Run every stage from obi.obo. Returns (assay branch, generic, kept, removed)."""
+    source = assay_branch(obo_path)
+
+    # Stage 1 — compositional labels
+    generic = [t for t in source if _is_generic_assay_label(t["label"])]
+
+    # Stage 2 — out-of-scope domains
+    _, children, definitions = parse_obo(obo_path)
+    dropped_ids = out_of_scope_ids(generic, children)
+
+    # Entries keep their fields and obi.obo order: _build_lookup indexes synonyms with
+    # setdefault, so index order decides synonym-collision ties.
+    kept = annotate(
+        [t for t in generic if t["id"] not in dropped_ids], definitions, children
+    )
+    removed = [t for t in generic if t["id"] in dropped_ids]
+    return source, generic, kept, removed
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -168,26 +253,14 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    source = json.loads(SOURCE_PATH.read_text(encoding="utf-8"))
-
-    # Stage 1 — compositional labels
-    generic = [t for t in source if _is_generic_assay_label(t["label"])]
-
-    # Stage 2 — out-of-scope domains
-    _, children = parse_obo(OBO_PATH)
-    dropped_ids = out_of_scope_ids(generic, children)
-
-    # Entries are copied through untouched and in their source order: _build_lookup indexes
-    # synonyms with setdefault, so index order decides synonym-collision ties.
-    kept = [t for t in generic if t["id"] not in dropped_ids]
-    removed = [t for t in generic if t["id"] in dropped_ids]
+    source, generic, kept, removed = build_index()
 
     if args.show_dropped:
         for term in removed:
             print(f"  {term['id']}  {term['label']}")
 
     print(
-        f"{len(source)} in source"
+        f"{len(source)} in assay branch"
         f" → {len(generic)} after compositional filter (-{len(source) - len(generic)})"
         f" → {len(kept)} after domain prune (-{len(removed)})"
     )

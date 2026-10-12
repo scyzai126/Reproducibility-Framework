@@ -39,7 +39,7 @@ from app.agent import assay_service
 from app.agent.assay_service import split_stem
 
 _REPO_ROOT = Path(__file__).resolve().parents[4]
-BENCHMARK_DIR = _REPO_ROOT / "data" / "benchmark_assay"
+BENCHMARK_DIR = _REPO_ROOT / "data" / "benchmark_assay" / "benchmark_assay_v1"
 #: The benchmark pairing lives in a CLI script that is not an importable package.
 _COMPARISON_SCRIPT = _REPO_ROOT / "scripts" / "compare_assay_benchmark.py"
 
