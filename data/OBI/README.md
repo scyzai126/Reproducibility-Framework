@@ -2,20 +2,36 @@
 
 The assay vocabulary and vectors used by `apps/api/app/agent/assay_obi_mapper.py`.
 **`obi_generic_index.json` is the live vocabulary the mapper searches.** It is a *derived* file:
-two prunes are applied to the OBI assay branch to get there, and `scripts/prune_obi_domain.py`
-rebuilds it from source in one command.
+`scripts/prune_obi_domain.py` takes the assay branch of `obi.obo`, applies two prunes, and adds
+each term's `definition` and `n_descendants` — one command, from `obi.obo` alone.
 
 | file | terms | size | role |
 |---|---|---|---|
-| `obi_generic_index.json` | 700 | 83 KB | **Live vocabulary.** Exact matching + the candidate pool for semantic search. Derived — do not hand-edit. |
-| `obi_generic_embeddings.json` | 1262 | 49 MB | **Live vectors.** `text-embedding-3-small`, 1536-dim. A superset of the index — see *Why the vectors are not pruned*. |
-| `obi_assay_terms_full.json` | 1794 | 261 KB | The source both prunes derive from. |
-| `obi.obo` | 5218 | 1.5 MB | Upstream OBI release 2026-05-08. The `is_a` graph the domain prune needs — off the serving path, but required to rebuild. |
+| `obi_generic_index.json` | 700 | 212 KB | **Live vocabulary.** Exact matching + the candidate pool for semantic search. Derived — do not hand-edit. |
+| `obi_generic_embeddings.json` | 700 | 28 MB | **Live vectors.** `text-embedding-3-small`, 1536-dim, one row per index term — see *The vectors*. |
+| `obi.obo` | 5218 | 1.5 MB | Upstream OBI release 2026-05-08. The only source: the index and the 1794-term assay branch are both derived from it. Off the serving path, but required to rebuild. |
 | `README.md` | — | — | This file: the record of what each prune removes and why. |
 
 ```
-obi_assay_terms_full  1794  ──[ measuring/detecting filter ]──▶  1248  ──[ tier A-I subtrees ]──▶  700
+obi.obo  5218  ──[ assay branch ]──▶  1794  ──[ measuring/detecting filter ]──▶  1248  ──[ tier A-I subtrees ]──▶  700
 ```
+
+The assay branch is every `is_a` descendant of `OBI:0000070 assay`, in `obi.obo` order. Each index
+entry is:
+
+```json
+{
+  "id": "OBI:0600031",
+  "label": "enzyme-linked immunospot assay",
+  "synonyms": ["ELISPOT assay"],
+  "definition": "A cytometry assay in which cells are cultured on a surface coated with ...",
+  "n_descendants": 43
+}
+```
+
+`definition` is the OBO `def:` text (all 700 have one). `n_descendants` counts distinct `is_a`
+descendants in the **full** `obi.obo`, self excluded — not within the index. ELISPOT's 43 are all
+compositional terms the prune removed, so it is broad in OBI and a leaf here.
 
 The removed terms are **not** committed — this README and the root list in
 `scripts/prune_obi_domain.py` are the record, and `--show-dropped` reprints them on demand.
@@ -96,29 +112,27 @@ not a decoy. It is subtracted from the whole dropped set, so it rescues from any
 `data/claims/` survive it. That is the point: ~95% of the old vocabulary had never once been
 selected.
 
-## Why the vectors are not pruned
+## The vectors
 
-`obi_generic_embeddings.json` still holds all 1262 rows (1248 survive the label filter at load
-time) and does **not** need to shrink when the
-index does. `_load_embeddings()` is row-aligned only *internally* (`entries[i]` ↔ `matrix[i]`);
-the index is reconciled later and **by id**, in `_top_k_candidates`:
+`obi_generic_embeddings.json` holds exactly the index's 700 terms, in index order. Since
+2026-10-02 each row is embedded from **`label | synonyms | definition`** (`embed_input`); before
+that it was `label | synonyms` over the unpruned 1262 terms. Adding the definition changes
+retrieval, so benchmark results from before that date are not directly comparable.
 
-```python
-if allowed_ids is not None:
-    keep = [i for i, e in enumerate(entries) if e["id"] in allowed_ids]
-```
+Each row also keeps `text` = `label | synonyms` without the definition, because the mapper
+splits `text` on `|` to show the pick LLM a candidate's synonyms.
 
-`map_assay_to_obi` always passes `allowed_ids = _term_ids(terms_path)`, so a pruned id simply
-stops being retrievable. The extra rows cost disk and load time, nothing else.
+`scripts/build_obi_embeddings.py` reuses a vector only when its row's `embed_input` is unchanged,
+re-embeds the rest, and drops rows no longer in the index — so after a rebuild of the index, a
+rerun embeds only what changed (a full build is ~30 K tokens, well under a cent).
 
-Note `scripts/build_obi_embeddings.py` will not shrink the file on its own — it returns early
-without rewriting when no new id needs embedding. Delete the file and rebuild if you ever want
-the space back (a full rebuild is ~15 K tokens, well under a cent).
+The mapper still reconciles vectors with the index **by id** in `_top_k_candidates`
+(`allowed_ids = _term_ids(terms_path)`), so a stale extra row could never be retrieved anyway.
 
 ## Rebuilding
 
-One command. It reads `obi_assay_terms_full.json` + `obi.obo`, applies both stages, and rewrites
-`obi_generic_index.json`. Idempotent — rebuilding always lands on the same terms in the same
+One command. It reads `obi.obo`, takes the assay branch, applies both prunes, adds `definition`
+and `n_descendants`, and rewrites `obi_generic_index.json`. Idempotent — rebuilding always lands on the same terms in the same
 order, so a rerun is a no-op.
 
 ```bash
@@ -140,8 +154,7 @@ re-derives the index and asserts it equals the committed file exactly — that c
 it safe not to commit the removed lists.
 
 ```bash
-# Only if terms were ADDED: embed the new ones (resumable, skips known ids).
-# Not needed for a prune — see "Why the vectors are not pruned" above.
+# After any index change: re-embed changed rows, drop removed ones (a no-op otherwise).
 ./.venv/bin/python scripts/build_obi_embeddings.py
 ```
 
@@ -149,15 +162,17 @@ it safe not to commit the removed lists.
 
 - **The load-time filter is still applied** on top of this pre-pruned index, so it is a no-op
   for the default vocabulary. It stays because `run_obi_map.py --terms` can point the mapper at
-  any term list, including `obi_assay_terms_full.json`.
+  any term list, including the unpruned assay branch (`prune_obi_domain.assay_branch`).
 - This folder is the **only** location for OBI vocabularies. The former copies under
   `.claude/skills/extract-assay-methods/references/` were deleted on 2026-08-19; `run_obi_map.py`
   imports the mapper and so reads these files transparently. Recover the old ones from git
   history if ever needed.
-- `obi.obo` — full OBI release 2026-05-08 (5218 terms), the upstream ontology. Read by
-  `scripts/prune_obi_domain.py` (for the `is_a` graph) but **not** on the serving path; also the
-  provenance for `obi_assay_terms_full.json` and the way to regenerate the assay branch against a
-  newer OBI release.
+- `obi.obo` — full OBI release 2026-05-08 (5218 terms), the upstream ontology and the **only**
+  source: `scripts/prune_obi_domain.py` derives the assay branch, the `is_a` graph, definitions
+  and descendant counts from it. **Not** on the serving path. To move to a newer OBI release,
+  replace this file and rerun both scripts under *Rebuilding*. The former
+  `obi_assay_terms_full.json` (the 1794-term assay branch, identical to what `assay_branch()`
+  derives) was deleted on 2026-10-02.
 - The domain prune is expressed as **subtree roots, not label keywords**, so it survives an OBI
   release bump. Depth cutoffs, leaf/internal splits and keyword lists were all evaluated and
   rejected: the branch is too shallow (705 of the old 1262 terms sat at depth 2) and domain
@@ -169,21 +184,12 @@ it safe not to commit the removed lists.
 
 ## Known gap
 
-Two common assays have **no** generic term left: the plain `intracellular cytokine staining
-assay` (`OBI:0000665`) and `MHC multimer staining assay` (`OBI:0000667`) are **obsolete** in OBI
-and absent from the source list. They deliberately fall back to broader parents
-(`OBI:0002766 cytokine assay`, `OBI:0001632 immuno staining assay`) rather than being pinned by
-an override map.
+Two common assays have **no** generic term: the plain `intracellular cytokine staining assay`
+(`OBI:0000665`) and `MHC multimer staining assay` (`OBI:0000667`) are **obsolete** in OBI, so
+they are outside the assay branch. Since 2026-09-11 they are not pinned by an override map either:
+the extractor's `normalized_name` records the measurement technique ("flow cytometry"), which
+maps to `OBI:0000916` exactly. `obi.obo` records `OBI:0000665 replaced_by OBI:0000916`.
 
-A smaller sibling family — `assay detecting X` — survives both prunes, and `\bdetecting\b` was
-never added to the compositional filter. It used to hold 14 terms, mostly insecticide-resistance
-assays; the domain prune took those with tier B, leaving 4, all of them in scope:
-
-```
-OBI:1110207  assay detecting IFN-gamma production
-OBI:0600017  assay detecting a molecular label
-OBI:0003761  cell death assay detecting lactate dehydrogenase (LDH) release
-OBI:0003762  ... using absorbance detection
-```
-
-`OBI:1110207` is actively used — `ex-vivo IFN-γ ELISpot` maps to it — so the family stays.
+The `assay detecting X` family (e.g. `OBI:1110207 assay detecting IFN-gamma production`) was
+added to the compositional filter on 2026-09-09 and is no longer in the index; a benchmark citing
+such a term can never be matched by the pipeline.
