@@ -66,15 +66,6 @@ def test_a_failed_extraction_call_is_a_line_of_its_own(cli, capsys):
     assert "EXTRACT FAILED  run2: AssayExtractionError: x" in capsys.readouterr().out
 
 
-def test_a_broad_mapping_left_unfolded_is_reported(cli, capsys):
-    cli.report_result(_result(
-        merges={"results": [], "summary": {"broad_unfolded": ["ICS"]}},
-        obi={"ICS": {"obi_id": "OBI:0000916", "obi_label": "flow cytometry assay"}}))
-
-    assert ("BROAD  ICS: kept its own entry; OBI:0000916 flow cytometry assay is broader"
-            in capsys.readouterr().out)
-
-
 def test_a_reviewed_identity_left_unfolded_is_reported(cli, capsys):
     cli.report_result(_result(
         assays={"ELISA kits": {**_ENTRY, "identity_review": {

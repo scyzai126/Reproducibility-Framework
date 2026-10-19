@@ -21,9 +21,8 @@ leaves none rather than one that looks verified.
 
 Round 5 runs last because the OBI term from round 4 is the assay's identity: the registry is
 re-keyed by the term's label, and two entries that mapped to one term are one assay, folded with
-every wording kept in `name_in_paper` and every write-up kept in `additional_evidence`. Two
-entries stand outside that rule and keep their own key: one whose term round 4 could only give
-as BROAD (printed `BROAD`), and one whose identity the judge did not support (printed
+every wording kept in `name_in_paper` and every write-up kept in `additional_evidence`. An entry
+whose identity the judge did not support stands outside that rule and keeps its own key (printed
 `REVIEW UNFOLDED`). Free, and the same registry always canonicalizes the same way.
 
 Round 4 runs on the *corrected* registry, and writes `assays_OBI.json` rather than merging back:
@@ -280,15 +279,8 @@ def report_result(result: dict) -> None:
     for record in (result.get("merges") or {}).get("results", []):
         print(f"  MERGED  {', '.join(record['folded'])} → {record['key']} "
               f"({record.get('obi_id') or 'no term'})")
-    # The opposite finding: an entry that shares a term with a sibling and was *not* folded,
-    # because round 4 could only name a family term for it. Printed so a reader sees why the
-    # registry carries two entries under what looks like one OBI term.
-    for key in ((result.get("merges") or {}).get("summary") or {}).get("broad_unfolded") or []:
-        mapped = (result.get("obi") or {}).get(key) or {}
-        print(f"  BROAD  {key}: kept its own entry; {mapped.get('obi_id')} "
-              f"{mapped.get('obi_label')} is broader than the assay")
-    # Likewise an entry whose identity the judge did not support: it ships, marked, under its
-    # own key -- never folded, so its wording cannot become a supported sibling's name.
+    # The opposite finding: an entry whose identity the judge did not support. It ships, marked,
+    # under its own key -- never folded, so its wording cannot become a supported sibling's name.
     for key in ((result.get("merges") or {}).get("summary") or {}).get("review_unfolded") or []:
         mark = (assays.get(key) or {}).get("identity_review") or {}
         print(f"  REVIEW UNFOLDED  {key}: kept its own entry; identity {mark.get('verdict')} "

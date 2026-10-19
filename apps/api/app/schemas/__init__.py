@@ -103,9 +103,8 @@ class AssayResponse(BaseModel):
     #: say which assay or which field, so dropping this loses the finding entirely.
     corrections: dict | None = None
     #: build_merge_report() output: which entries round 5 folded onto one OBI term, and so are no
-    #: longer keys of their own -- and, in `summary.broad_unfolded`, which kept their own key
-    #: although a sibling shares their term, because that term is BROAD. Null when round 5 was
-    #: skipped.
+    #: longer keys of their own -- and, in `summary.review_unfolded`, which kept their own key
+    #: because the judge did not support their identity. Null when round 5 was skipped.
     merges: dict | None = None
     #: assay id -> {entry, reason} for assays round 3 set aside as never performed.
     dropped: dict = {}

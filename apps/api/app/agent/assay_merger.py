@@ -6,11 +6,12 @@ anti-meningococcal antibodies) and `ELISA kits` (cytokines in culture supernatan
 downstream caught it: `clean_registry` is a dict comprehension, and the verifier judges one entry
 at a time against the paper, never against a sibling.
 
-**Two entries are one assay when they share an OBI term that is exact for both. Nothing else
-folds.** The term is the OBI label the entry mapped to; one round 4 marked BROAD -- the picker
-could only name a family, `flow cytometry assay` for an ICS panel -- is not the entry's identity,
-so an entry carrying it keeps its own key (`broad_unfolded` in the merge report, `BROAD` on the
-CLI) rather than folding onto every sibling in the family. A shared `standard_technique_name` used to be a second link, pulling
+**Two entries are one assay when they share an OBI term. Nothing else folds.** The term is the
+OBI label the entry mapped to, whatever `obi_granularity` round 4 recorded: a rule that kept
+BROAD mappings apart was tried and withdrawn, because the label is not stable (SDY2189's two FRNT
+write-ups came back EXACT in one run and BROAD in the next, and split the paper's one assay in
+two) and the wrong folds it was meant to stop (SDY1630's flow panels, SDY1640's ICS) had been
+mapped EXACT anyway. A shared `standard_technique_name` used to be a second link, pulling
 an unmapped entry onto a mapped sibling with the same technique; it was removed because the
 technique is the instrument the numbers came off, and one instrument runs many assays. The link
 first folded mapped entries onto each other (SDY1640's AIM assay into its immunophenotyping,
@@ -55,20 +56,10 @@ _KEPT_ON_MEMBER = ("name_in_paper", "sample_type", "readouts", "generate_claim",
                    "evidence")
 
 
-#: The `obi_granularity` round 4 records when the picker could only name a term broader than
-#: the assay (prompts/resolver_obi_assay.txt). The other value is "EXACT"; a free exact-label
-#: match, and every mapping written before the field existed, carry None.
-BROAD = "BROAD"
-
-
 def _stands_alone(mapped: dict, entry: dict) -> str | None:
     """Why an entry is a group of its own under its paper name, or None when it may fold.
 
     * "unmapped": OBI has no term for it, so there is nothing to key it by.
-    * "broad": round 4 could only name a term broader than the assay. Two entries sharing such
-      a term are in the same family, not one assay -- ICS and an immunophenotyping panel both
-      resolve to `flow cytometry assay` as BROAD, and folding them on it is how SDY1630's NK
-      functional assay disappeared into "Flow cytometry analysis and cell sorting".
     * "review": the judge did not support the entry's identity (REVIEW_FIELD). A wording nobody
       confirmed names this assay must not become a supported sibling's `name_in_paper`, nor
       absorb that sibling when it happens to come first; and a mark that survived only inside
@@ -79,25 +70,21 @@ def _stands_alone(mapped: dict, entry: dict) -> str | None:
         return "review"
     if not mapped.get("obi_label"):
         return "unmapped"
-    if mapped.get("obi_granularity") == BROAD:
-        return "broad"
     return None
 
 
 def canonical_groups(assays: dict, obi: dict | None = None) -> list[dict]:
     """Group the registry into assays: one group per OBI label, plus one per entry that stands
-    alone -- unmapped, or mapped only to a term broader than itself.
+    alone -- unmapped, or with an identity the judge did not support.
 
-    Two entries are linked when they map to the same OBI label as an exact term; that is the
-    only link, so the groups are a bucketing on the label. Registry order is preserved, both
-    between groups and within them, so the first entry is the one whose fields survive the fold.
-    Deterministic by construction -- there is no scoring step to break a tie differently on a
-    rerun.
+    Two entries are linked when they map to the same OBI label; that is the only link, so the
+    groups are a bucketing on the label. Registry order is preserved, both between groups and
+    within them, so the first entry is the one whose fields survive the fold. Deterministic by
+    construction -- there is no scoring step to break a tie differently on a rerun.
 
     The group is keyed by its OBI label, and the first member's mapping is the group's. An entry
-    that stands alone keeps its own key and its own record -- a BROAD one keeps its term too,
-    since the term is still what round 4 found; it just is not the entry's identity -- and
-    `alone` says why (`_stands_alone`), or is None for a label group.
+    that stands alone keeps its own key and its own record, and `alone` says why
+    (`_stands_alone`), or is None for a label group.
     """
     obi = obi or {}
     members_by_label: dict[str, list[str]] = {}
@@ -143,16 +130,10 @@ def _unfolded(assays: dict, obi: dict | None, why: str) -> list[str]:
     return [group["key"] for group in canonical_groups(assays, obi) if group["alone"] == why]
 
 
-def broad_unfolded(assays: dict, obi: dict | None = None) -> list[str]:
-    """The keys of entries left as their own entry because their term is BROAD. Free, same
-    grouping as the fold; for the merge report, where a reader finds out why a sibling that
-    shares a term was not folded onto it."""
-    return _unfolded(assays, obi, "broad")
-
-
 def review_unfolded(assays: dict, obi: dict | None = None) -> list[str]:
     """The keys of entries left as their own entry because their identity carries a review
-    mark. Same contract as broad_unfolded."""
+    mark. Free, same grouping as the fold; for the merge report, where a reader finds out why a
+    sibling that shares a term was not folded onto it."""
     return _unfolded(assays, obi, "review")
 
 
@@ -272,21 +253,18 @@ def compose_key_maps(earlier: dict[str, str] | None, later: dict[str, str]) -> d
 
 
 def build_merge_report(folds: list[dict], keys: dict[str, str] | None = None,
-                       broad: list[str] | None = None,
                        review: list[str] | None = None) -> dict:
     """The round's findings, for assays_merges.json.
 
     `key_map` is written on every run, folds or not: it is what joins the pre-round-5 files to
     the canonical registry, and a paper that folded nothing re-keys every entry all the same.
-    `broad_unfolded` and `review_unfolded` are always present too, empty or not, so no reader
-    branches on them: the entries that kept their own key although a sibling shares their
-    term, because that term is BROAD, or because the judge did not support their identity.
+    `review_unfolded` is always present too, empty or not, so no reader branches on it: the
+    entries that kept their own key because the judge did not support their identity.
     """
     report = {
         "summary": {
             "groups_merged": len(folds),
             "entries_folded": sum(len(f["folded"]) for f in folds),
-            "broad_unfolded": list(broad or []),
             "review_unfolded": list(review or []),
         },
         "results": folds,
