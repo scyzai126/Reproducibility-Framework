@@ -10,8 +10,9 @@ out. Three extractions cost two more calls and turn that into a vote.
 `consensus` takes the registries of N extraction calls and returns (registry, minority):
 
   * entries are aligned across runs without a model, in two tiers: first by their normalized
-    `name_in_paper`, which is exact and is what the extractor keys by; then an entry only one run
-    produced may join a cluster through `same_entry` (a shared alias, overlapping evidence
+    `name_in_paper` (and, when a run has several entries of one name, by position among them,
+    since the parser's `Luminex (2)` key leaves the name itself unchanged); then an entry only
+    one run produced may join an earlier or later cluster through `same_entry` (a shared alias, overlapping evidence
     sentence ids, or the same technique with one quote inside the other) -- but never a cluster
     that already holds an entry from its own run, so two entries a run deliberately kept apart
     (an ELISA and an `ELISA kits` aliased "ELISA") are never voted into one;
@@ -160,41 +161,77 @@ def cluster_for_vote(runs: list[tuple[str, dict]]
     """Two-tier alignment for voting: exact name first, then `same_entry` for lone entries.
     Returns the clusters and the (label, key) nodes that joined one in the second tier.
 
-    Tier 1 groups entries whose normalized `name_in_paper` is identical. Tier 2 takes each
-    cluster that only one run produced and, in order, attaches it to the first earlier-or-later
-    cluster one of whose members `same_entry` matches -- provided that cluster has no member from
-    the same run. That proviso is the whole point: a run's two entries are two assays by that
-    run's judgement, and the vote must count them, not merge them.
+    Tier 1 groups entries whose normalized `name_in_paper` is identical *and* that sit at the
+    same position among their own run's entries of that name. The parser keys a run's second
+    "Luminex" as `Luminex (2)` but leaves its `name_in_paper` alone, so on the name only, a run's
+    two Luminex entries would share one cluster and the second would be voted away without ever
+    reaching minority; the ordinal keeps them apart, so each run's judgement that there are two
+    is what gets counted. (Which second entry pairs with which is by position, so runs that list
+    same-name duplicates in a different order pair them differently; `same_entry` within a
+    strict group is not attempted.)
+
+    Tier 2 takes each cluster that only one run produced and attaches it to the first cluster
+    one of whose members `same_entry` matches -- provided that cluster has no member from the
+    same run. That proviso is the whole point: a run's two entries are two assays by that run's
+    judgement, and the vote must count them, not merge them. Two passes, because clusters are
+    created in run order and a lone run-1 entry is seen before the run-2/run-3 cluster it
+    belongs to exists: the first pass attaches to earlier clusters (and so fixes which cluster is
+    the home when both are lone), the second retries what is still lone against every cluster.
     """
     registries = dict(runs)
     clusters: list[dict[str, list[str]]] = []
-    by_strict: dict[str, dict[str, list[str]]] = {}
+    by_strict: dict[tuple[str, int], dict[str, list[str]]] = {}
     for label, registry in runs:
+        seen: dict[str, int] = {}
         for key, entry in registry.items():
             strict = _strict_key(key, entry)
-            if strict not in by_strict:
-                by_strict[strict] = {}
-                clusters.append(by_strict[strict])
-            by_strict[strict].setdefault(label, []).append(key)
+            ordinal = seen.get(strict, 0)
+            seen[strict] = ordinal + 1
+            slot = (strict, ordinal)
+            if slot not in by_strict:
+                by_strict[slot] = {}
+                clusters.append(by_strict[slot])
+            by_strict[slot].setdefault(label, []).append(key)
 
     def matches(cluster: dict[str, list[str]], label: str, key: str) -> bool:
         return any(same_entry(k, registries[l][k], key, registries[label][key])
                    for l, keys in cluster.items() for k in keys)
 
+    def lone(cluster: dict[str, list[str]]) -> tuple[str, str] | None:
+        if len(cluster) != 1:
+            return None
+        (label, keys), = cluster.items()
+        return (label, keys[0]) if len(keys) == 1 else None
+
+    def home_for(cluster: dict[str, list[str]], label: str, key: str
+                 ) -> dict[str, list[str]] | None:
+        return next((c for c in merged
+                     if c is not cluster and label not in c and matches(c, label, key)), None)
+
     merged: list[dict[str, list[str]]] = []
     attached: set[tuple[str, str]] = set()
+    deferred: list[dict[str, list[str]]] = []
     for cluster in clusters:
-        if len(cluster) == 1:
-            (label, keys), = cluster.items()
-            if len(keys) == 1:
-                home = next((c for c in merged if label not in c and matches(c, label, keys[0])),
-                            None)
-                if home is not None:
-                    home.setdefault(label, []).append(keys[0])
-                    attached.add((label, keys[0]))
-                    continue
+        node = lone(cluster)
+        if node is not None:
+            home = home_for(cluster, *node)
+            if home is not None:
+                home.setdefault(node[0], []).append(node[1])
+                attached.add(node)
+                continue
+            deferred.append(cluster)
         merged.append(cluster)
-    return merged, attached
+    moved: set[int] = set()
+    for cluster in deferred:
+        node = lone(cluster)  # may have gained a member in the first pass
+        if node is None:
+            continue
+        home = home_for(cluster, *node)
+        if home is not None:
+            home.setdefault(node[0], []).append(node[1])
+            attached.add(node)
+            moved.add(id(cluster))
+    return [c for c in merged if id(c) not in moved], attached
 
 
 def consensus(registries: list[dict]) -> tuple[dict, dict]:

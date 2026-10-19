@@ -138,17 +138,68 @@ def test_two_entries_every_run_kept_apart_are_never_voted_into_one():
 
 
 def test_a_duplicate_key_one_run_produced_is_minority_not_merged():
-    """v2's `ELISA (2)`, aliased "ELISA": it may not join the ELISA cluster, which already has an
-    entry from its own run, so it is reported as a 1-of-3 minority."""
-    a = _entry("ELISA")
-    dup = _entry("ELISA (2)", quote="Supernatants were assessed by ELISA.", ids=("S9",),
-                 aliases=["ELISA"])
-    runs = [{"ELISA": a}, {"ELISA": a, "ELISA (2)": dup}, {"ELISA": a}]
+    """The parser keys a run's second "Luminex" as `Luminex (2)` but leaves its `name_in_paper`
+    as "Luminex". It may not join the Luminex cluster, which already has an entry from its own
+    run, so it is reported as a 1-of-3 minority rather than silently merged into the first."""
+    a = _entry("Luminex", "Luminex", sample="serum")
+    dup = _entry("Luminex", "Luminex", quote="Cytokines were measured by Luminex.", ids=("S9",),
+                 sample="supernatant", readouts="cytokine concentrations")
+    runs = [{"Luminex": a}, {"Luminex": a, "Luminex (2)": dup}, {"Luminex": a}]
 
     registry, minority = consensus(runs)
 
-    assert list(registry) == ["ELISA"]
-    assert list(minority) == ["ELISA (2)"]
+    assert list(registry) == ["Luminex"]
+    assert registry["Luminex"]["sample_type"] == "serum"
+    assert list(minority) == ["Luminex (2)"]
+    assert minority["Luminex (2)"]["runs"] == ["run2"]
+    assert minority["Luminex (2)"]["entry"] == dup
+
+
+def test_a_second_same_name_entry_two_runs_produced_is_delivered_on_its_own():
+    """Two of three runs split Luminex into a serum and a supernatant assay. The majority's
+    judgement that there are two is kept: the second is delivered under the parser's key."""
+    a = _entry("Luminex", "Luminex", sample="serum")
+    dup = _entry("Luminex", "Luminex", quote="Cytokines were measured by Luminex.", ids=("S9",),
+                 sample="supernatant", readouts="cytokine concentrations")
+    runs = [{"Luminex": a}, {"Luminex": a, "Luminex (2)": dup}, {"Luminex": a, "Luminex (2)": dup}]
+
+    registry, minority = consensus(runs)
+
+    assert list(registry) == ["Luminex", "Luminex (2)"]
+    assert registry["Luminex"]["sample_type"] == "serum"
+    assert registry["Luminex (2)"]["sample_type"] == "supernatant"
+    assert registry["Luminex (2)"]["evidence"]["quote"] == "Cytokines were measured by Luminex."
+    assert minority == {}
+
+
+def test_a_run_with_two_same_name_entries_does_not_outvote_the_others():
+    """A vote counts runs. One run's two same-name entries agreeing with each other is one
+    run's opinion, not a majority over the other two."""
+    runs = [{"Luminex": _entry("Luminex", "Luminex", readouts="antibody titers")},
+            {"Luminex": _entry("Luminex", "Luminex", readouts="multiplex panel"),
+             "Luminex (2)": _entry("Luminex", "Luminex", readouts="multiplex panel",
+                                   quote="Cytokines were measured by Luminex.", ids=("S9",))},
+            {"Luminex": _entry("Luminex", "Luminex", readouts="antibody titres")}]
+
+    registry, _ = consensus(runs)
+
+    assert registry["Luminex"]["readouts"] == "antibody titers"
+
+
+def test_a_lone_entry_joins_its_twin_even_when_the_twin_cluster_comes_later():
+    """Run 1 wrote "flow cytometry"; runs 2 and 3 wrote "FACS". Clusters are built in run order,
+    so the lone run-1 entry is seen before the FACS cluster exists -- it must still find it,
+    be outvoted on the name, and contribute its wording as an alias instead of going to minority."""
+    facs = {**FLOW, "name_in_paper": "FACS", "aliases": []}
+    runs = [{"flow cytometry": FLOW, "ELISA": ELISA},
+            {"ELISA": ELISA, "FACS": facs},
+            {"ELISA": ELISA, "FACS": facs}]
+
+    registry, minority = consensus(runs)
+
+    assert list(registry) == ["ELISA", "FACS"]
+    assert registry["FACS"]["aliases"] == ["flow cytometry"]
+    assert minority == {}
 
 
 def test_two_wordings_of_one_assay_are_recognised_as_the_same_entry():
