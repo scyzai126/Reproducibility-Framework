@@ -727,10 +727,53 @@ def _judge(*fields, identity=SUPPORTED) -> str:
     })
 
 
-def test_alias_check_folds_case_and_spacing_like_the_quote_check():
+def test_alias_check_folds_case_and_spacing_between_tokens_not_inside_them():
     assert check_alias_verbatim("flow  Cytometer", SOURCE)["status"] == "found"
     assert check_alias_verbatim("CyTOF", SOURCE)["status"] == "missing"
     assert check_alias_verbatim("IF", SOURCE)["status"] == "too_short"
+
+
+def test_an_alias_inside_another_word_is_not_found():
+    """The old check dropped every space and looked for a substring, so a three-letter acronym
+    was "found" inside almost any paper: HAI in chair, ICS in statistics, PCR in top crater."""
+    assert check_alias_verbatim("HAI", "[S1] Participants sat on a chair.")["status"] == "missing"
+    assert check_alias_verbatim("ICS", "[S1] Statistics were computed in R.")["status"] == "missing"
+    assert check_alias_verbatim("PCR", "[S1] Samples from the top crater.")["status"] == "missing"
+
+
+def test_a_three_letter_acronym_is_found_where_it_stands_alone():
+    assert check_alias_verbatim("HAI", "[S1] HAI titers were measured.")["status"] == "found"
+    assert check_alias_verbatim("HAI", "[S1] Titers (HAI) rose.")["status"] == "found"
+    assert check_alias_verbatim("HAI", "[S1] An HAI-specific response.")["status"] == "found"
+    assert check_alias_verbatim("ICS", "[S1] Cytokines were measured by ICS.")["status"] == "found"
+
+
+def test_a_three_letter_alias_must_match_in_its_own_case():
+    """Three letters that are an acronym are also, somewhere, an English word."""
+    assert check_alias_verbatim("AIM", "[S1] The aim of this study was safety.")["status"] == "missing"
+    assert check_alias_verbatim("AIM", "[S1] An AIM assay was run.")["status"] == "found"
+
+
+def test_an_alias_tolerates_dash_and_space_variants_between_its_tokens():
+    for wording in ("RT–PCR", "RT PCR", "RTPCR", "RT-PCR"):
+        assert check_alias_verbatim("RT-PCR", f"[S1] Measured by {wording}.")["status"] == "found", wording
+    assert check_alias_verbatim("Flow cytometry", "[S1] by flow\ncytometry.")["status"] == "found"
+    assert check_alias_verbatim("qPCR", "[S1] QPCR was run.")["status"] == "found"
+    assert check_alias_verbatim("CyTOF", "[S1] on a cytof instrument.")["status"] == "found"
+
+
+@pytest.mark.asyncio
+async def test_a_reference_objection_phrased_as_not_appear_is_not_a_wording_objection():
+    """"Does not appear to be used as a name for this assay" is about what the words refer to,
+    not whether they are in the paper; the string check has nothing to say against it."""
+    entry = {**ENTRY, "aliases": ["ELISA"]}
+    body = _judge(("aliases[0]", "ELISA", NOT_SUPPORTED,
+                   "The term does not appear to be used as a name for this flow cytometry assay."))
+
+    result = await verify_assay("flow cytometry", entry, SOURCE, "Paper", _FakeClient(body))
+
+    alias = next(v for v in result["field_verifications"] if v["field_name"] == "aliases[0]")
+    assert alias["verdict"] == NOT_SUPPORTED
 
 
 @pytest.mark.asyncio

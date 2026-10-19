@@ -469,19 +469,45 @@ def check_quote_verbatim(entry: dict, source_text: str) -> dict:
             "verdict": NOT_SUPPORTED, "detail": f"quote is verbatim but {why}{where}"}
 
 
-#: The shortest alias the string check will vouch for. Whitespace is dropped before comparing,
-#: so a one- or two-letter alias ("IF", "MS") matches inside almost any word; three characters
-#: keeps the acronyms that matter ("HAI", "ICS", "PCR").
+#: The shortest alias the string check will vouch for, in letters. A one- or two-letter alias
+#: ("IF", "MS") is an English word or a fragment of one too often to vouch for even at a word
+#: boundary; three keeps the acronyms that matter ("HAI", "ICS", "PCR"), which the boundary and
+#: the case rule in check_alias_verbatim keep out of "chair" and "statistics".
 MIN_ALIAS_CHARS = 3
 
 #: A judge's reason that objects to the *wording* of an alias rather than to what it names. The
 #: string check settles wording, so such an objection over an alias that is in the text is
-#: withdrawn. "does not use the term X for this assay" is deliberately not matched: that is a
-#: claim about reference, which only the judge can make.
+#: withdrawn. "does not use the term X for this assay" is deliberately not matched, and neither
+#: is a bare "does not appear": "does not appear to be used as a name for this assay" is how the
+#: judge phrases a claim about reference, which only it can make. "does not appear verbatim"
+#: still matches, on `verbatim`.
 _WORDING_OBJECTION = re.compile(
-    r"verbatim|does not appear|not appear|exact (?:alias|phrase|wording|form|spelling|"
+    r"verbatim|exact (?:alias|phrase|wording|form|spelling|"
     r"capitali[sz]ation|lowercase|singular)|capitali[sz]|lowercase|singular phrase",
     re.IGNORECASE)
+
+
+def _fold_light(text: str) -> str:
+    """NFKC, quotes folded, every dash to "-", whitespace runs to one space; case kept.
+
+    The alias check's counterpart to _squash. Whitespace survives, as one space, so that a word
+    boundary still exists to test for: dropping it all is right for a quote, whose words are its
+    identity, and wrong for a three-letter alias, which would then be found inside almost any
+    word. The dash and NFKC folding are the same, for the same reasons.
+    """
+    text = unicodedata.normalize("NFKC", text).translate(_QUOTE_FOLD)
+    text = "".join("-" if unicodedata.category(c) == "Pd" else c for c in text)
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def _alias_pattern(alias: str, flags: int) -> re.Pattern:
+    """`alias` as a pattern over _fold_light text: its tokens in order, any run of spaces and
+    dashes -- or none -- between them, and a word boundary at each end. So "RT-PCR" is found as
+    "RT–PCR", "RT PCR" and "RTPCR", and "flow cytometry" across the parser's inserted spaces and
+    a line break, while "HAI" is not found in "chair"."""
+    tokens = [t for t in re.split(r"[\s-]+", _fold_light(alias)) if t]
+    body = r"[\s-]*".join(re.escape(t) for t in tokens)
+    return re.compile(rf"(?<!\w){body}(?!\w)", flags)
 
 
 def check_alias_verbatim(alias: object, source_text: str) -> dict:
@@ -491,19 +517,28 @@ def check_alias_verbatim(alias: object, source_text: str) -> dict:
     judge whether each alias "appears verbatim in the source", and measured over the 31 stored
     runs the judge got that wrong 36 times out of 39: "Flow cytometry", "HAI", "CyTOF", "qPCR"
     and "FACS" were all reported absent from papers that contain them, and round 3 then dropped
-    27 of them. Presence is a string fact, settled here the same way the quote is -- whitespace,
-    dashes and case folded -- and the judge is left with the question only it can answer,
-    whether the wording names this assay.
+    27 of them. Presence is a string fact, settled here, and the judge is left with the question
+    only it can answer, whether the wording names this assay.
+
+    Settled on a word basis, not as the quote check does it: dashes and the spaces between an
+    alias's tokens are folded, but the alias has to stand at a word boundary, because with every
+    space dropped a three-letter acronym was "found" inside almost any paper ("HAI" in "chair",
+    "ICS" in "statistics"), and `found` meant nothing. An alias of three letters or fewer also
+    has to match in its own case -- "AIM" is an assay and "aim" is a word -- while a longer one
+    folds case as the quote check does. The one artifact this no longer absorbs is a one-token
+    alias split by line-break hyphenation in the source ("cyto- metry"); an alias usually recurs,
+    and the quote check, which keeps the whitespace-free comparison, is where that mattered.
 
     Statuses: `found`, `missing`, `too_short` (nothing to vouch for), `no_alias`.
     """
     if not isinstance(alias, str) or not alias.strip():
         return {"status": "no_alias", "verdict": None, "detail": "no alias to check"}
-    needle = _squash(alias).lower()
-    if len(needle) < MIN_ALIAS_CHARS:
+    letters = re.sub(r"[\s-]", "", _fold_light(alias))
+    if len(letters) < MIN_ALIAS_CHARS:
         return {"status": "too_short", "verdict": None,
                 "detail": f"alias is under {MIN_ALIAS_CHARS} characters; presence proves nothing"}
-    if needle in _squash(strip_markers(source_text)).lower():
+    flags = 0 if len(letters) <= 3 else re.IGNORECASE
+    if _alias_pattern(alias, flags).search(_fold_light(strip_markers(source_text))):
         return {"status": "found", "verdict": SUPPORTED,
                 "detail": "alias appears in the source text"}
     return {"status": "missing", "verdict": NOT_SUPPORTED,
