@@ -383,7 +383,31 @@ async def test_two_entries_on_one_obi_term_leave_one_entry_keyed_by_that_term(pa
     # record cannot reconstruct.
     assert benchmark["flow cytometry assay"]["additional_evidence"][0]["name_in_paper"] == "ELISA kits"
     assert json.loads((paper / "assays_merges.json").read_text())["summary"] == {
-        "groups_merged": 1, "entries_folded": 1}
+        "groups_merged": 1, "entries_folded": 1, "broad_unfolded": []}
+
+
+@pytest.mark.asyncio
+async def test_a_broad_mapping_is_delivered_under_its_own_name_and_reported(paper, monkeypatch):
+    """Two entries on one term, but round 4 could only name the family for the second: it is
+    not folded, keeps its paper name as its key, and the round says so."""
+    def _broad_on_kits(assays, *_args, **_kwargs):
+        return {key: {**entry, "obi_id": "OBI:0000916", "obi_label": "flow cytometry assay",
+                      "resource": "embedding_llm", "obi_confidence": "high",
+                      "obi_granularity": "BROAD" if key == "ELISA kits" else "EXACT"}
+                for key, entry in assays.items()}
+    monkeypatch.setattr(assay_service, "enrich_assays_with_obi", _broad_on_kits)
+
+    result = await assay_report("111", "SDY1", _Client(_two_assays_body(), _verification_body()))
+
+    assert list(json.loads((paper / "assays.json").read_text())) == [
+        "flow cytometry assay", "ELISA kits"]
+    assert list(json.loads((paper / "assays_OBI.json").read_text())) == [
+        "flow cytometry assay", "ELISA kits"]
+    assert result["rounds"]["canonicalize"]["broad_unfolded"] == ["ELISA kits"]
+    assert result["merges"]["summary"]["broad_unfolded"] == ["ELISA kits"]
+    benchmark = json.loads((paper / "assays_benchmark.json").read_text())
+    assert benchmark["ELISA kits"]["name_in_paper"] == ["ELISA kits"]
+    assert "additional_evidence" not in benchmark["flow cytometry assay"]
 
 
 @pytest.mark.asyncio

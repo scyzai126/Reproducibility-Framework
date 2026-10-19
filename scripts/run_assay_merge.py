@@ -43,6 +43,7 @@ sys.path.insert(0, str(_REPO_ROOT / "apps" / "api"))
 
 from app.agent.assay_extractor import trim_registry
 from app.agent.assay_merger import (
+    broad_unfolded,
     build_merge_report,
     canonical_groups,
     canonicalize_registry,
@@ -82,6 +83,10 @@ def dry_run(registry_dir: Path, remap: bool = False) -> int:
     print(f"{registry_dir.name}: {len(assays)} entry(ies) → {len(groups)}, keyed by OBI term")
     for group in folds:
         print(f"    {group['key']}   <=  {', '.join(group['members'])}")
+    for group in groups:
+        if group["alone"] == "broad":
+            print(f"    BROAD  {group['key']}: keeps its own entry; "
+                  f"{group['obi_id']} {group['obi_label']} is broader than the assay")
     return len(assays) - len(groups)
 
 
@@ -113,14 +118,19 @@ def canonicalize_one(registry_dir: Path, remap: bool = False) -> None:
         return
 
     keys = compose_key_maps(stored.get("key_map"), key_map(assays, obi))
+    broad = broad_unfolded(assays, obi)
     merged, obi_out, folds = canonicalize_registry(assays, obi)
     # Folds found by an earlier pass are findings too; a second pass over an already-folded
     # registry finds none, and used to delete the only record of the first.
-    report = build_merge_report(list(stored.get("results") or []) + folds, keys)
+    report = build_merge_report(list(stored.get("results") or []) + folds, keys, broad)
     print(f"{registry_dir.name}: {len(assays)} → {len(merged)} entry(ies)")
     for record in folds:
         print(f"  MERGED  {', '.join(record['folded'])} → {record['key']} "
               f"({record.get('obi_id') or 'no term'})")
+    for key in broad:
+        mapped = (obi_out or {}).get(key) or {}
+        print(f"  BROAD  {key}: kept its own entry; {mapped.get('obi_id')} "
+              f"{mapped.get('obi_label')} is broader than the assay")
 
     # Only these four: the pipeline's other files describe rounds this script did not re-run,
     # and rewriting them from a registry they were not derived from would misreport those rounds.

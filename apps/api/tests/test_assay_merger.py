@@ -13,9 +13,11 @@ dropped on the way.
 
 from app.agent.assay_extractor import MERGED_FIELD, paper_names, trim_registry
 from app.agent.assay_merger import (
+    broad_unfolded,
     build_merge_report,
     canonical_groups,
     canonicalize_registry,
+    key_map,
     merge_entries,
 )
 
@@ -271,7 +273,7 @@ def test_the_report_counts_groups_and_entries():
 
     report = build_merge_report(folds)
 
-    assert report["summary"] == {"groups_merged": 1, "entries_folded": 1}
+    assert report["summary"] == {"groups_merged": 1, "entries_folded": 1, "broad_unfolded": []}
     assert report["results"][0]["key"] == "enzyme-linked immunosorbent assay"
 
 # ── a shared technique never links ───────────────────────────────────────────
@@ -382,3 +384,68 @@ def test_the_survivors_own_review_wins_and_an_unreviewed_member_gains_no_slot():
 
     assert merged["identity_review"] == mine
     assert "identity_review" not in merged["additional_evidence"][0]
+
+
+# ── a BROAD term is a family, not an identity ────────────────────────────────
+
+_BROAD_FLOW = {**_FLOW_TERM, "obi_granularity": "BROAD"}
+
+
+def test_a_broad_mapping_keeps_its_own_entry_under_its_paper_name():
+    """SDY1630: the NK functional assay could only be mapped to `flow cytometry assay` as
+    BROAD, and folding it onto the phenotyping panel on that term lost the curated assay."""
+    assays = {"flow cytometry": FLOW, "ICS": _tech("ICS", "flow cytometry")}
+    obi = {"flow cytometry": _FLOW_TERM, "ICS": _BROAD_FLOW}
+
+    merged, obi_out, folds = canonicalize_registry(assays, obi)
+
+    assert list(merged) == ["flow cytometry assay", "ICS"]
+    assert merged["ICS"]["name_in_paper"] == ["ICS"]
+    assert "additional_evidence" not in merged["flow cytometry assay"]
+    # The term is still what round 4 found; it just is not the entry's identity.
+    assert obi_out["ICS"]["obi_id"] == "OBI:0000916"
+    assert obi_out["ICS"]["obi_granularity"] == "BROAD"
+    assert folds == []
+
+
+def test_an_exact_or_unstated_granularity_still_folds():
+    """Only the literal BROAD stands alone: a free exact match, and every mapping written
+    before the field existed, carry no granularity and fold as they always did."""
+    for granularity in ("EXACT", None):
+        assays = {"flow cytometry": FLOW, "ICS": _tech("ICS", "flow cytometry")}
+        obi = {"flow cytometry": _FLOW_TERM, "ICS": {**_FLOW_TERM, "obi_granularity": granularity}}
+
+        merged, _, folds = canonicalize_registry(assays, obi)
+
+        assert list(merged) == ["flow cytometry assay"], granularity
+        assert len(folds) == 1
+
+
+def test_two_broad_entries_on_one_term_stay_two_entries():
+    assays = {"ICS": _tech("ICS", "flow cytometry"), "AIM": _tech("AIM", "flow cytometry")}
+    obi = {"ICS": _BROAD_FLOW, "AIM": _BROAD_FLOW}
+
+    merged, _, folds = canonicalize_registry(assays, obi)
+
+    assert list(merged) == ["ICS", "AIM"]
+    assert folds == []
+
+
+def test_a_broad_entry_named_like_another_groups_label_is_suffixed():
+    assays = {"flow cytometry": FLOW,
+              "flow cytometry assay": _tech("flow cytometry assay", "flow cytometry")}
+    obi = {"flow cytometry": _FLOW_TERM, "flow cytometry assay": _BROAD_FLOW}
+
+    merged, _, _ = canonicalize_registry(assays, obi)
+
+    assert list(merged) == ["flow cytometry assay", "flow cytometry assay (2)"]
+
+
+def test_the_report_lists_broad_entries_left_unfolded():
+    assays = {"flow cytometry": FLOW, "ICS": _tech("ICS", "flow cytometry")}
+    obi = {"flow cytometry": _FLOW_TERM, "ICS": _BROAD_FLOW}
+
+    assert broad_unfolded(assays, obi) == ["ICS"]
+    report = build_merge_report([], key_map(assays, obi), broad_unfolded(assays, obi))
+    assert report["summary"] == {"groups_merged": 0, "entries_folded": 0,
+                                 "broad_unfolded": ["ICS"]}

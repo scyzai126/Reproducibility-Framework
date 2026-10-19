@@ -58,6 +58,7 @@ from app.agent.assay_extractor import (
 )
 from app.agent.assay_extractor_pdf import extract_assays_from_pdf
 from app.agent.assay_merger import (
+    broad_unfolded,
     build_merge_report,
     canonical_groups,
     canonicalize_registry,
@@ -1083,7 +1084,8 @@ async def _run_rounds(pubmed_id, study_accession, client, verify, correct, model
     # cannot see that its two Methods subheadings describe one ELISA; round 4 can, because both
     # resolved to OBI:0000661. Free and deterministic -- no model decides any of it. An entry
     # OBI left unmapped keeps its own key and is reported UNMAPPED rather than folded onto a
-    # sibling that merely shares its technique.
+    # sibling that merely shares its technique; so does one whose term round 4 marked BROAD
+    # (reported BROAD), since a family term shared with a sibling is not one assay.
     #
     # Runs whether or not anything folds: re-keying is the point, and `name_in_paper` becomes a
     # list of every wording on every entry so no reader has to branch on whether a fold happened.
@@ -1098,8 +1100,10 @@ async def _run_rounds(pubmed_id, study_accession, client, verify, correct, model
     else:
         _emit(round="canonicalize", state="running", total=len(assays))
         keys = key_map(assays, obi)
+        # Before the re-key, like keys: both are read off the pre-canonical registry.
+        broad = broad_unfolded(assays, obi)
         assays, obi, folds = canonicalize_registry(assays, obi)
-        merges = build_merge_report(folds, keys)
+        merges = build_merge_report(folds, keys, broad)
         rounds["canonicalize"] = {"source": "canonical", "calls": 0,
                                   "assays": len(assays), **merges["summary"]}
         _emit(round="canonicalize", state="done", calls=0, assays=len(assays),

@@ -278,6 +278,13 @@ def report_result(result: dict) -> None:
     for record in (result.get("merges") or {}).get("results", []):
         print(f"  MERGED  {', '.join(record['folded'])} → {record['key']} "
               f"({record.get('obi_id') or 'no term'})")
+    # The opposite finding: an entry that shares a term with a sibling and was *not* folded,
+    # because round 4 could only name a family term for it. Printed so a reader sees why the
+    # registry carries two entries under what looks like one OBI term.
+    for key in ((result.get("merges") or {}).get("summary") or {}).get("broad_unfolded") or []:
+        mapped = (result.get("obi") or {}).get(key) or {}
+        print(f"  BROAD  {key}: kept its own entry; {mapped.get('obi_id')} "
+              f"{mapped.get('obi_label')} is broader than the assay")
     # A repair that was asked for, paid for, and then failed. It used to surface only as a count
     # inside the round's actions JSON, which is how 12 discarded alias corrections crossed a
     # 30-paper run unnoticed: the entry keeps exactly the field the verifier objected to.
