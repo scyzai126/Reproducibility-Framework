@@ -58,6 +58,14 @@ def test_a_verification_that_failed_is_a_line_of_its_own(cli, capsys):
     assert "ERROR  FACS → flow cytometry: verifier returned an empty reply" in out
 
 
+def test_a_failed_extraction_call_is_a_line_of_its_own(cli, capsys):
+    cli.report_result(_result(rounds={"extract": {
+        "source": "extracted", "calls": 3,
+        "failed_runs": [{"run": "run2", "error": "AssayExtractionError: x"}]}}))
+
+    assert "EXTRACT FAILED  run2: AssayExtractionError: x" in capsys.readouterr().out
+
+
 def test_a_refused_correction_is_reported(cli, capsys):
     cli.report_result(_result(corrections={"results": [{"assay_id": "FACS", "corrections": [
         {"field": "evidence", "action": "UNCHANGED",

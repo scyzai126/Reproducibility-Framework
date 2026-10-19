@@ -266,6 +266,12 @@ def report_result(result: dict) -> None:
         quote = ((record.get("entry") or {}).get("evidence") or {}).get("quote") or ""
         print(f"  MINORITY  {key}: found by {len(record.get('runs') or [])} of "
               f"{record.get('of')} extractions; not delivered — {quote[:120]}")
+    # An extraction call that returned nothing usable. The vote ran without it, which changes
+    # what "majority" meant for this paper (two of two is unanimity), so it is printed, not
+    # folded into the call count.
+    for failure in (result["rounds"].get("extract") or {}).get("failed_runs") or []:
+        print(f"  EXTRACT FAILED  {failure['run']}: {failure['error']} "
+              "(the vote ran over the remaining replies)")
     # Every fold round 5 made: an entry that is no longer a key of its own because another
     # write-up of the same OBI term absorbed it. Printed rather than counted, because the OBI term
     # is coarser than the paper's wording and a fold is exactly where that coarseness shows.

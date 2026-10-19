@@ -7,7 +7,8 @@ whether a given alias objection or OBI pick was the model's or the parser's coul
 without paying for the run again.
 
 A `Trace` is a list of records held in a ContextVar. `assay_service.assay_report` starts one and
-writes it to `<registry_dir>/assays_raw.json` after every round; each round calls `record(...)`
+writes it to `<registry_dir>/assays_raw.json` after every round (and before it gives up on a
+round 1 with too few replies to vote over); each round calls `record(...)`
 with the reply it got. Outside a trace `record` is a no-op, so the standalone scripts and every
 existing test are unaffected, and the ContextVar carries into the `asyncio.gather` tasks of
 round 2 and the `asyncio.to_thread` of round 4 without any of them being told.

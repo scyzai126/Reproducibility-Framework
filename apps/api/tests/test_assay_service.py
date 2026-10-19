@@ -6,7 +6,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.agent import assay_service
-from app.agent.assay_extractor import TRIMMED_FIELDS
+from app.agent.assay_extractor import TRIMMED_FIELDS, AssayExtractionError
 from app.agent.assay_service import (
     NothingToDoError,
     PaperNotFoundError,
@@ -774,3 +774,48 @@ def test_the_estimate_prices_round_one_at_the_extraction_count(paper, monkeypatc
     rounds = {r["name"]: r for r in assay_service.estimate_run("111", "SDY1")["rounds"]}
 
     assert rounds["extract"]["calls"] == 3 and rounds["extract"]["extractions"] == 3
+
+
+@pytest.mark.asyncio
+async def test_one_unparseable_extraction_reply_of_three_is_voted_around(paper, monkeypatch):
+    """One bad reply out of three used to raise and lose all three paid calls. Now the vote
+    runs over the two that parsed (unanimity, since needed = 2 of 2) and the failure is a
+    finding on the round, with the bad reply kept in the trace."""
+    monkeypatch.setattr(assay_service, "EXTRACTIONS", 3)
+    client = _ExtractionClient([_dc_panel_body(True), "{not json", _dc_panel_body(False)],
+                               _verification_body())
+
+    result = await assay_report("111", "SDY1", client)
+
+    failed = result["rounds"]["extract"]["failed_runs"]
+    assert [f["run"] for f in failed] == ["run2"]
+    assert failed[0]["error"].startswith("AssayExtractionError: model returned unparseable JSON")
+    assert result["rounds"]["extract"]["calls"] == 3  # paid for, failed or not
+    assert client.calls == 4
+    assert list(result["assays"]) == ["flow cytometry assay"]
+    assert result["minority"]["flow cytometry for DC activation"]["runs"] == ["run1"]
+    raw = json.loads((paper / "assays_raw.json").read_text())
+    assert raw["extract"]["run2"]["reply"] == "{not json"
+
+
+@pytest.mark.asyncio
+async def test_two_failed_extraction_calls_of_three_fail_the_run_but_keep_the_trace(
+        paper, monkeypatch):
+    """Fewer than two replies is nothing to vote over, so the run fails as before -- but the
+    replies that did arrive are written first, because they are the only diagnostic."""
+    monkeypatch.setattr(assay_service, "EXTRACTIONS", 3)
+    client = _ExtractionClient(["{not json", "[]", _dc_panel_body(False)], _verification_body())
+
+    with pytest.raises(AssayExtractionError, match="run1, run2"):
+        await assay_report("111", "SDY1", client)
+
+    raw = json.loads((paper / "assays_raw.json").read_text())
+    assert sorted(raw["extract"]) == ["run1", "run2", "run3"]
+    assert not (paper / "assays_precorrection.json").exists()
+    assert not (paper / "assays.json").exists()
+
+
+@pytest.mark.asyncio
+async def test_a_single_extraction_that_fails_still_fails_the_run(paper):
+    with pytest.raises(AssayExtractionError):
+        await assay_report("111", "SDY1", _Client("{not json"))

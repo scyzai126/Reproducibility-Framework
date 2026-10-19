@@ -49,6 +49,7 @@ from app.agent.assay_corrector import (
     uncorrectable_flags,
 )
 from app.agent.assay_extractor import (
+    AssayExtractionError,
     contract_warnings,
     extract_assays,
     has_methods_section,
@@ -834,10 +835,12 @@ async def assay_report(
     and the OBI mapper runs in a worker thread, so neither can be watched from here, and a
     caller must show that as indeterminate rather than invent a position.
 
-    Raises PaperNotFoundError when neither an XML nor a PDF is on disk. Extraction failures
-    propagate as AssayExtractionError; verification, correction and OBI-mapping failures do
-    not, because each turns a failed call into a per-item ERROR record, or a failed round,
-    rather than losing the paper.
+    Raises PaperNotFoundError when neither an XML nor a PDF is on disk. Round 1 raises
+    AssayExtractionError only when fewer than two extraction calls return a registry (one, when
+    one is made); a single failed call is recorded in `rounds["extract"]["failed_runs"]` and the
+    vote runs over the rest. Verification, correction and OBI-mapping failures never propagate,
+    because each turns a failed call into a per-item ERROR record, or a failed round, rather
+    than losing the paper.
     """
     def _emit(**event) -> None:
         if on_progress is None:
@@ -891,17 +894,42 @@ async def _run_rounds(pubmed_id, study_accession, client, verify, correct, model
     _emit(round="extract", state="running", total=n_extract)
     labels = [f"run{i + 1}" for i in range(n_extract)]
     # Concurrent: the calls are independent, so N of them take about as long as one. Each reply
-    # is kept in the trace under its own label; the registry is their majority.
+    # is kept in the trace under its own label; the registry is their majority. A call that
+    # fails -- an unparseable reply, a transport error -- is not allowed to take the others
+    # with it: the vote runs over whatever parsed, as long as that is at least two (or the one,
+    # when one is all that was asked), and the failure is recorded on the round.
     if kind == "pdf":
         pdf_bytes = paper_path.read_bytes()
-        runs = await asyncio.gather(*(
-            extract_assays_from_pdf(pdf_bytes, paper_path.name, title, client, model,
-                                    run_label=label) for label in labels))
+        coros = [extract_assays_from_pdf(pdf_bytes, paper_path.name, title, client, model,
+                                         run_label=label) for label in labels]
     else:
-        runs = await asyncio.gather(*(
-            extract_assays(source_text, title, client, model, run_label=label)
-            for label in labels))
-    assays, minority = consensus(list(runs))
+        coros = [extract_assays(source_text, title, client, model, run_label=label)
+                 for label in labels]
+    outcomes = await asyncio.gather(*coros, return_exceptions=True)
+    runs: list[dict] = []
+    failed: list[dict] = []
+    for label, outcome in zip(labels, outcomes):
+        if isinstance(outcome, BaseException) and not isinstance(outcome, Exception):
+            raise outcome  # cancellation is not a failed call
+        if isinstance(outcome, Exception):
+            logger.warning("extraction %s failed - %s", label, outcome)
+            failed.append({"run": label, "error": f"{type(outcome).__name__}: {outcome}"})
+        else:
+            runs.append(outcome)
+    if len(runs) < min(2, n_extract):
+        # Nothing to vote over. The replies that did arrive are the only diagnostic, so they
+        # are written before giving up -- over the previous run's trace, not merged into it,
+        # since Trace.write merges and the stale-file clearing below has not happened yet.
+        out_dir.mkdir(parents=True, exist_ok=True)
+        if raw_path.exists():
+            raw_path.unlink()
+        trace.write(raw_path)
+        names = ", ".join(f["run"] for f in failed)
+        raise AssayExtractionError(
+            f"{len(failed)} of {n_extract} extraction call(s) failed ({names}); fewer than two "
+            "replies to vote over: "
+            + "; ".join(f"{f['run']}: {f['error']}" for f in failed))
+    assays, minority = consensus(runs)
 
     # `source` and `evidence.sentence_ids` are not asked of the model; they are worked out here
     # from each quote, before the registry is written or judged. Free, and exact where the quote
@@ -930,6 +958,10 @@ async def _run_rounds(pubmed_id, study_accession, client, verify, correct, model
     calls += n_extract
     rounds["extract"] = {"source": "extracted", "calls": n_extract, "extractions": n_extract,
                          "assays": len(assays), "minority": len(minority)}
+    # Only when a call failed, like no_methods below: a reader branches on presence, and the
+    # count of calls stays what was paid for.
+    if failed:
+        rounds["extract"]["failed_runs"] = failed
     # Says why an empty or thin extraction may be: with no Methods section (a short report whose
     # methods sit in a supplement) round 1 had only the main text to read. XML only -- a PDF's
     # text layer carries no section tags to tell.
