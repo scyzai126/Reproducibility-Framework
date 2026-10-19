@@ -3,7 +3,7 @@
     "name_in_paper": [
       "gene array"
     ],
-    "normalized_name": "microarray",
+    "standard_technique_name": "microarray",
     "aliases": [
       "microarray",
       "gene microarray"
@@ -24,7 +24,7 @@
     "name_in_paper": [
       "qPCR"
     ],
-    "normalized_name": "real time polymerase chain reaction",
+    "standard_technique_name": "real time polymerase chain reaction",
     "aliases": [
       "quantitative real-time PCR"
     ],
@@ -44,7 +44,7 @@
     "name_in_paper": [
       "lysis plaque assay"
     ],
-    "normalized_name": "plaque assay",
+    "standard_technique_name": "plaque assay",
     "aliases": [
       "plaque assay"
     ],
@@ -64,7 +64,7 @@
     "name_in_paper": [
       "IL-1β ELISA"
     ],
-    "normalized_name": "enzyme linked immunosorbent assay",
+    "standard_technique_name": "enzyme linked immunosorbent assay",
     "aliases": [
       "ELISA"
     ],
@@ -82,15 +82,10 @@
   },
   "cell proliferation assay using carboxyfluorescein succinimidyl ester staining": {
     "name_in_paper": [
-      "CFSE labeling",
-      "flow cytometric analysis of IFN-γ/IL-2–producing activated CD4 T cells"
+      "CFSE labeling"
     ],
-    "normalized_name": "flow cytometry",
-    "aliases": [
-      "polychromatic flow cytometry",
-      "flow cytometry",
-      "FACS analysis"
-    ],
+    "standard_technique_name": "flow cytometry",
+    "aliases": [],
     "sample_type": "PBMCs from vaccinated volunteers",
     "readouts": "T cell proliferative response to YF17D-derived peptide pools",
     "generate_claim": true,
@@ -101,29 +96,14 @@
         "S155"
       ],
       "quote": "PBMCs from vaccinated volunteers were labeled with CFSE (Invitrogen), as previously described ( 64 )."
-    },
-    "additional_evidence": [
-      {
-        "name_in_paper": "flow cytometric analysis of IFN-γ/IL-2–producing activated CD4 T cells",
-        "sample_type": "PBMCs from vaccinated subjects",
-        "readouts": "frequencies of activated CD4 T cells expressing CD154, IL-2, IFN-γ and Th1/Th2 phenotype markers",
-        "generate_claim": true,
-        "source": "methods",
-        "evidence": {
-          "section": "Flow cytometric analysis of IFN-γ/IL-2–producing activated CD4 T cells.",
-          "sentence_ids": [
-            "S162"
-          ],
-          "quote": "To assess the cytokine production ability of YF17D-specific helper T cells, 2 million PBMCs from vaccinated subjects (day 14 and 28) were stimulated for 6 h with YF17D-derived peptide pools, in the presence of Brefeldin A (Sigma-Aldrich), and then stained with anti-CD8 and -CD4 antibodies."
-        }
-      }
-    ]
+    }
   },
-  "antigen detection by cytometric bead array assay": {
+  "cytometric bead array assay": {
     "name_in_paper": [
-      "BD Th1/Th2 CBA array"
+      "BD Th1/Th2 CBA array",
+      "multiplex cytokine analysis"
     ],
-    "normalized_name": "cytometric bead array",
+    "standard_technique_name": "cytometric bead array",
     "aliases": [
       "CBA",
       "cytometric bead assay"
@@ -138,24 +118,44 @@
         "S161"
       ],
       "quote": "The BD Th1/Th2 CBA array (BD) was used to measure levels of IL-2, IL-4, IL-5, IL-10, IFN-γ, and TNF in PBMCs supernatants, as suggested by the manufacturer."
-    }
+    },
+    "additional_evidence": [
+      {
+        "name_in_paper": "multiplex cytokine analysis",
+        "sample_type": "supernatants from DC/T cell co-cultures",
+        "readouts": "cytokine production levels",
+        "generate_claim": true,
+        "source": "methods",
+        "evidence": {
+          "section": "Multiplex cytokine analysis.",
+          "sentence_ids": [
+            "S179"
+          ],
+          "quote": "At the time the lymphocytes were harvested from DC/T cell co-cultures, the supernatants were also collected and stored frozen until analyzed for cytokine production using the Beadlyte human 22-plex Multi-cytokine Detection System (Millipore) on a Bio-Plex reader (Bio-Rad Laboratories)."
+        }
+      }
+    ]
   },
-  "cytometric bead array assay": {
+  "flow cytometry assay": {
     "name_in_paper": [
-      "multiplex cytokine analysis"
+      "flow cytometric analysis of IFN-γ/IL-2–producing activated CD4 T cells"
     ],
-    "normalized_name": "multiplex bead assay",
-    "aliases": [],
-    "sample_type": "supernatants from DC/T cell co-cultures",
-    "readouts": "cytokine production levels",
+    "standard_technique_name": "flow cytometry",
+    "aliases": [
+      "polychromatic flow cytometry",
+      "flow cytometry",
+      "FACS analysis"
+    ],
+    "sample_type": "PBMCs from vaccinated subjects",
+    "readouts": "frequencies of activated CD4 T cells expressing CD154, IL-2, IFN-γ and Th1/Th2 phenotype markers",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
-      "section": "Multiplex cytokine analysis.",
+      "section": "Flow cytometric analysis of IFN-γ/IL-2–producing activated CD4 T cells.",
       "sentence_ids": [
-        "S179"
+        "S162"
       ],
-      "quote": "At the time the lymphocytes were harvested from DC/T cell co-cultures, the supernatants were also collected and stored frozen until analyzed for cytokine production using the Beadlyte human 22-plex Multi-cytokine Detection System (Millipore) on a Bio-Plex reader (Bio-Rad Laboratories)."
+      "quote": "To assess the cytokine production ability of YF17D-specific helper T cells, 2 million PBMCs from vaccinated subjects (day 14 and 28) were stimulated for 6 h with YF17D-derived peptide pools, in the presence of Brefeldin A (Sigma-Aldrich), and then stained with anti-CD8 and -CD4 antibodies."
     }
   }
 }

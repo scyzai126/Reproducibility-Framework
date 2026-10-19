@@ -12,7 +12,7 @@ import pytest
 from app.agent import assay_service, assay_table
 
 _OBI = {"enzyme-linked immunosorbent assay": {
-    "name_in_paper": ["ELISA"], "normalized_name": "ELISA", "sample_type": "serum",
+    "name_in_paper": ["ELISA"], "standard_technique_name": "ELISA", "sample_type": "serum",
     "readouts": "titers", "obi_id": "OBI:0000661", "obi_label": "enzyme-linked immunosorbent assay",
     "resource": "exact_original", "obi_confidence": "high"}}
 

@@ -1,8 +1,7 @@
 {
   "flow cytometry assay": {
     "name_in_paper": [
-      "Flow cytometry and sorting",
-      "T cell proliferation assays"
+      "Flow cytometry and sorting"
     ],
     "aliases": [],
     "generate_claim": true,
@@ -13,23 +12,7 @@
         "S18"
       ],
       "quote": "Cells were acquired on an LSRII flow cytometer or sorted with Influx cell sorter (BD Biosciences) and analyzed using FlowJo (Treestar, Ashland, OR)."
-    },
-    "additional_evidence": [
-      {
-        "name_in_paper": "T cell proliferation assays",
-        "sample_type": "sorted memory CD8 + T cells",
-        "readouts": "cell proliferation measured by dilution/loss of proliferation dye after stimulation",
-        "generate_claim": true,
-        "source": "methods",
-        "evidence": {
-          "section": "T cell proliferation assays",
-          "sentence_ids": [
-            "S33"
-          ],
-          "quote": "Cells were plated (5×10 5 /mL) in media (RPMI-1640, 10% FBS, 1mM sodium pyruvate, 100 U/mL penicillin, 100ug/mL streptomycin, 2mM L-glutamine, and 100 μM β-Mercaptoethanol) with Human CD3/CD28 Activator (StemCell technologies) and analyzed 4–5 days later by flow cytometry."
-        }
-      }
-    ]
+    }
   },
   "bulk RNA-seq assay": {
     "name_in_paper": [
@@ -66,7 +49,22 @@
       "quote": "Samples were then incubated in 0.125nM Ir intercalator and acquired on a CyTOF2 (Fluidigm)."
     }
   },
-  "HLA multimer reagents": {
+  "cell proliferation assay": {
+    "name_in_paper": [
+      "T cell proliferation assays"
+    ],
+    "aliases": [],
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "T cell proliferation assays",
+      "sentence_ids": [
+        "S33"
+      ],
+      "quote": "Cells were plated (5×10 5 /mL) in media (RPMI-1640, 10% FBS, 1mM sodium pyruvate, 100 U/mL penicillin, 100ug/mL streptomycin, 2mM L-glutamine, and 100 μM β-Mercaptoethanol) with Human CD3/CD28 Activator (StemCell technologies) and analyzed 4–5 days later by flow cytometry."
+    }
+  },
+  "MHC tetramer/multimer assay measuring binding of a T cell epitope:MHC:TCR complex": {
     "name_in_paper": [
       "HLA multimer reagents"
     ],

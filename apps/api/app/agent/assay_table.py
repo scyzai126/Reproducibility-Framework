@@ -10,7 +10,7 @@ Two callers, one builder, so the two tables cannot differ:
   * GET /agent/assays/table builds one paper's rows on demand (Extract tab), via `only=`.
 
 The rows keep the schema `GET /agent/assay-obi` serves and `AssayObiRow` (apps/web/src/lib/types.ts)
-renders -- study, assay, normalized_name, sample_type, readouts, obi_id, obi_label, resource,
+renders -- study, assay, standard_technique_name, sample_type, readouts, obi_id, obi_label, resource,
 obi_confidence -- plus:
 
 * the curator's matching assay from `data/benchmark_assay/`, paired by
@@ -39,7 +39,9 @@ from app.agent import assay_service
 from app.agent.assay_service import split_stem
 
 _REPO_ROOT = Path(__file__).resolve().parents[4]
-BENCHMARK_DIR = _REPO_ROOT / "data" / "benchmark_assay" / "benchmark_assay_v1"
+#: The curators' latest pass. v1 was deleted when v2 and v4 were added; the compare script and
+#: tests/test_benchmark_assay_data.py name the same folder.
+BENCHMARK_DIR = _REPO_ROOT / "data" / "benchmark_assay" / "benchmark_assay_v4"
 #: The benchmark pairing lives in a CLI script that is not an importable package.
 _COMPARISON_SCRIPT = _REPO_ROOT / "scripts" / "compare_assay_benchmark.py"
 
@@ -173,7 +175,7 @@ def table_rows(registry_root: Path, benchmark_dir: Path = BENCHMARK_DIR,
             rows.append({
                 "study": f"{pmid}_{sdy}",
                 "assay": _wordings(entry.get("name_in_paper")),
-                "normalized_name": entry.get("normalized_name") or "",
+                "standard_technique_name": entry.get("standard_technique_name") or "",
                 "sample_type": entry.get("sample_type") or "",
                 "readouts": entry.get("readouts") or "",
                 "obi_id": entry.get("obi_id"),
@@ -189,7 +191,7 @@ def table_rows(registry_root: Path, benchmark_dir: Path = BENCHMARK_DIR,
             })
         for item in missed.pop(f"{pmid}_{sdy}", []):
             rows.append({
-                "study": f"{pmid}_{sdy}", "assay": "", "normalized_name": "", "sample_type": "",
+                "study": f"{pmid}_{sdy}", "assay": "", "standard_technique_name": "", "sample_type": "",
                 "readouts": "", "obi_id": None, "obi_label": None, "resource": None,
                 "obi_confidence": None, "benchmark_assay": item["name"],
                 "benchmark_obi_label": item["label"], "benchmark_obi_id": item["id"],

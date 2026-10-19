@@ -3,7 +3,7 @@
     "name_in_paper": [
       "ELISA"
     ],
-    "normalized_name": "ELISA",
+    "standard_technique_name": "ELISA",
     "aliases": [],
     "sample_type": "Serum",
     "readouts": "CMV and EBV seropositivity, based on CMV IgG antibody index results",
@@ -26,7 +26,7 @@
     "name_in_paper": [
       "microarray analysis of gene expression"
     ],
-    "normalized_name": "microarray",
+    "standard_technique_name": "microarray",
     "aliases": [
       "gene expression analysis",
       "genome-wide mRNA expression"
@@ -51,10 +51,9 @@
   "flow cytometry assay": {
     "name_in_paper": [
       "Leukocyte subset frequency determination",
-      "phosphoflow analysis",
-      "Tetramer and Phenotypic Staining of CD8 T Cells"
+      "phosphoflow analysis"
     ],
-    "normalized_name": "flow cytometry",
+    "standard_technique_name": "flow cytometry",
     "aliases": [],
     "sample_type": "PBMC",
     "readouts": "leukocyte subset frequencies",
@@ -71,13 +70,13 @@
     "obi_label": "flow cytometry assay",
     "resource": "embedding_llm_normalized",
     "obi_confidence": 0.7859,
-    "obi_granularity": "BROAD"
+    "obi_granularity": "EXACT"
   },
   "cytometric bead array assay": {
     "name_in_paper": [
       "Luminex"
     ],
-    "normalized_name": "bead based immuno assay",
+    "standard_technique_name": "bead based immuno assay",
     "aliases": [],
     "sample_type": "serum",
     "readouts": "cytokine and chemokine levels",
@@ -100,7 +99,7 @@
     "name_in_paper": [
       "HAI assay"
     ],
-    "normalized_name": "hemagglutination inhibition assay",
+    "standard_technique_name": "hemagglutination inhibition assay",
     "aliases": [
       "hemagglutinin-inhibition (HAI) assay"
     ],
@@ -121,11 +120,36 @@
     "obi_confidence": 0.8083,
     "obi_granularity": "EXACT"
   },
+  "MHC tetramer/multimer assay measuring binding of a T cell epitope:MHC:TCR complex": {
+    "name_in_paper": [
+      "Tetramer and Phenotypic Staining of CD8 T Cells"
+    ],
+    "standard_technique_name": "flow cytometry",
+    "aliases": [
+      "tetramer staining"
+    ],
+    "sample_type": "BAL",
+    "readouts": "influenza-specific CD8 T cells",
+    "generate_claim": true,
+    "source": "results",
+    "evidence": {
+      "section": "Figure 3 caption",
+      "sentence_ids": [
+        "S208"
+      ],
+      "quote": "Seven days after IAV infection, influenza viral titer was determined (upper panel) and IAV-specific T cells were enumerated from the BAL of IAV+ MCMV− (MCMV−) or IAV+ MCMV+ (MCMV+) mice by tetramer staining for NP, PA and PB1-specific responses."
+    },
+    "obi_id": "OBI:1110179",
+    "obi_label": "MHC tetramer/multimer assay measuring binding of a T cell epitope:MHC:TCR complex",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.5922,
+    "obi_granularity": "EXACT"
+  },
   "viral plaque assay": {
     "name_in_paper": [
       "plaque assay"
     ],
-    "normalized_name": "plaque assay",
+    "standard_technique_name": "plaque assay",
     "aliases": [],
     "sample_type": "lung homogenates",
     "readouts": "influenza viral titers",
@@ -148,7 +172,7 @@
     "name_in_paper": [
       "Single-nucleotide polymorphism assay"
     ],
-    "normalized_name": "single nucleotide polymorphism genotyping array",
+    "standard_technique_name": "single nucleotide polymorphism genotyping array",
     "aliases": [
       "single nucleotide polymorphism (SNP) genotyping approach"
     ],

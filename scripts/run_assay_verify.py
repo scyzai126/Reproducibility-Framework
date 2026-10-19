@@ -117,8 +117,21 @@ def report_quotes(assays: dict, source_text: str) -> None:
         print(f"{mismatched}/{len(assays)} entries claim a section their evidence does not support")
 
 
+def extraction_path(registry_dir: Path) -> Path:
+    """The registry keyed by the extractor's wording: what this round judges.
+
+    After a full pipeline run, assays.json is the canonical registry -- keyed by OBI label, with
+    `name_in_paper` as a list and `additional_evidence` blocks -- and the extraction it came from
+    is kept beside it as assays_precorrection.json. Judging the canonical file told the judge the
+    assay's name was its OBI label. A registry built by run_assay_extract.py alone has only
+    assays.json, which is then the extraction.
+    """
+    snapshot = registry_dir / "assays_precorrection.json"
+    return snapshot if snapshot.exists() else registry_dir / "assays.json"
+
+
 async def main(registry_dir: Path, limit: int | None, xml_path: Path | None, quotes_only: bool) -> None:
-    registry_path = registry_dir / "assays.json"
+    registry_path = extraction_path(registry_dir)
     if not registry_path.exists():
         print(f"No assays.json in {registry_dir}")
         sys.exit(1)

@@ -585,7 +585,7 @@ def _corpus_rows() -> list[dict]:
     if not _ASSAY_OBI_PATH.exists():
         raise HTTPException(
             status_code=404,
-            detail="No assay/OBI table found at data/31paper_assays/all_assays_OBI.json.",
+            detail=f"No assay/OBI table found at {assay_service._display_path(_ASSAY_OBI_PATH)}.",
         )
     import json
 
@@ -703,20 +703,17 @@ async def agent_assay_immport_resolve(
 # Fixed display order, so the UI's colours never shift when the data changes. Cheapest to
 # most expensive, which is also free-to-paid: the two exact tiers cost nothing, the two
 # embedding tiers cost two calls each. "exact_normalized" is the retired lexical round, kept
-# because 40 stored rows still carry it; "exact_normalized_llm" (exact on normalized_name) was
+# because 40 stored rows still carry it; "exact_normalized_llm" (exact on standard_technique_name) was
 # retired on 2026-10-02 and is kept for the same reason. "exact_original_llm" is an exact hit on
 # a term with children, refined by the picker -- paid like the embedding tiers.
 _RESOURCE_ORDER = ["exact_original", "exact_original_llm", "exact_normalized", "exact_normalized_llm",
                    "embedding_llm", "embedding_llm_normalized", "unresolved"]
 
 #: Built by scripts/build_assay_table.py from every registry's assays_OBI.json -- one row per assay.
-_ASSAY_OBI_PATH = (
-    Path(__file__).resolve().parents[4] / "data" / "31paper_assays" / "all_assays_OBI.json"
-)
+#: Under the versioned result folder, where build_assay_table.py writes it.
+_ASSAY_OBI_PATH = assay_service.REGISTRY_ROOT / "all_assays_OBI.json"
 #: Built by scripts/build_immport_coverage.py from that table; GET /agent/assay-immport serves it.
-_ASSAY_IMMPORT_PATH = (
-    Path(__file__).resolve().parents[4] / "data" / "31paper_assays" / "assay_immport.json"
-)
+_ASSAY_IMMPORT_PATH = assay_service.REGISTRY_ROOT / "assay_immport.json"
 
 
 def _assay_obi_stats(rows: list[dict]) -> dict:
@@ -758,8 +755,8 @@ async def get_assay_obi():
         raise HTTPException(
             status_code=404,
             detail=(
-                "No assay/OBI table found at data/31paper_assays/all_assays_OBI.json -- "
-                "run scripts/build_assay_table.py."
+                f"No assay/OBI table found at {assay_service._display_path(_ASSAY_OBI_PATH)} "
+                "-- run scripts/build_assay_table.py."
             ),
         )
     import json

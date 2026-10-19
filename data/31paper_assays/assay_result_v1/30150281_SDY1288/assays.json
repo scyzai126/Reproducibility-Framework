@@ -3,7 +3,7 @@
     "name_in_paper": [
       "real-time RT–PCR"
     ],
-    "normalized_name": "real time reverse-transcription polymerase chain reaction",
+    "standard_technique_name": "real time reverse-transcription polymerase chain reaction",
     "aliases": [],
     "sample_type": "acute-phase samples",
     "readouts": "detection of CHIKV",
@@ -20,16 +20,13 @@
   "enzyme-linked immunosorbent assay": {
     "name_in_paper": [
       "IgM capture ELISA",
-      "Inhibition ELISA",
-      "multiplex ELISA"
+      "Inhibition ELISA"
     ],
-    "normalized_name": "ELISA",
-    "aliases": [
-      "Luminex"
-    ],
+    "standard_technique_name": "ELISA",
+    "aliases": [],
     "sample_type": "paired acute and convalescent sera",
     "readouts": "seroconversion",
-    "generate_claim": true,
+    "generate_claim": false,
     "source": "methods",
     "evidence": {
       "section": "Study participants",
@@ -52,20 +49,6 @@
           ],
           "quote": "In addition, seroconversion by IgM capture ELISA and/or a >4-fold increase in antibody titer by Inhibition ELISA in paired acute and convalescent sera were evaluated (Galo et al , 2017 )."
         }
-      },
-      {
-        "name_in_paper": "multiplex ELISA",
-        "sample_type": "serum",
-        "readouts": "cytokine and chemokine concentrations",
-        "generate_claim": true,
-        "source": "methods",
-        "evidence": {
-          "section": "Multiplex ELISA",
-          "sentence_ids": [
-            "S192"
-          ],
-          "quote": "Cytokines and chemokines were measured using a multiplex ELISA-based assay (Luminex)."
-        }
       }
     ]
   },
@@ -73,7 +56,7 @@
     "name_in_paper": [
       "RNA-seq"
     ],
-    "normalized_name": "RNA sequencing",
+    "standard_technique_name": "RNA sequencing",
     "aliases": [],
     "sample_type": "whole blood in PAXgene solution",
     "readouts": "whole-blood gene and transcript expression",
@@ -87,11 +70,31 @@
       "quote": "All selected cases had an acute-phase sample collected on days 1–2 of illness and a convalescent sample collected on days 15–17 post-illness for serum, whole blood in PAXgene solution, and PBMCs; these were subject to transcriptomic analysis via RNA-seq, CHIKV viral titer assays, multiplex ELISA for cytokines, and mass cytometry for cellular phenotyping as illustrated in Fig 1 ."
     }
   },
+  "cytometric bead array assay": {
+    "name_in_paper": [
+      "multiplex ELISA"
+    ],
+    "standard_technique_name": "ELISA",
+    "aliases": [
+      "Luminex"
+    ],
+    "sample_type": "serum",
+    "readouts": "cytokine and chemokine concentrations",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Multiplex ELISA",
+      "sentence_ids": [
+        "S192"
+      ],
+      "quote": "Cytokines and chemokines were measured using a multiplex ELISA-based assay (Luminex)."
+    }
+  },
   "cytometry time of flight assay": {
     "name_in_paper": [
       "mass cytometry"
     ],
-    "normalized_name": "mass cytometry",
+    "standard_technique_name": "mass cytometry",
     "aliases": [
       "CyTOF",
       "Cytometry time-of-flight"
@@ -112,7 +115,7 @@
     "name_in_paper": [
       "virus isolation"
     ],
-    "normalized_name": null,
+    "standard_technique_name": null,
     "aliases": [],
     "sample_type": "acute-phase samples",
     "readouts": null,
@@ -130,7 +133,7 @@
     "name_in_paper": [
       "viral titer assays"
     ],
-    "normalized_name": "reverse transcription polymerase chain reaction",
+    "standard_technique_name": "reverse transcription polymerase chain reaction",
     "aliases": [],
     "sample_type": "patient serum",
     "readouts": "CHIKV RNA copies",

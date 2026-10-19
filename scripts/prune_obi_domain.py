@@ -3,16 +3,17 @@
 
 Builds `obi_generic_index.json` from `obi.obo` in three stages:
 
-    5218  --[ assay branch ]-->  1794  --[ measuring/detecting compositional filter ]-->  1248
-          --[ tier A-I subtrees ]-->  700
+    5218  --[ assay branch ]-->  1794  --[ measuring/detecting compositional filter ]-->  1249
+          --[ tier A-I subtrees ]-->  701
 
 **Stage 0** keeps the `is_a` descendants of `OBI:0000070 assay`. Each kept term then gets its
 `definition` and `n_descendants` from `obi.obo` (see `annotate`).
 
 **Stage 1** drops the IEDB-style compositional labels (*"… assay measuring epitope specific X
-production by Y cells"*). It reuses `_is_generic_assay_label` from the mapper so the rule has one
+production by Y cells"*). It reuses `_is_generic_assay_term` from the mapper so the rule has one
 definition, and the mapper re-applies it at load time for callers pointing `--terms` at the
-unfiltered list.
+unfiltered list. The mapper's `_COMPOSITIONAL_KEEP` pins the few compositional terms whose family
+has no generic term left (today only OBI:1110179, the MHC tetramer/multimer assay).
 
 **Stage 2** drops whole domains that never appear in an immunology or biomedical paper — hospital
 analyzer panels, insecticide resistance, electrophysiology, crystallography. Both stages exist for
@@ -26,7 +27,7 @@ goes and why; `--show-dropped` reprints the terms themselves on demand. Because 
 derived from `obi.obo` and the roots below, it is reproducible and verified as such by
 `apps/api/tests/test_assay_obi_mapper.py::test_index_is_reproducible_from_the_full_source`.
 
-Idempotent — rebuilding from source always lands on the same 700 terms in the same order.
+Idempotent — rebuilding from source always lands on the same 701 terms in the same order.
 
     ./.venv/bin/python scripts/prune_obi_domain.py [--dry-run] [--show-dropped]
 """
@@ -46,7 +47,7 @@ OBO_PATH = OBI_DIR / "obi.obo"
 INDEX_PATH = OBI_DIR / "obi_generic_index.json"
 
 sys.path.insert(0, str(REPO_ROOT / "apps" / "api"))
-from app.agent.assay_obi_mapper import _is_generic_assay_label  # noqa: E402
+from app.agent.assay_obi_mapper import _is_generic_assay_term  # noqa: E402
 
 # Out-of-scope subtree roots. Every term at or under one of these leaves the vocabulary.
 OUT_OF_SCOPE_ROOTS = {
@@ -226,7 +227,7 @@ def build_index(obo_path: Path = OBO_PATH) -> tuple[list[dict], list[dict], list
     source = assay_branch(obo_path)
 
     # Stage 1 — compositional labels
-    generic = [t for t in source if _is_generic_assay_label(t["label"])]
+    generic = [t for t in source if _is_generic_assay_term(t["id"], t["label"])]
 
     # Stage 2 — out-of-scope domains
     _, children, definitions = parse_obo(obo_path)

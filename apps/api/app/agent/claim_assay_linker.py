@@ -9,7 +9,7 @@ either. Its output is its own file, `claim_assay_links.json`, which the grouping
 Per claim:
     exact      the claim's wording normalizes to the registry key (the OBI label)
     alias      it normalizes to another wording the entry records (name_in_paper, aliases,
-               normalized_name)
+               standard_technique_name)
     unlinked   neither; `candidates` lists entries whose wordings the claim's text or quotes
                mention, for a human or a later LLM step to decide
 
@@ -74,8 +74,8 @@ def finding_sentences(numbered_text: str) -> dict[str, str]:
 
 def _all_forms(name: str, entry: dict) -> list[str]:
     forms = surface_forms(name, entry)
-    if isinstance(entry.get("normalized_name"), str) and entry["normalized_name"].strip():
-        forms.append(entry["normalized_name"])
+    if isinstance(entry.get("standard_technique_name"), str) and entry["standard_technique_name"].strip():
+        forms.append(entry["standard_technique_name"])
     return forms
 
 
@@ -112,7 +112,7 @@ def link_claims(claims: dict, registry: dict,
     entries = {k: v for k, v in (registry or {}).items() if isinstance(v, dict)}
     index = index_registry(entries)
     for name, entry in entries.items():
-        norm = normalize_assay_name(entry.get("normalized_name") or "")
+        norm = normalize_assay_name(entry.get("standard_technique_name") or "")
         if norm:
             index.setdefault(norm, name)
     patterns = {name: _search_patterns(_all_forms(name, entry)) for name, entry in entries.items()}

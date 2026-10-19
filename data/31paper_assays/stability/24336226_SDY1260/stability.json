@@ -1,0 +1,514 @@
+{
+  "runs": [
+    "v1",
+    "v2",
+    "run1",
+    "run2",
+    "run3",
+    "run4"
+  ],
+  "entries": {
+    "v1": 7,
+    "v2": 9,
+    "run1": 7,
+    "run2": 8,
+    "run3": 8,
+    "run4": 8
+  },
+  "clusters": 7,
+  "stable": 5,
+  "split": 1,
+  "presence": 1,
+  "duplicate_keys": {
+    "v1": [],
+    "v2": [
+      "ELISA (2)"
+    ],
+    "run1": [],
+    "run2": [],
+    "run3": [],
+    "run4": []
+  },
+  "rows": [
+    {
+      "shape": "stable",
+      "keys": {
+        "v1": [
+          "DNA microarray"
+        ],
+        "v2": [
+          "DNA microarray"
+        ],
+        "run1": [
+          "DNA microarray"
+        ],
+        "run2": [
+          "DNA microarray"
+        ],
+        "run3": [
+          "DNA microarray"
+        ],
+        "run4": [
+          "DNA microarray"
+        ]
+      }
+    },
+    {
+      "shape": "split",
+      "keys": {
+        "v1": [
+          "ELISA",
+          "ELISA kits"
+        ],
+        "v2": [
+          "ELISA",
+          "ELISA kits",
+          "ELISA (2)"
+        ],
+        "run1": [
+          "ELISA",
+          "ELISA kits"
+        ],
+        "run2": [
+          "ELISA",
+          "ELISA kits"
+        ],
+        "run3": [
+          "ELISA",
+          "ELISA kits"
+        ],
+        "run4": [
+          "ELISA",
+          "ELISA kits"
+        ]
+      }
+    },
+    {
+      "shape": "stable",
+      "keys": {
+        "v1": [
+          "Luminex"
+        ],
+        "v2": [
+          "anti-Diphtheria IgG by Luminex"
+        ],
+        "run1": [
+          "anti-Diphtheria IgG by Luminex"
+        ],
+        "run2": [
+          "anti-DT IgG capture microsphere assay"
+        ],
+        "run3": [
+          "anti-DT IgG capture microsphere assay"
+        ],
+        "run4": [
+          "Luminex"
+        ]
+      }
+    },
+    {
+      "shape": "stable",
+      "keys": {
+        "v1": [
+          "serum bactericidal titers (SBA)"
+        ],
+        "v2": [
+          "serum bactericidal titers (SBA)"
+        ],
+        "run1": [
+          "serum bactericidal titers (SBA)"
+        ],
+        "run2": [
+          "serum bactericidal titers (SBA)"
+        ],
+        "run3": [
+          "serum bactericidal titers (SBA)"
+        ],
+        "run4": [
+          "serum bactericidal titers (SBA)"
+        ]
+      }
+    },
+    {
+      "shape": "stable",
+      "keys": {
+        "v1": [
+          "flow cytometry"
+        ],
+        "v2": [
+          "FACS"
+        ],
+        "run1": [
+          "flow cytometry"
+        ],
+        "run2": [
+          "flow cytometry"
+        ],
+        "run3": [
+          "flow cytometry"
+        ],
+        "run4": [
+          "flow cytometry"
+        ]
+      }
+    },
+    {
+      "shape": "stable",
+      "keys": {
+        "v1": [
+          "ELISpot"
+        ],
+        "v2": [
+          "ELISpot"
+        ],
+        "run1": [
+          "ELISpot"
+        ],
+        "run2": [
+          "ELISpot"
+        ],
+        "run3": [
+          "ELISpot"
+        ],
+        "run4": [
+          "ELISpot"
+        ]
+      }
+    },
+    {
+      "shape": "presence",
+      "keys": {
+        "v1": [],
+        "v2": [
+          "FACS staining"
+        ],
+        "run1": [],
+        "run2": [
+          "flow cytometry for DC activation"
+        ],
+        "run3": [
+          "FACS staining"
+        ],
+        "run4": [
+          "FACS staining"
+        ]
+      }
+    }
+  ],
+  "field_drift": {
+    "standard_technique_name": {
+      "same": 1,
+      "reworded": 1,
+      "changed": 3
+    },
+    "sample_type": {
+      "same": 2,
+      "reworded": 2,
+      "changed": 1
+    },
+    "readouts": {
+      "same": 2,
+      "reworded": 0,
+      "changed": 3
+    },
+    "aliases": {
+      "same": 0,
+      "reworded": 1,
+      "changed": 4
+    },
+    "generate_claim": {
+      "same": 5,
+      "reworded": 0,
+      "changed": 0
+    },
+    "evidence.quote": {
+      "same": 3,
+      "reworded": 0,
+      "changed": 2
+    },
+    "source": {
+      "same": 5,
+      "reworded": 0,
+      "changed": 0
+    }
+  },
+  "field_drift_detail": [
+    {
+      "cluster": "DNA microarray",
+      "field": "standard_technique_name",
+      "verdict": "changed",
+      "values": {
+        "v1": "microarray",
+        "v2": "transcription profiling by array",
+        "run1": "transcription profiling by array",
+        "run2": "transcription profiling by array",
+        "run3": "transcription profiling by array",
+        "run4": "transcription profiling by array"
+      }
+    },
+    {
+      "cluster": "DNA microarray",
+      "field": "sample_type",
+      "verdict": "changed",
+      "values": {
+        "v1": "PBMCs",
+        "v2": "PBMCs",
+        "run1": "peripheral blood mononuclear cells",
+        "run2": "peripheral blood mononuclear cells",
+        "run3": "peripheral blood mononuclear cells",
+        "run4": "peripheral blood mononuclear cells"
+      }
+    },
+    {
+      "cluster": "DNA microarray",
+      "field": "aliases",
+      "verdict": "changed",
+      "values": {
+        "v1": [
+          "DNA microarrays",
+          "gene expression profile"
+        ],
+        "v2": [],
+        "run1": [
+          "DNA microarrays"
+        ],
+        "run2": [
+          "DNA microarrays"
+        ],
+        "run3": [
+          "microarray",
+          "DNA microarrays"
+        ],
+        "run4": [
+          "DNA microarrays",
+          "DNA microarray experiment"
+        ]
+      }
+    },
+    {
+      "cluster": "Luminex",
+      "field": "standard_technique_name",
+      "verdict": "changed",
+      "values": {
+        "v1": "bead based multiplex assay",
+        "v2": "Luminex",
+        "run1": "Luminex",
+        "run2": "Luminex",
+        "run3": "Luminex",
+        "run4": "luminex"
+      }
+    },
+    {
+      "cluster": "Luminex",
+      "field": "readouts",
+      "verdict": "changed",
+      "values": {
+        "v1": "anti-diphtheria toxoid IgG levels",
+        "v2": "diphtheria toxoid-specific IgG levels",
+        "run1": "diphtheria toxoid-specific IgG quantified as median fluorescence intensity-based arbitrary units per milliliter",
+        "run2": "diphtheria toxoid-specific IgG quantified by median fluorescence intensity",
+        "run3": "DT-specific IgG titer expressed as arbitrary units per milliliter based on median fluorescence intensity",
+        "run4": "diphtheria toxoid-specific IgG titer expressed from median fluorescence intensity"
+      }
+    },
+    {
+      "cluster": "Luminex",
+      "field": "aliases",
+      "verdict": "changed",
+      "values": {
+        "v1": [
+          "anti- DT IgG capture microsphere assay"
+        ],
+        "v2": [
+          "anti- DT IgG capture microsphere assay"
+        ],
+        "run1": [
+          "anti- DT IgG capture microsphere assay"
+        ],
+        "run2": [],
+        "run3": [
+          "Measurement of anti-Diphtheria IgG by Luminex",
+          "Luminex"
+        ],
+        "run4": [
+          "Measurement of anti-Diphtheria IgG by Luminex",
+          "anti- DT IgG capture microsphere assay"
+        ]
+      }
+    },
+    {
+      "cluster": "Luminex",
+      "field": "evidence.quote",
+      "verdict": "changed",
+      "values": {
+        "v1": "Fluorescent microspheres (Luminex Corp, Austin, TX) were covalently conjugated to DT (List Biologicals, Campbell, CA) and used to capture and quantify DT specific IgG in sera based on previous method with minor modifications 53 .",
+        "v2": "Immune response to Diphtheria toxoid (DT) carrier protein was assessed at Days 0, 7 and 30 using anti- DT IgG capture microsphere assay.",
+        "run1": "Immune response to Diphtheria toxoid (DT) carrier protein was assessed at Days 0, 7 and 30 using anti- DT IgG capture microsphere assay.",
+        "run2": "Immune response to Diphtheria toxoid (DT) carrier protein was assessed at Days 0, 7 and 30 using anti- DT IgG capture microsphere assay.",
+        "run3": "Immune response to Diphtheria toxoid (DT) carrier protein was assessed at Days 0, 7 and 30 using anti- DT IgG capture microsphere assay.",
+        "run4": "Fluorescent microspheres (Luminex Corp, Austin, TX) were covalently conjugated to DT (List Biologicals, Campbell, CA) and used to capture and quantify DT specific IgG in sera based on previous method with minor modifications 53 ."
+      }
+    },
+    {
+      "cluster": "serum bactericidal titers (SBA)",
+      "field": "standard_technique_name",
+      "verdict": "reworded",
+      "values": {
+        "v1": "serum bactericidal assay",
+        "v2": "serum bactericidal assay",
+        "run1": "serum bactericidal assay",
+        "run2": "serum bactericidal assay",
+        "run3": "serum bactericidal assay",
+        "run4": "bactericidal assay"
+      }
+    },
+    {
+      "cluster": "serum bactericidal titers (SBA)",
+      "field": "sample_type",
+      "verdict": "reworded",
+      "values": {
+        "v1": "serum samples",
+        "v2": "serum",
+        "run1": "serum",
+        "run2": "serum",
+        "run3": "serum",
+        "run4": "serum"
+      }
+    },
+    {
+      "cluster": "serum bactericidal titers (SBA)",
+      "field": "readouts",
+      "verdict": "changed",
+      "values": {
+        "v1": "bactericidal activity titers against meningococcal strains",
+        "v2": "bactericidal activity titers against meningococcal strains",
+        "run1": "bactericidal killing titers against meningococcal strains",
+        "run2": "bactericidal killing titers against meningococcal serogroups",
+        "run3": "bactericidal titers determined from 50% killing",
+        "run4": "serum dilution yielding 50% bacterial killing"
+      }
+    },
+    {
+      "cluster": "serum bactericidal titers (SBA)",
+      "field": "aliases",
+      "verdict": "changed",
+      "values": {
+        "v1": [
+          "SBA",
+          "Serum bactericidal assay (SBA)"
+        ],
+        "v2": [
+          "SBA"
+        ],
+        "run1": [
+          "SBA"
+        ],
+        "run2": [
+          "SBA"
+        ],
+        "run3": [
+          "Measurement of serum bactericidal titers (SBA)",
+          "SBA"
+        ],
+        "run4": [
+          "Measurement of serum bactericidal titers (SBA)",
+          "SBA"
+        ]
+      }
+    },
+    {
+      "cluster": "serum bactericidal titers (SBA)",
+      "field": "evidence.quote",
+      "verdict": "changed",
+      "values": {
+        "v1": "Continuous titers were determined by interpolation of the serum dilution yielding 50% killing as compared to the T 60 growth control plate average.",
+        "v2": "Serum samples collected at days 0, 7, 30, 180 and year 2 were added undiluted to microtiter plates (Costar) and then serially diluted (3-fold) in Hank’s balanced salt solution (HBSS, GIBCO/Invitrogen).",
+        "run1": "Serum samples collected at days 0, 7, 30, 180 and year 2 were added undiluted to microtiter plates (Costar) and then serially diluted (3-fold) in Hank’s balanced salt solution (HBSS, GIBCO/Invitrogen).",
+        "run2": "Continuous titers were determined by interpolation of the serum dilution yielding 50% killing as compared to the T 60 growth control plate average.",
+        "run3": "Continuous titers were determined by interpolation of the serum dilution yielding 50% killing as compared to the T 60 growth control plate average.",
+        "run4": "Continuous titers were determined by interpolation of the serum dilution yielding 50% killing as compared to the T 60 growth control plate average."
+      }
+    },
+    {
+      "cluster": "flow cytometry",
+      "field": "sample_type",
+      "verdict": "reworded",
+      "values": {
+        "v1": "whole blood cells",
+        "v2": "blood",
+        "run1": "whole blood cells",
+        "run2": "whole blood cells",
+        "run3": "whole blood cells",
+        "run4": "whole blood cells"
+      }
+    },
+    {
+      "cluster": "flow cytometry",
+      "field": "readouts",
+      "verdict": "changed",
+      "values": {
+        "v1": "frequency of blood antibody secreting cells identified as CD3 neg, CD20 neg, CD38 hi, CD27 hi, CD19+ cells",
+        "v2": "frequency of antibody secreting cells",
+        "run1": "frequency of antibody secreting cells identified as CD3 neg, CD20 neg, CD38 hi, CD27 hi, CD19+ cells",
+        "run2": "frequency of blood antibody secreting cells identified as CD3 neg, CD20 neg, CD38 hi, CD27 hi, CD19+ cells",
+        "run3": "frequency of blood antibody secreting cells identified as CD3 negative CD20 negative CD38 high CD27 high CD19 positive cells",
+        "run4": "frequency of blood antibody secreting cells identified as CD3 neg, CD20 neg, CD38 hi, CD27 hi, CD19 + cells"
+      }
+    },
+    {
+      "cluster": "flow cytometry",
+      "field": "aliases",
+      "verdict": "changed",
+      "values": {
+        "v1": [
+          "FACS"
+        ],
+        "v2": [
+          "flow cytometry"
+        ],
+        "run1": [
+          "FACS"
+        ],
+        "run2": [
+          "FACS"
+        ],
+        "run3": [
+          "FACS"
+        ],
+        "run4": [
+          "FACS"
+        ]
+      }
+    },
+    {
+      "cluster": "ELISpot",
+      "field": "standard_technique_name",
+      "verdict": "changed",
+      "values": {
+        "v1": "enzyme linked immunospot",
+        "v2": "ELISpot",
+        "run1": "enzyme linked immunospot assay",
+        "run2": "enzyme linked immunospot",
+        "run3": "enzyme-linked immunospot",
+        "run4": "enzyme-linked immunospot assay"
+      }
+    },
+    {
+      "cluster": "ELISpot",
+      "field": "aliases",
+      "verdict": "reworded",
+      "values": {
+        "v1": [],
+        "v2": [],
+        "run1": [],
+        "run2": [],
+        "run3": [
+          "Measurement of antibody secreting cells by FACS and ELISpot"
+        ],
+        "run4": [
+          "Measurement of antibody secreting cells by FACS and ELISpot"
+        ]
+      }
+    }
+  ]
+}

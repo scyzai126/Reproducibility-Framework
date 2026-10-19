@@ -30,3 +30,9 @@ data/generated/
 # 1000-paper PMC search corpus: 114MB of XML, rebuildable with scripts/download_pmc_corpus.py
 data/JAT_XML_vaccine1000/
 *.sql
+
+# macOS app installers accidentally saved into the repo (374MB/67MB; GitHub rejects >100MB)
+*.dmg
+
+# Office lock files
+~$*

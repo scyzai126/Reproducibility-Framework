@@ -13,7 +13,7 @@ def _row(study, assay, obi_id, resource):
     return {
         "study": study,
         "assay": assay,
-        "normalized_name": assay,
+        "standard_technique_name": assay,
         "sample_type": "PBMCs",
         "readouts": "cell frequencies",
         "obi_id": obi_id,

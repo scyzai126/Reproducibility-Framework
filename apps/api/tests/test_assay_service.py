@@ -303,7 +303,7 @@ async def test_the_run_writes_a_benchmark_registry_beside_the_full_one(paper):
     assert trimmed["flow cytometry assay"]["name_in_paper"] == ["flow cytometry"]
     # The pipeline's own record is untouched -- the trim is a projection, not a schema.
     assert full["flow cytometry assay"]["readouts"] == "cell frequencies"
-    assert full["flow cytometry assay"]["normalized_name"] is None
+    assert full["flow cytometry assay"]["standard_technique_name"] is None
     # And `source` is derived, not taken from the extraction: the fixture never proposes one.
     assert full["flow cytometry assay"]["source"] == "methods"
 
@@ -579,3 +579,198 @@ async def test_a_paper_with_methods_carries_no_such_flag(paper):
     result = await assay_report("111", "SDY1", _Client(_extraction_body(), _verification_body()))
 
     assert "no_methods" not in result["rounds"]["extract"]
+
+
+# ── derived fields follow a repaired quote ───────────────────────────────────
+
+_XML_WITH_RESULTS = """<article><front><article-meta><article-title>A Paper</article-title>
+</article-meta></front><body><sec sec-type="methods"><title>Methods</title>
+<p>Cells were analyzed on an LSRII.</p></sec><sec sec-type="results"><title>Results</title>
+<p>Monocyte frequencies rose after vaccination.</p></sec></body></article>"""
+
+
+@pytest.fixture
+def paper_with_results(paper, monkeypatch):
+    (assay_service.XML_ROOT / "SDY1_111.xml").write_text(_XML_WITH_RESULTS, encoding="utf-8")
+    return paper
+
+
+@pytest.mark.asyncio
+async def test_source_and_ids_are_re_derived_after_an_evidence_repair(paper_with_results):
+    """SDY1264: four repaired quotes had moved into the abstract while `source` still said
+    `methods` -- derived once from the extracted quote and never again. The corrected registry
+    is derived from the quote it actually carries."""
+    # A paraphrased quote fails the free verbatim check, which outranks the judge, so the
+    # evidence field is queued for the blind repair; the repair answers with a Results sentence.
+    paraphrased = json.dumps({"flow cytometry": {
+        **_ENTRY, "evidence": {**_ENTRY["evidence"], "quote": "Cells were run on an LSRII."}}})
+    repair = json.dumps({"value": "Monocyte frequencies rose after vaccination.", "reason": "."})
+    client = _Client(paraphrased, _verification_body(), repair)
+
+    result = await assay_report("111", "SDY1", client)
+
+    entry = result["assays"]["flow cytometry assay"]
+    assert entry["evidence"]["quote"] == "Monocyte frequencies rose after vaccination."
+    assert entry["source"] == "results"
+    assert entry["evidence"]["sentence_ids"] == ["S2"]
+    assert result["quote_check"]["source_mismatch"] == 0
+    stored = json.loads((paper_with_results / "assays_corrected.json").read_text())
+    assert stored["flow cytometry"]["source"] == "results"
+
+
+# ── the stored read makes the same concessions the run does ──────────────────
+
+def test_a_stored_pdf_registry_is_not_warned_about_missing_sentence_ids(pdf_only_paper, monkeypatch):
+    """A PDF entry has no ids and no derived `source` by contract. The stored read demanded
+    both, so every entry of a finished PDF paper came back with two warnings."""
+    folder = assay_service.CACHE_ROOT / "222_SDY2_pdf"
+    folder.mkdir(parents=True)
+    entry = {**_ENTRY, "name_in_paper": ["flow cytometry"], "source": None,
+             "evidence": {**_ENTRY["evidence"], "sentence_ids": []}}
+    (folder / "assays.json").write_text(json.dumps({"flow cytometry assay": entry}))
+    (folder / "assays_OBI.json").write_text(json.dumps({"flow cytometry assay": {
+        **entry, "obi_id": "OBI:0000916", "obi_label": "flow cytometry assay",
+        "resource": "exact_original"}}))
+    monkeypatch.setattr(assay_service, "extract_pdf_text", lambda *_a, **_k: "Cells were analyzed on an LSRII.")
+
+    stored = assay_service.stored_registry("222", "SDY2")
+
+    assert stored["contract_warnings"] == []
+
+
+# ── the judge's doubt about an identity reaches the file ─────────────────────
+
+def _judge_doubts_the_identity() -> str:
+    body = json.loads(_verification_body())
+    body["assay_identity_verdict"] = "NOT_SUPPORTED"
+    for field in body["field_verifications"]:
+        if field["field_name"] == "name_in_paper":
+            field["verdict"] = "NOT_SUPPORTED"
+            field["reason"] = "This is a section heading rather than a stated assay name."
+    body["record_verdict"] = "REVIEW"
+    return json.dumps(body)
+
+
+@pytest.mark.asyncio
+async def test_an_unsupported_identity_is_marked_in_the_registry_and_the_deliverable(paper):
+    """14 of the corpus's 170 entries were NOT_SUPPORTED on identity and shipped unmarked; the
+    REVIEW line in the terminal was the only trace. Now the file says so, under the key the
+    entry is delivered under."""
+    client = _Client(_extraction_body(), _judge_doubts_the_identity())
+
+    result = await assay_report("111", "SDY1", client)
+
+    review = {"verdict": "NOT_SUPPORTED",
+              "reason": "This is a section heading rather than a stated assay name."}
+    assert result["assays"]["flow cytometry assay"]["identity_review"] == review
+    assert json.loads((paper / "assays.json").read_text())["flow cytometry assay"]["identity_review"] == review
+    assert json.loads((paper / "assays_benchmark.json").read_text())["flow cytometry assay"]["identity_review"] == review
+
+
+@pytest.mark.asyncio
+async def test_a_supported_identity_leaves_the_entry_exactly_as_before(paper):
+    client = _Client(_extraction_body(), _verification_body())
+
+    result = await assay_report("111", "SDY1", client)
+
+    assert "identity_review" not in result["assays"]["flow cytometry assay"]
+    assert "identity_review" not in json.loads((paper / "assays_benchmark.json").read_text())["flow cytometry assay"]
+
+
+# ── every reply the run paid for is kept ─────────────────────────────────────
+
+@pytest.mark.asyncio
+async def test_the_run_keeps_every_model_reply_by_round(paper):
+    client = _Client(_extraction_body(), _verification_body())
+
+    result = await assay_report("111", "SDY1", client)
+
+    raw = json.loads((paper / "assays_raw.json").read_text())
+    # Keyed by extraction call, however many there were: the registry is their vote.
+    assert raw["extract"] == {"run1": {"reply": _extraction_body(), "source_kind": "xml"}}
+    assert raw["verify"]["flow cytometry"]["reply"] == _verification_body()
+    assert result["meta"]["raw_path"].endswith("assays_raw.json")
+
+
+@pytest.mark.asyncio
+async def test_a_stale_raw_file_does_not_survive_into_a_new_run(paper):
+    paper.mkdir(parents=True, exist_ok=True)
+    (paper / "assays_raw.json").write_text(json.dumps({"obi": {"ghost": {"reply": "none"}}}))
+
+    await assay_report("111", "SDY1", _Client(_extraction_body(), _verification_body()))
+
+    assert "obi" not in json.loads((paper / "assays_raw.json").read_text()) or \
+        "ghost" not in json.loads((paper / "assays_raw.json").read_text())["obi"]
+
+
+# ── round 1 is three extractions, voted ──────────────────────────────────────
+
+class _ExtractionClient(_Client):
+    """The first `n` calls are extraction replies (one body each), then the verification."""
+
+    def __init__(self, extractions: list[str], *rest: str):
+        super().__init__(*extractions, *rest)
+
+
+def _dc_panel_body(with_panel: bool) -> str:
+    panel = {"flow cytometry for DC activation": {
+        **_ENTRY, "name_in_paper": "flow cytometry for DC activation",
+        "readouts": "CD80 and CD86 on DCs",
+        "evidence": {"section": "Methods", "quote": "Cells were analyzed on an LSRII."}}}
+    return json.dumps({"flow cytometry": _ENTRY, **(panel if with_panel else {})})
+
+
+@pytest.mark.asyncio
+async def test_round_one_makes_three_calls_and_delivers_the_majority(paper, monkeypatch):
+    """SDY1260's DC panel in one run of three: reported as MINORITY, not delivered."""
+    monkeypatch.setattr(assay_service, "EXTRACTIONS", 3)
+    client = _ExtractionClient([_dc_panel_body(False), _dc_panel_body(True), _dc_panel_body(False)],
+                               _verification_body())
+
+    result = await assay_report("111", "SDY1", client)
+
+    assert result["rounds"]["extract"] == {"source": "extracted", "calls": 3, "extractions": 3,
+                                           "assays": 1, "minority": 1}
+    assert client.calls == 4
+    assert result["meta"]["llm_calls"] == 4
+    assert list(result["assays"]) == ["flow cytometry assay"]
+    assert list(result["minority"]) == ["flow cytometry for DC activation"]
+    assert result["minority"]["flow cytometry for DC activation"]["runs"] == ["run2"]
+    stored = json.loads((paper / "assays_minority.json").read_text())
+    assert list(stored) == ["flow cytometry for DC activation"]
+    raw = json.loads((paper / "assays_raw.json").read_text())
+    assert sorted(raw["extract"]) == ["run1", "run2", "run3"]
+
+
+@pytest.mark.asyncio
+async def test_an_entry_two_of_three_calls_found_is_delivered(paper, monkeypatch):
+    monkeypatch.setattr(assay_service, "EXTRACTIONS", 3)
+    client = _ExtractionClient([_dc_panel_body(True), _dc_panel_body(True), _dc_panel_body(False)],
+                               _verification_body())
+
+    result = await assay_report("111", "SDY1", client)
+
+    assert result["rounds"]["extract"]["minority"] == 0
+    assert not (paper / "assays_minority.json").exists()
+    # Two assays, both mapped by the stub to one term, so round 5 folds them: the panel
+    # survives as a second wording rather than disappearing.
+    assert result["assays"]["flow cytometry assay"]["name_in_paper"] == [
+        "flow cytometry", "flow cytometry for DC activation"]
+
+
+@pytest.mark.asyncio
+async def test_a_stale_minority_file_is_cleared_by_a_run_that_has_none(paper, monkeypatch):
+    paper.mkdir(parents=True, exist_ok=True)
+    (paper / "assays_minority.json").write_text("{\"ghost\": {}}")
+
+    await assay_report("111", "SDY1", _Client(_extraction_body(), _verification_body()))
+
+    assert not (paper / "assays_minority.json").exists()
+
+
+def test_the_estimate_prices_round_one_at_the_extraction_count(paper, monkeypatch):
+    monkeypatch.setattr(assay_service, "EXTRACTIONS", 3)
+
+    rounds = {r["name"]: r for r in assay_service.estimate_run("111", "SDY1")["rounds"]}
+
+    assert rounds["extract"]["calls"] == 3 and rounds["extract"]["extractions"] == 3

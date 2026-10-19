@@ -6,10 +6,11 @@ corpus papers are in that position (SDY1276/21357945, SDY1291/23151505, SDY1293/
 SDY404/25367297) and had no route through the assay pipeline at all before this module.
 
 prompts/extract_assays_pdf.txt is the authority on the rules, and is deliberately paired with
-prompts/extract_assays.txt: everything from "## What counts as an entry" to the per-field rules
-is byte-identical between them, and only the parts that describe the *input* differ. An edit to
-one of those shared sections belongs in both files. The XML prompt is the original; this one
-exists because its input contract cannot survive the change of source:
+prompts/extract_assays.txt: from "## What counts as an entry" to the per-field rules the two are
+the same text, except for the `evidence` bullet, which on this route has to say that there are no
+sentence markers and that `section` is the only record of where the quote sits. An edit to one of
+the shared sections belongs in both files. The XML prompt is the original; this one exists
+because its input contract cannot survive the change of source:
 
   * The XML parse hands the model `## Heading  [methods]` section tags, and tells it the tag is
     authoritative. A PDF has no tags, so this prompt has the model read the headings itself.
@@ -32,11 +33,13 @@ import logging
 from openai import AsyncOpenAI
 
 from app.agent.assay_extractor import (
+    EXTRACTION_SEED,
     AssayExtractionError,
     clean_registry,
     contract_warnings,
     parse_registry_json,
 )
+from app.agent import assay_trace
 from app.agent.claim_parser import _load_prompt, _strip_fences
 from app.agent.pdf_direct import _pdf_file_content
 from app.config import settings
@@ -62,8 +65,11 @@ async def extract_assays_from_pdf(
     paper_title: str,
     client: AsyncOpenAI,
     model: str = settings.OPENAI_MODEL,
+    run_label: str = "",
 ) -> dict:
     """Build a paper's assay registry from its PDF. One LLM call for the whole paper.
+
+    `run_label` names this call's reply in the run's trace, as in assay_extractor.extract_assays.
 
     One call rather than one per section, for the reason assay_extractor.extract_assays gives:
     extraction has to deduplicate *across* the paper, and a model shown one section at a time
@@ -86,9 +92,11 @@ async def extract_assays_from_pdf(
             },
         ],
         temperature=0,
+        seed=EXTRACTION_SEED,
     )
 
     raw = _strip_fences((resp.choices[0].message.content or "").strip())
+    assay_trace.record("extract", run_label, reply=raw, source_kind="pdf")
     if not raw:
         raise AssayExtractionError("model returned an empty response")
 

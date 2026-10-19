@@ -1,0 +1,350 @@
+{
+  "runs": [
+    "v1",
+    "run1",
+    "run2"
+  ],
+  "entries": {
+    "v1": 5,
+    "run1": 5,
+    "run2": 5
+  },
+  "clusters": 5,
+  "stable": 5,
+  "split": 0,
+  "presence": 0,
+  "duplicate_keys": {
+    "v1": [],
+    "run1": [],
+    "run2": []
+  },
+  "rows": [
+    {
+      "shape": "stable",
+      "keys": {
+        "v1": [
+          "Microarray Assay"
+        ],
+        "run1": [
+          "Microarray Assay"
+        ],
+        "run2": [
+          "Microarray Assay"
+        ]
+      }
+    },
+    {
+      "shape": "stable",
+      "keys": {
+        "v1": [
+          "Flow Cytometry"
+        ],
+        "run1": [
+          "Flow Cytometry"
+        ],
+        "run2": [
+          "Flow Cytometry"
+        ]
+      }
+    },
+    {
+      "shape": "stable",
+      "keys": {
+        "v1": [
+          "Hemagglutinin Inhibition"
+        ],
+        "run1": [
+          "Hemagglutinin Inhibition Assays"
+        ],
+        "run2": [
+          "Hemagglutinin Inhibition Assays"
+        ]
+      }
+    },
+    {
+      "shape": "stable",
+      "keys": {
+        "v1": [
+          "Virus-Neutralization Assays"
+        ],
+        "run1": [
+          "Virus-neutralization assays"
+        ],
+        "run2": [
+          "Virus-neutralization assays"
+        ]
+      }
+    },
+    {
+      "shape": "stable",
+      "keys": {
+        "v1": [
+          "Multiplex Cytokine Analysis"
+        ],
+        "run1": [
+          "Multiplex Cytokine Analysis"
+        ],
+        "run2": [
+          "Multiplex Cytokine Analysis"
+        ]
+      }
+    }
+  ],
+  "field_drift": {
+    "standard_technique_name": {
+      "same": 1,
+      "reworded": 2,
+      "changed": 2
+    },
+    "sample_type": {
+      "same": 1,
+      "reworded": 0,
+      "changed": 4
+    },
+    "readouts": {
+      "same": 1,
+      "reworded": 0,
+      "changed": 4
+    },
+    "aliases": {
+      "same": 0,
+      "reworded": 1,
+      "changed": 4
+    },
+    "generate_claim": {
+      "same": 5,
+      "reworded": 0,
+      "changed": 0
+    },
+    "evidence.quote": {
+      "same": 3,
+      "reworded": 0,
+      "changed": 2
+    },
+    "source": {
+      "same": 5,
+      "reworded": 0,
+      "changed": 0
+    }
+  },
+  "field_drift_detail": [
+    {
+      "cluster": "Microarray Assay",
+      "field": "standard_technique_name",
+      "verdict": "changed",
+      "values": {
+        "v1": "microarray",
+        "run1": "transcription profiling by array",
+        "run2": "transcription profiling by array"
+      }
+    },
+    {
+      "cluster": "Microarray Assay",
+      "field": "sample_type",
+      "verdict": "changed",
+      "values": {
+        "v1": "whole-blood lysate",
+        "run1": "whole blood",
+        "run2": "whole blood"
+      }
+    },
+    {
+      "cluster": "Microarray Assay",
+      "field": "readouts",
+      "verdict": "changed",
+      "values": {
+        "v1": "global transcript abundance and gene expression signal intensities",
+        "run1": "whole-genome transcript abundance signal intensities",
+        "run2": "whole-genome transcript abundance signal intensities"
+      }
+    },
+    {
+      "cluster": "Microarray Assay",
+      "field": "aliases",
+      "verdict": "changed",
+      "values": {
+        "v1": [
+          "whole-genome transcriptional profiles",
+          "whole-genome arrays"
+        ],
+        "run1": [
+          "microarray"
+        ],
+        "run2": [
+          "microarray"
+        ]
+      }
+    },
+    {
+      "cluster": "Flow Cytometry",
+      "field": "readouts",
+      "verdict": "changed",
+      "values": {
+        "v1": "blood cell population abundance including B cells and plasmablasts",
+        "run1": "immune cell population abundances including plasmablasts and B cells",
+        "run2": "immune cell population abundances and immunophenotypes"
+      }
+    },
+    {
+      "cluster": "Flow Cytometry",
+      "field": "aliases",
+      "verdict": "changed",
+      "values": {
+        "v1": [
+          "polychromatic flow cytometry",
+          "multi-parameter flow cytometry"
+        ],
+        "run1": [
+          "whole-blood flow cytometry"
+        ],
+        "run2": []
+      }
+    },
+    {
+      "cluster": "Flow Cytometry",
+      "field": "evidence.quote",
+      "verdict": "changed",
+      "values": {
+        "v1": "We incubated 200 uL of whole blood with pretitrated monoclonal antibodies for 15 min at room temperature followed by lysis of red blood cells (BD FACS Lyse).",
+        "run1": "Samples were processed within 2 hr after blood draw and acquired on a BD Special Order LSRII flow cytometer.",
+        "run2": "Samples were processed within 2 hr after blood draw and acquired on a BD Special Order LSRII flow cytometer."
+      }
+    },
+    {
+      "cluster": "Hemagglutinin Inhibition",
+      "field": "standard_technique_name",
+      "verdict": "reworded",
+      "values": {
+        "v1": "hemagglutination inhibition assay",
+        "run1": "hemagglutination inhibition",
+        "run2": "hemagglutination inhibition assay"
+      }
+    },
+    {
+      "cluster": "Hemagglutinin Inhibition",
+      "field": "sample_type",
+      "verdict": "changed",
+      "values": {
+        "v1": "human sera",
+        "run1": "serum",
+        "run2": "human sera"
+      }
+    },
+    {
+      "cluster": "Hemagglutinin Inhibition",
+      "field": "readouts",
+      "verdict": "changed",
+      "values": {
+        "v1": "neutralizing antibody titers against influenza virus strains measured as the reciprocal of the highest dilution with no hemagglutinating activity",
+        "run1": "neutralizing antibody titers against influenza virus strains measured as the reciprocal of the highest dilution with no hemagglutinating activity",
+        "run2": "neutralizing antibody titers as the reciprocal of the highest serum dilution with no hemagglutinating activity"
+      }
+    },
+    {
+      "cluster": "Hemagglutinin Inhibition",
+      "field": "aliases",
+      "verdict": "changed",
+      "values": {
+        "v1": [
+          "HAI"
+        ],
+        "run1": [
+          "HAI titers"
+        ],
+        "run2": [
+          "HAI titers"
+        ]
+      }
+    },
+    {
+      "cluster": "Hemagglutinin Inhibition",
+      "field": "evidence.quote",
+      "verdict": "changed",
+      "values": {
+        "v1": "Briefly, 2-fold serial dilutions of human sera were mixed and preincubated in 96-well plates for 30 min at room temperature with 8 hemagglutinin units of virus (H1N1 A/Brisbane/59/2007 and H3N2 A/Brisbane/10/2007) per well.",
+        "run1": "Neutralizing antibody titers were determined as the reciprocal value of the highest dilution that displayed no hemagglutinating activity.",
+        "run2": "Neutralizing antibody titers were determined as the reciprocal value of the highest dilution that displayed no hemagglutinating activity."
+      }
+    },
+    {
+      "cluster": "Virus-Neutralization Assays",
+      "field": "standard_technique_name",
+      "verdict": "reworded",
+      "values": {
+        "v1": "neutralization assay",
+        "run1": "virus neutralization assay",
+        "run2": "virus neutralization assay"
+      }
+    },
+    {
+      "cluster": "Virus-Neutralization Assays",
+      "field": "sample_type",
+      "verdict": "changed",
+      "values": {
+        "v1": "human sera",
+        "run1": "serum",
+        "run2": "human sera"
+      }
+    },
+    {
+      "cluster": "Virus-Neutralization Assays",
+      "field": "aliases",
+      "verdict": "reworded",
+      "values": {
+        "v1": [
+          "VN"
+        ],
+        "run1": [
+          "VN"
+        ],
+        "run2": []
+      }
+    },
+    {
+      "cluster": "Multiplex Cytokine Analysis",
+      "field": "standard_technique_name",
+      "verdict": "changed",
+      "values": {
+        "v1": "cytometric bead array",
+        "run1": "luminex",
+        "run2": "luminex"
+      }
+    },
+    {
+      "cluster": "Multiplex Cytokine Analysis",
+      "field": "sample_type",
+      "verdict": "changed",
+      "values": {
+        "v1": "sera",
+        "run1": "serum",
+        "run2": "sera"
+      }
+    },
+    {
+      "cluster": "Multiplex Cytokine Analysis",
+      "field": "readouts",
+      "verdict": "changed",
+      "values": {
+        "v1": "cytokine and chemokine levels",
+        "run1": "cytokine and chemokine concentrations measured with antibody-conjugated beads",
+        "run2": "cytokine and chemokine concentrations measured with antibody-conjugated beads"
+      }
+    },
+    {
+      "cluster": "Multiplex Cytokine Analysis",
+      "field": "aliases",
+      "verdict": "changed",
+      "values": {
+        "v1": [
+          "Luminex"
+        ],
+        "run1": [
+          "Luminex Technology"
+        ],
+        "run2": [
+          "Luminex Technology"
+        ]
+      }
+    }
+  ]
+}

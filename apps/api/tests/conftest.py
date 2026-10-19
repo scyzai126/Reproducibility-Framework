@@ -17,6 +17,15 @@ def _isolated_assay_cache(tmp_path, monkeypatch):
 
 
 @pytest.fixture(autouse=True)
+def _single_extraction(monkeypatch):
+    """The chain tests drive round 1 with one canned body each. The default of three voted
+    extractions is covered by its own tests, which set this back to 3."""
+    from app.agent import assay_service
+
+    monkeypatch.setattr(assay_service, "EXTRACTIONS", 1)
+
+
+@pytest.fixture(autouse=True)
 def _isolated_claims_cache(tmp_path, monkeypatch):
     """No test writes a new paper's claims into the real data/cache/claims."""
     from app.agent import orchestrator

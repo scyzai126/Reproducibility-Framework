@@ -1,4 +1,4 @@
-"""Round 5: key the registry by its OBI term, and fold entries that share a term or a technique.
+"""Round 5: key the registry by its OBI term, and fold entries that share a term.
 
 Extraction is a single whole-paper call keyed by the paper's own wording, so one assay described
 under two Methods subheadings lands two entries -- SDY1260 carries both `ELISA` (serum
@@ -6,17 +6,18 @@ anti-meningococcal antibodies) and `ELISA kits` (cytokines in culture supernatan
 downstream caught it: `clean_registry` is a dict comprehension, and the verifier judges one entry
 at a time against the paper, never against a sibling.
 
-**Two entries are one assay when they share an OBI term or a technique.** The term is the OBI
-label the entry mapped to; the technique is its `normalized_name`, the extractor's judgement of
-the measurement method. Either link is enough, and links chain: an entry mapped to one term and
-sharing its technique with an unmapped entry pulls that entry in too. The technique link is what
-catches an assay the paper named after a protocol section ("Whole transcriptome profiling of NK
-cell subsets") and OBI therefore left unmapped, beside the same technique under a plainer name.
+**Two entries are one assay when they share an OBI term. Nothing else folds.** The term is the
+OBI label the entry mapped to. A shared `standard_technique_name` used to be a second link, pulling
+an unmapped entry onto a mapped sibling with the same technique; it was removed because the
+technique is the instrument the numbers came off, and one instrument runs many assays. The link
+first folded mapped entries onto each other (SDY1640's AIM assay into its immunophenotyping,
+SDY1389's proliferation assay, SDY1289's CFSE and ICS assays), and once that was stopped it still
+folded SDY1328's unmapped `multiplex ELISA` into plain `ELISA` -- the one case the resolver's own
+rule 10 says is a different assay. An entry OBI has no term for is now its own entry under the
+paper's wording, and reported UNMAPPED, which is a finding a human can act on; a fold hid it.
 
-The merged entry is keyed by the OBI label of its first mapped member, rather than by a wording
--- `name_in_paper` already records every wording, as a list. A group with no mapped member keeps
-its first member's paper name as its key. When a technique link joins two different OBI labels,
-the first mapped member's label wins and the merge report lists every member's own label.
+The merged entry is keyed by its OBI label rather than by a wording -- `name_in_paper` already
+records every wording, as a list. An unmapped entry keeps its paper name as its key.
 
 The rule is coarser than the paper's own language: one OBI term covers every ELISA a paper runs,
 so SDY1640's two antigen-specific ELISAs and SDY1669's plate ELISA and SIMoA assay fold together
@@ -24,13 +25,18 @@ too. That is the trade this round exists to make. Nothing is discarded in the pr
 folded write-up's specimen, platform, readouts and quote move to `additional_evidence` on the
 surviving entry, so the coarser key never costs a measurement.
 
+An identity the judge did not support (`identity_review`, assay_extractor.REVIEW_FIELD) travels
+with the fold inside the member's own `additional_evidence` block, and is never copied onto the
+survivor: the judge ruled on that member's name ("ELISA kits" names a product), and the survivor's
+name was ruled on separately. Promoting it made SDY1260's supported ELISA read as doubted.
+
 Deterministic and free: no model decides any of this, and the same registry always canonicalizes
 the same way.
 """
 
 import logging
 
-from app.agent.assay_extractor import paper_names
+from app.agent.assay_extractor import REVIEW_FIELD, paper_names
 from app.agent.assay_registry import normalize_assay_name
 
 logger = logging.getLogger(__name__)
@@ -43,70 +49,36 @@ _KEPT_ON_MEMBER = ("name_in_paper", "sample_type", "readouts", "generate_claim",
                    "evidence")
 
 
-def _technique_key(entry: dict, mapped: dict) -> str:
-    """The entry's `normalized_name`, folded for comparison; "" when it has none.
-
-    Read from the registry entry first and the OBI record second, because the OBI mapper carries
-    the field on its own output and a registry written before the field existed has it nowhere.
-    """
-    value = entry.get("normalized_name") or mapped.get("normalized_name") or ""
-    return " ".join(str(value).split()).lower()
-
-
 def canonical_groups(assays: dict, obi: dict | None = None) -> list[dict]:
-    """Group the registry into assays: one group per connected set of entries.
+    """Group the registry into assays: one group per OBI label, plus one per unmapped entry.
 
-    Two entries are linked when they map to the same OBI label, or when they carry the same
-    `normalized_name` (case- and whitespace-insensitive). Links are transitive -- A~B on the term
-    and B~C on the technique puts all three in one group -- so the groups are found with a
-    union-find rather than by bucketing on either key alone.
+    Two entries are linked when they map to the same OBI label; that is the only link, so the
+    groups are a bucketing on the label. Registry order is preserved, both between groups and
+    within them, so the first entry is the one whose fields survive the fold. Deterministic by
+    construction -- there is no scoring step to break a tie differently on a rerun.
 
-    The group is keyed by the OBI label of its first mapped member, and that member's mapping is
-    the group's; a group with no mapped member keeps its first member's own key. Registry order is
-    preserved, both between groups and within them, so the first entry is the one whose fields
-    survive the fold. Deterministic by construction -- there is no scoring step to break a tie
-    differently on a rerun.
+    The group is keyed by its OBI label, and the first member's mapping is the group's; an
+    unmapped entry keeps its own key and its own (unresolved) record.
     """
     obi = obi or {}
-    keys = list(assays)
-    parent = {key: key for key in keys}
-
-    def find(key: str) -> str:
-        while parent[key] != key:
-            parent[key] = parent[parent[key]]
-            key = parent[key]
-        return key
-
-    def union(a: str, b: str) -> None:
-        ra, rb = find(a), find(b)
-        if ra != rb:
-            # The root is always the earlier entry, so a group's order never depends on which
-            # link happened to be found first.
-            first, second = sorted((ra, rb), key=keys.index)
-            parent[second] = first
-
-    first_by_label: dict[str, str] = {}
-    first_by_technique: dict[str, str] = {}
-    for key in keys:
+    members_by_label: dict[str, list[str]] = {}
+    order: list[tuple[str, list[str]]] = []
+    for key in assays:
         mapped = obi.get(key) or {}
         label = mapped.get("obi_label")
-        if label:
-            union(first_by_label.setdefault(label, key), key)
-        technique = _technique_key(assays[key], mapped)
-        if technique:
-            union(first_by_technique.setdefault(technique, key), key)
-
-    members_by_root: dict[str, list[str]] = {}
-    for key in keys:
-        members_by_root.setdefault(find(key), []).append(key)
+        if not label:
+            order.append((key, [key]))
+            continue
+        if label not in members_by_label:
+            members_by_label[label] = []
+            order.append((label, members_by_label[label]))
+        members_by_label[label].append(key)
 
     groups: list[dict] = []
     taken: set[str] = set()
-    for members in members_by_root.values():
-        anchor = next((m for m in members if (obi.get(m) or {}).get("obi_label")), None)
-        mapped = obi.get(anchor) or {} if anchor else {}
-        key = mapped.get("obi_label") if anchor else members[0]
-        # An unmapped group keeps its paper wording as its key, and nothing stops that wording
+    for key, members in order:
+        mapped = obi.get(members[0]) or {}
+        # An unmapped entry keeps its paper wording as its key, and nothing stops that wording
         # from being another group's OBI label. Two groups on one key would overwrite each
         # other in the registry, so the later one is suffixed instead of silently lost.
         base, n = key, 2
@@ -118,9 +90,9 @@ def canonical_groups(assays: dict, obi: dict | None = None) -> list[dict]:
             "members": members,
             "obi_id": mapped.get("obi_id"),
             "obi_label": mapped.get("obi_label"),
-            "anchor": anchor or members[0],
-            # Every member's own term, so a group joined across two OBI labels by a shared
-            # technique shows that in the merge report instead of hiding the second label.
+            "anchor": members[0],
+            # Every member's own term. One label per group now that the technique link is gone;
+            # kept so the merge report's shape, and every reader of it, stays the same.
             "member_labels": {m: (obi.get(m) or {}).get("obi_label") for m in members},
         })
     return groups
@@ -170,7 +142,11 @@ def merge_entries(winner: dict, losers: list[dict]) -> dict:
 
     blocks = list(winner.get("additional_evidence") or [])
     for loser in losers:
-        blocks.append({field: loser.get(field) for field in _KEPT_ON_MEMBER})
+        block = {field: loser.get(field) for field in _KEPT_ON_MEMBER}
+        # Only where present: an unreviewed member must not gain a `None` review slot.
+        if loser.get(REVIEW_FIELD):
+            block[REVIEW_FIELD] = loser[REVIEW_FIELD]
+        blocks.append(block)
         # A registry canonicalized twice must not lose the blocks it already carried.
         blocks += list(loser.get("additional_evidence") or [])
     if blocks:
@@ -205,8 +181,6 @@ def canonicalize_registry(assays: dict, obi: dict | None = None) -> tuple[dict, 
                           "folded": members[1:], "member_labels": group["member_labels"]})
         merged[group["key"]] = entry
         if obi_out is not None:
-            # The group's term comes from its first *mapped* member, which is not the winner when
-            # an unmapped entry heads a group joined on its technique.
             mapped = dict(obi.get(group["anchor"]) or {})
             # The mapping describes the same assay as the registry entry, so it carries the same
             # merged names rather than the one wording its own lookup happened to run on.

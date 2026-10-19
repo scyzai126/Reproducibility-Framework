@@ -157,7 +157,7 @@ export default function AssayBenchmarkView({ benchmark, registry, obi, meta, not
 
                 {showFull && full && (
                   <>
-                    <Row label="normalized" value={full.normalized_name} />
+                    <Row label="standard technique" value={full.standard_technique_name} />
                     <Row label="platform" value={full.platform} />
                     <Row label="sample type" value={full.sample_type} />
                     <Row label="readouts" value={full.readouts} />
@@ -170,6 +170,18 @@ export default function AssayBenchmarkView({ benchmark, registry, obi, meta, not
                     <Evidence evidence={entry.evidence} />
                   </div>
                 </div>
+
+                {/* The judge's doubt about the identity. No round repairs an identity, so this
+                    is the only place the doubt reaches the reader. */}
+                {entry.identity_review?.verdict && (
+                  <div className="flex gap-3 text-xs">
+                    <span className="w-24 flex-shrink-0 text-gray-400">identity</span>
+                    <p className="min-w-0 text-amber-700">
+                      <span className="font-medium">{entry.identity_review.verdict}</span>
+                      {entry.identity_review.reason ? ` — ${entry.identity_review.reason}` : ''}
+                    </p>
+                  </div>
+                )}
 
                 {/* The second write-up's evidence survives the fold; it is the one thing the
                     surviving record cannot reconstruct. */}

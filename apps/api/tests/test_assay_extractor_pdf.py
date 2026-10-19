@@ -25,7 +25,7 @@ PDF_BYTES = b"%PDF-1.4 not a real pdf, never parsed locally on this route"
 def _entry(**over) -> dict:
     entry = {
         "name_in_paper": "microarray",
-        "normalized_name": "transcription profiling by array",
+        "standard_technique_name": "transcription profiling by array",
         "aliases": ["Illumina Human HT12v3 Expression BeadChip"],
         "sample_type": "PBMCs",
         "readouts": "genome-wide gene expression",

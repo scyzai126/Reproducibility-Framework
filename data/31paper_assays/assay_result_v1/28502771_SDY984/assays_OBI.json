@@ -3,7 +3,7 @@
     "name_in_paper": [
       "Flow cytometry"
     ],
-    "normalized_name": "flow cytometry",
+    "standard_technique_name": "flow cytometry",
     "aliases": [
       "FACS",
       "intracellular FACS staining"
@@ -23,14 +23,14 @@
     "obi_label": "flow cytometry assay",
     "resource": "exact_original_llm",
     "obi_confidence": "high",
-    "obi_granularity": "EXACT"
+    "obi_granularity": "BROAD"
   },
   "enzyme-linked immunospot assay": {
     "name_in_paper": [
       "Zostavax®-specific IFN-γ, IL-4 and IL-21 ELISPOT",
       "Zostavax®-specific and total IgG B cell ELISPOT"
     ],
-    "normalized_name": "ELISPOT",
+    "standard_technique_name": "ELISPOT",
     "aliases": [],
     "sample_type": "cryopreserved cells",
     "readouts": "antigen-specific IFN-γ, IL-4, and IL-21 spot-forming cells after stimulation with VZV lysate or VZV peptide pool",
@@ -53,7 +53,7 @@
     "name_in_paper": [
       "Zostavax®-specific IgG/IgA ELISA"
     ],
-    "normalized_name": "ELISA",
+    "standard_technique_name": "ELISA",
     "aliases": [],
     "sample_type": "plasma samples",
     "readouts": "VZV-specific IgG and IgA antibody titers",
@@ -76,7 +76,7 @@
     "name_in_paper": [
       "Viral DNA detection"
     ],
-    "normalized_name": "polymerase chain reaction",
+    "standard_technique_name": "polymerase chain reaction",
     "aliases": [
       "PCR",
       "nested PCR analysis",
@@ -103,7 +103,7 @@
     "name_in_paper": [
       "partial sequencing of amplicons"
     ],
-    "normalized_name": "sequencing",
+    "standard_technique_name": "sequencing",
     "aliases": [],
     "sample_type": "PCR amplicons from random positive samples",
     "readouts": "amplicon sequence including codon 958 of ORF62 to distinguish vaccine strain from wild type varicella",
@@ -124,9 +124,10 @@
   },
   "cytometric bead array assay": {
     "name_in_paper": [
-      "Multiplex cytokine assays"
+      "Multiplex cytokine assays",
+      "Cytokine Bead Array (CBA)"
     ],
-    "normalized_name": "Luminex",
+    "standard_technique_name": "Luminex",
     "aliases": [
       "Luminex assays",
       "27-plex Luminex platform"
@@ -148,36 +149,11 @@
     "obi_confidence": 0.6,
     "obi_granularity": "EXACT"
   },
-  "antigen detection by cytometric bead array assay": {
-    "name_in_paper": [
-      "Cytokine Bead Array (CBA)"
-    ],
-    "normalized_name": "cytometric bead array",
-    "aliases": [
-      "CBA"
-    ],
-    "sample_type": "cell-free culture supernatants",
-    "readouts": "cytokines and chemokines including IL-6, TNF, CXCL8, CCL2, CXCL9 and CXCL10",
-    "generate_claim": true,
-    "source": "methods",
-    "evidence": {
-      "section": "In vitro stimulation of PBMCs with Zostavax®",
-      "sentence_ids": [
-        "S257"
-      ],
-      "quote": "Cell-free culture supernatants collected were analyzed for cytokines and chemokines, including IL-6, TNF, CXCL8, CCL2, CXCL9 and CXCL10 using Cytokine Bead Array (CBA) kits (BD Biosciences, San Diego, US)"
-    },
-    "obi_id": "OBI:0003115",
-    "obi_label": "antigen detection by cytometric bead array assay",
-    "resource": "embedding_llm",
-    "obi_confidence": 0.7614,
-    "obi_granularity": "EXACT"
-  },
   "transcription profiling by array assay": {
     "name_in_paper": [
       "PBMC Transcriptomics analysis"
     ],
-    "normalized_name": "microarray",
+    "standard_technique_name": "microarray",
     "aliases": [
       "transcriptomics"
     ],
@@ -202,7 +178,7 @@
     "name_in_paper": [
       "Plasma Metabolomics analysis"
     ],
-    "normalized_name": "liquid chromatography mass spectrometry",
+    "standard_technique_name": "liquid chromatography mass spectrometry",
     "aliases": [
       "high-resolution metabolomics",
       "metabolomics"
@@ -228,7 +204,7 @@
     "name_in_paper": [
       "tandem MS-MS experiments"
     ],
-    "normalized_name": "tandem mass spectrometry",
+    "standard_technique_name": "tandem mass spectrometry",
     "aliases": [
       "MS-MS"
     ],

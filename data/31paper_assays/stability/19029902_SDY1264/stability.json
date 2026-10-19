@@ -1,0 +1,601 @@
+{
+  "runs": [
+    "v1",
+    "v2",
+    "run1",
+    "run2",
+    "run3",
+    "run4"
+  ],
+  "entries": {
+    "v1": 9,
+    "v2": 9,
+    "run1": 9,
+    "run2": 10,
+    "run3": 9,
+    "run4": 9
+  },
+  "clusters": 9,
+  "stable": 7,
+  "split": 0,
+  "presence": 1,
+  "duplicate_keys": {
+    "v1": [],
+    "v2": [],
+    "run1": [],
+    "run2": [],
+    "run3": [],
+    "run4": []
+  },
+  "rows": [
+    {
+      "shape": "stable",
+      "keys": {
+        "v1": [
+          "Multiplex analysis"
+        ],
+        "v2": [
+          "Multiplex analysis"
+        ],
+        "run1": [
+          "Multiplex analysis"
+        ],
+        "run2": [
+          "Multiplex analysis"
+        ],
+        "run3": [
+          "Multiplex analysis"
+        ],
+        "run4": [
+          "Multiplex analysis"
+        ]
+      }
+    },
+    {
+      "shape": "stable",
+      "keys": {
+        "v1": [
+          "Flow cytometric analysis"
+        ],
+        "v2": [
+          "Flow cytometric analysis"
+        ],
+        "run1": [
+          "Flow cytometric analysis"
+        ],
+        "run2": [
+          "Flow cytometric analysis"
+        ],
+        "run3": [
+          "Flow cytometric analysis"
+        ],
+        "run4": [
+          "Flow cytometric analysis"
+        ]
+      }
+    },
+    {
+      "shape": "stable pair (2)",
+      "keys": {
+        "v1": [
+          "cytopathic effect (CPE)",
+          "plaque reduction neutralization test (PRNT)"
+        ],
+        "v2": [
+          "cytopathic effect (CPE)",
+          "plaque reduction neutralization test (PRNT)"
+        ],
+        "run1": [
+          "neutralizing antibodies by cytopathic effect (CPE)",
+          "plaque reduction neutralization test (PRNT)"
+        ],
+        "run2": [
+          "neutralizing antibodies by cytopathic effect (CPE)",
+          "plaque reduction neutralization test (PRNT)"
+        ],
+        "run3": [
+          "neutralizing antibodies by CPE",
+          "plaque reduction neutralization test"
+        ],
+        "run4": [
+          "neutralizing antibodies by CPE",
+          "plaque reduction neutralization test"
+        ]
+      }
+    },
+    {
+      "shape": "stable",
+      "keys": {
+        "v1": [
+          "microarray"
+        ],
+        "v2": [
+          "microarray"
+        ],
+        "run1": [
+          "microarray"
+        ],
+        "run2": [
+          "microarray"
+        ],
+        "run3": [
+          "microarray"
+        ],
+        "run4": [
+          "microarray"
+        ]
+      }
+    },
+    {
+      "shape": "stable",
+      "keys": {
+        "v1": [
+          "RT-PCR"
+        ],
+        "v2": [
+          "RT-PCR"
+        ],
+        "run1": [
+          "RT-PCR"
+        ],
+        "run2": [
+          "RT-PCR"
+        ],
+        "run3": [
+          "RT-PCR"
+        ],
+        "run4": [
+          "RT-PCR"
+        ]
+      }
+    },
+    {
+      "shape": "stable",
+      "keys": {
+        "v1": [
+          "Immunofluorescence"
+        ],
+        "v2": [
+          "Immunofluorescence"
+        ],
+        "run1": [
+          "immunofluorescence"
+        ],
+        "run2": [
+          "Immunofluorescence"
+        ],
+        "run3": [
+          "immunofluorescence"
+        ],
+        "run4": [
+          "Immunofluorescence"
+        ]
+      }
+    },
+    {
+      "shape": "stable",
+      "keys": {
+        "v1": [
+          "immunoblot analysis"
+        ],
+        "v2": [
+          "immunoblot analysis"
+        ],
+        "run1": [
+          "immunoblot analysis"
+        ],
+        "run2": [
+          "immunoblot analysis"
+        ],
+        "run3": [
+          "immunoblot analysis"
+        ],
+        "run4": [
+          "immunoblot analysis"
+        ]
+      }
+    },
+    {
+      "shape": "stable",
+      "keys": {
+        "v1": [
+          "ELISA"
+        ],
+        "v2": [
+          "ELISA"
+        ],
+        "run1": [
+          "ELISA"
+        ],
+        "run2": [
+          "ELISA"
+        ],
+        "run3": [
+          "ELISA"
+        ],
+        "run4": [
+          "ELISA"
+        ]
+      }
+    },
+    {
+      "shape": "presence",
+      "keys": {
+        "v1": [],
+        "v2": [],
+        "run1": [],
+        "run2": [
+          "flow cytometry using tetramers"
+        ],
+        "run3": [],
+        "run4": []
+      }
+    }
+  ],
+  "field_drift": {
+    "standard_technique_name": {
+      "same": 4,
+      "reworded": 0,
+      "changed": 3
+    },
+    "sample_type": {
+      "same": 1,
+      "reworded": 2,
+      "changed": 4
+    },
+    "readouts": {
+      "same": 2,
+      "reworded": 1,
+      "changed": 4
+    },
+    "aliases": {
+      "same": 1,
+      "reworded": 5,
+      "changed": 1
+    },
+    "generate_claim": {
+      "same": 7,
+      "reworded": 0,
+      "changed": 0
+    },
+    "evidence.quote": {
+      "same": 6,
+      "reworded": 0,
+      "changed": 1
+    },
+    "source": {
+      "same": 7,
+      "reworded": 0,
+      "changed": 0
+    }
+  },
+  "field_drift_detail": [
+    {
+      "cluster": "Multiplex analysis",
+      "field": "sample_type",
+      "verdict": "reworded",
+      "values": {
+        "v1": "Plasma samples from CPTs",
+        "v2": "plasma",
+        "run1": "plasma",
+        "run2": "plasma",
+        "run3": "plasma",
+        "run4": "plasma"
+      }
+    },
+    {
+      "cluster": "Multiplex analysis",
+      "field": "readouts",
+      "verdict": "reworded",
+      "values": {
+        "v1": "cytokine concentrations",
+        "v2": "cytokine concentrations",
+        "run1": "24 cytokine concentrations",
+        "run2": "24 cytokine concentrations",
+        "run3": "24 cytokine concentrations",
+        "run4": "24 cytokine concentrations"
+      }
+    },
+    {
+      "cluster": "Multiplex analysis",
+      "field": "aliases",
+      "verdict": "reworded",
+      "values": {
+        "v1": [
+          "24-plex assay",
+          "24-plex Luminex assay"
+        ],
+        "v2": [],
+        "run1": [
+          "24-plex assay",
+          "24-plex Luminex assay"
+        ],
+        "run2": [
+          "24-plex assay"
+        ],
+        "run3": [
+          "24-plex assay",
+          "24-plex Luminex assay"
+        ],
+        "run4": [
+          "24-plex assay",
+          "24-plex Luminex assay"
+        ]
+      }
+    },
+    {
+      "cluster": "Flow cytometric analysis",
+      "field": "sample_type",
+      "verdict": "changed",
+      "values": {
+        "v1": "PBMCs",
+        "v2": "PBMCs",
+        "run1": "peripheral blood mononuclear cells",
+        "run2": "peripheral blood mononuclear cells",
+        "run3": "peripheral blood mononuclear cells",
+        "run4": "peripheral blood mononuclear cells"
+      }
+    },
+    {
+      "cluster": "Flow cytometric analysis",
+      "field": "readouts",
+      "verdict": "changed",
+      "values": {
+        "v1": "percentages of CD86+ antigen-presenting cells and CD38+ HLA-DR+ CD8+ T cells",
+        "v2": "frequencies of monocytes, myeloid DCs, plasmacytoid DCs, percentage of CD86+ activated antigen-presenting cells, and percentage of CD38+ HLA-DR+ CD8+ CD3+ T cells",
+        "run1": "percentages of CD86+ antigen-presenting cells and percentage of CD38+ HLA-DR+ CD8+ CD3+ T cells",
+        "run2": "percentages of CD86+ antigen-presenting cells and percentage of CD38+ HLA-DR+ CD8+ CD3+ T cells",
+        "run3": "percentages of CD86-positive monocytes, myeloid dendritic cells and plasmacytoid dendritic cells; percentage of CD38-positive HLA-DR-positive CD8-positive CD3-positive T cells",
+        "run4": "percentages of CD86-positive monocytes, myeloid dendritic cells and plasmacytoid dendritic cells; percentage of CD38-positive HLA-DR-positive CD8-positive CD3-positive T cells"
+      }
+    },
+    {
+      "cluster": "Flow cytometric analysis",
+      "field": "aliases",
+      "verdict": "reworded",
+      "values": {
+        "v1": [
+          "Flow cytometry",
+          "flow cytometry"
+        ],
+        "v2": [],
+        "run1": [],
+        "run2": [],
+        "run3": [
+          "flow cytometry"
+        ],
+        "run4": [
+          "flow cytometry"
+        ]
+      }
+    },
+    {
+      "cluster": "microarray",
+      "field": "standard_technique_name",
+      "verdict": "changed",
+      "values": {
+        "v1": "microarray",
+        "v2": "transcription profiling by array",
+        "run1": "transcription profiling by array",
+        "run2": "transcription profiling by array",
+        "run3": "transcription profiling by array",
+        "run4": "transcription profiling by array"
+      }
+    },
+    {
+      "cluster": "microarray",
+      "field": "sample_type",
+      "verdict": "reworded",
+      "values": {
+        "v1": "total peripheral blood mono-nuclear cells (PBMCs)",
+        "v2": "PBMCs",
+        "run1": "peripheral blood mononuclear cells",
+        "run2": "peripheral blood mononuclear cells",
+        "run3": "peripheral blood mononuclear cells",
+        "run4": "peripheral blood mononuclear cells"
+      }
+    },
+    {
+      "cluster": "microarray",
+      "field": "readouts",
+      "verdict": "changed",
+      "values": {
+        "v1": "gene expression values",
+        "v2": "gene expression levels",
+        "run1": "gene expression intensity data",
+        "run2": "gene expression intensities",
+        "run3": "gene expression intensities",
+        "run4": "gene expression intensity data"
+      }
+    },
+    {
+      "cluster": "microarray",
+      "field": "aliases",
+      "verdict": "changed",
+      "values": {
+        "v1": [
+          "transcriptional profiling",
+          "microarray analysis"
+        ],
+        "v2": [],
+        "run1": [
+          "microarray analysis"
+        ],
+        "run2": [
+          "microarray analysis"
+        ],
+        "run3": [
+          "microarray analysis",
+          "Affymetrix Human Genome U133 Plus 2.0 Array"
+        ],
+        "run4": [
+          "microarray analysis",
+          "Affymetrix Human Genome U133 Plus 2.0 Array"
+        ]
+      }
+    },
+    {
+      "cluster": "RT-PCR",
+      "field": "sample_type",
+      "verdict": "changed",
+      "values": {
+        "v1": "total RNA",
+        "v2": null,
+        "run1": null,
+        "run2": "peripheral blood mononuclear cells",
+        "run3": null,
+        "run4": null
+      }
+    },
+    {
+      "cluster": "RT-PCR",
+      "field": "readouts",
+      "verdict": "changed",
+      "values": {
+        "v1": "relative gene expression by cycling threshold values",
+        "v2": "relative gene expression",
+        "run1": "gene expression measured by cycling threshold values normalized to housekeeping genes",
+        "run2": "relative gene expression by cycling threshold values",
+        "run3": "relative gene expression measured by cycling threshold values",
+        "run4": "gene expression measured by cycling threshold values normalized to housekeeping genes"
+      }
+    },
+    {
+      "cluster": "RT-PCR",
+      "field": "aliases",
+      "verdict": "reworded",
+      "values": {
+        "v1": [],
+        "v2": [],
+        "run1": [
+          "Two-step RT-PCR",
+          "TaqMan Gene Expression Plate Assay"
+        ],
+        "run2": [
+          "Two-step RT-PCR"
+        ],
+        "run3": [
+          "two-step RT-PCR"
+        ],
+        "run4": [
+          "Two-step RT-PCR",
+          "relative RT-PCR expression"
+        ]
+      }
+    },
+    {
+      "cluster": "Immunofluorescence",
+      "field": "sample_type",
+      "verdict": "changed",
+      "values": {
+        "v1": "BHK cells",
+        "v2": "BHK cells",
+        "run1": "baby hamster kidney cells",
+        "run2": "baby hamster kidney cells",
+        "run3": "baby hamster kidney cells",
+        "run4": "baby hamster kidney cells"
+      }
+    },
+    {
+      "cluster": "Immunofluorescence",
+      "field": "readouts",
+      "verdict": "changed",
+      "values": {
+        "v1": "TIAR staining and stress granule formation",
+        "v2": "TIAR staining and stress granule formation",
+        "run1": "TIAR immunofluorescence signal and stress granule formation",
+        "run2": "TIAR immunofluorescence signal and stress granule formation",
+        "run3": "TIAR staining and stress granule formation by fluorescence imaging",
+        "run4": "TIAR staining and stress granule formation by fluorescence imaging"
+      }
+    },
+    {
+      "cluster": "Immunofluorescence",
+      "field": "aliases",
+      "verdict": "reworded",
+      "values": {
+        "v1": [
+          "Fluorescence microscopy"
+        ],
+        "v2": [],
+        "run1": [],
+        "run2": [],
+        "run3": [],
+        "run4": [
+          "fluorescence microscopy"
+        ]
+      }
+    },
+    {
+      "cluster": "Immunofluorescence",
+      "field": "evidence.quote",
+      "verdict": "changed",
+      "values": {
+        "v1": "Immunofluorescence signal was detected using a LSM510 confocal microscope (Zeiss), and images were captured and analyzed using the Zeiss LSM Image Browser.",
+        "v2": "Immunofluorescence, immunoblot analysis and ELISA.",
+        "run1": "Immunofluorescence signal was detected using a LSM510 confocal microscope (Zeiss), and images were captured and analyzed using the Zeiss LSM Image Browser.",
+        "run2": "Immunofluorescence signal was detected using a LSM510 confocal microscope (Zeiss), and images were captured and analyzed using the Zeiss LSM Image Browser.",
+        "run3": "Immunofluorescence signal was detected using a LSM510 confocal microscope (Zeiss), and images were captured and analyzed using the Zeiss LSM Image Browser.",
+        "run4": "Immunofluorescence signal was detected using a LSM510 confocal microscope (Zeiss), and images were captured and analyzed using the Zeiss LSM Image Browser."
+      }
+    },
+    {
+      "cluster": "immunoblot analysis",
+      "field": "standard_technique_name",
+      "verdict": "changed",
+      "values": {
+        "v1": "immunoblot",
+        "v2": "western blot",
+        "run1": "western blot",
+        "run2": "western blot",
+        "run3": "western blot",
+        "run4": "western blot"
+      }
+    },
+    {
+      "cluster": "immunoblot analysis",
+      "field": "sample_type",
+      "verdict": "changed",
+      "values": {
+        "v1": "human total PBMC or BHK cells",
+        "v2": "human total PBMC or BHK cells",
+        "run1": "human total peripheral blood mononuclear cells or baby hamster kidney cells",
+        "run2": "human total peripheral blood mononuclear cells or baby hamster kidney cells",
+        "run3": "human total peripheral blood mononuclear cells or baby hamster kidney cells",
+        "run4": "human total peripheral blood mononuclear cells or baby hamster kidney cells"
+      }
+    },
+    {
+      "cluster": "immunoblot analysis",
+      "field": "aliases",
+      "verdict": "reworded",
+      "values": {
+        "v1": [
+          "Immunoblot"
+        ],
+        "v2": [],
+        "run1": [
+          "Immunoblot"
+        ],
+        "run2": [],
+        "run3": [],
+        "run4": [
+          "Immunoblot"
+        ]
+      }
+    },
+    {
+      "cluster": "ELISA",
+      "field": "standard_technique_name",
+      "verdict": "changed",
+      "values": {
+        "v1": "ELISA",
+        "v2": "ELISA",
+        "run1": "enzyme linked immunosorbent assay",
+        "run2": "ELISA",
+        "run3": "enzyme-linked immunosorbent assay",
+        "run4": "enzyme-linked immunosorbent assay"
+      }
+    }
+  ]
+}

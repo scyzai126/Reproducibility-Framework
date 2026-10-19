@@ -274,86 +274,111 @@ def test_the_report_counts_groups_and_entries():
     assert report["summary"] == {"groups_merged": 1, "entries_folded": 1}
     assert report["results"][0]["key"] == "enzyme-linked immunosorbent assay"
 
-# ── linking on normalized_name ───────────────────────────────────────────────
+# ── a shared technique never links ───────────────────────────────────────────
 
 _RNASEQ_TERM = {"obi_id": "OBI:0001271", "obi_label": "RNA-seq assay"}
 _BULK_TERM = {"obi_id": "OBI:0003090", "obi_label": "bulk RNA-seq assay"}
+_AIM_TERM = {"obi_id": "OBI:0003230", "obi_label": "T cell activation induced marker assay"}
 
 
 def _tech(name: str, technique: str | None) -> dict:
-    return {**FLOW, "name_in_paper": name, "aliases": [], "normalized_name": technique}
+    return {**FLOW, "name_in_paper": name, "aliases": [], "standard_technique_name": technique}
 
 
-def test_same_technique_on_different_terms_folds_under_the_first_mapped_label():
+def test_same_technique_on_different_terms_stays_two_assays():
     assays = {"RNA-seq": _tech("RNA-seq", "RNA sequencing"),
               "bulk RNA-seq": _tech("bulk RNA-seq", "RNA sequencing")}
     groups = canonical_groups(assays, {"RNA-seq": _RNASEQ_TERM, "bulk RNA-seq": _BULK_TERM})
 
-    assert len(groups) == 1
-    assert groups[0]["key"] == "RNA-seq assay"
-    assert groups[0]["members"] == ["RNA-seq", "bulk RNA-seq"]
+    assert [g["key"] for g in groups] == ["RNA-seq assay", "bulk RNA-seq assay"]
+    assert [g["members"] for g in groups] == [["RNA-seq"], ["bulk RNA-seq"]]
 
 
-def test_an_unmapped_entry_joins_the_mapped_one_that_shares_its_technique():
-    """The case the link exists for: a protocol-section name OBI could not resolve."""
-    assays = {"Whole transcriptome profiling of NK cell subsets":
-                  _tech("Whole transcriptome profiling of NK cell subsets", "RNA sequencing"),
-              "RNA-seq": _tech("RNA-seq", "RNA sequencing")}
-    obi = {"Whole transcriptome profiling of NK cell subsets": _NO_TERM, "RNA-seq": _RNASEQ_TERM}
-
-    merged, obi_out, folds = canonicalize_registry(assays, obi)
-
-    assert list(merged) == ["RNA-seq assay"]
-    # The unmapped entry came first, so its fields survive; the term comes from the mapped one.
-    assert merged["RNA-seq assay"]["name_in_paper"][0] == \
-        "Whole transcriptome profiling of NK cell subsets"
-    assert obi_out["RNA-seq assay"]["obi_id"] == "OBI:0001271"
-    assert folds[0]["obi_label"] == "RNA-seq assay"
-
-
-def test_links_chain_across_term_and_technique():
-    """A~B on the term, B~C on the technique: one assay, not two."""
-    assays = {"A": _tech("A", None), "B": _tech("B", "RNA sequencing"),
-              "C": _tech("C", "RNA sequencing")}
-    obi = {"A": _RNASEQ_TERM, "B": _RNASEQ_TERM, "C": _NO_TERM}
+def test_a_shared_instrument_never_joins_two_different_terms():
+    """SDY1640: three flow-cytometry experiments, one of them an AIM assay with its own term.
+    The shared instrument used to fold the AIM assay into the immunophenotyping."""
+    assays = {"phenotyping": _tech("phenotyping", "flow cytometry"),
+              "AIM assay": _tech("AIM assay", "flow cytometry"),
+              "ICS": _tech("ICS", "flow cytometry")}
+    obi = {"phenotyping": _FLOW_TERM, "AIM assay": _AIM_TERM, "ICS": _FLOW_TERM}
 
     groups = canonical_groups(assays, obi)
 
-    assert [g["members"] for g in groups] == [["A", "B", "C"]]
+    assert [(g["key"], g["members"]) for g in groups] == [
+        ("flow cytometry assay", ["phenotyping", "ICS"]),
+        ("T cell activation induced marker assay", ["AIM assay"]),
+    ]
 
 
-def test_a_missing_or_blank_technique_never_links():
-    assays = {"A": _tech("A", None), "B": _tech("B", None), "C": _tech("C", "  ")}
+def test_an_unmapped_entry_is_never_folded_onto_a_sibling_sharing_its_technique():
+    """SDY1328: `multiplex ELISA` had no term and shared "ELISA" as its technique with the
+    paper's plate ELISA, so it was folded into OBI:0000661 -- the one case the resolver's own
+    rule says is a different assay (a bead-based multiplex). An unmapped entry stays its own
+    entry, under its own wording, where UNMAPPED can be reported for it."""
+    assays = {"ELISA": _tech("ELISA", "ELISA"),
+              "multiplex ELISA": _tech("multiplex ELISA", "ELISA")}
+    obi = {"ELISA": _ELISA_TERM, "multiplex ELISA": _NO_TERM}
+
+    merged, obi_out, folds = canonicalize_registry(assays, obi)
+
+    assert list(merged) == ["enzyme-linked immunosorbent assay", "multiplex ELISA"]
+    assert merged["multiplex ELISA"]["name_in_paper"] == ["multiplex ELISA"]
+    assert obi_out["multiplex ELISA"]["obi_id"] is None
+    assert folds == []
+
+
+def test_an_unmapped_entry_between_two_terms_stays_alone():
+    assays = {"flow": _tech("flow", "flow cytometry"), "U": _tech("U", "flow cytometry"),
+              "AIM": _tech("AIM", "flow cytometry")}
+    obi = {"flow": _FLOW_TERM, "U": _NO_TERM, "AIM": _AIM_TERM}
+
+    assert [g["members"] for g in canonical_groups(assays, obi)] == [["flow"], ["U"], ["AIM"]]
+
+
+def test_two_unmapped_entries_on_one_technique_stay_two_assays():
+    """A CFSE assay and an ICS panel OBI happened to miss are not one assay for sharing a
+    cytometer."""
+    assays = {"CFSE": _tech("CFSE", "flow cytometry"), "ICS": _tech("ICS", "flow cytometry")}
 
     groups = canonical_groups(assays, {k: _NO_TERM for k in assays})
 
-    assert [g["members"] for g in groups] == [["A"], ["B"], ["C"]]
+    assert [(g["key"], g["members"]) for g in groups] == [("CFSE", ["CFSE"]), ("ICS", ["ICS"])]
 
 
-def test_technique_matching_ignores_case_and_spacing():
-    assays = {"A": _tech("A", "Flow  Cytometry"), "B": _tech("B", "flow cytometry")}
+def test_a_technique_on_the_obi_record_does_not_link_either():
+    assays = {"A": _tech("A", None), "B": _tech("B", None)}
+    obi = {"A": {**_NO_TERM, "standard_technique_name": "ELISA"},
+           "B": {**_NO_TERM, "standard_technique_name": "elisa"}}
 
-    groups = canonical_groups(assays, None)
-
-    assert [g["members"] for g in groups] == [["A", "B"]]
-    assert groups[0]["key"] == "A"
+    assert [g["members"] for g in canonical_groups(assays, obi)] == [["A"], ["B"]]
 
 
 def test_the_report_lists_each_members_own_label():
-    assays = {"RNA-seq": _tech("RNA-seq", "RNA sequencing"),
-              "bulk RNA-seq": _tech("bulk RNA-seq", "RNA sequencing")}
+    assays = {"ELISA": _tech("ELISA", "ELISA"), "ELISA kits": _tech("ELISA kits", "ELISA")}
 
-    _, _, folds = canonicalize_registry(
-        assays, {"RNA-seq": _RNASEQ_TERM, "bulk RNA-seq": _BULK_TERM})
+    _, _, folds = canonicalize_registry(assays, {"ELISA": _ELISA_TERM, "ELISA kits": _ELISA_TERM})
 
-    assert folds[0]["member_labels"] == {"RNA-seq": "RNA-seq assay",
-                                         "bulk RNA-seq": "bulk RNA-seq assay"}
+    assert folds[0]["member_labels"] == {"ELISA": "enzyme-linked immunosorbent assay",
+                                         "ELISA kits": "enzyme-linked immunosorbent assay"}
 
 
-def test_the_technique_can_come_from_the_obi_record():
-    """The mapper carries normalized_name on its own output; either source links."""
-    assays = {"A": _tech("A", None), "B": _tech("B", None)}
-    obi = {"A": {**_NO_TERM, "normalized_name": "ELISA"},
-           "B": {**_NO_TERM, "normalized_name": "elisa"}}
+# ── the identity review travels with the fold ────────────────────────────────
 
-    assert [g["members"] for g in canonical_groups(assays, obi)] == [["A", "B"]]
+_REVIEW = {"verdict": "NOT_SUPPORTED", "reason": "a section heading"}
+
+
+def test_a_folded_members_review_stays_in_its_block_and_is_not_promoted():
+    """SDY1260: the judge doubted "ELISA kits" as a name; the ELISA it folded into was
+    supported, and promoting the doubt made the deliverable say otherwise."""
+    merged = merge_entries(ELISA, [{**ELISA_KITS, "identity_review": _REVIEW}])
+
+    assert "identity_review" not in merged
+    assert merged["additional_evidence"][0]["identity_review"] == _REVIEW
+
+
+def test_the_survivors_own_review_wins_and_an_unreviewed_member_gains_no_slot():
+    mine = {"verdict": "NOT_REPORTED", "reason": "verification failed"}
+    merged = merge_entries({**ELISA, "identity_review": mine}, [ELISA_KITS])
+
+    assert merged["identity_review"] == mine
+    assert "identity_review" not in merged["additional_evidence"][0]

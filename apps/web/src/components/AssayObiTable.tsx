@@ -16,7 +16,7 @@ import { benchmarkViews } from './AssayBenchmarkResults';
 export const ASSAY_TABLE_ID = 'assay-obi-table';
 
 type SortKey =
-  | 'study' | 'assay' | 'normalized_name' | 'obi_label' | 'benchmark_assay' | 'benchmark_obi_label'
+  | 'study' | 'assay' | 'standard_technique_name' | 'obi_label' | 'benchmark_assay' | 'benchmark_obi_label'
   | 'resource' | 'obi_confidence';
 type SortDir = 'asc' | 'desc';
 
@@ -33,7 +33,7 @@ const COLUMNS: { key: SortKey | null; label: string; className?: string }[] = [
   { key: null, label: DATA_COLUMN },
   { key: 'resource', label: 'Resolved by' },
   { key: 'obi_confidence', label: 'Conf.', className: 'text-right' },
-  { key: 'normalized_name', label: 'Normalized' },
+  { key: 'standard_technique_name', label: 'Standard technique' },
   { key: null, label: 'Sample type' },
 ];
 
@@ -257,7 +257,7 @@ export default function AssayObiTable({
       if (activeView && !activeView.matches(r, coverage.get(immportKey(r.study, r.assay)))) return false;
       if (!q) return true;
       const repos = (dataAvailability?.[r.study]?.data_repositories ?? []).map((d) => d.accession);
-      return [r.assay, r.normalized_name, r.obi_label, r.obi_id, r.study,
+      return [r.assay, r.standard_technique_name, r.obi_label, r.obi_id, r.study,
               r.benchmark_assay, r.benchmark_obi_label, r.benchmark_obi_id, ...repos]
         .some((field) => field?.toLowerCase().includes(q));
     });
@@ -557,7 +557,7 @@ export default function AssayObiTable({
                       </td>
                     </>
                   )}
-                  <td className="px-3 py-2 text-gray-600 max-w-[180px]">{row.normalized_name || '—'}</td>
+                  <td className="px-3 py-2 text-gray-600 max-w-[180px]">{row.standard_technique_name || '—'}</td>
                   <td className="px-3 py-2 text-gray-400 max-w-[180px]">{row.sample_type || '—'}</td>
                 </tr>
               ))}

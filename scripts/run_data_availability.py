@@ -1,6 +1,6 @@
 """Find where each paper's data lives, and separate its own data from data it reused or only cited.
 
---all runs the benchmark papers: one per folder in data/31paper_assays/ (named <PMID>_<SDY>,
+--all runs the benchmark papers: one per folder under assay_service.REGISTRY_ROOT (named <PMID>_<SDY>,
 optionally with a _pdf suffix). Each is read from data/JAT_XML/<SDY>_<PMID>.xml when that
 exists, otherwise from the first data/pdf/**/<SDY>_<PMID>.pdf. Per paper:
 
@@ -73,7 +73,9 @@ from app.agent.data_availability import (  # noqa: E402
 from app.agent.data_availability_service import immport_lookup_factory, run_paper  # noqa: E402
 from app.config import settings  # noqa: E402
 
-ASSAY_DIR = _REPO_ROOT / "data" / "31paper_assays"
+from app.agent.assay_service import REGISTRY_ROOT  # noqa: E402
+
+ASSAY_DIR = REGISTRY_ROOT
 JATS_DIR = _REPO_ROOT / "data" / "JAT_XML"
 PDF_ROOT = _REPO_ROOT / "data" / "pdf"
 OUT_DIR = _REPO_ROOT / "data" / "benchmark_assay" / "data_availability"

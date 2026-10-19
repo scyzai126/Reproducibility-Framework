@@ -12,23 +12,23 @@
     "evidence": {
       "section": "SARS-CoV-2 RBD ELISA",
       "sentence_ids": [
-        "S310"
+        "S308"
       ],
-      "quote": "Positive control standard was run on each plate and was used to calculate titers (relative units) for all samples using non-linear regression interpolations, done to quantify the amount of anti-RBD IgG, anti-RBD IgM, and anti-RBD IgA present in each specimen."
+      "quote": "Plates were read on a Spectramax Plate Reader at 450 nm using SoftMax Pro, and ODs were background subtracted."
     },
     "additional_evidence": [
       {
         "name_in_paper": "OC43 and NL63 coronavirus RBD ELISA",
         "sample_type": "serum",
-        "readouts": "antigen-specific antibodies to HCoV-OC43 and HCoV-NL63 RBD",
+        "readouts": "antigen-specific antibodies to coronavirus RBD measured at 405 nm using anti-human IgG, IgA and IgM antibodies",
         "generate_claim": true,
         "source": "methods",
         "evidence": {
           "section": "OC43 and NL63 coronavirus RBD ELISA",
           "sentence_ids": [
-            "S314"
+            "S315"
           ],
-          "quote": "After blocking, we added 1:20 diluted serum and incubated at 37°C for 1 h."
+          "quote": "Antigen-specific antibodies (Ig) were measured at 405 nm by using alkaline phosphatase conjugated goat anti-human IgG, IgA and IgM Abs and 4-Nitrophenyl phosphate."
         }
       }
     ]
@@ -36,15 +36,11 @@
   "flow cytometry assay": {
     "name_in_paper": [
       "Direct ex vivo PBMC immune cell phenotyping",
-      "Activation induced cell marker assay",
       "Intracellular cytokine staining assay"
     ],
     "aliases": [
-      "21-color flow cytometry panel",
-      "Immunophenotyping of mononuclear leukocytes",
       "Phenotyping Flow Cytometry",
-      "AIM assays",
-      "ICS"
+      "ICS assay"
     ],
     "generate_claim": true,
     "source": "methods",
@@ -57,41 +53,43 @@
     },
     "additional_evidence": [
       {
-        "name_in_paper": "Activation induced cell marker assay",
-        "sample_type": "PBMC",
-        "readouts": "frequency of antigen-specific AIM+ CD4+ and CD8+ T cells after peptide stimulation",
-        "generate_claim": true,
-        "source": "methods",
-        "evidence": {
-          "section": "Activation induced cell marker assay",
-          "sentence_ids": [
-            "S326"
-          ],
-          "quote": "Cells were cultured for 24 hours in the presence of SARS-CoV-2 specific MPs [1 μg/ml] or 10 μg/mL PHA in 96-wells U bottom plates at 1x10 6 PBMC per well."
-        }
-      },
-      {
         "name_in_paper": "Intracellular cytokine staining assay",
-        "sample_type": "PBMC",
-        "readouts": "IFNγ, granzyme B, TNFα, and IL-10 production in CD8+ T cells",
+        "sample_type": "peripheral blood mononuclear cells",
+        "readouts": "CD8+ T cells producing IFNγ, granzyme B, TNFα, or IL-10 after peptide stimulation",
         "generate_claim": true,
         "source": "methods",
         "evidence": {
           "section": "Intracellular cytokine staining assay",
           "sentence_ids": [
-            "S332"
+            "S337"
           ],
-          "quote": "For the intracellular cytokine staining, PBMC were cultured in the presence of SARS-CoV-2 specific MPs [1 μg/ml] for 9 hours."
+          "quote": "The gates applied for the identification of IFNγ, GzB, TNFα, or IL-10 production on the total population of CD8 + T cells were defined according to the cells cultured with DMSO for each individual."
         }
       }
     ]
   },
-  "antigen detection by cytometric bead array assay": {
+  "T cell activation induced marker assay": {
+    "name_in_paper": [
+      "Activation induced cell marker assay"
+    ],
+    "aliases": [
+      "AIM assay"
+    ],
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Activation induced cell marker assay",
+      "sentence_ids": [
+        "S326"
+      ],
+      "quote": "Cells were cultured for 24 hours in the presence of SARS-CoV-2 specific MPs [1 μg/ml] or 10 μg/mL PHA in 96-wells U bottom plates at 1x10 6 PBMC per well."
+    }
+  },
+  "analyte detection by flow based bead assay": {
     "name_in_paper": [
       "Cytokine bead assays"
     ],
     "aliases": [
-      "multiplex detection of cytokines",
       "LEGENDplex"
     ],
     "generate_claim": true,
@@ -109,9 +107,9 @@
       "lateral flow assay"
     ],
     "aliases": [
+      "colloidal-gold immunochromatographic ‘lateral flow’ assay",
       "lateral flow serology",
-      "lateral flow immunoglobulin (Ig) tests",
-      "colloidal-gold immunochromatographic ‘lateral flow’ assay"
+      "lateral flow immunoglobulin (Ig) tests"
     ],
     "generate_claim": true,
     "source": "methods",
@@ -121,23 +119,6 @@
         "S266"
       ],
       "quote": "Following enrollment, whole blood from convalescent donors was run on a colloidal-gold immunochromatographic ‘lateral flow’ assay to evaluate for prior exposure to SARS-CoV-2."
-    }
-  },
-  "organism detection by PCR assay": {
-    "name_in_paper": [
-      "viral PCR"
-    ],
-    "aliases": [
-      "swab test viral PCR"
-    ],
-    "generate_claim": true,
-    "source": "results",
-    "evidence": {
-      "section": "Immunological Phenotypes of Recovered COVID-19 Patients",
-      "sentence_ids": [
-        "S25"
-      ],
-      "quote": "SARS-CoV-2 infection was determined by swab test viral PCR during the acute phase of the infection."
     }
   }
 }

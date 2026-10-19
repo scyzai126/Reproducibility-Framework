@@ -1,11 +1,9 @@
 {
   "summary": {
-    "assays": 8,
-    "fields_re_extracted": 2,
-    "actions": {
-      "REPLACED": 2
-    },
-    "reported_not_corrected": 1
+    "assays": 7,
+    "fields_re_extracted": 0,
+    "actions": {},
+    "reported_not_corrected": 0
   },
   "results": [
     {
@@ -18,20 +16,8 @@
     {
       "assay_id": "OC43 and NL63 coronavirus RBD ELISA",
       "assay_name": "OC43 and NL63 coronavirus RBD ELISA",
-      "record_verdict": "REVIEW",
-      "corrections": [
-        {
-          "field": "aliases",
-          "action": "REPLACED",
-          "previous": [
-            "Plasma IgG ELISAs"
-          ],
-          "blind_answer": [],
-          "dropped": [
-            "Plasma IgG ELISAs"
-          ]
-        }
-      ],
+      "record_verdict": "ACCEPT",
+      "corrections": [],
       "reported_not_corrected": []
     },
     {
@@ -44,25 +30,8 @@
     {
       "assay_id": "Activation induced cell marker assay",
       "assay_name": "Activation induced cell marker assay",
-      "record_verdict": "REVIEW",
-      "corrections": [
-        {
-          "field": "aliases",
-          "action": "REPLACED",
-          "previous": [
-            "AIM assays",
-            "AIM assay",
-            "direct ex vivo T cell assays"
-          ],
-          "blind_answer": [
-            "AIM assays",
-            "AIM assay"
-          ],
-          "dropped": [
-            "direct ex vivo T cell assays"
-          ]
-        }
-      ],
+      "record_verdict": "ACCEPT",
+      "corrections": [],
       "reported_not_corrected": []
     },
     {
@@ -85,19 +54,6 @@
       "record_verdict": "ACCEPT",
       "corrections": [],
       "reported_not_corrected": []
-    },
-    {
-      "assay_id": "viral PCR",
-      "assay_name": "viral PCR",
-      "record_verdict": "REVIEW",
-      "corrections": [],
-      "reported_not_corrected": [
-        {
-          "field_name": "name_in_paper",
-          "verdict": "NOT_SUPPORTED",
-          "reason": "The text mentions \"swab test viral PCR\" but does not use the exact assay name \"viral PCR\" as a performed assay name."
-        }
-      ]
     }
   ]
 }

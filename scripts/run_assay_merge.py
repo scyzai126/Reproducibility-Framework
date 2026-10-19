@@ -27,7 +27,7 @@ Usage:
     python3 scripts/run_assay_merge.py --all [--dry-run] [--map]
 
 Example:
-    python3 scripts/run_assay_merge.py data/31paper_assays/24336226_SDY1260 --dry-run
+    python3 scripts/run_assay_merge.py data/31paper_assays/assay_result_v1/24336226_SDY1260 --dry-run
 
 Reads  : <registry_dir>/{assays.json,assays_OBI.json,assays_corrected.json (with --map)}
 Writes : <registry_dir>/{assays.json,assays_OBI.json,assays_benchmark.json,assays_merges.json}
@@ -49,9 +49,7 @@ from app.agent.assay_merger import (
     compose_key_maps,
     key_map,
 )
-from app.agent.assay_service import obi_misses, obi_query_calls
-
-REGISTRY_ROOT = _REPO_ROOT / "data" / "31paper_assays"
+from app.agent.assay_service import REGISTRY_ROOT, obi_misses, obi_query_calls
 
 
 def _read(path: Path) -> dict | None:
@@ -94,8 +92,15 @@ def canonicalize_one(registry_dir: Path, remap: bool = False) -> None:
     if remap:
         # Imported here, not at the top: it is the one paid step, and a plain canonicalize
         # should not even load the client.
+        from app.agent import assay_trace
         from app.agent.assay_obi_mapper import enrich_assays_with_obi
-        obi = enrich_assays_with_obi(assays)
+        # The picks are kept like a full run keeps them, merged into the file the full run wrote.
+        trace = assay_trace.start()
+        try:
+            obi = enrich_assays_with_obi(assays)
+        finally:
+            assay_trace.stop()
+        trace.write(registry_dir / assay_trace.RAW_FILE)
         # A fresh mapping of the pre-canonical registry: nothing earlier to compose with.
         stored = {}
         for key, entry in obi.items():

@@ -31,11 +31,11 @@ export const RESOURCE_COLOR: Record<ObiResource, string> = {
 
 export const RESOURCE_LABEL: Record<ObiResource, string> = {
   exact_original: 'Exact — original name',
-  exact_normalized: 'Exact — normalized name (retired)',
-  exact_normalized_llm: 'Exact — normalized name',
+  exact_normalized: 'Exact — standard technique name (retired)',
+  exact_normalized_llm: 'Exact — standard technique name',
   exact_original_llm: 'Exact — refined by picker',
   embedding_llm: 'Embedding + LLM',
-  embedding_llm_normalized: 'Embedding + LLM (via normalized name)',
+  embedding_llm_normalized: 'Embedding + LLM (via standard technique name)',
   unresolved: 'Unresolved',
 };
 

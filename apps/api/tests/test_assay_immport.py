@@ -87,7 +87,7 @@ def model(monkeypatch):
 
 
 def _row(**kw):
-    base = {"study": "19029902_SDY1264", "assay": "", "normalized_name": "", "obi_label": ""}
+    base = {"study": "19029902_SDY1264", "assay": "", "standard_technique_name": "", "obi_label": ""}
     return {**base, **kw}
 
 
@@ -95,7 +95,7 @@ def _row(**kw):
 
 def test_the_technique_is_tried_before_the_paper_s_own_wording():
     """ImmPort's column holds the technique ("Luminex xMAP"), not the paper's phrasing."""
-    terms = search_terms(assay="24-plex Luminex assay", normalized_name="Luminex xMAP")
+    terms = search_terms(assay="24-plex Luminex assay", standard_technique_name="Luminex xMAP")
 
     assert terms[0] == "Luminex xMAP"
 
@@ -117,7 +117,7 @@ def test_aliases_are_tried_too():
 
 def test_a_term_repeated_in_another_case_is_tried_once():
     """Each term costs a query."""
-    terms = search_terms(assay="ELISA", normalized_name="elisa", obi_label="ELISA")
+    terms = search_terms(assay="ELISA", standard_technique_name="elisa", obi_label="ELISA")
 
     assert len(terms) == 1
 
@@ -139,7 +139,7 @@ def test_the_study_half_is_taken_from_either_spelling():
 async def test_an_assay_immport_registered_is_matched_with_its_accession():
     session = _FakeSession({"SDY1264": [("EXP16737", "Virus Neutralization")]})
 
-    report = await check_rows(session, [_row(normalized_name="Virus Neutralization")])
+    report = await check_rows(session, [_row(standard_technique_name="Virus Neutralization")])
 
     row = report["rows"][0]
     assert row["status"] == MATCHED
@@ -154,7 +154,7 @@ async def test_a_study_with_nothing_registered_is_answered_without_a_single_look
     """The cheapest true answer the sweep can give, and it must never reach a model."""
     session = _FakeSession({"SDY1264": []})
 
-    report = await check_rows(session, [_row(normalized_name="Virus Neutralization")])
+    report = await check_rows(session, [_row(standard_technique_name="Virus Neutralization")])
 
     assert report["rows"][0]["status"] == NO_EXPERIMENTS
     assert session.like_terms == []
@@ -166,7 +166,7 @@ async def test_an_assay_the_study_does_not_register_is_absent_not_missing():
     one status a model call could still change, which is why it is kept apart."""
     session = _FakeSession({"SDY1264": [("EXP16737", "Virus Neutralization")]})
 
-    report = await check_rows(session, [_row(normalized_name="Mass spectrometry")])
+    report = await check_rows(session, [_row(standard_technique_name="Mass spectrometry")])
 
     row = report["rows"][0]
     assert row["status"] == ABSENT
@@ -194,7 +194,7 @@ async def test_the_sweep_never_reaches_the_model(monkeypatch):
     monkeypatch.setattr("app.agent.query_builder._get_openai_client", _explode)
     session = _FakeSession({"SDY1264": [("EXP1", "Flow Cytometry")]})
 
-    report = await check_rows(session, [_row(normalized_name="Mass spectrometry")])
+    report = await check_rows(session, [_row(standard_technique_name="Mass spectrometry")])
 
     assert report["rows"][0]["status"] == ABSENT
 
@@ -205,7 +205,7 @@ async def test_every_wording_is_tried_before_a_row_is_called_absent():
     session = _FakeSession({"SDY1264": [("EXP1", "Flow Cytometry")]})
 
     await check_rows(session, [_row(assay="Flow cytometric analysis",
-                                    normalized_name="", obi_label="flow cytometry assay")])
+                                    standard_technique_name="", obi_label="flow cytometry assay")])
 
     assert "flow cytometry" in session.like_terms
 
@@ -224,7 +224,7 @@ async def test_a_later_wording_can_rescue_a_row_the_first_one_missed():
 
 # ── the LLM fallback, when asked for ──────────────────────────────────────────
 
-_PRNT = {"normalized_name": "plaque reduction neutralization test",
+_PRNT = {"standard_technique_name": "plaque reduction neutralization test",
          "assay": "plaque reduction neutralization test (PRNT)"}
 
 
@@ -249,7 +249,7 @@ async def test_a_row_sql_resolves_never_reaches_the_model(model):
     fake = model("EXP16737")
     session = _FakeSession({"SDY1264": [("EXP16737", "Virus Neutralization")]})
 
-    report = await check_rows(session, [_row(normalized_name="Virus Neutralization")],
+    report = await check_rows(session, [_row(standard_technique_name="Virus Neutralization")],
                               use_llm=True)
 
     assert report["rows"][0]["method"] == "SQL"

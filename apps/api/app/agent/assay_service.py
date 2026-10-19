@@ -38,6 +38,8 @@ from pathlib import Path
 
 from openai import AsyncOpenAI
 
+from app.agent import assay_trace
+from app.agent.assay_consensus import consensus
 from app.agent.assay_corrector import (
     build_report as build_correction_report,
     correct_registry,
@@ -61,12 +63,13 @@ from app.agent.assay_merger import (
     key_map,
 )
 from app.agent.assay_obi_mapper import _build_lookup, _index_children, enrich_assays_with_obi
-from app.agent.assay_registry import normalize_assay_name
+from app.agent.assay_registry import CORPUS_ROOT, RESULT_VERSION, normalize_assay_name
 from app.agent.assay_verifier import (
     build_report,
     check_quote_verbatim,
     check_source_section,
     derive_evidence_fields,
+    mark_identity_reviews,
     verify_registry,
 )
 from app.agent.jats_parser import (
@@ -85,7 +88,10 @@ XML_ROOT = _REPO_ROOT / "data" / "JAT_XML"
 #: Searched only when a paper has no JATS XML. Both roots are module-level and re-read at call
 #: time so tests can monkeypatch either.
 PDF_ROOT = _REPO_ROOT / "data" / "pdf"
-REGISTRY_ROOT = _REPO_ROOT / "data" / "31paper_assays"
+#: `data/31paper_assays/<RESULT_VERSION>`: the benchmark papers' registries. The version lives in
+#: assay_registry so claim resolution and this chain read the same folder; CORPUS_ROOT is the
+#: unversioned parent, where the ImmPort cache sits.
+REGISTRY_ROOT = CORPUS_ROOT / RESULT_VERSION
 #: Where a paper outside the benchmark keeps its results: `<pmid>_<SDY>[_pdf]/`, holding its
 #: assay registry and its data-repository files together. Benchmark papers stay in REGISTRY_ROOT,
 #: so the corpus table (built from REGISTRY_ROOT alone) never picks up a new paper.
@@ -93,6 +99,14 @@ CACHE_ROOT = _REPO_ROOT / "data" / "cache" / "assays"
 #: Marks a registry built from a PDF because the paper has no JATS XML: `<pmid>_<SDY>_pdf`.
 #: Its entries carry no sentence ids, so the folder name says so up front.
 PDF_DIR_SUFFIX = "_pdf"
+
+#: How many extraction calls round 1 makes per paper, voted into one registry by
+#: assay_consensus.consensus. Three, not one: measured over three papers run twice each with the
+#: same prompt, two came back with an inventory one entry longer in one run than the other, and
+#: rounds 2-4 then spent ~25 calls verifying whichever inventory happened to come out. Two more
+#: extraction calls buy a majority on every entry and every field. Read at call time so a test or
+#: a caller can set it.
+EXTRACTIONS = 3
 
 #: A PDF text layer is only ever the verification haystack, never the extraction input, so it
 #: is capped far above any real paper rather than at paper_reader's 120k default. Truncation
@@ -348,27 +362,27 @@ def quote_report(assays: dict, source_text: str) -> dict:
 #: value from an older mapping as free here would under-report a re-run's bill.
 #:
 #: "exact_normalized_llm" *is* free and must be listed. It was the exact lookup on
-#: normalized_name (removed 2026-10-02, so only stored rows carry it), and it reached the same
+#: technique (removed 2026-10-02, so only stored rows carry it), and it reached the same
 #: `return` as exact_original without touching the network. Omitting it billed a 4-assay paper 8 calls for
 #: a round that made none.
 _OBI_FREE_RESOURCES = ("exact_original", "exact_normalized_llm")
 
 
 def _obi_query(key: str, entry: dict) -> tuple[str, str]:
-    """(paper name, normalized name) exactly as enrich_assays_with_obi queries them.
+    """(paper name, standard_technique_name) exactly as enrich_assays_with_obi queries them.
 
     The first wording only -- a canonicalized entry carries a list, and the mapper looks up one
     name -- falling back to the registry key when the entry has no name at all.
     """
     names = paper_names(entry)
-    return (names[0] if names else key).strip(), str(entry.get("normalized_name") or "").strip()
+    return (names[0] if names else key).strip(), str(entry.get("standard_technique_name") or "").strip()
 
 
 def obi_query_calls(key: str, entry: dict) -> int:
     """What step 2 of the mapper spends on this entry: 2 calls, or 3 with a second query.
 
     One embedding for the paper's name, one chat call to pick, and one more embedding when a
-    `normalized_name` differs from the name (_embedding_llm_match retrieves on both and merges
+    `standard_technique_name` differs from the name (_embedding_llm_match retrieves on both and merges
     the pools). Counting a flat 2 under-billed every entry the extractor normalized.
     """
     original, normalized = _obi_query(key, entry)
@@ -417,7 +431,7 @@ def obi_misses(assays: dict) -> list[str]:
     """Which assays would fall through to the OBI mapper's paid step. No API call.
 
     Mirrors assay_obi_mapper.map_assay_to_obi: step 1 looks up the *first* wording and nothing
-    else -- not the `normalized_name`, which since 2026-10-02 is a retrieval query only. It used to also count any later
+    else -- not the `standard_technique_name`, which since 2026-10-02 is a retrieval query only. It used to also count any later
     wording and the registry key as a free hit -- and after round 5 the key of every mapped entry
     is an OBI label, which the vocabulary always knows, so a finished paper estimated almost no
     OBI calls at all.
@@ -535,7 +549,8 @@ def estimate_run(pubmed_id: str, study_accession: str) -> dict:
     mapped_input = corrected if corrected is not None else kept
 
     rounds: list[dict] = [
-        {"round": 1, "name": "extract", "calls": 1, "exact": True, "basis": "always"},
+        {"round": 1, "name": "extract", "calls": EXTRACTIONS, "exact": True, "basis": "always",
+         "extractions": EXTRACTIONS},
     ]
 
     if extracted is not None:
@@ -632,6 +647,11 @@ _STORED_FILES = {
     "merges": "assays_merges.json",
     "rejected": "assays_rejected.json",
     "precorrection": "assays_precorrection.json",
+    # Every model reply the run paid for, by round (assay_trace). The file to read when a
+    # registry looks wrong, instead of paying to re-run it.
+    "raw": assay_trace.RAW_FILE,
+    # Entries found by fewer than a majority of the extraction calls: not delivered, not lost.
+    "minority": "assays_minority.json",
 }
 
 
@@ -687,12 +707,18 @@ def stored_registry(pubmed_id: str, study_accession: str) -> dict:
         "benchmark": stored["benchmark"] if stored["benchmark"] is not None
                      else trim_registry(assays),
         "assays": assays,
+        "minority": stored["minority"] or {},
         "obi": stored["obi"],
         "verification": stored["verification"],
         "corrections": stored["corrections"],
         "merges": stored["merges"],
         "dropped": stored["rejected"] or {},
-        "contract_warnings": contract_warnings(assays),
+        # The same two concessions assay_report and the CLI make: a PDF registry has no sentence
+        # ids by contract, and after round 5 a key is the entry's OBI label, which only the
+        # stored mapping can confirm. Without either, every entry of a finished paper warned.
+        "contract_warnings": contract_warnings(
+            assays, expect_sentence_ids=not out_dir.name.endswith(PDF_DIR_SUFFIX),
+            obi=stored["obi"]),
         # Rebuilt from the stored mapping rather than read from a round record, which a stored
         # registry does not keep. Without it a reader of a finished paper would never be told
         # which assays OBI has no term for -- a finding CLAUDE.md requires be reported, and one
@@ -776,17 +802,20 @@ async def assay_report(
     correct: bool = True,
     model: str = settings.OPENAI_MODEL,
     on_progress: Callable[[dict], None] | None = None,
+    extractions: int | None = None,
 ) -> dict:
     """Answer "what assays did this paper use?" in five rounds, and return the accurate set.
 
     Round 1 extracts (prompts/extract_assays.txt, or prompts/extract_assays_pdf.txt for a
-    paper that has only a PDF; 1 call either way). Round 2 verifies each entry
+    paper that has only a PDF) `extractions` times -- EXTRACTIONS by default -- concurrently,
+    and votes the replies into one registry (assay_consensus): an entry a minority of the calls
+    found is written to assays_minority.json and reported, not delivered. Round 2 verifies each entry
     against the paper with a model that has none of the extraction's reasoning in view
     (prompts/verify_assays.txt, 1 call per assay). Round 3 repairs what round 2 refused to
     support (prompts/correct_assay_field.txt, 1 call per flagged FIELD) and sets aside assays
     whose identity it rejected. Round 4 maps the surviving assays onto OBI terms (free on an
     exact match, 2-3 calls otherwise). Round 5 re-keys the registry by OBI label and folds
-    entries that share a term or technique (free).
+    entries that share a term (free).
 
     **assays.json is written last.** Round 1 clears every file the previous run left and writes
     its extraction to assays_precorrection.json; only when round 5 is done is the corrected,
@@ -824,7 +853,23 @@ async def assay_report(
 
     title, source_text = paper_source(kind, paper_path)
     out_dir = registry_dir(pubmed_id, study_accession)
+    # Every reply this run gets is kept beside the registry, written after each round so a run
+    # that dies part-way keeps the rounds it paid for. Stopped in the finally below.
+    trace = assay_trace.start()
+    try:
+        return await _run_rounds(pubmed_id, study_accession, client, verify, correct, model,
+                                 _emit, kind, paper_path, title, source_text, out_dir, trace,
+                                 extractions if extractions is not None else EXTRACTIONS)
+    finally:
+        assay_trace.stop()
+
+
+async def _run_rounds(pubmed_id, study_accession, client, verify, correct, model, _emit,
+                      kind, paper_path, title, source_text, out_dir, trace,
+                      extractions: int) -> dict:
+    """assay_report's five rounds, split out so the trace's start/stop wraps them."""
     registry_path = out_dir / "assays.json"
+    minority_path = out_dir / "assays_minority.json"
     precorrection_path = out_dir / "assays_precorrection.json"
     verification_path = out_dir / "assays_verification.json"
     corrections_path = out_dir / "assays_corrections.json"
@@ -833,6 +878,7 @@ async def assay_report(
     obi_path = out_dir / "assays_OBI.json"
     merges_path = out_dir / "assays_merges.json"
     benchmark_path = out_dir / "assays_benchmark.json"
+    raw_path = out_dir / assay_trace.RAW_FILE
 
     calls = 0
     rounds: dict = {}
@@ -841,12 +887,21 @@ async def assay_report(
     # The only round that cares which kind of source this is. A PDF goes to the model whole --
     # `source_text` for that kind is just the text layer, kept back for the quote checks below,
     # because the layout it loses is exactly what the extraction needs to read sections from.
-    _emit(round="extract", state="running")
+    n_extract = max(1, int(extractions))
+    _emit(round="extract", state="running", total=n_extract)
+    labels = [f"run{i + 1}" for i in range(n_extract)]
+    # Concurrent: the calls are independent, so N of them take about as long as one. Each reply
+    # is kept in the trace under its own label; the registry is their majority.
     if kind == "pdf":
-        assays = await extract_assays_from_pdf(
-            paper_path.read_bytes(), paper_path.name, title, client, model)
+        pdf_bytes = paper_path.read_bytes()
+        runs = await asyncio.gather(*(
+            extract_assays_from_pdf(pdf_bytes, paper_path.name, title, client, model,
+                                    run_label=label) for label in labels))
     else:
-        assays = await extract_assays(source_text, title, client, model)
+        runs = await asyncio.gather(*(
+            extract_assays(source_text, title, client, model, run_label=label)
+            for label in labels))
+    assays, minority = consensus(list(runs))
 
     # `source` and `evidence.sentence_ids` are not asked of the model; they are worked out here
     # from each quote, before the registry is written or judged. Free, and exact where the quote
@@ -861,20 +916,27 @@ async def assay_report(
     # assays.json that looks verified. The registry is only written once the chain is done; until
     # then this run's extraction lives in assays_precorrection.json, which is what it is.
     for stale in (registry_path, benchmark_path, verification_path, corrections_path,
-                  corrected_path, rejected_path, obi_path, merges_path):
+                  corrected_path, rejected_path, obi_path, merges_path, raw_path,
+                  minority_path):
         if stale.exists():
             stale.unlink()
     out_dir.mkdir(parents=True, exist_ok=True)
     precorrection_path.write_text(json.dumps(assays, indent=2, ensure_ascii=False) + "\n",
                                   encoding="utf-8")
-    calls += 1
-    rounds["extract"] = {"source": "extracted", "calls": 1, "assays": len(assays)}
+    if minority:
+        minority_path.write_text(json.dumps(minority, indent=2, ensure_ascii=False) + "\n",
+                                 encoding="utf-8")
+    trace.write(raw_path)
+    calls += n_extract
+    rounds["extract"] = {"source": "extracted", "calls": n_extract, "extractions": n_extract,
+                         "assays": len(assays), "minority": len(minority)}
     # Says why an empty or thin extraction may be: with no Methods section (a short report whose
     # methods sit in a supplement) round 1 had only the main text to read. XML only -- a PDF's
     # text layer carries no section tags to tell.
     if kind == "xml" and not has_methods_section(source_text):
         rounds["extract"]["no_methods"] = True
-    _emit(round="extract", state="done", calls=1, assays=len(assays))
+    _emit(round="extract", state="done", calls=n_extract, assays=len(assays),
+          minority=len(minority))
 
     warnings = contract_warnings(assays, expect_sentence_ids=(kind == "xml"))
 
@@ -894,6 +956,11 @@ async def assay_report(
         verification = build_report(results)
         verification_path.write_text(
             json.dumps(verification, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        trace.write(raw_path)
+        # The one verdict no later round acts on. Marked on the entry here so it rides through
+        # correction, the fold and into the deliverable rather than surviving only as a line
+        # printed once.
+        mark_identity_reviews(assays, verification)
         calls += len(assays)
         rounds["verify"] = {"source": "verified", "calls": len(assays)}
     if verification:
@@ -916,6 +983,11 @@ async def assay_report(
               total=corrections_available(kept, verification)["calls"])
         corrected, records = await correct_registry(kept, verification, source_text, title,
                                                     client, model)
+        # A replaced quote may sit in a different section from the one it replaced, and `source`
+        # and `sentence_ids` are derived from the quote -- so they are derived again from the
+        # corrected one. Without this, SDY1264 carried `source: methods` on four quotes the
+        # repair had moved into the abstract, and the run's own quote_report flagged every one.
+        derive_evidence_fields(corrected, source_text)
         report = build_correction_report(records)
         corrections = report
         spent = report["summary"]["fields_re_extracted"]
@@ -924,6 +996,7 @@ async def assay_report(
             json.dumps(corrected, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
         corrections_path.write_text(
             json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        trace.write(raw_path)
         if dropped:
             rejected_path.write_text(
                 json.dumps(dropped, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
@@ -942,7 +1015,7 @@ async def assay_report(
     # values the verifier had already refused to support, and would pay to map assays that
     # drop_rejected then removes.
     #
-    # Written to its own file, never back into assays.json: enrichment adds normalized_name and
+    # Written to its own file, never back into assays.json: enrichment adds technique and
     # four obi_* keys, none of them in ENTRY_FIELDS, so a merged registry would trip
     # contract_warnings on the way out and lose them to trim_registry anyway.
     obi = None
@@ -966,6 +1039,7 @@ async def assay_report(
             rounds["obi"] = {"source": "failed", "calls": 0}
             _emit(round="obi", state="failed", calls=0)
         else:
+            trace.write(raw_path)
             spent_obi = obi_calls(obi)
             calls += spent_obi
             rounds["obi"] = {"source": "mapped", "calls": spent_obi, **obi_summary(obi)}
@@ -975,7 +1049,9 @@ async def assay_report(
     # The OBI term is the assay's identity, so the registry is keyed by the term's label and two
     # entries that mapped to one term are one assay. Extraction keys by the paper's wording and
     # cannot see that its two Methods subheadings describe one ELISA; round 4 can, because both
-    # resolved to OBI:0000661. Free and deterministic -- no model decides any of it.
+    # resolved to OBI:0000661. Free and deterministic -- no model decides any of it. An entry
+    # OBI left unmapped keeps its own key and is reported UNMAPPED rather than folded onto a
+    # sibling that merely shares its technique.
     #
     # Runs whether or not anything folds: re-keying is the point, and `name_in_paper` becomes a
     # list of every wording on every entry so no reader has to branch on whether a fold happened.
@@ -1027,6 +1103,9 @@ async def assay_report(
         # which assay or which field.
         "corrections": corrections,
         "dropped": dropped,
+        # Entries a minority of the extraction calls found: not delivered, and a finding to
+        # report for the same reason a dropped one is.
+        "minority": minority,
         # Same reason as corrections: which entries were folded onto one OBI term, and so are
         # no longer keys of their own, is a finding a caller has to be able to report.
         "merges": merges,
@@ -1037,9 +1116,11 @@ async def assay_report(
             "registry_path": _display_path(registry_path),
             "benchmark_path": _display_path(benchmark_path),
             "obi_path": _display_path(obi_path) if obi is not None else None,
+            "raw_path": _display_path(raw_path),
             "note": "assays.json holds the corrected registry; the extracted one is kept as "
                     "assays_precorrection.json; assays_benchmark.json is the reading view; "
-                    "assays_OBI.json is the same registry with OBI terms attached",
+                    "assays_OBI.json is the same registry with OBI terms attached; "
+                    "assays_raw.json holds every model reply the run paid for",
         },
     }
 

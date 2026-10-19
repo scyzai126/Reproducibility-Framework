@@ -31,8 +31,10 @@ from collections import defaultdict
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-BENCHMARK_DIR = REPO_ROOT / "data" / "benchmark_assay" / "benchmark_assay_v1"
-REGISTRY_DIR = REPO_ROOT / "data" / "31paper_assays"
+# The same two folders app.agent.assay_table names -- this script is loaded by it, so it cannot
+# import from the app without a cycle; keep the two in step by hand.
+BENCHMARK_DIR = REPO_ROOT / "data" / "benchmark_assay" / "benchmark_assay_v4"
+REGISTRY_DIR = REPO_ROOT / "data" / "31paper_assays" / "assay_result_v1"
 #: The benchmark side resolves against the FULL assay vocabulary — the 1794-term assay branch
 #: of obi.obo — not `obi_generic_index.json`. That 700-term file is the pruned pool our own
 #: mapper retrieves from; a curator is free to use a term the prune dropped, and resolving their

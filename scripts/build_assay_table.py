@@ -10,7 +10,7 @@ duplicates, so a row is one assay the paper performed, with every wording the pa
 joined into `assay`. **It calls nothing** -- the OBI term is already on disk.
 
 The rows keep the schema `GET /agent/assay-obi` serves and `AssayObiRow` (apps/web/src/lib/types.ts)
-renders -- study, assay, normalized_name, sample_type, readouts, obi_id, obi_label, resource,
+renders -- study, assay, standard_technique_name, sample_type, readouts, obi_id, obi_label, resource,
 obi_confidence -- so the route, its stats and the ImmPort sweep read the table unchanged.
 `study` is `<pmid>_<SDY>` with the `_pdf` marker dropped, the spelling
 `assay_immport.study_accession_of` parses.

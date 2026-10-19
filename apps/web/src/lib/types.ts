@@ -180,14 +180,14 @@ export type ObiResource =
   /** Exact hit on the extractor's technique judgement — the live normalized tier. */
   | 'exact_normalized_llm'
   | 'embedding_llm'
-  /** Picked from candidates only the normalized name could retrieve. */
+  /** Picked from candidates only the technique could retrieve. */
   | 'embedding_llm_normalized'
   | 'unresolved';
 
 export interface AssayObiRow {
   study: string;
   assay: string;
-  normalized_name: string;
+  standard_technique_name: string;
   sample_type: string;
   readouts: string;
   obi_id: string | null;
@@ -308,8 +308,10 @@ export interface AssayBenchmarkEntry {
   source?: string | null;
   evidence?: AssayEvidence | null;
   additional_evidence?: { name_in_paper?: string; evidence?: AssayEvidence }[];
+  /** Present only when the verifier left the assay's identity unsupported; nothing repairs it. */
+  identity_review?: { verdict: string; reason: string } | null;
   /** Only on the full ten-field record. */
-  normalized_name?: string | null;
+  standard_technique_name?: string | null;
   platform?: string | null;
   sample_type?: string | null;
   readouts?: string | null;

@@ -2,7 +2,7 @@
 
 The rounds the separate scripts run one at a time, chained:
 
-  1. prompts/extract_assays.txt      builds the registry              1 call
+  1. prompts/extract_assays.txt      builds the registry              3 calls, voted
   2. prompts/verify_assays.txt       judges every entry               1 call per assay
   3. prompts/correct_assay_field.txt repairs what round 2 refused     1 call per flagged FIELD
   4. prompts/resolver_obi_assay.txt  resolves each name to an OBI term  2-3 calls per unmatched
@@ -57,7 +57,7 @@ Usage:
     python3 scripts/run_assay_pipeline.py --pmid 34252919 --sdy SDY2189 [--dry-run]
 
 Example:
-    python3 scripts/run_assay_pipeline.py data/31paper_assays/34252919_SDY2189 --dry-run
+    python3 scripts/run_assay_pipeline.py data/31paper_assays/assay_result_v1/34252919_SDY2189 --dry-run
 """
 
 import argparse
@@ -115,6 +115,11 @@ def _print_fields(assays: dict, obi: dict | None = None) -> None:
             "(none)" if isinstance(aliases, list) else f"NOT A LIST: {aliases!r}")
         print(f"  {key}\n      in paper: {', '.join(names) or '(none)'}"
               f"\n      source: {cite}\n      aliases: {shown}")
+        # The judge's doubt about the identity, as the deliverable carries it (identity_review):
+        # printed here so the terminal and the file say the same thing about the same key.
+        review = entry.get("identity_review")
+        if isinstance(review, dict) and review.get("verdict"):
+            print(f"      identity: {review['verdict']} \u2014 {review.get('reason') or ''}")
         if obi is None:
             continue
         # The resource is printed beside the term because the two say different things: which
@@ -154,7 +159,12 @@ def _dry_run(pmid: str, sdy: str) -> None:
     verify, correct = by_name["verify"], by_name["correct"]
     obi, canon = by_name["obi"], by_name["canonicalize"]
 
-    print("  round 1 extract: will run                            1 call")
+    n_extract = by_name["extract"]["calls"]
+    if n_extract == 1:
+        print("  round 1 extract: will run                            1 call")
+    else:
+        print(f"  round 1 extract: will run                            {n_extract} calls"
+              f"   ({n_extract} extractions, majority vote)")
 
     if verify["calls"] is not None:
         print(f"  round 2 verify:  will run                            ~{verify['calls']} calls"
@@ -217,7 +227,9 @@ def report_result(result: dict) -> None:
     # Both of these are the reasons not to trust an entry, so neither is summarised away.
     # Checked on the delivered registry, against the source it came from: a PDF has no sentence
     # markers, so demanding sentence_ids there printed a false WARNING on every entry.
-    for warning in contract_warnings(assays, expect_sentence_ids=(kind == "xml")):
+    # The mapping says which key is an OBI label; without it every re-keyed entry warned.
+    for warning in contract_warnings(assays, expect_sentence_ids=(kind == "xml"),
+                                     obi=result.get("obi")):
         print(f"  WARNING  {warning}")
     for key, quote in (check.get("per_assay") or {}).items():
         if quote.get("status") in ("misattributed", "too_short", "missing"):
@@ -248,6 +260,12 @@ def report_result(result: dict) -> None:
                       f" — {field.get('reason') or 'no reason given'}")
     for key, record in (result.get("dropped") or {}).items():
         print(f"  DROPPED  {key}: {record.get('reason') or 'rejected'}")
+    # An entry fewer than a majority of the extraction calls found. Not delivered, but printed:
+    # a rare miss and a Results-only admission both look like this, and a reader decides which.
+    for key, record in (result.get("minority") or {}).items():
+        quote = ((record.get("entry") or {}).get("evidence") or {}).get("quote") or ""
+        print(f"  MINORITY  {key}: found by {len(record.get('runs') or [])} of "
+              f"{record.get('of')} extractions; not delivered — {quote[:120]}")
     # Every fold round 5 made: an entry that is no longer a key of its own because another
     # write-up of the same OBI term absorbed it. Printed rather than counted, because the OBI term
     # is coarser than the paper's wording and a fold is exactly where that coarseness shows.
@@ -289,6 +307,8 @@ def report_result(result: dict) -> None:
           f"\n  {meta['registry_path']}  the full registry the pipeline works from")
     if meta.get("obi_path"):
         print(f"  {meta['obi_path']}  the same registry with OBI terms attached")
+    if meta.get("raw_path"):
+        print(f"  {meta['raw_path']}  every model reply this run paid for, by round")
 
 
 async def main(pmid: str, sdy: str) -> None:

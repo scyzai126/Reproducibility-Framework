@@ -1,0 +1,433 @@
+{
+  "runs": [
+    "v1",
+    "run1",
+    "run2"
+  ],
+  "entries": {
+    "v1": 10,
+    "run1": 10,
+    "run2": 10
+  },
+  "clusters": 8,
+  "stable": 6,
+  "split": 0,
+  "presence": 0,
+  "duplicate_keys": {
+    "v1": [],
+    "run1": [],
+    "run2": []
+  },
+  "rows": [
+    {
+      "shape": "stable pair (2)",
+      "keys": {
+        "v1": [
+          "Anti-spike binding enzyme-linked immunosorbent assay",
+          "RNA isolation and qPCR"
+        ],
+        "run1": [
+          "Anti-spike binding enzyme-linked immunosorbent assay",
+          "RNA isolation and qPCR"
+        ],
+        "run2": [
+          "Anti-spike binding enzyme-linked immunosorbent assay",
+          "RNA isolation and qPCR"
+        ]
+      }
+    },
+    {
+      "shape": "stable pair (2)",
+      "keys": {
+        "v1": [
+          "Focus reduction neutralization titre assay",
+          "FRNT assay against the variants of concern"
+        ],
+        "run1": [
+          "Focus reduction neutralization titre assay",
+          "FRNT assay against the variants of concern"
+        ],
+        "run2": [
+          "Focus reduction neutralization titre assay",
+          "FRNT assay against the variants of concern"
+        ]
+      }
+    },
+    {
+      "shape": "stable",
+      "keys": {
+        "v1": [
+          "Intracellular cytokine staining assay"
+        ],
+        "run1": [
+          "Intracellular cytokine staining assay"
+        ],
+        "run2": [
+          "Intracellular cytokine staining assay"
+        ]
+      }
+    },
+    {
+      "shape": "stable",
+      "keys": {
+        "v1": [
+          "Bead-based antigen arrays"
+        ],
+        "run1": [
+          "Bead-based antigen arrays"
+        ],
+        "run2": [
+          "Bead-based antigen arrays"
+        ]
+      }
+    },
+    {
+      "shape": "stable",
+      "keys": {
+        "v1": [
+          "CyTOF analysis of whole-blood samples"
+        ],
+        "run1": [
+          "CyTOF analysis of whole-blood samples"
+        ],
+        "run2": [
+          "CyTOF analysis of whole-blood samples"
+        ]
+      }
+    },
+    {
+      "shape": "stable",
+      "keys": {
+        "v1": [
+          "Plasma protein profiling using multiplex Olink panel"
+        ],
+        "run1": [
+          "Plasma protein profiling using multiplex Olink panel"
+        ],
+        "run2": [
+          "Plasma protein profiling using multiplex Olink panel"
+        ]
+      }
+    },
+    {
+      "shape": "stable",
+      "keys": {
+        "v1": [
+          "Bulk transcriptomics"
+        ],
+        "run1": [
+          "Bulk transcriptomics"
+        ],
+        "run2": [
+          "Bulk transcriptomics"
+        ]
+      }
+    },
+    {
+      "shape": "stable",
+      "keys": {
+        "v1": [
+          "CITE-seq"
+        ],
+        "run1": [
+          "CITE-seq"
+        ],
+        "run2": [
+          "CITE-seq"
+        ]
+      }
+    }
+  ],
+  "field_drift": {
+    "standard_technique_name": {
+      "same": 3,
+      "reworded": 1,
+      "changed": 2
+    },
+    "sample_type": {
+      "same": 2,
+      "reworded": 1,
+      "changed": 3
+    },
+    "readouts": {
+      "same": 0,
+      "reworded": 0,
+      "changed": 6
+    },
+    "aliases": {
+      "same": 0,
+      "reworded": 4,
+      "changed": 2
+    },
+    "generate_claim": {
+      "same": 6,
+      "reworded": 0,
+      "changed": 0
+    },
+    "evidence.quote": {
+      "same": 4,
+      "reworded": 1,
+      "changed": 1
+    },
+    "source": {
+      "same": 6,
+      "reworded": 0,
+      "changed": 0
+    }
+  },
+  "field_drift_detail": [
+    {
+      "cluster": "Intracellular cytokine staining assay",
+      "field": "sample_type",
+      "verdict": "changed",
+      "values": {
+        "v1": "Live frozen PBMCs",
+        "run1": "peripheral blood mononuclear cells",
+        "run2": "peripheral blood mononuclear cells"
+      }
+    },
+    {
+      "cluster": "Intracellular cytokine staining assay",
+      "field": "readouts",
+      "verdict": "changed",
+      "values": {
+        "v1": "antigen-specific intracellular cytokine production in T cells",
+        "run1": "antigen-specific T cell intracellular cytokine responses after spike peptide stimulation",
+        "run2": "antigen-specific T cell intracellular cytokine responses after peptide stimulation"
+      }
+    },
+    {
+      "cluster": "Intracellular cytokine staining assay",
+      "field": "aliases",
+      "verdict": "reworded",
+      "values": {
+        "v1": [
+          "spike-specific T cell responses",
+          "Spike-specific CD4",
+          "Spike-specific CD8"
+        ],
+        "run1": [],
+        "run2": []
+      }
+    },
+    {
+      "cluster": "Intracellular cytokine staining assay",
+      "field": "evidence.quote",
+      "verdict": "reworded",
+      "values": {
+        "v1": "Antigen-specific T cell responses were measured using the intracellular cytokine staining assay as previously described.",
+        "run1": "Antigen-specific T cell responses were measured using the intracellular cytokine staining assay as previously described 35 .",
+        "run2": "Antigen-specific T cell responses were measured using the intracellular cytokine staining assay as previously described."
+      }
+    },
+    {
+      "cluster": "Bead-based antigen arrays",
+      "field": "standard_technique_name",
+      "verdict": "changed",
+      "values": {
+        "v1": "bead based immunoassay",
+        "run1": "bead-based immunoassay",
+        "run2": "bead-based immunoassay"
+      }
+    },
+    {
+      "cluster": "Bead-based antigen arrays",
+      "field": "readouts",
+      "verdict": "changed",
+      "values": {
+        "v1": "IgG binding to autoantigens and cytokines measured as mean fluorescence intensity",
+        "run1": "IgG binding to autoantigens and cytokines reported as mean fluorescence intensity",
+        "run2": "IgG binding to autoantigen- and cytokine-coupled beads as mean fluorescence intensity"
+      }
+    },
+    {
+      "cluster": "Bead-based antigen arrays",
+      "field": "aliases",
+      "verdict": "reworded",
+      "values": {
+        "v1": [
+          "55-plex antigen and 58-plex cytokine arrays",
+          "cytokine array",
+          "autoantigen array"
+        ],
+        "run1": [
+          "cytokine array",
+          "autoantigen array"
+        ],
+        "run2": [
+          "55-plex antigen and 58-plex cytokine arrays"
+        ]
+      }
+    },
+    {
+      "cluster": "Bead-based antigen arrays",
+      "field": "evidence.quote",
+      "verdict": "changed",
+      "values": {
+        "v1": "Binding events were displayed as mean fluorescence intensity (MFI).",
+        "run1": "Serum samples were tested at 1:100 dilution in 0.05% PBS-Tween supplemented with 1% (w/v) BSA.",
+        "run2": "Binding events were displayed as mean fluorescence intensity (MFI)."
+      }
+    },
+    {
+      "cluster": "CyTOF analysis of whole-blood samples",
+      "field": "sample_type",
+      "verdict": "changed",
+      "values": {
+        "v1": "whole-blood samples",
+        "run1": "whole blood samples",
+        "run2": "whole blood samples"
+      }
+    },
+    {
+      "cluster": "CyTOF analysis of whole-blood samples",
+      "field": "readouts",
+      "verdict": "changed",
+      "values": {
+        "v1": "immune cell population frequencies and intracellular phosphoprotein marker intensities",
+        "run1": "immune cell population frequencies and intracellular phospho-marker intensities",
+        "run2": "immune cell population frequencies and intracellular phosphoprotein marker intensities"
+      }
+    },
+    {
+      "cluster": "CyTOF analysis of whole-blood samples",
+      "field": "aliases",
+      "verdict": "changed",
+      "values": {
+        "v1": [
+          "cytometry by time of flight (CyTOF)",
+          "CyTOF"
+        ],
+        "run1": [
+          "CyTOF"
+        ],
+        "run2": [
+          "CyTOF",
+          "cytometry by time of flight"
+        ]
+      }
+    },
+    {
+      "cluster": "Plasma protein profiling using multiplex Olink panel",
+      "field": "readouts",
+      "verdict": "changed",
+      "values": {
+        "v1": "plasma cytokine and protein concentrations",
+        "run1": "cytokine concentrations quantified by microfluidic qPCR",
+        "run2": "cytokine concentrations quantified by microfluidic qPCR"
+      }
+    },
+    {
+      "cluster": "Plasma protein profiling using multiplex Olink panel",
+      "field": "aliases",
+      "verdict": "reworded",
+      "values": {
+        "v1": [
+          "Olink",
+          "Olink multiplex proximity extension assay (PEA) inflammation panel",
+          "PEA"
+        ],
+        "run1": [
+          "Olink multiplex proximity extension assay (PEA) inflammation panel",
+          "PEA"
+        ],
+        "run2": [
+          "Olink multiplex proximity extension assay (PEA) inflammation panel",
+          "PEA"
+        ]
+      }
+    },
+    {
+      "cluster": "Bulk transcriptomics",
+      "field": "standard_technique_name",
+      "verdict": "reworded",
+      "values": {
+        "v1": "RNA sequencing",
+        "run1": "bulk RNA sequencing",
+        "run2": "bulk RNA sequencing"
+      }
+    },
+    {
+      "cluster": "Bulk transcriptomics",
+      "field": "sample_type",
+      "verdict": "reworded",
+      "values": {
+        "v1": "blood samples stored in Paxgene tubes",
+        "run1": "blood samples",
+        "run2": "blood samples"
+      }
+    },
+    {
+      "cluster": "Bulk transcriptomics",
+      "field": "readouts",
+      "verdict": "changed",
+      "values": {
+        "v1": "whole-blood gene expression levels",
+        "run1": "whole-blood mRNA transcript levels",
+        "run2": "whole-blood transcript abundance from sequencing libraries"
+      }
+    },
+    {
+      "cluster": "Bulk transcriptomics",
+      "field": "aliases",
+      "verdict": "reworded",
+      "values": {
+        "v1": [
+          "bulk mRNA sequencing"
+        ],
+        "run1": [],
+        "run2": [
+          "bulk mRNA sequencing"
+        ]
+      }
+    },
+    {
+      "cluster": "CITE-seq",
+      "field": "standard_technique_name",
+      "verdict": "changed",
+      "values": {
+        "v1": "cellular indexing of transcriptomes and epitopes by sequencing",
+        "run1": "single-cell RNA sequencing",
+        "run2": "single-cell RNA sequencing"
+      }
+    },
+    {
+      "cluster": "CITE-seq",
+      "field": "sample_type",
+      "verdict": "changed",
+      "values": {
+        "v1": "PBMCs",
+        "run1": "peripheral blood mononuclear cells",
+        "run2": "peripheral blood mononuclear cells"
+      }
+    },
+    {
+      "cluster": "CITE-seq",
+      "field": "readouts",
+      "verdict": "changed",
+      "values": {
+        "v1": "single-cell transcriptomes and antibody-derived epitope tags",
+        "run1": "single-cell transcriptomes and antibody-derived tag measurements",
+        "run2": "single-cell transcriptomes and antibody-derived tag measurements"
+      }
+    },
+    {
+      "cluster": "CITE-seq",
+      "field": "aliases",
+      "verdict": "changed",
+      "values": {
+        "v1": [
+          "cellular indexing of transcriptomes and epitopes by sequencing (CITE-seq)",
+          "single-cell transcriptional profiling"
+        ],
+        "run1": [
+          "cellular indexing of transcriptomes and epitopes by sequencing"
+        ],
+        "run2": [
+          "cellular indexing of transcriptomes and epitopes by sequencing",
+          "scRNA-seq"
+        ]
+      }
+    }
+  ]
+}

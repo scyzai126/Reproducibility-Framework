@@ -1,48 +1,48 @@
 {
   "SARS-CoV-2 RBD ELISA": {
     "name_in_paper": "SARS-CoV-2 RBD ELISA",
-    "normalized_name": "ELISA",
+    "standard_technique_name": "enzyme-linked immunosorbent assay",
     "aliases": [
       "ELISA"
     ],
     "sample_type": "plasma",
-    "readouts": "anti-RBD IgG, IgM, and IgA titers",
+    "readouts": "anti-RBD IgG, IgM, and IgA titers measured by plate absorbance at 450 nm",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
       "section": "SARS-CoV-2 RBD ELISA",
       "sentence_ids": [
-        "S310"
+        "S308"
       ],
-      "quote": "Positive control standard was run on each plate and was used to calculate titers (relative units) for all samples using non-linear regression interpolations, done to quantify the amount of anti-RBD IgG, anti-RBD IgM, and anti-RBD IgA present in each specimen."
+      "quote": "Plates were read on a Spectramax Plate Reader at 450 nm using SoftMax Pro, and ODs were background subtracted."
     }
   },
   "OC43 and NL63 coronavirus RBD ELISA": {
     "name_in_paper": "OC43 and NL63 coronavirus RBD ELISA",
-    "normalized_name": "ELISA",
-    "aliases": [],
+    "standard_technique_name": "enzyme-linked immunosorbent assay",
+    "aliases": [
+      "ELISA"
+    ],
     "sample_type": "serum",
-    "readouts": "antigen-specific antibodies to HCoV-OC43 and HCoV-NL63 RBD",
+    "readouts": "antigen-specific antibodies to coronavirus RBD measured at 405 nm using anti-human IgG, IgA and IgM antibodies",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
       "section": "OC43 and NL63 coronavirus RBD ELISA",
       "sentence_ids": [
-        "S314"
+        "S315"
       ],
-      "quote": "After blocking, we added 1:20 diluted serum and incubated at 37°C for 1 h."
+      "quote": "Antigen-specific antibodies (Ig) were measured at 405 nm by using alkaline phosphatase conjugated goat anti-human IgG, IgA and IgM Abs and 4-Nitrophenyl phosphate."
     }
   },
   "Direct ex vivo PBMC immune cell phenotyping": {
     "name_in_paper": "Direct ex vivo PBMC immune cell phenotyping",
-    "normalized_name": "flow cytometry",
+    "standard_technique_name": "flow cytometry",
     "aliases": [
-      "21-color flow cytometry panel",
-      "Immunophenotyping of mononuclear leukocytes",
       "Phenotyping Flow Cytometry"
     ],
-    "sample_type": "PBMCs",
-    "readouts": "frequencies of mononuclear leukocyte subsets and phenotypic markers",
+    "sample_type": "peripheral blood mononuclear cells",
+    "readouts": "frequencies of mononuclear leukocyte lineage and phenotypic marker-defined cell populations",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
@@ -55,13 +55,12 @@
   },
   "Activation induced cell marker assay": {
     "name_in_paper": "Activation induced cell marker assay",
-    "normalized_name": "flow cytometry",
+    "standard_technique_name": "flow cytometry",
     "aliases": [
-      "AIM assays",
       "AIM assay"
     ],
-    "sample_type": "PBMC",
-    "readouts": "frequency of antigen-specific AIM+ CD4+ and CD8+ T cells after peptide stimulation",
+    "sample_type": "peripheral blood mononuclear cells",
+    "readouts": "percentages of antigen-specific activated CD4+ or CD8+ T cells defined by OX40 and CD137 or CD69 and CD137 after peptide stimulation",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
@@ -74,33 +73,30 @@
   },
   "Intracellular cytokine staining assay": {
     "name_in_paper": "Intracellular cytokine staining assay",
-    "normalized_name": "flow cytometry",
+    "standard_technique_name": "flow cytometry",
     "aliases": [
-      "intracellular cytokine staining",
-      "ICS",
-      "ICS assays"
+      "ICS assay"
     ],
-    "sample_type": "PBMC",
-    "readouts": "IFNγ, granzyme B, TNFα, and IL-10 production in CD8+ T cells",
+    "sample_type": "peripheral blood mononuclear cells",
+    "readouts": "CD8+ T cells producing IFNγ, granzyme B, TNFα, or IL-10 after peptide stimulation",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
       "section": "Intracellular cytokine staining assay",
       "sentence_ids": [
-        "S332"
+        "S337"
       ],
-      "quote": "For the intracellular cytokine staining, PBMC were cultured in the presence of SARS-CoV-2 specific MPs [1 μg/ml] for 9 hours."
+      "quote": "The gates applied for the identification of IFNγ, GzB, TNFα, or IL-10 production on the total population of CD8 + T cells were defined according to the cells cultured with DMSO for each individual."
     }
   },
   "Cytokine bead assays": {
     "name_in_paper": "Cytokine bead assays",
-    "normalized_name": "cytometric bead array",
+    "standard_technique_name": "cytometric bead array",
     "aliases": [
-      "multiplex detection of cytokines",
       "LEGENDplex"
     ],
     "sample_type": "cell culture supernatants",
-    "readouts": "concentrations of 13 cytokines in stimulation-culture supernatants",
+    "readouts": "13 cytokine concentrations in stimulation-culture supernatants; beads analyzed by flow cytometry",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
@@ -113,11 +109,11 @@
   },
   "lateral flow assay": {
     "name_in_paper": "lateral flow assay",
-    "normalized_name": "lateral flow immunoassay",
+    "standard_technique_name": "lateral flow immunoassay",
     "aliases": [
+      "colloidal-gold immunochromatographic ‘lateral flow’ assay",
       "lateral flow serology",
-      "lateral flow immunoglobulin (Ig) tests",
-      "colloidal-gold immunochromatographic ‘lateral flow’ assay"
+      "lateral flow immunoglobulin (Ig) tests"
     ],
     "sample_type": "whole blood",
     "readouts": "IgM or IgG antibodies directed against recombinant SARS-CoV-2 antigen",
@@ -129,24 +125,6 @@
         "S266"
       ],
       "quote": "Following enrollment, whole blood from convalescent donors was run on a colloidal-gold immunochromatographic ‘lateral flow’ assay to evaluate for prior exposure to SARS-CoV-2."
-    }
-  },
-  "viral PCR": {
-    "name_in_paper": "viral PCR",
-    "normalized_name": "polymerase chain reaction",
-    "aliases": [
-      "swab test viral PCR"
-    ],
-    "sample_type": "swab",
-    "readouts": "SARS-CoV-2 infection positivity",
-    "generate_claim": true,
-    "source": "results",
-    "evidence": {
-      "section": "Immunological Phenotypes of Recovered COVID-19 Patients",
-      "sentence_ids": [
-        "S25"
-      ],
-      "quote": "SARS-CoV-2 infection was determined by swab test viral PCR during the acute phase of the infection."
     }
   }
 }

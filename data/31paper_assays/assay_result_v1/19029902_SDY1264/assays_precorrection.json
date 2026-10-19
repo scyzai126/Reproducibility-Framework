@@ -1,13 +1,13 @@
 {
   "Multiplex analysis": {
     "name_in_paper": "Multiplex analysis",
-    "normalized_name": "Luminex",
+    "standard_technique_name": "Luminex",
     "aliases": [
       "24-plex assay",
       "24-plex Luminex assay"
     ],
-    "sample_type": "Plasma samples from CPTs",
-    "readouts": "cytokine concentrations",
+    "sample_type": "plasma",
+    "readouts": "24 cytokine concentrations",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
@@ -20,13 +20,12 @@
   },
   "Flow cytometric analysis": {
     "name_in_paper": "Flow cytometric analysis",
-    "normalized_name": "flow cytometry",
+    "standard_technique_name": "flow cytometry",
     "aliases": [
-      "Flow cytometry",
       "flow cytometry"
     ],
-    "sample_type": "PBMCs",
-    "readouts": "percentages of CD86+ antigen-presenting cells and CD38+ HLA-DR+ CD8+ T cells",
+    "sample_type": "peripheral blood mononuclear cells",
+    "readouts": "percentages of CD86-positive monocytes, myeloid dendritic cells and plasmacytoid dendritic cells; percentage of CD38-positive HLA-DR-positive CD8-positive CD3-positive T cells",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
@@ -37,51 +36,55 @@
       "quote": "PBMCs from all time points for an individual were thawed, stained and acquired in parallel."
     }
   },
-  "cytopathic effect (CPE)": {
-    "name_in_paper": "cytopathic effect (CPE)",
-    "normalized_name": "cytopathic effect assay",
+  "neutralizing antibodies by CPE": {
+    "name_in_paper": "neutralizing antibodies by CPE",
+    "standard_technique_name": "cytopathic effect neutralization assay",
     "aliases": [
-      "CPE"
+      "CPE",
+      "Assay for yellow fever virus (YFV) neutralizing antibodies",
+      "PRNT",
+      "plaque reduction neutralization test",
+      "cytopathic effect (CPE)"
     ],
     "sample_type": "plasma",
-    "readouts": "yellow fever virus neutralizing antibody titer",
+    "readouts": "yellow fever virus neutralizing antibody titer defined by the last dilution with intact Vero cell monolayer and no cytopathic effect",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
       "section": "Assay for yellow fever virus (YFV) neutralizing antibodies",
       "sentence_ids": [
-        "S179"
+        "S180"
       ],
-      "quote": "YFV neutralizing antibodies were measured by cytopathic effect (CPE) (trial 1) or by plaque reduction neutralization test (PRNT) (trial 2)."
+      "quote": "In brief, for neutralizing antibodies by CPE, plasma dilutions in triplicate were incubated with 1,000 plaque-forming units of YFV at 37 °C for 1 h in 96-well flat-bottomed plates."
     }
   },
-  "plaque reduction neutralization test (PRNT)": {
-    "name_in_paper": "plaque reduction neutralization test (PRNT)",
-    "normalized_name": "plaque reduction neutralization test",
+  "plaque reduction neutralization test": {
+    "name_in_paper": "plaque reduction neutralization test",
+    "standard_technique_name": "plaque reduction neutralization test",
     "aliases": [
       "PRNT"
     ],
-    "sample_type": "sera",
-    "readouts": "yellow fever virus neutralizing antibody titer",
+    "sample_type": "serum",
+    "readouts": "yellow fever virus neutralizing antibody titer based on plaque counts",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
       "section": "Assay for yellow fever virus (YFV) neutralizing antibodies",
       "sentence_ids": [
-        "S179"
+        "S183"
       ],
-      "quote": "YFV neutralizing antibodies were measured by cytopathic effect (CPE) (trial 1) or by plaque reduction neutralization test (PRNT) (trial 2)."
+      "quote": "For the PRNT, various dilutions of the sera were incubated overnight at 4 °C with 200 plaque-forming units of YFV."
     }
   },
   "microarray": {
     "name_in_paper": "microarray",
-    "normalized_name": "microarray",
+    "standard_technique_name": "transcription profiling by array",
     "aliases": [
-      "transcriptional profiling",
-      "microarray analysis"
+      "Affymetrix Human Genome U133 Plus 2.0 Array",
+      "transcriptional profiling"
     ],
-    "sample_type": "total peripheral blood mono-nuclear cells (PBMCs)",
-    "readouts": "gene expression values",
+    "sample_type": "peripheral blood mononuclear cells",
+    "readouts": "gene expression intensity data",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
@@ -94,10 +97,13 @@
   },
   "RT-PCR": {
     "name_in_paper": "RT-PCR",
-    "normalized_name": "reverse transcription polymerase chain reaction",
-    "aliases": [],
-    "sample_type": "total RNA",
-    "readouts": "relative gene expression by cycling threshold values",
+    "standard_technique_name": "reverse transcription polymerase chain reaction",
+    "aliases": [
+      "two-step RT-PCR",
+      "real-time RT-PCR"
+    ],
+    "sample_type": null,
+    "readouts": "relative gene expression measured by cycling threshold values",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
@@ -108,14 +114,14 @@
       "quote": "Two-step RT-PCR was performed."
     }
   },
-  "Immunofluorescence": {
-    "name_in_paper": "Immunofluorescence",
-    "normalized_name": "immunofluorescence microscopy",
+  "immunofluorescence": {
+    "name_in_paper": "immunofluorescence",
+    "standard_technique_name": "immunofluorescence microscopy",
     "aliases": [
-      "Fluorescence microscopy"
+      "fluorescence microscopy"
     ],
-    "sample_type": "BHK cells",
-    "readouts": "TIAR staining and stress granule formation",
+    "sample_type": "baby hamster kidney cells",
+    "readouts": "TIAR staining and stress granule formation by fluorescence imaging",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
@@ -128,11 +134,9 @@
   },
   "immunoblot analysis": {
     "name_in_paper": "immunoblot analysis",
-    "normalized_name": "immunoblot",
-    "aliases": [
-      "Immunoblot"
-    ],
-    "sample_type": "human total PBMC or BHK cells",
+    "standard_technique_name": "western blot",
+    "aliases": [],
+    "sample_type": "human total peripheral blood mononuclear cells or baby hamster kidney cells",
     "readouts": "eIF2α phosphorylation and total eIF2α abundance",
     "generate_claim": true,
     "source": "methods",
@@ -146,7 +150,7 @@
   },
   "ELISA": {
     "name_in_paper": "ELISA",
-    "normalized_name": "ELISA",
+    "standard_technique_name": "enzyme-linked immunosorbent assay",
     "aliases": [],
     "sample_type": "plasma",
     "readouts": "C3a concentration",

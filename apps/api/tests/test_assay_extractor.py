@@ -1,5 +1,7 @@
 """Extraction validates its output on the way out rather than trusting the model."""
 
+import json
+
 import pytest
 
 from app.agent.assay_extractor import (
@@ -19,7 +21,7 @@ from app.agent.assay_extractor import (
 def _raw(**over) -> dict:
     entry = {
         "name_in_paper": "flow cytometry",
-        "normalized_name": "flow cytometry",
+        "standard_technique_name": "flow cytometry",
         "aliases": ["FACS"],
         "sample_type": "PBMCs",
         "readouts": "cell frequencies",
@@ -43,31 +45,31 @@ def test_a_missing_name_falls_back_to_the_registry_key():
     assert entry["name_in_paper"] == "ELISA"
 
 
-def test_a_missing_normalized_name_stays_null_and_does_not_echo_the_key():
+def test_a_missing_technique_stays_null_and_does_not_echo_the_key():
     """Unlike name_in_paper, this one has no fallback, and that asymmetry is the point.
 
-    An omitted normalization means the model declined to name a technique. Echoing the paper's
+    An omitted technique means the model declined to name a technique. Echoing the paper's
     own wording back would turn that silence into an assertion -- and the OBI mapper trusts
     this field as an exact-match key without any further adjudication, so a fabricated value
     here becomes an unchallenged ontology term.
     """
-    assert clean_entry("ELISA", _raw(normalized_name=""))["normalized_name"] is None
-    assert clean_entry("ELISA", _raw(normalized_name=None))["normalized_name"] is None
-    assert clean_entry("ELISA", _raw(normalized_name="   "))["normalized_name"] is None
+    assert clean_entry("ELISA", _raw(standard_technique_name=""))["standard_technique_name"] is None
+    assert clean_entry("ELISA", _raw(standard_technique_name=None))["standard_technique_name"] is None
+    assert clean_entry("ELISA", _raw(standard_technique_name="   "))["standard_technique_name"] is None
 
 
-def test_a_normalized_name_that_is_not_a_string_is_dropped():
-    assert clean_entry("ELISA", _raw(normalized_name=["flow cytometry"]))["normalized_name"] is None
+def test_a_technique_that_is_not_a_string_is_dropped():
+    assert clean_entry("ELISA", _raw(standard_technique_name=["flow cytometry"]))["standard_technique_name"] is None
 
 
 def test_an_old_schema_entry_without_the_field_still_parses():
     """The 44 registries on disk predate the field; reading one must not fail or invent a value."""
     raw = _raw()
-    del raw["normalized_name"]
+    del raw["standard_technique_name"]
 
     entry = clean_entry("flow cytometry", raw)
 
-    assert entry["normalized_name"] is None
+    assert entry["standard_technique_name"] is None
     assert tuple(entry) == ENTRY_FIELDS
 
 
@@ -332,3 +334,101 @@ def test_a_repeated_key_keeps_both_entries(caplog):
 def test_unparseable_registry_json_raises_the_extraction_error():
     with pytest.raises(AssayExtractionError):
         parse_registry_json("{not json")
+
+
+# ── the key check after round 5 ───────────────────────────────────────────────
+
+_CANONICAL = {
+    "enzyme-linked immunosorbent assay": {
+        "name_in_paper": ["ELISA"], "aliases": [], "sample_type": "serum", "readouts": "titers",
+        "generate_claim": True, "source": "methods",
+        "evidence": {"section": "Methods", "sentence_ids": ["S1"], "quote": "measured by ELISA"},
+    }
+}
+_OBI = {"enzyme-linked immunosorbent assay": {"obi_id": "OBI:0000661",
+                                              "obi_label": "enzyme-linked immunosorbent assay"}}
+
+
+def test_an_entry_keyed_by_its_obi_label_is_not_warned_about():
+    """Round 5 re-keys every mapped entry by its OBI label, and a single-wording entry has no
+    fold to show for it. The check used to warn on 135 of the corpus's 147 entries."""
+    assert contract_warnings(_CANONICAL, obi=_OBI) == []
+
+
+def test_a_canonical_entry_is_trusted_when_no_mapping_is_given():
+    """A list-valued name_in_paper is round 5's signature; without the mapping to confirm the
+    label, the entry is given the benefit of the doubt rather than warned on wholesale."""
+    assert contract_warnings(_CANONICAL) == []
+
+
+def test_the_mapping_makes_the_key_check_exact():
+    """With the mapping in hand, a key that is neither a wording nor the entry's label is the
+    defect the check exists for."""
+    wrong = {"flow cytometry assay": _CANONICAL["enzyme-linked immunosorbent assay"]}
+    obi = {"flow cytometry assay": {"obi_id": "OBI:0000661",
+                                    "obi_label": "enzyme-linked immunosorbent assay"}}
+
+    warnings = contract_warnings(wrong, obi=obi)
+
+    assert len(warnings) == 1
+    assert "not the key" in warnings[0] and "enzyme-linked immunosorbent assay" in warnings[0]
+
+
+def test_a_pre_round_5_entry_keyed_by_another_wording_still_warns():
+    registry = {"ELISA kits": {**_CANONICAL["enzyme-linked immunosorbent assay"],
+                               "name_in_paper": "ELISA"}}
+
+    assert any("not the key" in w for w in contract_warnings(registry))
+
+
+def test_trim_registry_carries_the_identity_review_only_where_it_exists():
+    review = {"verdict": "NOT_SUPPORTED", "reason": "a section heading"}
+    registry = {"A": {**_CANONICAL["enzyme-linked immunosorbent assay"], "identity_review": review},
+                "B": _CANONICAL["enzyme-linked immunosorbent assay"]}
+
+    trimmed = trim_registry(registry)
+
+    assert trimmed["A"]["identity_review"] == review
+    assert "identity_review" not in trimmed["B"]
+
+
+def test_both_extraction_prompts_carry_the_stability_fixes():
+    """Four measured defects, one sentence each; the PDF prompt mirrors the shared sections."""
+    from app.agent.claim_parser import _load_prompt
+    for name in ("extract_assays.txt", "extract_assays_pdf.txt"):
+        prompt = _load_prompt(name)
+        assert "costs nothing to include" in prompt, name            # aliases restored
+        assert '("flow cytometry", "ELISA")' not in prompt, name     # no ELISA exception
+        assert '"enzyme-linked immunosorbent\n  assay"' in prompt, name
+        assert "in its own paragraph or subsection" in prompt, name  # flow split is a test
+        assert "names only in Results or a caption" in prompt, name  # Results-only rule
+
+
+@pytest.mark.asyncio
+async def test_each_extraction_call_is_seeded_and_labelled(monkeypatch):
+    from app.agent import assay_trace
+    from app.agent.assay_extractor import EXTRACTION_SEED, extract_assays
+
+    class _Client:
+        def __init__(self):
+            self.kwargs = None
+            outer = self
+
+            class _Completions:
+                async def create(self, **kwargs):
+                    outer.kwargs = kwargs
+                    message = type("M", (), {"content": json.dumps({"ELISA": _raw()})})()
+                    return type("R", (), {"choices": [type("C", (), {"message": message})()]})()
+
+            self.chat = type("Chat", (), {"completions": _Completions()})()
+
+    client = _Client()
+    trace = assay_trace.start()
+    try:
+        await extract_assays("## Methods  [methods]\n[S1] By ELISA.", "A Paper", client,
+                             run_label="run2")
+    finally:
+        assay_trace.stop()
+
+    assert client.kwargs["seed"] == EXTRACTION_SEED
+    assert list(trace.as_json()["extract"]) == ["run2"]

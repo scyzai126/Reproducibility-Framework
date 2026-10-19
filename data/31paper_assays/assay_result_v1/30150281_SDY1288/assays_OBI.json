@@ -3,7 +3,7 @@
     "name_in_paper": [
       "real-time RT–PCR"
     ],
-    "normalized_name": "real time reverse-transcription polymerase chain reaction",
+    "standard_technique_name": "real time reverse-transcription polymerase chain reaction",
     "aliases": [],
     "sample_type": "acute-phase samples",
     "readouts": "detection of CHIKV",
@@ -25,10 +25,9 @@
   "enzyme-linked immunosorbent assay": {
     "name_in_paper": [
       "IgM capture ELISA",
-      "Inhibition ELISA",
-      "multiplex ELISA"
+      "Inhibition ELISA"
     ],
-    "normalized_name": "ELISA",
+    "standard_technique_name": "ELISA",
     "aliases": [],
     "sample_type": "paired acute and convalescent sera",
     "readouts": "seroconversion",
@@ -44,14 +43,14 @@
     "obi_id": "OBI:0000661",
     "obi_label": "enzyme-linked immunosorbent assay",
     "resource": "embedding_llm",
-    "obi_confidence": 0.594,
-    "obi_granularity": "BROAD"
+    "obi_confidence": 0.5939,
+    "obi_granularity": "EXACT"
   },
   "bulk RNA-seq assay": {
     "name_in_paper": [
       "RNA-seq"
     ],
-    "normalized_name": "RNA sequencing",
+    "standard_technique_name": "RNA sequencing",
     "aliases": [],
     "sample_type": "whole blood in PAXgene solution",
     "readouts": "whole-blood gene and transcript expression",
@@ -70,11 +69,36 @@
     "obi_confidence": 0.6716,
     "obi_granularity": "EXACT"
   },
+  "cytometric bead array assay": {
+    "name_in_paper": [
+      "multiplex ELISA"
+    ],
+    "standard_technique_name": "ELISA",
+    "aliases": [
+      "Luminex"
+    ],
+    "sample_type": "serum",
+    "readouts": "cytokine and chemokine concentrations",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Multiplex ELISA",
+      "sentence_ids": [
+        "S192"
+      ],
+      "quote": "Cytokines and chemokines were measured using a multiplex ELISA-based assay (Luminex)."
+    },
+    "obi_id": "OBI:0000920",
+    "obi_label": "cytometric bead array assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.5629,
+    "obi_granularity": "EXACT"
+  },
   "cytometry time of flight assay": {
     "name_in_paper": [
       "mass cytometry"
     ],
-    "normalized_name": "mass cytometry",
+    "standard_technique_name": "mass cytometry",
     "aliases": [
       "CyTOF",
       "Cytometry time-of-flight"
@@ -100,7 +124,7 @@
     "name_in_paper": [
       "virus isolation"
     ],
-    "normalized_name": null,
+    "standard_technique_name": null,
     "aliases": [],
     "sample_type": "acute-phase samples",
     "readouts": null,
@@ -123,7 +147,7 @@
     "name_in_paper": [
       "viral titer assays"
     ],
-    "normalized_name": "reverse transcription polymerase chain reaction",
+    "standard_technique_name": "reverse transcription polymerase chain reaction",
     "aliases": [],
     "sample_type": "patient serum",
     "readouts": "CHIKV RNA copies",

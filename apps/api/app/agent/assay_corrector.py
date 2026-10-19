@@ -46,6 +46,7 @@ from app.agent.assay_verifier import (
     has_sentence_markers,
     name_field,
 )
+from app.agent import assay_trace
 from app.agent.claim_parser import _load_prompt, _strip_fences
 from app.config import settings
 
@@ -82,7 +83,9 @@ _QUESTIONS = {
     "evidence": (
         "Which sentence or sentences establish that THIS assay was actually performed in this "
         "study? Answer with a short quote copied verbatim from those sentences -- not a "
-        "paraphrase. Do not quote a sentence that cites someone else's use of the technique."
+        "paraphrase. Prefer the Methods sentence that describes the procedure over an abstract "
+        "or Results sentence that only reports its outcome. Do not quote a sentence that cites "
+        "someone else's use of the technique."
     ),
 }
 
@@ -267,7 +270,10 @@ def apply_correction(entry: dict, group: str, blind: object, source_text: str,
         # "fluorescence-activated cell sorting (FACS) measurements" on SDY1119. Adding
         # aliases the blind read found is likewise out of scope: that is expansion.
         flagged = flagged_aliases if flagged_aliases is not None else set()
-        confirmed = {_normalize(a) for a in (blind or []) if isinstance(a, str)}
+        # A bare string is one alias, not a list of its characters: iterating "FACS" as-is read
+        # it as four one-letter aliases and dropped the flagged "FACS" it had just confirmed.
+        answered = [blind] if isinstance(blind, str) else (blind if isinstance(blind, list) else [])
+        confirmed = {_normalize(a) for a in answered if isinstance(a, str)}
         previous = entry.get("aliases") or []
         kept = [a for i, a in enumerate(previous)
                 if i not in flagged or _normalize(a) in confirmed]
@@ -288,8 +294,12 @@ async def correct_field(
     paper_title: str,
     client: AsyncOpenAI,
     model: str = settings.OPENAI_MODEL,
+    assay_key: str = "",
 ) -> tuple[object, str | None]:
-    """Ask the paper what this field says. One LLM call. Returns (value, error)."""
+    """Ask the paper what this field says. One LLM call. Returns (value, error).
+
+    `assay_key` only labels the reply in the run's trace (assay_trace); the prompt never sees it.
+    """
     try:
         resp = await client.chat.completions.create(
             model=model,
@@ -298,10 +308,18 @@ async def correct_field(
             temperature=0,
         )
         raw = _strip_fences((resp.choices[0].message.content or "").strip())
-        parsed = json.loads(raw) if raw else {}
+        assay_trace.record("correct", assay_key, field=group, reply=raw)
+        parsed = json.loads(raw) if raw else None
     except Exception as exc:  # noqa: BLE001 - one bad field must not cost the whole paper
         logger.warning("blind re-extraction of %s failed - %s", group, exc)
+        assay_trace.record("correct", assay_key, field=group, error=f"{type(exc).__name__}: {exc}")
         return None, f"{type(exc).__name__}: {exc}"
+
+    # An empty reply is a failed call, not an answer. Read as `{}` it became `value: None`,
+    # which decide() scores as CLEARED -- a specimen the paper states, wiped because one call
+    # returned nothing. The verifier draws the same line for the same reason.
+    if parsed is None:
+        return None, "corrector returned an empty reply"
 
     # A bare list is the aliases answer, unwrapped. The prompt asks for {"value": ...} and the
     # aliases question then says "a JSON list of strings", so a model that follows the question
@@ -364,7 +382,7 @@ async def correct_registry(
     async def _ask(key: str, group: str) -> tuple[object, str | None]:
         async with semaphore:
             return await correct_field(entries[key], group, source_text, paper_title,
-                                       client, model)
+                                       client, model, assay_key=key)
 
     answers = dict(zip(plan, await asyncio.gather(*(_ask(k, g) for k, g in plan))))
 

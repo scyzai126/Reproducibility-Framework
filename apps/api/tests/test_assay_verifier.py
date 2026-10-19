@@ -12,11 +12,14 @@ from app.agent.assay_verifier import (
     REVIEW,
     SUPPORTED,
     build_summary,
+    check_alias_verbatim,
     check_quote_verbatim,
     check_source_section,
     derive_record_verdict,
     get_evidence,
     get_name,
+    identity_reviews,
+    mark_identity_reviews,
     proposed_fields,
     sentence_index,
     verify_assay,
@@ -287,22 +290,22 @@ def test_a_record_with_every_field_supported_reaches_accept():
     assert derive_record_verdict(SUPPORTED, supported) == ACCEPT
 
 
-def test_the_normalized_name_is_never_verified_against_the_paper():
+def test_the_technique_is_never_verified_against_the_paper():
     """It is a judgement about the technique, not a claim about the text.
 
     Every other field reports something the paper states, so the verifier can ask whether the
-    text supports it. `normalized_name` is expected to use words the paper never wrote -- that
+    text supports it. `standard_technique_name` is expected to use words the paper never wrote -- that
     is the whole reason it exists, since "Surface and intracellular cytokine staining" has to
     become "flow cytometry" to retrieve the right OBI term. Verifying it would draw a
     NOT_SUPPORTED on nearly every entry and bury round 2 in REVIEW lines for working output.
     """
-    entry = {**ENTRY, "normalized_name": "flow cytometry"}
+    entry = {**ENTRY, "standard_technique_name": "flow cytometry"}
 
-    assert "normalized_name" not in dict(proposed_fields(entry))
+    assert "standard_technique_name" not in dict(proposed_fields(entry))
 
 
 def test_generate_claim_is_never_a_proposed_field():
-    """The other judgement field, and excluded for the same reason as normalized_name.
+    """The other judgement field, and excluded for the same reason as technique.
 
     "The paper reports no finding drawn from this assay" is a statement about the whole paper;
     no single span supports or contradicts it, so a judge asked to rule can only guess. Keeping
@@ -688,3 +691,187 @@ def test_removed_fields_on_an_older_registry_are_not_proposed_values():
     fields = dict(proposed_fields(entry))
     assert "measurement_role" not in fields
     assert "parent_hint" not in fields
+
+
+# ── a canonical registry's entries ───────────────────────────────────────────
+
+def test_get_name_reads_the_first_wording_of_a_canonical_entry():
+    """After round 5 `name_in_paper` is a list and the key is an OBI label, which is not what
+    the paper called anything."""
+    entry = {"name_in_paper": ["ELISA", "ELISA kits"], "aliases": []}
+
+    assert get_name("enzyme-linked immunosorbent assay", entry) == "ELISA"
+
+
+def test_get_name_falls_back_to_the_key_past_an_empty_list():
+    assert get_name("ELISA", {"name_in_paper": [], "aliases": []}) == "ELISA"
+
+
+def test_additional_evidence_is_never_a_proposed_field():
+    """Round 5 writes other entries' records there; nobody proposed it for this one."""
+    entry = {"name_in_paper": "ELISA", "aliases": [], "sample_type": "serum",
+             "additional_evidence": [{"name_in_paper": "ELISA kits"}]}
+
+    assert [f for f, _ in proposed_fields(entry)] == ["name_in_paper", "sample_type"]
+
+
+# ── aliases: the string check settles presence, the judge settles reference ──
+
+def _judge(*fields, identity=SUPPORTED) -> str:
+    return json.dumps({
+        "assay_identity_verdict": identity,
+        "field_verifications": [
+            {"field_name": name, "proposed_value": value, "verdict": verdict, "reason": reason}
+            for name, value, verdict, reason in fields],
+        "record_verdict": ACCEPT,
+    })
+
+
+def test_alias_check_folds_case_and_spacing_like_the_quote_check():
+    assert check_alias_verbatim("flow  Cytometer", SOURCE)["status"] == "found"
+    assert check_alias_verbatim("CyTOF", SOURCE)["status"] == "missing"
+    assert check_alias_verbatim("IF", SOURCE)["status"] == "too_short"
+
+
+@pytest.mark.asyncio
+async def test_a_verbatim_alias_the_judge_called_absent_is_supported():
+    """36 of the 39 aliases the judge rejected across the corpus are in the paper; "does not
+    appear verbatim" is a string claim, and the string check refutes it."""
+    entry = {**ENTRY, "aliases": ["Flow Cytometer"]}
+    body = _judge(("aliases[0]", "Flow Cytometer", NOT_SUPPORTED,
+                   "This exact alias does not appear verbatim in the source text."))
+
+    result = await verify_assay("flow cytometry", entry, SOURCE, "Paper", _FakeClient(body))
+
+    alias = next(v for v in result["field_verifications"] if v["field_name"] == "aliases[0]")
+    assert alias["verdict"] == SUPPORTED
+    assert "wording" in alias["reason"]
+
+
+@pytest.mark.asyncio
+async def test_a_verbatim_alias_the_judge_called_a_readout_stays_unsupported():
+    """Reference is the judge's call: the string check only says the words are there."""
+    entry = {**ENTRY, "aliases": ["frequencies"]}
+    body = _judge(("aliases[0]", "frequencies", NOT_SUPPORTED,
+                   "This phrase refers to a readout rather than an alternate name for the assay."))
+
+    result = await verify_assay("flow cytometry", entry, SOURCE, "Paper", _FakeClient(body))
+
+    alias = next(v for v in result["field_verifications"] if v["field_name"] == "aliases[0]")
+    assert alias["verdict"] == NOT_SUPPORTED
+
+
+@pytest.mark.asyncio
+async def test_an_absent_alias_is_unsupported_whatever_the_judge_said():
+    body = _judge(("aliases[0]", "FACS", SUPPORTED, "FACS is used throughout"))
+
+    result = await verify_assay("flow cytometry", ENTRY, SOURCE, "Paper", _FakeClient(body))
+
+    alias = next(v for v in result["field_verifications"] if v["field_name"] == "aliases[0]")
+    assert alias["verdict"] == NOT_SUPPORTED
+    assert "does not appear" in alias["reason"]
+
+
+@pytest.mark.asyncio
+async def test_a_contradicted_alias_is_never_rescued_by_being_in_the_text():
+    """A platform name is in the paper by definition; that is not what CONTRADICTED is about."""
+    entry = {**ENTRY, "aliases": ["BD LSRFortessa"]}
+    body = _judge(("aliases[0]", "BD LSRFortessa", CONTRADICTED,
+                   "This is the instrument, not an alias for the assay."))
+
+    result = await verify_assay("flow cytometry", entry, SOURCE, "Paper", _FakeClient(body))
+
+    alias = next(v for v in result["field_verifications"] if v["field_name"] == "aliases[0]")
+    assert alias["verdict"] == CONTRADICTED
+
+
+# ── the quote check only lowers a verdict ────────────────────────────────────
+
+@pytest.mark.asyncio
+async def test_a_verbatim_quote_keeps_the_judges_semantic_objection():
+    """The prompt asks for NOT_SUPPORTED when a verbatim quote establishes nothing about the
+    assay being performed; the string check used to overwrite that with SUPPORTED."""
+    body = _judge(("evidence.quote", ENTRY["evidence"]["quote"], NOT_SUPPORTED,
+                   "The quote names the instrument but does not show this assay was performed."))
+
+    result = await verify_assay("flow cytometry", ENTRY, SOURCE, "Paper", _FakeClient(body))
+
+    quote = next(v for v in result["field_verifications"] if v["field_name"] == "evidence.quote")
+    assert quote["verdict"] == NOT_SUPPORTED
+    assert "instrument" in quote["reason"]
+
+
+@pytest.mark.asyncio
+async def test_a_verbatim_quote_the_judge_skipped_takes_the_string_checks_support():
+    """Presence is the one thing known about a quote nobody ruled on."""
+    body = _judge(("name_in_paper", "flow cytometry", SUPPORTED, "ok"))
+
+    result = await verify_assay("flow cytometry", ENTRY, SOURCE, "Paper", _FakeClient(body))
+
+    quote = next(v for v in result["field_verifications"] if v["field_name"] == "evidence.quote")
+    assert quote["verdict"] == SUPPORTED
+
+
+# ── the prompt tells the judge what it is and is not asked ──────────────────
+
+def test_the_verify_prompt_states_the_naming_convention_and_leaves_presence_to_code():
+    from app.agent.claim_parser import _load_prompt
+    prompt = _load_prompt("verify_assays.txt")
+
+    assert "technique this name denotes" in prompt
+    assert "checked by code" in prompt
+
+
+def test_the_verify_prompt_forbids_rejecting_an_assay_over_a_product_name():
+    """SDY1655's only cytokine measurement was deleted with the reason "a product/panel name
+    rather than an assay technique name". The extraction prompt's rule that a product name is
+    not the assay *name* had been read as a rule about whether the assay *exists*."""
+    from app.agent.claim_parser import _load_prompt
+    prompt = _load_prompt("verify_assays.txt")
+
+    reject_section = prompt[prompt.index("**REJECT**"):prompt.index("## Output")]
+    assert "not grounds for REJECT" in reject_section
+    for named in ("product", "panel", "kit", "vendor"):
+        assert named in reject_section
+
+
+# ── identity reviews ─────────────────────────────────────────────────────────
+
+def _record(assay_id, identity, reason=None, error=None, record_verdict=REVIEW):
+    fields = [{"field_name": "name_in_paper", "verdict": identity, "reason": reason or ""}]
+    record = {"assay_id": assay_id, "assay_identity_verdict": identity,
+              "field_verifications": fields, "record_verdict": record_verdict}
+    if error:
+        record["error"] = error
+    return record
+
+
+def test_identity_reviews_name_the_unsupported_and_the_unjudged_only():
+    verification = {"results": [
+        _record("ELISA", SUPPORTED, "stated in Methods", record_verdict=ACCEPT),
+        _record("Multiplex analysis", NOT_SUPPORTED, "This is a section heading."),
+        _record("viremia", CONTRADICTED, "an endpoint, not an assay", record_verdict=REJECT),
+        _record("qPCR", NOT_REPORTED, error="TimeoutError: slow", record_verdict="ERROR"),
+    ]}
+
+    assert identity_reviews(verification) == {
+        "Multiplex analysis": {"verdict": NOT_SUPPORTED, "reason": "This is a section heading."},
+        "qPCR": {"verdict": NOT_REPORTED, "reason": "TimeoutError: slow"},
+    }
+
+
+def test_mark_identity_reviews_writes_the_field_onto_matching_entries_only():
+    assays = {"ELISA": {"name_in_paper": "ELISA"}, "Multiplex analysis": {"name_in_paper": "Multiplex analysis"}}
+    verification = {"results": [_record("Multiplex analysis", NOT_SUPPORTED, "a heading")]}
+
+    mark_identity_reviews(assays, verification)
+
+    assert assays["Multiplex analysis"]["identity_review"] == {"verdict": NOT_SUPPORTED, "reason": "a heading"}
+    assert "identity_review" not in assays["ELISA"]
+
+
+def test_the_review_mark_is_never_a_proposed_field():
+    entry = {"name_in_paper": "ELISA", "aliases": [],
+             "identity_review": {"verdict": NOT_SUPPORTED, "reason": "a heading"}}
+
+    assert [f for f, _ in proposed_fields(entry)] == ["name_in_paper"]

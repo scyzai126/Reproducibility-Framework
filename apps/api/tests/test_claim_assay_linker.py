@@ -21,7 +21,7 @@ REGISTRY = {
         ["IgG ELISA"], aliases=["ELISA"], obi_id="OBI:0000661",
         obi_label="enzyme-linked immunosorbent assay", sample_type="serum"),
     "cytometric bead array assay": _entry(
-        ["Multiplex analysis"], aliases=["24-plex Luminex assay"], normalized_name="Luminex"),
+        ["Multiplex analysis"], aliases=["24-plex Luminex assay"], standard_technique_name="Luminex"),
     "flow cytometry assay": _entry(["flow cytometry"]),
     "viral plaque assay": _entry(["plaque assay"], generate_claim=False),
 }
@@ -42,7 +42,7 @@ def test_a_claim_naming_a_paper_wording_links_through_the_alias():
 
     assert links["claims"]["claim_1"]["link"] == "alias"
     assert links["claims"]["claim_1"]["assay_key"] == "enzyme-linked immunosorbent assay"
-    # `normalized_name` is a wording too, though merge_verified does not index it.
+    # `standard_technique_name` is a wording too, though merge_verified does not index it.
     assert links["claims"]["claim_2"]["assay_key"] == "cytometric bead array assay"
 
 

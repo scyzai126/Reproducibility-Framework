@@ -185,20 +185,20 @@ def test_an_exact_hit_on_a_term_with_children_is_billed(paper, vocabulary, monke
     assert obi["calls"] >= 2
 
 
-def test_obi_charges_a_third_call_when_the_normalized_name_is_a_second_query(paper, vocabulary):
-    """_embedding_llm_match embeds the normalized name too when it differs from the paper's."""
+def test_obi_charges_a_third_call_when_the_technique_is_a_second_query(paper, vocabulary):
+    """_embedding_llm_match embeds the technique too when it differs from the paper's."""
     _store(paper, {"SIMoA": {**_ENTRY, "name_in_paper": "SIMoA",
-                             "normalized_name": "single molecule array"}})
+                             "standard_technique_name": "single molecule array"}})
 
     obi = [r for r in estimate_run("111", "SDY1")["rounds"] if r["name"] == "obi"][0]
 
     assert obi["calls"] == 3
 
 
-def test_a_normalized_name_that_exact_matches_is_still_a_paid_miss(vocabulary):
-    """The mapper no longer looks the normalized name up exactly (removed 2026-10-02), so an
+def test_a_technique_that_exact_matches_is_still_a_paid_miss(vocabulary):
+    """The mapper no longer looks the technique up exactly (removed 2026-10-02), so an
     entry only it would have resolved goes to step 2 and must be billed."""
-    entry = {**_ENTRY, "name_in_paper": "FACS", "normalized_name": "flow cytometry"}
+    entry = {**_ENTRY, "name_in_paper": "FACS", "standard_technique_name": "flow cytometry"}
 
     assert obi_misses({"FACS": entry}) == ["FACS"]
     assert obi_query_calls("FACS", entry) == 3

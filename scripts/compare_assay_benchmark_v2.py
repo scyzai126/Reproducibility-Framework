@@ -5,9 +5,11 @@
 v1 run that `compare_assay_benchmark.py` scores:
 
 * Several assay names a curator listed separately map to the same OBI term (four flow-cytometry
-  panels in SDY1289, two ELISPOTs in SDY984). Those are one assay at the ontology level, so they are
-  merged into a single benchmark row before matching -- the agent's registry is already keyed by OBI
-  label, and scoring four rows against its one would read as three misses.
+  panels in SDY1289, two ELISPOTs in SDY984). Each is matched on its own first; a row left without
+  a partner then folds into a row on the same term that was paired with an agent entry on that
+  term -- the agent's registry is keyed by OBI label, and scoring four rows against its one would
+  read as three misses. Folding before matching instead erased assays a curator filed under a
+  generic term (CFSE and ADCC under `flow cytometry assay`) that the agent kept separate.
 * Some files are hand-edited JSON with trailing commas or an unclosed brace. They are repaired in
   memory, never on disk, and every repair is reported.
 
@@ -37,9 +39,11 @@ from compare_assay_benchmark import (  # noqa: E402
     MATCHED_STATUSES,
     TIERS,
     ObiGraph,
+    _surface_forms,
     bench_evidence,
     bench_obi_id,
     match_tier,
+    normalize,
     our_row,
     status_for,
 )
@@ -162,68 +166,54 @@ def _names(value) -> list[str]:
     return [v for v in (value if isinstance(value, list) else [value]) if isinstance(v, str) and v]
 
 
-def merge_by_obi(bench: dict, obi: ObiGraph) -> dict:
-    """Fold benchmark entries that share an OBI id into one entry keyed by that OBI label.
+def prepare_benchmark(bench: dict, obi: ObiGraph) -> dict:
+    """One row per curated entry, carrying its OBI id, its quote and `merged_from: [key]`.
 
-    Entries with no OBI id stay as they are: two unmapped names are not known to be one assay.
-    A merged entry keeps every name, alias and quote so the name and quote tiers still see them.
+    Nothing is merged here. Merging same-OBI entries before matching erased real assays: curators
+    put CFSE labeling (SDY1289) and the NK-mediated ADCC assay (SDY1294) under the generic
+    `flow cytometry assay`, so both vanished into immunophenotyping and the agent's own CFSE and
+    ADCC entries scored as EXTRA. `compare_paper` folds only the rows that found no partner.
     """
-    groups: dict[str, list[tuple[str, dict]]] = {}
-    order: list[tuple[str, str | None]] = []
-    for key, entry in bench.items():
-        obi_id = bench_obi_id(entry) or obi.resolve(key)
-        if obi_id:
-            if obi_id not in groups:
-                groups[obi_id] = []
-                order.append(("obi", obi_id))
-            groups[obi_id].append((key, entry))
-        else:
-            order.append(("key", key))
+    return {key: {**entry, "obi_id": bench_obi_id(entry) or obi.resolve(key), "merged_from": [key],
+                  "quotes": [bench_evidence(entry)]}
+            for key, entry in bench.items()}
 
-    merged: dict[str, dict] = {}
-    for kind, ref in order:
-        if kind == "key":
-            entry = bench[ref]
-            merged[ref] = {**entry, "obi_id": None, "merged_from": [ref],
-                           "quotes": [bench_evidence(entry)]}
-            continue
-        members = groups[ref]
-        if len(members) == 1:
-            key, entry = members[0]
-            merged[key] = {**entry, "obi_id": ref, "merged_from": [key],
-                           "quotes": [bench_evidence(entry)]}
-            continue
-        names: list[str] = []
-        aliases: list[str] = []
-        quotes: list[dict] = []
-        for key, entry in members:
-            names += [n for n in dict.fromkeys([key, *_names(entry.get("name_in_paper"))]) if n not in names]
-            aliases += [a for a in dict.fromkeys(entry.get("aliases") or []) if a not in aliases]
-            quotes.append({**bench_evidence(entry), "from": key})
-        claims = {entry.get("generate_claim") for _, entry in members}
-        merged_key = obi.label_of.get(ref) or members[0][0]
-        merged[merged_key] = {
-            "name_in_paper": names,
-            "aliases": aliases,
-            "generate_claim": True if True in claims else (False if False in claims else None),
-            "obi_id": ref,
-            "merged_from": [key for key, _ in members],
-            "quotes": quotes,
-            # match_tier's quote tier reads one evidence block; give it every quote at once.
-            "evidence_location": {"quote": " ".join(q.get("quote", "") for q in quotes)},
-        }
-    return merged
+
+def fold_rows(members: list[tuple[str, dict]]) -> dict:
+    """The first row, carrying every member's names, aliases and quotes.
+
+    The first member is the one that was paired, so its key, OBI id and evidence block stay the
+    row's own; the others contribute what they were called and what they quoted.
+    """
+    if len(members) == 1:
+        return members[0][1]
+    names: list[str] = []
+    aliases: list[str] = []
+    quotes: list[dict] = []
+    for key, entry in members:
+        names += [n for n in dict.fromkeys([key, *_names(entry.get("name_in_paper"))]) if n not in names]
+        aliases += [a for a in dict.fromkeys(entry.get("aliases") or []) if a not in aliases]
+        quotes += [{**q, "from": key} for q in entry["quotes"]]
+    claims = {entry.get("generate_claim") for _, entry in members}
+    return {
+        **members[0][1],
+        "name_in_paper": names,
+        "aliases": aliases,
+        "generate_claim": True if True in claims else (False if False in claims else None),
+        "merged_from": [k for _, entry in members for k in entry["merged_from"]],
+        "quotes": quotes,
+    }
 
 
 # ── pairing papers ───────────────────────────────────────────────────────────
 
 
-def discover_pairs(only: str | None = None) -> tuple[list[dict], list[str]]:
+def discover_pairs(only: str | None = None, benchmark_dir: Path = BENCHMARK_DIR) -> tuple[list[dict], list[str]]:
     registries = sorted(d for d in REGISTRY_DIR.iterdir()
                         if d.is_dir() and (d / "assays_benchmark.json").exists())
     pairs: list[dict] = []
     skipped: list[str] = []
-    for path in sorted(BENCHMARK_DIR.glob("*.json")):
+    for path in sorted(benchmark_dir.glob("*.json")):
         m = _STUDY.match(path.name)
         if not m:
             skipped.append(f"{path.name}: filename does not start with an SDY accession")
@@ -245,16 +235,157 @@ def discover_pairs(only: str | None = None) -> tuple[list[dict], list[str]]:
 # ── comparing one paper ──────────────────────────────────────────────────────
 
 
+#: The shared tiers, then two weaker ones only this script uses. `short_name` lets an acronym the
+#: shared containment rule is too short for ("CFU") match as a whole word. `evidence` pairs two
+#: entries that quote the same sentence even when their OBI terms are unrelated -- the shared quote
+#: tier refuses that, which turned a real disagreement over the term into a MISSED plus an EXTRA.
+PAIR_TIERS = TIERS + ["short_name", "evidence"]
+
+#: Only a second agent entry on the very same term is a split of one assay. A child term is not:
+#: SDY984's BD CBA (`antigen detection by cytometric bead array assay`) is a separate assay from
+#: the Luminex panel the benchmark lists under `cytometric bead array assay`, and stays EXTRA.
+_SPLIT_TIERS = ("obi_exact",)
+
+_SHORT = (3, 5)
+_SENTENCE_MIN_WORDS = 8
+_SENTENCE_OVERLAP = 0.8
+
+_EXTRA_TIER_REASON = {
+    "short_name": "paired by a short name",
+    "evidence": "paired by a shared evidence sentence",
+}
+
+
+def _words(text: str) -> list[str]:
+    return normalize(text or "").split()
+
+
+def _bench_quote(bench: dict) -> str:
+    return bench_evidence(bench).get("quote", "") or ""
+
+
+def _our_quote(ours: dict) -> str:
+    return (ours.get("evidence") or {}).get("quote", "") or ""
+
+
+def _short_word_hit(forms: list[str], texts: list[str]) -> bool:
+    """A 3-5 character form that appears as a whole word in any of `texts`."""
+    words = [set(t.split()) for t in texts if t]
+    return any(_SHORT[0] <= len(f) <= _SHORT[1] and " " not in f and any(f in w for w in words)
+               for f in forms)
+
+
+def _shared_sentence(a: str, b: str) -> bool:
+    """Whether two quotes come from the same sentence: most of the shorter one is in the longer."""
+    wa, wb = _words(a), _words(b)
+    short, long_ = (wa, wb) if len(wa) <= len(wb) else (wb, wa)
+    if len(short) < _SENTENCE_MIN_WORDS:
+        return False
+    pool = set(long_)
+    return sum(w in pool for w in short) / len(short) >= _SENTENCE_OVERLAP
+
+
+def pair_signals(bench: dict, ours: dict) -> list[str]:
+    """Every independent piece of evidence, besides the OBI terms, that the two are one assay."""
+    bench_forms = _surface_forms(bench["name_in_paper"], bench.get("aliases"))
+    our_forms = _surface_forms(ours["name_in_paper"], ours.get("aliases"))
+    bench_q, our_q = normalize(_bench_quote(bench)), normalize(_our_quote(ours))
+    signals = []
+    if set(bench_forms) & set(our_forms):
+        signals.append("same name")
+    if any(len(b) >= 6 and len(o) >= 6 and (b in o or o in b)
+           for b in bench_forms for o in our_forms):
+        signals.append("name containment")
+    if (_short_word_hit(bench_forms, our_forms + [our_q])
+            or _short_word_hit(our_forms, bench_forms + [bench_q])):
+        signals.append("short name")
+    if any(len(o) >= 6 and o in bench_q for o in our_forms) or \
+            any(len(b) >= 6 and b in our_q for b in bench_forms):
+        signals.append("quote names the other side")
+    if _shared_sentence(_bench_quote(bench), _our_quote(ours)):
+        signals.append("shared evidence sentence")
+    return signals
+
+
+def pair_score(bench: dict, bench_id: str | None, ours: dict, obi: ObiGraph) -> tuple[str, str | None, list[str]] | None:
+    """(tier, detail, signals) for one (benchmark row, agent entry) pair, or None.
+
+    The tier is the shared `match_tier` when it finds one, else one of the two weak tiers. The
+    signals are what ranks two pairs on the same tier, so an ancestry match that also shares the
+    quote and the name beats one that only shares an ancestor.
+    """
+    signals = pair_signals(bench, ours)
+    hit = match_tier(bench, bench_id, ours, obi)
+    if hit:
+        return hit[0], hit[1], signals
+    if "short name" in signals:
+        return "short_name", None, signals
+    if "shared evidence sentence" in signals:
+        return "evidence", None, signals
+    return None
+
+
 def compare_paper(bench: dict, registry: Path, obi: ObiGraph) -> dict:
-    """Same algorithm as compare_assay_benchmark.compare_paper, over an already-merged benchmark."""
+    """Score one paper, pairing each benchmark row with at most one agent entry.
+
+    Every pair is scored, then pairs are taken strongest first -- by tier, then by how many other
+    signals agree -- and each side is used once. The shared algorithm let every benchmark row
+    claim every agent entry on its best tier, so one entry could be counted under two rows while
+    its real partner showed as EXTRA. An agent entry left over on the same OBI term as an
+    already-paired row is that row's SPLIT; anything else left over is EXTRA.
+    """
     ours = json.loads((registry / "assays_benchmark.json").read_text(encoding="utf-8"))
     ours_obi = json.loads((registry / "assays_OBI.json").read_text(encoding="utf-8"))
     our_rows = {key: {**our_row(key, entry, ours_obi.get(key, {})),
                       "generate_claim": entry.get("generate_claim")}
                 for key, entry in ours.items()}
+    bench_keys, our_keys = list(bench), list(our_rows)
+
+    scored = []
+    for bi, bench_key in enumerate(bench_keys):
+        for oi, our_key in enumerate(our_keys):
+            hit = pair_score(bench[bench_key], bench[bench_key]["obi_id"], our_rows[our_key], obi)
+            if hit:
+                # A name both sides use outranks a shared term: the curator's "CFSE labeling" is
+                # filed under `flow cytometry assay`, and would otherwise take the agent's flow
+                # cytometry entry on the term before reaching the agent's own "CFSE labeling".
+                scored.append(("same name" not in hit[2], PAIR_TIERS.index(hit[0]), -len(hit[2]),
+                               bi, oi, hit))
+    scored.sort(key=lambda t: t[:5])
+
+    assigned: dict[str, list[tuple[str, tuple]]] = {}
+    used: set[str] = set()
+    for _, _, _, bi, oi, hit in scored:
+        bench_key, our_key = bench_keys[bi], our_keys[oi]
+        if bench_key in assigned or our_key in used:
+            continue
+        assigned[bench_key] = [(our_key, hit)]
+        used.add(our_key)
+    for _, _, _, bi, oi, hit in scored:
+        bench_key, our_key = bench_keys[bi], our_keys[oi]
+        if our_key in used or bench_key not in assigned or hit[0] not in _SPLIT_TIERS:
+            continue
+        assigned[bench_key].append((our_key, hit))
+        used.add(our_key)
+
+    # A benchmark row left without a partner, on the same curated term as a row that was paired,
+    # is one more panel of that assay -- SDY1289's four flow cytometry panels against the agent's
+    # one entry, or its two microarray rows against the agent's one array entry on another term --
+    # and folds into it rather than reading as MISSED. Only leftovers fold, so a row that found
+    # its own partner is never swallowed.
+    folded: dict[str, list[str]] = {}
+    for bench_key in bench_keys:
+        bench_id = bench[bench_key]["obi_id"]
+        if bench_key in assigned or not bench_id:
+            continue
+        host = next((k for k in bench_keys if k in assigned and bench[k]["obi_id"] == bench_id), None)
+        if host:
+            folded.setdefault(host, []).append(bench_key)
+    gone = {k for members in folded.values() for k in members}
+    bench = {k: fold_rows([(k, bench[k])] + [(m, bench[m]) for m in folded.get(k, [])])
+             for k in bench_keys if k not in gone}
 
     rows: list[dict] = []
-    claimed: set[str] = set()
     for bench_key, entry in bench.items():
         bench_id = entry["obi_id"]
         bench_side = {
@@ -267,27 +398,23 @@ def compare_paper(bench: dict, registry: Path, obi: ObiGraph) -> dict:
             "generate_claim": entry.get("generate_claim"),
             "quotes": entry["quotes"],
         }
-        hits = []
-        for row in our_rows.values():
-            hit = match_tier(entry, bench_id, row, obi)
-            if hit:
-                hits.append((hit[0], hit[1], row))
-        if not hits:
-            rows.append({"status": "MISSED", "tier": None,
+        pairs = assigned.get(bench_key)
+        if not pairs:
+            rows.append({"status": "MISSED", "tier": None, "signals": [],
                          "reason": "no agent entry matches this benchmark assay",
                          "benchmark": bench_side, "ours": []})
             continue
-        tier = min((h[0] for h in hits), key=TIERS.index)
-        best = [h for h in hits if h[0] == tier]
-        matches = [row for _, _, row in best]
-        claimed |= {row["key"] for row in matches}
-        status, reason = status_for(tier, best[0][1], bench_id, matches, obi)
-        rows.append({"status": status, "tier": tier, "reason": reason,
+        tier, detail, signals = pairs[0][1]
+        matches = [our_rows[k] for k, _ in pairs]
+        status, reason = status_for(tier, detail, bench_id, matches, obi)
+        if tier in _EXTRA_TIER_REASON:
+            reason = f"{_EXTRA_TIER_REASON[tier]}; {reason}"
+        rows.append({"status": status, "tier": tier, "signals": signals, "reason": reason,
                      "benchmark": bench_side, "ours": matches})
 
     for key, row in our_rows.items():
-        if key not in claimed:
-            rows.append({"status": "EXTRA", "tier": None,
+        if key not in used:
+            rows.append({"status": "EXTRA", "tier": None, "signals": [],
                          "reason": "agent found it in the paper; the benchmark does not list it",
                          "benchmark": None, "ours": [row]})
 
@@ -302,6 +429,7 @@ def compare_paper(bench: dict, registry: Path, obi: ObiGraph) -> dict:
             "extra": sum(r["status"] == "EXTRA" for r in rows),
             "recall": round(matched / len(bench), 4) if bench else None,
         },
+        "merged_groups": [v["merged_from"] for v in bench.values() if len(v["merged_from"]) > 1],
         "rows": rows,
     }
 
@@ -380,6 +508,33 @@ def _evidence_cell(row: dict) -> str:
     return f'<details><summary>evidence ({len(items)})</summary>{"".join(items)}</details>'
 
 
+def overall_totals(papers: list[dict]) -> dict:
+    """Corpus-wide counts and rates over every scored paper.
+
+    `status_counts` counts comparison rows by status, so MATCH..SPLIT and MISSED are benchmark
+    rows and EXTRA is agent rows. Precision is matched / agent assays; `obi_exact_rate` is the
+    share of matched assays that landed on the identical OBI term, and `obi_recall` the share of
+    benchmark assays the agent gave that identical term. A zero denominator gives 0.0.
+    """
+    def ratio(num: float, den: float) -> float:
+        return num / den if den else 0.0
+
+    totals = {
+        "benchmark_raw": sum(p["benchmark_raw_total"] for p in papers),
+        **{k: sum(p["metrics"][k] for p in papers)
+           for k in ("benchmark_total", "ours_total", "matched", "exact", "missed", "extra")},
+        "status_counts": {s: sum(r["status"] == s for p in papers for r in p["rows"])
+                          for s in STATUS_INFO},
+    }
+    totals["recall"] = ratio(totals["matched"], totals["benchmark_total"])
+    totals["precision"] = ratio(totals["matched"], totals["ours_total"])
+    totals["f1"] = ratio(2 * totals["precision"] * totals["recall"],
+                         totals["precision"] + totals["recall"])
+    totals["obi_exact_rate"] = ratio(totals["exact"], totals["matched"])
+    totals["obi_recall"] = ratio(totals["exact"], totals["benchmark_total"])
+    return totals
+
+
 def render_html(report: dict) -> str:
     t = report["totals"]
     summary_rows = []
@@ -405,7 +560,9 @@ def render_html(report: dict) -> str:
             body.append(
                 f'<tr class="row" data-status="{r["status"]}">'
                 f'<td><span class="badge {cls}">{r["status"].replace("_", " ")}</span>'
-                f'<div class="sub">{e(r["tier"] or "")}</div></td>'
+                f'<div class="sub">{e(r["tier"] or "")}</div>'
+                + (f'<div class="sub">{e("; ".join(r.get("signals") or []))}</div>' if r.get("signals") else "")
+                + '</td>'
                 f'<td>{_bench_cell(r["benchmark"])}</td><td>{_ours_cell(r["ours"])}</td>'
                 f'<td class="reason">{e(r["reason"])}</td><td>{_evidence_cell(r)}</td></tr>'
             )
@@ -425,6 +582,16 @@ def render_html(report: dict) -> str:
                      for s, (c, d) in STATUS_INFO.items())
     notes = "".join(f"<li>{e(s)}</li>" for s in t["skipped"])
     nobench = ", ".join(t["registries_without_benchmark"]) or "none"
+    label = Path(report["benchmark_dir"]).name
+    # A report written before status_counts existed is recounted from its rows.
+    status_counts = t.get("status_counts") or {
+        s: sum(r["status"] == s for p in report["papers"] for r in p["rows"]) for s in STATUS_INFO}
+    total_row = (
+        f'<tr><td>Total</td><td>{t["papers"]} papers</td>'
+        f'<td class="n">{t["benchmark_total"]}</td><td class="n">{t["ours_total"]}</td>'
+        + "".join(f'<td class="n {c}-c">{status_counts[s] or ""}</td>' for s, (c, _) in STATUS_INFO.items())
+        + f'<td class="n">{t["recall"]:.0%}</td><td></td></tr>'
+    )
 
     return f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -455,7 +622,8 @@ table{{border-collapse:collapse;width:100%;background:var(--card);border:1px sol
 th,td{{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}}
 th{{font-size:12px;color:var(--muted);font-weight:600;background:var(--code)}}
 td.n{{text-align:right;font-variant-numeric:tabular-nums}}
-.summary tr{{cursor:pointer}} .summary tbody tr:hover{{background:var(--code)}}
+.summary tbody tr{{cursor:pointer}} .summary tbody tr:hover{{background:var(--code)}}
+.summary tfoot td{{font-weight:700;border-top:2px solid var(--line);background:var(--code)}}
 .paper{{margin-top:36px;scroll-margin-top:60px}}
 .cmp td:nth-child(1){{width:120px}} .cmp td:nth-child(2),.cmp td:nth-child(3){{width:26%}} .cmp td:nth-child(4){{width:18%}}
 .badge{{display:inline-block;font-size:11px;font-weight:700;padding:2px 7px;border-radius:10px;color:#fff;white-space:nowrap}}
@@ -476,7 +644,7 @@ blockquote{{margin:4px 0 8px;padding:4px 8px;border-left:3px solid var(--line);c
 .q b{{font-size:12px}}
 .hidden{{display:none}}
 </style></head><body><main>
-<h1>Assay benchmark v2 vs. agent</h1>
+<h1>Assay benchmark {e(label)} vs. agent</h1>
 <p class="sub">Benchmark: <code>{e(report["benchmark_dir"])}</code> · Agent: <code>{e(report["registry_dir"])}</code> ·
 benchmark entries that share an OBI id within a paper are merged into one row before matching.</p>
 <div class="kpis">
@@ -487,17 +655,19 @@ benchmark entries that share an OBI id within a paper are merged into one row be
 <div class="kpi"><b>{t["missed"]}</b><span>missed</span></div>
 <div class="kpi"><b>{t["extra"]}</b><span>extra</span></div>
 <div class="kpi"><b>{t["recall"]:.1%}</b><span>recall</span></div>
+<div class="kpi"><b>{t.get("obi_recall", 0):.1%}</b><span>OBI recall (same term as curator)</span></div>
 </div>
 <details><summary>Status legend &amp; notes</summary>
 <ul>{"".join(f'<li><span class="badge {c}">{s.replace("_", " ")}</span> {e(d)}</li>' for s, (c, d) in STATUS_INFO.items())}</ul>
-<p>Agent registries with no v2 benchmark (not scored): {e(nobench)}</p>
+<p>Agent registries with no {e(label)} benchmark (not scored): {e(nobench)}</p>
 {f"<p>Skipped benchmark files:</p><ul>{notes}</ul>" if notes else ""}
 <p>The benchmark is a recall reference, not an exhaustive list, so EXTRA rows are candidates for curator review rather than errors.</p>
 </details>
 <h2 style="margin-top:20px">Per paper</h2>
 <div class="wrap"><table class="summary"><thead><tr><th>Study</th><th>PMID</th><th>Bench</th><th>Agent</th>
 {"".join(f'<th class="{c}-c">{s.replace("MATCH_", "").replace("_", " ")}</th>' for s, (c, _) in STATUS_INFO.items())}
-<th>Recall</th><th>Notes</th></tr></thead><tbody>{"".join(summary_rows)}</tbody></table></div>
+<th>Recall</th><th>Notes</th></tr></thead><tbody>{"".join(summary_rows)}</tbody>
+<tfoot>{total_row}</tfoot></table></div>
 <div class="toolbar">{legend}
 <input type="search" id="q" placeholder="Search assay, OBI, quote…">
 <button id="exp">Expand evidence</button><button id="theme">Theme</button>
@@ -530,18 +700,22 @@ apply();
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--only", help="Restrict to one study accession, e.g. SDY1289")
+    parser.add_argument("--benchmark-dir", type=Path, default=BENCHMARK_DIR,
+                        help="Folder of curated benchmark JSON files (default: Benchmark_assays_v2)")
+    parser.add_argument("--out-stem", default=OUT_STEM, help="Output filename stem under comparison/")
     args = parser.parse_args()
+    benchmark_dir = args.benchmark_dir.resolve()
+    out_stem = args.out_stem
 
     obi = ObiGraph()
-    pairs, skipped = discover_pairs(args.only)
+    pairs, skipped = discover_pairs(args.only, benchmark_dir)
     papers = []
     for pair in pairs:
         raw, repair, error = load_lenient(pair["benchmark"])
         if raw is None:
             skipped.append(f"{pair['benchmark'].name}: unparseable JSON ({error})")
             continue
-        bench = merge_by_obi(raw, obi)
-        result = compare_paper(bench, pair["registry"], obi)
+        result = compare_paper(prepare_benchmark(raw, obi), pair["registry"], obi)
         papers.append({
             "study": pair["study"],
             "pmid": pair["pmid"],
@@ -549,7 +723,6 @@ def main() -> None:
             "registry_dir": str(pair["registry"].relative_to(REPO_ROOT)),
             "repair": repair,
             "benchmark_raw_total": len(raw),
-            "merged_groups": [v["merged_from"] for v in bench.values() if len(v["merged_from"]) > 1],
             **result,
         })
 
@@ -559,23 +732,20 @@ def main() -> None:
         "papers": len(papers),
         "skipped": skipped,
         "registries_without_benchmark": [] if args.only else [r for r in all_regs if r not in scored],
-        "benchmark_raw": sum(p["benchmark_raw_total"] for p in papers),
-        **{k: sum(p["metrics"][k] for p in papers)
-           for k in ("benchmark_total", "ours_total", "matched", "exact", "missed", "extra")},
+        **overall_totals(papers),
     }
-    totals["recall"] = totals["matched"] / totals["benchmark_total"] if totals["benchmark_total"] else 0.0
     report = {
-        "benchmark_dir": str(BENCHMARK_DIR.relative_to(REPO_ROOT)),
+        "benchmark_dir": str(benchmark_dir.relative_to(REPO_ROOT)),
         "registry_dir": str(REGISTRY_DIR.relative_to(REPO_ROOT)),
         "totals": totals,
         "papers": papers,
     }
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    (OUT_DIR / f"{OUT_STEM}.json").write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    (OUT_DIR / f"{OUT_STEM}.html").write_text(render_html(report), encoding="utf-8")
+    (OUT_DIR / f"{out_stem}.json").write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    (OUT_DIR / f"{out_stem}.html").write_text(render_html(report), encoding="utf-8")
 
-    print(f"scored {len(papers)}/{len(list(BENCHMARK_DIR.glob('*.json')))} benchmark files")
+    print(f"scored {len(papers)}/{len(list(benchmark_dir.glob('*.json')))} benchmark files")
     for s in skipped:
         print(f"  SKIPPED  {s}")
     for p in papers:
@@ -590,7 +760,7 @@ def main() -> None:
         m = p["metrics"]
         print(f"  {p['study']:<8} {p['pmid']}  bench {m['benchmark_total']:>2} agent {m['ours_total']:>2} "
               f"matched {m['matched']:>2} missed {m['missed']} extra {m['extra']:>2}")
-    print(f"\nwrote {(OUT_DIR / OUT_STEM).relative_to(REPO_ROOT)}.{{json,html}}")
+    print(f"\nwrote {(OUT_DIR / out_stem).relative_to(REPO_ROOT)}.{{json,html}}")
 
 
 if __name__ == "__main__":

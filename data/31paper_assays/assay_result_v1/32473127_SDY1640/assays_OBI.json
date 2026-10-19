@@ -4,41 +4,38 @@
       "SARS-CoV-2 RBD ELISA",
       "OC43 and NL63 coronavirus RBD ELISA"
     ],
-    "normalized_name": "ELISA",
+    "standard_technique_name": "enzyme-linked immunosorbent assay",
     "aliases": [
       "ELISA"
     ],
     "sample_type": "plasma",
-    "readouts": "anti-RBD IgG, IgM, and IgA titers",
+    "readouts": "anti-RBD IgG, IgM, and IgA titers measured by plate absorbance at 450 nm",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
       "section": "SARS-CoV-2 RBD ELISA",
       "sentence_ids": [
-        "S310"
+        "S308"
       ],
-      "quote": "Positive control standard was run on each plate and was used to calculate titers (relative units) for all samples using non-linear regression interpolations, done to quantify the amount of anti-RBD IgG, anti-RBD IgM, and anti-RBD IgA present in each specimen."
+      "quote": "Plates were read on a Spectramax Plate Reader at 450 nm using SoftMax Pro, and ODs were background subtracted."
     },
     "obi_id": "OBI:0000661",
     "obi_label": "enzyme-linked immunosorbent assay",
     "resource": "embedding_llm",
-    "obi_confidence": 0.5939,
+    "obi_confidence": 0.7588,
     "obi_granularity": "EXACT"
   },
   "flow cytometry assay": {
     "name_in_paper": [
       "Direct ex vivo PBMC immune cell phenotyping",
-      "Activation induced cell marker assay",
       "Intracellular cytokine staining assay"
     ],
-    "normalized_name": "flow cytometry",
+    "standard_technique_name": "flow cytometry",
     "aliases": [
-      "21-color flow cytometry panel",
-      "Immunophenotyping of mononuclear leukocytes",
       "Phenotyping Flow Cytometry"
     ],
-    "sample_type": "PBMCs",
-    "readouts": "frequencies of mononuclear leukocyte subsets and phenotypic markers",
+    "sample_type": "peripheral blood mononuclear cells",
+    "readouts": "frequencies of mononuclear leukocyte lineage and phenotypic marker-defined cell populations",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
@@ -54,17 +51,41 @@
     "obi_confidence": 0.7859,
     "obi_granularity": "EXACT"
   },
-  "antigen detection by cytometric bead array assay": {
+  "T cell activation induced marker assay": {
+    "name_in_paper": [
+      "Activation induced cell marker assay"
+    ],
+    "standard_technique_name": "flow cytometry",
+    "aliases": [
+      "AIM assay"
+    ],
+    "sample_type": "peripheral blood mononuclear cells",
+    "readouts": "percentages of antigen-specific activated CD4+ or CD8+ T cells defined by OX40 and CD137 or CD69 and CD137 after peptide stimulation",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Activation induced cell marker assay",
+      "sentence_ids": [
+        "S326"
+      ],
+      "quote": "Cells were cultured for 24 hours in the presence of SARS-CoV-2 specific MPs [1 μg/ml] or 10 μg/mL PHA in 96-wells U bottom plates at 1x10 6 PBMC per well."
+    },
+    "obi_id": "OBI:0003230",
+    "obi_label": "T cell activation induced marker assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.6295,
+    "obi_granularity": "EXACT"
+  },
+  "analyte detection by flow based bead assay": {
     "name_in_paper": [
       "Cytokine bead assays"
     ],
-    "normalized_name": "cytometric bead array",
+    "standard_technique_name": "cytometric bead array",
     "aliases": [
-      "multiplex detection of cytokines",
       "LEGENDplex"
     ],
     "sample_type": "cell culture supernatants",
-    "readouts": "concentrations of 13 cytokines in stimulation-culture supernatants",
+    "readouts": "13 cytokine concentrations in stimulation-culture supernatants; beads analyzed by flow cytometry",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
@@ -74,21 +95,21 @@
       ],
       "quote": "Cytokines in cell culture supernatants of the same samples used for AIM were quantified using a human Th cytokine panel (13-plex) kit (LEGENDplex, Biolegend) according to the manufacturer’s instruction."
     },
-    "obi_id": "OBI:0003115",
-    "obi_label": "antigen detection by cytometric bead array assay",
+    "obi_id": "OBI:0003799",
+    "obi_label": "analyte detection by flow based bead assay",
     "resource": "embedding_llm",
-    "obi_confidence": 0.7614,
+    "obi_confidence": 0.6278,
     "obi_granularity": "EXACT"
   },
   "single-value binding of antibody with reporter to antigen assay": {
     "name_in_paper": [
       "lateral flow assay"
     ],
-    "normalized_name": "lateral flow immunoassay",
+    "standard_technique_name": "lateral flow immunoassay",
     "aliases": [
+      "colloidal-gold immunochromatographic ‘lateral flow’ assay",
       "lateral flow serology",
-      "lateral flow immunoglobulin (Ig) tests",
-      "colloidal-gold immunochromatographic ‘lateral flow’ assay"
+      "lateral flow immunoglobulin (Ig) tests"
     ],
     "sample_type": "whole blood",
     "readouts": "IgM or IgG antibodies directed against recombinant SARS-CoV-2 antigen",
@@ -104,32 +125,7 @@
     "obi_id": "OBI:0002773",
     "obi_label": "single-value binding of antibody with reporter to antigen assay",
     "resource": "embedding_llm",
-    "obi_confidence": 0.4985,
+    "obi_confidence": 0.4943,
     "obi_granularity": "BROAD"
-  },
-  "organism detection by PCR assay": {
-    "name_in_paper": [
-      "viral PCR"
-    ],
-    "normalized_name": "polymerase chain reaction",
-    "aliases": [
-      "swab test viral PCR"
-    ],
-    "sample_type": "swab",
-    "readouts": "SARS-CoV-2 infection positivity",
-    "generate_claim": true,
-    "source": "results",
-    "evidence": {
-      "section": "Immunological Phenotypes of Recovered COVID-19 Patients",
-      "sentence_ids": [
-        "S25"
-      ],
-      "quote": "SARS-CoV-2 infection was determined by swab test viral PCR during the acute phase of the infection."
-    },
-    "obi_id": "OBI:0002740",
-    "obi_label": "organism detection by PCR assay",
-    "resource": "embedding_llm",
-    "obi_confidence": 0.4584,
-    "obi_granularity": "EXACT"
   }
 }

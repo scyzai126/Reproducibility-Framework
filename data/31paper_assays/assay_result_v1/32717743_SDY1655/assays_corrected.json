@@ -1,7 +1,7 @@
 {
   "RT-qPCR": {
     "name_in_paper": "RT-qPCR",
-    "normalized_name": "real time reverse-transcription polymerase chain reaction",
+    "standard_technique_name": "real time reverse-transcription polymerase chain reaction",
     "aliases": [
       "quantitative PCR with reverse tran- scription (RT–qPCR)"
     ],
@@ -19,7 +19,7 @@
   },
   "Flow cytometry": {
     "name_in_paper": "Flow cytometry",
-    "normalized_name": "flow cytometry",
+    "standard_technique_name": "flow cytometry",
     "aliases": [
       "intracellular cytokine staining"
     ],
@@ -37,7 +37,7 @@
   },
   "ELISA": {
     "name_in_paper": "ELISA",
-    "normalized_name": "enzyme linked immunosorbent assay",
+    "standard_technique_name": "enzyme linked immunosorbent assay",
     "aliases": [],
     "sample_type": "plasma",
     "readouts": "soluble mediator levels",
@@ -50,6 +50,22 @@
         "S24"
       ],
       "quote": "We analysed PBMC and plasma samples from patients with moderate or severe COVID-19 and healthy HCW donors ( Fig. 1a , gating strategy in) by flow cytometry and ELISA to quantify leuko- cytes and soluble mediators, respectively."
+    }
+  },
+  "Human Cytokine Array/Chemokine Array 71–403 Plex Panel (HD71)": {
+    "name_in_paper": "Human Cytokine Array/Chemokine Array 71–403 Plex Panel (HD71)",
+    "standard_technique_name": "multiplex bead immunoassay",
+    "aliases": [],
+    "sample_type": "sera",
+    "readouts": "cytokine and chemokine levels",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Cytokine and chemokine measurements",
+      "sentence_ids": [
+        "S177"
+      ],
+      "quote": "Sera were shipped to Eve Technologies (Calgary, Alberta, Canada) on dry ice, and levels of cytokines and chemokines were measured with Human Cytokine Array/Chemokine Array 71–403 Plex Panel (HD71)."
     }
   }
 }

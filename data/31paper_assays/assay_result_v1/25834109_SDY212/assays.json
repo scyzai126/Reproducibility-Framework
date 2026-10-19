@@ -3,7 +3,7 @@
     "name_in_paper": [
       "ELISA"
     ],
-    "normalized_name": "ELISA",
+    "standard_technique_name": "ELISA",
     "aliases": [],
     "sample_type": "Serum",
     "readouts": "CMV and EBV seropositivity, based on CMV IgG antibody index results",
@@ -21,7 +21,7 @@
     "name_in_paper": [
       "microarray analysis of gene expression"
     ],
-    "normalized_name": "microarray",
+    "standard_technique_name": "microarray",
     "aliases": [
       "gene expression analysis",
       "genome-wide mRNA expression"
@@ -41,13 +41,10 @@
   "flow cytometry assay": {
     "name_in_paper": [
       "Leukocyte subset frequency determination",
-      "phosphoflow analysis",
-      "Tetramer and Phenotypic Staining of CD8 T Cells"
+      "phosphoflow analysis"
     ],
-    "normalized_name": "flow cytometry",
-    "aliases": [
-      "tetramer staining"
-    ],
+    "standard_technique_name": "flow cytometry",
+    "aliases": [],
     "sample_type": "PBMC",
     "readouts": "leukocyte subset frequencies",
     "generate_claim": true,
@@ -73,20 +70,6 @@
           ],
           "quote": "After washing, cells were resuspended in FACS buffer and acquisition was performed on an LSRII instrument (BD Biosciences)."
         }
-      },
-      {
-        "name_in_paper": "Tetramer and Phenotypic Staining of CD8 T Cells",
-        "sample_type": "BAL",
-        "readouts": "influenza-specific CD8 T cells",
-        "generate_claim": true,
-        "source": "results",
-        "evidence": {
-          "section": "Figure 3 caption",
-          "sentence_ids": [
-            "S208"
-          ],
-          "quote": "Seven days after IAV infection, influenza viral titer was determined (upper panel) and IAV-specific T cells were enumerated from the BAL of IAV+ MCMV− (MCMV−) or IAV+ MCMV+ (MCMV+) mice by tetramer staining for NP, PA and PB1-specific responses."
-        }
       }
     ]
   },
@@ -94,7 +77,7 @@
     "name_in_paper": [
       "Luminex"
     ],
-    "normalized_name": "bead based immuno assay",
+    "standard_technique_name": "bead based immuno assay",
     "aliases": [],
     "sample_type": "serum",
     "readouts": "cytokine and chemokine levels",
@@ -112,7 +95,7 @@
     "name_in_paper": [
       "HAI assay"
     ],
-    "normalized_name": "hemagglutination inhibition assay",
+    "standard_technique_name": "hemagglutination inhibition assay",
     "aliases": [
       "hemagglutinin-inhibition (HAI) assay"
     ],
@@ -128,11 +111,31 @@
       "quote": "The HAI assay was performed on sera from day 0 and day 28 using a standard technique ( 66 ); serially diluted 25-µl aliquots of serum samples in PBS were mixed with 25-µl aliquots of virus matching the vaccine strain composition for that years, corresponding to 4 HA units, in V-bottom 96-well plates (Nunc) and incubated for 30 min at room temperature."
     }
   },
+  "MHC tetramer/multimer assay measuring binding of a T cell epitope:MHC:TCR complex": {
+    "name_in_paper": [
+      "Tetramer and Phenotypic Staining of CD8 T Cells"
+    ],
+    "standard_technique_name": "flow cytometry",
+    "aliases": [
+      "tetramer staining"
+    ],
+    "sample_type": "BAL",
+    "readouts": "influenza-specific CD8 T cells",
+    "generate_claim": true,
+    "source": "results",
+    "evidence": {
+      "section": "Figure 3 caption",
+      "sentence_ids": [
+        "S208"
+      ],
+      "quote": "Seven days after IAV infection, influenza viral titer was determined (upper panel) and IAV-specific T cells were enumerated from the BAL of IAV+ MCMV− (MCMV−) or IAV+ MCMV+ (MCMV+) mice by tetramer staining for NP, PA and PB1-specific responses."
+    }
+  },
   "viral plaque assay": {
     "name_in_paper": [
       "plaque assay"
     ],
-    "normalized_name": "plaque assay",
+    "standard_technique_name": "plaque assay",
     "aliases": [],
     "sample_type": "lung homogenates",
     "readouts": "influenza viral titers",
@@ -150,7 +153,7 @@
     "name_in_paper": [
       "Single-nucleotide polymorphism assay"
     ],
-    "normalized_name": "single nucleotide polymorphism genotyping array",
+    "standard_technique_name": "single nucleotide polymorphism genotyping array",
     "aliases": [
       "single nucleotide polymorphism (SNP) genotyping approach"
     ],

@@ -100,11 +100,13 @@
   },
   "cytometric bead array assay": {
     "name_in_paper": [
-      "Multiplex cytokine assays"
+      "Multiplex cytokine assays",
+      "Cytokine Bead Array (CBA)"
     ],
     "aliases": [
       "Luminex assays",
-      "27-plex Luminex platform"
+      "27-plex Luminex platform",
+      "CBA"
     ],
     "generate_claim": true,
     "source": "methods",
@@ -114,24 +116,23 @@
         "S249"
       ],
       "quote": "Luminex assays were performed with the Beadlyte Human 10-Plex Multi-Cytokine Detection System (Upstate)."
-    }
-  },
-  "antigen detection by cytometric bead array assay": {
-    "name_in_paper": [
-      "Cytokine Bead Array (CBA)"
-    ],
-    "aliases": [
-      "CBA"
-    ],
-    "generate_claim": true,
-    "source": "methods",
-    "evidence": {
-      "section": "In vitro stimulation of PBMCs with Zostavax®",
-      "sentence_ids": [
-        "S257"
-      ],
-      "quote": "Cell-free culture supernatants collected were analyzed for cytokines and chemokines, including IL-6, TNF, CXCL8, CCL2, CXCL9 and CXCL10 using Cytokine Bead Array (CBA) kits (BD Biosciences, San Diego, US)"
-    }
+    },
+    "additional_evidence": [
+      {
+        "name_in_paper": "Cytokine Bead Array (CBA)",
+        "sample_type": "cell-free culture supernatants",
+        "readouts": "cytokines and chemokines including IL-6, TNF, CXCL8, CCL2, CXCL9 and CXCL10",
+        "generate_claim": true,
+        "source": "methods",
+        "evidence": {
+          "section": "In vitro stimulation of PBMCs with Zostavax®",
+          "sentence_ids": [
+            "S257"
+          ],
+          "quote": "Cell-free culture supernatants collected were analyzed for cytokines and chemokines, including IL-6, TNF, CXCL8, CCL2, CXCL9 and CXCL10 using Cytokine Bead Array (CBA) kits (BD Biosciences, San Diego, US)"
+        }
+      }
+    ]
   },
   "transcription profiling by array assay": {
     "name_in_paper": [

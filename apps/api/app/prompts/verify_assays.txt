@@ -54,6 +54,17 @@ this most — hold it to the strictest reading.
 
 ## Assay identity verification
 
+**How the name was chosen.** The extractor was told to name each assay by the paper's own
+Methods subsection heading with its generic framing stripped ("Measurement of anti-Meningococcal
+antibodies by ELISA" becomes `ELISA`; "RNA Isolation and Microarray Analysis" becomes
+`microarray`), or by the heading itself when nothing can be stripped ("Multiplex analysis",
+"Flow cytometric analysis"). A name that reads like a section heading is therefore expected,
+and is not by itself a reason to withhold support. The identity question is whether the
+**technique this name denotes** was performed in this study -- not whether the string is the
+paper's formal name for an assay. Withhold support when the name denotes no technique at all
+(a purpose clause, a reagent, a readout, a sample-prep step), or when the text does not show the
+technique was performed here.
+
 For the assay name, verify that the assay or procedure was actually performed in this study.
 
 Do not accept assays that are:
@@ -102,14 +113,16 @@ Verify each of the following fields the extraction proposed, when it is present 
 
 - **`name_in_paper`** — the assay identity, judged by the rules above. Its verdict is reported
   separately as `assay_identity_verdict`, and also as a field verification.
-- **`aliases`** — other exact wordings the paper uses **for the assay itself**. Verify each
-  alias separately, as `aliases[0]`, `aliases[1]`, and so on. An alias must (a) appear verbatim
-  in the source text and (b) refer to the same measurement as the assay. An instrument, chip,
-  or kit name is NOT an alias — if one appears here, that is CONTRADICTED, because the extractor
-  was told a product names the equipment, not the technique, and is not recorded. The exception is
-  a brand name that *is* the field's standard name for a technique (Luminex, CyTOF, ELISpot,
-  TaqMan): the extractor was told these stay as names, so they are valid aliases too. A phrase
-  that does not appear verbatim in the source is NOT_SUPPORTED, even if a near-variant does.
+- **`aliases`** — other wordings the paper uses **for the assay itself**. Verify each alias
+  separately, as `aliases[0]`, `aliases[1]`, and so on. **Whether the alias appears in the
+  source text is checked by code, character by character, before your answer is read; do not
+  rule on it.** Differences of case, plural or spacing are not yours to judge either. Your
+  question is only whether the wording refers to the same measurement as the assay: a readout,
+  a measured quantity, or a broader category is NOT_SUPPORTED. An instrument, chip, or kit name
+  is NOT an alias — if one appears here, that is CONTRADICTED, because the extractor was told a
+  product names the equipment, not the technique, and is not recorded. The exception is a brand
+  name that *is* the field's standard name for a technique (Luminex, CyTOF, ELISpot, TaqMan):
+  the extractor was told these stay as names, so they are valid aliases too.
 - **`sample_type`** — the tissue/specimen the assay was performed on. Verify the specimen was
   used in *this* assay. Do not accept a specimen merely because it appears elsewhere in the
   passage or is the study's main specimen.
@@ -126,7 +139,7 @@ Older extractions may carry `evidence_location` instead of `evidence`, and `orig
 instead of `name_in_paper`. Treat them as the same fields under different names, and report
 them under the field name the extraction actually used.
 
-**Some fields in a record are not yours to verify.** `normalized_name` is the extractor's
+**Some fields in a record are not yours to verify.** `standard_technique_name` is the extractor's
 judgement of which technique produced the data, not a value copied from the text.
 `generate_claim` is its judgement of whether the paper reported a finding drawn from the assay
 — a statement about the whole paper, which no single span either supports or contradicts.
@@ -170,6 +183,15 @@ CONTRADICTED, or the record is fundamentally unsupported.
 
 Do not reject an assay simply because optional methodological details are missing. A technique
 the paper performed but never drew a conclusion from is still a legitimate record.
+
+**A product, panel, kit, platform or vendor name is not grounds for REJECT.** Papers routinely
+name a real assay by the thing they bought — "Human Cytokine Array/Chemokine Array 71-403 Plex
+Panel (HD71)", "Olink Target 96", "LEGENDplex 13-plex". The only question here is whether the
+paper performed the measurement; if a Methods paragraph describes it being run on this study's
+samples, the record is SUPPORTED. Naming is a separate concern handled elsewhere: the technique
+belongs in `standard_technique_name`, and a wrong value there is a field verdict on that field,
+never a verdict on the record. Rejecting one of these deletes the paper's own measurement and
+nothing downstream can recover it.
 
 ## Output
 

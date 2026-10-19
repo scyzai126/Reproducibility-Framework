@@ -49,8 +49,9 @@ from app.agent.assay_corrector import (
     promote_registry,
     uncorrectable_flags,
 )
+from app.agent.assay_verifier import derive_evidence_fields
 from app.agent.claim_parser import _get_client
-from run_assay_verify import locate_xml, paper_text
+from run_assay_verify import extraction_path, locate_xml, paper_text
 
 
 def _load(path: Path, what: str) -> dict:
@@ -104,7 +105,8 @@ def promote(registry_dir: Path) -> None:
 
 async def main(registry_dir: Path, xml_path: Path | None, dry_run: bool,
                keep_rejected: bool = False) -> None:
-    assays = _load(registry_dir / "assays.json", "the extraction")
+    # The extraction-keyed registry, which is what assays_verification.json describes.
+    assays = _load(extraction_path(registry_dir), "the extraction")
     verification = _load(registry_dir / "assays_verification.json", "scripts/run_assay_verify.py")
 
     total = report_plan(assays, verification)
@@ -130,6 +132,8 @@ async def main(registry_dir: Path, xml_path: Path | None, dry_run: bool,
     corrected, records = await correct_registry(
         kept, verification, source_text, title, _get_client()
     )
+    # `source` and `sentence_ids` follow the quote; a replaced quote may sit in another section.
+    derive_evidence_fields(corrected, source_text)
     if dropped:
         (registry_dir / "assays_rejected.json").write_text(
             json.dumps(dropped, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")

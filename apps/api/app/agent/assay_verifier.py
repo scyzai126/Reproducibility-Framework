@@ -21,6 +21,9 @@ Two checks run before any money is spent:
   * `check_quote_verbatim` confirms the evidence quote actually appears in the sentences it
     cites. This is a pure string comparison — no API call — and it catches a reconstructed
     or fabricated quote for free.
+  * `check_alias_verbatim` does the same for each alias, so the judge is never asked whether
+    a string is in the paper -- a question it answered wrongly 36 times in 39 -- only whether
+    the wording names this assay.
   * `proposed_fields` decides what there is to verify at all. An entry with no non-null
     field beyond its name costs one call, not zero, because the name still needs judging.
 
@@ -39,6 +42,8 @@ from collections.abc import Callable
 
 from openai import AsyncOpenAI
 
+from app.agent import assay_trace
+from app.agent.assay_extractor import REVIEW_FIELD
 from app.agent.claim_parser import _load_prompt, _strip_fences
 from app.agent.jats_parser import sentence_sections
 from app.config import settings
@@ -76,7 +81,7 @@ _QUOTE_FOLD = str.maketrans({"\u2018": "'", "\u2019": "'", "\u201a": "'",
                              "\u2032": "'", "\u2033": '"'})
 
 #: Registry keys that are structure, derived values, or removed cruft -- not proposed values to
-#: verify. `normalized_name` is the extractor's judgement of which technique produced the data, so
+#: verify. `standard_technique_name` is the extractor's judgement of which technique produced the data, so
 #: there is no span to check it against. `generate_claim` is the other judgement, and about the
 #: paper as a whole rather than any one sentence: no span supports "the paper reported nothing
 #: from this assay", so a judge asked to rule on it can only guess. Keeping it out is also what
@@ -90,11 +95,14 @@ _QUOTE_FOLD = str.maketrans({"\u2018": "'", "\u2019": "'", "\u201a": "'",
 #: paper came back NOT_REPORTED on it, which forced REVIEW on the record and billed one round-3
 #: evidence correction per assay for a field nobody had objected to. `confidence`, `claim_role`,
 #: `platform`, `measurement_role` and `parent_hint` are fields the extraction no longer produces;
-#: they are listed so an older registry on disk still verifies cleanly.
-_NOT_PROPOSED = frozenset({"confidence", "claim_role", "normalized_name", "generate_claim",
+#: they are listed so an older registry on disk still verifies cleanly. `additional_evidence`
+#: is written by round 5 (assay_merger) and holds other entries' records, not a value anyone
+#: proposed for this one.
+_NOT_PROPOSED = frozenset({"confidence", "claim_role", "standard_technique_name", "generate_claim",
                            "source", "platform", "measurement_role", "parent_hint",
                            "evidence.sentence_ids", "evidence_location.sentence_ids",
-                           "obi_id", "obi_label", "resource", "obi_confidence"})
+                           "obi_id", "obi_label", "resource", "obi_confidence",
+                           "additional_evidence", REVIEW_FIELD})
 
 #: Name and evidence each moved between schema versions. Older registries on disk use the
 #: right-hand spellings, so both are read and reported under whichever the entry carries.
@@ -198,6 +206,43 @@ def derive_evidence_fields(assays: dict, source_text: str) -> dict:
     return assays
 
 
+def identity_reviews(verification: dict) -> dict[str, dict]:
+    """assay_id -> {verdict, reason} for every entry whose identity the judge did not support.
+
+    NOT_SUPPORTED and NOT_REPORTED only. CONTRADICTED identities are dropped by round 3 and
+    never reach the deliverable, so there is nothing to mark; a verification that failed outright
+    leaves the identity NOT_REPORTED, which is not the same as supported and is marked as such.
+    The reason is the judge's reason on the name field, else the call's error, else a stock line.
+    """
+    reviews: dict[str, dict] = {}
+    for result in verification.get("results") or []:
+        verdict = result.get("assay_identity_verdict")
+        if verdict not in (NOT_SUPPORTED, NOT_REPORTED):
+            continue
+        reason = next(
+            (v.get("reason") for v in (result.get("field_verifications") or [])
+             if v.get("field_name") in _NAME_KEYS and v.get("reason")),
+            None,
+        ) or result.get("error") or "the verifier did not support the assay identity"
+        reviews[str(result.get("assay_id", ""))] = {"verdict": verdict, "reason": reason}
+    return reviews
+
+
+def mark_identity_reviews(assays: dict, verification: dict | None) -> dict:
+    """Write REVIEW_FIELD onto every entry identity_reviews names. Mutates and returns.
+
+    Runs right after round 2 so the mark is on the entry through correction (which deep-copies
+    entries and keeps unknown keys), through the round-5 fold (assay_merger carries it) and into
+    the deliverable (assay_extractor.trim_registry copies it). An entry the judge supported is
+    left exactly as it was.
+    """
+    for key, review in identity_reviews(verification or {}).items():
+        entry = assays.get(key)
+        if isinstance(entry, dict):
+            entry[REVIEW_FIELD] = review
+    return assays
+
+
 def check_source_section(entry: dict, sections: dict[str, str]) -> dict:
     """Confirm `source` agrees with the section the entry's evidence actually sits in.
 
@@ -216,10 +261,10 @@ def check_source_section(entry: dict, sections: dict[str, str]) -> dict:
     Reports; never rewrites. An entry admitted as NEW_ASSAY correctly carries "results", so a
     mismatch is a signal for a human rather than a value to correct automatically.
 
-    The `verdict` mirrors check_quote_verbatim's, and is what lets _normalize_result overrule
-    the judge on this field: where the cited sentences sit is a fact about the document, not an
-    opinion. It is None on "unknown" so an entry with no ids, or one predating the field, keeps
-    whatever the judge said instead of being marked wrong for a check that could not run.
+    The `verdict` mirrors check_quote_verbatim's so the two checks report alike; `source` is in
+    _NOT_PROPOSED and never reaches the judge, so nothing here overrules anyone -- it is reported
+    by quote_report. It is None on "unknown" so an entry with no ids, or one predating the field,
+    is not marked wrong for a check that could not run.
 
     Returns `unknown` -- never a mismatch -- when the entry cites no sentence_ids, when its ids
     are absent from the map, or when `source` is missing. Most registries on disk predate both
@@ -267,12 +312,18 @@ def get_name(key: str, entry: dict) -> str:
     """The assay's name, falling back to the registry key when no name field is present.
 
     The claims-derived registries on disk carry only `sample_type` and `readouts`, so the
-    key is sometimes the only name there is.
+    key is sometimes the only name there is. A canonical registry (after round 5) carries the
+    wordings as a list; the first is the name, and the key there is an OBI label, which is not
+    what the paper called anything.
     """
     for name_key in _NAME_KEYS:
         value = entry.get(name_key)
         if isinstance(value, str) and value.strip():
             return value
+        if isinstance(value, list):
+            first = next((v for v in value if isinstance(v, str) and v.strip()), None)
+            if first:
+                return first
     return key
 
 
@@ -418,6 +469,70 @@ def check_quote_verbatim(entry: dict, source_text: str) -> dict:
             "verdict": NOT_SUPPORTED, "detail": f"quote is verbatim but {why}{where}"}
 
 
+#: The shortest alias the string check will vouch for. Whitespace is dropped before comparing,
+#: so a one- or two-letter alias ("IF", "MS") matches inside almost any word; three characters
+#: keeps the acronyms that matter ("HAI", "ICS", "PCR").
+MIN_ALIAS_CHARS = 3
+
+#: A judge's reason that objects to the *wording* of an alias rather than to what it names. The
+#: string check settles wording, so such an objection over an alias that is in the text is
+#: withdrawn. "does not use the term X for this assay" is deliberately not matched: that is a
+#: claim about reference, which only the judge can make.
+_WORDING_OBJECTION = re.compile(
+    r"verbatim|does not appear|not appear|exact (?:alias|phrase|wording|form|spelling|"
+    r"capitali[sz]ation|lowercase|singular)|capitali[sz]|lowercase|singular phrase",
+    re.IGNORECASE)
+
+
+def check_alias_verbatim(alias: object, source_text: str) -> dict:
+    """Confirm an alias appears in the paper. No API call.
+
+    The counterpart of check_quote_verbatim for `aliases[i]`. The verify prompt used to ask the
+    judge whether each alias "appears verbatim in the source", and measured over the 31 stored
+    runs the judge got that wrong 36 times out of 39: "Flow cytometry", "HAI", "CyTOF", "qPCR"
+    and "FACS" were all reported absent from papers that contain them, and round 3 then dropped
+    27 of them. Presence is a string fact, settled here the same way the quote is -- whitespace,
+    dashes and case folded -- and the judge is left with the question only it can answer,
+    whether the wording names this assay.
+
+    Statuses: `found`, `missing`, `too_short` (nothing to vouch for), `no_alias`.
+    """
+    if not isinstance(alias, str) or not alias.strip():
+        return {"status": "no_alias", "verdict": None, "detail": "no alias to check"}
+    needle = _squash(alias).lower()
+    if len(needle) < MIN_ALIAS_CHARS:
+        return {"status": "too_short", "verdict": None,
+                "detail": f"alias is under {MIN_ALIAS_CHARS} characters; presence proves nothing"}
+    if needle in _squash(strip_markers(source_text)).lower():
+        return {"status": "found", "verdict": SUPPORTED,
+                "detail": "alias appears in the source text"}
+    return {"status": "missing", "verdict": NOT_SUPPORTED,
+            "detail": "alias does not appear anywhere in the source text"}
+
+
+def alias_checks(entry: dict, source_text: str) -> dict[str, dict]:
+    """`aliases[i]` -> check_alias_verbatim, for every alias proposed_fields enumerates."""
+    return {field: check_alias_verbatim(value, source_text)
+            for field, value in proposed_fields(entry) if field.startswith("aliases[")}
+
+
+def _apply_alias_check(verification: dict, check: dict) -> None:
+    """Settle the wording half of an alias verdict; leave the reference half to the judge.
+
+    An alias the text does not contain is NOT_SUPPORTED whatever the judge said. One the text
+    does contain keeps the judge's verdict -- "a readout, not a name" is its call -- unless that
+    verdict was NOT_SUPPORTED *for the wording*, which the string check has just refuted.
+    """
+    if check["status"] == "missing":
+        verification["verdict"] = NOT_SUPPORTED
+        verification["reason"] = check["detail"]
+    elif (check["status"] == "found" and verification["verdict"] == NOT_SUPPORTED
+          and _WORDING_OBJECTION.search(verification.get("reason") or "")):
+        verification["verdict"] = SUPPORTED
+        verification["reason"] = (f"{check['detail']}; the judge's objection was to the "
+                                  f"wording: {verification.get('reason') or ''}".rstrip(": "))
+
+
 def proposed_fields(entry: dict) -> list[tuple[str, object]]:
     """Every non-null atomic value the extraction proposed, as (field_name, value).
 
@@ -502,11 +617,19 @@ def derive_record_verdict(identity_verdict: str, verifications: list[dict]) -> s
     return ACCEPT
 
 
-def _normalize_result(assay_key: str, entry: dict, raw: dict, quote_check: dict) -> dict:
-    """Build one assay's report from the judge's answer plus the quote check.
+def _normalize_result(assay_key: str, entry: dict, raw: dict, quote_check: dict,
+                      aliases_verbatim: dict[str, dict] | None = None) -> dict:
+    """Build one assay's report from the judge's answer plus the string checks.
 
     `assay_id` is forced to the real registry key — a per-assay call gives the model no way
     to know it beyond the echo we asked for.
+
+    The string checks settle what a string can settle and nothing more. A quote the paper does
+    not contain, or cites wrongly, is marked down whatever the judge said. A quote the paper
+    does contain keeps the judge's verdict: the prompt asks it to rule NOT_SUPPORTED when a
+    verbatim quote "establishes nothing about this assay being performed", and the check used to
+    overwrite that ruling with SUPPORTED. Only a judge that never answered for the quote is given
+    the string check's SUPPORTED, since presence is then the one thing known about it.
     """
     by_name = {
         v["field_name"]: v
@@ -519,15 +642,23 @@ def _normalize_result(assay_key: str, entry: dict, raw: dict, quote_check: dict)
         for field, value in proposed_fields(entry)
     ]
 
-    # The string check outranks the judge on quote verbatimness: it is not an opinion.
+    # The string check outranks the judge on quote verbatimness: it is not an opinion. It can
+    # only lower a verdict, though -- see the docstring.
     if quote_check["verdict"] is not None:
         evidence_key = next(
             (k for k in _EVIDENCE_KEYS if isinstance(entry.get(k), dict)), _EVIDENCE_KEYS[0]
         )
         for verification in verifications:
-            if verification["field_name"] == f"{evidence_key}.quote":
+            if verification["field_name"] != f"{evidence_key}.quote":
+                continue
+            if quote_check["verdict"] != SUPPORTED or verification["verdict"] == NOT_REPORTED:
                 verification["verdict"] = quote_check["verdict"]
                 verification["reason"] = quote_check["detail"]
+
+    for verification in verifications:
+        check = (aliases_verbatim or {}).get(verification["field_name"])
+        if check:
+            _apply_alias_check(verification, check)
 
     identity_key = name_field(entry)
     identity = raw.get("assay_identity_verdict")
@@ -583,6 +714,7 @@ async def verify_assay(
     bad entry cannot cost a whole paper's verdicts.
     """
     quote_check = check_quote_verbatim(entry, source_text)
+    aliases_verbatim = alias_checks(entry, source_text)
 
     candidate = json.dumps({assay_key: entry}, indent=2, ensure_ascii=False)
     prompt = (
@@ -600,9 +732,11 @@ async def verify_assay(
             temperature=0,
         )
         raw = _strip_fences((resp.choices[0].message.content or "").strip())
+        assay_trace.record("verify", assay_key, reply=raw)
         parsed = json.loads(raw) if raw else None
     except Exception as exc:  # noqa: BLE001 - any failure becomes a per-assay error report
         logger.warning("%s: verification call failed - %s", assay_key, exc)
+        assay_trace.record("verify", assay_key, error=f"{type(exc).__name__}: {exc}")
         return _error_result(assay_key, entry, quote_check, f"{type(exc).__name__}: {exc}")
 
     # An empty reply is a failed call, not a verdict. Scoring it as {} used to turn every field
@@ -616,7 +750,7 @@ async def verify_assay(
             f"verifier returned {type(parsed).__name__}, not an object",
         )
 
-    return _normalize_result(assay_key, entry, parsed, quote_check)
+    return _normalize_result(assay_key, entry, parsed, quote_check, aliases_verbatim)
 
 
 async def verify_registry(

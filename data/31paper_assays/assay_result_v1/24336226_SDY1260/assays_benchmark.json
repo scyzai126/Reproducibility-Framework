@@ -5,7 +5,7 @@
     ],
     "aliases": [
       "DNA microarrays",
-      "gene expression profile"
+      "DNA microarray experiment"
     ],
     "generate_claim": true,
     "source": "methods",
@@ -22,21 +22,23 @@
       "ELISA",
       "ELISA kits"
     ],
-    "aliases": [],
+    "aliases": [
+      "Measurement of anti-Meningococcal antibodies by ELISA"
+    ],
     "generate_claim": true,
     "source": "methods",
     "evidence": {
       "section": "Measurement of anti-Meningococcal antibodies by ELISA",
       "sentence_ids": [
-        "S284"
+        "S274"
       ],
-      "quote": "Subclass IgG1 antibodies were measured using mouse anti-human IgG1 (Alpha Diagnostics, San Antonio, TX) conjugated to HRP."
+      "quote": "Serum samples were pre-diluted 1:25 and then serially diluted (2-fold) seven times in SC buffer (PBS with 5% NBBS and 0.1% Brij35)."
     },
     "additional_evidence": [
       {
         "name_in_paper": "ELISA kits",
         "sample_type": "cell supernatants",
-        "readouts": "IL-6, TNF, IL-12p40 and IL-1b levels",
+        "readouts": "IL-6, TNF, and IL-12p40 in cell supernatants",
         "generate_claim": true,
         "source": "methods",
         "evidence": {
@@ -45,15 +47,26 @@
             "S348"
           ],
           "quote": "Cell supernatants were harvested and assessed for IL-6, TNF and IL-12p40 using ELISA kits, according to manufacturer’s instructions (BD Biosciences, catalog numbers 555220, 555212, 555171)."
+        },
+        "identity_review": {
+          "verdict": "NOT_SUPPORTED",
+          "reason": "\"ELISA kits\" names a product/reagent category rather than the assay technique performed."
         }
       }
-    ]
+    ],
+    "identity_review": {
+      "verdict": "NOT_SUPPORTED",
+      "reason": "\"ELISA kits\" names a product/reagent category rather than the assay technique performed."
+    }
   },
-  "antibody detection by cytometric bead array assay": {
+  "cytometric bead array assay": {
     "name_in_paper": [
-      "Luminex"
+      "anti-DT IgG capture microsphere assay",
+      "27-plex cytokines (Luminex)"
     ],
     "aliases": [
+      "Measurement of anti-Diphtheria IgG by Luminex",
+      "Luminex",
       "anti- DT IgG capture microsphere assay"
     ],
     "generate_claim": true,
@@ -61,18 +74,34 @@
     "evidence": {
       "section": "Measurement of anti-Diphtheria IgG by Luminex",
       "sentence_ids": [
-        "S289"
+        "S288"
       ],
-      "quote": "Fluorescent microspheres (Luminex Corp, Austin, TX) were covalently conjugated to DT (List Biologicals, Campbell, CA) and used to capture and quantify DT specific IgG in sera based on previous method with minor modifications 53 ."
-    }
+      "quote": "Immune response to Diphtheria toxoid (DT) carrier protein was assessed at Days 0, 7 and 30 using anti- DT IgG capture microsphere assay."
+    },
+    "additional_evidence": [
+      {
+        "name_in_paper": "27-plex cytokines (Luminex)",
+        "sample_type": "plasma",
+        "readouts": "27 cytokine concentrations",
+        "generate_claim": true,
+        "source": "results",
+        "evidence": {
+          "section": "Table 1",
+          "sentence_ids": [
+            "S413"
+          ],
+          "quote": "Plasma samples were used for the remaining assays."
+        }
+      }
+    ]
   },
   "bacterial neutralization assay": {
     "name_in_paper": [
       "serum bactericidal titers (SBA)"
     ],
     "aliases": [
-      "SBA",
-      "Serum bactericidal assay (SBA)"
+      "Measurement of serum bactericidal titers (SBA)",
+      "SBA"
     ],
     "generate_claim": true,
     "source": "methods",
@@ -105,7 +134,9 @@
     "name_in_paper": [
       "ELISpot"
     ],
-    "aliases": [],
+    "aliases": [
+      "Measurement of antibody secreting cells by FACS and ELISpot"
+    ],
     "generate_claim": true,
     "source": "methods",
     "evidence": {

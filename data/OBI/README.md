@@ -7,13 +7,13 @@ each term's `definition` and `n_descendants` — one command, from `obi.obo` alo
 
 | file | terms | size | role |
 |---|---|---|---|
-| `obi_generic_index.json` | 700 | 212 KB | **Live vocabulary.** Exact matching + the candidate pool for semantic search. Derived — do not hand-edit. |
-| `obi_generic_embeddings.json` | 700 | 28 MB | **Live vectors.** `text-embedding-3-small`, 1536-dim, one row per index term — see *The vectors*. |
+| `obi_generic_index.json` | 701 | 212 KB | **Live vocabulary.** Exact matching + the candidate pool for semantic search. Derived — do not hand-edit. |
+| `obi_generic_embeddings.json` | 701 | 28 MB | **Live vectors.** `text-embedding-3-small`, 1536-dim, one row per index term — see *The vectors*. |
 | `obi.obo` | 5218 | 1.5 MB | Upstream OBI release 2026-05-08. The only source: the index and the 1794-term assay branch are both derived from it. Off the serving path, but required to rebuild. |
 | `README.md` | — | — | This file: the record of what each prune removes and why. |
 
 ```
-obi.obo  5218  ──[ assay branch ]──▶  1794  ──[ measuring/detecting filter ]──▶  1248  ──[ tier A-I subtrees ]──▶  700
+obi.obo  5218  ──[ assay branch ]──▶  1794  ──[ measuring/detecting filter ]──▶  1249  ──[ tier A-I subtrees ]──▶  701
 ```
 
 The assay branch is every `is_a` descendant of `OBI:0000070 assay`, in `obi.obo` order. Each index
@@ -29,7 +29,7 @@ entry is:
 }
 ```
 
-`definition` is the OBO `def:` text (all 700 have one). `n_descendants` counts distinct `is_a`
+`definition` is the OBO `def:` text (all 701 have one). `n_descendants` counts distinct `is_a`
 descendants in the **full** `obi.obo`, self excluded — not within the index. ELISPOT's 43 are all
 compositional terms the prune removed, so it is broad in OBI and a leaf here.
 
@@ -41,7 +41,8 @@ The removed terms are **not** committed — this README and the root list in
 The dropped 546 are IEDB-style **compositional** labels — *"… assay measuring epitope specific
 X production by Y cells"* — plus IEDB MHC-binding constructs like *"radioactivity detection
 assay measuring half maximal inhibitory concentration [IC50] …"*. Everything matching
-`/\b(measuring|detecting)\b/` is removed.
+`/\b(measuring|detecting)\b/` is removed, except the ids pinned in `_COMPOSITIONAL_KEEP`
+(`app/agent/assay_obi_mapper.py`) — today only `OBI:1110179`, see *Known gap* — so 545 go.
 
 `detecting` was added on 2026-09-09, taking the filter from 532 terms to 546. Matching only
 `measuring` had left four of the same construct in the index, and one of them —
@@ -58,7 +59,7 @@ producing wrong mappings in committed output until 2026-08-19.
 
 A second pass on 2026-09-08 cut the index from 1262 to 703, and pinning X-ray crystallography on
 2026-09-09 brought it to 704; widening the compositional filter the same day left **700** — 548
-removed by this stage. Same
+removed by this stage. Pinning the MHC tetramer term on 2026-10-13 made it **701**. Same
 failure mode, different source: the assay branch carries whole domains that never appear in an
 immunology or biomedical paper, and they sit close enough in embedding space to crowd out the
 terms we want. There is **no similarity threshold** in the mapper — `_top_k_candidates` returns
@@ -114,7 +115,7 @@ selected.
 
 ## The vectors
 
-`obi_generic_embeddings.json` holds exactly the index's 700 terms, in index order. Since
+`obi_generic_embeddings.json` holds exactly the index's 701 terms, in index order. Since
 2026-10-02 each row is embedded from **`label | synonyms | definition`** (`embed_input`); before
 that it was `label | synonyms` over the unpruned 1262 terms. Adding the definition changes
 retrieval, so benchmark results from before that date are not directly comparable.
@@ -186,9 +187,18 @@ it safe not to commit the removed lists.
 
 Two common assays have **no** generic term: the plain `intracellular cytokine staining assay`
 (`OBI:0000665`) and `MHC multimer staining assay` (`OBI:0000667`) are **obsolete** in OBI, so
-they are outside the assay branch. Since 2026-09-11 they are not pinned by an override map either:
-the extractor's `normalized_name` records the measurement technique ("flow cytometry"), which
-maps to `OBI:0000916` exactly. `obi.obo` records `OBI:0000665 replaced_by OBI:0000916`.
+they are outside the assay branch. The two are handled differently, following what `obi.obo`
+names as each one's replacement:
+
+- **Intracellular cytokine staining** — `OBI:0000665 replaced_by OBI:0000916`. Since 2026-09-11
+  it is not pinned by an override map: the extractor's `standard_technique_name` records the measurement
+  technique ("flow cytometry"), which maps to `OBI:0000916` exactly.
+- **MHC multimer staining** — `OBI:0000667 replaced_by OBI:1110179` *MHC tetramer/multimer assay
+  measuring binding of a T cell epitope:MHC:TCR complex*. That label is compositional, so the
+  filter dropped it and a tetramer stain fell back to flow cytometry, where the round-5 merge
+  folded it into the paper's other flow panels (SDY212's "tetramer staining" was lost that way).
+  Since 2026-10-13 it is pinned by `_COMPOSITIONAL_KEEP`. It `is_a` both `OBI:0000916` and
+  `OBI:0003128 T cell epitope assay`, so it stays comparable to a benchmark that uses either.
 
 The `assay detecting X` family (e.g. `OBI:1110207 assay detecting IFN-gamma production`) was
 added to the compositional filter on 2026-09-09 and is no longer in the index; a benchmark citing

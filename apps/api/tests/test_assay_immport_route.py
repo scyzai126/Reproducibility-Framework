@@ -92,9 +92,9 @@ def corpus(tmp_path, monkeypatch):
     """A two-row corpus file standing in for data/31paper_assays/all_assays_OBI.json."""
     path = tmp_path / "all_assays_OBI.json"
     path.write_text(json.dumps([
-        {"study": "19029902_SDY1264", "assay": "Neut Ab", "normalized_name": "Virus Neutralization",
+        {"study": "19029902_SDY1264", "assay": "Neut Ab", "standard_technique_name": "Virus Neutralization",
          "obi_label": "serum neutralization assay"},
-        {"study": "19029902_SDY1264", "assay": "Mass spec", "normalized_name": "Mass spectrometry",
+        {"study": "19029902_SDY1264", "assay": "Mass spec", "standard_technique_name": "Mass spectrometry",
          "obi_label": "mass spectrometry assay"},
     ]), encoding="utf-8")
     monkeypatch.setattr(routes, "_ASSAY_OBI_PATH", path)
@@ -168,7 +168,7 @@ def test_stored_coverage_for_this_table_is_served_without_touching_immport(corpu
 def test_a_benchmark_only_row_is_not_swept_counted_or_used_for_staleness(corpus, client):
     """A curator assay we missed is shown in the table but is not an assay of ours."""
     rows = json.loads(corpus.read_text(encoding="utf-8"))
-    rows.append({"study": "19029902_SDY1264", "assay": "", "normalized_name": "", "obi_id": None,
+    rows.append({"study": "19029902_SDY1264", "assay": "", "standard_technique_name": "", "obi_id": None,
                  "obi_label": None, "resource": None, "benchmark_assay": "YFV neutralization",
                  "benchmark_only": True})
     corpus.write_text(json.dumps(rows), encoding="utf-8")
@@ -240,9 +240,9 @@ def test_checking_one_paper_s_rows_falls_back_to_the_model(corpus, client, resol
     response = client(_FakeSession(_EXPERIMENTS)).post(
         "/agent/assay-immport/check",
         json={"rows": [{"study": "19029902_SDY1264", "assay": "Neut Ab",
-                        "normalized_name": "Virus Neutralization"},
+                        "standard_technique_name": "Virus Neutralization"},
                        {"study": "19029902_SDY1264", "assay": "Mass spec",
-                        "normalized_name": "Mass spectrometry"}]})
+                        "standard_technique_name": "Mass spectrometry"}]})
 
     assert response.status_code == 200
     body = response.json()
@@ -260,7 +260,7 @@ def test_a_yes_here_means_what_a_yes_in_the_corpus_table_means(corpus, client):
     checked = client(_FakeSession(_EXPERIMENTS)).post(
         "/agent/assay-immport/check",
         json={"rows": [{"study": matched["study"], "assay": matched["assay"],
-                        "normalized_name": "Virus Neutralization"}]}).json()
+                        "standard_technique_name": "Virus Neutralization"}]}).json()
 
     assert checked["rows"][0]["experiment_accession"] == matched["experiment_accession"]
 
@@ -308,7 +308,7 @@ def test_an_acknowledged_resolve_runs(corpus, client):
     response = client(_FakeSession(_EXPERIMENTS)).post(
         "/agent/assay-immport/resolve",
         json={"rows": [{"study": "19029902_SDY1264", "assay": "Neut Ab",
-                        "normalized_name": "Virus Neutralization"}],
+                        "standard_technique_name": "Virus Neutralization"}],
               "acknowledged_calls": 1})
 
     assert response.status_code == 200

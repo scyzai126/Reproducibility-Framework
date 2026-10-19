@@ -3,12 +3,12 @@
     "name_in_paper": [
       "DNA microarray"
     ],
-    "normalized_name": "microarray",
+    "standard_technique_name": "transcription profiling by array",
     "aliases": [
       "DNA microarrays",
-      "gene expression profile"
+      "DNA microarray experiment"
     ],
-    "sample_type": "PBMCs",
+    "sample_type": "peripheral blood mononuclear cells",
     "readouts": "gene expression levels",
     "generate_claim": true,
     "source": "methods",
@@ -22,7 +22,7 @@
     "obi_id": "OBI:0001463",
     "obi_label": "transcription profiling by array assay",
     "resource": "embedding_llm",
-    "obi_confidence": 0.6095,
+    "obi_confidence": 0.8293,
     "obi_granularity": "EXACT"
   },
   "enzyme-linked immunosorbent assay": {
@@ -30,18 +30,20 @@
       "ELISA",
       "ELISA kits"
     ],
-    "normalized_name": "enzyme linked immunosorbent assay",
-    "aliases": [],
-    "sample_type": "serum samples",
-    "readouts": "anti-meningococcal polysaccharide antibody levels including IgG, IgM, IgG1 and IgG2",
+    "standard_technique_name": "enzyme-linked immunosorbent assay",
+    "aliases": [
+      "Measurement of anti-Meningococcal antibodies by ELISA"
+    ],
+    "sample_type": "serum",
+    "readouts": "meningococcal serogroup A or C polysaccharide-specific IgG, IgM, IgG1 and IgG2 antibody levels",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
       "section": "Measurement of anti-Meningococcal antibodies by ELISA",
       "sentence_ids": [
-        "S284"
+        "S274"
       ],
-      "quote": "Subclass IgG1 antibodies were measured using mouse anti-human IgG1 (Alpha Diagnostics, San Antonio, TX) conjugated to HRP."
+      "quote": "Serum samples were pre-diluted 1:25 and then serially diluted (2-fold) seven times in SC buffer (PBS with 5% NBBS and 0.1% Brij35)."
     },
     "obi_id": "OBI:0000661",
     "obi_label": "enzyme-linked immunosorbent assay",
@@ -49,42 +51,45 @@
     "obi_confidence": "high",
     "obi_granularity": null
   },
-  "antibody detection by cytometric bead array assay": {
+  "cytometric bead array assay": {
     "name_in_paper": [
-      "Luminex"
+      "anti-DT IgG capture microsphere assay",
+      "27-plex cytokines (Luminex)"
     ],
-    "normalized_name": "bead based multiplex assay",
+    "standard_technique_name": "Luminex",
     "aliases": [
+      "Measurement of anti-Diphtheria IgG by Luminex",
+      "Luminex",
       "anti- DT IgG capture microsphere assay"
     ],
     "sample_type": "sera",
-    "readouts": "anti-diphtheria toxoid IgG levels",
+    "readouts": "diphtheria toxoid-specific IgG quantified as median fluorescence intensity-based arbitrary units per milliliter",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
       "section": "Measurement of anti-Diphtheria IgG by Luminex",
       "sentence_ids": [
-        "S289"
+        "S288"
       ],
-      "quote": "Fluorescent microspheres (Luminex Corp, Austin, TX) were covalently conjugated to DT (List Biologicals, Campbell, CA) and used to capture and quantify DT specific IgG in sera based on previous method with minor modifications 53 ."
+      "quote": "Immune response to Diphtheria toxoid (DT) carrier protein was assessed at Days 0, 7 and 30 using anti- DT IgG capture microsphere assay."
     },
-    "obi_id": "OBI:0003116",
-    "obi_label": "antibody detection by cytometric bead array assay",
-    "resource": "exact_original_llm",
-    "obi_confidence": "high",
+    "obi_id": "OBI:0000920",
+    "obi_label": "cytometric bead array assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.5992,
     "obi_granularity": "EXACT"
   },
   "bacterial neutralization assay": {
     "name_in_paper": [
       "serum bactericidal titers (SBA)"
     ],
-    "normalized_name": "serum bactericidal assay",
+    "standard_technique_name": "serum bactericidal assay",
     "aliases": [
-      "SBA",
-      "Serum bactericidal assay (SBA)"
+      "Measurement of serum bactericidal titers (SBA)",
+      "SBA"
     ],
-    "sample_type": "serum samples",
-    "readouts": "bactericidal activity titers against meningococcal strains",
+    "sample_type": "serum",
+    "readouts": "bactericidal titers determined from serum dilution yielding 50% killing",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
@@ -97,19 +102,19 @@
     "obi_id": "OBI:0003797",
     "obi_label": "bacterial neutralization assay",
     "resource": "embedding_llm",
-    "obi_confidence": 0.5757,
+    "obi_confidence": 0.5756,
     "obi_granularity": "EXACT"
   },
   "flow cytometry assay": {
     "name_in_paper": [
       "flow cytometry"
     ],
-    "normalized_name": "flow cytometry",
+    "standard_technique_name": "flow cytometry",
     "aliases": [
       "FACS"
     ],
     "sample_type": "whole blood cells",
-    "readouts": "frequency of blood antibody secreting cells identified as CD3 neg, CD20 neg, CD38 hi, CD27 hi, CD19+ cells",
+    "readouts": "frequency of blood antibody secreting cells identified as CD3 negative CD20 negative CD38 high CD27 high CD19 positive cells",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
@@ -129,8 +134,10 @@
     "name_in_paper": [
       "ELISpot"
     ],
-    "normalized_name": "enzyme linked immunospot",
-    "aliases": [],
+    "standard_technique_name": "enzyme-linked immunospot assay",
+    "aliases": [
+      "Measurement of antibody secreting cells by FACS and ELISpot"
+    ],
     "sample_type": null,
     "readouts": "numbers of antigen-specific and total IgG, IgM, and IgA secreting cells",
     "generate_claim": true,

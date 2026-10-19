@@ -70,7 +70,10 @@ label each:
 - `NOT_AN_ASSAY` — a computational analysis, a sample-prep step, a QC check, or an endpoint
   (see the four exclusions below), or a technique the paper did not perform.
 - `NEW_ASSAY` — a real wet-lab measurement technique with no counterpart in the inventory.
-  **Only this label is admitted.**
+  **Only this label is admitted.** A technique the paper names only in Results or a caption,
+  with no Methods description, is `NEW_ASSAY` only when the sentence states it was performed on
+  this study's own samples ("we stained PBMC with HLA-A2 tetramers"); a Results sentence that
+  merely reports a result of it, or mentions the technique as context, admits nothing.
 
 Do not skip the classification step and merge the two lists directly.
 
@@ -150,11 +153,17 @@ Methods wording to defer to.
   it is not an alias, and is recorded nowhere.
 
 **One entry per distinct measurement.** Three things identify a measurement: the
-**technique** (what `normalized_name` would say), the **analyte or biological target** it
+**technique** (what `standard_technique_name` would say), the **analyte or biological target** it
 measures, and the **specimen** it measures it in. Two descriptions that share all three are one
 entry; split them only when at least one of the three differs. So a Luminex antibody-titer
 assay and a separate Luminex cytokine panel stay two entries despite the shared instrument —
-the analyte differs.
+the analyte differs. The same holds on a flow cytometer: immunophenotyping, an
+activation-induced marker (AIM) assay, a proliferation-dye or CFSE assay, intracellular
+cytokine staining after stimulation, and MHC multimer/tetramer staining are separate entries
+when Methods describes the experiment in its own paragraph or subsection — its own stimulation,
+staining or labelling step — even when the paper calls all of them flow cytometry. A stain or
+panel described only inside another experiment's paragraph is part of that entry. Several
+antibody panels within one experiment are still one entry.
 
 Everything else is the same measurement run more than once, and never a reason to split: a
 different kit, instrument model or protocol variant, a different purpose, several reagents,
@@ -193,7 +202,7 @@ Return ONLY a JSON object with one key per deduplicated assay — the key is the
 {
   "flow cytometry": {
     "name_in_paper": "flow cytometry",
-    "normalized_name": "flow cytometry",
+    "standard_technique_name": "flow cytometry",
     "aliases": ["FACS"],
     "sample_type": "PBMCs",
     "readouts": "intracellular cytokine production",
@@ -210,11 +219,11 @@ vendor field, or a sentence id. Where the assay sits in the paper and which sent
 came from are worked out from your `quote` after you answer; an answer of your own for either is
 discarded.
 
-- `normalized_name` — the **measurement technique**: what class of method or instrument
+- `standard_technique_name` — the **measurement technique**: what class of method or instrument
   produced the data. This is the one field that is not a report of what the paper says. Every
   other field copies or summarises the text; this one is your judgement, and it may use words
   the paper never wrote. When the paper already names the technique in standard terms
-  ("flow cytometry", "ELISA"), that name is the answer — keep it.
+  ("flow cytometry", "mass cytometry"), that name is the answer — keep it.
   **Papers name assays after protocol sections, acronyms and study aims. Name the technique
   instead.** "Surface and intracellular cytokine staining" → `"flow cytometry"`, because the
   cells were stained and then acquired on a cytometer. "Direct ex vivo PBMC immune cell
@@ -227,7 +236,8 @@ discarded.
   cytometer means flow cytometry, a sequencer means sequencing — but never emit the instrument
   itself: `"LSR-II"` is wrong, `"flow cytometry"` is right.
   **Write the acronym out in full words.** This field is matched against an ontology written in
-  full words, and an acronym matches nothing there: `"PCR"` → `"polymerase chain reaction"`,
+  full words, and an acronym matches nothing there: `"ELISA"` → `"enzyme-linked immunosorbent
+  assay"`, `"PCR"` → `"polymerase chain reaction"`,
   `"16S rRNA gene sequencing"` → `"16S ribosomal gene sequencing"`. Where the ontology spells a
   technique its own way, use its spelling: `"RIA"` → `"radio immuno assay"`, not
   "radioimmunoassay". The acronym still belongs in `aliases`; it is not lost.
@@ -255,6 +265,21 @@ discarded.
   so an over-specified string steers the match toward a wrong term — and the vocabulary holds
   whole families of near-identical terms separated by exactly those words (seven for
   polymerase chain reaction alone, four for neutralization).
+  **Never less specific than the paper is, either.** The same rule cuts the other way: when
+  the paper — anywhere, usually the Methods — states the detail that narrows the technique,
+  the qualifier belongs in this field, even when the assay's own name leaves it out. Read the
+  evidence for what was actually done, not just what the assay was called:
+  - RNA-seq on cells captured one by one (10x Chromium, Drop-seq, Smart-seq on sorted single
+    cells, "scRNA-seq", "single-cell transcriptomes") → `"single-cell RNA sequencing"`
+  - RNA-seq on RNA extracted from a population — whole blood, PBMC, a sorted subset, tissue —
+    with no single-cell capture → `"bulk RNA sequencing"`
+  - the same for ATAC-seq, Hi-C and other sequencing assays that have a single-cell form
+  - PCR the Methods run on cDNA → reverse transcription; with SYBR Green, TaqMan probes or Ct
+    values → real time
+  The test is a sentence you could point to. "Libraries were prepared from total RNA isolated
+  from PBMC" earns `bulk`; a paper that only ever writes "RNA-seq" and says nothing about how
+  RNA was obtained earns plain `"RNA sequencing"`. A qualifier you are guessing at is the
+  over-specification the paragraph above forbids.
   **The letters of an acronym are the paper stating them.** "qPCR" says real time, so it is
   `"real time polymerase chain reaction"`; "qRT-PCR" says both, so it is `"real time
   reverse-transcription polymerase chain reaction"` — dropping a qualifier the acronym carries
@@ -281,12 +306,18 @@ discarded.
   A Methods heading that names the measurement several entries carry out together is an alias
   of each of those entries, when it passes the same test: quote it verbatim in every one of
   their `aliases`. A heading that names a broader topic than the measurement is not.
-  `[]` is a perfectly good answer; a wrong alias costs more
-  than a missing one, because a later step reads these as evidence of what the technique is.
-- `sample_type` — the tissue/specimen the assay was performed on. `null` if unstated.
+  Include every wording that passes the substitution test — the bare technique word, the
+  acronym, a Methods heading that names this measurement. Whether each one appears in the paper
+  is checked by code afterwards, so a wording you are unsure of costs nothing to include, while
+  one you leave out is never recovered. `[]` only when the paper really uses one wording.
+- `sample_type` — the tissue/specimen the assay was performed on. `null` if unstated. Write it
+  out in full, expanding the paper's abbreviation: "platelet-rich plasma (platelets)", not "PRP";
+  "peripheral blood mononuclear cells", not "PBMC" alone.
 - `readouts` — the key measurement(s) it produces, in your own words. What the instrument
   measured, **not** what the paper concluded from it: "miRNA expression levels", never "miRNA
-  correlations with the antibody response".
+  correlations with the antibody response". When the paper says what instrument read the assay,
+  name it here — "13 cytokine concentrations; beads acquired on a flow cytometer" — because a
+  later step tells a flow-read bead kit from a Luminex panel only by this.
 - `generate_claim` — `true` when the paper reports a finding drawn from this assay's data,
   `false` when the paper performed the assay but reports no finding from it. `null` when the text
   does not let you tell. **This does not change what belongs in the inventory** — an assay the

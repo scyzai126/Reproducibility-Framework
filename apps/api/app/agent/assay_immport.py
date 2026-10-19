@@ -27,7 +27,8 @@ from collections.abc import Iterable, Sequence
 from sqlalchemy import bindparam, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.agent.assay_service import REGISTRY_ROOT, split_stem
+from app.agent.assay_registry import CORPUS_ROOT
+from app.agent.assay_service import split_stem
 from app.agent.query_builder import (
     get_assay_method_for_experiment,
     resolve_experiment_accession,
@@ -56,7 +57,9 @@ _MIN_TERM = 4
 
 #: The model's answer per `<SDY>::<assay>`: `{"experiment_accession": str | None}`. A None is
 #: cached too -- "none of this study's experiments" is an answer that was paid for.
-LLM_CACHE_PATH = REGISTRY_ROOT / "immport_llm_cache.json"
+#: Unversioned on purpose: the cache is keyed by assay wording and outlives any one result
+#: version.
+LLM_CACHE_PATH = CORPUS_ROOT / "immport_llm_cache.json"
 
 
 def _load_cache() -> dict[str, dict]:
@@ -81,21 +84,21 @@ def _cache_key(study: str, assay: str) -> str:
 
 def search_terms(
     assay: str = "",
-    normalized_name: str = "",
+    standard_technique_name: str = "",
     obi_label: str = "",
     aliases: Iterable[str] = (),
 ) -> list[str]:
     """Every wording worth trying against ImmPort's `name` and `measurement_technique`.
 
     Ordered by how likely each is to be ImmPort's own vocabulary rather than the paper's:
-    `normalized_name` is the extractor's judgement of the technique and is what ImmPort's column
+    `standard_technique_name` is the extractor's judgement of the technique and is what ImmPort's column
     holds ("Luminex xMAP"), so it goes first; the paper's own wording goes last because it is the
     most idiosyncratic. Suffix-stripped variants follow their originals.
 
     Deduplicated case-insensitively and filtered by length, because the caller pays a query per
     term and a two-character term resolves nothing.
     """
-    ordered = [normalized_name, assay, obi_label, *aliases]
+    ordered = [standard_technique_name, assay, obi_label, *aliases]
     widened: list[str] = []
     for term in ordered:
         widened.append(term)
@@ -186,7 +189,7 @@ async def check_rows(
 
         terms = search_terms(
             assay=row.get("assay") or "",
-            normalized_name=row.get("normalized_name") or "",
+            standard_technique_name=row.get("standard_technique_name") or "",
             obi_label=row.get("obi_label") or "",
             aliases=row.get("aliases") or (),
         )

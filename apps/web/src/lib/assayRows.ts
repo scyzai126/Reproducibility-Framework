@@ -11,7 +11,7 @@ import type {
  * One paper's result, in the shape the corpus table renders.
  *
  * Every column the corpus table shows already exists per assay — `assays_OBI.json` carries
- * name_in_paper, normalized_name, sample_type, readouts and the four obi_* fields — so this is a
+ * name_in_paper, standard_technique_name, sample_type, readouts and the four obi_* fields — so this is a
  * mapping rather than a fetch, and the summary above a result cannot disagree with the evidence
  * below it about which assays exist.
  *
@@ -31,7 +31,7 @@ export function toCorpusRows(
   studyAccession: string,
 ): AssayObiRow[] {
   if (!result) return [];
-  // `obi` in preference to `assays`: the OBI mapper fills in normalized_name even where the
+  // `obi` in preference to `assays`: the OBI mapper fills in technique even where the
   // extractor left it null, which is why the corpus file has good values and a raw registry
   // often does not. When round 4 failed there is no obi at all, and the registry still gives
   // every column but the OBI ones.
@@ -47,7 +47,7 @@ export function toCorpusRows(
     // recognises, so it leads and the key is the fallback.
     // " / ", as the backend's table rows join them: the ImmPort check caches by this string.
     assay: paperNames(entry).join(' / ') || key,
-    normalized_name: entry.normalized_name ?? '',
+    standard_technique_name: entry.standard_technique_name ?? '',
     sample_type: entry.sample_type ?? '',
     readouts: entry.readouts ?? '',
     obi_id: entry.obi_id ?? null,

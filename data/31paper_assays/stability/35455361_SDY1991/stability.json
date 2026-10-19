@@ -1,0 +1,177 @@
+{
+  "runs": [
+    "v1",
+    "run1",
+    "run2"
+  ],
+  "entries": {
+    "v1": 5,
+    "run1": 4,
+    "run2": 4
+  },
+  "clusters": 4,
+  "stable": 2,
+  "split": 0,
+  "presence": 1,
+  "duplicate_keys": {
+    "v1": [],
+    "run1": [],
+    "run2": []
+  },
+  "rows": [
+    {
+      "shape": "stable pair (2)",
+      "keys": {
+        "v1": [
+          "DENV-specific IgG ELISAs",
+          "flow cytometry-based neutralization assays"
+        ],
+        "run1": [
+          "DENV-specific IgG ELISAs",
+          "flow cytometry-based neutralization assays"
+        ],
+        "run2": [
+          "DENV-specific IgG ELISAs",
+          "flow cytometry-based neutralization assays"
+        ]
+      }
+    },
+    {
+      "shape": "stable",
+      "keys": {
+        "v1": [
+          "IFN-γ Capture Assay"
+        ],
+        "run1": [
+          "IFN-γ Capture Assay"
+        ],
+        "run2": [
+          "IFN-γ Capture Assay"
+        ]
+      }
+    },
+    {
+      "shape": "presence",
+      "keys": {
+        "v1": [
+          "flow cytometry"
+        ],
+        "run1": [],
+        "run2": []
+      }
+    },
+    {
+      "shape": "stable",
+      "keys": {
+        "v1": [
+          "Microscaled RNA-Sequencing Assay"
+        ],
+        "run1": [
+          "Microscaled RNA-Sequencing Assay"
+        ],
+        "run2": [
+          "Microscaled RNA-Sequencing Assay"
+        ]
+      }
+    }
+  ],
+  "field_drift": {
+    "standard_technique_name": {
+      "same": 0,
+      "reworded": 1,
+      "changed": 1
+    },
+    "sample_type": {
+      "same": 0,
+      "reworded": 0,
+      "changed": 2
+    },
+    "readouts": {
+      "same": 0,
+      "reworded": 0,
+      "changed": 2
+    },
+    "aliases": {
+      "same": 2,
+      "reworded": 0,
+      "changed": 0
+    },
+    "generate_claim": {
+      "same": 2,
+      "reworded": 0,
+      "changed": 0
+    },
+    "evidence.quote": {
+      "same": 2,
+      "reworded": 0,
+      "changed": 0
+    },
+    "source": {
+      "same": 2,
+      "reworded": 0,
+      "changed": 0
+    }
+  },
+  "field_drift_detail": [
+    {
+      "cluster": "IFN-γ Capture Assay",
+      "field": "standard_technique_name",
+      "verdict": "changed",
+      "values": {
+        "v1": "cytokine capture assay",
+        "run1": "flow cytometry",
+        "run2": "flow cytometry"
+      }
+    },
+    {
+      "cluster": "IFN-γ Capture Assay",
+      "field": "sample_type",
+      "verdict": "changed",
+      "values": {
+        "v1": "PBMCs",
+        "run1": "peripheral blood mononuclear cells",
+        "run2": "peripheral blood mononuclear cells"
+      }
+    },
+    {
+      "cluster": "IFN-γ Capture Assay",
+      "field": "readouts",
+      "verdict": "changed",
+      "values": {
+        "v1": "IFN-γ-producing CD8+ T cells after DENV peptide stimulation",
+        "run1": "IFN-γ-producing CD8+ T cells identified after DENV CD8 megapool stimulation",
+        "run2": "interferon-gamma-producing and non-producing CD8-positive T cells identified after DENV CD8 megapool stimulation"
+      }
+    },
+    {
+      "cluster": "Microscaled RNA-Sequencing Assay",
+      "field": "standard_technique_name",
+      "verdict": "reworded",
+      "values": {
+        "v1": "RNA sequencing",
+        "run1": "bulk RNA sequencing",
+        "run2": "bulk RNA sequencing"
+      }
+    },
+    {
+      "cluster": "Microscaled RNA-Sequencing Assay",
+      "field": "sample_type",
+      "verdict": "changed",
+      "values": {
+        "v1": "sorted CD8+ IFNγ+ and CD8+ IFNγ− cell populations",
+        "run1": "sorted CD8+ IFNγ+ and CD8+ IFNγ− T cell populations",
+        "run2": "sorted CD8-positive interferon-gamma-positive and CD8-positive interferon-gamma-negative T cells"
+      }
+    },
+    {
+      "cluster": "Microscaled RNA-Sequencing Assay",
+      "field": "readouts",
+      "verdict": "changed",
+      "values": {
+        "v1": "whole-transcriptome mRNA sequence reads and gene expression counts",
+        "run1": "whole-transcriptome mRNA sequencing reads and gene expression profiles",
+        "run2": "whole-transcriptome mRNA sequencing reads and gene expression counts"
+      }
+    }
+  ]
+}

@@ -1,12 +1,12 @@
 {
   "DNA microarray": {
     "name_in_paper": "DNA microarray",
-    "normalized_name": "microarray",
+    "standard_technique_name": "transcription profiling by array",
     "aliases": [
       "DNA microarrays",
-      "gene expression profile"
+      "DNA microarray experiment"
     ],
-    "sample_type": "PBMCs",
+    "sample_type": "peripheral blood mononuclear cells",
     "readouts": "gene expression levels",
     "generate_claim": true,
     "source": "methods",
@@ -20,47 +20,51 @@
   },
   "ELISA": {
     "name_in_paper": "ELISA",
-    "normalized_name": "enzyme linked immunosorbent assay",
-    "aliases": [],
-    "sample_type": "serum samples",
-    "readouts": "anti-meningococcal polysaccharide antibody levels including IgG, IgM, IgG1 and IgG2",
+    "standard_technique_name": "enzyme-linked immunosorbent assay",
+    "aliases": [
+      "Measurement of anti-Meningococcal antibodies by ELISA"
+    ],
+    "sample_type": "serum",
+    "readouts": "meningococcal serogroup A or C polysaccharide-specific IgG, IgM, IgG1 and IgG2 antibody levels",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
       "section": "Measurement of anti-Meningococcal antibodies by ELISA",
       "sentence_ids": [
-        "S284"
+        "S274"
       ],
-      "quote": "Subclass IgG1 antibodies were measured using mouse anti-human IgG1 (Alpha Diagnostics, San Antonio, TX) conjugated to HRP."
+      "quote": "Serum samples were pre-diluted 1:25 and then serially diluted (2-fold) seven times in SC buffer (PBS with 5% NBBS and 0.1% Brij35)."
     }
   },
-  "Luminex": {
-    "name_in_paper": "Luminex",
-    "normalized_name": "bead based multiplex assay",
+  "anti-DT IgG capture microsphere assay": {
+    "name_in_paper": "anti-DT IgG capture microsphere assay",
+    "standard_technique_name": "Luminex",
     "aliases": [
+      "Measurement of anti-Diphtheria IgG by Luminex",
+      "Luminex",
       "anti- DT IgG capture microsphere assay"
     ],
     "sample_type": "sera",
-    "readouts": "anti-diphtheria toxoid IgG levels",
+    "readouts": "diphtheria toxoid-specific IgG quantified as median fluorescence intensity-based arbitrary units per milliliter",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
       "section": "Measurement of anti-Diphtheria IgG by Luminex",
       "sentence_ids": [
-        "S289"
+        "S288"
       ],
-      "quote": "Fluorescent microspheres (Luminex Corp, Austin, TX) were covalently conjugated to DT (List Biologicals, Campbell, CA) and used to capture and quantify DT specific IgG in sera based on previous method with minor modifications 53 ."
+      "quote": "Immune response to Diphtheria toxoid (DT) carrier protein was assessed at Days 0, 7 and 30 using anti- DT IgG capture microsphere assay."
     }
   },
   "serum bactericidal titers (SBA)": {
     "name_in_paper": "serum bactericidal titers (SBA)",
-    "normalized_name": "serum bactericidal assay",
+    "standard_technique_name": "serum bactericidal assay",
     "aliases": [
-      "SBA",
-      "Serum bactericidal assay (SBA)"
+      "Measurement of serum bactericidal titers (SBA)",
+      "SBA"
     ],
-    "sample_type": "serum samples",
-    "readouts": "bactericidal activity titers against meningococcal strains",
+    "sample_type": "serum",
+    "readouts": "bactericidal titers determined from serum dilution yielding 50% killing",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
@@ -73,12 +77,12 @@
   },
   "flow cytometry": {
     "name_in_paper": "flow cytometry",
-    "normalized_name": "flow cytometry",
+    "standard_technique_name": "flow cytometry",
     "aliases": [
       "FACS"
     ],
     "sample_type": "whole blood cells",
-    "readouts": "frequency of blood antibody secreting cells identified as CD3 neg, CD20 neg, CD38 hi, CD27 hi, CD19+ cells",
+    "readouts": "frequency of blood antibody secreting cells identified as CD3 negative CD20 negative CD38 high CD27 high CD19 positive cells",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
@@ -91,8 +95,10 @@
   },
   "ELISpot": {
     "name_in_paper": "ELISpot",
-    "normalized_name": "enzyme linked immunospot",
-    "aliases": [],
+    "standard_technique_name": "enzyme-linked immunospot assay",
+    "aliases": [
+      "Measurement of antibody secreting cells by FACS and ELISpot"
+    ],
     "sample_type": null,
     "readouts": "numbers of antigen-specific and total IgG, IgM, and IgA secreting cells",
     "generate_claim": true,
@@ -107,12 +113,12 @@
   },
   "ELISA kits": {
     "name_in_paper": "ELISA kits",
-    "normalized_name": "enzyme linked immunosorbent assay",
+    "standard_technique_name": "enzyme-linked immunosorbent assay",
     "aliases": [
       "ELISA"
     ],
     "sample_type": "cell supernatants",
-    "readouts": "IL-6, TNF, IL-12p40 and IL-1b levels",
+    "readouts": "IL-6, TNF, and IL-12p40 in cell supernatants",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
@@ -121,6 +127,26 @@
         "S348"
       ],
       "quote": "Cell supernatants were harvested and assessed for IL-6, TNF and IL-12p40 using ELISA kits, according to manufacturer’s instructions (BD Biosciences, catalog numbers 555220, 555212, 555171)."
+    },
+    "identity_review": {
+      "verdict": "NOT_SUPPORTED",
+      "reason": "\"ELISA kits\" names a product/reagent category rather than the assay technique performed."
+    }
+  },
+  "27-plex cytokines (Luminex)": {
+    "name_in_paper": "27-plex cytokines (Luminex)",
+    "standard_technique_name": "Luminex",
+    "aliases": [],
+    "sample_type": "plasma",
+    "readouts": "27 cytokine concentrations",
+    "generate_claim": true,
+    "source": "results",
+    "evidence": {
+      "section": "Table 1",
+      "sentence_ids": [
+        "S413"
+      ],
+      "quote": "Plasma samples were used for the remaining assays."
     }
   }
 }

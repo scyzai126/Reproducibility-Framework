@@ -22,7 +22,7 @@ def cli():
 
 
 _ENTRY = {
-    "name_in_paper": ["flow cytometry"], "normalized_name": None, "aliases": [],
+    "name_in_paper": ["flow cytometry"], "standard_technique_name": None, "aliases": [],
     "platform": None, "sample_type": None, "readouts": None, "measurement_role": "reported",
     "parent_hint": None, "source": "methods",
     "evidence": {"section": "Methods", "sentence_ids": [], "quote": "Cells were stained."},
@@ -84,3 +84,16 @@ def test_a_miscited_quote_is_reported(cli, capsys):
 
     assert "QUOTE MISATTRIBUTED  flow cytometry: quote is verbatim but cites S9" in (
         capsys.readouterr().out)
+
+
+def test_a_registry_keyed_by_obi_label_is_not_warned_about(cli, capsys):
+    """After round 5 the key is the OBI label, and the mapping is what says so. Without it
+    every single-wording entry of a finished paper printed `not the key`."""
+    entry = {**_ENTRY, "name_in_paper": ["FACS"]}
+    cli.report_result(_result(
+        assays={"flow cytometry assay": entry},
+        obi={"flow cytometry assay": {**entry, "obi_id": "OBI:0000916",
+                                      "obi_label": "flow cytometry assay",
+                                      "resource": "exact_original"}}))
+
+    assert "not the key" not in capsys.readouterr().out

@@ -18,8 +18,8 @@ from collections import defaultdict
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-BENCHMARK_DIR = REPO_ROOT / "data" / "benchmark_assay" / "benchmark_assay_v1"
-REGISTRY_DIR = REPO_ROOT / "data" / "31paper_assays"
+BENCHMARK_DIR = REPO_ROOT / "data" / "benchmark_assay" / "benchmark_assay_v4"
+REGISTRY_DIR = REPO_ROOT / "data" / "31paper_assays" / "assay_result_v1"
 OBO_PATH = REPO_ROOT / "data" / "OBI" / "obi.obo"
 OUT_DIR = BENCHMARK_DIR.parent / "comparison"
 OUT_STEM = "benchmark_same_name_different_obi"

@@ -55,7 +55,7 @@ def seen(monkeypatch):
 
     def _fake(assays, *_args, **_kwargs):
         calls.append(dict(assays))
-        return {key: {**entry, "normalized_name": key, "obi_id": "OBI:0000916",
+        return {key: {**entry, "standard_technique_name": key, "obi_id": "OBI:0000916",
                       "obi_label": "flow cytometry assay", "resource": "exact_original",
                       "obi_confidence": "high"}
                 for key, entry in assays.items()}

@@ -16,7 +16,7 @@ import pytest
 _REPO_ROOT = Path(__file__).resolve().parents[3]
 
 #: The fields of AssayObiRow in apps/web/src/lib/types.ts.
-_ROW_FIELDS = {"study", "assay", "normalized_name", "sample_type", "readouts",
+_ROW_FIELDS = {"study", "assay", "standard_technique_name", "sample_type", "readouts",
                "obi_id", "obi_label", "resource", "obi_confidence",
                "benchmark_assay", "benchmark_obi_label", "benchmark_obi_id", "benchmark_items",
                "paper_url", "paper_source"}
@@ -46,21 +46,21 @@ def _write(root: Path, stem: str, entries: dict) -> None:
 def registries(tmp_path):
     _write(tmp_path, "24336226_SDY1260", {
         "enzyme-linked immunosorbent assay": {
-            "name_in_paper": ["ELISA", "ELISA kits"], "normalized_name": "ELISA",
+            "name_in_paper": ["ELISA", "ELISA kits"], "standard_technique_name": "ELISA",
             "sample_type": "serum", "readouts": "IgG titers",
             "obi_id": "OBI:0000661", "obi_label": "enzyme-linked immunosorbent assay",
             "resource": "exact_original", "obi_confidence": "high",
             "evidence": {"quote": "not carried into the table"},
         },
         "lateral flow assay": {
-            "name_in_paper": ["lateral flow assay"], "normalized_name": "lateral flow",
+            "name_in_paper": ["lateral flow assay"], "standard_technique_name": "lateral flow",
             "sample_type": "whole blood", "readouts": "antibody presence",
             "obi_id": None, "obi_label": None, "obi_confidence": None,
         },
     })
     _write(tmp_path, "20078211_SDY1293_pdf", {
         "microarray assay": {
-            "name_in_paper": "GeneChip analysis", "normalized_name": "microarray",
+            "name_in_paper": "GeneChip analysis", "standard_technique_name": "microarray",
             "sample_type": "PBMCs", "readouts": "gene expression",
             "obi_id": "OBI:0001985", "obi_label": "microarray assay",
             "resource": "exact_normalized_llm", "obi_confidence": "high",

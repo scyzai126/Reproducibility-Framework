@@ -3,47 +3,46 @@
     "name_in_paper": [
       "Multiplex analysis"
     ],
-    "normalized_name": "Luminex",
+    "standard_technique_name": "Luminex",
     "aliases": [
       "24-plex assay",
       "24-plex Luminex assay"
     ],
-    "sample_type": "Plasma samples from CPTs",
-    "readouts": "cytokine concentrations",
+    "sample_type": "plasma",
+    "readouts": "24 cytokine concentrations",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
       "section": "Multiplex analysis",
       "sentence_ids": [
-        "S8"
+        "S165"
       ],
-      "quote": "First, we studied the protein cytokine response in the blood of vaccinees at days 0, 1, 3, 7 and 21 after vaccination, using a 24-plex Luminex assay."
+      "quote": "Assays were performed with the Beadlyte Human 22-Plex Multi-Cytokine Detection System with the addition of interferon-α2 and IL-1 receptor-α Beadmates to make a 24-plex assay (Upstate)."
     },
     "obi_id": "OBI:0000920",
     "obi_label": "cytometric bead array assay",
     "resource": "embedding_llm",
-    "obi_confidence": 0.5992,
+    "obi_confidence": 0.5991,
     "obi_granularity": "EXACT"
   },
   "flow cytometry assay": {
     "name_in_paper": [
       "Flow cytometric analysis"
     ],
-    "normalized_name": "flow cytometry",
+    "standard_technique_name": "flow cytometry",
     "aliases": [
-      "Flow cytometry",
       "flow cytometry"
     ],
-    "sample_type": "PBMCs",
-    "readouts": "percentages of CD86+ antigen-presenting cells and CD38+ HLA-DR+ CD8+ T cells",
+    "sample_type": "peripheral blood mononuclear cells",
+    "readouts": "percentages of CD86-positive monocytes, myeloid dendritic cells and plasmacytoid dendritic cells; percentage of CD38-positive HLA-DR-positive CD8-positive CD3-positive T cells",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
       "section": "Multiplex analysis",
       "sentence_ids": [
-        "S11"
+        "S170"
       ],
-      "quote": "Next we evaluated the frequency and activation status of antigen-presenting cells, including DCs and monocytes, in the blood at various times after vaccination."
+      "quote": "PBMCs from all time points for an individual were thawed, stained and acquired in parallel."
     },
     "obi_id": "OBI:0000916",
     "obi_label": "flow cytometry assay",
@@ -53,112 +52,113 @@
   },
   "serum neutralization of viral infectivity assay": {
     "name_in_paper": [
-      "cytopathic effect (CPE)",
-      "plaque reduction neutralization test (PRNT)"
+      "neutralizing antibodies by CPE",
+      "plaque reduction neutralization test"
     ],
-    "normalized_name": "cytopathic effect assay",
+    "standard_technique_name": "cytopathic effect neutralization assay",
     "aliases": [
       "CPE",
-      "Assay for yellow fever virus (YFV) neutralizing antibodies"
+      "cytopathic effect (CPE)"
     ],
     "sample_type": "plasma",
-    "readouts": "yellow fever virus neutralizing antibody titer",
+    "readouts": "yellow fever virus neutralizing antibody titer defined by the last dilution with intact Vero cell monolayer and no cytopathic effect",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
       "section": "Assay for yellow fever virus (YFV) neutralizing antibodies",
       "sentence_ids": [
-        "S179"
+        "S180"
       ],
-      "quote": "YFV neutralizing antibodies were measured by cytopathic effect (CPE) (trial 1) or by plaque reduction neutralization test (PRNT) (trial 2)."
+      "quote": "In brief, for neutralizing antibodies by CPE, plasma dilutions in triplicate were incubated with 1,000 plaque-forming units of YFV at 37 °C for 1 h in 96-well flat-bottomed plates."
     },
     "obi_id": "OBI:0000872",
     "obi_label": "serum neutralization of viral infectivity assay",
-    "resource": "embedding_llm",
-    "obi_confidence": 0.4905,
+    "resource": "embedding_llm_normalized",
+    "obi_confidence": 0.599,
     "obi_granularity": "EXACT"
   },
   "transcription profiling by array assay": {
     "name_in_paper": [
       "microarray"
     ],
-    "normalized_name": "microarray",
+    "standard_technique_name": "transcription profiling by array",
     "aliases": [
-      "transcriptional profiling",
-      "microarray analysis"
+      "transcriptional profiling"
     ],
-    "sample_type": "total peripheral blood mono-nuclear cells (PBMCs)",
-    "readouts": "gene expression values",
+    "sample_type": "peripheral blood mononuclear cells",
+    "readouts": "gene expression intensity data",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
       "section": "RNA isolation and microarray and RT-PCR data generation",
       "sentence_ids": [
-        "S14"
+        "S191"
       ],
-      "quote": "To gain a global perspective of the innate response to YF-17D, we performed transcriptional profiling of total peripheral blood mono-nuclear cells (PBMCs) from the 15 subjects (trial 1)."
+      "quote": "After hybridization on Human U133 Plus 2.0 Arrays for 16 h at 45 °C and 60 r.p.m."
     },
     "obi_id": "OBI:0001463",
     "obi_label": "transcription profiling by array assay",
     "resource": "exact_original_llm",
-    "obi_confidence": 0.6923,
+    "obi_confidence": 0.8293,
     "obi_granularity": "EXACT"
   },
-  "real time reverse-transcription polymerase chain reaction assay": {
+  "reverse transcription polymerase chain reaction assay": {
     "name_in_paper": [
       "RT-PCR"
     ],
-    "normalized_name": "reverse transcription polymerase chain reaction",
-    "aliases": [],
-    "sample_type": "PBMCs",
-    "readouts": "relative gene expression by cycling threshold values",
+    "standard_technique_name": "reverse transcription polymerase chain reaction",
+    "aliases": [
+      "two-step RT-PCR"
+    ],
+    "sample_type": null,
+    "readouts": "relative gene expression measured by cycling threshold values",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
       "section": "RNA isolation and microarray and RT-PCR data generation",
       "sentence_ids": [
-        "S47"
+        "S197"
       ],
-      "quote": "For an independent verification of these genes, we assayed 10 day 3/day 0 and 15 day 7/day 0 changes in trial 1 by RT-PCR."
+      "quote": "Two-step RT-PCR was performed."
     },
-    "obi_id": "OBI:0000911",
-    "obi_label": "real time reverse-transcription polymerase chain reaction assay",
+    "obi_id": "OBI:0001170",
+    "obi_label": "reverse transcription polymerase chain reaction assay",
     "resource": "embedding_llm",
-    "obi_confidence": 0.678,
+    "obi_confidence": 0.738,
     "obi_granularity": "EXACT"
   },
-  "immunocytochemistry": {
+  "fluorescence microscopy assay": {
     "name_in_paper": [
-      "Immunofluorescence"
+      "immunofluorescence"
     ],
-    "normalized_name": "immunofluorescence microscopy",
+    "standard_technique_name": "immunofluorescence microscopy",
     "aliases": [
-      "Fluorescence microscopy"
+      "fluorescence microscopy"
     ],
-    "sample_type": "BHK cells",
-    "readouts": "TIAR staining and stress granule formation",
+    "sample_type": "baby hamster kidney cells",
+    "readouts": "TIAR staining and stress granule formation by fluorescence imaging",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
       "section": "Data analysis",
       "sentence_ids": [
-        "S207"
+        "S213"
       ],
-      "quote": "Immunofluorescence, immunoblot analysis and ELISA."
+      "quote": "Immunofluorescence signal was detected using a LSM510 confocal microscope (Zeiss), and images were captured and analyzed using the Zeiss LSM Image Browser."
     },
-    "obi_id": "OBI:0002174",
-    "obi_label": "immunocytochemistry",
+    "obi_id": "CHMO:0000087",
+    "obi_label": "fluorescence microscopy assay",
     "resource": "embedding_llm",
-    "obi_confidence": 0.5626,
-    "obi_granularity": "EXACT"
+    "obi_confidence": 0.6256,
+    "obi_granularity": "BROAD"
   },
-  "immunoblot assay": {
+  "western blot assay": {
     "name_in_paper": [
       "immunoblot analysis"
     ],
-    "normalized_name": "immunoblot",
+    "standard_technique_name": "western blot",
     "aliases": [],
-    "sample_type": "human total PBMC or BHK cells",
+    "sample_type": "human total peripheral blood mononuclear cells or baby hamster kidney cells",
     "readouts": "eIF2α phosphorylation and total eIF2α abundance",
     "generate_claim": true,
     "source": "methods",
@@ -169,17 +169,17 @@
       ],
       "quote": "For immunoblot analysis, human total PBMC or BHK cells were lysed with 100 μl of M-PER mammalian protein extraction reagent (Pierce) containing Halt pro-tease inhibitor, EDTA and phosphatase inhibitor (Pierce)."
     },
-    "obi_id": "OBI:0001978",
-    "obi_label": "immunoblot assay",
+    "obi_id": "OBI:0000854",
+    "obi_label": "western blot assay",
     "resource": "embedding_llm",
-    "obi_confidence": 0.7621,
+    "obi_confidence": 0.7294,
     "obi_granularity": "EXACT"
   },
   "enzyme-linked immunosorbent assay": {
     "name_in_paper": [
       "ELISA"
     ],
-    "normalized_name": "ELISA",
+    "standard_technique_name": "enzyme-linked immunosorbent assay",
     "aliases": [],
     "sample_type": "plasma",
     "readouts": "C3a concentration",

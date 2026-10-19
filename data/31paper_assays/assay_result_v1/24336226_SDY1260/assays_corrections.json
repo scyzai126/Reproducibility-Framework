@@ -1,8 +1,10 @@
 {
   "summary": {
-    "assays": 7,
-    "fields_re_extracted": 0,
-    "actions": {},
+    "assays": 8,
+    "fields_re_extracted": 2,
+    "actions": {
+      "REPLACED": 2
+    },
     "reported_not_corrected": 1
   },
   "results": [
@@ -21,8 +23,8 @@
       "reported_not_corrected": []
     },
     {
-      "assay_id": "Luminex",
-      "assay_name": "Luminex",
+      "assay_id": "anti-DT IgG capture microsphere assay",
+      "assay_name": "anti-DT IgG capture microsphere assay",
       "record_verdict": "ACCEPT",
       "corrections": [],
       "reported_not_corrected": []
@@ -37,8 +39,24 @@
     {
       "assay_id": "flow cytometry",
       "assay_name": "flow cytometry",
-      "record_verdict": "ACCEPT",
-      "corrections": [],
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "FACS",
+            "Measurement of antibody secreting cells by FACS and ELISpot"
+          ],
+          "blind_answer": [
+            "FACS",
+            "flow cytometry"
+          ],
+          "dropped": [
+            "Measurement of antibody secreting cells by FACS and ELISpot"
+          ]
+        }
+      ],
       "reported_not_corrected": []
     },
     {
@@ -52,14 +70,28 @@
       "assay_id": "ELISA kits",
       "assay_name": "ELISA kits",
       "record_verdict": "REVIEW",
-      "corrections": [],
+      "corrections": [
+        {
+          "field": "readouts",
+          "action": "REPLACED",
+          "previous": "IL-6, TNF, IL-12p40 and IL-1b protein levels",
+          "blind_answer": "IL-6, TNF, and IL-12p40 in cell supernatants"
+        }
+      ],
       "reported_not_corrected": [
         {
           "field_name": "name_in_paper",
           "verdict": "NOT_SUPPORTED",
-          "reason": "\"ELISA kits\" appears only as a product description and not as the assay name used in the paper."
+          "reason": "\"ELISA kits\" names a product/reagent category rather than the assay technique performed."
         }
       ]
+    },
+    {
+      "assay_id": "27-plex cytokines (Luminex)",
+      "assay_name": "27-plex cytokines (Luminex)",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
     }
   ]
 }

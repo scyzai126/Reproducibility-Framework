@@ -24,6 +24,7 @@ import logging
 
 from openai import AsyncOpenAI
 
+from app.agent import assay_trace
 from app.agent.claim_parser import _load_prompt, _strip_fences
 from app.config import settings
 
@@ -33,7 +34,7 @@ logger = logging.getLogger(__name__)
 #: model returns is dropped: `confidence` and `claim_role` are the two it reaches for
 #: unprompted, and both were removed from this schema on purpose.
 #:
-#: `normalized_name` is the odd one out, and deliberately so: every other field records
+#: `standard_technique_name` is the odd one out, and deliberately so: every other field records
 #: something the paper states, while this one records which *technique* the assay is -- a
 #: judgement the model makes while reading the paper, often in words the paper never uses.
 #: That is the point. Papers name assays after protocol sections ("Surface and intracellular
@@ -60,9 +61,9 @@ logger = logging.getLogger(__name__)
 #: deliverable rather than staying in assays.json. It is deliberately NOT a filter: nothing drops
 #: a `false` entry, because extract_assays.txt rules that an assay the paper performed is an entry
 #: whether or not the paper concluded from it, and that rule is what the recall score rests on.
-#: Like `normalized_name` it is a judgement rather than a value copied from a span, so it is
+#: Like `standard_technique_name` it is a judgement rather than a value copied from a span, so it is
 #: excluded from verification -- see assay_verifier._NOT_PROPOSED.
-ENTRY_FIELDS = ("name_in_paper", "normalized_name", "aliases", "sample_type",
+ENTRY_FIELDS = ("name_in_paper", "standard_technique_name", "aliases", "sample_type",
                 "readouts", "generate_claim", "source", "evidence")
 
 #: What the finished registry is projected onto for `assays_benchmark.json`: the assay's name,
@@ -80,6 +81,20 @@ TRIMMED_FIELDS = ("name_in_paper", "aliases", "generate_claim", "source", "evide
 #: never allowed to assert a merge -- and carried into the deliverable only where it exists, so an
 #: unmerged entry's trimmed record stays exactly what it was before the round existed.
 MERGED_FIELD = "additional_evidence"
+
+#: Passed as `seed` on every extraction call. Best effort on OpenAI's side -- the same seed does
+#: not guarantee the same reply -- but it costs nothing and removes one source of drift.
+EXTRACTION_SEED = 7
+
+#: Another field outside ENTRY_FIELDS, written by assay_verifier.mark_identity_reviews after
+#: round 2 and only on an entry whose identity the judge did not support: `{"verdict":
+#: "NOT_SUPPORTED" | "NOT_REPORTED", "reason": ...}`. Identity is the one field no round repairs
+#: -- a corrector asked "what is this assay really called" would be re-extracting with the
+#: rejected name in view -- so the verdict used to survive only as a REVIEW line in the terminal,
+#: and 14 of the corpus's 170 entries reached the deliverable with nothing in the file to say
+#: the judge had objected. Carried into the deliverable where it exists, like MERGED_FIELD; an
+#: entry without it is unchanged.
+REVIEW_FIELD = "identity_review"
 
 
 def paper_names(entry: dict) -> list[str]:
@@ -140,12 +155,12 @@ def clean_entry(key: str, raw: dict) -> dict:
     return {
         "name_in_paper": raw.get("name_in_paper") if isinstance(raw.get("name_in_paper"), str)
                          and raw["name_in_paper"].strip() else key,
-        # Never falls back to the key. An omitted normalization means the model declined to
+        # Never falls back to the key. An omitted technique means the model declined to
         # name a technique, and echoing the paper's wording back would turn that silence into
         # a claim -- one the OBI mapper would then trust as an exact-match key.
-        "normalized_name": raw.get("normalized_name")
-                           if isinstance(raw.get("normalized_name"), str)
-                           and raw["normalized_name"].strip() else None,
+        "standard_technique_name": raw.get("standard_technique_name")
+                           if isinstance(raw.get("standard_technique_name"), str)
+                           and raw["standard_technique_name"].strip() else None,
         "aliases": [a for a in aliases if isinstance(a, str) and a.strip()]
                    if isinstance(aliases, list) else [],
         "sample_type": raw.get("sample_type") or None,
@@ -228,7 +243,8 @@ def _unwrap(parsed: dict) -> dict:
     return parsed
 
 
-def contract_warnings(registry: dict, *, expect_sentence_ids: bool = True) -> list[str]:
+def contract_warnings(registry: dict, *, expect_sentence_ids: bool = True,
+                      obi: dict | None = None) -> list[str]:
     """Contract violations worth telling a human about, without failing the extraction.
 
     None of these are recoverable here -- fixing them means re-extracting or repairing, which
@@ -248,6 +264,12 @@ def contract_warnings(registry: dict, *, expect_sentence_ids: bool = True) -> li
     and `source`, and subscripting would raise KeyError on them, turning a stale registry into
     a 500. Reporting the missing fields is the honest answer: those entries really do lack the
     evidence quote and sentence ids that downstream steps need.
+
+    `obi` is the registry's OBI mapping (assays_OBI.json), keyed the same way. After round 5 an
+    entry's key is its OBI label rather than one of its wordings, and the mapping is what says
+    which label that is. Given it, the key check is exact; without it, an entry round 5 has
+    visibly re-keyed -- `name_in_paper` is a list on every canonical entry -- is given the benefit
+    of the doubt, because the alternative warned on 135 of the 147 entries in the corpus.
     """
     warnings: list[str] = []
     for key, entry in registry.items():
@@ -267,10 +289,14 @@ def contract_warnings(registry: dict, *, expect_sentence_ids: bool = True) -> li
             warnings.append(f"{key}: aliases is {entry.get('aliases')!r}, not a list")
         # Before round 5 the key is the assay's one wording. After it, the key is the OBI label
         # and the wordings are a list, so the check becomes "the key is one of the names, or it is
-        # the term they were folded onto" -- a registry whose key is neither is the defect.
+        # the term the entry mapped to" -- a registry whose key is neither is the defect.
         names = paper_names(entry)
-        if key not in names and not entry.get(MERGED_FIELD) and len(names) < 2:
-            warnings.append(f"{key}: name_in_paper is {entry.get('name_in_paper')!r}, not the key")
+        label = ((obi or {}).get(key) or {}).get("obi_label") if isinstance(obi, dict) else None
+        canonical = isinstance(entry.get("name_in_paper"), list)
+        if key in names or key == label or (obi is None and canonical):
+            continue
+        warnings.append(f"{key}: name_in_paper is {entry.get('name_in_paper')!r}, not the key"
+                        + (f" and the key is not its OBI label {label!r}" if label else ""))
     return warnings
 
 
@@ -295,6 +321,10 @@ def trim_registry(registry: dict) -> dict:
         # one thing a reader of the deliverable cannot reconstruct from the winner's own record.
         if entry.get(MERGED_FIELD):
             record[MERGED_FIELD] = entry[MERGED_FIELD]
+        # Present only where the judge withheld support for the identity: the one verdict that
+        # reaches a reader of the deliverable, because nothing downstream acts on it.
+        if entry.get(REVIEW_FIELD):
+            record[REVIEW_FIELD] = entry[REVIEW_FIELD]
         trimmed[key] = record
     return trimmed
 
@@ -330,8 +360,13 @@ async def extract_assays(
     paper_title: str,
     client: AsyncOpenAI,
     model: str = settings.OPENAI_MODEL,
+    run_label: str = "",
 ) -> dict:
     """Build a paper's assay registry. One LLM call for the whole paper.
+
+    `run_label` only names this call's reply in the run's trace (assay_trace): assay_service
+    makes several extraction calls per paper and votes (assay_consensus), so each reply is kept
+    under its own label.
 
     One call rather than one per section, which is the opposite of the choice
     assay_verifier makes for verification and deliberately so: verification judges each entry
@@ -343,8 +378,10 @@ async def extract_assays(
         model=model,
         messages=[{"role": "user", "content": build_prompt(source_text, paper_title)}],
         temperature=0,
+        seed=EXTRACTION_SEED,
     )
     raw = _strip_fences((resp.choices[0].message.content or "").strip())
+    assay_trace.record("extract", run_label, reply=raw, source_kind="xml")
     if not raw:
         raise AssayExtractionError("model returned an empty response")
 

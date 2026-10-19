@@ -11,6 +11,7 @@ from app.agent.assay_corrector import (
     REPLACED,
     UNCHANGED,
     apply_correction,
+    correct_field,
     build_prompt,
     correct_registry,
     decide,
@@ -257,6 +258,23 @@ def test_drop_rejected_does_not_mutate_its_input():
     assert list(assays) == ["GSEA"]
 
 
+def test_a_product_named_assay_with_a_supported_identity_is_kept():
+    """SDY1655: the judge deleted "Human Cytokine Array/Chemokine Array 71-403 Plex Panel
+    (HD71)", the paper's only cytokine measurement, for being named after the panel. Only a
+    CONTRADICTED identity or a REJECT record removes an entry; a quarrel with the name is a
+    field verdict on `standard_technique_name` and must leave the record standing."""
+    panel = "Human Cytokine Array/Chemokine Array 71-403 Plex Panel (HD71)"
+    result = {"assay_id": panel, "record_verdict": "REVIEW",
+              "assay_identity_verdict": "SUPPORTED",
+              "field_verifications": [{"field_name": "standard_technique_name",
+                                       "verdict": "NOT_SUPPORTED",
+                                       "reason": "names the panel, not the technique"}]}
+    kept, dropped = drop_rejected({panel: {"name_in_paper": panel}},
+                                  _verification_results(result))
+
+    assert list(kept) == [panel] and dropped == {}
+
+
 def test_a_review_record_is_repaired_not_dropped():
     """REVIEW means a field is wrong, which correction fixes; only identity is fatal."""
     result = {"assay_id": "ELISA", "record_verdict": "REVIEW",
@@ -493,12 +511,12 @@ def test_the_aliases_question_names_the_field_it_wants_the_list_in():
     assert "do not return it on its own" in _QUESTIONS["aliases"]
 
 
-def test_the_normalized_name_has_no_repair_question():
+def test_the_technique_has_no_repair_question():
     """Nothing to re-extract: no blind question about the paper can recover a technique
     judgement, and the verifier never flags it anyway (it is in _NOT_PROPOSED). field_group
     returning None is what keeps a future schema field from silently acquiring a wrong
     corrector question -- pinned here so the eighth field's arrival stays deliberate."""
-    assert field_group("normalized_name") is None
+    assert field_group("standard_technique_name") is None
 
 
 # ── evidence is compared quote to quote ───────────────────────────────────────
@@ -532,3 +550,39 @@ def test_a_pdf_replacement_quote_drops_the_ids_it_invented():
 
     assert record["action"] == REPLACED
     assert entry["evidence"]["sentence_ids"] == []
+
+
+# ── a failed call is not an answer ───────────────────────────────────────────
+
+@pytest.mark.asyncio
+async def test_an_empty_reply_is_an_error_not_a_cleared_field():
+    """Read as `{}` an empty body became `value: None`, which decide() scores as CLEARED: a
+    specimen the paper states, wiped because one call returned nothing. The verifier draws the
+    same line."""
+    value, error = await correct_field(_entry(), "sample_type", _SOURCE, "A Paper",
+                                       _CannedClient(""))
+
+    assert value is None
+    assert error == "corrector returned an empty reply"
+
+
+@pytest.mark.asyncio
+async def test_an_empty_reply_leaves_the_registry_entry_as_it_was():
+    corrected, records = await correct_registry(
+        {"flow cytometry": _entry()}, {"results": [{"assay_id": "flow cytometry",
+                                                   **_verification(("sample_type", "NOT_SUPPORTED"))}]},
+        _SOURCE, "A Paper", _CannedClient(""))
+
+    assert corrected["flow cytometry"]["sample_type"] == "PBMCs"
+    assert records[0]["corrections"][0]["action"] == "ERROR"
+
+
+def test_a_bare_string_alias_answer_is_one_alias_not_its_letters():
+    """Iterating "FACS analysis" as-is read it as a bag of characters, none of which matched
+    the flagged alias it had just confirmed, so the alias was dropped."""
+    entry = _entry()
+
+    record = apply_correction(entry, "aliases", "FACS analysis", _SOURCE, flagged_aliases={0, 1})
+
+    assert entry["aliases"] == ["FACS analysis"]
+    assert record["dropped"] == ["Flow cytometry"]
