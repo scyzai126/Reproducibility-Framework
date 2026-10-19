@@ -10,19 +10,21 @@ The rounds the separate scripts run one at a time, chained:
   5. (no prompt — deterministic)     keys by OBI term, folds duplicates  free
 
 Chaining is the whole point: an unverified registry cannot be told apart from a verified one by
-reading it, because a `platform` inferred from what a technique usually runs on looks exactly
+reading it, because a `sample_type` inferred from what a technique usually runs on looks exactly
 like one copied out of Methods.
 
 Round 3 promotes, so `assays.json` ends up holding the corrected registry with the extracted
 one kept beside it as `assays_precorrection.json`. The run then projects that onto
-`assays_benchmark.json` -- name_in_paper, aliases, source, evidence -- **which is the file to
-read**. Every field stays in `assays.json` because each pass in the chain works from them. assays.json is written only once every round is done, so a run that dies part-way
+`assays_benchmark.json` -- name_in_paper, aliases, generate_claim, source, evidence, plus
+identity_review where the judge doubted the identity -- **which is the file to read**. Every field stays in `assays.json` because each pass in the chain works from them. assays.json is written only once every round is done, so a run that dies part-way
 leaves none rather than one that looks verified.
 
 Round 5 runs last because the OBI term from round 4 is the assay's identity: the registry is
 re-keyed by the term's label, and two entries that mapped to one term are one assay, folded with
-every wording kept in `name_in_paper` and every write-up kept in `additional_evidence`. Free, and
-the same registry always canonicalizes the same way.
+every wording kept in `name_in_paper` and every write-up kept in `additional_evidence`. Two
+entries stand outside that rule and keep their own key: one whose term round 4 could only give
+as BROAD (printed `BROAD`), and one whose identity the judge did not support (printed
+`REVIEW UNFOLDED`). Free, and the same registry always canonicalizes the same way.
 
 Round 4 runs on the *corrected* registry, and writes `assays_OBI.json` rather than merging back:
 the OBI resolver reads sample_type and readouts as disambiguating context, and those are fields
@@ -48,7 +50,7 @@ of against the sentences it names, and the methods-vs-results cross-check report
 --dry-run names the source it would use, so which route a paper takes is visible before paying.
 
 **--dry-run makes no API call** and reports the projected bill. Run it first: a 10-assay paper
-is upwards of 30 calls. Round 1 is one call; rounds 2-4 are sized from what the last run's
+is upwards of 30 calls. Round 1 is three calls; rounds 2-4 are sized from what the last run's
 extraction found, once one exists on disk -- each from the file that round actually read, since
 round 5 re-keys assays.json. Round 5 is free.
 
@@ -285,6 +287,12 @@ def report_result(result: dict) -> None:
         mapped = (result.get("obi") or {}).get(key) or {}
         print(f"  BROAD  {key}: kept its own entry; {mapped.get('obi_id')} "
               f"{mapped.get('obi_label')} is broader than the assay")
+    # Likewise an entry whose identity the judge did not support: it ships, marked, under its
+    # own key -- never folded, so its wording cannot become a supported sibling's name.
+    for key in ((result.get("merges") or {}).get("summary") or {}).get("review_unfolded") or []:
+        mark = (assays.get(key) or {}).get("identity_review") or {}
+        print(f"  REVIEW UNFOLDED  {key}: kept its own entry; identity {mark.get('verdict')} "
+              f"— {mark.get('reason') or 'no reason given'}")
     # A repair that was asked for, paid for, and then failed. It used to surface only as a count
     # inside the round's actions JSON, which is how 12 discarded alias corrections crossed a
     # 30-paper run unnoticed: the entry keeps exactly the field the verifier objected to.

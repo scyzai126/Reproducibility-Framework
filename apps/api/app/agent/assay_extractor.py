@@ -92,8 +92,9 @@ EXTRACTION_SEED = 7
 #: -- a corrector asked "what is this assay really called" would be re-extracting with the
 #: rejected name in view -- so the verdict used to survive only as a REVIEW line in the terminal,
 #: and 14 of the corpus's 170 entries reached the deliverable with nothing in the file to say
-#: the judge had objected. Carried into the deliverable where it exists, like MERGED_FIELD; an
-#: entry without it is unchanged.
+#: the judge had objected. Carried into the deliverable where it exists, like MERGED_FIELD, and
+#: under the entry's own key: round 5 never folds a marked entry (assay_merger), so its wording
+#: cannot become a supported sibling's name. An entry without it is unchanged.
 REVIEW_FIELD = "identity_review"
 
 

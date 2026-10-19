@@ -383,7 +383,7 @@ async def test_two_entries_on_one_obi_term_leave_one_entry_keyed_by_that_term(pa
     # record cannot reconstruct.
     assert benchmark["flow cytometry assay"]["additional_evidence"][0]["name_in_paper"] == "ELISA kits"
     assert json.loads((paper / "assays_merges.json").read_text())["summary"] == {
-        "groups_merged": 1, "entries_folded": 1, "broad_unfolded": []}
+        "groups_merged": 1, "entries_folded": 1, "broad_unfolded": [], "review_unfolded": []}
 
 
 @pytest.mark.asyncio
@@ -679,16 +679,19 @@ def _judge_doubts_the_identity() -> str:
 async def test_an_unsupported_identity_is_marked_in_the_registry_and_the_deliverable(paper):
     """14 of the corpus's 170 entries were NOT_SUPPORTED on identity and shipped unmarked; the
     REVIEW line in the terminal was the only trace. Now the file says so, under the key the
-    entry is delivered under."""
+    entry is delivered under -- its own paper name, since round 5 never folds a marked entry
+    and so never re-keys it by a term nobody confirmed it is."""
     client = _Client(_extraction_body(), _judge_doubts_the_identity())
 
     result = await assay_report("111", "SDY1", client)
 
     review = {"verdict": "NOT_SUPPORTED",
               "reason": "This is a section heading rather than a stated assay name."}
-    assert result["assays"]["flow cytometry assay"]["identity_review"] == review
-    assert json.loads((paper / "assays.json").read_text())["flow cytometry assay"]["identity_review"] == review
-    assert json.loads((paper / "assays_benchmark.json").read_text())["flow cytometry assay"]["identity_review"] == review
+    assert list(result["assays"]) == ["flow cytometry"]
+    assert result["assays"]["flow cytometry"]["identity_review"] == review
+    assert json.loads((paper / "assays.json").read_text())["flow cytometry"]["identity_review"] == review
+    assert json.loads((paper / "assays_benchmark.json").read_text())["flow cytometry"]["identity_review"] == review
+    assert result["rounds"]["canonicalize"]["review_unfolded"] == ["flow cytometry"]
 
 
 @pytest.mark.asyncio

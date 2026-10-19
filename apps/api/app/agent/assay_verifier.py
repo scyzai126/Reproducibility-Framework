@@ -232,9 +232,9 @@ def mark_identity_reviews(assays: dict, verification: dict | None) -> dict:
     """Write REVIEW_FIELD onto every entry identity_reviews names. Mutates and returns.
 
     Runs right after round 2 so the mark is on the entry through correction (which deep-copies
-    entries and keeps unknown keys), through the round-5 fold (assay_merger carries it) and into
-    the deliverable (assay_extractor.trim_registry copies it). An entry the judge supported is
-    left exactly as it was.
+    entries and keeps unknown keys), through round 5 (assay_merger never folds a marked entry,
+    so it keeps its own key) and into the deliverable (assay_extractor.trim_registry copies it).
+    An entry the judge supported is left exactly as it was.
     """
     for key, review in identity_reviews(verification or {}).items():
         entry = assays.get(key)

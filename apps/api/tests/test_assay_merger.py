@@ -19,6 +19,7 @@ from app.agent.assay_merger import (
     canonicalize_registry,
     key_map,
     merge_entries,
+    review_unfolded,
 )
 
 ELISA = {
@@ -273,7 +274,8 @@ def test_the_report_counts_groups_and_entries():
 
     report = build_merge_report(folds)
 
-    assert report["summary"] == {"groups_merged": 1, "entries_folded": 1, "broad_unfolded": []}
+    assert report["summary"] == {"groups_merged": 1, "entries_folded": 1,
+                                 "broad_unfolded": [], "review_unfolded": []}
     assert report["results"][0]["key"] == "enzyme-linked immunosorbent assay"
 
 # ── a shared technique never links ───────────────────────────────────────────
@@ -371,7 +373,9 @@ _REVIEW = {"verdict": "NOT_SUPPORTED", "reason": "a section heading"}
 
 def test_a_folded_members_review_stays_in_its_block_and_is_not_promoted():
     """SDY1260: the judge doubted "ELISA kits" as a name; the ELISA it folded into was
-    supported, and promoting the doubt made the deliverable say otherwise."""
+    supported, and promoting the doubt made the deliverable say otherwise. The pipeline no
+    longer folds a marked entry at all (canonical_groups); this is merge_entries' own contract,
+    which a registry folded before that rule still relies on."""
     merged = merge_entries(ELISA, [{**ELISA_KITS, "identity_review": _REVIEW}])
 
     assert "identity_review" not in merged
@@ -448,4 +452,43 @@ def test_the_report_lists_broad_entries_left_unfolded():
     assert broad_unfolded(assays, obi) == ["ICS"]
     report = build_merge_report([], key_map(assays, obi), broad_unfolded(assays, obi))
     assert report["summary"] == {"groups_merged": 0, "entries_folded": 0,
-                                 "broad_unfolded": ["ICS"]}
+                                 "broad_unfolded": ["ICS"], "review_unfolded": []}
+
+
+# ── a reviewed identity is never folded ──────────────────────────────────────
+
+def test_a_reviewed_entry_is_never_folded_onto_a_sibling():
+    """SDY1260: the judge doubted "ELISA kits" as a name. Folded onto the supported ELISA, its
+    wording became that entry's second name and its mark sank into additional_evidence."""
+    assays = {"ELISA": ELISA, "ELISA kits": {**ELISA_KITS, "identity_review": _REVIEW}}
+    obi = {"ELISA": _ELISA_TERM, "ELISA kits": _ELISA_TERM}
+
+    merged, obi_out, folds = canonicalize_registry(assays, obi)
+
+    assert list(merged) == ["enzyme-linked immunosorbent assay", "ELISA kits"]
+    assert merged["enzyme-linked immunosorbent assay"]["name_in_paper"] == ["ELISA"]
+    assert "additional_evidence" not in merged["enzyme-linked immunosorbent assay"]
+    assert merged["ELISA kits"]["identity_review"] == _REVIEW
+    assert obi_out["ELISA kits"]["obi_id"] == "OBI:0000661"
+    assert folds == []
+
+
+def test_a_reviewed_first_entry_does_not_absorb_its_siblings():
+    assays = {"ELISA": {**ELISA, "identity_review": _REVIEW}, "ELISA kits": ELISA_KITS}
+    obi = {"ELISA": _ELISA_TERM, "ELISA kits": _ELISA_TERM}
+
+    merged, _, folds = canonicalize_registry(assays, obi)
+
+    assert list(merged) == ["ELISA", "enzyme-linked immunosorbent assay"]
+    assert merged["enzyme-linked immunosorbent assay"]["name_in_paper"] == ["ELISA kits"]
+    assert folds == []
+
+
+def test_the_report_lists_reviewed_entries_left_unfolded():
+    assays = {"ELISA": ELISA, "ELISA kits": {**ELISA_KITS, "identity_review": _REVIEW}}
+    obi = {"ELISA": _ELISA_TERM, "ELISA kits": _ELISA_TERM}
+
+    assert review_unfolded(assays, obi) == ["ELISA kits"]
+    report = build_merge_report([], key_map(assays, obi), broad_unfolded(assays, obi),
+                                review_unfolded(assays, obi))
+    assert report["summary"]["review_unfolded"] == ["ELISA kits"]

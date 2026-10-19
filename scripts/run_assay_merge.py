@@ -49,6 +49,7 @@ from app.agent.assay_merger import (
     canonicalize_registry,
     compose_key_maps,
     key_map,
+    review_unfolded,
 )
 from app.agent.assay_service import REGISTRY_ROOT, obi_misses, obi_query_calls
 
@@ -87,6 +88,9 @@ def dry_run(registry_dir: Path, remap: bool = False) -> int:
         if group["alone"] == "broad":
             print(f"    BROAD  {group['key']}: keeps its own entry; "
                   f"{group['obi_id']} {group['obi_label']} is broader than the assay")
+        elif group["alone"] == "review":
+            print(f"    REVIEW UNFOLDED  {group['key']}: keeps its own entry; "
+                  "identity not supported by the judge")
     return len(assays) - len(groups)
 
 
@@ -119,10 +123,11 @@ def canonicalize_one(registry_dir: Path, remap: bool = False) -> None:
 
     keys = compose_key_maps(stored.get("key_map"), key_map(assays, obi))
     broad = broad_unfolded(assays, obi)
+    review = review_unfolded(assays, obi)
     merged, obi_out, folds = canonicalize_registry(assays, obi)
     # Folds found by an earlier pass are findings too; a second pass over an already-folded
     # registry finds none, and used to delete the only record of the first.
-    report = build_merge_report(list(stored.get("results") or []) + folds, keys, broad)
+    report = build_merge_report(list(stored.get("results") or []) + folds, keys, broad, review)
     print(f"{registry_dir.name}: {len(assays)} → {len(merged)} entry(ies)")
     for record in folds:
         print(f"  MERGED  {', '.join(record['folded'])} → {record['key']} "
@@ -131,6 +136,10 @@ def canonicalize_one(registry_dir: Path, remap: bool = False) -> None:
         mapped = (obi_out or {}).get(key) or {}
         print(f"  BROAD  {key}: kept its own entry; {mapped.get('obi_id')} "
               f"{mapped.get('obi_label')} is broader than the assay")
+    for key in review:
+        mark = merged[key].get("identity_review") or {}
+        print(f"  REVIEW UNFOLDED  {key}: kept its own entry; identity {mark.get('verdict')} "
+              f"— {mark.get('reason') or 'no reason given'}")
 
     # Only these four: the pipeline's other files describe rounds this script did not re-run,
     # and rewriting them from a registry they were not derived from would misreport those rounds.

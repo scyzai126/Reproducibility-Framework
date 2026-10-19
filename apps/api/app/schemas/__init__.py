@@ -73,7 +73,7 @@ class AssayRequest(BaseModel):
     a `platform` inferred from what a technique usually runs on looks exactly like one copied
     from Methods. Turn them off only to inspect an intermediate round.
 
-    Every request runs all five rounds and costs 1 + N + F + O model calls; nothing is served
+    Every request runs all five rounds and costs 3 + N + F + O model calls; nothing is served
     from a previous run.
     """
 

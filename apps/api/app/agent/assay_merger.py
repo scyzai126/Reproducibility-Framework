@@ -28,10 +28,13 @@ too. That is the trade this round exists to make. Nothing is discarded in the pr
 folded write-up's specimen, platform, readouts and quote move to `additional_evidence` on the
 surviving entry, so the coarser key never costs a measurement.
 
-An identity the judge did not support (`identity_review`, assay_extractor.REVIEW_FIELD) travels
-with the fold inside the member's own `additional_evidence` block, and is never copied onto the
-survivor: the judge ruled on that member's name ("ELISA kits" names a product), and the survivor's
-name was ruled on separately. Promoting it made SDY1260's supported ELISA read as doubted.
+An identity the judge did not support (`identity_review`, assay_extractor.REVIEW_FIELD) is never
+folded at all: the entry keeps its own key (`review_unfolded` in the merge report, `REVIEW
+UNFOLDED` on the CLI), so a wording nobody confirmed names this assay cannot become a supported
+sibling's `name_in_paper`, and the mark stays where a reader of the deliverable sees it. For a
+registry folded before that rule, merge_entries still keeps a folded member's mark inside its
+own `additional_evidence` block rather than promoting it: the judge ruled on that member's name
+("ELISA kits" names a product), and the survivor's name was ruled on separately.
 
 Deterministic and free: no model decides any of this, and the same registry always canonicalizes
 the same way.
@@ -66,7 +69,14 @@ def _stands_alone(mapped: dict, entry: dict) -> str | None:
       a term are in the same family, not one assay -- ICS and an immunophenotyping panel both
       resolve to `flow cytometry assay` as BROAD, and folding them on it is how SDY1630's NK
       functional assay disappeared into "Flow cytometry analysis and cell sorting".
+    * "review": the judge did not support the entry's identity (REVIEW_FIELD). A wording nobody
+      confirmed names this assay must not become a supported sibling's `name_in_paper`, nor
+      absorb that sibling when it happens to come first; and a mark that survived only inside
+      a survivor's `additional_evidence` was a doubt the deliverable no longer showed. Checked
+      first, because it holds whatever the term is -- an ERROR record's NOT_REPORTED included.
     """
+    if entry.get(REVIEW_FIELD):
+        return "review"
     if not mapped.get("obi_label"):
         return "unmapped"
     if mapped.get("obi_granularity") == BROAD:
@@ -138,6 +148,12 @@ def broad_unfolded(assays: dict, obi: dict | None = None) -> list[str]:
     grouping as the fold; for the merge report, where a reader finds out why a sibling that
     shares a term was not folded onto it."""
     return _unfolded(assays, obi, "broad")
+
+
+def review_unfolded(assays: dict, obi: dict | None = None) -> list[str]:
+    """The keys of entries left as their own entry because their identity carries a review
+    mark. Same contract as broad_unfolded."""
+    return _unfolded(assays, obi, "review")
 
 
 def merge_entries(winner: dict, losers: list[dict]) -> dict:
@@ -256,19 +272,22 @@ def compose_key_maps(earlier: dict[str, str] | None, later: dict[str, str]) -> d
 
 
 def build_merge_report(folds: list[dict], keys: dict[str, str] | None = None,
-                       broad: list[str] | None = None) -> dict:
+                       broad: list[str] | None = None,
+                       review: list[str] | None = None) -> dict:
     """The round's findings, for assays_merges.json.
 
     `key_map` is written on every run, folds or not: it is what joins the pre-round-5 files to
     the canonical registry, and a paper that folded nothing re-keys every entry all the same.
-    `broad_unfolded` is always present too, empty or not, so no reader branches on it: the
-    entries that kept their own key although a sibling shares their (BROAD) term.
+    `broad_unfolded` and `review_unfolded` are always present too, empty or not, so no reader
+    branches on them: the entries that kept their own key although a sibling shares their
+    term, because that term is BROAD, or because the judge did not support their identity.
     """
     report = {
         "summary": {
             "groups_merged": len(folds),
             "entries_folded": sum(len(f["folded"]) for f in folds),
             "broad_unfolded": list(broad or []),
+            "review_unfolded": list(review or []),
         },
         "results": folds,
     }

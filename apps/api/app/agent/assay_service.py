@@ -14,7 +14,7 @@ check searches the whole document and neither field can be derived.
 **Every request runs all five rounds.** Results are written to disk under
 data/31paper_assays, and the files are the same ones the CLI scripts read and write,
 so a registry built here is visible to run_assay_verify.py and vice versa — but a stored one
-is never served back. A request costs 1 + N + F calls every time.
+is never served back. A request costs 3 + N + F + O calls every time.
 
 Reuse used to be the default, and it was removed rather than narrowed. Round 1's cache could
 not be dropped on its own: a freshly extracted registry invalidates any stored verification
@@ -63,6 +63,7 @@ from app.agent.assay_merger import (
     canonical_groups,
     canonicalize_registry,
     key_map,
+    review_unfolded,
 )
 from app.agent.assay_obi_mapper import _build_lookup, _index_children, enrich_assays_with_obi
 from app.agent.assay_registry import CORPUS_ROOT, RESULT_VERSION, normalize_assay_name
@@ -522,7 +523,7 @@ def estimate_run(pubmed_id: str, study_accession: str) -> dict:
     every round is known, so a caller cannot accidentally present a partial sum as the bill.
 
     Raises PaperNotFoundError when neither an XML nor a PDF is on disk. The round sizes do not
-    depend on which one it is -- the PDF rides along as a file part on round 1's single call
+    depend on which one it is -- the PDF rides along as a file part on each of round 1's calls
     rather than adding one -- so a PDF paper is estimated exactly as an XML paper is.
     """
     source = locate_paper_source(pubmed_id, study_accession)
@@ -825,7 +826,7 @@ async def assay_report(
     beside it. A run that dies part-way therefore leaves no assays.json at all rather than one
     that cannot be told apart from a verified registry.
 
-    Every paper costs 1 + N + F + O calls, every time. Nothing is served from disk: asking
+    Every paper costs 3 + N + F + O calls, every time. Nothing is served from disk: asking
     twice pays twice, and the second answer is the one that reflects the current prompts.
 
     `on_progress` is fired at each round boundary, and once per assay during round 2, for a
@@ -990,9 +991,9 @@ async def _run_rounds(pubmed_id, study_accession, client, verify, correct, model
         verification_path.write_text(
             json.dumps(verification, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
         trace.write(raw_path)
-        # The one verdict no later round acts on. Marked on the entry here so it rides through
-        # correction, the fold and into the deliverable rather than surviving only as a line
-        # printed once.
+        # The one verdict no round repairs. Marked on the entry here so it rides through
+        # correction into the deliverable rather than surviving only as a line printed once --
+        # and so round 5 can see it: a marked entry is never folded (assay_merger).
         mark_identity_reviews(assays, verification)
         calls += len(assays)
         rounds["verify"] = {"source": "verified", "calls": len(assays)}
@@ -1100,10 +1101,11 @@ async def _run_rounds(pubmed_id, study_accession, client, verify, correct, model
     else:
         _emit(round="canonicalize", state="running", total=len(assays))
         keys = key_map(assays, obi)
-        # Before the re-key, like keys: both are read off the pre-canonical registry.
+        # Before the re-key, like keys: all three are read off the pre-canonical registry.
         broad = broad_unfolded(assays, obi)
+        review = review_unfolded(assays, obi)
         assays, obi, folds = canonicalize_registry(assays, obi)
-        merges = build_merge_report(folds, keys, broad)
+        merges = build_merge_report(folds, keys, broad, review)
         rounds["canonicalize"] = {"source": "canonical", "calls": 0,
                                   "assays": len(assays), **merges["summary"]}
         _emit(round="canonicalize", state="done", calls=0, assays=len(assays),

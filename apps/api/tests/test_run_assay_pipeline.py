@@ -75,6 +75,16 @@ def test_a_broad_mapping_left_unfolded_is_reported(cli, capsys):
             in capsys.readouterr().out)
 
 
+def test_a_reviewed_identity_left_unfolded_is_reported(cli, capsys):
+    cli.report_result(_result(
+        assays={"ELISA kits": {**_ENTRY, "identity_review": {
+            "verdict": "NOT_SUPPORTED", "reason": "names a product"}}},
+        merges={"results": [], "summary": {"review_unfolded": ["ELISA kits"]}}))
+
+    assert ("REVIEW UNFOLDED  ELISA kits: kept its own entry; identity NOT_SUPPORTED — names a product"
+            in capsys.readouterr().out)
+
+
 def test_a_refused_correction_is_reported(cli, capsys):
     cli.report_result(_result(corrections={"results": [{"assay_id": "FACS", "corrections": [
         {"field": "evidence", "action": "UNCHANGED",
