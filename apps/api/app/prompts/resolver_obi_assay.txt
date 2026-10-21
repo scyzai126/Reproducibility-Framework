@@ -15,7 +15,10 @@ A candidate with no definition or descendant count in the vocabulary shows neith
 The similarity is only the order retrieval found them in — it is not evidence that a term is
 right, and a correct term often scores lower than a wrong one. Judge by the definition.
 Entries marked "exact name match", "child of exact name match" or "grandchild of exact name
-match" are in the list regardless of similarity — see rule 8.
+match" are in the list regardless of similarity — see rule 8. So are entries marked "child of
+candidate N" or "parent of candidate N": the direct OBI children and parents of the best-retrieved
+terms, listed so the choice between a term and its parent or child is made here, by the record,
+rather than left to whichever one retrieval happened to rank.
 
 {candidates}
 
@@ -93,6 +96,11 @@ match" are in the list regardless of similarity — see rule 8.
    Otherwise choose the exact name match: plain "RNA-seq" or "flow cytometry" with nothing more
    specific stays on it. Choose a candidate outside these marked terms only when its definition
    fits clearly better than all of them.
+   Entries marked "child of candidate N" / "parent of candidate N" are the OBI neighbours of the
+   top retrieved terms. Treat them under rule 2 exactly like the retrieved terms: choose the
+   child when the record gives specific evidence for it (e.g. "antibody detection by cytometric
+   bead array assay" when the readouts are antibodies), the parent when the candidate it hangs
+   off is more specific than the record warrants, and the retrieved term itself otherwise.
 
 9. FUNCTIONAL ASSAYS ACQUIRED ON A CYTOMETER. A flow cytometer is an instrument, not an
    assay: many different assays are read on one. When the assay name, aliases or readouts

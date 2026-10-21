@@ -1,0 +1,106 @@
+{
+  "summary": {
+    "assays": 9,
+    "fields_re_extracted": 3,
+    "actions": {
+      "REPLACED": 3
+    },
+    "reported_not_corrected": 0
+  },
+  "results": [
+    {
+      "assay_id": "gene array",
+      "assay_name": "gene array",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "qPCR",
+      "assay_name": "qPCR",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "IL-1β ELISA",
+      "assay_name": "IL-1β ELISA",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "readouts",
+          "action": "REPLACED",
+          "previous": "IL-1β concentration",
+          "blind_answer": "IL-1β in collected supernatants, i.e. IL-1β production/secretion by the cells"
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "CFSE labeling",
+      "assay_name": "CFSE labeling",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "BD Th1/Th2 CBA array",
+      "assay_name": "BD Th1/Th2 CBA array",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "readouts",
+          "action": "REPLACED",
+          "previous": "levels of IL-2, IL-4, IL-5, IL-10, IFN-γ, and TNF; beads acquired on a flow cytometer",
+          "blind_answer": "Levels of the cytokines IL-2, IL-4, IL-5, IL-10, IFN-γ, and TNF in PBMC supernatants"
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Flow cytometric analysis of IFN-γ/IL-2–producing activated CD4 T cells",
+      "assay_name": "Flow cytometric analysis of IFN-γ/IL-2–producing activated CD4 T cells",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "FACS analysis",
+      "assay_name": "FACS analysis",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "FACS analysis of long-term, vaccine-specific CD4+ T cells",
+            "flow cytometric T helper phenotype analysis"
+          ],
+          "blind_answer": [
+            "flow cytometry",
+            "polychromatic flow cytometry"
+          ],
+          "dropped": [
+            "FACS analysis of long-term, vaccine-specific CD4+ T cells",
+            "flow cytometric T helper phenotype analysis"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "CD4 + T cell stimulation assay",
+      "assay_name": "CD4 + T cell stimulation assay",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "multiplex cytokine analysis",
+      "assay_name": "multiplex cytokine analysis",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    }
+  ]
+}

@@ -1,0 +1,189 @@
+{
+  "transcription profiling by array assay": {
+    "name_in_paper": [
+      "DNA microarray"
+    ],
+    "standard_technique_name": "transcription profiling by array",
+    "aliases": [
+      "DNA microarrays",
+      "DNA microarray experiment"
+    ],
+    "sample_type": "peripheral blood mononuclear cells",
+    "readouts": "gene expression levels",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Blood transcriptome analysis",
+      "sentence_ids": [
+        "S269"
+      ],
+      "quote": "DNA microarray experiment was performed as previously described 6 , on Affymetrix human U133 Plus 2.0 arrays (GeneTitan platform)."
+    },
+    "obi_id": "OBI:0001463",
+    "obi_label": "transcription profiling by array assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.8293,
+    "obi_granularity": "EXACT",
+    "obi_path": [
+      "OBI:0001463"
+    ],
+    "obi_calls": 1,
+    "obi_backoff": false
+  },
+  "enzyme-linked immunosorbent assay": {
+    "name_in_paper": [
+      "ELISA",
+      "ELISA kits"
+    ],
+    "standard_technique_name": "enzyme-linked immunosorbent assay",
+    "aliases": [
+      "Measurement of anti-Meningococcal antibodies by ELISA"
+    ],
+    "sample_type": "serum",
+    "readouts": "meningococcal serogroup A or C polysaccharide-specific IgG, IgM, IgG1 and IgG2 antibody levels",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Measurement of anti-Meningococcal antibodies by ELISA",
+      "sentence_ids": [
+        "S274"
+      ],
+      "quote": "Serum samples were pre-diluted 1:25 and then serially diluted (2-fold) seven times in SC buffer (PBS with 5% NBBS and 0.1% Brij35)."
+    },
+    "obi_id": "OBI:0000661",
+    "obi_label": "enzyme-linked immunosorbent assay",
+    "resource": "exact_original",
+    "obi_confidence": "high",
+    "obi_granularity": null,
+    "obi_path": [
+      "OBI:0000661"
+    ],
+    "obi_calls": 0,
+    "obi_backoff": false
+  },
+  "cytometric bead array assay": {
+    "name_in_paper": [
+      "anti-DT IgG capture microsphere assay",
+      "27-plex cytokines (Luminex)"
+    ],
+    "standard_technique_name": "Luminex",
+    "aliases": [
+      "Measurement of anti-Diphtheria IgG by Luminex",
+      "Luminex",
+      "anti- DT IgG capture microsphere assay"
+    ],
+    "sample_type": "sera",
+    "readouts": "diphtheria toxoid-specific IgG quantified as median fluorescence intensity-based arbitrary units per milliliter",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Measurement of anti-Diphtheria IgG by Luminex",
+      "sentence_ids": [
+        "S288"
+      ],
+      "quote": "Immune response to Diphtheria toxoid (DT) carrier protein was assessed at Days 0, 7 and 30 using anti- DT IgG capture microsphere assay."
+    },
+    "obi_id": "OBI:0003116",
+    "obi_label": "antibody detection by cytometric bead array assay",
+    "resource": "embedding_llm_descended",
+    "obi_confidence": 0.5992,
+    "obi_granularity": "EXACT",
+    "obi_path": [
+      "OBI:0000920",
+      "OBI:0003116"
+    ],
+    "obi_calls": 1,
+    "obi_backoff": false
+  },
+  "bacterial neutralization assay": {
+    "name_in_paper": [
+      "serum bactericidal titers (SBA)"
+    ],
+    "standard_technique_name": "serum bactericidal assay",
+    "aliases": [
+      "Measurement of serum bactericidal titers (SBA)",
+      "SBA"
+    ],
+    "sample_type": "serum",
+    "readouts": "bactericidal titers determined from serum dilution yielding 50% killing",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Measurement of serum bactericidal titers (SBA)",
+      "sentence_ids": [
+        "S298"
+      ],
+      "quote": "Continuous titers were determined by interpolation of the serum dilution yielding 50% killing as compared to the T 60 growth control plate average."
+    },
+    "obi_id": "OBI:0003797",
+    "obi_label": "bacterial neutralization assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.5756,
+    "obi_granularity": "EXACT",
+    "obi_path": [
+      "OBI:0003797"
+    ],
+    "obi_calls": 0,
+    "obi_backoff": false
+  },
+  "flow cytometry assay": {
+    "name_in_paper": [
+      "flow cytometry"
+    ],
+    "standard_technique_name": "flow cytometry",
+    "aliases": [
+      "FACS"
+    ],
+    "sample_type": "whole blood cells",
+    "readouts": "frequency of blood antibody secreting cells identified as CD3 negative CD20 negative CD38 high CD27 high CD19 positive cells",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Measurement of antibody secreting cells by FACS and ELISpot",
+      "sentence_ids": [
+        "S304"
+      ],
+      "quote": "Blood ASC were identified by flow cytometry as CD3 neg , CD20 neg , CD38 hi , CD27 hi , CD19 + cells as described previously 56 ."
+    },
+    "obi_id": "OBI:0000916",
+    "obi_label": "flow cytometry assay",
+    "resource": "exact_original_llm",
+    "obi_confidence": "high",
+    "obi_granularity": "EXACT",
+    "obi_path": [
+      "OBI:0000916"
+    ],
+    "obi_calls": 1,
+    "obi_backoff": false
+  },
+  "enzyme-linked immunospot assay": {
+    "name_in_paper": [
+      "ELISpot"
+    ],
+    "standard_technique_name": "enzyme-linked immunospot assay",
+    "aliases": [
+      "Measurement of antibody secreting cells by FACS and ELISpot"
+    ],
+    "sample_type": null,
+    "readouts": "numbers of antigen-specific and total IgG, IgM, and IgA secreting cells",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Measurement of antibody secreting cells by FACS and ELISpot",
+      "sentence_ids": [
+        "S305"
+      ],
+      "quote": "Antigen specific and total IgG, IgM, and IgA secreting cells were quantified by ELISpot."
+    },
+    "obi_id": "OBI:0600031",
+    "obi_label": "enzyme-linked immunospot assay",
+    "resource": "exact_original",
+    "obi_confidence": "high",
+    "obi_granularity": null,
+    "obi_path": [
+      "OBI:0600031"
+    ],
+    "obi_calls": 0,
+    "obi_backoff": false
+  }
+}

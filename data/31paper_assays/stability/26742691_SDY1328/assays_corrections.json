@@ -1,0 +1,106 @@
+{
+  "summary": {
+    "assays": 7,
+    "fields_re_extracted": 5,
+    "actions": {
+      "REAFFIRMED": 1,
+      "REPLACED": 4
+    },
+    "reported_not_corrected": 1
+  },
+  "results": [
+    {
+      "assay_id": "GM1-enzyme-linked immunosorbent assay (ELISA)",
+      "assay_name": "GM1-enzyme-linked immunosorbent assay (ELISA)",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "evidence",
+          "action": "REAFFIRMED",
+          "previous": "Anti-Cholera toxin B subunit (CTB) IgG were quantified in serum samples according to a GM1-enzyme-linked immunosorbent assay (ELISA) method adapted from Svennerholm et al.",
+          "blind_answer": {
+            "quote": "Anti-Cholera toxin B subunit (CTB) IgG were quantified in serum samples according to a GM1-enzyme-linked immunosorbent assay (ELISA) method adapted from Svennerholm et al.",
+            "sentence_ids": []
+          }
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "MONOLISA Anti-HBs PLUS kit",
+      "assay_name": "MONOLISA Anti-HBs PLUS kit",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "readouts",
+          "action": "REPLACED",
+          "previous": "anti-hepatitis B surface antigen total antibody levels measured by optical density",
+          "blind_answer": "Total antibodies against hepatitis B surface antigen (anti-HBsAg) levels"
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "commercially available kit",
+      "assay_name": "commercially available kit",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "readouts",
+          "action": "REPLACED",
+          "previous": "anti-Diphtheria IgG concentrations measured by optical density; anti-Tetanus IgG concentrations measured by optical density",
+          "blind_answer": "Anti-Diphtheria IgG concentrations in serum samples"
+        }
+      ],
+      "reported_not_corrected": [
+        {
+          "field_name": "name_in_paper",
+          "verdict": "NOT_SUPPORTED",
+          "reason": "This phrase is too vague to identify a specific assay technique and functions as a product description rather than an assay name."
+        }
+      ]
+    },
+    {
+      "assay_id": "microarray",
+      "assay_name": "microarray",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "sample_type",
+          "action": "REPLACED",
+          "previous": "whole blood samples",
+          "blind_answer": "PAXgene blood samples"
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Polychromatic FCM",
+      "assay_name": "Polychromatic FCM",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "multiplex ELISA protocol Human Inflammation multianalyte profiling",
+      "assay_name": "multiplex ELISA protocol Human Inflammation multianalyte profiling",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "readouts",
+          "action": "REPLACED",
+          "previous": "concentrations of 45 cytokines and chemokines",
+          "blind_answer": "the concentrations of inflammatory proteins, specifically a panel of 45 cytokines/chemokines"
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "complete blood count",
+      "assay_name": "complete blood count",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    }
+  ]
+}

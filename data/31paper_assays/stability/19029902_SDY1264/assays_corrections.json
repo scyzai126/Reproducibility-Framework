@@ -1,0 +1,81 @@
+{
+  "summary": {
+    "assays": 9,
+    "fields_re_extracted": 1,
+    "actions": {
+      "ERROR": 1
+    },
+    "reported_not_corrected": 0
+  },
+  "results": [
+    {
+      "assay_id": "Multiplex analysis",
+      "assay_name": "Multiplex analysis",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Flow cytometric analysis",
+      "assay_name": "Flow cytometric analysis",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "neutralizing antibodies by cytopathic effect",
+      "assay_name": "neutralizing antibodies by cytopathic effect",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "plaque reduction neutralization test",
+      "assay_name": "plaque reduction neutralization test",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "sample_type",
+          "action": "ERROR",
+          "error": "JSONDecodeError: Unterminated string starting at: line 1 column 26 (char 25)"
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "microarray",
+      "assay_name": "microarray",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "RT-PCR",
+      "assay_name": "RT-PCR",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Immunofluorescence",
+      "assay_name": "Immunofluorescence",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "immunoblot analysis",
+      "assay_name": "immunoblot analysis",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "ELISA",
+      "assay_name": "ELISA",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+You are a biomedical reviewer deciding whether several records describe the same measurement.
+
+Each record below was extracted from one paper and every one of them was mapped to the same
+ontology term: {obi_label}. A shared term makes them candidates to be folded into one entry; it
+does not make them one entry. One term covers every flow cytometry experiment a paper runs, and
+most papers run several. Your job is to say which of these records describe one measurement and
+which describe different measurements that happen to share a term.
+
+You are shown the records and nothing else -- not the paper. Judge the records as they are
+written, not what their names should have been or what the paper probably did.
+
+## The rule that decides
+
+**One entry per distinct measurement.** Three things identify a measurement: the
+**technique** (what `standard_technique_name` would say), the **analyte or biological target** it
+measures, and the **specimen** it measures it in. Two descriptions that share all three are one
+entry; split them only when at least one of the three differs. So a Luminex antibody-titer
+assay and a separate Luminex cytokine panel stay two entries despite the shared instrument —
+the analyte differs. The same holds on a flow cytometer: immunophenotyping, an
+activation-induced marker (AIM) assay, a proliferation-dye or CFSE assay, intracellular
+cytokine staining after stimulation, and MHC multimer/tetramer staining are separate entries
+when Methods describes the experiment in its own paragraph or subsection — its own stimulation,
+staining or labelling step — even when the paper calls all of them flow cytometry. A stain or
+panel described only inside another experiment's paragraph is part of that entry. Several
+antibody panels within one experiment are still one entry.
+
+Everything else is the same measurement run more than once, and never a reason to split: a
+different kit, instrument model or protocol variant, a different purpose, several reagents,
+targets or panels within one experiment, or runs on two cohorts, at two timepoints or in two
+batches. Record the second wording in `aliases` and drop the product. Check the
+inventory for near-duplicates before returning it — `ELISA` and `ELISA kits` are one entry,
+not two.
+
+**A `null` is "not stated", never a disagreement.** A record whose `sample_type`,
+`standard_technique_name` or `readouts` is `null` says nothing about that part of the identity.
+Only two *stated*, *different* values split: a record on `serum` and a record on `culture
+supernatants` are two measurements; a record on `serum` and a record whose specimen is `null`
+are not told apart by the specimen, so decide on the technique and the analyte alone. Two
+records that disagree on nothing stated are one measurement -- that is what the fold exists
+for, and splitting them on a gap is not a disagreement.
+
+Read `section`, `quote` and `readouts` together: a section of its own with its own stimulation,
+staining or labelling step, or a readout that names a different analyte, is what tells one
+measurement from another. A different wording of the same step is not.
+
+## Output
+
+Return ONLY valid JSON in exactly this shape — no prose, no markdown fences:
+
+{
+  "groups": [["<key>", "<key>"], ["<key>"]],
+  "reason": "<one concise sentence>"
+}
+
+`groups` is a partition of the records: every `key` below appears exactly once, in exactly one
+group. Records in one group are one measurement and will be folded into a single entry; records
+in different groups stay separate entries. A single group holding every key means they are all
+one measurement. Do not invent a key, drop a key, or repeat one.
+
+---
+
+## The records, all mapped to: {obi_label}
+
+{candidates}
+
+---
+
+Decide which of these records describe the same measurement, by the rule above. Return JSON only.

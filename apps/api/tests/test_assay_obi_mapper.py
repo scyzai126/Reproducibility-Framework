@@ -1,6 +1,16 @@
 import pytest
 
 from app.agent.assay_obi_mapper import enrich_assays_with_obi, map_assay_to_obi
+from app.config import settings
+
+
+@pytest.fixture(autouse=True)
+def _embedding_strategy(monkeypatch):
+    """Every test above the "2026-10-20: tree descent" section exercises step 2's embedding
+    path, which is the default; pinning it here keeps those tests meaning what they say even
+    when a developer's .env sets OBI_MAPPING_STRATEGY=descend (settings reads .env). The
+    descent tests set the strategy themselves, and one of them checks the default."""
+    monkeypatch.setattr(settings, "OBI_MAPPING_STRATEGY", "embedding")
 
 
 def test_exact_original_match():
@@ -60,7 +70,7 @@ def test_a_staining_section_reaches_flow_cytometry_through_the_picker(monkeypatc
     """
     from app.agent import assay_obi_mapper
 
-    def fake_top_k(query, k=10, allowed_ids=None):
+    def fake_top_k(query, k=10, allowed_ids=None, **_):
         if query == "Surface and intracellular cytokine staining":
             return [{"id": "OBI:0001632", "label": "immuno staining assay", "similarity": 0.52}]
         return [{"id": "OBI:0000916", "label": "flow cytometry assay", "similarity": 0.88}]
@@ -82,7 +92,10 @@ def test_a_staining_section_reaches_flow_cytometry_through_the_picker(monkeypatc
 
     assert mapped["obi_id"] == "OBI:0000916"
     assert mapped["resource"] == "embedding_llm_normalized"
-    assert set(seen["ids"]) == {"OBI:0000916", "OBI:0001632"}
+    # Both retrieved terms reach the picker; their OBI neighbours ride along after them
+    # (_with_neighbours), which is why this is a subset and not an equality.
+    assert {"OBI:0000916", "OBI:0001632"} <= set(seen["ids"])
+    assert seen["ids"][:2] == ["OBI:0000916", "OBI:0001632"]
     assert seen["name"] == "Surface and intracellular cytokine staining"
     assert seen["normalized"] == "flow cytometry"
 
@@ -154,7 +167,7 @@ def test_step3_retrieves_on_the_technique_but_shows_the_llm_the_paper_name(monke
 
     seen = {}
 
-    def fake_top_k(query, k=10, allowed_ids=None):
+    def fake_top_k(query, k=10, allowed_ids=None, **_):
         seen["query"] = query
         return [{"id": "OBI:0002031", "label": "genotyping by SNP array assay", "similarity": 0.67}]
 
@@ -191,7 +204,7 @@ def test_step3_shows_one_name_when_technique_changed_nothing(monkeypatch):
     monkeypatch.setattr(
         assay_obi_mapper,
         "_top_k_candidates",
-        lambda query, k=10, allowed_ids=None: [{"id": "OBI:1", "label": "x", "similarity": 0.5}],
+        lambda query, k=10, allowed_ids=None, **_: [{"id": "OBI:1", "label": "x", "similarity": 0.5}],
     )
     monkeypatch.setattr(assay_obi_mapper, "_llm_pick", fake_llm_pick)
 
@@ -323,7 +336,7 @@ def test_filter_still_guards_an_unpruned_vocabulary(tmp_path):
     # top of the compositional filter it is also domain-pruned (scripts/prune_obi_domain.py),
     # which no label regex can express. Subset is the property worth guarding — a domain prune
     # only ever removes.
-    live = _term_ids(_OBI_DIR / "obi_generic_index.json")
+    live = _term_ids(_OBI_DIR / "obi_assay_pruned_index.json")
     assert set(live) <= set(ids)
 
 
@@ -446,7 +459,7 @@ def test_the_paper_name_is_what_step2_queries_and_shows(monkeypatch):
     monkeypatch.setattr(
         assay_obi_mapper,
         "_top_k_candidates",
-        lambda query, k=10, allowed_ids=None: (
+        lambda query, k=10, allowed_ids=None, **_: (
             seen.__setitem__("query", query),
             [{"id": "OBI:1", "label": "x", "similarity": 0.5}],
         )[1],
@@ -480,7 +493,7 @@ def test_step2_retrieves_on_both_names(monkeypatch):
 
     monkeypatch.setattr(
         assay_obi_mapper, "_top_k_candidates",
-        lambda query, k=10, allowed_ids=None: (
+        lambda query, k=10, allowed_ids=None, **_: (
             queries.append(query), [{"id": "OBI:1", "label": "x", "similarity": 0.5}])[1],
     )
     monkeypatch.setattr(
@@ -501,7 +514,7 @@ def test_step2_retrieves_once_when_the_two_names_agree(monkeypatch):
 
     monkeypatch.setattr(
         assay_obi_mapper, "_top_k_candidates",
-        lambda query, k=10, allowed_ids=None: (
+        lambda query, k=10, allowed_ids=None, **_: (
             queries.append(query), [{"id": "OBI:1", "label": "x", "similarity": 0.5}])[1],
     )
     monkeypatch.setattr(
@@ -570,7 +583,7 @@ def test_the_paper_query_carries_the_aliases_but_not_sample_or_readouts(monkeypa
     queries = []
     monkeypatch.setattr(
         assay_obi_mapper, "_top_k_candidates",
-        lambda query, k=20, allowed_ids=None: (
+        lambda query, k=20, allowed_ids=None, **_: (
             queries.append(query), [{"id": "OBI:1", "label": "x", "similarity": 0.5}])[1],
     )
     monkeypatch.setattr(assay_obi_mapper, "_llm_pick", lambda *a, **k: None)
@@ -592,7 +605,7 @@ def test_a_term_only_the_standard_technique_query_could_reach_is_attributed_to_i
     """
     from app.agent import assay_obi_mapper
 
-    def fake_top_k(query, k=10, allowed_ids=None):
+    def fake_top_k(query, k=10, allowed_ids=None, **_):
         if query == "Surface and intracellular cytokine staining":
             return [{"id": "OBI:0001632", "label": "immuno staining assay", "similarity": 0.52}]
         return [{"id": "OBI:0000916", "label": "flow cytometry assay", "similarity": 0.88}]
@@ -618,7 +631,7 @@ def test_a_term_both_queries_found_stays_plain_embedding_llm(monkeypatch):
 
     monkeypatch.setattr(
         assay_obi_mapper, "_top_k_candidates",
-        lambda query, k=10, allowed_ids=None: [
+        lambda query, k=10, allowed_ids=None, **_: [
             {"id": "OBI:0000916", "label": "flow cytometry assay", "similarity": 0.7}],
     )
     monkeypatch.setattr(
@@ -647,7 +660,7 @@ def test_the_picker_is_shown_both_names_but_retrieval_is_not_display(monkeypatch
 
     monkeypatch.setattr(
         assay_obi_mapper, "_top_k_candidates",
-        lambda query, k=10, allowed_ids=None: [
+        lambda query, k=10, allowed_ids=None, **_: [
             {"id": "OBI:0002031", "label": "genotyping by SNP array assay", "similarity": 0.67}],
     )
     monkeypatch.setattr(
@@ -714,7 +727,7 @@ def test_index_is_reproducible_from_the_full_source():
 
     _, _, rebuilt, _ = prune.build_index(prune.OBO_PATH)
 
-    committed = json.loads((_OBI_DIR / "obi_generic_index.json").read_text(encoding="utf-8"))
+    committed = json.loads((_OBI_DIR / "obi_assay_pruned_index.json").read_text(encoding="utf-8"))
 
     # Order matters, not just membership: _build_lookup uses setdefault, so index order decides
     # which term wins a synonym collision.
@@ -978,6 +991,49 @@ def test_index_children_are_direct_and_inside_the_index():
     assert "OBI:0000661" not in children
 
 
+def test_every_index_entry_carries_its_is_a_parents():
+    """The index holds the graph the mapper walks: direct `is_a` parents, unfiltered, each with
+    its label so a reviewer can read the edge without obi.obo. A pruned term can name a parent
+    the index does not hold (its IEDB children are not in, and point nowhere)."""
+    import json
+
+    from app.agent.assay_obi_mapper import _OBI_TERMS_PATH
+
+    terms = json.loads(_OBI_TERMS_PATH.read_text(encoding="utf-8"))
+    assert all(isinstance(t.get("parents"), list) for t in terms)
+    by_id = {t["id"]: t for t in terms}
+    assert by_id["OBI:0600031"]["parents"] == [  # ELISPOT, obo order
+        {"id": "OBI:0001977", "label": "cytometry assay"},
+        {"id": "OBI:0003587", "label": "cell culture assay"},
+    ]
+    assert by_id["OBI:0000661"]["parents"] == [{"id": "OBI:0000443", "label": "analyte assay"}]
+
+
+def test_index_children_come_from_the_index_not_obi_obo(monkeypatch, tmp_path):
+    """With `parents` in the index, the mapper no longer needs obi.obo at run time: pointing
+    _OBO_PATH at nothing changes no edge. A terms file without the field still falls back."""
+    import json
+
+    from app.agent import assay_obi_mapper as m
+
+    m._index_children.cache_clear()
+    with_obo = m._index_children()
+    monkeypatch.setattr(m, "_OBO_PATH", tmp_path / "missing.obo")
+    m._index_children.cache_clear()
+    try:
+        assert m._index_children() == with_obo
+        assert "OBI:0001271" in m._index_children()["OBI:0001177"]
+        # an older index, without the field, has only obi.obo to go on -- and it is gone
+        stripped = tmp_path / "old_index.json"
+        stripped.write_text(json.dumps([{k: v for k, v in t.items() if k != "parents"}
+                                        for t in m._index_entries(m._OBI_TERMS_PATH).values()]))
+        assert m._index_children(stripped) == {}
+    finally:
+        m._index_children.cache_clear()
+        m._index_entries.cache_clear()
+        m._term_ids.cache_clear()
+
+
 def test_an_rna_seq_hit_pins_its_children_and_the_picker_can_choose_bulk(monkeypatch):
     from app.agent import assay_obi_mapper
 
@@ -1153,3 +1209,752 @@ def test_the_pick_prompt_prefers_broad_to_none():
     prompt = build_pick_prompt("PRNT", [{"id": "OBI:1", "label": "x", "similarity": 0.5}])
 
     assert "PREFER BROAD TO NONE" in prompt
+
+
+# ── 2026-10-19: reproducibility and diagnostics ────────────────────────────────
+
+class _RecordingClient:
+    """A chat client that answers `body` and keeps the kwargs of every call it was made."""
+
+    def __init__(self, body: str):
+        self.calls: list[dict] = []
+        outer = self
+
+        class _Completions:
+            def create(self, **kwargs):
+                outer.calls.append(kwargs)
+                message = type("M", (), {"content": body})()
+                return type("R", (), {"choices": [type("C", (), {"message": message})()]})()
+
+        self.chat = type("Chat", (), {"completions": _Completions()})()
+
+
+_ONE = [{"id": "OBI:1", "label": "x", "similarity": 0.5}]
+
+
+def test_the_pick_call_is_seeded_like_extraction(monkeypatch):
+    """The pick was the largest source of run-to-run change on the 31-paper re-run."""
+    from app.agent import assay_obi_mapper
+    from app.agent.assay_extractor import EXTRACTION_SEED
+    client = _RecordingClient("1 EXACT")
+    monkeypatch.setattr(assay_obi_mapper, "OpenAI", lambda **_: client)
+
+    assay_obi_mapper._llm_pick("ELISA", _ONE)
+
+    assert client.calls[0]["seed"] == EXTRACTION_SEED
+    assert client.calls[0]["temperature"] == 0
+
+
+@pytest.mark.parametrize("reply", ["3 EXACT.", "3, EXACT", "3 (EXACT)", "3: EXACT", "3 - exact",
+                                   "**3 EXACT**", "3 exact\n"])
+def test_punctuation_around_the_granularity_does_not_void_the_pick(reply):
+    from app.agent.assay_obi_mapper import parse_pick_reply
+
+    assert parse_pick_reply(reply, 10) == (2, "EXACT")
+
+
+@pytest.mark.parametrize("reply", ["candidate 3", "3 maybe", "OBI:0000661", "12 EXACT", ""])
+def test_a_reply_naming_no_candidate_is_a_failed_call_not_an_abstention(monkeypatch, reply):
+    """"none" is a judgement and is reported UNMAPPED; a reply nobody can read is not."""
+    from app.agent import assay_obi_mapper
+    monkeypatch.setattr(assay_obi_mapper, "OpenAI", lambda **_: _RecordingClient(reply))
+
+    with pytest.raises(assay_obi_mapper.PickReplyError):
+        assay_obi_mapper._llm_pick("x", _ONE)
+
+
+def test_none_is_still_an_abstention(monkeypatch):
+    from app.agent import assay_obi_mapper
+    monkeypatch.setattr(assay_obi_mapper, "OpenAI", lambda **_: _RecordingClient("None."))
+
+    assert assay_obi_mapper._llm_pick("x", _ONE) is None
+
+
+def test_an_unreadable_reply_is_reported_as_an_error_not_a_vocabulary_gap(monkeypatch):
+    from app.agent import assay_obi_mapper
+    monkeypatch.setattr(assay_obi_mapper, "_top_k_candidates", lambda *a, **k: list(_ONE))
+    monkeypatch.setattr(assay_obi_mapper, "OpenAI",
+                        lambda **_: _RecordingClient("candidate 1 looks right"))
+
+    entry = enrich_assays_with_obi({"XYZZY_unknown": {"name_in_paper": "XYZZY_unknown"}})[
+        "XYZZY_unknown"]
+
+    assert entry["resource"] == "error" and entry["obi_id"] is None
+    assert "PickReplyError" in entry["obi_error"]
+    assert "candidate 1 looks right" in entry["obi_error"]
+
+
+def test_an_unreadable_reply_on_an_exact_hit_leaves_the_exact_hit_standing(monkeypatch):
+    from app.agent import assay_obi_mapper
+    monkeypatch.setattr(assay_obi_mapper, "_top_k_candidates", lambda *a, **k: [])
+    monkeypatch.setattr(assay_obi_mapper, "OpenAI", lambda **_: _RecordingClient("the first one"))
+
+    mapped = assay_obi_mapper.map_assay_to_obi("RNA-seq", "RNA sequencing")
+
+    assert mapped["resource"] == "exact_original_llm"
+    assert mapped["obi_label"] == "RNA-seq assay"
+
+
+def test_a_label_beats_a_synonym_on_a_shared_key(tmp_path):
+    import json
+    from app.agent.assay_obi_mapper import _build_lookup
+    terms = tmp_path / "terms.json"
+    terms.write_text(json.dumps([
+        {"id": "OBI:A", "label": "histological assay", "synonyms": ["histopathology"]},
+        {"id": "OBI:B", "label": "histopathology assay", "synonyms": []},
+    ]), encoding="utf-8")
+
+    lookup = _build_lookup(terms)
+
+    assert lookup["histopathology"]["obi_id"] == "OBI:B"
+    assert lookup["histopathology assay"]["obi_id"] == "OBI:B"
+    assert lookup["histological"]["obi_id"] == "OBI:A"
+
+
+def test_lookup_collisions_are_the_known_four():
+    """Keys two index terms claim. Pinned so an OBI release that adds one is noticed: for a
+    synonym shared by two terms, index order -- not a judgement -- decides which one wins."""
+    import json
+    from app.agent.assay_obi_mapper import _OBI_TERMS_PATH, _build_lookup, _index_keys
+    owners: dict[str, set[str]] = {}
+    for term in json.loads(_OBI_TERMS_PATH.read_text(encoding="utf-8")):
+        for text in [term["label"], *term.get("synonyms", [])]:
+            for key in _index_keys(str(text)):
+                owners.setdefault(key, set()).add(term["id"])
+
+    assert {k for k, ids in owners.items() if len(ids) > 1} == {
+        "at-iii", "at-iii assay", "histopathology", "lps"}
+    assert _build_lookup()["histopathology"]["obi_id"] == "OBI:0002564"
+
+
+def test_enrichment_keeps_registry_order_whatever_order_the_lookups_finish(monkeypatch):
+    import time
+    from app.agent import assay_obi_mapper
+
+    def slow_first(name, *args, **kwargs):
+        if name == "slow":
+            time.sleep(0.05)
+        return {"obi_id": f"OBI:{name}", "obi_label": name, "resource": "exact_original",
+                "confidence": "high"}
+
+    monkeypatch.setattr(assay_obi_mapper, "map_assay_to_obi", slow_first)
+    done: list[tuple[str, int, int]] = []
+
+    enriched = enrich_assays_with_obi({"slow": {}, "fast": {}},
+                                      on_done=lambda key, n, total: done.append((key, n, total)))
+
+    assert list(enriched) == ["slow", "fast"]
+    assert [d[0] for d in done] == ["fast", "slow"]
+    assert [(n, total) for _, n, total in done] == [(1, 2), (2, 2)]
+
+
+def test_replies_made_on_worker_threads_reach_the_runs_trace(monkeypatch):
+    """assay_trace is a ContextVar; a bare thread would not see the active trace."""
+    from app.agent import assay_obi_mapper, assay_trace
+
+    def record(name, *args, **kwargs):
+        assay_trace.record("obi", kwargs["registry_key"], reply="1 exact")
+        return None
+
+    monkeypatch.setattr(assay_obi_mapper, "map_assay_to_obi", record)
+    trace = assay_trace.start()
+    try:
+        enrich_assays_with_obi({"a": {}, "b": {}, "c": {}})
+    finally:
+        assay_trace.stop()
+
+    assert set(trace.as_json()["obi"]) == {"a", "b", "c"}
+
+
+def test_a_broken_progress_listener_does_not_cost_the_round(monkeypatch):
+    from app.agent import assay_obi_mapper
+    monkeypatch.setattr(assay_obi_mapper, "map_assay_to_obi", lambda *a, **k: None)
+
+    def boom(*_):
+        raise RuntimeError("listener broke")
+
+    enriched = enrich_assays_with_obi({"a": {}}, on_done=boom)
+
+    assert enriched["a"]["resource"] == "unresolved"
+
+
+# ── 2026-10-19: OBI neighbours of the top retrieved candidates ─────────────────
+
+def _c(obi_id: str, label: str, similarity: float | None = 0.5, **extra) -> dict:
+    return {"id": obi_id, "label": label, "similarity": similarity, **extra}
+
+
+def test_index_parents_is_the_inverse_of_index_children():
+    from app.agent.assay_obi_mapper import _index_children, _index_parents
+    children, parents = _index_children(), _index_parents()
+
+    assert all(kid in parents and parent in parents[kid]
+               for parent, kids in children.items() for kid in kids)
+    assert all(kid in children.get(parent, ()) for kid, ps in parents.items() for parent in ps)
+    # CBA's antibody-detection child, the SDY1260 miss, is one edge below it.
+    assert "OBI:0003116" in children["OBI:0000920"]
+
+
+def test_neighbours_of_the_top_retrieved_terms_join_the_list_after_it():
+    """The curator's term the 31-paper run never retrieved sat one is_a edge from a top-3
+    candidate; the picker can only choose among what it is shown."""
+    from app.agent import assay_obi_mapper
+    retrieved = [_c("OBI:0000920", "cytometric bead array assay", 0.7),
+                 _c("OBI:0000661", "enzyme-linked immunosorbent assay", 0.6)]
+
+    out = assay_obi_mapper._with_neighbours(retrieved)
+
+    assert out[:2] == retrieved
+    added = {c["id"]: c for c in out[2:]}
+    assert "OBI:0003116" in added                       # child of CBA
+    assert added["OBI:0003116"]["pin"] == "child_of"
+    assert added["OBI:0003116"]["of"] == 1
+    assert added["OBI:0003116"]["similarity"] is None
+    assert all(c["id"] not in {"OBI:0000920", "OBI:0000661"} for c in out[2:])
+    assert len({c["id"] for c in out}) == len(out)
+
+
+def test_only_the_first_top_retrieved_terms_anchor_neighbours():
+    from app.agent import assay_obi_mapper
+    retrieved = [_c(f"OBI:{i}", f"t{i}") for i in range(1, 6)]
+    seen = []
+    monkeypatch_children = {f"OBI:{i}": (f"OBI:{i}0",) for i in range(1, 6)}
+    entries = {f"OBI:{i}0": {"id": f"OBI:{i}0", "label": f"child of t{i}"} for i in range(1, 6)}
+    with _patched_graph(assay_obi_mapper, monkeypatch_children, {}, entries):
+        out = assay_obi_mapper._with_neighbours(retrieved)
+    seen = [c["of"] for c in out[5:]]
+
+    assert seen == [1, 2, 3]
+
+
+def test_a_term_over_the_child_cap_contributes_no_children_but_still_its_parents():
+    from app.agent import assay_obi_mapper
+    big = assay_obi_mapper.MAX_NEIGHBOUR_CHILDREN + 1
+    children = {"OBI:1": tuple(f"OBI:1{i:02d}" for i in range(big))}
+    parents = {"OBI:1": ("OBI:0",)}
+    entries = {"OBI:0": {"id": "OBI:0", "label": "parent"},
+               **{k: {"id": k, "label": k} for k in children["OBI:1"]}}
+    with _patched_graph(assay_obi_mapper, children, parents, entries):
+        out = assay_obi_mapper._with_neighbours([_c("OBI:1", "big family")])
+
+    assert [c["id"] for c in out] == ["OBI:1", "OBI:0"]
+    assert out[1]["pin"] == "parent_of" and out[1]["of"] == 1
+
+
+def test_pinned_rows_are_not_anchors_and_keep_leading_the_list():
+    from app.agent import assay_obi_mapper
+    pinned_hit = _c("OBI:9", "exact hit", None, pin="exact")
+    retrieved = [_c("OBI:1", "a"), _c("OBI:2", "b")]
+    children = {"OBI:9": ("OBI:90",), "OBI:1": ("OBI:10",)}
+    entries = {"OBI:90": {"id": "OBI:90", "label": "kid of hit"}, "OBI:10": {"id": "OBI:10", "label": "kid of a"}}
+    with _patched_graph(assay_obi_mapper, children, {}, entries):
+        out = assay_obi_mapper._with_neighbours([pinned_hit, *retrieved])
+
+    assert out[0] is pinned_hit
+    assert [c["id"] for c in out[3:]] == ["OBI:10"]
+    assert out[3]["of"] == 2          # "a" is candidate 2 in the list the picker sees
+
+
+def test_neighbour_rows_are_labelled_by_their_anchor_in_the_prompt():
+    from app.agent.assay_obi_mapper import build_pick_prompt
+    prompt = build_pick_prompt("x", [_c("OBI:1", "a"), _c("OBI:10", "kid", None, pin="child_of", of=1),
+                                     _c("OBI:0", "mum", None, pin="parent_of", of=1)])
+
+    assert "2. OBI:10 | kid (child of candidate 1)" in prompt
+    assert "3. OBI:0 | mum (parent of candidate 1)" in prompt
+    assert 'marked "child of\ncandidate N" or "parent of candidate N"' in prompt
+    assert "Entries marked \"child of candidate N\" / \"parent of candidate N\" are the OBI neighbours" in prompt
+
+
+def test_a_pick_only_a_neighbour_could_reach_is_attributed_to_the_expansion(monkeypatch):
+    from app.agent import assay_obi_mapper
+    monkeypatch.setattr(assay_obi_mapper, "_top_k_candidates",
+                        lambda *a, **k: [_c("OBI:0000920", "cytometric bead array assay", 0.7)])
+
+    def pick_child(assay_name, candidates, **_):
+        child = next(c for c in candidates if c["id"] == "OBI:0003116")
+        return {"obi_id": child["id"], "obi_label": child["label"], "resource": "embedding_llm",
+                "confidence": child["similarity"], "granularity": "EXACT"}
+
+    monkeypatch.setattr(assay_obi_mapper, "_llm_pick", pick_child)
+
+    mapped = assay_obi_mapper.map_assay_to_obi("anti-Diphtheria IgG by Luminex", "Luminex")
+
+    assert mapped["obi_id"] == "OBI:0003116"
+    assert mapped["resource"] == "embedding_llm_neighbour"
+
+
+def test_a_pick_on_a_retrieved_term_keeps_its_attribution(monkeypatch):
+    from app.agent import assay_obi_mapper
+    monkeypatch.setattr(assay_obi_mapper, "_top_k_candidates",
+                        lambda *a, **k: [_c("OBI:0000920", "cytometric bead array assay", 0.7)])
+    monkeypatch.setattr(assay_obi_mapper, "_llm_pick",
+                        lambda name, candidates, **_: {"obi_id": "OBI:0000920", "obi_label": "cba",
+                                                      "resource": "embedding_llm", "confidence": 0.7})
+
+    assert assay_obi_mapper.map_assay_to_obi("Luminex panel", "Luminex")["resource"] == "embedding_llm"
+
+
+class _patched_graph:
+    """Swap the index graph for a small one, for tests that need a shape the real index lacks."""
+
+    def __init__(self, module, children, parents, entries):
+        self.module, self.children, self.parents, self.entries = module, children, parents, entries
+
+    def __enter__(self):
+        m = self.module
+        self.saved = (m._index_children, m._index_parents, m._index_entries, m._term_details)
+        m._index_children = lambda terms_path=None: self.children
+        m._index_parents = lambda terms_path=None: self.parents
+        m._index_entries = lambda terms_path=None: self.entries
+        m._term_details = lambda terms_path=None: {}
+        return self
+
+    def __exit__(self, *exc):
+        (self.module._index_children, self.module._index_parents,
+         self.module._index_entries, self.module._term_details) = self.saved
+
+
+# ── 2026-10-20: tree descent ──────────────────────────────────────────────────
+#
+# A six-term vocabulary with the shape the walk has to handle: two roots (one a leaf), a
+# branch two deep, and a term with children under an exact-match label.
+#
+#   R1 "imaging assay" (root, leaf)
+#   R2 "sequencing assay" (root)
+#     └─ S1 "RNA-seq" ──┬─ S1a "bulk RNA-seq assay"
+#                       └─ S1b "single-cell RNA sequencing assay"
+#     └─ S2 "DNA sequencing assay" (leaf)
+
+_WALK_TERMS = [
+    {"id": "OBI:R1", "label": "imaging assay", "synonyms": [], "definition": "Makes a picture.",
+     "n_descendants": 0, "parents": []},
+    {"id": "OBI:R2", "label": "sequencing assay", "synonyms": ["seq"],
+     "definition": "Determines a sequence.", "n_descendants": 3, "parents": []},
+    {"id": "OBI:S1", "label": "RNA-seq", "synonyms": ["RNA sequencing"],
+     "definition": "Sequences RNA.", "n_descendants": 2, "parents": [{"id": "OBI:R2"}]},
+    {"id": "OBI:S1a", "label": "bulk RNA-seq assay", "synonyms": [],
+     "definition": "Sequences pooled RNA.", "n_descendants": 0, "parents": [{"id": "OBI:S1"}]},
+    {"id": "OBI:S1b", "label": "single-cell RNA sequencing assay", "synonyms": ["scRNA-seq"],
+     "definition": "Sequences RNA per cell.", "n_descendants": 0, "parents": [{"id": "OBI:S1"}]},
+    {"id": "OBI:S2", "label": "DNA sequencing assay", "synonyms": [],
+     "definition": "Sequences DNA.", "n_descendants": 0, "parents": [{"id": "OBI:R2"}]},
+]
+
+
+@pytest.fixture
+def walk_terms(tmp_path, monkeypatch):
+    """The vocabulary above as a terms file, with the descent strategy selected and every
+    cache the walk reads cleared on the way out."""
+    import json
+    from app.agent import assay_obi_mapper as m
+    path = tmp_path / "walk_terms.json"
+    path.write_text(json.dumps(_WALK_TERMS), encoding="utf-8")
+    monkeypatch.setattr(settings, "OBI_MAPPING_STRATEGY", "descend")
+    yield path
+    for cached in (m._term_ids, m._build_lookup, m._index_entries, m._index_children,
+                   m._index_parents, m._index_roots, m._term_details):
+        cached.cache_clear()
+
+
+class _WalkClient:
+    """A chat client that answers the scripted replies in order and keeps every prompt."""
+
+    def __init__(self, *replies: str):
+        self.replies = list(replies)
+        self.prompts: list[str] = []
+        outer = self
+
+        class _Completions:
+            def create(self, **kwargs):
+                outer.prompts.append(kwargs["messages"][0]["content"])
+                body = outer.replies.pop(0)
+                message = type("M", (), {"content": body})()
+                return type("R", (), {"choices": [type("C", (), {"message": message})()]})()
+
+        self.chat = type("Chat", (), {"completions": _Completions()})()
+
+
+def _walk(monkeypatch, *replies: str) -> _WalkClient:
+    from app.agent import assay_obi_mapper
+    client = _WalkClient(*replies)
+    monkeypatch.setattr(assay_obi_mapper, "OpenAI", lambda **_: client)
+    return client
+
+
+def test_the_default_strategy_is_embedding_until_the_descent_is_benchmarked():
+    """The descent is opt-in: it has no benchmark comparison yet, its first level is a 96-way
+    choice nothing below can recover from, and it spends 1-2 more chat calls per unmatched
+    assay. The default moves only on data (see the module docstring)."""
+    from app.config import Settings
+
+    assert Settings.model_fields["OBI_MAPPING_STRATEGY"].default == "embedding"
+
+
+def test_the_roots_are_the_parentless_generic_terms(walk_terms):
+    from app.agent.assay_obi_mapper import _index_roots
+
+    assert _index_roots(walk_terms) == ("OBI:R1", "OBI:R2")
+
+
+def test_the_live_index_has_the_measured_ninety_six_roots():
+    """The number the module docstring and the prompt's cost reasoning rest on."""
+    from app.agent.assay_obi_mapper import _index_roots, _index_children
+
+    roots = _index_roots()
+    assert len(roots) == 96
+    assert "OBI:0000443" in roots                      # analyte assay, 79 children
+    assert len(_index_children()["OBI:0000443"]) == 79
+
+
+@pytest.mark.parametrize("reply, expected", [
+    ("3", ("pick", 2, None)),
+    ("3 exact", ("pick", 2, "EXACT")),
+    ("#2, (broad).", ("pick", 1, "BROAD")),
+    ("STOP EXACT", ("stop", None, "EXACT")),
+    ("stop broad", ("stop", None, "BROAD")),
+    ("stop", ("stop", None, None)),          # the term is unambiguous; granularity is diagnostic
+    ("none", ("none", None, None)),
+])
+def test_the_descend_reply_grammar(reply, expected):
+    from app.agent.assay_obi_mapper import parse_descend_reply
+
+    assert parse_descend_reply(reply, 5) == expected
+
+
+@pytest.mark.parametrize("reply", ["OBI:0000916", "3 or 5", "7", "maybe 2", "stop here"])
+def test_a_descend_reply_outside_the_grammar_is_a_failed_call(reply):
+    """An unreadable reply, or a child number that is not listed, is reported like a failed
+    call, never read as an abstention or a step."""
+    from app.agent.assay_obi_mapper import PickReplyError, parse_descend_reply
+
+    with pytest.raises(PickReplyError):
+        parse_descend_reply(reply, 5)
+
+
+def test_a_walk_from_the_root_steps_down_until_a_granularity_ends_it(walk_terms, monkeypatch):
+    from app.agent import assay_obi_mapper, assay_trace
+    client = _walk(monkeypatch, "2", "1", "2 EXACT")
+    trace = assay_trace.start()
+    try:
+        mapped = assay_obi_mapper.map_assay_to_obi(
+            "10x Chromium transcriptomes", "single-cell RNA sequencing", terms_path=walk_terms,
+            registry_key="10x", aliases=["scRNA-seq"])
+    finally:
+        assay_trace.stop()
+
+    assert mapped["obi_id"] == "OBI:S1b" and mapped["obi_label"] == "single-cell RNA sequencing assay"
+    assert mapped["resource"] == "descend_llm"
+    assert mapped["confidence"] is None
+    assert mapped["granularity"] == "EXACT"
+    assert mapped["path"] == ["OBI:R2", "OBI:S1", "OBI:S1b"]
+    assert mapped["calls"] == 3 and mapped["backoff"] is False
+    # The root prompt lists the two roots; the next the chosen root's two children.
+    assert "1. OBI:R1 | imaging assay" in client.prompts[0]
+    assert "children in vocabulary: 2" in client.prompts[0]
+    assert "OBI:0000070 | assay (the root" in client.prompts[0]
+    assert "1. OBI:S1 | RNA-seq | RNA sequencing" in client.prompts[1]
+    assert "OBI:R2 | sequencing assay | seq | definition: Determines a sequence." in client.prompts[1]
+    # One trace record for the whole walk, every level in it.
+    record = trace.as_json()["obi"]["10x"]
+    assert record["strategy"] == "descend" and record["path"] == mapped["path"]
+    assert [(lvl["node"], lvl["reply"]) for lvl in record["levels"]] == [
+        ("OBI:0000070", "2"), ("OBI:R2", "1"), ("OBI:S1", "2 exact")]
+    assert record["levels"][1]["candidates"][1] == (
+        "2. OBI:S2 | DNA sequencing assay | definition: Sequences DNA. | descendants: 0"
+        " | children in vocabulary: 0")
+
+
+def test_stepping_into_a_leaf_ends_the_walk_without_another_call(walk_terms, monkeypatch):
+    from app.agent import assay_obi_mapper
+    client = _walk(monkeypatch, "2", "2")
+
+    mapped = assay_obi_mapper.map_assay_to_obi("whole genome sequencing", "", terms_path=walk_terms)
+
+    assert mapped["obi_id"] == "OBI:S2"
+    assert mapped["calls"] == 2 and not client.replies
+    assert mapped["granularity"] is None      # a bare number carries none, as before
+
+
+def test_stop_ends_the_walk_on_the_current_term(walk_terms, monkeypatch):
+    from app.agent import assay_obi_mapper
+    _walk(monkeypatch, "2", "STOP BROAD")
+
+    mapped = assay_obi_mapper.map_assay_to_obi("nanopore sequencing", "", terms_path=walk_terms)
+
+    assert mapped["obi_id"] == "OBI:R2" and mapped["granularity"] == "BROAD"
+    assert mapped["path"] == ["OBI:R2"] and mapped["backoff"] is False
+
+
+def test_none_below_the_root_backs_off_onto_the_current_term_as_broad(walk_terms, monkeypatch):
+    """"none" at a level below the root contradicts the step that entered the term; the term
+    stands, BROAD, and the walk is marked so a run that does this often can be found."""
+    from app.agent import assay_obi_mapper
+    _walk(monkeypatch, "2", "none")
+
+    mapped = assay_obi_mapper.map_assay_to_obi("nanopore sequencing", "", terms_path=walk_terms)
+
+    assert mapped["obi_id"] == "OBI:R2" and mapped["granularity"] == "BROAD"
+    assert mapped["backoff"] is True and mapped["calls"] == 2
+
+
+def test_none_at_the_root_is_unresolved_and_so_is_stop(walk_terms, monkeypatch):
+    from app.agent import assay_obi_mapper
+    _walk(monkeypatch, "none", "STOP EXACT")
+
+    assert assay_obi_mapper.map_assay_to_obi("bespoke readout", "", terms_path=walk_terms) is None
+    assert assay_obi_mapper.map_assay_to_obi("bespoke readout", "", terms_path=walk_terms) is None
+
+
+def test_an_exact_hit_with_children_is_where_the_walk_starts(walk_terms, monkeypatch):
+    """"RNA-seq" is a label with children, so the first level shown is its children -- not the
+    96 roots -- and the result keeps the exact-hit attribution and confidence."""
+    from app.agent import assay_obi_mapper
+    client = _walk(monkeypatch, "1 EXACT")
+
+    mapped = assay_obi_mapper.map_assay_to_obi("RNA-seq", "RNA sequencing", terms_path=walk_terms,
+                                               sample_type="PAXgene whole blood")
+
+    assert mapped["obi_id"] == "OBI:S1a"
+    assert mapped["resource"] == "exact_original_llm" and mapped["confidence"] == "high"
+    assert mapped["path"] == ["OBI:S1", "OBI:S1a"] and mapped["calls"] == 1
+    assert len(client.prompts) == 1
+    assert "OBI:S1 | RNA-seq | RNA sequencing | definition: Sequences RNA." in client.prompts[0]
+    assert "OBI:R1" not in client.prompts[0]
+
+
+def test_an_exact_hit_stands_when_its_first_level_abstains_or_cannot_be_read(walk_terms,
+                                                                            monkeypatch):
+    from app.agent import assay_obi_mapper
+    _walk(monkeypatch, "none", "3 or 5")
+
+    backed_off = assay_obi_mapper.map_assay_to_obi("RNA-seq", "", terms_path=walk_terms)
+    unreadable = assay_obi_mapper.map_assay_to_obi("RNA-seq", "", terms_path=walk_terms)
+
+    assert backed_off["obi_id"] == "OBI:S1" and backed_off["granularity"] == "BROAD"
+    assert backed_off["resource"] == "exact_original_llm" and backed_off["backoff"] is True
+    assert unreadable == {"obi_id": "OBI:S1", "obi_label": "RNA-seq",
+                          "resource": "exact_original_llm", "confidence": "high"}
+
+
+def test_an_unreadable_reply_with_no_exact_hit_propagates_with_the_walk_recorded(walk_terms,
+                                                                                 monkeypatch):
+    from app.agent import assay_obi_mapper, assay_trace
+    _walk(monkeypatch, "2", "which one?")
+    trace = assay_trace.start()
+    try:
+        with pytest.raises(assay_obi_mapper.PickReplyError):
+            assay_obi_mapper.map_assay_to_obi("nanopore", "", terms_path=walk_terms,
+                                              registry_key="nanopore")
+    finally:
+        assay_trace.stop()
+
+    record = trace.as_json()["obi"]["nanopore"]
+    assert [lvl["reply"] for lvl in record["levels"]] == ["2", "which one?"]
+
+
+def test_an_exact_hit_on_a_leaf_still_answers_for_free(walk_terms, monkeypatch):
+    from app.agent import assay_obi_mapper
+    client = _walk(monkeypatch)
+
+    mapped = assay_obi_mapper.map_assay_to_obi("imaging assay", "", terms_path=walk_terms)
+
+    assert mapped == {"obi_id": "OBI:R1", "obi_label": "imaging assay",
+                      "resource": "exact_original", "confidence": "high"}
+    assert not client.prompts
+
+
+def test_the_walk_stops_where_it_is_after_the_level_limit(walk_terms, monkeypatch):
+    """A reply that keeps naming a child with children cannot run forever; the walk ends
+    where it is, BROAD, marked as a back-off."""
+    from app.agent import assay_obi_mapper
+    monkeypatch.setattr(assay_obi_mapper, "MAX_DESCENT_LEVELS", 1)
+    _walk(monkeypatch, "2", "1")
+
+    mapped = assay_obi_mapper.map_assay_to_obi("nanopore", "", terms_path=walk_terms)
+
+    assert mapped["obi_id"] == "OBI:R2" and mapped["granularity"] == "BROAD"
+    assert mapped["backoff"] is True and mapped["calls"] == 1
+
+
+def test_the_embedding_strategy_is_still_selectable(walk_terms, monkeypatch):
+    from app.agent import assay_obi_mapper
+    seen = []
+    monkeypatch.setattr(assay_obi_mapper, "_embedding_llm_match",
+                        lambda query, **kw: seen.append(query) or None)
+    monkeypatch.setattr(assay_obi_mapper, "_llm_descend_pick",
+                        lambda *a, **k: pytest.fail("the walk ran under the embedding strategy"))
+
+    monkeypatch.setattr(settings, "OBI_MAPPING_STRATEGY", "embedding")
+    assert assay_obi_mapper.map_assay_to_obi("SIMoA", "", terms_path=walk_terms) is None
+    assert seen == ["SIMoA"]
+    # The argument outranks the setting.
+    monkeypatch.setattr(settings, "OBI_MAPPING_STRATEGY", "descend")
+    assay_obi_mapper.map_assay_to_obi("SIMoA", "", terms_path=walk_terms, strategy="embedding")
+    assert seen == ["SIMoA", "SIMoA"]
+
+
+def test_an_unknown_strategy_is_refused_before_anything_is_spent(walk_terms, monkeypatch):
+    from app.agent import assay_obi_mapper
+    monkeypatch.setattr(settings, "OBI_MAPPING_STRATEGY", "bm25")
+
+    with pytest.raises(ValueError, match="OBI_MAPPING_STRATEGY"):
+        assay_obi_mapper.map_assay_to_obi("SIMoA", "", terms_path=walk_terms)
+
+
+def test_the_descend_call_is_seeded_at_temperature_zero_on_the_configured_model(walk_terms,
+                                                                               monkeypatch):
+    from app.agent import assay_obi_mapper
+    from app.agent.assay_extractor import EXTRACTION_SEED
+    client = _RecordingClient("1 EXACT")
+    monkeypatch.setattr(assay_obi_mapper, "OpenAI", lambda **_: client)
+
+    assay_obi_mapper.map_assay_to_obi("RNA-seq", "", terms_path=walk_terms, model="m-test")
+
+    assert client.calls[0]["seed"] == EXTRACTION_SEED
+    assert client.calls[0]["temperature"] == 0
+    assert client.calls[0]["model"] == "m-test"
+
+
+def test_enrichment_writes_the_walk_beside_the_term(walk_terms, monkeypatch):
+    from app.agent import assay_obi_mapper
+    _walk(monkeypatch, "2", "2")
+
+    out = enrich_assays_with_obi({"WGS": {"name_in_paper": ["WGS"], "confidence": "high"}},
+                                 terms_path=walk_terms)
+
+    entry = out["WGS"]
+    assert entry["obi_id"] == "OBI:S2" and entry["resource"] == "descend_llm"
+    assert entry["obi_path"] == ["OBI:R2", "OBI:S2"]
+    assert entry["obi_calls"] == 2 and entry["obi_backoff"] is False
+    assert entry["obi_confidence"] is None
+    assert entry["confidence"] == "high"      # the extraction confidence is untouched
+
+
+def test_the_descend_prompt_carries_the_record_and_every_legal_reply(walk_terms):
+    from app.agent.assay_obi_mapper import _descend_candidates, build_descend_prompt
+
+    prompt = build_descend_prompt(
+        "ICS", None, _descend_candidates(["OBI:R1", "OBI:R2"], walk_terms),
+        sample_type="PBMC", readouts="IFN-g+ CD8 T cells", aliases=["intracellular staining"],
+        standard_technique_name="flow cytometry")
+
+    assert 'Assay name from paper: "ICS"' in prompt
+    assert "Also called in the paper: intracellular staining" in prompt
+    assert "Standard technique name: flow cytometry" in prompt
+    assert "Sample type: PBMC" in prompt and "Readouts: IFN-g+ CD8 T cells" in prompt
+    for form in ("N EXACT", "N BROAD", "STOP EXACT", "STOP BROAD", "none"):
+        assert form in prompt
+
+
+def test_the_root_prompt_over_the_live_index_fits_one_call():
+    """Ninety-six candidate lines, each capped at four synonyms and 300 definition
+    characters: the one level every unmatched assay pays for has to stay a single prompt."""
+    from app.agent.assay_obi_mapper import _descend_candidates, _index_roots, build_descend_prompt
+
+    prompt = build_descend_prompt("x", None, _descend_candidates(_index_roots()))
+
+    assert prompt.count("\n") < 300
+    assert len(prompt) < 40_000
+
+
+# ── 2026-10-21: hybrid -- the embedding pick, then a descent from it ───────────
+
+def _pick(obi_id: str, label: str, granularity: str | None = "EXACT") -> dict:
+    return {"obi_id": obi_id, "obi_label": label, "resource": "embedding_llm",
+            "confidence": 0.61, "granularity": granularity}
+
+
+def _hybrid(monkeypatch, pick: dict | None, *replies: str) -> tuple[list, _WalkClient]:
+    """Stub step 2's embedding pick and script the walk; returns (pick kwargs seen, client)."""
+    from app.agent import assay_obi_mapper
+    seen = []
+    monkeypatch.setattr(assay_obi_mapper, "_embedding_llm_match",
+                        lambda query, **kw: seen.append((query, kw)) or pick)
+    monkeypatch.setattr(settings, "OBI_MAPPING_STRATEGY", "hybrid")
+    return seen, _walk(monkeypatch, *replies)
+
+
+def test_hybrid_descends_from_the_pick_and_attributes_a_move(walk_terms, monkeypatch):
+    from app.agent import assay_obi_mapper, assay_trace
+    seen, client = _hybrid(monkeypatch, _pick("OBI:S1", "RNA-seq", "BROAD"), "2 EXACT")
+    trace = assay_trace.start()
+    try:
+        mapped = assay_obi_mapper.map_assay_to_obi(
+            "10x transcriptomes", "single-cell RNA sequencing", terms_path=walk_terms,
+            registry_key="10x", aliases=["scRNA-seq"])
+    finally:
+        assay_trace.stop()
+
+    assert mapped["obi_id"] == "OBI:S1b" and mapped["resource"] == "embedding_llm_descended"
+    assert mapped["confidence"] == 0.61          # the pick's score is kept
+    assert mapped["granularity"] == "EXACT"
+    assert mapped["path"] == ["OBI:S1", "OBI:S1b"]
+    assert mapped["calls"] == 3 + 1              # technique query differs from the name: 3, plus the walk
+    assert len(client.prompts) == 1 and "OBI:S1 | RNA-seq | RNA sequencing" in client.prompts[0]
+    # the walk is recorded beside the pick, not over it
+    assert "10x" in trace.as_json()["obi_descend"]
+    assert trace.as_json()["obi_descend"]["10x"]["path"] == ["OBI:S1", "OBI:S1b"]
+
+
+def test_hybrid_spends_nothing_on_a_pick_that_is_a_leaf(walk_terms, monkeypatch):
+    from app.agent import assay_obi_mapper
+    _, client = _hybrid(monkeypatch, _pick("OBI:S1a", "bulk RNA-seq assay"))
+
+    mapped = assay_obi_mapper.map_assay_to_obi("pooled RNA sequencing", "", terms_path=walk_terms)
+
+    assert mapped["obi_id"] == "OBI:S1a" and mapped["resource"] == "embedding_llm"
+    assert mapped["path"] == ["OBI:S1a"] and mapped["calls"] == 2 and mapped["backoff"] is False
+    assert not client.prompts
+
+
+def test_hybrid_keeps_the_pick_when_the_walk_stops_on_it(walk_terms, monkeypatch):
+    from app.agent import assay_obi_mapper
+    _hybrid(monkeypatch, _pick("OBI:S1", "RNA-seq", None), "STOP BROAD")
+
+    mapped = assay_obi_mapper.map_assay_to_obi("RNA sequencing of sorted cells", "", terms_path=walk_terms)
+
+    assert mapped["obi_id"] == "OBI:S1" and mapped["resource"] == "embedding_llm"
+    assert mapped["granularity"] == "BROAD"      # the walk's call, more informed than the pick's
+    assert mapped["path"] == ["OBI:S1"] and mapped["calls"] == 3
+
+
+def test_hybrid_keeps_the_pick_when_the_walk_cannot_be_read(walk_terms, monkeypatch):
+    from app.agent import assay_obi_mapper
+    _hybrid(monkeypatch, _pick("OBI:S1", "RNA-seq"), "either of them")
+
+    mapped = assay_obi_mapper.map_assay_to_obi("RNA-seq data", "", terms_path=walk_terms)
+
+    assert mapped["obi_id"] == "OBI:S1" and mapped["resource"] == "embedding_llm"
+    assert mapped["calls"] == 3 and mapped["descend_error"].startswith("PickReplyError")
+
+
+def test_hybrid_does_not_walk_when_the_picker_abstained(walk_terms, monkeypatch):
+    from app.agent import assay_obi_mapper
+    _, client = _hybrid(monkeypatch, None)
+
+    assert assay_obi_mapper.map_assay_to_obi("bespoke readout", "", terms_path=walk_terms) is None
+    assert not client.prompts
+
+
+def test_hybrid_still_runs_the_embedding_step_with_the_exact_hit_pinned(walk_terms, monkeypatch):
+    """Step 1 and the embedding step are untouched: an exact hit with children is pinned
+    into the pick as before, and the walk then starts from whatever the picker chose."""
+    from app.agent import assay_obi_mapper
+    seen, _ = _hybrid(monkeypatch, _pick("OBI:S1a", "bulk RNA-seq assay"))
+
+    assay_obi_mapper.map_assay_to_obi("RNA-seq", "", terms_path=walk_terms)
+
+    (query, kwargs), = seen
+    assert query == "RNA-seq" and [p["id"] for p in kwargs["pinned"]] == ["OBI:S1", "OBI:S1a", "OBI:S1b"]
+
+
+def test_enrichment_writes_the_hybrid_walk_beside_the_term(walk_terms, monkeypatch):
+    _hybrid(monkeypatch, _pick("OBI:S1", "RNA-seq"), "1 BROAD")
+
+    out = enrich_assays_with_obi({"RNA-seq": {"name_in_paper": ["RNA-seq"]}}, terms_path=walk_terms)
+
+    entry = out["RNA-seq"]
+    assert entry["obi_id"] == "OBI:S1a" and entry["resource"] == "embedding_llm_descended"
+    assert entry["obi_path"] == ["OBI:S1", "OBI:S1a"] and entry["obi_calls"] == 3
+    assert entry["obi_confidence"] == 0.61 and entry["obi_granularity"] == "BROAD"

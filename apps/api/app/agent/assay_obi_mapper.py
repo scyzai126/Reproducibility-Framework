@@ -3,10 +3,37 @@
 Matching chain (stops at first hit):
   1. Exact match on name_in_paper, onto a term with no children in the index
                                        → resource: exact_original,       confidence: "high"
-  1b. Exact match onto a term that has children: the hit and its direct children are pinned
-      into step 2's candidates, and the picker chooses
+  1b. Exact match onto a term that has children: the hit is where step 2 starts from
+      (descend: the walk begins at the hit; embedding: the hit and its direct children are
+      pinned into the candidates), and the picker chooses
                                        → resource: exact_original_llm
-  2. Embedding top-K + LLM pick        → resource: embedding_llm,        confidence: <float>
+  2. Step 2 is one of two strategies, chosen by settings.OBI_MAPPING_STRATEGY:
+     "embedding" (default): top-K by vector similarity + one LLM pick (_embedding_llm_match)
+                                       → resource: embedding_llm,        confidence: <float>
+     The list also carries the direct OBI parents and children of its top retrieved terms
+     (_with_neighbours); a pick that only they could reach is attributed
+     "embedding_llm_neighbour", one only the technique query reached "embedding_llm_normalized".
+     "descend" (opt-in): walk the OBI assay tree top-down, one chat call per level, each
+     choosing among the current term's direct children or stopping on the current term
+     (_descend)                        → resource: descend_llm,          confidence: None
+
+The descent (2026-10-20) is an alternative under evaluation, not the default. The case for
+it: retrieval ranks the term a paper's wording *resembles*, which is often a parent or
+sibling of the term the record warrants, and the picker can only choose among the twenty it
+is shown, whereas the walk shows the picker every child of the term it is on, so the choice
+between a term and its children is always made by the record and never by what retrieval
+happened to rank. The tree is shallow -- 701 terms, 96 at the top, 335 at depth 2, the deepest
+at 5 -- so a walk is typically 2-3 chat calls and spends no embedding calls. The case against
+making it the default yet: it has not been compared with the embedding path on the curated
+benchmark (where retrieval puts the curator's term among the 20 shown 91% of the time); its
+first level, the 96 parentless terms of the index (47 of them leaves, many there only because
+their real parent was pruned), is a wrong turn nothing below can recover from; it spends 1-2
+more chat calls per unmatched assay, the first on a ~8k-token prompt; and a mapping made of
+2-3 consecutive judgements compounds the run-to-run variance the single pick already shows.
+An exact hit on the paper's name skips the first level (the walk starts at the hit). The two
+strategies are meant to be run side by side on the same registries (scripts/run_assay_merge.py
+--map-all under each setting, scored by scripts/compare_assay_benchmark.py) before the
+default moves.
 
 Only the paper's own name is an exact key. Step 2 retrieves on it and on `standard_technique_name` and
 merges the two candidate pools. `standard_technique_name` is the extractor's judgement of which
@@ -35,9 +62,12 @@ embedding retrieval on a bare "RNA-seq" does not reliably rank.
 
 from __future__ import annotations
 
+import contextvars
 import json
 import logging
 import re
+from collections.abc import Callable
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
@@ -46,7 +76,7 @@ import numpy as np
 from openai import OpenAI
 
 from app.agent import assay_trace
-from app.agent.assay_extractor import paper_names
+from app.agent.assay_extractor import EXTRACTION_SEED, paper_names
 from app.config import settings
 
 logger = logging.getLogger(__name__)
@@ -54,15 +84,17 @@ logger = logging.getLogger(__name__)
 _REPO_ROOT = Path(__file__).resolve().parents[4]
 _OBI_DIR = _REPO_ROOT / "data" / "OBI"
 # Pruned vocabulary + matching vectors — see data/OBI/README.md for how they are built.
-_OBI_TERMS_PATH = _OBI_DIR / "obi_generic_index.json"
-_EMBEDDINGS_PATH = _OBI_DIR / "obi_generic_embeddings.json"
-#: Source of the `is_a` edges. The index carries no parent links, only `n_descendants`, which
-#: counts the full ontology and so calls ELISA (53) a parent though the index holds none of them.
+_OBI_TERMS_PATH = _OBI_DIR / "obi_assay_pruned_index.json"
+_EMBEDDINGS_PATH = _OBI_DIR / "obi_assay_pruned_embeddings.json"
+#: Fallback source of the `is_a` edges, for a terms file built before the index carried
+#: `parents` (every entry's direct is_a parents, id and label). The live index has carried them since
+#: 2026-10-20, so obi.obo is off the serving path; `n_descendants` still counts the full
+#: ontology and so calls ELISA (53) a parent though the index holds none of them.
 _OBO_PATH = _OBI_DIR / "obi.obo"
 _PROMPTS_DIR = _REPO_ROOT / "apps" / "api" / "app" / "prompts"
 
 #: Not settings.OPENAI_MODEL: this one names an *embedding* model, and the vectors in
-#: obi_generic_embeddings.json were built with it. Changing it silently invalidates every one
+#: obi_assay_pruned_embeddings.json were built with it. Changing it silently invalidates every one
 #: of them -- a query embedded by a different model is not comparable to that matrix.
 EMBED_MODEL = "text-embedding-3-small"
 #: Candidates the picker sees. 20, not 10, since 2026-10-02: over 150 benchmark rows the
@@ -73,6 +105,36 @@ TOP_K = 20
 #: the rest. The technique name scores high against short generic labels, and a plain merge by
 #: score let those push the paper wording's specific candidates out.
 PRIMARY_SLOTS = 14
+#: Retrieved candidates whose direct OBI parents and children join the list (_with_neighbours),
+#: and the family size above which a term's children stay out. Measured over 144 curated rows
+#: (benchmark v4 vs the stability run, scripts/eval_obi_retrieval.py): the curator's term was
+#: among the 20 retrieved in 140; of the 4 misses, 1 was a child of the top candidate (SDY1260
+#: antibody detection by CBA under our CBA pick), 0 were reachable by lexical (BM25) retrieval,
+#: and 3 were neither (two CBA panels the picker had other terms for, one blood count). Three is
+#: where that sat; uncapped, the expansion added ~2.6 terms per entry. The cap keeps `analyte
+#: assay` (79 index children) and `cytometry assay` (45) from burying the list when they rank --
+#: parents are always added, there are few.
+NEIGHBOUR_TOP = 3
+MAX_NEIGHBOUR_CHILDREN = 8
+#: Entries mapped at once by enrich_assays_with_obi. Each entry is 2-3 blocking network calls
+#: and none depends on another, so a 15-assay paper mapped one entry at a time spent most of
+#: round 4 waiting. Four, like the verifier's bound on concurrent calls in spirit: enough to
+#: overlap the latency, few enough not to trip the API's rate limit alongside nothing else.
+OBI_WORKERS = 4
+#: Levels the descent walks before it stops where it is. The index's deepest term sits at
+#: depth 5 (bulk / single-cell RNA-seq at 4), so six is never reached on a straight walk; it
+#: is a guard against a reply that keeps naming a child with children, not a tuning knob.
+MAX_DESCENT_LEVELS = 6
+#: The OBI assay branch root. Not in the index (scripts/prune_obi_domain.py starts below it),
+#: so the walk's first level is the index's parentless terms (_index_roots), and the record
+#: for that level names this id as the node.
+OBI_ASSAY_ROOT = "OBI:0000070"
+#: The values settings.OBI_MAPPING_STRATEGY takes; anything else is refused at map time.
+#: "hybrid" is the embedding pick followed, when the picked term has children in the index, by
+#: one descent from it (_descend_from_pick): the walk only ever goes down from a term retrieval
+#: already chose, so it cannot take the wrong top-level branch, which is where the root walk
+#: lost on the three-paper comparison (docs/obi_descent_vs_embedding_3papers.md).
+OBI_STRATEGIES = ("embedding", "descend", "hybrid")
 
 
 # ── Vocabulary pruning ────────────────────────────────────────────────────────
@@ -131,16 +193,24 @@ def _index_keys(text: str) -> list[str]:
 
 @lru_cache(maxsize=8)
 def _build_lookup(terms_path: Path = _OBI_TERMS_PATH) -> dict[str, dict[str, str]]:
-    terms = json.loads(terms_path.read_text(encoding="utf-8"))
+    """Every label and synonym key in the vocabulary, each pointing at one term.
+
+    Labels are indexed before any synonym, so when a key is both one term's label and another
+    term's synonym the label wins ("histopathology" is OBI:0002564's label and OBI:0600020's
+    synonym). Within a tier, index order decides, as before: the index is in obo order, and
+    `test_lookup_collisions_are_the_known_four` pins the keys this matters for.
+    """
+    terms = [
+        t for t in json.loads(terms_path.read_text(encoding="utf-8"))
+        if t.get("id") and t.get("label") and _is_generic_assay_term(t["id"], t["label"])
+    ]
     lookup: dict[str, dict[str, str]] = {}
     for term in terms:
-        obi_id = term.get("id", "")
-        label = term.get("label", "")
-        if not obi_id or not label or not _is_generic_assay_term(obi_id, label):
-            continue
-        entry = {"obi_id": obi_id, "obi_label": label}
-        for key in _index_keys(label):
+        entry = {"obi_id": term["id"], "obi_label": term["label"]}
+        for key in _index_keys(term["label"]):
             lookup.setdefault(key, entry)
+    for term in terms:
+        entry = {"obi_id": term["id"], "obi_label": term["label"]}
         for syn in term.get("synonyms", []):
             if syn:
                 for key in _index_keys(str(syn)):
@@ -167,14 +237,30 @@ _OBO_IS_A = re.compile(r"^is_a: (\S+)", re.MULTILINE)
 def _index_children(terms_path: Path = _OBI_TERMS_PATH) -> dict[str, tuple[str, ...]]:
     """Direct `is_a` children per term, both ends inside the index's generic vocabulary.
 
+    Read from each entry's `parents` (its direct is_a parents as {"id", "label"}, written by
+    scripts/prune_obi_domain.py from the full ontology; a bare id is accepted too) and
+    inverted; a parent outside the
+    vocabulary is dropped, so a pruned index never points at a term it does not hold. A terms
+    file without `parents` falls back to parsing obi.obo as before, and an absent obi.obo then
+    gives {}, which leaves every exact hit answering outright.
+
     Direct only: walking further is _pinned_candidates' decision, and it does so for the RNA
     sequencing family alone (_TWO_TIER_PIN_IDS).
-    An absent obi.obo gives {}, which leaves every exact hit answering outright as before.
     """
-    if not _OBO_PATH.exists():
-        return {}
     allowed = _term_ids(terms_path)
     children: dict[str, list[str]] = {}
+    entries = _index_entries(terms_path)
+    if entries and all("parents" in t for t in entries.values()):
+        for obi_id, term in entries.items():
+            if obi_id not in allowed:
+                continue
+            for parent in term.get("parents") or []:
+                parent_id = parent.get("id") if isinstance(parent, dict) else parent
+                if parent_id in allowed:
+                    children.setdefault(parent_id, []).append(obi_id)
+        return {parent: tuple(kids) for parent, kids in children.items()}
+    if not _OBO_PATH.exists():
+        return {}
     for block in _OBO_PATH.read_text(encoding="utf-8").split("\n\n"):
         if not block.startswith("[Term]"):
             continue
@@ -185,6 +271,31 @@ def _index_children(terms_path: Path = _OBI_TERMS_PATH) -> dict[str, tuple[str, 
             if parent in allowed:
                 children.setdefault(parent, []).append(match.group(1))
     return {parent: tuple(kids) for parent, kids in children.items()}
+
+
+@lru_cache(maxsize=8)
+def _index_parents(terms_path: Path = _OBI_TERMS_PATH) -> dict[str, tuple[str, ...]]:
+    """Direct `is_a` parents per term: the inverse of _index_children, from the same parse."""
+    parents: dict[str, list[str]] = {}
+    for parent, kids in _index_children(terms_path).items():
+        for kid in kids:
+            parents.setdefault(kid, []).append(parent)
+    return {kid: tuple(ps) for kid, ps in parents.items()}
+
+
+@lru_cache(maxsize=8)
+def _index_roots(terms_path: Path = _OBI_TERMS_PATH) -> tuple[str, ...]:
+    """The generic terms with no parent inside the index, in index (obo) order.
+
+    These are the descent's first level: the assay root itself is not in the index, and a
+    term whose only parents were pruned (an out-of-scope domain term, a compositional one)
+    has nothing above it here either, so it is reachable only from the top. 96 in the live
+    index, 47 of them leaves.
+    """
+    allowed = _term_ids(terms_path)
+    parents = _index_parents(terms_path)
+    return tuple(obi_id for obi_id in _index_entries(terms_path)
+                 if obi_id in allowed and not parents.get(obi_id))
 
 
 @lru_cache(maxsize=8)
@@ -207,7 +318,7 @@ def _pinned_candidates(hit_id: str, terms_path: Path = _OBI_TERMS_PATH) -> list[
     why each is there instead. `text` is built like the embedded rows ("label | syn | ...").
     """
     entries = _index_entries(terms_path)
-    details = _term_details()
+    details = _term_details(terms_path)
     children = _index_children(terms_path)
     order = [(hit_id, "exact"), *((c, "child") for c in children.get(hit_id, ()))]
     if hit_id in _TWO_TIER_PIN_IDS:
@@ -243,19 +354,73 @@ def _with_pinned(
     return head + [c for c in candidates if c["id"] not in pinned_ids]
 
 
-@lru_cache(maxsize=1)
-def _term_details() -> dict[str, dict[str, Any]]:
-    """Definition and descendant count per id, from the index the embeddings were built over.
+#: The `pin` values _with_neighbours writes; _candidate_line names the anchor for each.
+_NEIGHBOUR_PINS = ("child_of", "parent_of")
+
+
+def _with_neighbours(
+    candidates: list[dict[str, Any]], terms_path: Path = _OBI_TERMS_PATH
+) -> list[dict[str, Any]]:
+    """The list plus the direct OBI parents and children of its first NEIGHBOUR_TOP retrieved
+    entries, appended after it.
+
+    Retrieval ranks the term a paper's wording resembles, which is often the parent of the
+    term the record warrants or a sibling of it, and the picker can only choose among what it is
+    shown: of the four curated terms the 31-paper run never retrieved, the one a structural
+    change could reach was one `is_a` edge below the top candidate (see NEIGHBOUR_TOP). So the
+    neighbours join the list the way an exact hit's children do
+    (_pinned_candidates) -- regardless of similarity, marked with the candidate they belong to,
+    and the choice between parent and child is left to the picker under its rule 2.
+
+    Anchors are the first NEIGHBOUR_TOP entries that retrieval found (no `pin`): a pinned exact
+    hit already brings its own children. Called after _with_pinned so `of` is the 1-based number
+    the picker sees. A term with more than MAX_NEIGHBOUR_CHILDREN children in the index
+    contributes none of them; its parents still join. Nothing already listed is repeated.
+    """
+    present = {c["id"] for c in candidates}
+    entries = _index_entries(terms_path)
+    details = _term_details(terms_path)
+    children = _index_children(terms_path)
+    parents = _index_parents(terms_path)
+    added: list[dict[str, Any]] = []
+    anchors = [(i, c) for i, c in enumerate(candidates, 1) if not c.get("pin")][:NEIGHBOUR_TOP]
+    for position, anchor in anchors:
+        order = [(p, "parent_of") for p in parents.get(anchor["id"], ())]
+        kids = children.get(anchor["id"], ())
+        if len(kids) <= MAX_NEIGHBOUR_CHILDREN:
+            order += [(k, "child_of") for k in kids]
+        for obi_id, pin in order:
+            term = entries.get(obi_id)
+            if obi_id in present or not term:
+                continue
+            present.add(obi_id)
+            added.append({
+                **details.get(obi_id, {}),
+                "id": obi_id,
+                "label": term["label"],
+                "text": " | ".join([term["label"], *(str(s) for s in term.get("synonyms") or [])]),
+                "similarity": None,
+                "pin": pin,
+                "of": position,
+            })
+    return list(candidates) + added
+
+
+@lru_cache(maxsize=8)
+def _term_details(terms_path: Path = _OBI_TERMS_PATH) -> dict[str, dict[str, Any]]:
+    """Definition and descendant count per id, from the vocabulary being searched.
 
     The embeddings file carries the definition only inside `embed_input`, joined to the label
     and synonyms; the index keeps it as its own field, alongside `n_descendants`. The picker is
     told to judge by definition and break ties on fewer descendants, so both have to reach it.
+    Keyed on `terms_path` like `_index_entries` and `_index_children`: it used to read the
+    default index whatever vocabulary the caller passed.
     """
-    if not _OBI_TERMS_PATH.exists():
+    if not terms_path.exists():
         return {}
     return {
         t["id"]: {"definition": t.get("definition") or "", "n_descendants": t.get("n_descendants")}
-        for t in json.loads(_OBI_TERMS_PATH.read_text(encoding="utf-8")) if t.get("id")
+        for t in json.loads(terms_path.read_text(encoding="utf-8")) if t.get("id")
     }
 
 
@@ -287,13 +452,16 @@ def _embed_query(text: str) -> np.ndarray:
 
 
 def _top_k_candidates(
-    query: str, k: int = TOP_K, allowed_ids: frozenset[str] | None = None
+    query: str, k: int = TOP_K, allowed_ids: frozenset[str] | None = None,
+    terms_path: Path = _OBI_TERMS_PATH,
 ) -> list[dict[str, Any]]:
     """Return the top-k OBI entries by cosine similarity to the query string.
 
-    If allowed_ids is given, restrict candidates to entries whose id is in that set
-    (e.g. a curated subset like obi_immuno_assay_terms.json) even though embeddings
-    are precomputed over the full OBI term list.
+    The vectors are exactly the index's terms (data/OBI/README.md), so `allowed_ids` is a
+    no-op for the default vocabulary; it still restricts retrieval when a caller searches a
+    different terms file (`run_obi_map.py --terms`), whose definitions and descendant counts
+    then come from `terms_path`. There is no similarity threshold: the k best are returned
+    however low they score, and abstention is the picker's alone.
     """
     entries, matrix = _load_embeddings()
     if allowed_ids is not None:
@@ -304,7 +472,7 @@ def _top_k_candidates(
     scores = np.dot(matrix, vec)
     k = min(k, len(entries))
     top_indices = np.argsort(scores)[-k:][::-1]
-    details = _term_details()
+    details = _term_details(terms_path)
     return [
         {
             **details.get(entries[i]["id"], {}),
@@ -336,17 +504,7 @@ def _candidate_line(index: int, candidate: dict[str, Any]) -> str:
     by a name no paper uses -- it saw "enzyme-linked immunosorbent assay" and never "ELISA",
     though the vector it was retrieved by encoded both.
     """
-    label = candidate["label"]
-    parts = [p.strip() for p in str(candidate.get("text") or label).split("|")]
-    synonyms = [p for p in parts[1:] if p and p.lower() != label.lower()][:_MAX_SHOWN_SYNONYMS]
-    shown = f"{label} | {' | '.join(synonyms)}" if synonyms else label
-    definition = " ".join(str(candidate.get("definition") or "").split())
-    if definition:
-        if len(definition) > _MAX_DEFINITION_CHARS:
-            definition = definition[:_MAX_DEFINITION_CHARS].rstrip() + "..."
-        shown += f" | definition: {definition}"
-    if candidate.get("n_descendants") is not None:
-        shown += f" | descendants: {candidate['n_descendants']}"
+    shown = _candidate_text(candidate)
     marks = []
     if candidate.get("pin") == "exact":
         marks.append("exact name match")
@@ -354,6 +512,10 @@ def _candidate_line(index: int, candidate: dict[str, Any]) -> str:
         marks.append("child of exact name match")
     elif candidate.get("pin") == "grandchild":
         marks.append("grandchild of exact name match")
+    elif candidate.get("pin") == "child_of":
+        marks.append(f"child of candidate {candidate.get('of')}")
+    elif candidate.get("pin") == "parent_of":
+        marks.append(f"parent of candidate {candidate.get('of')}")
     if candidate.get("similarity") is not None:
         marks.append(f"similarity: {candidate['similarity']}")
     return f"{index}. {candidate['id']} | {shown} ({'; '.join(marks)})"
@@ -386,17 +548,40 @@ def build_pick_prompt(
 #: optionally followed by its granularity -- nothing else. The old `re.search(r"\d+")` read
 #: "OBI:0000661" as candidate 0000661 and "3 or 5" as a confident 3. The granularity is
 #: optional so a bare number, the reply the prompt asked for before it existed, still parses.
-_PICK_REPLY = re.compile(r"#?\s*(\d+)\s*[.)]?(?:[\s\t]+(exact|broad))?")
+#: Punctuation around the granularity ("3, EXACT", "3 (EXACT)", "3 EXACT.") is tolerated: it
+#: changes nothing about which candidate was named, and a reply refused for it used to be
+#: taken as "none".
+_PICK_REPLY = re.compile(r"#?\s*(\d+)\s*[.):,-]?\s*(?:\(?\s*(exact|broad)\s*\)?)?\s*\.?")
+_ABSTENTIONS = ("none", "none.")
+
+
+class PickReplyError(ValueError):
+    """The picker's reply named neither a listed candidate nor "none".
+
+    Raised rather than read as "none": an abstention is the model's judgement that no term
+    fits, and is reported UNMAPPED as a vocabulary gap; a reply nobody could parse is a failed
+    call, and is reported like one (`resource: error`, `obi_error`), so a re-run is known to
+    be worth paying for. The two used to be indistinguishable in the output.
+    """
+
+
+def _normalize_reply(reply: str) -> str:
+    return reply.strip().strip("*`'\"").strip().lower()
+
+
+def is_abstention(reply: str) -> bool:
+    """Whether the reply is the prompt's "none"."""
+    return _normalize_reply(reply) in _ABSTENTIONS
 
 
 def parse_pick_reply(reply: str, n_candidates: int) -> tuple[int | None, str | None]:
     """(0-based candidate index, "EXACT"/"BROAD" or None), or (None, None) for "none" or
-    anything ambiguous."""
-    reply = reply.strip().strip("*`'\"").strip().lower()
+    anything ambiguous -- `is_abstention` tells the two apart."""
+    reply = _normalize_reply(reply)
     match = _PICK_REPLY.fullmatch(reply)
     if not match:
-        if reply not in ("none", "none."):
-            logger.warning("OBI pick reply not understood, treated as none: %r", reply[:80])
+        if reply not in _ABSTENTIONS:
+            logger.warning("OBI pick reply not understood: %r", reply[:80])
         return None, None
     idx = int(match.group(1)) - 1
     if not 0 <= idx < n_candidates:
@@ -433,6 +618,14 @@ def _llm_pick(
     restraint -- prefer the specific match "only when the specificity is warranted", answer
     "none" when the name is too vague -- and abstention is the system's only defence, since
     _top_k_candidates applies no similarity threshold.
+
+    Seeded like the extraction call (EXTRACTION_SEED): on the 31-paper re-run this pick was
+    the largest source of change between two runs of the same paper (9 of 31 papers moved on
+    the OBI term with no extraction change), and a seed is the one lever on that which costs
+    nothing. Best-effort on the provider's side, so it narrows the variance rather than ends it.
+
+    Returns None only for an abstention. A reply that names no listed candidate raises
+    PickReplyError, which enrich_assays_with_obi records as a failed lookup.
     """
     prompt = build_pick_prompt(assay_name, candidates, sample_type, readouts, aliases,
                                standard_technique_name)
@@ -442,6 +635,7 @@ def _llm_pick(
         model=model,
         messages=[{"role": "user", "content": prompt}],
         temperature=0,
+        seed=EXTRACTION_SEED,
     )
     reply = (resp.choices[0].message.content or "").strip().lower()
     # The numbered lines are retrieval's output and are gone once the pick is parsed; with the
@@ -450,13 +644,19 @@ def _llm_pick(
                        candidates=[_candidate_line(i + 1, c) for i, c in enumerate(candidates)])
     idx, granularity = parse_pick_reply(reply, len(candidates))
     if idx is None:
-        return None
+        if is_abstention(reply):
+            return None
+        raise PickReplyError(f"pick reply not understood: {reply[:80]!r}")
     chosen = candidates[idx]
     return {
         "obi_id": chosen["id"],
         "obi_label": chosen["label"],
         "resource": "embedding_llm",
         "confidence": chosen["similarity"],
+        # Diagnostic only. Nothing downstream reads it: round 5 folds on the label whatever
+        # the granularity (assay_merger), and the deliverable does not carry it. It is kept
+        # because the adjudication of a disputed term starts from whether the picker itself
+        # called the term broad.
         "granularity": granularity,
     }
 
@@ -534,6 +734,7 @@ def _embedding_llm_match(
     standard_technique_query: str = "",
     pinned: list[dict[str, Any]] | None = None,
     registry_key: str = "",
+    terms_path: Path = _OBI_TERMS_PATH,
 ) -> dict[str, Any] | None:
     """Retrieve on `query` and `standard_technique_query`, but show the LLM `display_name`.
 
@@ -553,31 +754,42 @@ def _embedding_llm_match(
 
     `pinned` is step 1's exact hit and its direct children (_pinned_candidates). They lead the
     list whatever they score, and the result is attributed "exact_original_llm". The exact hit
-    is also the floor: if the picker answers "none" -- or there are no embeddings to retrieve
-    with -- the verbatim match stands rather than being lost.
+    is also the floor: if the picker answers "none", or its reply cannot be read, or there are
+    no embeddings to retrieve with, the verbatim match stands rather than being lost. Without
+    an exact hit an unreadable reply propagates (PickReplyError): there is no answer to fall
+    back on, and "unresolved" would misreport a failed call as a vocabulary gap.
     """
     exact_hit = next((p for p in pinned or [] if p.get("pin") == "exact"), None)
     fallback = ({"obi_id": exact_hit["id"], "obi_label": exact_hit["label"],
                  "resource": "exact_original", "confidence": "high"} if exact_hit else None)
     if not _EMBEDDINGS_PATH.exists():
         return fallback
-    raw_pool = _top_k_candidates(_paper_query(query, aliases), allowed_ids=allowed_ids)
+    raw_pool = _top_k_candidates(_paper_query(query, aliases), allowed_ids=allowed_ids,
+                                 terms_path=terms_path)
     pools = [raw_pool]
     normalized = standard_technique_query.strip()
     if normalized and normalized.lower() != query.strip().lower():
-        pools.append(_top_k_candidates(normalized, allowed_ids=allowed_ids))
+        pools.append(_top_k_candidates(normalized, allowed_ids=allowed_ids,
+                                       terms_path=terms_path))
     candidates = _merge_candidates(*pools)
     if pinned:
         candidates = _with_pinned(candidates, pinned)
     if not candidates:
         return None
-    picked = _llm_pick(
-        display_name or query, candidates,
-        sample_type=sample_type, readouts=readouts, model=model, aliases=aliases,
-        standard_technique_name=normalized if normalized.lower() != (display_name or query).strip().lower()
-        else "",
-        registry_key=registry_key,
-    )
+    candidates = _with_neighbours(candidates, terms_path)
+    try:
+        picked = _llm_pick(
+            display_name or query, candidates,
+            sample_type=sample_type, readouts=readouts, model=model, aliases=aliases,
+            standard_technique_name=normalized
+            if normalized.lower() != (display_name or query).strip().lower() else "",
+            registry_key=registry_key,
+        )
+    except PickReplyError as exc:
+        if not exact_hit:
+            raise
+        logger.warning("%s: %s; the exact name match stands", registry_key or query, exc)
+        return {**fallback, "resource": "exact_original_llm"}
     if exact_hit:
         if not picked:
             return {**fallback, "resource": "exact_original_llm"}
@@ -586,13 +798,319 @@ def _embedding_llm_match(
             picked["confidence"] = "high"
         picked["resource"] = "exact_original_llm"
         return picked
-    # Attribute the win when only the technique query could reach the chosen term. Without
-    # this, a benchmark run cannot tell whether the technique earned its keep in step 2 or
-    # merely rode along -- and the two justify very different things.
-    if picked and len(pools) > 1:
-        if picked.get("obi_id") not in {c["id"] for c in raw_pool}:
+    # Attribute the win to whatever alone could reach the chosen term: the neighbour expansion
+    # (the term was retrieved by neither query), else the technique query. Without this, a
+    # benchmark run cannot tell whether either earned its keep in step 2 or merely rode along --
+    # and the two justify very different things.
+    if picked:
+        chosen = next(c for c in candidates if c["id"] == picked["obi_id"])
+        if chosen.get("pin") in _NEIGHBOUR_PINS:
+            picked["resource"] = "embedding_llm_neighbour"
+        elif len(pools) > 1 and picked["obi_id"] not in {c["id"] for c in raw_pool}:
             picked["resource"] = "embedding_llm_normalized"
     return picked
+
+
+# ── Tree descent ──────────────────────────────────────────────────────────────
+
+def _descend_candidates(ids: tuple[str, ...] | list[str],
+                        terms_path: Path = _OBI_TERMS_PATH) -> list[dict[str, Any]]:
+    """The candidate dicts for one level: the given terms, in the order given, shaped like a
+    retrieved candidate (id, label, text, definition, n_descendants) plus `n_children`, the
+    number of index terms directly under each -- what tells the picker whether stepping into
+    a child ends the walk or shows another level. An id the index does not hold is skipped."""
+    entries = _index_entries(terms_path)
+    details = _term_details(terms_path)
+    children = _index_children(terms_path)
+    out = []
+    for obi_id in ids:
+        term = entries.get(obi_id)
+        if not term:
+            continue
+        out.append({
+            **details.get(obi_id, {}),
+            "id": obi_id,
+            "label": term["label"],
+            "text": " | ".join([term["label"], *(str(s) for s in term.get("synonyms") or [])]),
+            "similarity": None,
+            "n_children": len(children.get(obi_id, ())),
+        })
+    return out
+
+
+def _candidate_text(candidate: dict[str, Any]) -> str:
+    """`label | syn1 | ... | definition: ... | descendants: n`, the part of a candidate line
+    that describes the term -- shared by the pick and descent prompts."""
+    label = candidate["label"]
+    parts = [p.strip() for p in str(candidate.get("text") or label).split("|")]
+    synonyms = [p for p in parts[1:] if p and p.lower() != label.lower()][:_MAX_SHOWN_SYNONYMS]
+    shown = f"{label} | {' | '.join(synonyms)}" if synonyms else label
+    definition = " ".join(str(candidate.get("definition") or "").split())
+    if definition:
+        if len(definition) > _MAX_DEFINITION_CHARS:
+            definition = definition[:_MAX_DEFINITION_CHARS].rstrip() + "..."
+        shown += f" | definition: {definition}"
+    if candidate.get("n_descendants") is not None:
+        shown += f" | descendants: {candidate['n_descendants']}"
+    return shown
+
+
+def _descend_candidate_line(index: int, candidate: dict[str, Any]) -> str:
+    """One numbered child for the descent prompt: the term as _candidate_line shows it, with
+    no similarity or pin (neither exists here) and the child's own child count appended."""
+    return (f"{index}. {candidate['id']} | {_candidate_text(candidate)}"
+            f" | children in vocabulary: {candidate.get('n_children', 0)}")
+
+
+def _current_term_line(current: dict[str, Any] | None) -> str:
+    if current is None:
+        return (f"{OBI_ASSAY_ROOT} | assay (the root of the OBI assay branch; not itself a "
+                "mappable term -- choose a child or answer none)")
+    return f"{current['id']} | {_candidate_text(current)}"
+
+
+def build_descend_prompt(
+    assay_name: str,
+    current: dict[str, Any] | None,
+    candidates: list[dict[str, Any]],
+    sample_type: str = "",
+    readouts: str = "",
+    aliases: list[str] | None = None,
+    standard_technique_name: str = "",
+) -> str:
+    """Render resolver_obi_descend.txt for one level of the walk. `current` is None at the
+    root. Split out so a test can read it without reaching the network."""
+    named = [a.strip() for a in (aliases or []) if isinstance(a, str) and a.strip()]
+    return (
+        (_PROMPTS_DIR / "resolver_obi_descend.txt").read_text(encoding="utf-8")
+        .replace("{assay_name}", assay_name)
+        .replace("{aliases}", ", ".join(named) if named else "none given")
+        .replace("{standard_technique_name}", standard_technique_name.strip() or "not given")
+        .replace("{current_term}", _current_term_line(current))
+        .replace("{candidates}",
+                 "\n".join(_descend_candidate_line(i + 1, c) for i, c in enumerate(candidates)))
+        .replace("{sample_type}", sample_type.strip() or "not specified")
+        .replace("{readouts}", readouts.strip() or "not specified")
+    )
+
+
+#: The whole reply one level of the descent asks for: a child number with an optional
+#: granularity (bare = step in, with granularity = end on it), "stop" with a granularity, or
+#: "none". The same punctuation tolerance as _PICK_REPLY.
+_DESCEND_REPLY = re.compile(
+    r"(?:#?\s*(?P<idx>\d+)|(?P<stop>stop))\s*[.):,-]?\s*"
+    r"(?:\(?\s*(?P<gran>exact|broad)\s*\)?)?\s*\.?"
+)
+
+
+def parse_descend_reply(reply: str, n_candidates: int) -> tuple[str, int | None, str | None]:
+    """(action, 0-based child index or None, "EXACT"/"BROAD"/None).
+
+    action is "pick" (a child was named; the walk ends on it when a granularity came with the
+    number, continues below it otherwise), "stop" (the current term) or "none". A reply that is
+    none of these, or names a child that is not listed, raises PickReplyError: as with the
+    embedding picker, an unreadable reply is a failed call and is reported like one rather than
+    read as an abstention.
+    """
+    reply = _normalize_reply(reply)
+    if reply in _ABSTENTIONS:
+        return "none", None, None
+    match = _DESCEND_REPLY.fullmatch(reply)
+    if not match:
+        raise PickReplyError(f"descend reply not understood: {reply[:80]!r}")
+    granularity = match.group("gran").upper() if match.group("gran") else None
+    if match.group("stop"):
+        return "stop", None, granularity
+    idx = int(match.group("idx")) - 1
+    if not 0 <= idx < n_candidates:
+        raise PickReplyError(f"descend reply names child {idx + 1} of {n_candidates}")
+    return "pick", idx, granularity
+
+
+def _llm_descend_pick(
+    assay_name: str,
+    current: dict[str, Any] | None,
+    candidates: list[dict[str, Any]],
+    sample_type: str = "",
+    readouts: str = "",
+    model: str = settings.OPENAI_MODEL,
+    aliases: list[str] | None = None,
+    standard_technique_name: str = "",
+) -> str:
+    """One level of the walk: ask the model, return its reply lowercased and stripped. Seeded
+    and at temperature 0 like _llm_pick, for the same reason. Recording is left to _descend,
+    which keeps every level of one assay in a single trace record."""
+    prompt = build_descend_prompt(assay_name, current, candidates, sample_type, readouts,
+                                  aliases, standard_technique_name)
+    client = OpenAI(api_key=settings.OPENAI_API_KEY)
+    resp = client.chat.completions.create(
+        model=model,
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0,
+        seed=EXTRACTION_SEED,
+    )
+    return (resp.choices[0].message.content or "").strip().lower()
+
+
+def _descend(
+    start_id: str | None,
+    assay_name: str,
+    sample_type: str = "",
+    readouts: str = "",
+    model: str = settings.OPENAI_MODEL,
+    aliases: list[str] | None = None,
+    standard_technique_name: str = "",
+    registry_key: str = "",
+    terms_path: Path = _OBI_TERMS_PATH,
+    trace_round: str = "obi",
+) -> dict[str, Any] | None:
+    """Walk the OBI assay tree from `start_id` (None: the root) down to the term the record
+    warrants, one chat call per level.
+
+    `trace_round` names the trace round the walk is recorded under: "obi" when the walk *is*
+    round 4, "obi_descend" when it follows an embedding pick that already holds the "obi" slot
+    for this key (a second record under one key would overwrite the first).
+
+    At each level the picker sees the current term and its direct children in the index
+    (_index_children; at the root, _index_roots) and answers one of: a child's number (step
+    into it), a number with EXACT/BROAD (end on that child), STOP EXACT/BROAD (end on the
+    current term) or none. The walk also ends on its own when the chosen child has no children
+    in the index, and when it has run MAX_DESCENT_LEVELS levels.
+
+    Two replies are read against the grammar on purpose. "none" below the root contradicts
+    the previous level, which stepped into the current term because it covered the assay; it
+    ends the walk on the current term as BROAD and is marked `backoff`, so a run that did this
+    often can be found. A STOP at the root is an abstention: there is no term to stop on.
+
+    Returns None only for an abstention at the root. A reply nobody could parse raises
+    PickReplyError out of whatever level it happened at; the caller decides whether an exact
+    hit stands in for the answer. The result carries `path` (every term the walk entered,
+    `start_id` first), `calls` and `backoff` beside the usual fields; `confidence` is None
+    because the walk measures nothing -- the caller sets "high" when it started at an exact hit.
+    The whole walk is one trace record under `registry_key`, with the candidate lines and reply
+    of every level, so a wrong term is diagnosed from disk by reading which turn went wrong.
+    """
+    entries = _index_entries(terms_path)
+    children = _index_children(terms_path)
+    current_id = start_id
+    path: list[str] = [start_id] if start_id else []
+    levels: list[dict[str, Any]] = []
+    chosen_id: str | None = None
+    granularity: str | None = None
+    backoff = False
+
+    def finish(obi_id: str | None, gran: str | None) -> None:
+        nonlocal chosen_id, granularity
+        chosen_id, granularity = obi_id, gran
+
+    def record() -> None:
+        assay_trace.record(trace_round, registry_key or assay_name, strategy="descend",
+                           path=list(path), levels=levels,
+                           reply=levels[-1]["reply"] if levels else None)
+
+    for _level in range(MAX_DESCENT_LEVELS):
+        child_ids = children.get(current_id, ()) if current_id else _index_roots(terms_path)
+        candidates = _descend_candidates(child_ids, terms_path)
+        if not candidates:
+            # A leaf (or a root with nothing under it): the previous level's answer stands.
+            finish(current_id, granularity)
+            break
+        current = _descend_candidates([current_id], terms_path)[0] if current_id else None
+        reply = _llm_descend_pick(assay_name, current, candidates, sample_type, readouts,
+                                  model, aliases, standard_technique_name)
+        levels.append({"node": current_id or OBI_ASSAY_ROOT, "reply": reply,
+                       "candidates": [_descend_candidate_line(i + 1, c)
+                                      for i, c in enumerate(candidates)]})
+        try:
+            action, idx, gran = parse_descend_reply(reply, len(candidates))
+        except PickReplyError:
+            record()
+            raise
+        if action == "none":
+            if current_id is None:
+                finish(None, None)
+            else:
+                backoff = True
+                finish(current_id, "BROAD")
+            break
+        if action == "stop":
+            if current_id is None:
+                # Nothing to stop on at the root: read as the abstention it amounts to.
+                finish(None, None)
+            else:
+                finish(current_id, gran)
+            break
+        chosen = candidates[idx]
+        path.append(chosen["id"])
+        current_id = chosen["id"]
+        granularity = gran
+        if gran is not None or not children.get(current_id):
+            finish(current_id, gran)
+            break
+    else:
+        # MAX_DESCENT_LEVELS replies, every one of them a step into a term with children.
+        backoff = True
+        finish(current_id, "BROAD")
+    record()
+    if chosen_id is None:
+        return None
+    return {
+        "obi_id": chosen_id,
+        "obi_label": entries[chosen_id]["label"],
+        "resource": "descend_llm",
+        "confidence": None,
+        "granularity": granularity,
+        "path": path,
+        "calls": len(levels),
+        "backoff": backoff,
+    }
+
+
+def _descend_from_pick(
+    picked: dict[str, Any],
+    assay_name: str,
+    sample_type: str = "",
+    readouts: str = "",
+    model: str = settings.OPENAI_MODEL,
+    aliases: list[str] | None = None,
+    standard_technique_name: str = "",
+    registry_key: str = "",
+    terms_path: Path = _OBI_TERMS_PATH,
+    prior_calls: int = 0,
+) -> dict[str, Any]:
+    """The hybrid strategy's second step: from a term already picked, walk down only.
+
+    Nothing is spent when the picked term has no children in the index -- the pick is returned
+    as it came, plus the bookkeeping fields (`path` = [its id], `calls` = `prior_calls`). Otherwise
+    _descend starts at the pick, recorded under the "obi_descend" trace round so the pick's own
+    record survives. A walk that ends where it started keeps the pick's resource and takes the
+    walk's granularity (STOP EXACT/BROAD is the more informed call); one that moves to a
+    descendant is attributed "embedding_llm_descended". A walk whose reply could not be read
+    leaves the pick standing: the pick was paid for and is an answer. `prior_calls` is what the
+    pick cost, so `calls` is the entry's whole bill.
+    """
+    start = picked["obi_id"]
+    if not _index_children(terms_path).get(start):
+        return {**picked, "path": [start], "calls": prior_calls, "backoff": False}
+    try:
+        walked = _descend(
+            start, assay_name, sample_type=sample_type, readouts=readouts, model=model,
+            aliases=aliases, standard_technique_name=standard_technique_name,
+            registry_key=registry_key, terms_path=terms_path, trace_round="obi_descend",
+        )
+    except PickReplyError as exc:
+        logger.warning("%s: %s; the embedding pick stands", registry_key or assay_name, exc)
+        return {**picked, "path": [start], "calls": prior_calls + 1, "backoff": False,
+                "descend_error": f"{type(exc).__name__}: {exc}"}
+    # _descend returns None only for an abstention at the root, and this walk has a start.
+    assert walked is not None
+    walked["calls"] += prior_calls
+    if walked["obi_id"] == start:
+        return {**picked, "granularity": walked["granularity"] or picked.get("granularity"),
+                "path": walked["path"], "calls": walked["calls"], "backoff": walked["backoff"]}
+    walked["resource"] = "embedding_llm_descended"
+    walked["confidence"] = picked.get("confidence")
+    return walked
 
 
 # ── Public API ────────────────────────────────────────────────────────────────
@@ -606,8 +1124,16 @@ def map_assay_to_obi(
     model: str = settings.OPENAI_MODEL,
     aliases: list[str] | None = None,
     registry_key: str = "",
+    strategy: str | None = None,
 ) -> dict[str, Any] | None:
     """Return OBI metadata for an assay, or None when no candidate fits.
+
+    `strategy` is step 2's method, "embedding", "descend" or "hybrid" (OBI_STRATEGIES); None
+    reads settings.OBI_MAPPING_STRATEGY at call time. "hybrid" is the embedding pick and then,
+    when the picked term has children in the index, one descent from it (_descend_from_pick). Under "descend" the walk starts at the exact
+    hit when step 1 found one with children, and at the root otherwise; the hit is also the
+    answer when the walk's first level abstains or its reply cannot be read, as the embedding
+    path keeps it when the picker says none.
 
     terms_path selects the standard vocabulary used for exact-match lookup and
     restricts the embedding fallback's candidate pool to that vocabulary's ids
@@ -641,14 +1167,41 @@ def map_assay_to_obi(
             return {**result, "resource": "exact_original", "confidence": "high"}
         pinned = _pinned_candidates(result["obi_id"], terms_path)
     normalized = standard_technique_name.strip()
+    strategy = strategy or settings.OBI_MAPPING_STRATEGY
+    if strategy not in OBI_STRATEGIES:
+        raise ValueError(f"OBI_MAPPING_STRATEGY must be one of {OBI_STRATEGIES}, not {strategy!r}")
 
-    # Step 2 — embedding candidates from both queries (restricted to terms_path's
-    # vocabulary), merged into one top-K list, LLM picks best
     original = name_in_paper.strip()
     query = original or normalized
     display_name = query
+
+    if strategy == "descend":
+        # Step 2 (descend) — walk the tree from the exact hit, or from the root
+        exact = {**result, "resource": "exact_original_llm", "confidence": "high"} if result else None
+        try:
+            walked = _descend(
+                result["obi_id"] if result else None, display_name,
+                sample_type=sample_type, readouts=readouts, model=model, aliases=aliases,
+                standard_technique_name=normalized
+                if normalized.lower() != display_name.lower() else "",
+                registry_key=registry_key, terms_path=terms_path,
+            )
+        except PickReplyError as exc:
+            if not exact:
+                raise
+            logger.warning("%s: %s; the exact name match stands", registry_key or query, exc)
+            return exact
+        if exact:
+            if not walked:
+                return exact
+            walked["resource"] = "exact_original_llm"
+            walked["confidence"] = "high"
+        return walked
+
+    # Step 2 (embedding) — candidates from both queries (restricted to terms_path's
+    # vocabulary), merged into one top-K list, LLM picks best
     allowed_ids = _term_ids(terms_path)
-    return _embedding_llm_match(
+    picked = _embedding_llm_match(
         query,
         allowed_ids=allowed_ids,
         sample_type=sample_type,
@@ -659,6 +1212,18 @@ def map_assay_to_obi(
         standard_technique_query=normalized,
         pinned=pinned,
         registry_key=registry_key,
+        terms_path=terms_path,
+    )
+    if strategy != "hybrid" or not picked:
+        return picked
+    # Step 2b (hybrid) — from the pick, down only
+    second_query = bool(normalized) and normalized.lower() != query.lower()
+    return _descend_from_pick(
+        picked, display_name, sample_type=sample_type, readouts=readouts, model=model,
+        aliases=aliases,
+        standard_technique_name=normalized if normalized.lower() != display_name.lower() else "",
+        registry_key=registry_key, terms_path=terms_path,
+        prior_calls=3 if second_query else 2,
     )
 
 
@@ -666,8 +1231,24 @@ def enrich_assays_with_obi(
     assays: dict[str, Any],
     terms_path: Path = _OBI_TERMS_PATH,
     model: str = settings.OPENAI_MODEL,
+    on_done: Callable[[str, int, int], None] | None = None,
+    workers: int = OBI_WORKERS,
 ) -> dict[str, dict[str, Any]]:
     """Add OBI fields to a Phase-1 assay registry keyed by assay name.
+
+    Entries are mapped `workers` at a time (OBI_WORKERS) and returned in registry order
+    whatever order they finished in. Each worker runs in a copy of the caller's context, so
+    the replies still land in the run's trace (assay_trace is a ContextVar, and a bare thread
+    would not see it). `on_done(key, done, total)` fires as each entry finishes, from the
+    calling thread, for a caller showing progress; an exception it raises is logged and does
+    not cost the run.
+
+    Fields written per entry: `obi_id`, `obi_label`, `resource`, `obi_confidence` and
+    `obi_granularity`, plus `obi_path`, `obi_calls` and `obi_backoff` when the descent or
+    hybrid strategy mapped it (the terms the walk entered, the calls the entry cost, and
+    whether the walk ended by backing off onto the term it was on). The granularity is the picker's own EXACT/BROAD and is diagnostic only:
+    nothing downstream reads it -- round 5 folds on the label whatever it says, and it is not in
+    the deliverable -- but the adjudication of a disputed term starts from it.
 
     The OBI score is written as `obi_confidence`, never `confidence`: registries carry the
     *extraction* confidence under the latter (how clearly the paper identifies the technique),
@@ -693,8 +1274,8 @@ def enrich_assays_with_obi(
     existing registry had before this field existed. Nothing needs re-extracting to keep working;
     re-extraction is only how a registry starts benefiting.
     """
-    enriched: dict[str, dict[str, Any]] = {}
-    for canonical, value in assays.items():
+    def map_one(canonical: str) -> dict[str, Any]:
+        value = assays[canonical]
         entry: dict[str, Any] = dict(value) if isinstance(value, dict) else {"description": value}
         # First wording, not the whole list: a registry already canonicalized by round 5 carries
         # every wording of a folded entry, and the lookup takes one name. The stored list is
@@ -721,13 +1302,13 @@ def enrich_assays_with_obi(
             )
         except Exception as exc:  # noqa: BLE001 - one failed lookup must not cost the others
             # Per entry, because the round used to be all-or-nothing: one timed-out embedding
-            # call threw away every mapping the paper had already paid for.
+            # call threw away every mapping the paper had already paid for. A PickReplyError
+            # lands here too: the call was made and paid for, and its reply could not be read.
             logger.warning("%s: OBI lookup failed - %s", canonical, exc)
             entry.update({"obi_id": None, "obi_label": None, "resource": "error",
                           "obi_confidence": None, "obi_granularity": None,
                           "obi_error": f"{type(exc).__name__}: {exc}"})
-            enriched[canonical] = entry
-            continue
+            return entry
         if mapped:
             entry["obi_id"] = mapped["obi_id"]
             entry["obi_label"] = mapped["obi_label"]
@@ -736,6 +1317,13 @@ def enrich_assays_with_obi(
             # The picker's own EXACT/BROAD; None for an exact name match (no pick was asked)
             # and for a reply that gave only a number.
             entry["obi_granularity"] = mapped.get("granularity")
+            if "path" in mapped:
+                # The descent's own record: the terms it entered and what it spent. Written
+                # only by that strategy, so an embedding mapping keeps the shape it always had,
+                # and assay_service.obi_calls bills from `obi_calls` when it is there.
+                entry["obi_path"] = mapped["path"]
+                entry["obi_calls"] = mapped["calls"]
+                entry["obi_backoff"] = mapped["backoff"]
         else:
             entry["obi_id"] = None
             entry["obi_label"] = None
@@ -744,6 +1332,20 @@ def enrich_assays_with_obi(
             # resource="unresolved" reads as an OBI score.
             entry["obi_confidence"] = None
             entry["obi_granularity"] = None
+        return entry
 
-        enriched[canonical] = entry
-    return enriched
+    keys = list(assays)
+    results: dict[str, dict[str, Any]] = {}
+    with ThreadPoolExecutor(max_workers=max(1, workers)) as pool:
+        # One context copy per task: a Context can be entered by one thread at a time, and the
+        # copy is what carries the active trace into the worker.
+        futures = {pool.submit(contextvars.copy_context().run, map_one, key): key for key in keys}
+        for future in as_completed(futures):
+            key = futures[future]
+            results[key] = future.result()
+            if on_done is not None:
+                try:
+                    on_done(key, len(results), len(keys))
+                except Exception:  # noqa: BLE001 - a listener must never cost the run
+                    logger.exception("OBI progress listener raised; the round continues")
+    return {key: results[key] for key in keys}

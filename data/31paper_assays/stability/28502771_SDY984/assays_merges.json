@@ -1,0 +1,44 @@
+{
+  "summary": {
+    "groups_merged": 0,
+    "entries_folded": 0,
+    "review_unfolded": [],
+    "kept_apart": [
+      "enzyme-linked immunospot assay — Zostavax®-specific and total IgG B cell ELISPOT"
+    ],
+    "judge_failed": []
+  },
+  "results": [],
+  "key_map": {
+    "Flow cytometry": "flow cytometry assay",
+    "Zostavax®-specific IFN-γ, IL-4 and IL-21 ELISPOT": "enzyme-linked immunospot assay",
+    "Zostavax®-specific and total IgG B cell ELISPOT": "enzyme-linked immunospot assay — Zostavax®-specific and total IgG B cell ELISPOT",
+    "Zostavax®-specific IgG/IgA ELISA": "enzyme-linked immunosorbent assay",
+    "Viral DNA detection": "real time polymerase chain reaction assay",
+    "Multiplex cytokine assays": "cytometric bead array assay",
+    "PBMC Transcriptomics analysis": "transcription profiling by array assay",
+    "Plasma Metabolomics analysis": "metabolomics by mass spectrometry assay",
+    "nested PCR analysis": "polymerase chain reaction assay",
+    "partial sequencing of amplicons": "amplicon sequencing assay",
+    "Cytokine Bead Array (CBA)": "analyte detection by flow based bead assay"
+  },
+  "judge": [
+    {
+      "label": "enzyme-linked immunospot assay",
+      "members": [
+        "Zostavax®-specific IFN-γ, IL-4 and IL-21 ELISPOT",
+        "Zostavax®-specific and total IgG B cell ELISPOT"
+      ],
+      "groups": [
+        [
+          "Zostavax®-specific IFN-γ, IL-4 and IL-21 ELISPOT"
+        ],
+        [
+          "Zostavax®-specific and total IgG B cell ELISPOT"
+        ]
+      ],
+      "reason": "Both use ELISPOT on PBMCs, but they measure different analytes: cytokine-secreting T-cell responses (IFN-γ/IL-4/IL-21) versus VZV-specific and total IgG-secreting B cells.",
+      "error": null
+    }
+  ]
+}

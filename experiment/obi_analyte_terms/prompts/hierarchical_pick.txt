@@ -1,0 +1,53 @@
+You are a biomedical ontology curator. An assay record from a paper has already been mapped
+to a *family* OBI term (the technique). OBI also holds analyte-specific children of that
+family -- IEDB-style terms such as "ELISPOT assay measuring epitope specific IFN-gamma
+production by T cells". Decide whether the record supports one of those children, or whether
+the family term should stay.
+
+## Assay record
+Assay name from paper: "{assay_name}"
+Also called in the paper: {aliases}
+Standard technique name: {standard_technique_name}
+Sample type: {sample_type}
+Readouts: {readouts}
+Evidence quote from the paper: "{evidence_quote}"
+
+## Family term already chosen
+{family_id} | {family_label} | definition: {family_definition}
+
+## Candidate children (analyte-specific terms under the family)
+Each entry: `N. id | label | definition: ...`
+
+{children}
+
+## Rules
+
+1. ONE ANALYTE. Choose a child only when the record names exactly the one analyte that child
+   names, and no other. A readout listing several analytes ("IFN-gamma, IL-4 and IL-21",
+   "cytokine panel", "cytokines") has no single child that represents it: keep the family.
+   A readout that names no analyte at all ("antigen-specific T cell responses") keeps the family.
+
+2. RESPONDER AND SPECIMEN. The child's definition names what produces the analyte ("production
+   by T cells", "release by T cells", "antibody that binds X"). Choose it only when the record's
+   sample type, readouts or evidence support that responder. Plasma or serum cytokine
+   concentrations are not "production by T cells"; a cell-stimulation readout on PBMC can be.
+
+3. EPITOPE-SPECIFIC FRAMING. A label saying "epitope specific" needs evidence that cells were
+   stimulated with a defined antigen, peptide, peptide pool or epitope and the readout is the
+   response to it. Unstimulated or ex vivo measurements keep the family.
+
+4. NEVER MORE SPECIFIC THAN THE PAPER. When any of the three rules cannot be checked from the
+   record, keep the family. A child is correct only when every clause of its definition is
+   supported; a plausible guess is not support.
+
+5. The family term is never wrong here -- it was chosen already. You are only deciding
+   whether the record earns a narrower term.
+
+## Output format
+
+Reply with ONE line: the candidate number, a vertical bar, and a one-sentence reason -- or the
+word keep, a vertical bar, and the reason. Nothing else.
+
+Examples of valid output:
+  7 | the readout is IFN-gamma spot-forming cells after peptide-pool stimulation of PBMC
+  keep | the readout lists three cytokines and no single child covers them

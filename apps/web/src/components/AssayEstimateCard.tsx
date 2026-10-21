@@ -124,7 +124,7 @@ export default function AssayEstimateCard({ estimate, onConfirm, busy }: Props) 
 
         {folds.length > 0 && (
           <div className="mt-3 text-xs">
-            <p className="text-gray-500 mb-1">Entries that would fold onto one OBI term — free:</p>
+            <p className="text-gray-500 mb-1">Entries sharing one OBI term — one judge call each:</p>
             <ul className="space-y-0.5">
               {folds.map((fold) => (
                 <li key={fold.key} className="text-gray-700 pl-3 border-l-2 border-gray-200">

@@ -1,0 +1,94 @@
+{
+  "summary": {
+    "assays": 6,
+    "fields_re_extracted": 3,
+    "actions": {
+      "REPLACED": 3
+    },
+    "reported_not_corrected": 0
+  },
+  "results": [
+    {
+      "assay_id": "Immunofluorescence assay to detect anti-Japanese encephalitis virus and anti-West Nile virus antibodies",
+      "assay_name": "Immunofluorescence assay to detect anti-Japanese encephalitis virus and anti-West Nile virus antibodies",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "flow cytometry",
+      "assay_name": "flow cytometry",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "NK-mediated ADCC assay",
+      "assay_name": "NK-mediated ADCC assay",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "ADCC assay",
+            "antibody-dependent cell-mediated cytotoxicity (ADCC) assay",
+            "NK function"
+          ],
+          "blind_answer": [
+            "ADCC assay",
+            "ADCC activity",
+            "antibody-dependent cell-mediated cytotoxicity"
+          ],
+          "dropped": [
+            "NK function"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "T cell function",
+      "assay_name": "T cell function",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "microarray hybridization",
+      "assay_name": "microarray hybridization",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "plaque reduction neutralization test (PRNT)",
+      "assay_name": "plaque reduction neutralization test (PRNT)",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "sample_type",
+          "action": "REPLACED",
+          "previous": "plasma",
+          "blind_answer": "plasma samples"
+        },
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "Anti-YFV neutralizing antibodies were measured by the plaque reduction neutralization test (PRNT).",
+            "neutralizing antibody",
+            "neutralizing antibody titer"
+          ],
+          "blind_answer": [],
+          "dropped": [
+            "Anti-YFV neutralizing antibodies were measured by the plaque reduction neutralization test (PRNT).",
+            "neutralizing antibody",
+            "neutralizing antibody titer"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    }
+  ]
+}

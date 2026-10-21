@@ -1,0 +1,68 @@
+{
+  "summary": {
+    "assays": 5,
+    "fields_re_extracted": 1,
+    "actions": {
+      "REPLACED": 1
+    },
+    "reported_not_corrected": 1
+  },
+  "results": [
+    {
+      "assay_id": "Flow cytometry analysis and cell sorting",
+      "assay_name": "Flow cytometry analysis and cell sorting",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "High-dimensional parameter flow cytometric analysis of NK cell subsets",
+      "assay_name": "High-dimensional parameter flow cytometric analysis of NK cell subsets",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "In vitro cytokine stimulation and functional assays of NK cells",
+      "assay_name": "In vitro cytokine stimulation and functional assays of NK cells",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "measuring degranulation by NK cells",
+      "assay_name": "measuring degranulation by NK cells",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "degranulation by NK cells"
+          ],
+          "blind_answer": [
+            "CD107a expression following activation of NK cells from indicated sites by co-culture with K562 cells for 4 h",
+            "staining for the expression of lysosomal-associated membrane protein 1 (LAMP-1: CD107a), a marker for degranulation"
+          ],
+          "dropped": [
+            "degranulation by NK cells"
+          ]
+        }
+      ],
+      "reported_not_corrected": [
+        {
+          "field_name": "name_in_paper",
+          "verdict": "NOT_SUPPORTED",
+          "reason": "This is a purpose clause/readout description rather than a clearly named assay technique."
+        }
+      ]
+    },
+    {
+      "assay_id": "Whole transcriptome profiling of NK cell subsets",
+      "assay_name": "Whole transcriptome profiling of NK cell subsets",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    }
+  ]
+}

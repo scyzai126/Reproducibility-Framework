@@ -14,7 +14,9 @@ check searches the whole document and neither field can be derived.
 **Every request runs all five rounds.** Results are written to disk under
 data/31paper_assays, and the files are the same ones the CLI scripts read and write,
 so a registry built here is visible to run_assay_verify.py and vice versa — but a stored one
-is never served back. A request costs 3 + N + F + O calls every time.
+is never served back. A request costs 3 + N + F + O + J calls every time: three extractions,
+one verification per entry, one correction per flagged field, the OBI lookups, and one fold
+judgement per group of entries sharing an OBI term.
 
 Reuse used to be the default, and it was removed rather than narrowed. Round 1's cache could
 not be dropped on its own: a freshly extracted registry invalidates any stored verification
@@ -33,7 +35,7 @@ import json
 import logging
 from collections.abc import Callable
 from datetime import datetime, timezone
-from functools import lru_cache
+from functools import lru_cache, partial
 from pathlib import Path
 
 from openai import AsyncOpenAI
@@ -57,10 +59,14 @@ from app.agent.assay_extractor import (
     trim_registry,
 )
 from app.agent.assay_extractor_pdf import extract_assays_from_pdf
+from app.agent.assay_fold_judge import judge_fold_groups
 from app.agent.assay_merger import (
     build_merge_report,
     canonical_groups,
     canonicalize_registry,
+    fold_candidates,
+    judge_failed,
+    kept_apart,
     key_map,
     review_unfolded,
 )
@@ -380,27 +386,56 @@ def _obi_query(key: str, entry: dict) -> tuple[str, str]:
     return (names[0] if names else key).strip(), str(entry.get("standard_technique_name") or "").strip()
 
 
-def obi_query_calls(key: str, entry: dict) -> int:
-    """What step 2 of the mapper spends on this entry: 2 calls, or 3 with a second query.
+#: What a descent typically spends on an entry the vocabulary does not hold verbatim: the
+#: common targets (flow cytometry, ELISA, CBA, RT-qPCR, profiling by array) sit at depth 2 and
+#: take two or three replies to reach, the deepest (bulk / single-cell RNA-seq) up to five. An
+#: estimate, where the embedding path's count was exact: the depth is the model's answer.
+DESCENT_TYPICAL_CALLS = 3
 
-    One embedding for the paper's name, one chat call to pick, and one more embedding when a
-    `standard_technique_name` differs from the name (_embedding_llm_match retrieves on both and merges
-    the pools). Counting a flat 2 under-billed every entry the extractor normalized.
+
+def obi_query_calls(key: str, entry: dict, strategy: str | None = None) -> int:
+    """What step 2 of the mapper would spend on this entry, before it runs.
+
+    Embedding strategy: 2 calls, or 3 with a second query -- one embedding for the paper's
+    name, one chat call to pick, and one more embedding when a `standard_technique_name`
+    differs from the name (_embedding_llm_match retrieves on both and merges the pools).
+    Counting a flat 2 under-billed every entry the extractor normalized.
+
+    Descend strategy: one chat call per level walked. An exact hit on a term with children
+    starts the walk there and usually ends at the next reply (1); anything else starts at the
+    root and is billed DESCENT_TYPICAL_CALLS, the depth most targets sit at. `strategy` None
+    reads the setting.
+
+    Hybrid strategy: the embedding bill plus one chat call for the descent from the pick. The
+    extra call is only made when the picked term has children in the index, which cannot be
+    known before the pick, so this is an upper bound.
     """
+    strategy = strategy or settings.OBI_MAPPING_STRATEGY
     original, normalized = _obi_query(key, entry)
-    return 3 if normalized and original and normalized.lower() != original.lower() else 2
+    if strategy == "descend":
+        hit = _build_lookup().get(original.lower()) if original else None
+        return 1 if hit else DESCENT_TYPICAL_CALLS
+    embedding = 3 if normalized and original and normalized.lower() != original.lower() else 2
+    return embedding + 1 if strategy == "hybrid" else embedding
 
 
 def obi_calls(obi: dict) -> int:
-    """What the OBI round spent, counted back from the resources it returned.
+    """What the OBI round spent, counted back from what it returned.
 
-    An over-count in two cases: when obi_generic_embeddings.json is absent,
+    An entry the descent mapped carries `obi_calls`, the chat calls its walk made, and is
+    billed exactly. Any other paid entry is billed the strategy's estimate (obi_query_calls),
+    an over-count in two cases: when obi_assay_pruned_embeddings.json is absent,
     _embedding_llm_match bails before calling anything and every miss still reads
     "unresolved"; and an entry whose lookup raised ("error") is billed as though every call it
     would have made went through. Over-reporting a bill is the safer direction to be wrong in.
     """
-    return sum(obi_query_calls(key, entry) for key, entry in (obi or {}).items()
-               if entry.get("resource") not in _OBI_FREE_RESOURCES)
+    total = 0
+    for key, entry in (obi or {}).items():
+        if entry.get("resource") in _OBI_FREE_RESOURCES:
+            continue
+        spent = entry.get("obi_calls")
+        total += spent if isinstance(spent, int) else obi_query_calls(key, entry)
+    return total
 
 
 def obi_summary(obi: dict) -> dict:
@@ -485,9 +520,10 @@ def stored_key_map(out_dir: Path, extracted: dict | None = None,
 #: caller decides how to wrap it; scripts/run_assay_pipeline.py prints its own hard-wrapped
 #: rendering of these same three sentences, because its column layout is a printer's concern.
 ESTIMATE_CAVEAT = (
-    "Rounds 2-4 are sized from the previous run's output, which this run re-extracts rather "
+    "Rounds 2-5 are sized from the previous run's output, which this run re-extracts rather "
     "than reuses. The shape rarely moves; it is not guaranteed -- round 4 in particular "
-    "depends on whether this run re-extracts the same assay names."
+    "depends on whether this run re-extracts the same assay names, and round 5 on whether "
+    "they map to the same terms."
 )
 
 
@@ -516,10 +552,12 @@ def estimate_run(pubmed_id: str, study_accession: str) -> dict:
     `calls: None` rather than guessing: an invented number on a cost gate is worse than no
     number.
 
-    `exact` is False exactly where the CLI prints "~": rounds 2-4, which all scale with what the
+    `exact` is False exactly where the CLI prints "~": rounds 2-5, which all scale with what the
     extraction finds. Round 4's count is exact for the names the last run found -- the
-    vocabulary is a file -- but this run re-extracts those names. `total_calls` is None unless
-    every round is known, so a caller cannot accidentally present a partial sum as the bill.
+    vocabulary is a file -- but this run re-extracts those names; round 5's is one call per
+    group of entries sharing a term, which depends on the same names mapping the same way.
+    `total_calls` is None unless every round is known, so a caller cannot accidentally present
+    a partial sum as the bill.
 
     Raises PaperNotFoundError when neither an XML nor a PDF is on disk. The round sizes do not
     depend on which one it is -- the PDF rides along as a file part on each of round 1's calls
@@ -582,22 +620,26 @@ def estimate_run(pubmed_id: str, study_accession: str) -> dict:
                        "basis": "unknown", "assays": None, "free_matches": None, "misses": []})
 
     if mapped_input is not None:
-        # The stored mapping is keyed canonically; the fold is computed on the pre-canonical
-        # registry, so each entry is given the mapping of the key it landed under.
+        # The stored mapping is keyed canonically; the grouping is computed on the pre-canonical
+        # registry, so each entry is given the mapping of the key it landed under. One judge
+        # call per candidate group -- entries sharing a term -- and `folds` names those groups:
+        # what the judge will be asked about, not what will fold, since that is its answer.
+        # The field keeps its name because types.ts and AssayEstimateCard read it. A registry
+        # with no mapping has no candidates and is 0, not None: the caveat covers it.
         keys = stored_key_map(out_dir, mapped_input, assays)
         obi_by_entry = ({k: obi[keys.get(k, k)] for k in mapped_input if keys.get(k, k) in obi}
                         if obi else None)
         groups = canonical_groups(mapped_input, obi_by_entry)
-        folds = [{"key": g["key"], "members": g["members"]}
-                 for g in groups if len(g["members"]) > 1]
-        rounds.append({"round": 5, "name": "canonicalize", "calls": 0, "exact": True,
-                       "basis": "deterministic", "entries": len(mapped_input),
-                       "groups": len(groups), "folds": folds})
+        candidates = [{"key": g["key"], "members": g["members"]}
+                      for g in fold_candidates(mapped_input, obi_by_entry)]
+        rounds.append({"round": 5, "name": "canonicalize", "calls": len(candidates),
+                       "exact": False, "basis": "last_run", "entries": len(mapped_input),
+                       "groups": len(groups), "folds": candidates})
     else:
-        # Free whether or not it can be sized, so the call count is 0 rather than None: "we
-        # cannot tell you what this costs" would be a lie about a round that costs nothing.
-        rounds.append({"round": 5, "name": "canonicalize", "calls": 0, "exact": True,
-                       "basis": "deterministic", "entries": None, "groups": None, "folds": []})
+        # Nothing stored says how many entries will share a term, so the round cannot be sized
+        # and says so, like rounds 2-4: a guessed number on a cost gate is worse than none.
+        rounds.append({"round": 5, "name": "canonicalize", "calls": None, "exact": False,
+                       "basis": "unknown", "entries": None, "groups": None, "folds": []})
 
     known = all(r["calls"] is not None for r in rounds)
     return {
@@ -816,8 +858,9 @@ async def assay_report(
     (prompts/verify_assays.txt, 1 call per assay). Round 3 repairs what round 2 refused to
     support (prompts/correct_assay_field.txt, 1 call per flagged FIELD) and sets aside assays
     whose identity it rejected. Round 4 maps the surviving assays onto OBI terms (free on an
-    exact match, 2-3 calls otherwise). Round 5 re-keys the registry by OBI label and folds
-    entries that share a term (free).
+    exact match, 2-3 calls otherwise). Round 5 re-keys the registry by OBI label and, for each
+    group of entries sharing a term, asks a judge whether they are one measurement
+    (prompts/judge_fold.txt, 1 call per candidate group) and folds only what it confirms.
 
     **assays.json is written last.** Round 1 clears every file the previous run left and writes
     its extraction to assays_precorrection.json; only when round 5 is done is the corrected,
@@ -825,16 +868,16 @@ async def assay_report(
     beside it. A run that dies part-way therefore leaves no assays.json at all rather than one
     that cannot be told apart from a verified registry.
 
-    Every paper costs 3 + N + F + O calls, every time. Nothing is served from disk: asking
+    Every paper costs 3 + N + F + O + J calls, every time. Nothing is served from disk: asking
     twice pays twice, and the second answer is the one that reflects the current prompts.
 
-    `on_progress` is fired at each round boundary, and once per assay during round 2, for a
-    caller watching a run it did not block on. It is a listener, not a participant: it cannot
-    change what the chain does, and an exception it raises is logged and swallowed, because a
-    broken listener must never cost a paid run its remaining rounds. Rounds 3 and 4 report a
-    total and then a result with nothing in between -- correct_registry gathers its field calls
-    and the OBI mapper runs in a worker thread, so neither can be watched from here, and a
-    caller must show that as indeterminate rather than invent a position.
+    `on_progress` is fired at each round boundary, and once per assay during rounds 2 and 4,
+    for a caller watching a run it did not block on. It is a listener, not a participant: it
+    cannot change what the chain does, and an exception it raises is logged and swallowed,
+    because a broken listener must never cost a paid run its remaining rounds. Rounds 3 and 5
+    report a total and then a result with nothing in between -- correct_registry gathers its
+    field calls and judge_fold_groups gathers its group calls, so neither can be watched from
+    here, and a caller must show that as indeterminate rather than invent a position.
 
     Raises PaperNotFoundError when neither an XML nor a PDF is on disk. Round 1 raises
     AssayExtractionError only when fewer than two extraction calls return a registry (one, when
@@ -1056,12 +1099,20 @@ async def _run_rounds(pubmed_id, study_accession, client, verify, correct, model
         rounds["obi"] = {"source": "skipped", "calls": 0}
         _emit(round="obi", state="skipped", calls=0)
     else:
-        # No `done`: the mapper runs in a worker thread and reports nothing until it returns.
-        _emit(round="obi", state="running", total=len(assays))
+        _emit(round="obi", state="running", done=0, total=len(assays))
+        loop = asyncio.get_running_loop()
+
+        def _obi_done(key: str, done: int, total: int) -> None:
+            # Called on the mapper's thread; the listener runs on the loop's, like every
+            # other _emit, so a caller never sees two events at once.
+            loop.call_soon_threadsafe(
+                partial(_emit, round="obi", state="running", done=done, total=total, item=key))
+
         try:
             # to_thread because enrich_assays_with_obi is synchronous and drives a blocking
             # OpenAI client; calling it inline would stall the event loop for the whole round.
-            obi = await asyncio.to_thread(enrich_assays_with_obi, assays, model=model)
+            obi = await asyncio.to_thread(enrich_assays_with_obi, assays, model=model,
+                                          on_done=_obi_done)
         except Exception:
             # Soft on purpose. The mapper already turns a failed lookup into an "error" entry,
             # so reaching here means the round could not run at all (a missing vocabulary file,
@@ -1079,13 +1130,21 @@ async def _run_rounds(pubmed_id, study_accession, client, verify, correct, model
             _emit(round="obi", state="done", calls=spent_obi, **obi_summary(obi))
 
     # ── Round 5: canonicalize ─────────────────────────────────────────────────
-    # The OBI term is the assay's identity, so the registry is keyed by the term's label and two
-    # entries that mapped to one term are one assay. Extraction keys by the paper's wording and
-    # cannot see that its two Methods subheadings describe one ELISA; round 4 can, because both
-    # resolved to OBI:0000661. Free and deterministic -- no model decides any of it. An entry
-    # OBI left unmapped keeps its own key and is reported UNMAPPED rather than folded onto a
-    # sibling that merely shares its technique; so does one whose identity the judge did not
-    # support (reported REVIEW UNFOLDED), so its wording never becomes a sibling's name.
+    # The OBI term is the assay's identity, so the registry is keyed by the term's label, and
+    # two entries that mapped to one term are candidates to be one assay. Extraction keys by the
+    # paper's wording and cannot see that its two Methods subheadings describe one ELISA; round
+    # 4 can, because both resolved to OBI:0000661. But one term also covers every flow
+    # cytometry experiment a paper runs: on the 31-paper stability run 12 of 18 term-only folds
+    # merged different measurements the extractor had split correctly. So each candidate group
+    # is put to a judge (assay_fold_judge, one call per group, the records and no paper text)
+    # under the extraction prompt's own identity rule, and only the sets it calls one
+    # measurement fold; the rest stay apart under `<label> — <wording>` with the same OBI id
+    # (reported KEPT APART). A group the judge could not rule on folds nothing (FOLD JUDGE
+    # FAILED): a fold cannot be undone from the registry and a split can. The re-key itself is
+    # deterministic given the partition. An entry OBI left unmapped keeps its own key and is
+    # reported UNMAPPED rather than folded onto a sibling that merely shares its technique; so
+    # does one whose identity the verifier did not support (reported REVIEW UNFOLDED), so its
+    # wording never becomes a sibling's name -- neither is a candidate.
     #
     # Runs whether or not anything folds: re-keying is the point, and `name_in_paper` becomes a
     # list of every wording on every entry so no reader has to branch on whether a fold happened.
@@ -1098,15 +1157,28 @@ async def _run_rounds(pubmed_id, study_accession, client, verify, correct, model
         rounds["canonicalize"] = {"source": "skipped", "calls": 0}
         _emit(round="canonicalize", state="skipped", calls=0)
     else:
-        _emit(round="canonicalize", state="running", total=len(assays))
-        keys = key_map(assays, obi)
-        # Before the re-key, like keys: both are read off the pre-canonical registry.
-        review = review_unfolded(assays, obi)
-        assays, obi, folds = canonicalize_registry(assays, obi)
-        merges = build_merge_report(folds, keys, review)
-        rounds["canonicalize"] = {"source": "canonical", "calls": 0,
+        candidates = fold_candidates(assays, obi)
+        partition: dict | None = None
+        judged: list[dict] | None = None
+        spent = 0
+        # The total up front and no position, like rounds 3 and 4: judge_fold_groups gathers
+        # its calls and reports nothing until all of them return.
+        _emit(round="canonicalize", state="running", total=len(candidates))
+        if candidates:
+            partition, judged = await judge_fold_groups(candidates, assays, client, model)
+            spent = len(candidates)
+            calls += spent
+            trace.write(raw_path)
+        keys = key_map(assays, obi, partition)
+        # Before the re-key, like keys: all three are read off the pre-canonical registry.
+        review = review_unfolded(assays, obi, partition)
+        apart = kept_apart(assays, obi, partition)
+        failed_labels = judge_failed(assays, obi, partition)
+        assays, obi, folds = canonicalize_registry(assays, obi, partition)
+        merges = build_merge_report(folds, keys, review, apart, failed_labels, judged)
+        rounds["canonicalize"] = {"source": "canonical", "calls": spent,
                                   "assays": len(assays), **merges["summary"]}
-        _emit(round="canonicalize", state="done", calls=0, assays=len(assays),
+        _emit(round="canonicalize", state="done", calls=spent, assays=len(assays),
               **merges["summary"])
         merges_path.write_text(
             json.dumps(merges, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")

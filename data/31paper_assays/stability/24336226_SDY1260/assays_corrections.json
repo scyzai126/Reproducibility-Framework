@@ -1,0 +1,88 @@
+{
+  "summary": {
+    "assays": 8,
+    "fields_re_extracted": 2,
+    "actions": {
+      "REPLACED": 1,
+      "REAFFIRMED": 1
+    },
+    "reported_not_corrected": 0
+  },
+  "results": [
+    {
+      "assay_id": "DNA microarray",
+      "assay_name": "DNA microarray",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "ELISA",
+      "assay_name": "ELISA",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "serum bactericidal titers (SBA)",
+      "assay_name": "serum bactericidal titers (SBA)",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "flow cytometry",
+      "assay_name": "flow cytometry",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "ELISpot",
+      "assay_name": "ELISpot",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "anti-Diphtheria IgG by Luminex",
+      "assay_name": "anti-Diphtheria IgG by Luminex",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "DC activation flow cytometry",
+      "assay_name": "DC activation flow cytometry",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "cytokine ELISA",
+      "assay_name": "cytokine ELISA",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "readouts",
+          "action": "REPLACED",
+          "previous": "IL-6, TNF, IL-12p40, and IL-1b concentrations",
+          "blind_answer": "IL-6, TNF, and IL-12p40 in cell supernatants"
+        },
+        {
+          "field": "aliases",
+          "action": "REAFFIRMED",
+          "previous": [
+            "ELISA kits",
+            "ELISA"
+          ],
+          "blind_answer": [
+            "ELISA kits"
+          ],
+          "dropped": []
+        }
+      ],
+      "reported_not_corrected": []
+    }
+  ]
+}

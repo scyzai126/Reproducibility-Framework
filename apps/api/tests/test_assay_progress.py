@@ -65,6 +65,14 @@ def _two_assays_body() -> str:
     return json.dumps({"flow cytometry": _ENTRY, "ELISA": {**_ENTRY, "name_in_paper": "ELISA"}})
 
 
+def _judge_body() -> str:
+    """Round 5's one call on this paper: both entries share the stub's term, and the judge is
+    asked whether they are one measurement. `_Client` serves bodies in call order -- extraction,
+    then one verification per entry -- and repeats the last, so without this the judge would be
+    handed the verification and the two would be kept apart as a failure."""
+    return json.dumps({"groups": [["flow cytometry", "ELISA"]], "reason": "one measurement"})
+
+
 def _verification_body() -> str:
     fields = ["name_in_paper", "platform", "readouts", "source",
               "evidence.quote", "evidence.sentence_ids"]
@@ -84,7 +92,7 @@ async def test_every_round_announces_itself_before_it_spends_and_again_when_it_i
     lay out the whole run before the first call returns."""
     events = []
 
-    await assay_report("111", "SDY1", _Client(_two_assays_body(), _verification_body()),
+    await assay_report("111", "SDY1", _Client(_two_assays_body(), _verification_body(), _verification_body(), _judge_body()),
                        on_progress=events.append)
 
     opened, seen = [], set()
@@ -104,7 +112,7 @@ async def test_verifying_reports_once_per_assay_with_the_name_not_just_the_count
     the event carries it."""
     events = []
 
-    await assay_report("111", "SDY1", _Client(_two_assays_body(), _verification_body()),
+    await assay_report("111", "SDY1", _Client(_two_assays_body(), _verification_body(), _verification_body(), _judge_body()),
                        on_progress=events.append)
 
     ticks = [e for e in events if e["round"] == "verify" and "done" in e and e["done"]]
@@ -119,7 +127,7 @@ async def test_each_round_reports_the_same_call_count_it_ends_up_in_the_report(p
     events = []
 
     result = await assay_report("111", "SDY1",
-                                _Client(_two_assays_body(), _verification_body()),
+                                _Client(_two_assays_body(), _verification_body(), _verification_body(), _judge_body()),
                                 on_progress=events.append)
 
     reported = {e["round"]: e["calls"] for e in events
@@ -130,15 +138,17 @@ async def test_each_round_reports_the_same_call_count_it_ends_up_in_the_report(p
 
 @pytest.mark.asyncio
 async def test_the_rounds_that_cannot_be_watched_announce_a_total_and_no_position(paper):
-    """correct_registry gathers its field calls and the OBI mapper runs in a worker thread, so
-    neither can report progress. A total with no position is honest; an invented position is
-    a progress bar that means nothing."""
+    """correct_registry gathers its field calls, so round 3 cannot report progress. A total
+    with no position is honest; an invented position is a progress bar that means nothing.
+    Round 4 used to be listed here too; since the mapper reports each entry as it finishes
+    (enrich_assays_with_obi's on_done), it opens with a position like round 2 --
+    test_assay_service_obi covers that."""
     events = []
 
-    await assay_report("111", "SDY1", _Client(_two_assays_body(), _verification_body()),
+    await assay_report("111", "SDY1", _Client(_two_assays_body(), _verification_body(), _verification_body(), _judge_body()),
                        on_progress=events.append)
 
-    for name in ("correct", "obi"):
+    for name in ("correct",):
         opening = [e for e in events if e["round"] == name and e["state"] == "running"][0]
         assert "total" in opening
         assert "done" not in opening
@@ -149,7 +159,7 @@ async def test_a_skipped_round_says_so_rather_than_staying_silent(paper):
     """Silence reads as "still running" to anything watching."""
     events = []
 
-    await assay_report("111", "SDY1", _Client(_two_assays_body()),
+    await assay_report("111", "SDY1", _Client(_two_assays_body(), _judge_body()),
                        verify=False, correct=False, on_progress=events.append)
 
     skipped = {e["round"] for e in events if e["state"] == "skipped"}
@@ -166,7 +176,7 @@ async def test_a_listener_that_raises_does_not_take_the_run_down_with_it(paper):
         raise RuntimeError("the listener is broken")
 
     result = await assay_report("111", "SDY1",
-                                _Client(_two_assays_body(), _verification_body()),
+                                _Client(_two_assays_body(), _verification_body(), _verification_body(), _judge_body()),
                                 on_progress=_broken)
 
     assert list(result["assays"]) == ["flow cytometry assay"]
@@ -176,11 +186,29 @@ async def test_a_listener_that_raises_does_not_take_the_run_down_with_it(paper):
 @pytest.mark.asyncio
 async def test_no_listener_is_the_behaviour_the_cli_has_always_had(paper):
     """on_progress defaults to None, and the chain must not notice."""
-    client = _Client(_two_assays_body(), _verification_body())
+    client = _Client(_two_assays_body(), _verification_body(), _verification_body(), _judge_body())
 
     result = await assay_report("111", "SDY1", client)
 
-    assert result["meta"]["llm_calls"] == client.calls == 3
+    # 1 extract + 2 verify + 1 fold judge.
+    assert result["meta"]["llm_calls"] == client.calls == 4
+
+
+@pytest.mark.asyncio
+async def test_canonicalizing_announces_the_candidate_groups_it_will_judge(paper):
+    """Round 5 gathers its judge calls like round 3 gathers its field calls, so its opening
+    event carries the total -- one per candidate group -- and no position."""
+    events = []
+
+    await assay_report("111", "SDY1", _Client(_two_assays_body(), _verification_body(),
+                                              _verification_body(), _judge_body()),
+                       on_progress=events.append)
+
+    opening = [e for e in events if e["round"] == "canonicalize" and e["state"] == "running"][0]
+    assert opening["total"] == 1
+    assert "done" not in opening
+    closing = [e for e in events if e["round"] == "canonicalize" and e["state"] == "done"][0]
+    assert closing["calls"] == 1
 
 
 # ── the verifier's own hook ───────────────────────────────────────────────────

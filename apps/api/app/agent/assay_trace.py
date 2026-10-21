@@ -1,7 +1,7 @@
 """Keep every model reply a pipeline run paid for, so a bad run can be read instead of re-bought.
 
-The assay chain spends 3 + N + F + O calls on a paper and, until this module, kept none of the
-replies: each round parsed its answer, wrote what it derived, and dropped the text. Every defect
+The assay chain spends 3 + N + F + O + J calls on a paper and, until this module, kept none of
+the replies: each round parsed its answer, wrote what it derived, and dropped the text. Every defect
 found in the two reviews of the chain had to be reconstructed from those derived files, and
 whether a given alias objection or OBI pick was the model's or the parser's could not be told
 without paying for the run again.
@@ -47,8 +47,9 @@ class Trace:
         """Group by round, then by assay key, then by field when a round has one.
 
         `extract` is a single reply per run. `verify` and `obi` are one per assay. `correct` is
-        one per assay per field. A record that arrives twice for one slot overwrites the first,
-        which is what a retry should do.
+        one per assay per field. `canonicalize` is one per group of entries sharing an OBI term,
+        keyed by that term's label. A record that arrives twice for one slot overwrites the
+        first, which is what a retry should do.
         """
         out: dict = {}
         for record in self.records:

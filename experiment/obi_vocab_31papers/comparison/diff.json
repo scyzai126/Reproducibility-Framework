@@ -1,0 +1,430 @@
+{
+  "totals": {
+    "pruned": {
+      "papers": 31,
+      "benchmark_total": 161,
+      "ours_total": 157,
+      "matched": 150,
+      "exact": 132,
+      "missed": 11,
+      "extra": 2,
+      "obi_exact_rate": 0.88,
+      "obi_recall": 0.8198757763975155,
+      "status_counts": {
+        "MATCH": 132,
+        "MATCH_GRANULARITY": 5,
+        "MATCH_OBI_CONFLICT": 7,
+        "MATCH_OBI_UNMAPPED": 6,
+        "SPLIT": 3,
+        "MISSED": 11,
+        "EXTRA": 2,
+        "UNSUPPORTED_EXTRA": 2
+      },
+      "unresolved": 2,
+      "errors": 0,
+      "calls": 434
+    },
+    "full": {
+      "papers": 31,
+      "benchmark_total": 161,
+      "ours_total": 157,
+      "matched": 150,
+      "exact": 126,
+      "missed": 11,
+      "extra": 2,
+      "obi_exact_rate": 0.84,
+      "obi_recall": 0.782608695652174,
+      "status_counts": {
+        "MATCH": 126,
+        "MATCH_GRANULARITY": 7,
+        "MATCH_OBI_CONFLICT": 9,
+        "MATCH_OBI_UNMAPPED": 8,
+        "SPLIT": 3,
+        "MISSED": 11,
+        "EXTRA": 2,
+        "UNSUPPORTED_EXTRA": 2
+      },
+      "unresolved": 4,
+      "errors": 0,
+      "calls": 449
+    },
+    "stability_reference": {
+      "papers": 31,
+      "benchmark_total": 161,
+      "ours_total": 157,
+      "matched": 150,
+      "exact": 131,
+      "missed": 11,
+      "extra": 3,
+      "obi_exact_rate": 0.8733333333333333,
+      "obi_recall": 0.8136645962732919,
+      "status_counts": {
+        "MATCH": 131,
+        "MATCH_GRANULARITY": 5,
+        "MATCH_OBI_CONFLICT": 7,
+        "MATCH_OBI_UNMAPPED": 7,
+        "SPLIT": 2,
+        "MISSED": 11,
+        "EXTRA": 3,
+        "UNSUPPORTED_EXTRA": 2
+      },
+      "unresolved": 4,
+      "errors": 0,
+      "calls": 434
+    }
+  },
+  "diffs": {
+    "pruned_vs_full": [
+      {
+        "registry": "20078211_SDY1293_pdf",
+        "key": "microscopy assay",
+        "pruned": {
+          "obi_id": "OBI:0002119",
+          "obi_label": "microscopy assay",
+          "resource": "embedding_llm"
+        },
+        "full": {
+          "obi_id": "OBI:0002649",
+          "obi_label": "blood microbiology assay",
+          "resource": "embedding_llm"
+        },
+        "curator": {
+          "obi_id": "OBI:0002119",
+          "obi_label": "microscopy assay"
+        },
+        "agrees_with_curator": "pruned",
+        "full_term_is_compositional": false,
+        "full_term_outside_pruned_index": false
+      },
+      {
+        "registry": "23266342_SDY1364",
+        "key": "enzyme-linked immunospot assay",
+        "pruned": {
+          "obi_id": "OBI:0600031",
+          "obi_label": "enzyme-linked immunospot assay",
+          "resource": "embedding_llm"
+        },
+        "full": {
+          "obi_id": "OBI:1110059",
+          "obi_label": "ELISPOT assay measuring epitope specific interferon-gamma production by T cells",
+          "resource": "embedding_llm"
+        },
+        "curator": {
+          "obi_id": "OBI:0600031",
+          "obi_label": "enzyme-linked immunospot assay"
+        },
+        "agrees_with_curator": "pruned",
+        "full_term_is_compositional": true,
+        "full_term_outside_pruned_index": true
+      },
+      {
+        "registry": "23266342_SDY1364",
+        "key": "flow cytometry assay",
+        "pruned": {
+          "obi_id": "OBI:0000916",
+          "obi_label": "flow cytometry assay",
+          "resource": "embedding_llm_normalized"
+        },
+        "full": {
+          "obi_id": "OBI:1110172",
+          "obi_label": "intracellular cytokine staining assay measuring epitope specific interferon-gamma production by T cells",
+          "resource": "embedding_llm"
+        },
+        "curator": {
+          "obi_id": "OBI:0000916",
+          "obi_label": "flow cytometry assay"
+        },
+        "agrees_with_curator": "pruned",
+        "full_term_is_compositional": true,
+        "full_term_outside_pruned_index": true
+      },
+      {
+        "registry": "23844129_SDY1364",
+        "key": "enzyme-linked immunospot assay",
+        "pruned": {
+          "obi_id": "OBI:0600031",
+          "obi_label": "enzyme-linked immunospot assay",
+          "resource": "embedding_llm"
+        },
+        "full": {
+          "obi_id": "OBI:1110059",
+          "obi_label": "ELISPOT assay measuring epitope specific interferon-gamma production by T cells",
+          "resource": "embedding_llm"
+        },
+        "curator": {
+          "obi_id": "OBI:0600031",
+          "obi_label": "enzyme-linked immunospot assay"
+        },
+        "agrees_with_curator": "pruned",
+        "full_term_is_compositional": true,
+        "full_term_outside_pruned_index": true
+      },
+      {
+        "registry": "26742691_SDY1328",
+        "key": "complete blood count",
+        "pruned": {
+          "obi_id": "OBI:0003040",
+          "obi_label": "blood assay",
+          "resource": "embedding_llm"
+        },
+        "full": {
+          "obi_id": null,
+          "obi_label": null,
+          "resource": "unresolved"
+        },
+        "curator": {
+          "obi_id": "OBI:0000630",
+          "obi_label": "hematology assay"
+        },
+        "agrees_with_curator": "neither",
+        "full_term_is_compositional": false,
+        "full_term_outside_pruned_index": false
+      },
+      {
+        "registry": "32717743_SDY1655",
+        "key": "antigen detection by cytometric bead array assay",
+        "pruned": {
+          "obi_id": "OBI:0003115",
+          "obi_label": "antigen detection by cytometric bead array assay",
+          "resource": "embedding_llm"
+        },
+        "full": {
+          "obi_id": null,
+          "obi_label": null,
+          "resource": "unresolved"
+        },
+        "curator": {
+          "obi_id": "OBI:0000920",
+          "obi_label": "cytometric bead array assay"
+        },
+        "agrees_with_curator": "neither",
+        "full_term_is_compositional": false,
+        "full_term_outside_pruned_index": false
+      },
+      {
+        "registry": "32788292_SDY1669",
+        "key": "bacterial lipopolysaccharide detection in plasma assay",
+        "pruned": {
+          "obi_id": "OBI:0003793",
+          "obi_label": "bacterial lipopolysaccharide detection in plasma assay",
+          "resource": "embedding_llm"
+        },
+        "full": {
+          "obi_id": "OBI:0000904",
+          "obi_label": "reporter cell line analyte detection bioassay",
+          "resource": "embedding_llm_normalized"
+        },
+        "curator": {
+          "obi_id": "OBI:0003793",
+          "obi_label": "bacterial lipopolysaccharide detection in plasma assay"
+        },
+        "agrees_with_curator": "pruned",
+        "full_term_is_compositional": false,
+        "full_term_outside_pruned_index": false
+      },
+      {
+        "registry": "35455361_SDY1991",
+        "key": "flow cytometry assay",
+        "pruned": {
+          "obi_id": "OBI:0000916",
+          "obi_label": "flow cytometry assay",
+          "resource": "embedding_llm_normalized"
+        },
+        "full": {
+          "obi_id": "OBI:1110207",
+          "obi_label": "assay detecting IFN-gamma production",
+          "resource": "embedding_llm"
+        },
+        "curator": {
+          "obi_id": "OBI:0000916",
+          "obi_label": "flow cytometry assay"
+        },
+        "agrees_with_curator": "pruned",
+        "full_term_is_compositional": true,
+        "full_term_outside_pruned_index": true
+      }
+    ],
+    "pruned_vs_stability_reference": [
+      {
+        "registry": "19029902_SDY1264",
+        "key": "real time reverse-transcription polymerase chain reaction assay",
+        "pruned": {
+          "obi_id": "OBI:0001170",
+          "obi_label": "reverse transcription polymerase chain reaction assay",
+          "resource": "embedding_llm"
+        },
+        "stability_reference": {
+          "obi_id": "OBI:0000911",
+          "obi_label": "real time reverse-transcription polymerase chain reaction assay",
+          "resource": "embedding_llm"
+        },
+        "curator": {
+          "obi_id": "OBI:0000911",
+          "obi_label": "real time reverse-transcription polymerase chain reaction assay"
+        },
+        "agrees_with_curator": "stability_reference",
+        "stability_reference_term_is_compositional": false,
+        "stability_reference_term_outside_pruned_index": false
+      },
+      {
+        "registry": "19029902_SDY1264",
+        "key": "immunocytochemistry",
+        "pruned": {
+          "obi_id": "CHMO:0000087",
+          "obi_label": "fluorescence microscopy assay",
+          "resource": "embedding_llm"
+        },
+        "stability_reference": {
+          "obi_id": "OBI:0002174",
+          "obi_label": "immunocytochemistry",
+          "resource": "embedding_llm"
+        },
+        "curator": {
+          "obi_id": null,
+          "obi_label": null
+        },
+        "agrees_with_curator": "no curated term",
+        "stability_reference_term_is_compositional": false,
+        "stability_reference_term_outside_pruned_index": false
+      },
+      {
+        "registry": "20078211_SDY1293_pdf",
+        "key": "real time polymerase chain reaction assay",
+        "pruned": {
+          "obi_id": "OBI:0000911",
+          "obi_label": "real time reverse-transcription polymerase chain reaction assay",
+          "resource": "embedding_llm"
+        },
+        "stability_reference": {
+          "obi_id": "OBI:0000893",
+          "obi_label": "real time polymerase chain reaction assay",
+          "resource": "embedding_llm"
+        },
+        "curator": {
+          "obi_id": "OBI:0000911",
+          "obi_label": "real time reverse-transcription polymerase chain reaction assay"
+        },
+        "agrees_with_curator": "pruned",
+        "stability_reference_term_is_compositional": false,
+        "stability_reference_term_outside_pruned_index": false
+      },
+      {
+        "registry": "24336226_SDY1260",
+        "key": "cytometric bead array assay",
+        "pruned": {
+          "obi_id": "OBI:0003116",
+          "obi_label": "antibody detection by cytometric bead array assay",
+          "resource": "embedding_llm_neighbour"
+        },
+        "stability_reference": {
+          "obi_id": "OBI:0000920",
+          "obi_label": "cytometric bead array assay",
+          "resource": "embedding_llm"
+        },
+        "curator": {
+          "obi_id": "OBI:0003116",
+          "obi_label": "antibody detection by cytometric bead array assay"
+        },
+        "agrees_with_curator": "pruned",
+        "stability_reference_term_is_compositional": false,
+        "stability_reference_term_outside_pruned_index": false
+      },
+      {
+        "registry": "26742691_SDY1328",
+        "key": "complete blood count",
+        "pruned": {
+          "obi_id": "OBI:0003040",
+          "obi_label": "blood assay",
+          "resource": "embedding_llm"
+        },
+        "stability_reference": {
+          "obi_id": null,
+          "obi_label": null,
+          "resource": "unresolved"
+        },
+        "curator": {
+          "obi_id": "OBI:0000630",
+          "obi_label": "hematology assay"
+        },
+        "agrees_with_curator": "neither",
+        "stability_reference_term_is_compositional": false,
+        "stability_reference_term_outside_pruned_index": false
+      },
+      {
+        "registry": "28502771_SDY984",
+        "key": "analyte detection by flow based bead assay",
+        "pruned": {
+          "obi_id": "OBI:0000920",
+          "obi_label": "cytometric bead array assay",
+          "resource": "embedding_llm"
+        },
+        "stability_reference": {
+          "obi_id": "OBI:0003799",
+          "obi_label": "analyte detection by flow based bead assay",
+          "resource": "embedding_llm"
+        },
+        "curator": null,
+        "agrees_with_curator": "no curated term",
+        "stability_reference_term_is_compositional": false,
+        "stability_reference_term_outside_pruned_index": false
+      },
+      {
+        "registry": "28687661_SDY1294",
+        "key": "immuno staining assay",
+        "pruned": {
+          "obi_id": "OBI:0002119",
+          "obi_label": "microscopy assay",
+          "resource": "embedding_llm_neighbour"
+        },
+        "stability_reference": {
+          "obi_id": "OBI:0001632",
+          "obi_label": "immuno staining assay",
+          "resource": "embedding_llm"
+        },
+        "curator": {
+          "obi_id": "CHMO:0000087",
+          "obi_label": "fluorescence microscopy assay"
+        },
+        "agrees_with_curator": "neither",
+        "stability_reference_term_is_compositional": false,
+        "stability_reference_term_outside_pruned_index": false
+      },
+      {
+        "registry": "32473127_SDY1640",
+        "key": "lateral flow assay",
+        "pruned": {
+          "obi_id": "OBI:0000443",
+          "obi_label": "analyte assay",
+          "resource": "embedding_llm_neighbour"
+        },
+        "stability_reference": {
+          "obi_id": null,
+          "obi_label": null,
+          "resource": "unresolved"
+        },
+        "curator": {
+          "obi_id": null,
+          "obi_label": null
+        },
+        "agrees_with_curator": "no curated term",
+        "stability_reference_term_is_compositional": false,
+        "stability_reference_term_outside_pruned_index": false
+      }
+    ]
+  },
+  "diff_counts": {
+    "pruned_vs_full": {
+      "pruned": 6,
+      "neither": 2,
+      "changed": 8,
+      "full_term_compositional": 4,
+      "full_term_outside_pruned_index": 4
+    },
+    "pruned_vs_stability_reference": {
+      "stability_reference": 1,
+      "no curated term": 3,
+      "pruned": 2,
+      "neither": 2
+    }
+  }
+}

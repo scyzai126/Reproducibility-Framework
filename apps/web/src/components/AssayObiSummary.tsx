@@ -26,6 +26,10 @@ export const RESOURCE_COLOR: Record<ObiResource, string> = {
   exact_original_llm: '#184f95',
   embedding_llm: '#eb6834',
   embedding_llm_normalized: '#eb6834',
+  embedding_llm_neighbour: '#eb6834',
+  // The tree descent is the other LLM-decided tier, so the LLM swatch, for the reason above.
+  descend_llm: '#eb6834',
+  embedding_llm_descended: '#eb6834',
   unresolved: '#898781',
 };
 
@@ -36,6 +40,9 @@ export const RESOURCE_LABEL: Record<ObiResource, string> = {
   exact_original_llm: 'Exact — refined by picker',
   embedding_llm: 'Embedding + LLM',
   embedding_llm_normalized: 'Embedding + LLM (via standard technique name)',
+  embedding_llm_neighbour: 'Embedding + LLM (via an OBI neighbour)',
+  descend_llm: 'OBI tree descent + LLM',
+  embedding_llm_descended: 'Embedding + LLM, refined by descent',
   unresolved: 'Unresolved',
 };
 

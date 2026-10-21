@@ -103,8 +103,12 @@ class AssayResponse(BaseModel):
     #: say which assay or which field, so dropping this loses the finding entirely.
     corrections: dict | None = None
     #: build_merge_report() output: which entries round 5 folded onto one OBI term, and so are no
-    #: longer keys of their own -- and, in `summary.review_unfolded`, which kept their own key
-    #: because the judge did not support their identity. Null when round 5 was skipped.
+    #: longer keys of their own -- and, in the summary, which kept their own key: `review_unfolded`
+    #: (the verifier did not support their identity), `kept_apart` (the fold judge ruled them a
+    #: different measurement from a sibling on the same term; keyed `<label> — <wording>`) and
+    #: `judge_failed` (the labels whose group the fold judge could not rule on, so nothing in it
+    #: folded). `judge` carries the judge's reason or error per group. Null when round 5 was
+    #: skipped.
     merges: dict | None = None
     #: assay id -> {entry, reason} for assays round 3 set aside as never performed.
     dropped: dict = {}
@@ -231,9 +235,10 @@ class AssayResolveResponse(BaseModel):
 class AssayEstimateRound(BaseModel):
     """What one round would cost.
 
-    `calls` is null when the round cannot be sized yet -- rounds 2, 3 and 4 all depend on how
-    many assays the extraction finds, and a paper that has never been run says nothing about
-    that. Null rather than a guess: an invented number on a cost gate is worse than no number.
+    `calls` is null when the round cannot be sized yet -- rounds 2 to 5 all depend on how many
+    assays the extraction finds (and, for round 5, how many of them share an OBI term), and a
+    paper that has never been run says nothing about that. Null rather than a guess: an invented
+    number on a cost gate is worse than no number.
 
     `exact` is false where the CLI prints "~": the round is sized from the previous run's
     output, which this run re-extracts rather than reuses.
@@ -251,7 +256,8 @@ class AssayEstimateRound(BaseModel):
     misses: list[str] = []
     entries: int | None = None
     groups: int | None = None
-    #: Round 5 only: the entries that would fold onto one OBI term.
+    #: Round 5 only: the candidate groups -- entries sharing one OBI term -- each of which costs
+    #: one judge call. Which of them fold is the judge's answer, not the estimate's.
     folds: list[dict] = []
 
 

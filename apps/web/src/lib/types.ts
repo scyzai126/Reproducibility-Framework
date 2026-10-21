@@ -182,6 +182,12 @@ export type ObiResource =
   | 'embedding_llm'
   /** Picked from candidates only the technique could retrieve. */
   | 'embedding_llm_normalized'
+  /** Picked from a direct OBI parent or child of a top retrieved term, which retrieval itself missed. */
+  | 'embedding_llm_neighbour'
+  /** Walked down the OBI assay tree from the root, one LLM call per level (opt-in via OBI_MAPPING_STRATEGY=descend). */
+  | 'descend_llm'
+  /** The embedding pick, then one descent from it that moved to a descendant (opt-in via OBI_MAPPING_STRATEGY=hybrid). */
+  | 'embedding_llm_descended'
   | 'unresolved';
 
 export interface AssayObiRow {

@@ -1,0 +1,201 @@
+{
+  "cytometric bead array assay": {
+    "name_in_paper": [
+      "Multiplex analysis"
+    ],
+    "standard_technique_name": "Luminex",
+    "aliases": [
+      "24-plex assay",
+      "24-plex Luminex assay"
+    ],
+    "sample_type": "plasma",
+    "readouts": "24 cytokine concentrations",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Multiplex analysis",
+      "sentence_ids": [
+        "S165"
+      ],
+      "quote": "Assays were performed with the Beadlyte Human 22-Plex Multi-Cytokine Detection System with the addition of interferon-α2 and IL-1 receptor-α Beadmates to make a 24-plex assay (Upstate)."
+    },
+    "obi_id": "OBI:0000920",
+    "obi_label": "cytometric bead array assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.5991,
+    "obi_granularity": "EXACT"
+  },
+  "flow cytometry assay": {
+    "name_in_paper": [
+      "Flow cytometric analysis"
+    ],
+    "standard_technique_name": "flow cytometry",
+    "aliases": [
+      "flow cytometry"
+    ],
+    "sample_type": "peripheral blood mononuclear cells",
+    "readouts": "percentages of CD86-positive monocytes, myeloid dendritic cells and plasmacytoid dendritic cells; percentage of CD38-positive HLA-DR-positive CD8-positive CD3-positive T cells",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Multiplex analysis",
+      "sentence_ids": [
+        "S170"
+      ],
+      "quote": "PBMCs from all time points for an individual were thawed, stained and acquired in parallel."
+    },
+    "obi_id": "OBI:0000916",
+    "obi_label": "flow cytometry assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.7859,
+    "obi_granularity": "EXACT"
+  },
+  "serum neutralization of viral infectivity assay": {
+    "name_in_paper": [
+      "neutralizing antibodies by CPE",
+      "plaque reduction neutralization test"
+    ],
+    "standard_technique_name": "cytopathic effect neutralization assay",
+    "aliases": [
+      "CPE",
+      "cytopathic effect (CPE)"
+    ],
+    "sample_type": "plasma",
+    "readouts": "yellow fever virus neutralizing antibody titer defined by the last dilution with intact Vero cell monolayer and no cytopathic effect",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Assay for yellow fever virus (YFV) neutralizing antibodies",
+      "sentence_ids": [
+        "S180"
+      ],
+      "quote": "In brief, for neutralizing antibodies by CPE, plasma dilutions in triplicate were incubated with 1,000 plaque-forming units of YFV at 37 °C for 1 h in 96-well flat-bottomed plates."
+    },
+    "obi_id": "OBI:0000872",
+    "obi_label": "serum neutralization of viral infectivity assay",
+    "resource": "embedding_llm_normalized",
+    "obi_confidence": 0.599,
+    "obi_granularity": "EXACT"
+  },
+  "transcription profiling by array assay": {
+    "name_in_paper": [
+      "microarray"
+    ],
+    "standard_technique_name": "transcription profiling by array",
+    "aliases": [
+      "transcriptional profiling"
+    ],
+    "sample_type": "peripheral blood mononuclear cells",
+    "readouts": "gene expression intensity data",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "RNA isolation and microarray and RT-PCR data generation",
+      "sentence_ids": [
+        "S191"
+      ],
+      "quote": "After hybridization on Human U133 Plus 2.0 Arrays for 16 h at 45 °C and 60 r.p.m."
+    },
+    "obi_id": "OBI:0001463",
+    "obi_label": "transcription profiling by array assay",
+    "resource": "exact_original_llm",
+    "obi_confidence": 0.8293,
+    "obi_granularity": "EXACT"
+  },
+  "reverse transcription polymerase chain reaction assay": {
+    "name_in_paper": [
+      "RT-PCR"
+    ],
+    "standard_technique_name": "reverse transcription polymerase chain reaction",
+    "aliases": [
+      "two-step RT-PCR"
+    ],
+    "sample_type": null,
+    "readouts": "relative gene expression measured by cycling threshold values",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "RNA isolation and microarray and RT-PCR data generation",
+      "sentence_ids": [
+        "S197"
+      ],
+      "quote": "Two-step RT-PCR was performed."
+    },
+    "obi_id": "OBI:0001170",
+    "obi_label": "reverse transcription polymerase chain reaction assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.738,
+    "obi_granularity": "EXACT"
+  },
+  "fluorescence microscopy assay": {
+    "name_in_paper": [
+      "immunofluorescence"
+    ],
+    "standard_technique_name": "immunofluorescence microscopy",
+    "aliases": [
+      "fluorescence microscopy"
+    ],
+    "sample_type": "baby hamster kidney cells",
+    "readouts": "TIAR staining and stress granule formation by fluorescence imaging",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Data analysis",
+      "sentence_ids": [
+        "S213"
+      ],
+      "quote": "Immunofluorescence signal was detected using a LSM510 confocal microscope (Zeiss), and images were captured and analyzed using the Zeiss LSM Image Browser."
+    },
+    "obi_id": "CHMO:0000087",
+    "obi_label": "fluorescence microscopy assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.6256,
+    "obi_granularity": "BROAD"
+  },
+  "western blot assay": {
+    "name_in_paper": [
+      "immunoblot analysis"
+    ],
+    "standard_technique_name": "western blot",
+    "aliases": [],
+    "sample_type": "human total peripheral blood mononuclear cells or baby hamster kidney cells",
+    "readouts": "eIF2α phosphorylation and total eIF2α abundance",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Data analysis",
+      "sentence_ids": [
+        "S214"
+      ],
+      "quote": "For immunoblot analysis, human total PBMC or BHK cells were lysed with 100 μl of M-PER mammalian protein extraction reagent (Pierce) containing Halt pro-tease inhibitor, EDTA and phosphatase inhibitor (Pierce)."
+    },
+    "obi_id": "OBI:0000854",
+    "obi_label": "western blot assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.7294,
+    "obi_granularity": "EXACT"
+  },
+  "enzyme-linked immunosorbent assay": {
+    "name_in_paper": [
+      "ELISA"
+    ],
+    "standard_technique_name": "enzyme-linked immunosorbent assay",
+    "aliases": [],
+    "sample_type": "plasma",
+    "readouts": "C3a concentration",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Data analysis",
+      "sentence_ids": [
+        "S218"
+      ],
+      "quote": "C3a in plasma was measured by ELISA (Quidel A015)."
+    },
+    "obi_id": "OBI:0000661",
+    "obi_label": "enzyme-linked immunosorbent assay",
+    "resource": "exact_original",
+    "obi_confidence": "high",
+    "obi_granularity": null
+  }
+}

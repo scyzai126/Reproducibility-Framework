@@ -1,0 +1,75 @@
+{
+  "Single-Cell RNA-seq": {
+    "name_in_paper": "Single-Cell RNA-seq",
+    "standard_technique_name": "single-cell RNA sequencing",
+    "aliases": [
+      "scRNA-seq",
+      "Chromium 3′-scRNA-seq"
+    ],
+    "sample_type": "CD3-positive T cells from lungs, lung-draining lymph nodes, bone marrow, and peripheral blood",
+    "readouts": "single-cell transcript sequences and molecular counts for gene expression profiles",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Single-Cell RNA-seq",
+      "sentence_ids": [
+        "S263"
+      ],
+      "quote": "We pooled all of the libraries for a given donor, each of which was barcoded with a unique Illumina sample index, for sequencing in a single Illumina flow cell."
+    }
+  },
+  "flow cytometry": {
+    "name_in_paper": "flow cytometry",
+    "standard_technique_name": "flow cytometry",
+    "aliases": [],
+    "sample_type": "tissue and blood cell suspensions",
+    "readouts": "T cell surface marker fluorescence",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Flow cytometry and proliferation assays",
+      "sentence_ids": [
+        "S405"
+      ],
+      "quote": "To evaluate the expression of T cell surface markers by flow cytometry, we incubated tissue and blood cell suspensions with Human TruStain FcX (BioLegend) and stained with following fluorochrome-conjugated antibodies: CD3 (UCHT1, BD Biosciences; OKT3, BioLegend), CD4 (SK3, BD Biosciences; SK3, Tonbo Biosciences), CD8 (SK1, BioLegend; RPA-T8, BD Biosciences), CCR7 (G043H7; BioLegend), CD45RA (HI100; BioLegend), CD25 (BC96; BioLegend), CD127 (A019D5; BioLegend), CD69 (FN50; BioLegend), CD103 (Ber-ACT8; BioLegend), CD45 (HI30; BioLegend), and Fixable Viability Dye eFluor 780 (eBioscience)."
+    }
+  },
+  "Quantitative real-time PCR": {
+    "name_in_paper": "Quantitative real-time PCR",
+    "standard_technique_name": "real time reverse-transcription polymerase chain reaction",
+    "aliases": [
+      "qPCR",
+      "Quntitative PCR",
+      "Quntitative PCR (qPCR)"
+    ],
+    "sample_type": "sorted live CD4-positive and CD8-positive T cells from peripheral blood mononuclear cells",
+    "readouts": "NME1, IL2RA, IFIT3, and TBP cDNA amplification cycle thresholds and fold changes in transcript expression",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Quantitative real-time PCR",
+      "sentence_ids": [
+        "S418"
+      ],
+      "quote": "We converted RNA to cDNA via SuperScript IV VILO Master Mix (Invitrogen) and performed quantitative real-time PCR (qPCR) on a Viia 7 Real-Time PCR system (Applied Biosystems) using TaqMan Gene Expression Assays (NME1 Hs00264824_m1; IL2RA Hs00907777_m1; IFIT3 Hs00155468_m1; TBP Hs00427620_m1) and TaqMan Fast Advanced Master Mix, all from ThermoFisher Scientific."
+    }
+  },
+  "proliferation assays": {
+    "name_in_paper": "proliferation assays",
+    "standard_technique_name": "flow cytometry",
+    "aliases": [
+      "stimulation/proliferation assays"
+    ],
+    "sample_type": "CD3-positive T cells from single cell suspensions",
+    "readouts": "cell proliferation dye dilution and intracellular NME1 and CD25 fluorescence after stimulation",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Flow cytometry and proliferation assays",
+      "sentence_ids": [
+        "S406"
+      ],
+      "quote": "For stimulation/proliferation assays, we magnetically enriched for CD3 + T cells from single cell suspensions, stained cells with Cell Proliferation Dye eFluor 450 (eBioscience), and cultured cells for up to 120 h with or without TCR stimulation as above."
+    }
+  }
+}

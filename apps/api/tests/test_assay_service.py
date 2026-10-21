@@ -85,6 +85,14 @@ def _extraction_body() -> str:
     return json.dumps({"flow cytometry": _ENTRY})
 
 
+def _judge_body(groups: list[list[str]]) -> str:
+    """The fold judge's answer for a two-entry paper. `_Client` serves bodies in call order and
+    repeats the last, so a two-entry fixture is extraction, one verification per entry, then
+    this -- a fixture that stops at the verification hands the judge a verdict instead of a
+    partition and the two entries are kept apart as a failed judgement."""
+    return json.dumps({"groups": groups, "reason": "one measurement"})
+
+
 def _verification_body() -> str:
     """A judge that answers for every field the entry proposed.
 
@@ -136,8 +144,8 @@ async def test_a_missing_paper_raises_rather_than_extracting_from_nothing(paper)
 async def test_a_cold_paper_runs_all_five_rounds(paper):
     """1 extraction + 1 assay verified + 0 flagged fields + a free OBI match + a free re-key.
 
-    Round 5 runs even on a single assay and still costs nothing: keying the registry by its OBI
-    term is the point, and folding is only what happens when two entries land on one term.
+    Round 5 runs even on a single assay and costs nothing there: keying the registry by its OBI
+    term is the point, and the judge is only asked when two entries land on one term.
     """
     client = _Client(_extraction_body(), _verification_body())
 
@@ -145,6 +153,7 @@ async def test_a_cold_paper_runs_all_five_rounds(paper):
 
     assert client.calls == 2
     assert result["meta"]["llm_calls"] == 2
+    assert result["rounds"]["canonicalize"]["calls"] == 0
     assert [r["source"] for r in result["rounds"].values()] == [
         "extracted", "verified", "corrected", "mapped", "canonical"]
     for name in ("assays.json", "assays_verification.json", "assays_corrections.json"):
@@ -275,7 +284,9 @@ def test_the_route_returns_the_obi_terms_corrections_and_merges_it_computed(pape
     """
     import app.api.routes as routes
 
-    routes._get_client = lambda: _Client(_two_assays_body(), _verification_body())
+    routes._get_client = lambda: _Client(_two_assays_body(), _verification_body(),
+                                         _verification_body(),
+                                         _judge_body([["ELISA", "ELISA kits"]]))
     response = TestClient(app).post(
         "/agent/assays", json={"study_accession": "SDY1", "pubmed_id": "111"})
 
@@ -284,6 +295,9 @@ def test_the_route_returns_the_obi_terms_corrections_and_merges_it_computed(pape
     assert list(body["obi"]) == ["flow cytometry assay"]
     assert body["obi"]["flow cytometry assay"]["obi_id"] == "OBI:0000916"
     assert body["merges"]["results"][0]["folded"] == ["ELISA kits"]
+    assert body["merges"]["summary"]["kept_apart"] == []
+    assert body["merges"]["summary"]["judge_failed"] == []
+    assert body["rounds"]["canonicalize"]["calls"] == 1
     assert body["corrections"]["summary"]["assays"] == 2
 
 
@@ -365,13 +379,18 @@ def _two_assays_body() -> str:
 @pytest.mark.asyncio
 async def test_two_entries_on_one_obi_term_leave_one_entry_keyed_by_that_term(paper):
     """The whole point of folding at registry time rather than at report time."""
-    client = _Client(_two_assays_body(), _verification_body())
+    client = _Client(_two_assays_body(), _verification_body(), _verification_body(),
+                     _judge_body([["ELISA", "ELISA kits"]]))
 
     result = await assay_report("111", "SDY1", client)
 
     assert result["rounds"]["canonicalize"]["source"] == "canonical"
-    # Free: the OBI term is already on disk, and the rule reads it rather than asking anything.
-    assert result["rounds"]["canonicalize"]["calls"] == 0
+    # One call: the two entries share a term, so the judge is asked whether they are one
+    # measurement before anything folds. 1 extract + 2 verify + 1 judge.
+    assert result["rounds"]["canonicalize"]["calls"] == 1
+    assert client.calls == result["meta"]["llm_calls"] == 4
+    assert json.loads((paper / "assays_raw.json").read_text())["canonicalize"][
+        "flow cytometry assay"]["reply"] == _judge_body([["ELISA", "ELISA kits"]])
     assert list(json.loads((paper / "assays.json").read_text())) == ["flow cytometry assay"]
     # A mapping still keyed by a folded-away wording would read as an assay this paper reported.
     assert list(json.loads((paper / "assays_OBI.json").read_text())) == ["flow cytometry assay"]
@@ -383,7 +402,48 @@ async def test_two_entries_on_one_obi_term_leave_one_entry_keyed_by_that_term(pa
     # record cannot reconstruct.
     assert benchmark["flow cytometry assay"]["additional_evidence"][0]["name_in_paper"] == "ELISA kits"
     assert json.loads((paper / "assays_merges.json").read_text())["summary"] == {
-        "groups_merged": 1, "entries_folded": 1, "review_unfolded": []}
+        "groups_merged": 1, "entries_folded": 1, "review_unfolded": [], "kept_apart": [],
+        "judge_failed": []}
+
+
+@pytest.mark.asyncio
+async def test_two_entries_the_judge_keeps_apart_are_both_delivered_under_the_term(paper):
+    """SDY1630's shape: the judge says the two write-ups are different measurements, so the
+    second keeps its own entry, keyed by the term and its wording, with the same OBI id."""
+    from app.agent.assay_extractor import KEY_SEP, contract_warnings
+
+    client = _Client(_two_assays_body(), _verification_body(), _verification_body(),
+                     _judge_body([["ELISA"], ["ELISA kits"]]))
+
+    result = await assay_report("111", "SDY1", client)
+
+    apart = "flow cytometry assay" + KEY_SEP + "ELISA kits"
+    assert list(result["assays"]) == ["flow cytometry assay", apart]
+    assert list(json.loads((paper / "assays.json").read_text())) == ["flow cytometry assay", apart]
+    assert json.loads((paper / "assays_benchmark.json").read_text())[apart]["name_in_paper"] == [
+        "ELISA kits"]
+    assert result["obi"][apart]["obi_id"] == "OBI:0000916"
+    assert result["merges"]["summary"]["kept_apart"] == [apart]
+    assert result["merges"]["summary"]["groups_merged"] == 0
+    assert result["merges"]["judge"][0]["reason"] == "one measurement"
+    assert result["rounds"]["canonicalize"]["kept_apart"] == [apart]
+    assert contract_warnings(result["assays"], obi=result["obi"]) == []
+
+
+@pytest.mark.asyncio
+async def test_a_judge_that_cannot_rule_leaves_both_entries_apart_and_is_still_billed(paper):
+    """`{}` is a reply with no partition in it. Nothing folds -- a fold cannot be undone from the
+    registry -- and the call was still made, so the round reports it."""
+    client = _Client(_two_assays_body(), _verification_body(), _verification_body(), "{}")
+
+    result = await assay_report("111", "SDY1", client)
+
+    assert len(result["assays"]) == 2
+    assert result["merges"]["summary"]["judge_failed"] == ["flow cytometry assay"]
+    assert result["merges"]["results"] == []
+    assert result["merges"]["judge"][0]["error"]
+    assert result["rounds"]["canonicalize"]["calls"] == 1
+    assert client.calls == 4
 
 
 @pytest.mark.asyncio
@@ -749,14 +809,15 @@ async def test_round_one_makes_three_calls_and_delivers_the_majority(paper, monk
 async def test_an_entry_two_of_three_calls_found_is_delivered(paper, monkeypatch):
     monkeypatch.setattr(assay_service, "EXTRACTIONS", 3)
     client = _ExtractionClient([_dc_panel_body(True), _dc_panel_body(True), _dc_panel_body(False)],
-                               _verification_body())
+                               _verification_body(), _verification_body(),
+                               _judge_body([["flow cytometry", "flow cytometry for DC activation"]]))
 
     result = await assay_report("111", "SDY1", client)
 
     assert result["rounds"]["extract"]["minority"] == 0
     assert not (paper / "assays_minority.json").exists()
-    # Two assays, both mapped by the stub to one term, so round 5 folds them: the panel
-    # survives as a second wording rather than disappearing.
+    # Two assays, both mapped by the stub to one term and judged one measurement, so round 5
+    # folds them: the panel survives as a second wording rather than disappearing.
     assert result["assays"]["flow cytometry assay"]["name_in_paper"] == [
         "flow cytometry", "flow cytometry for DC activation"]
 

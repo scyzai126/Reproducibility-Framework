@@ -1,0 +1,269 @@
+{
+  "summary": {
+    "total": 4,
+    "accept": 4,
+    "review": 0,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {}
+  },
+  "results": [
+    {
+      "assay_id": "Relative quantitation of bacterial RNA by flow cytometry",
+      "assay_name": "Relative quantitation of bacterial RNA by flow cytometry",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Relative quantitation of bacterial RNA by flow cytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S18",
+            "S21"
+          ],
+          "evidence_text": "Mean fluorescence intensity of the RNA dye was assessed by flow cytometry",
+          "reason": "The section describes a flow-cytometric procedure performed here to quantify bacterial RNA signal."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "Bacille Calmette-Guérin vaccine formulations",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S18"
+          ],
+          "evidence_text": "BCG volumes estimated to contain 2×10^6 CFU (calculated based on vaccine label) were obtained from each BCG formulation immediately after reconstitution.",
+          "reason": "The assay was performed on material taken from each BCG formulation."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "bacterial RNA dye fluorescence intensity; RNA-positive bacterial events",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S21",
+            "S22"
+          ],
+          "evidence_text": "Mean fluorescence intensity of the RNA dye was assessed by flow cytometry (LSR Fortessa, BD Biosciences). The unstained controls were defined as being 1% RNA positive and all events with equal or greater fluorescence were gated as being \"RNA positive”.",
+          "reason": "The text explicitly states both fluorescence intensity and RNA-positive events were measured."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Mean fluorescence intensity of the RNA dye was assessed by flow cytometry (LSR Fortessa, BD Biosciences).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S21"
+          ],
+          "evidence_text": "Mean fluorescence intensity of the RNA dye was assessed by flow cytometry (LSR Fortessa, BD Biosciences).",
+          "reason": "The quote appears verbatim and describes the assay being performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S21"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "culturable microbial count assay",
+      "assay_name": "culturable microbial count assay",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "culturable microbial count assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S23"
+          ],
+          "evidence_text": "Actual CFU counts were obtained by the culturable microbial count assay",
+          "reason": "The text explicitly states this assay was used in the study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "Bacille Calmette-Guérin vaccine formulations",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S25",
+            "S27"
+          ],
+          "evidence_text": "BCG vials were reconstituted to an estimated uniform starting CFU concentration of 5×10^6 CFU/mL ... BCG formulations were cultured under the same laboratory conditions",
+          "reason": "The assay was performed on reconstituted BCG vaccine formulations/vials."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "colony-forming units",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S23"
+          ],
+          "evidence_text": "Actual CFU counts were obtained",
+          "reason": "The assay's measured output is explicitly stated as CFU counts."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Actual CFU counts were obtained by the culturable microbial count assay and used as a proxy for mycobacterial viability.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S23"
+          ],
+          "evidence_text": "Actual CFU counts were obtained by the culturable microbial count assay and used as a proxy for mycobacterial viability.",
+          "reason": "The quote appears verbatim and shows the assay was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S23"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Whole blood assay and cytokine/chemokine measurements",
+      "assay_name": "Whole blood assay and cytokine/chemokine measurements",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Whole blood assay and cytokine/chemokine measurements",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S33",
+            "S37"
+          ],
+          "evidence_text": "Whole blood assays were conducted as previously described [ 25 ].",
+          "reason": "The study explicitly states that whole blood assays were conducted in this methods section."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "whole blood",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S34"
+          ],
+          "evidence_text": "whole blood diluted 1:1 in RPMI medium was stimulated",
+          "reason": "The assay was performed on whole blood."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "concentrations of 41 cytokines and chemokines",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S37"
+          ],
+          "evidence_text": "measure the concentration of 41 cytokines/chemokines",
+          "reason": "The text explicitly states this assay measured concentrations of 41 cytokines/chemokines."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "A fluorescent bead-based multianalyte xMAP technology cytokine kit (Milliplex Human Cytokine/Chemokine Immunoassay, Millipore Corp, Billerica, MA, USA) was employed to measure the concentration of 41 cytokines/chemokines covering the spectrum of Th1, Th2, Th17, chemoattractants and hematopoietic factors.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S37"
+          ],
+          "evidence_text": "A fluorescent bead-based multianalyte xMAP technology cytokine kit (Milliplex Human Cytokine/Chemokine Immunoassay, Millipore Corp, Billerica, MA, USA) was employed to measure the concentration of 41 cytokines/chemokines covering the spectrum of Th1, Th2, Th17, chemoattractants and hematopoietic factors.",
+          "reason": "The quote appears verbatim and describes the measurement performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S37"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Bacterial viability stain",
+      "assay_name": "Bacterial viability stain",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Bacterial viability stain",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S15",
+            "S17"
+          ],
+          "evidence_text": "Volumes of BCG vaccines estimated to carry 2×10^6 colony-forming units (CFU, calculated based on vaccine label) were stained immediately after reconstitution with 5 μM SYTO® and 30 μM Propidium Iodide (PI) dyes in 1 mL of phosphate-buffered saline (PBS) ... Cell membrane integrity was assessed by flow cytometry",
+          "reason": "The methods section describes this staining procedure being performed in the study to assess membrane integrity."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "Bacterial viability stain/Assessment of mycobacterial membrane integrity",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S17"
+          ],
+          "evidence_text": "Cell membrane integrity was assessed by flow cytometry",
+          "reason": "This heading wording refers to the same assay used to assess mycobacterial membrane integrity."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "Assessment of mycobacterial membrane integrity",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S17"
+          ],
+          "evidence_text": "Cell membrane integrity was assessed by flow cytometry",
+          "reason": "This alias denotes the same membrane-integrity assay described in the methods."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "Bacille Calmette-Guérin vaccine formulations",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S15"
+          ],
+          "evidence_text": "Volumes of BCG vaccines estimated to carry 2×10^6 colony-forming units (CFU, calculated based on vaccine label) were stained immediately after reconstitution",
+          "reason": "The assay was performed on BCG vaccine samples immediately after reconstitution."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "mycobacterial membrane integrity; proportion of intact versus damaged bacterial cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S17",
+            "S52"
+          ],
+          "evidence_text": "Cell membrane integrity was assessed by flow cytometry ... BCG-IND demonstrated a significantly lower percentage of intact mycobacterial cells",
+          "reason": "The text states the assay assessed membrane integrity and reports percentages of intact cells."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Cell membrane integrity was assessed by flow cytometry (LSR Fortessa, BD Biosciences).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S17"
+          ],
+          "evidence_text": "Cell membrane integrity was assessed by flow cytometry (LSR Fortessa, BD Biosciences).",
+          "reason": "The quote appears verbatim and directly states the assay was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S17"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

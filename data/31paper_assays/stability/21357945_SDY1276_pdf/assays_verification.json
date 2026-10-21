@@ -1,0 +1,225 @@
+{
+  "summary": {
+    "total": 3,
+    "accept": 1,
+    "review": 2,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {
+      "sample_type": {
+        "NOT_SUPPORTED": 1
+      },
+      "aliases[]": {
+        "NOT_SUPPORTED": 1
+      }
+    }
+  },
+  "results": [
+    {
+      "assay_id": "Microarray Analysis",
+      "assay_name": "Microarray Analysis",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Microarray Analysis",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Microarray Analysis",
+          "reason": "This section heading denotes a microarray procedure that was performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "global gene expression",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "performed a timed assessment of global gene expression before and after vaccination",
+          "reason": "This wording refers to the same measurement produced by the microarray assay."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "genome-wide gene expression",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "assessed the genome-wide gene expression patterns in peripheral blood cells",
+          "reason": "This wording refers to the same microarray-based expression measurement."
+        },
+        {
+          "field_name": "aliases[2]",
+          "proposed_value": "genome-wide gene expression patterns",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "assessed the genome-wide gene expression patterns in pe-ripheral blood cells",
+          "reason": "This wording refers to the same assay output measured in the study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "whole blood",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "The microarray assay is described on cRNA and elsewhere as peripheral blood cells, while whole blood is only stated for RNA collection and stabilization, not unambiguously as the assay specimen."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "transcript abundance levels across the genome",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "The simultaneous assessment of transcript abundance for over 25,000 genes and gene candidates",
+          "reason": "The text explicitly states that the assay assessed transcript abundance on a genome-wide scale."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "cRNA was hybridized onto Illumina Human HT-12v3 Expression BeadChips (Illumina), following the manufacturer’s protocol.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "cRNA was hybridized onto Illumina Human HT-12v3 Expression BeadChips (Illumina), following the manu-facturer’s protocol.",
+          "reason": "This verbatim quote appears in the methods and directly describes the assay being performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in the whole document"
+      },
+      "conflict_detected": true,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    },
+    {
+      "assay_id": "Hemagglutination inhibition (HAI) tests",
+      "assay_name": "Hemagglutination inhibition (HAI) tests",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Hemagglutination inhibition (HAI) tests",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Hemagglutination inhibition (HAI) tests were performed as previously described [20]",
+          "reason": "The text explicitly states that HAI tests were performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "HAI",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Hemagglutination inhibition (HAI) tests",
+          "reason": "The parenthetical abbreviation identifies HAI as the same assay."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "HAI tests",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Hemagglutination inhibition (HAI) tests",
+          "reason": "alias does not appear anywhere in the source text"
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "serum",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "starting serum sample dilution of 1:4",
+          "reason": "The HAI test description explicitly refers to serum samples."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "influenza antibody titers measured by inhibition of hemagglutination",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Antibody titers were measured before and on days 14 and 28 after vaccination.",
+          "reason": "The study states antibody titers were measured, and HAI tests are one of the antibody titer measurements performed."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Hemagglutination inhibition (HAI) tests were performed as previously described [20], except for a starting serum sample dilution of 1:4 and the use of turkey red blood cells (RBCs).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Hemagglutination inhibition (HAI) tests were performed as previously described [20], except for a starting serum sample dilution of 1:4 and the use of turkey red blood cells (RBCs).",
+          "reason": "The quote appears verbatim and explicitly shows the assay was performed here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in the whole document"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Neutralizing antibody tests",
+      "assay_name": "Neutralizing antibody tests",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Neutralizing antibody tests",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Neutralizing antibody tests were performed as previously described [21] except that hamster serum was not included.",
+          "reason": "The text explicitly states that neutralizing antibody tests were performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "neutralization assays",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Because the results for the two antibody titer data sets (HAI and neutralization) were strongly correlated, we combined the information from the two assays",
+          "reason": "This wording refers to the same neutralization measurement as one of the two antibody titer assays."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "neutralization antibody titers",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "The TRI, therefore, is a summary of the aggregate residuals of all antigen components in the vaccine with both HAI and neutralization antibody titers incorporated.",
+          "reason": "This phrase refers to the titers produced by the same neutralization assay used in the study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "serum",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Serum was separated by centrifugation prior to storage at 220\u0002C. Hemagglutination inhibition (HAI) tests were performed as previously described [20]... Neutralizing antibody tests were performed as previously described [21]",
+          "reason": "Within the serum samples section, the antibody tests including neutralizing antibody tests are described on serum samples."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "influenza neutralizing antibody titers",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Because the results for the two antibody titer data sets (HAI and neutralization) were strongly correlated",
+          "reason": "The text explicitly identifies neutralization as one of the antibody titer data sets."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Neutralizing antibody tests were performed as previously described [21] except that hamster serum was not included.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Neutralizing antibody tests were performed as previously described [21] except that hamster serum was not included.",
+          "reason": "The quote appears verbatim and directly states the assay was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in the whole document"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

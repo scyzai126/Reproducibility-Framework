@@ -1,0 +1,115 @@
+{
+  "summary": {
+    "assays": 10,
+    "fields_re_extracted": 4,
+    "actions": {
+      "REPLACED": 2,
+      "CLEARED": 2
+    },
+    "reported_not_corrected": 0
+  },
+  "results": [
+    {
+      "assay_id": "Anti-spike binding enzyme-linked immunosorbent assay",
+      "assay_name": "Anti-spike binding enzyme-linked immunosorbent assay",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "readouts",
+          "action": "REPLACED",
+          "previous": "anti-spike IgG binding measured as optical density",
+          "blind_answer": "Optical density at 450 nm from spike-protein ELISA wells containing bound serum antibodies"
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Focus reduction neutralization titre assay",
+      "assay_name": "Focus reduction neutralization titre assay",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "FRNT assay against the variants of concern",
+      "assay_name": "FRNT assay against the variants of concern",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "sample_type",
+          "action": "CLEARED",
+          "previous": "samples",
+          "blind_answer": null
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Intracellular cytokine staining assay",
+      "assay_name": "Intracellular cytokine staining assay",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Bead-based antigen arrays",
+      "assay_name": "Bead-based antigen arrays",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "CyTOF analysis of whole-blood samples",
+      "assay_name": "CyTOF analysis of whole-blood samples",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Plasma protein profiling using multiplex Olink panel",
+      "assay_name": "Plasma protein profiling using multiplex Olink panel",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Bulk transcriptomics",
+      "assay_name": "Bulk transcriptomics",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "CITE-seq",
+      "assay_name": "CITE-seq",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "RNA isolation and qPCR",
+      "assay_name": "RNA isolation and qPCR",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "readouts",
+          "action": "CLEARED",
+          "previous": "gene expression measured from cDNA by SYBR Green real-time PCR",
+          "blind_answer": null
+        },
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "qPCR"
+          ],
+          "blind_answer": [],
+          "dropped": [
+            "qPCR"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    }
+  ]
+}

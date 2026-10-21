@@ -1,0 +1,190 @@
+{
+  "summary": {
+    "total": 3,
+    "accept": 2,
+    "review": 1,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {
+      "evidence.quote": {
+        "NOT_SUPPORTED": 1
+      }
+    }
+  },
+  "results": [
+    {
+      "assay_id": "Flow Cytometry",
+      "assay_name": "Flow Cytometry",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Flow Cytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Flow Cytometry",
+          "reason": "The source includes a Methods subsection titled \"Flow Cytometry\" describing the procedure performed in this study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "On the day of recruitment, freshly isolated PBMCs were surface stained",
+          "reason": "The flow cytometry procedure was explicitly performed on freshly isolated PBMCs."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "percentages of CD14+CD16− and CD14+CD16+ monocyte populations; intracellular interleukin 6, tumor necrosis factor α, and interleukin 10 expression as percentage of the parent population",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "anti–interleukin 6 (IL-6) fluorescein isothiocyanate ... anti–tumor necrosis factor (TNF) α ... and anti–interleukin 10 (IL-10) ... was used to stain for intracellular cytokines. ... Intracellular cytokine expression was calculated as percentage of the parent population.",
+          "reason": "The assay measured intracellular IL-6, TNF-α, and IL-10 and quantified expression as percentage of the parent population, with CD14/CD16 staining defining monocyte subsets."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Intracellular cytokine expression was calculated as percentage of the parent population.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Intracellular cytokine expression was calculated as percentage of the parent population.",
+          "reason": "The quoted text appears verbatim in the Flow Cytometry methods and describes the assay readout used here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in the whole document"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Hemagglutination Inhibition Titer Measurement",
+      "assay_name": "Hemagglutination Inhibition Titer Measurement",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Hemagglutination Inhibition Titer Measurement",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Hemagglutination Inhibition Titer Measurement",
+          "reason": "This is the Methods subsection heading for an assay performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "hemagglutination inhibition (HAI) assays",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Hemagglutination inhibition (HAI) assays were performed",
+          "reason": "The text explicitly uses this wording for the assay performed."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "HAI",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Hemagglutination inhibition (HAI) assays",
+          "reason": "The abbreviation HAI is explicitly introduced as the assay name."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "serum",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "on serum samples collected at day 0 (before vaccination) and day 28 after vaccination",
+          "reason": "The assay is explicitly stated to be performed on serum samples."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "antibody titers against each strain in the 2011–2012 vaccine",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "to determine antibody titers against each strain in the 2011–2012 vaccine",
+          "reason": "The text explicitly states the assay determined antibody titers against each vaccine strain."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Hemagglutination inhibition (HAI) assays were performed as described elsewhere [12] on serum samples collected at day 0 (before vaccination) and day 28 after vaccination to determine antibody titers against each strain in the 2011–2012 vaccine",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Hemagglutination inhibition (HAI) assays were performed as described elsewhere [12] on serum samples collected at day 0 (before vaccination) and day 28 after vaccination to determine antibody titers against each strain in the 2011–2012 vaccine",
+          "reason": "The quote appears verbatim and explicitly states the assay was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in the whole document"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Western Blot Analysis",
+      "assay_name": "Western Blot Analysis",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Western Blot Analysis",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Western Blot Analysis",
+          "reason": "The Methods section explicitly names and describes this assay as performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "Western analyses",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "depicted in Western analyses of monocytes isolated by negative magnetic bead sorting",
+          "reason": "This wording refers to the same western blot measurement used in the study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells or purified monocytes",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Analysis of PBMCs or puriﬁed monocyte lysates harvested at baseline",
+          "reason": "The assay is explicitly stated to use PBMC or purified monocyte lysates."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "total and phosphorylated STAT3 and DUSP1 protein band intensities normalized to β-actin",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "used antibodies against human signal transducer and activator of transcription-3 (STAT3), phosphorylated-STAT3 (p-STAT3) Y705, and p-STAT3 S727 (all from Cell Signaling Technology), dual-speciﬁcity phosphatase 1 (DUSP1; Sigma-Aldrich), phospho-DUSP1 (p-DUSP1) S359 (Cell Signaling Technology), and p-DUSP1 S296 (OriGene Technologies). Pixel intensities of speciﬁc protein bands and corresponding β-actin bands were estimated",
+          "reason": "The text states that total and phosphorylated STAT3 and DUSP1 proteins were measured by band intensities relative to β-actin."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Analysis of PBMCs or puriﬁed monocyte lysates harvested at baseline used antibodies against human signal transducer and activator of transcription-3 (STAT3), phosphorylated-STAT3 ( p-STAT3) Y705, and p-STAT3 S727",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "The proposed quote does not appear verbatim in the source because the spacing and punctuation differ from the original text."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in the whole document"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

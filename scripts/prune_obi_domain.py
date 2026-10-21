@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 """Derive the live OBI assay vocabulary from the full assay branch.
 
-Builds `obi_generic_index.json` from `obi.obo` in three stages:
+Builds `obi_assay_pruned_index.json` from `obi.obo` in three stages:
 
     5218  --[ assay branch ]-->  1794  --[ measuring/detecting compositional filter ]-->  1249
           --[ tier A-I subtrees ]-->  701
 
 **Stage 0** keeps the `is_a` descendants of `OBI:0000070 assay`. Each kept term then gets its
-`definition` and `n_descendants` from `obi.obo` (see `annotate`).
+`definition`, `n_descendants` and `parents` (its direct `is_a` edges) from `obi.obo` (see
+`annotate`), so the index carries the graph the mapper walks and `obi.obo` is needed only to
+rebuild.
 
 **Stage 1** drops the IEDB-style compositional labels (*"… assay measuring epitope specific X
 production by Y cells"*). It reuses `_is_generic_assay_term` from the mapper so the rule has one
@@ -44,7 +46,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 OBI_DIR = REPO_ROOT / "data" / "OBI"
 OBO_PATH = OBI_DIR / "obi.obo"
-INDEX_PATH = OBI_DIR / "obi_generic_index.json"
+INDEX_PATH = OBI_DIR / "obi_assay_pruned_index.json"
 
 sys.path.insert(0, str(REPO_ROOT / "apps" / "api"))
 from app.agent.assay_obi_mapper import _is_generic_assay_term  # noqa: E402
@@ -203,20 +205,45 @@ def out_of_scope_ids(terms: list[dict], children: dict[str, list[str]]) -> set[s
     return (dropped & present) - KEEP_WHITELIST
 
 
+def parent_map(path: Path) -> dict[str, list[dict[str, str]]]:
+    """{id: [{"id", "label"} per direct is_a parent, in file order]} for every [Term] in `path`.
+
+    The label rides along for a human reading the index; the mapper keys on the id alone.
+    """
+    terms = read_terms(path)
+    names = {t["id"]: t["name"] for t in terms}
+    return {t["id"]: [{"id": p, "label": names.get(p, "")} for p in t["parents"]] for t in terms}
+
+
 def annotate(
-    terms: list[dict], definitions: dict[str, str], children: dict[str, list[str]]
+    terms: list[dict],
+    definitions: dict[str, str],
+    children: dict[str, list[str]],
+    parents: dict[str, list[dict[str, str]]] | None = None,
 ) -> list[dict]:
-    """Add `definition` and `n_descendants` to each term, both read from obi.obo.
+    """Add `definition`, `n_descendants` and `parents` to each term, all read from obi.obo.
 
     `n_descendants` counts distinct `is_a` descendants in the full ontology (self excluded), not
     within the pruned index — the compositional children it counts are gone from the index, so a
     family term like ELISPOT can be broad in OBI and a leaf here. A term with no `def:` gets "".
+
+    `parents` is the term's direct `is_a` edges in the full ontology, unfiltered, each as
+    {"id", "label"} so the file can be read without the ontology beside it: a pruned index keeps
+    a parent that is not itself in the index (the reader restricts to what it holds, as
+    `assay_obi_mapper._index_children` does). Given as `parent_map(obo)`; when not passed it is
+    recovered by inverting `children`, which loses the file order and carries no labels.
     """
+    if parents is None:
+        parents = {}
+        for parent, kids in children.items():
+            for kid in kids:
+                parents.setdefault(kid, []).append({"id": parent, "label": ""})
     return [
         {
             **term,
             "definition": definitions.get(term["id"], ""),
             "n_descendants": len(subtree(term["id"], children)) - 1,
+            "parents": list(parents.get(term["id"], [])),
         }
         for term in terms
     ]
@@ -236,7 +263,8 @@ def build_index(obo_path: Path = OBO_PATH) -> tuple[list[dict], list[dict], list
     # Entries keep their fields and obi.obo order: _build_lookup indexes synonyms with
     # setdefault, so index order decides synonym-collision ties.
     kept = annotate(
-        [t for t in generic if t["id"] not in dropped_ids], definitions, children
+        [t for t in generic if t["id"] not in dropped_ids], definitions, children,
+        parents=parent_map(obo_path),
     )
     removed = [t for t in generic if t["id"] in dropped_ids]
     return source, generic, kept, removed

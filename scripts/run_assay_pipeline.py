@@ -6,8 +6,11 @@ The rounds the separate scripts run one at a time, chained:
   2. prompts/verify_assays.txt       judges every entry               1 call per assay
   3. prompts/correct_assay_field.txt repairs what round 2 refused     1 call per flagged FIELD
   4. prompts/resolver_obi_assay.txt  resolves each name to an OBI term  2-3 calls per unmatched
-     ("unmatched" = not in the OBI vocabulary verbatim; that exact match is the only free step)
-  5. (no prompt — deterministic)     keys by OBI term, folds duplicates  free
+     ("unmatched" = not in the OBI vocabulary verbatim; that exact match is the only free step.
+     OBI_MAPPING_STRATEGY=descend instead walks the OBI tree one level per call with
+     prompts/resolver_obi_descend.txt, ~3 calls per unmatched; opt-in, not yet benchmarked)
+  5. prompts/judge_fold.txt          keys by OBI term; a judge decides  1 call per group of
+                                     which same-term entries fold       entries sharing a term
 
 Chaining is the whole point: an unverified registry cannot be told apart from a verified one by
 reading it, because a `sample_type` inferred from what a technique usually runs on looks exactly
@@ -20,10 +23,16 @@ identity_review where the judge doubted the identity -- **which is the file to r
 leaves none rather than one that looks verified.
 
 Round 5 runs last because the OBI term from round 4 is the assay's identity: the registry is
-re-keyed by the term's label, and two entries that mapped to one term are one assay, folded with
-every wording kept in `name_in_paper` and every write-up kept in `additional_evidence`. An entry
-whose identity the judge did not support stands outside that rule and keeps its own key (printed
-`REVIEW UNFOLDED`). Free, and the same registry always canonicalizes the same way.
+re-keyed by the term's label, and two entries that mapped to one term are candidates to be one
+assay. A judge (prompts/judge_fold.txt, one call per such group, shown the records and not the
+paper) says which of them are one measurement under the extraction prompt's own rule --
+technique + analyte + specimen -- and only those fold, with every wording kept in `name_in_paper`
+and every write-up kept in `additional_evidence`. The rest keep the term and their own entry,
+keyed `<label> — <wording>` (printed `KEPT APART`, with the judge's reason); a group the judge
+could not rule on folds nothing (printed `FOLD JUDGE FAILED`). On the 31-paper run, 12 of 18
+term-only folds had merged different measurements, which is why the judge exists. An entry whose
+identity the verifier did not support stands outside all of this and keeps its own key (printed
+`REVIEW UNFOLDED`). Given the judge's answers the re-key is deterministic.
 
 Round 4 runs on the *corrected* registry, and writes `assays_OBI.json` rather than merging back:
 the OBI resolver reads sample_type and readouts as disambiguating context, and those are fields
@@ -49,9 +58,10 @@ of against the sentences it names, and the methods-vs-results cross-check report
 --dry-run names the source it would use, so which route a paper takes is visible before paying.
 
 **--dry-run makes no API call** and reports the projected bill. Run it first: a 10-assay paper
-is upwards of 30 calls. Round 1 is three calls; rounds 2-4 are sized from what the last run's
+is upwards of 30 calls. Round 1 is three calls; rounds 2-5 are sized from what the last run's
 extraction found, once one exists on disk -- each from the file that round actually read, since
-round 5 re-keys assays.json. Round 5 is free.
+round 5 re-keys assays.json. Round 5 is one call per group of entries sharing an OBI term, and
+the dry run names each group.
 
 Usage:
     python3 scripts/run_assay_pipeline.py <registry_dir> [--dry-run]
@@ -70,7 +80,7 @@ from pathlib import Path
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_REPO_ROOT / "apps" / "api"))
 
-from app.agent.assay_extractor import contract_warnings, paper_names
+from app.agent.assay_extractor import KEY_SEP, contract_warnings, paper_names
 from app.agent.assay_service import (
     PaperNotFoundError,
     assay_report,
@@ -78,6 +88,22 @@ from app.agent.assay_service import (
     split_stem,
 )
 from app.agent.claim_parser import _get_client
+from app.config import settings
+
+
+
+def _obi_step2_wording() -> tuple[str, str]:
+    """How the dry run names the paid OBI step and its rate, by strategy. Read at print time,
+    not import time, so a test (or a shell) that sets OBI_MAPPING_STRATEGY sees its own
+    wording. The rate is padded to the embedding wording's width so the "? calls" column
+    stays aligned."""
+    if settings.OBI_MAPPING_STRATEGY == "descend":
+        name, rate = "OBI tree descent + LLM", "~3 calls per unmatched"
+    elif settings.OBI_MAPPING_STRATEGY == "hybrid":
+        name, rate = "embedding + LLM, then a descent", "3-4 calls per unmatched"
+    else:
+        name, rate = "embedding + LLM", "2-3 calls per unmatched"
+    return name, rate.ljust(len("2-3 calls per unmatched"))
 
 
 def split_registry_dir(path: Path) -> tuple[str, str]:
@@ -183,20 +209,23 @@ def _dry_run(pmid: str, sdy: str) -> None:
         print(f"  round 4 OBI:     will run                            ~{obi['calls']} calls"
               f"   ({obi['free_matches']} of {obi['assays']} match the vocabulary for free)")
         for key in obi["misses"]:
-            print(f"      needs embedding + LLM: {key}")
+            print(f"      needs {_obi_step2_wording()[0]}: {key}")
     else:
-        print("  round 4 OBI:     will run, 2-3 calls per unmatched   ? calls")
+        print(f"  round 4 OBI:     will run, {_obi_step2_wording()[1]}   ? calls")
 
+    # One judge call per group of entries sharing a term. The groups are named rather than the
+    # folds, because which of them fold is the judge's answer and not something to promise.
     if canon["entries"] is not None:
-        print(f"  round 5 canon:   will run                            0 calls"
-              f"   ({canon['entries']} entries \u2192 {canon['groups']}, keyed by OBI term)")
+        print(f"  round 5 canon:   will run                            ~{canon['calls']} calls"
+              f"   ({canon['entries']} entries \u2192 {canon['groups']}, "
+              f"{len(canon['folds'])} group(s) to judge)")
         for group in canon["folds"]:
-            print(f"      folds onto {group['key']}: {', '.join(group['members'])}")
+            print(f"      candidate group {group['key']}: {', '.join(group['members'])}")
     else:
-        print("  round 5 canon:   will run, free                       0 calls")
+        print("  round 5 canon:   will run, 1 call per candidate group ? calls")
 
     if estimate["caveat"]:
-        print("\n  ~ because rounds 2-4 are sized from the previous run's output, which this "
+        print("\n  ~ because rounds 2-5 are sized from the previous run's output, which this "
               "run\n    re-extracts rather than reuses. The shape rarely moves; it is not "
               "guaranteed.")
     print("\n--dry-run: nothing called.")
@@ -207,8 +236,8 @@ def report_result(result: dict) -> None:
 
     Factored out of main() so scripts/run_assay_batch.py reports each of its 30 papers the same
     way. One definition on purpose -- CLAUDE.md requires the WARNING / REVIEW / REJECT /
-    DROPPED / UNMAPPED lines be reported rather than summarised, and a second copy of this
-    logic is how one of them quietly stops being printed.
+    DROPPED / UNMAPPED / KEPT APART / FOLD JUDGE FAILED lines be reported rather than
+    summarised, and a second copy of this logic is how one of them quietly stops being printed.
     """
     print(f"{result['paper_source']} [{result.get('paper_source_kind', 'xml')}]: "
           f"{result['paper_title']!r}")
@@ -274,14 +303,31 @@ def report_result(result: dict) -> None:
         print(f"  EXTRACT FAILED  {failure['run']}: {failure['error']} "
               "(the vote ran over the remaining replies)")
     # Every fold round 5 made: an entry that is no longer a key of its own because another
-    # write-up of the same OBI term absorbed it. Printed rather than counted, because the OBI term
-    # is coarser than the paper's wording and a fold is exactly where that coarseness shows.
-    for record in (result.get("merges") or {}).get("results", []):
+    # write-up of the same OBI term absorbed it, and the judge agreed they were one measurement.
+    # Printed rather than counted, because a fold is irreversible and is exactly where a wrong
+    # judgement would show.
+    merges = result.get("merges") or {}
+    for record in merges.get("results", []):
         print(f"  MERGED  {', '.join(record['folded'])} → {record['key']} "
               f"({record.get('obi_id') or 'no term'})")
-    # The opposite finding: an entry whose identity the judge did not support. It ships, marked,
-    # under its own key -- never folded, so its wording cannot become a supported sibling's name.
-    for key in ((result.get("merges") or {}).get("summary") or {}).get("review_unfolded") or []:
+    # The judge's other two answers, with its own words beside each. KEPT APART: the entry shares
+    # a term with the sibling that kept the bare label but was ruled a different measurement, so
+    # it ships under `<label> — <wording>`. FOLD JUDGE FAILED: the call failed or did not answer
+    # with a partition, so nothing in that group folded -- a re-run of round 5 alone
+    # (run_assay_merge.py --judge) can still fold it; a wrong fold could not be undone. Both are
+    # read off `merges["judge"]`, which a merge report written before the judge existed lacks.
+    judge = {record.get("label"): record for record in merges.get("judge") or []}
+    for key in (merges.get("summary") or {}).get("kept_apart") or []:
+        label = key.split(KEY_SEP, 1)[0]
+        print(f"  KEPT APART  {key}: judged a different measurement from {label} "
+              f"— {judge.get(label, {}).get('reason') or 'no reason given'}")
+    for label in (merges.get("summary") or {}).get("judge_failed") or []:
+        print(f"  FOLD JUDGE FAILED  {label}: "
+              f"{judge.get(label, {}).get('error') or 'no error recorded'}; members kept apart")
+    # The opposite finding: an entry whose identity the verifier did not support. It ships,
+    # marked, under its own key -- never folded, so its wording cannot become a supported
+    # sibling's name.
+    for key in (merges.get("summary") or {}).get("review_unfolded") or []:
         mark = (assays.get(key) or {}).get("identity_review") or {}
         print(f"  REVIEW UNFOLDED  {key}: kept its own entry; identity {mark.get('verdict')} "
               f"— {mark.get('reason') or 'no reason given'}")

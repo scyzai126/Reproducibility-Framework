@@ -1,0 +1,633 @@
+{
+  "summary": {
+    "total": 8,
+    "accept": 7,
+    "review": 1,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {
+      "aliases[]": {
+        "CONTRADICTED": 1
+      },
+      "readouts": {
+        "NOT_SUPPORTED": 1
+      }
+    }
+  },
+  "results": [
+    {
+      "assay_id": "DNA microarray",
+      "assay_name": "DNA microarray",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "DNA microarray",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S269"
+          ],
+          "evidence_text": "DNA microarray experiment was performed",
+          "reason": "The text explicitly states that a DNA microarray experiment was performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "microarray",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S51",
+            "S269"
+          ],
+          "evidence_text": "using DNA microarrays",
+          "reason": "This wording refers to the same assay as the DNA microarray experiment."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "DNA microarrays",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S51"
+          ],
+          "evidence_text": "using DNA microarrays",
+          "reason": "This wording refers to the same assay performed on the vaccinees' samples."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S51"
+          ],
+          "evidence_text": "we analyzed the transcriptomic profiles in peripheral blood mononuclear cells (PBMC, days 0, 3 and 7) of the vaccinees using DNA microarrays",
+          "reason": "The assay is explicitly described as being performed on PBMCs."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "gene expression levels across transcripts",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S270"
+          ],
+          "evidence_text": "expression data were normalized",
+          "reason": "The assay output is explicitly described as expression data, supporting gene expression measurement."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "DNA microarray experiment was performed as previously described 6 , on Affymetrix human U133 Plus 2.0 arrays (GeneTitan platform).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S269"
+          ],
+          "evidence_text": "DNA microarray experiment was performed as previously described 6 , on Affymetrix human U133 Plus 2.0 arrays (GeneTitan platform).",
+          "reason": "The quoted sentence appears verbatim and states the assay was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S269"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "ELISA",
+      "assay_name": "ELISA",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "ELISA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S271"
+          ],
+          "evidence_text": "Measurement of anti-Meningococcal antibodies by ELISA",
+          "reason": "The methods section explicitly describes ELISA as a performed assay in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "Measurement of anti-Meningococcal antibodies by ELISA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S271"
+          ],
+          "evidence_text": "Measurement of anti-Meningococcal antibodies by ELISA",
+          "reason": "This wording is the section heading naming the same assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "serum",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S274"
+          ],
+          "evidence_text": "Serum samples were pre-diluted 1:25",
+          "reason": "The ELISA methods explicitly state that serum samples were used."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "meningococcal polysaccharide-specific IgG, IgM, IgG1, and IgG2 antibody levels",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S276",
+            "S277",
+            "S284",
+            "S285"
+          ],
+          "evidence_text": "mouse anti-human IgG, monoclonal antibody HP6043, Hybridoma, Baltimore, MD) was added to detect the bound serum IgG in samples collected at days 0, 7, 30, 180 and year 2. For detection of IgM antibodies mouse anti-IgM Fc monoclonal antibody (HP6083, Hybridoma) conjugated to HRP were used instead in samples from days 0, 7 and 30. Subclass IgG1 antibodies were measured using mouse anti-human IgG1 (Alpha Diagnostics, San Antonio, TX) conjugated to HRP. IgG2 antibodies were measured using mouse anti-human IgG2 (Invitrogen, Frederick, MA) conjugated to alkaline phosphatase.",
+          "reason": "The ELISA methods explicitly measure meningococcal polysaccharide-specific IgG, IgM, IgG1, and IgG2 antibodies."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Serum samples were pre-diluted 1:25 and then serially diluted (2-fold) seven times in SC buffer (PBS with 5% NBBS and 0.1% Brij35).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S274"
+          ],
+          "evidence_text": "Serum samples were pre-diluted 1:25 and then serially diluted (2-fold) seven times in SC buffer (PBS with 5% NBBS and 0.1% Brij35).",
+          "reason": "The quote appears verbatim in the ELISA methods and pertains to the assay being performed."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S274"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "serum bactericidal titers (SBA)",
+      "assay_name": "serum bactericidal titers (SBA)",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "serum bactericidal titers (SBA)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S291"
+          ],
+          "evidence_text": "Measurement of serum bactericidal titers (SBA)",
+          "reason": "The methods section explicitly names and describes this assay as performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "SBA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S23"
+          ],
+          "evidence_text": "serum bactericidal activity (SBA)",
+          "reason": "SBA is explicitly used in the paper to refer to this serum bactericidal measurement."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "Measurement of serum bactericidal titers (SBA)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S291"
+          ],
+          "evidence_text": "Measurement of serum bactericidal titers (SBA)",
+          "reason": "This wording is the paper's methods heading for the assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "serum",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S292"
+          ],
+          "evidence_text": "Serum samples collected at days 0, 7, 30, 180 and year 2 were added undiluted to microtiter plates",
+          "reason": "The assay was explicitly performed on serum samples."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "bactericidal killing titers against meningococcal serogroup A and C strains",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S293",
+            "S298",
+            "S301",
+            "S302"
+          ],
+          "evidence_text": "A pre-determined dilution of meningococcal reference bacterial stock (serogroup A, strain F8238 or serogroup C, strain C11) ... Continuous titers were determined by interpolation of the serum dilution yielding 50% killing ... Sera were also tested with N. meningitidis serogroup A strain 3125, L10 immunotype",
+          "reason": "The assay measured serum bactericidal titers based on 50% killing against meningococcal serogroup A and C bacterial strains."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Continuous titers were determined by interpolation of the serum dilution yielding 50% killing as compared to the T 60 growth control plate average.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S298"
+          ],
+          "evidence_text": "Continuous titers were determined by interpolation of the serum dilution yielding 50% killing as compared to the T 60 growth control plate average.",
+          "reason": "The quoted sentence appears verbatim and describes how the assay readout was determined in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S298"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "flow cytometry",
+      "assay_name": "flow cytometry",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "flow cytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S304"
+          ],
+          "evidence_text": "identified by flow cytometry",
+          "reason": "The text explicitly states that blood ASCs were identified by flow cytometry in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "FACS",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S303",
+            "S412",
+            "S414"
+          ],
+          "evidence_text": "Measurement of antibody secreting cells by FACS and ELISpot",
+          "reason": "FACS is used in the paper to refer to the same assay section that includes flow-cytometric ASC measurement."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "Measurement of antibody secreting cells by FACS and ELISpot",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S303"
+          ],
+          "evidence_text": "Measurement of antibody secreting cells by FACS and ELISpot",
+          "reason": "This is the Methods subsection heading for the assay that includes the flow-cytometric ASC measurement."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "whole blood cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S412"
+          ],
+          "evidence_text": "Whole blood cells were used for FACS",
+          "reason": "The table caption explicitly links whole blood cells to FACS."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "frequency of antibody secreting cells identified as CD3 negative CD20 negative CD38 high CD27 high CD19 positive cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S304",
+            "S359"
+          ],
+          "evidence_text": "Blood ASC were identified by flow cytometry as CD3 neg , CD20 neg , CD38 hi , CD27 hi , CD19 + cells",
+          "reason": "The text states that flow cytometry identified ASCs by this marker combination, and the figure caption refers to the number of ASCs."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Blood ASC were identified by flow cytometry as CD3 neg , CD20 neg , CD38 hi , CD27 hi , CD19 + cells as described previously 56 .",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S304"
+          ],
+          "evidence_text": "Blood ASC were identified by flow cytometry as CD3 neg , CD20 neg , CD38 hi , CD27 hi , CD19 + cells as described previously 56 .",
+          "reason": "The quote appears verbatim and directly shows the assay was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S304"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "ELISpot",
+      "assay_name": "ELISpot",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "ELISpot",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S305"
+          ],
+          "evidence_text": "quantified by ELISpot",
+          "reason": "The text explicitly states that ELISpot was used in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "Measurement of antibody secreting cells by FACS and ELISpot",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S304",
+            "S305"
+          ],
+          "evidence_text": "Blood ASC were identified by flow cytometry as CD3 neg , CD20 neg , CD38 hi , CD27 hi , CD19 + cells as described previously 56 . Antigen specific and total IgG, IgM, and IgA secreting cells were quantified by ELISpot.",
+          "reason": "This section heading refers to the assay section that includes ELISpot as one of the performed measurements."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "numbers of antigen-specific and total IgG, IgM, and IgA secreting cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S305"
+          ],
+          "evidence_text": "Antigen specific and total IgG, IgM, and IgA secreting cells were quantified by ELISpot.",
+          "reason": "The text directly states that ELISpot quantified antigen-specific and total IgG, IgM, and IgA secreting cells."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Antigen specific and total IgG, IgM, and IgA secreting cells were quantified by ELISpot.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S305"
+          ],
+          "evidence_text": "Antigen specific and total IgG, IgM, and IgA secreting cells were quantified by ELISpot.",
+          "reason": "The quote appears verbatim and shows ELISpot was performed here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S305"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "anti-Diphtheria IgG by Luminex",
+      "assay_name": "anti-Diphtheria IgG by Luminex",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "anti-Diphtheria IgG by Luminex",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S288",
+            "S289"
+          ],
+          "evidence_text": "Immune response to Diphtheria toxoid (DT) carrier protein was assessed at Days 0, 7 and 30 using anti- DT IgG capture microsphere assay. Fluorescent microspheres (Luminex Corp, Austin, TX) were covalently conjugated to DT (List Biologicals, Campbell, CA) and used to capture and quantify DT specific IgG in sera",
+          "reason": "The methods section explicitly describes a Luminex-based microsphere assay measuring anti-DT IgG in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "anti-DT IgG capture microsphere assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S288"
+          ],
+          "evidence_text": "anti- DT IgG capture microsphere assay",
+          "reason": "This wording directly names the same assay used to assess anti-DT IgG."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "Measurement of anti-Diphtheria IgG by Luminex",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S287"
+          ],
+          "evidence_text": "Measurement of anti-Diphtheria IgG by Luminex",
+          "reason": "This is the methods subsection heading for the assay performed."
+        },
+        {
+          "field_name": "aliases[2]",
+          "proposed_value": "anti- DT IgG capture microsphere assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S288"
+          ],
+          "evidence_text": "anti- DT IgG capture microsphere assay",
+          "reason": "This wording directly refers to the same assay used in the study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "sera",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S289"
+          ],
+          "evidence_text": "DT specific IgG in sera",
+          "reason": "The assay is explicitly stated to quantify DT-specific IgG in sera."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "diphtheria toxoid-specific IgG measured as median fluorescence intensity-based titer",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S289",
+            "S290"
+          ],
+          "evidence_text": "used to capture and quantify DT specific IgG in sera... anti-DT IgG titer (relationship between the median fluorescence intensity (MFI) and dilution factor) was expressed as arbitrary units per milliliter (AU/ml)",
+          "reason": "The text states the assay quantified DT-specific IgG and expressed anti-DT IgG titer based on MFI versus dilution."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Fluorescent microspheres (Luminex Corp, Austin, TX) were covalently conjugated to DT (List Biologicals, Campbell, CA) and used to capture and quantify DT specific IgG in sera based on previous method with minor modifications 53 .",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S289"
+          ],
+          "evidence_text": "Fluorescent microspheres (Luminex Corp, Austin, TX) were covalently conjugated to DT (List Biologicals, Campbell, CA) and used to capture and quantify DT specific IgG in sera based on previous method with minor modifications 53 .",
+          "reason": "The quote appears verbatim and describes the assay being performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S289"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "DC activation flow cytometry",
+      "assay_name": "DC activation flow cytometry",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "DC activation flow cytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S345",
+            "S346"
+          ],
+          "evidence_text": "mDC and moDC were stimulated overnight (10 6 /ml) in 96-well plates with dilutions of the MPSV4 or MCV4 vaccines (final concentration 0.1x, 0.01x, 0.001x), or LPS (10ug/ml Invivogen, San Diego, CA). Cells were stained with CD80-FITC, CD83-PE, HLA-DR-PerCP and CD86-APC (BD Biosciences, San Jose, CA), acquired on an LSR and analysed using FlowJo.",
+          "reason": "The study performed flow-cytometric analysis of stimulated dendritic cells in the in vitro DC activation experiment."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "FACS staining",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S347"
+          ],
+          "evidence_text": "The clones used for FACS staining were CD80-FITC (L307.4), CD83-PE (HB15e), HLA-DR-PerCP (L243) and CD86-APC (2331) (BD Biosciences).",
+          "reason": "This wording refers to the same flow-cytometry staining procedure used in the assay."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "FACS",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S347"
+          ],
+          "evidence_text": "FACS staining",
+          "reason": "The text uses FACS to refer to the same flow-cytometric assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "human blood myeloid dendritic cells and monocyte-derived dendritic cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S343",
+            "S344",
+            "S345"
+          ],
+          "evidence_text": "BDCA1 + blood myeloid DCs (mDC) and CD14 + monocytes were isolated with magnetic beads according to manufacturer’s instructions (Miltenyi Biotec, Auburn, CA, catalog numbers 130-090-506, 130-050-201). Monocytes were cultured for 6 days in complete RPMI medium-10% FBS with 20 ng/ml GM-CSF and 40ng/ml IL-4 (Peprotech, Rocky Hill, NJ) to generate monocyte-derived DCs (moDC). mDC and moDC were stimulated overnight",
+          "reason": "These sentences explicitly identify the human blood myeloid DCs and monocyte-derived DCs used in this assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "surface expression of CD80, CD83, HLA-DR and CD86 on stimulated dendritic cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S346"
+          ],
+          "evidence_text": "Cells were stained with CD80-FITC, CD83-PE, HLA-DR-PerCP and CD86-APC (BD Biosciences, San Jose, CA), acquired on an LSR and analysed using FlowJo.",
+          "reason": "The assay measured these stained surface markers on the stimulated dendritic cells."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Cells were stained with CD80-FITC, CD83-PE, HLA-DR-PerCP and CD86-APC (BD Biosciences, San Jose, CA), acquired on an LSR and analysed using FlowJo.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S346"
+          ],
+          "evidence_text": "Cells were stained with CD80-FITC, CD83-PE, HLA-DR-PerCP and CD86-APC (BD Biosciences, San Jose, CA), acquired on an LSR and analysed using FlowJo.",
+          "reason": "The quote appears verbatim and directly describes the assay being performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S346"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "cytokine ELISA",
+      "assay_name": "cytokine ELISA",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "cytokine ELISA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S348"
+          ],
+          "evidence_text": "assessed for IL-6, TNF and IL-12p40 using ELISA kits",
+          "reason": "The study performed an ELISA-based cytokine measurement in this section."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "ELISA kits",
+          "verdict": "CONTRADICTED",
+          "evidence_sentence_ids": [
+            "S348"
+          ],
+          "evidence_text": "using ELISA kits",
+          "reason": "This is a product/reagent description, not an alias for the assay itself."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "ELISA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S348"
+          ],
+          "evidence_text": "using ELISA kits",
+          "reason": "This wording refers to the same ELISA measurement technique."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "cell supernatants",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S348",
+            "S352"
+          ],
+          "evidence_text": "Cell supernatants were harvested and assessed",
+          "reason": "The assay was performed on harvested cell supernatants."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "IL-6, TNF, IL-12p40, and IL-1b concentrations",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "No single assay in the cited evidence measures all four analytes, since human cells were assessed for IL-6, TNF and IL-12p40 while mouse cells were assessed for IL-6, TNF and IL-1b."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Cell supernatants were harvested and assessed for IL-6, TNF and IL-12p40 using ELISA kits, according to manufacturer’s instructions (BD Biosciences, catalog numbers 555220, 555212, 555171).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S348"
+          ],
+          "evidence_text": "Cell supernatants were harvested and assessed for IL-6, TNF and IL-12p40 using ELISA kits, according to manufacturer’s instructions (BD Biosciences, catalog numbers 555220, 555212, 555171).",
+          "reason": "The quote appears verbatim and shows the assay was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S348"
+      },
+      "conflict_detected": true,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    }
+  ]
+}

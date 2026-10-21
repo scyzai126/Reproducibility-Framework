@@ -24,6 +24,15 @@ from app.agent.assay_service import (
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
 
+
+@pytest.fixture(autouse=True)
+def _embedding_strategy(monkeypatch):
+    """The OBI estimates below are the embedding strategy's exact 2/3-call bill, which is the
+    default; pinning it keeps a developer's .env (OBI_MAPPING_STRATEGY=descend) out of the
+    arithmetic. The descent's own estimate is tested in the "tree descent" section at the
+    end, which sets the strategy itself."""
+    monkeypatch.setattr(assay_service.settings, "OBI_MAPPING_STRATEGY", "embedding")
+
 _XML = """<article><front><article-meta><article-title>A Paper</article-title></article-meta>
 </front><body><sec><title>Methods</title><p>Cells were analyzed on an LSRII.</p></sec></body></article>"""
 
@@ -81,13 +90,14 @@ def test_a_stem_with_no_second_half_is_not_a_paper():
 # ── what cannot be known is not guessed ───────────────────────────────────────
 
 def test_a_paper_never_run_sizes_only_the_rounds_that_are_free_to_size(paper, vocabulary):
-    """Rounds 2, 3 and 4 depend on how many assays the extraction finds, and nothing on disk
-    says. `None` is the honest answer; a number would be an invented bill."""
+    """Rounds 2 to 5 depend on how many assays the extraction finds -- and, for round 5, how
+    many of them share a term -- and nothing on disk says. `None` is the honest answer; a
+    number would be an invented bill."""
     estimate = estimate_run("111", "SDY1")
 
     calls = {r["name"]: r["calls"] for r in estimate["rounds"]}
     assert calls == {"extract": 1, "verify": None, "correct": None, "obi": None,
-                     "canonicalize": 0}
+                     "canonicalize": None}
     assert estimate["total_calls_known"] is False
     assert estimate["total_calls"] is None
     # There is no "~" to explain on a paper whose rounds were never sized from anything.
@@ -95,12 +105,12 @@ def test_a_paper_never_run_sizes_only_the_rounds_that_are_free_to_size(paper, vo
     assert estimate["has_registry"] is False
 
 
-def test_canonicalizing_is_reported_as_free_even_when_it_cannot_be_sized(paper, vocabulary):
-    """0, not None. "We cannot tell you what this costs" would be a lie about a round that
-    costs nothing and always has."""
+def test_canonicalizing_is_unsized_rather_than_guessed_when_nothing_is_stored(paper, vocabulary):
+    """None, not 0. Round 5 costs one judge call per group of entries sharing a term, and a
+    paper never run says nothing about how many such groups there are."""
     canon = [r for r in estimate_run("111", "SDY1")["rounds"] if r["name"] == "canonicalize"][0]
 
-    assert (canon["calls"], canon["exact"]) == (0, True)
+    assert (canon["calls"], canon["exact"], canon["basis"]) == (None, False, "unknown")
     assert canon["entries"] is None
 
 
@@ -243,11 +253,12 @@ def test_a_finished_paper_is_sized_from_its_extraction_not_its_canonical_registr
         {"key": "digital ELISA", "members": ["SIMoA", "SIMoA kit"]}]
 
 
-# ── round 5: what would fold ──────────────────────────────────────────────────
+# ── round 5: the candidate groups, one judge call each ─────────────────────
 
-def test_the_estimate_names_the_entries_that_would_fold_onto_one_term(paper, vocabulary):
-    """Free and deterministic, so this is not a projection -- it is what will happen. Two
-    write-ups of one OBI term become one entry, and the gate says which."""
+def test_the_estimate_names_the_candidate_groups_and_bills_one_call_each(paper, vocabulary):
+    """Two write-ups of one OBI term are one candidate group: one judge call, and the gate says
+    which entries it will be asked about. Whether they fold is the judge's answer, so the
+    round is "~" like the others, not exact."""
     _store(paper,
            {"ELISA": _ENTRY, "ELISA kits": _ENTRY},
            obi={"ELISA": {"obi_id": "OBI:0000661", "obi_label": "ELISA"},
@@ -257,7 +268,17 @@ def test_the_estimate_names_the_entries_that_would_fold_onto_one_term(paper, voc
 
     assert (canon["entries"], canon["groups"]) == (2, 1)
     assert canon["folds"][0]["members"] == ["ELISA", "ELISA kits"]
-    assert canon["calls"] == 0
+    assert (canon["calls"], canon["exact"], canon["basis"]) == (1, False, "last_run")
+
+
+def test_a_registry_with_no_mapping_has_no_candidate_groups_and_is_billed_zero(paper, vocabulary):
+    """Stored but never mapped: nothing shares a term, so round 5 is sized at 0, not left
+    unsized -- the caveat already says the shape may move."""
+    _store(paper, {"ELISA": _ENTRY, "ELISA kits": _ENTRY})
+
+    canon = [r for r in estimate_run("111", "SDY1")["rounds"] if r["name"] == "canonicalize"][0]
+
+    assert (canon["calls"], canon["folds"]) == (0, [])
 
 
 # ── the whole bill ────────────────────────────────────────────────────────────
@@ -267,7 +288,8 @@ def test_the_total_is_the_sum_of_the_rounds_once_every_one_is_known(paper, vocab
 
     estimate = estimate_run("111", "SDY1")
 
-    # 1 extract + 1 verify + 0 correct + 0 obi (the vocabulary knows it) + 0 canonicalize.
+    # 1 extract + 1 verify + 0 correct + 0 obi (the vocabulary knows it) + 0 canonicalize
+    # (one entry shares a term with nothing).
     assert estimate["total_calls"] == 2
     assert estimate["total_calls_known"] is True
     assert estimate["caveat"]
@@ -351,9 +373,9 @@ def test_the_dry_run_still_prints_the_format_it_always_has(paper, vocabulary, pi
     assert ("  round 4 OBI:     will run                            ~2 calls"
             "   (1 of 2 match the vocabulary for free)") in out
     assert "      needs embedding + LLM: SIMoA" in out
-    assert ("  round 5 canon:   will run                            0 calls"
-            "   (2 entries → 2, keyed by OBI term)") in out
-    assert "~ because rounds 2-4 are sized from the previous run's output" in out
+    assert ("  round 5 canon:   will run                            ~0 calls"
+            "   (2 entries → 2, 0 group(s) to judge)") in out
+    assert "~ because rounds 2-5 are sized from the previous run's output" in out
     assert out.rstrip().endswith("--dry-run: nothing called.")
 
 
@@ -368,7 +390,7 @@ def test_the_dry_run_reports_an_unsized_paper_with_question_marks(paper, vocabul
     assert "  round 2 verify:  will run, 1 call per assay found    ? calls" in out
     assert "  round 3 correct: will run, 1 call per flagged field  ? calls" in out
     assert "  round 4 OBI:     will run, 2-3 calls per unmatched   ? calls" in out
-    assert "  round 5 canon:   will run, free                       0 calls" in out
+    assert "  round 5 canon:   will run, 1 call per candidate group ? calls" in out
     # No "~" paragraph: nothing on this paper was sized from a previous run.
     assert "~ because rounds 2 and 3" not in out
 
@@ -391,3 +413,75 @@ def test_the_dry_run_exits_with_the_scripts_own_wording_for_a_missing_paper(pape
     assert message.startswith(
         "No paper for pubmed_id='999' study_accession='SDY999': ")
     assert "no JATS XML under " in message and "no PDF under " in message
+
+
+def test_the_dry_run_names_each_candidate_group_the_judge_will_see(paper, vocabulary,
+                                                                   pipeline_script, monkeypatch,
+                                                                   capsys):
+    """What round 5 will spend on, by name: the entries sharing a term, which is what a reader
+    deciding whether to pay wants to see -- a fold is no longer certain, a call is."""
+    monkeypatch.setattr(pipeline_script, "estimate_run", estimate_run)
+    _store(paper, {"ELISA": _ENTRY, "ELISA kits": _ENTRY},
+           obi={"ELISA": {"obi_id": "OBI:0000661", "obi_label": "ELISA"},
+                "ELISA kits": {"obi_id": "OBI:0000661", "obi_label": "ELISA"}})
+
+    pipeline_script._dry_run("111", "SDY1")
+
+    out = capsys.readouterr().out
+    assert ("  round 5 canon:   will run                            ~1 calls"
+            "   (2 entries → 1, 1 group(s) to judge)") in out
+    assert "      candidate group ELISA: ELISA, ELISA kits" in out
+    assert "folds onto" not in out
+
+
+# ── 2026-10-20: tree descent ──────────────────────────────────────────────────
+
+def test_the_descent_bills_one_call_from_an_exact_hit_and_three_from_the_root(vocabulary,
+                                                                               monkeypatch):
+    """An exact hit on a term with children is where the walk starts, so it usually ends at
+    the next reply; a name the vocabulary misses starts at the root and is billed the depth
+    most targets sit at. The embedding bill of 2/3 never applies under the descent."""
+    monkeypatch.setattr(assay_service.settings, "OBI_MAPPING_STRATEGY", "descend")
+    monkeypatch.setattr(assay_service, "_index_children", lambda: {"OBI:0000916": ("OBI:x",)})
+    hit = {**_ENTRY, "name_in_paper": "flow cytometry", "standard_technique_name": "FACS"}
+    miss = {**_ENTRY, "name_in_paper": "SIMoA", "standard_technique_name": "single molecule array"}
+
+    assert obi_misses({"a": hit, "b": miss}) == ["a", "b"]
+    assert obi_query_calls("a", hit) == 1
+    assert obi_query_calls("b", miss) == assay_service.DESCENT_TYPICAL_CALLS
+    assert obi_query_calls("b", miss, strategy="embedding") == 3
+
+
+def test_the_dry_run_names_the_descent_as_the_paid_step(paper, vocabulary, pipeline_script,
+                                                        monkeypatch, capsys):
+    monkeypatch.setattr(assay_service.settings, "OBI_MAPPING_STRATEGY", "descend")
+    monkeypatch.setattr(pipeline_script, "estimate_run", estimate_run)
+    _store(paper, {"SIMoA": {**_ENTRY, "name_in_paper": "SIMoA"}})
+
+    pipeline_script._dry_run("111", "SDY1")
+
+    out = capsys.readouterr().out
+    assert ("  round 4 OBI:     will run                            ~3 calls"
+            "   (0 of 1 match the vocabulary for free)") in out
+    assert "      needs OBI tree descent + LLM: SIMoA" in out
+
+
+def test_the_dry_run_rates_the_descent_in_the_same_column(paper, vocabulary, pipeline_script,
+                                                         monkeypatch, capsys):
+    monkeypatch.setattr(assay_service.settings, "OBI_MAPPING_STRATEGY", "descend")
+    monkeypatch.setattr(pipeline_script, "estimate_run", estimate_run)
+
+    pipeline_script._dry_run("111", "SDY1")
+
+    out = capsys.readouterr().out
+    assert "  round 4 OBI:     will run, ~3 calls per unmatched    ? calls" in out
+
+
+def test_the_hybrid_bills_the_embedding_calls_plus_one(vocabulary, monkeypatch):
+    monkeypatch.setattr(assay_service.settings, "OBI_MAPPING_STRATEGY", "hybrid")
+    plain = {**_ENTRY, "name_in_paper": "SIMoA"}
+    two_queries = {**_ENTRY, "name_in_paper": "SIMoA", "standard_technique_name": "single molecule array"}
+
+    assert obi_query_calls("a", plain) == 3
+    assert obi_query_calls("b", two_queries) == 4
+    assert obi_query_calls("b", two_queries, strategy="embedding") == 3

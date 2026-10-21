@@ -1,0 +1,282 @@
+{
+  "summary": {
+    "total": 4,
+    "accept": 4,
+    "review": 0,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {}
+  },
+  "results": [
+    {
+      "assay_id": "RT-qPCR",
+      "assay_name": "RT-qPCR",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "RT-qPCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S167"
+          ],
+          "evidence_text": "RNA concentrations were measured from nasopharyngeal samples by RT-qPCR",
+          "reason": "The text explicitly states that RT-qPCR was used to measure RNA concentrations."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "SARS-CoV-2 RT-qPCR analysis",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S152"
+          ],
+          "evidence_text": "Nasopharyngeal swabs were collected, as recently described 23 , approximately every four days for SARS-CoV-2 RT-qPCR analysis",
+          "reason": "This wording refers to the same RT-qPCR assay performed on the swabs."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "real-time RT-qPCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S169"
+          ],
+          "evidence_text": "using the US CDC real-time RT-qPCR primer/probe sets",
+          "reason": "This is wording used in the assay description for the same RT-qPCR measurement."
+        },
+        {
+          "field_name": "aliases[2]",
+          "proposed_value": "qPCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S171"
+          ],
+          "evidence_text": "assayed by qPCR",
+          "reason": "The text uses qPCR to refer to the same assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "nasopharyngeal swabs",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S152"
+          ],
+          "evidence_text": "Nasopharyngeal swabs were collected, as recently described 23 , approximately every four days for SARS-CoV-2 RT-qPCR analysis",
+          "reason": "The assay is explicitly performed on nasopharyngeal swabs."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "SARS-CoV-2 RNA concentration and virus RNA copies",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S167",
+            "S170"
+          ],
+          "evidence_text": "RNA concentrations were measured from nasopharyngeal samples by RT-qPCR as previously described 23 . Virus RNA copies were quantified",
+          "reason": "The assay is explicitly described as measuring RNA concentrations and quantifying virus RNA copies."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "RNA concentrations were measured from nasopharyngeal samples by RT-qPCR as previously described 23 .",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S167"
+          ],
+          "evidence_text": "RNA concentrations were measured from nasopharyngeal samples by RT-qPCR as previously described 23 .",
+          "reason": "The quote appears verbatim and states that the assay was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S167"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Human Cytokine Array/Chemokine Array 71–403 Plex Panel (HD71)",
+      "assay_name": "Human Cytokine Array/Chemokine Array 71–403 Plex Panel (HD71)",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Human Cytokine Array/Chemokine Array 71–403 Plex Panel (HD71)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S177"
+          ],
+          "evidence_text": "measured with Human Cytokine Array/Chemokine Array 71–403 Plex Panel (HD71)",
+          "reason": "The text explicitly states this measurement was performed with that named panel."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "serum",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S176",
+            "S177"
+          ],
+          "evidence_text": "Patient serum was isolated as before and aliquots were stored in −80°C. Sera were shipped to Eve Technologies (Calgary, Alberta, Canada) on dry ice, and levels of cytokines and chemokines were measured",
+          "reason": "The assay is explicitly described as being run on sera/patient serum."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "cytokine and chemokine levels",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S177"
+          ],
+          "evidence_text": "levels of cytokines and chemokines were measured",
+          "reason": "The text directly states the assay measured cytokine and chemokine levels."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Sera were shipped to Eve Technologies (Calgary, Alberta, Canada) on dry ice, and levels of cytokines and chemokines were measured with Human Cytokine Array/Chemokine Array 71–403 Plex Panel (HD71).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S177"
+          ],
+          "evidence_text": "Sera were shipped to Eve Technologies (Calgary, Alberta, Canada) on dry ice, and levels of cytokines and chemokines were measured with Human Cytokine Array/Chemokine Array 71–403 Plex Panel (HD71).",
+          "reason": "The quote appears verbatim and shows the assay was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S177"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "flow cytometry",
+      "assay_name": "flow cytometry",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "flow cytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S185"
+          ],
+          "evidence_text": "## Flow cytometry",
+          "reason": "The Methods section explicitly identifies flow cytometry as a performed assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S186"
+          ],
+          "evidence_text": "freshly isolated PBMCs",
+          "reason": "The flow cytometry procedure was performed on freshly isolated PBMCs."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "immune cell subset frequencies and phenotypes",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S13",
+            "S24",
+            "S202",
+            "S221"
+          ],
+          "evidence_text": "leukocyte profiles (by flow cytometry using freshly isolated peripheral blood mononuclear cells; PBMCs)",
+          "reason": "The text states flow cytometry quantified leukocyte profiles, consistent with immune cell subset frequencies and phenotypes."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Briefly, freshly isolated PBMCs were plated at 1–2 × 10 6 cells / well in a 96 well U-bottom plate.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S186"
+          ],
+          "evidence_text": "Briefly, freshly isolated PBMCs were plated at 1–2 × 10 6 cells / well in a 96 well U-bottom plate.",
+          "reason": "The quoted sentence appears verbatim in the Flow cytometry methods and describes the assay being performed."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S186"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "intracellular cytokine staining",
+      "assay_name": "intracellular cytokine staining",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "intracellular cytokine staining",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S192"
+          ],
+          "evidence_text": "For intracellular cytokine staining following stimulation",
+          "reason": "The Methods explicitly describe intracellular cytokine staining being performed."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S186",
+            "S192"
+          ],
+          "evidence_text": "freshly isolated PBMCs were plated at 1–2 × 10 6 cells / well in a 96 well U-bottom plate. For intracellular cytokine staining following stimulation, cells were resuspended",
+          "reason": "The intracellular cytokine staining procedure is described on the plated freshly isolated PBMCs."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "intracellular cytokine production after stimulation",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S192",
+            "S193",
+            "S194",
+            "S196"
+          ],
+          "evidence_text": "For intracellular cytokine staining following stimulation... Subsequently, these cells were washed and stimulated... To quantify intracellular cytokines",
+          "reason": "The assay is explicitly used after stimulation to quantify intracellular cytokines."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "For intracellular cytokine staining following stimulation, cells were resuspended in 200 μL cRPMI (RPMI-1640 supplemented with 10% FBS, 2 mM L-glutamine, 100 U/ml penicillin, and 100 mg/ml streptomycin, 1mM Sodium Pyruvate, and 50uM 2-Mercaptoethanol) and stored at 4°C overnight.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S192"
+          ],
+          "evidence_text": "For intracellular cytokine staining following stimulation, cells were resuspended in 200 μL cRPMI (RPMI-1640 supplemented with 10% FBS, 2 mM L-glutamine, 100 U/ml penicillin, and 100 mg/ml streptomycin, 1mM Sodium Pyruvate, and 50uM 2-Mercaptoethanol) and stored at 4°C overnight.",
+          "reason": "The quoted sentence appears verbatim and describes the assay being performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S192"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

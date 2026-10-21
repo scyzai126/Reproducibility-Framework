@@ -216,7 +216,8 @@ def test_a_newly_added_paper_cannot_be_sized_and_says_so(corpus, ncbi, client):
     assert estimate["total_calls"] is None
     assert estimate["caveat"] is None
     # Five assay rounds, then the web run's data step (this paper names no accession: 0).
-    assert [r["calls"] for r in estimate["rounds"]] == [1, None, None, None, 0, 0]
+    # Round 5 is one judge call per candidate group, unknown until the paper is mapped: None.
+    assert [r["calls"] for r in estimate["rounds"]] == [1, None, None, None, None, 0]
 
 
 def test_a_newly_added_paper_still_has_to_pass_the_cost_gate(corpus, ncbi, client):

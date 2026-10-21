@@ -290,6 +290,14 @@ async def test_an_empty_registry_skips_the_round(paper, seen):
 
 # ── accounting ────────────────────────────────────────────────────────────────
 
+@pytest.fixture(autouse=True)
+def _embedding_strategy(monkeypatch):
+    """The bills below are the embedding strategy's exact 2/3 calls -- the default, pinned so
+    a developer's .env cannot change the arithmetic. The descent's accounting is tested at
+    the end of this file."""
+    monkeypatch.setattr(assay_service.settings, "OBI_MAPPING_STRATEGY", "embedding")
+
+
 def test_only_the_names_the_vocabulary_missed_are_billed():
     """The exact match is a dict lookup; the embedding round costs an embedding plus a chat call.
 
@@ -337,3 +345,56 @@ def test_a_normalized_exact_match_is_billed_as_free():
     assert obi_calls({"a": {"resource": "embedding_llm"}}) == 2
     assert obi_calls({"a": {"resource": "embedding_llm_normalized"}}) == 2
     assert obi_calls({"a": {"resource": "unresolved"}}) == 2
+
+
+@pytest.mark.asyncio
+async def test_round_4_reports_each_assay_as_it_is_mapped(paper, monkeypatch):
+    """The mapper used to run to completion on its worker thread before the listener heard
+    anything; now each finished entry is an event on the loop's thread, like round 2's."""
+    def _fake(assays, *_args, on_done=None, **_kwargs):
+        out = {}
+        for n, (key, entry) in enumerate(assays.items(), 1):
+            out[key] = {**entry, "obi_id": f"OBI:{n}", "obi_label": f"term {n}",
+                        "resource": "exact_original", "obi_confidence": "high"}
+            if on_done is not None:
+                on_done(key, n, len(assays))
+        return out
+
+    monkeypatch.setattr(assay_service, "enrich_assays_with_obi", _fake)
+    client = _Client(
+        json.dumps({"flow cytometry": _entry(), "ELISA": _entry("ELISA")}),
+        {"flow cytometry": json.dumps(_verdict("flow cytometry")),
+         "ELISA": json.dumps(_verdict("ELISA"))},
+    )
+    events: list[dict] = []
+
+    await assay_report("111", "SDY1", client, on_progress=events.append)
+
+    obi = [e for e in events if e["round"] == "obi"]
+    assert [(e["state"], e.get("done"), e.get("total")) for e in obi[:3]] == [
+        ("running", 0, 2), ("running", 1, 2), ("running", 2, 2)]
+    assert {e.get("item") for e in obi[1:3]} == {"flow cytometry", "ELISA"}
+    assert obi[-1]["state"] == "done"
+
+
+# ── 2026-10-20: tree descent accounting ───────────────────────────────────────
+
+def test_a_descended_entry_is_billed_what_its_walk_spent(monkeypatch):
+    """The walk's length is the model's answer, so the mapper writes it (`obi_calls`) and the
+    bill reads it rather than estimating; an entry without it (an older mapping, an error)
+    still gets the strategy's estimate."""
+    monkeypatch.setattr(assay_service.settings, "OBI_MAPPING_STRATEGY", "descend")
+    monkeypatch.setattr(assay_service, "_build_lookup", lambda: {})
+
+    assert obi_calls({
+        "a": {"resource": "descend_llm", "obi_calls": 4},
+        "b": {"resource": "exact_original_llm", "obi_calls": 1},
+        "c": {"resource": "exact_original"},
+        "d": {"resource": "error"},
+    }) == 4 + 1 + 0 + assay_service.DESCENT_TYPICAL_CALLS
+
+
+def test_a_walk_that_abstained_is_billed_what_it_spent_too(monkeypatch):
+    monkeypatch.setattr(assay_service.settings, "OBI_MAPPING_STRATEGY", "descend")
+
+    assert obi_calls({"a": {"resource": "unresolved", "obi_id": None, "obi_calls": 1}}) == 1

@@ -1,7 +1,8 @@
 """The CLI's findings printer: every reason not to trust an entry is a line, never a count.
 
-CLAUDE.md requires WARNING / REVIEW / REJECT / DROPPED / MERGED lines be reported rather than
-summarised. These are the findings that used to reach disk and never the terminal.
+CLAUDE.md requires WARNING / REVIEW / REJECT / DROPPED / MERGED / KEPT APART / FOLD JUDGE FAILED
+lines be reported rather than summarised. These are the findings that used to reach disk and
+never the terminal.
 """
 
 import importlib.util
@@ -115,3 +116,39 @@ def test_a_registry_keyed_by_obi_label_is_not_warned_about(cli, capsys):
                                       "resource": "exact_original"}}))
 
     assert "not the key" not in capsys.readouterr().out
+
+
+def test_an_entry_the_fold_judge_kept_apart_is_reported_with_its_reason(cli, capsys):
+    """The judge ruled it a different measurement from the sibling that kept the bare label;
+    the line names both and carries the judge's own sentence, read from `merges["judge"]`."""
+    from app.agent.assay_extractor import KEY_SEP
+
+    key = "flow cytometry assay" + KEY_SEP + "intracellular cytokine staining"
+    cli.report_result(_result(
+        assays={"flow cytometry assay": _ENTRY,
+                key: {**_ENTRY, "name_in_paper": ["intracellular cytokine staining"]}},
+        merges={"results": [], "summary": {"kept_apart": [key], "judge_failed": []},
+                "judge": [{"label": "flow cytometry assay", "members": ["a", "b"],
+                           "groups": [["a"], ["b"]], "reason": "ICS has its own stimulation step",
+                           "error": None}]}))
+
+    assert (f"KEPT APART  {key}: judged a different measurement from flow cytometry assay "
+            "— ICS has its own stimulation step") in capsys.readouterr().out
+
+
+def test_a_group_the_fold_judge_could_not_rule_on_is_reported_with_its_error(cli, capsys):
+    cli.report_result(_result(
+        merges={"results": [], "summary": {"kept_apart": [], "judge_failed": ["flow cytometry assay"]},
+                "judge": [{"label": "flow cytometry assay", "members": ["a", "b"], "groups": None,
+                           "reason": None, "error": "TimeoutError: slow"}]}))
+
+    assert ("FOLD JUDGE FAILED  flow cytometry assay: TimeoutError: slow; members kept apart"
+            in capsys.readouterr().out)
+
+
+def test_a_merge_report_written_before_the_judge_existed_prints_no_judge_lines(cli, capsys):
+    """Neither list, no `judge` block: nothing to print and nothing to raise on."""
+    cli.report_result(_result(merges={"results": [], "summary": {"review_unfolded": []}}))
+
+    out = capsys.readouterr().out
+    assert "KEPT APART" not in out and "FOLD JUDGE FAILED" not in out

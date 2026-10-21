@@ -1,0 +1,774 @@
+{
+  "summary": {
+    "total": 11,
+    "accept": 11,
+    "review": 0,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {}
+  },
+  "results": [
+    {
+      "assay_id": "Flow cytometry",
+      "assay_name": "Flow cytometry",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Flow cytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S198"
+          ],
+          "evidence_text": "Flow cytometry analysis was done",
+          "reason": "The methods explicitly state that flow cytometry analysis was performed in this study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "heparinized whole blood or cryopreserved peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S198"
+          ],
+          "evidence_text": "either heparinized whole blood or cryopreserved PBMCs",
+          "reason": "The flow cytometry methods explicitly name these specimens for this assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "frequencies of T cell and innate cell populations; activation marker expression",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S201",
+            "S203",
+            "S206"
+          ],
+          "evidence_text": "To measure blood follicular T helper like cells... To determine the frequency of innate cell populations and their activation status... Each cell population was quantified as percentage of total PBMC.",
+          "reason": "The methods describe measuring cell population frequencies and activation status by flow cytometry."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Flow cytometry analysis was done on either heparinized whole blood or cryopreserved PBMCs.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S198"
+          ],
+          "evidence_text": "Flow cytometry analysis was done on either heparinized whole blood or cryopreserved PBMCs.",
+          "reason": "The quoted sentence appears verbatim and shows the assay was performed here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S198"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Zostavax®-specific IFN-γ, IL-4 and IL-21 ELISPOT",
+      "assay_name": "Zostavax®-specific IFN-γ, IL-4 and IL-21 ELISPOT",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Zostavax®-specific IFN-γ, IL-4 and IL-21 ELISPOT",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S206"
+          ],
+          "evidence_text": "## Zostavax®-specific IFN-γ, IL-4 and IL-21 ELISPOT",
+          "reason": "This methods subsection heading explicitly identifies an ELISPOT assay performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "ELISPOT",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S214"
+          ],
+          "evidence_text": "an automated ELISPOT counter",
+          "reason": "The text uses ELISPOT to refer to this assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "cryopreserved peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S209"
+          ],
+          "evidence_text": "Cryopreserved cells (3–5×10 5 /well)",
+          "reason": "Within this ELISPOT methods section, the assay is performed on cryopreserved cells, and PBMCs are the study cell type used for these antigen-specific T cell assays."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "spot-forming cells for IFN-γ, IL-4, or IL-21 after stimulation with VZV cell lysate or VZV HLA-A2-restricted peptide pool",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S207",
+            "S209",
+            "S214"
+          ],
+          "evidence_text": "plates (Millipore–S2EM004M99 for IFN-γ; MAIPS4510 for IL-4 and IL-21) were coated with either purified anti-human IFN-γ ... anti-human IL-4 ... or anti-human IL-21 ... stimulated with either media alone, 0.25 μg of VZV cell lysate ... or VZV HLA-A2-restricted peptide pool ... analyzed using an automated ELISPOT counter",
+          "reason": "The assay measures IFN-γ, IL-4, and IL-21 responses after the stated stimulations, and ELISPOT output is reported as spot counts elsewhere in the paper."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Cryopreserved cells (3–5×10 5 /well) were resuspended in RPMI 1640 + 10% human AB serum (Sigma Aldrich), penicillin, streptomycin, L-glutamine and 2-mercaptoethanol and added to each plate, stimulated with either media alone, 0.25 μg of VZV cell lysate (Meridian Life Sciences - Strain Ellen grade II detergent free) or VZV HLA-A2-restricted peptide pool",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S209"
+          ],
+          "evidence_text": "Cryopreserved cells (3–5×10 5 /well) were resuspended in RPMI 1640 + 10% human AB serum (Sigma Aldrich), penicillin, streptomycin, L-glutamine and 2-mercaptoethanol and added to each plate, stimulated with either media alone, 0.25 μg of VZV cell lysate (Meridian Life Sciences - Strain Ellen grade II detergent free) or VZV HLA-A2-restricted peptide pool",
+          "reason": "The quote appears verbatim and describes this ELISPOT assay being performed in the study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S209"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Zostavax®-specific and total IgG B cell ELISPOT",
+      "assay_name": "Zostavax®-specific and total IgG B cell ELISPOT",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Zostavax®-specific and total IgG B cell ELISPOT",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S215"
+          ],
+          "evidence_text": "## Zostavax®-specific and total IgG B cell ELISPOT",
+          "reason": "This methods subsection heading names an assay performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "ELISPOT",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S215"
+          ],
+          "evidence_text": "## Zostavax®-specific and total IgG B cell ELISPOT",
+          "reason": "ELISPOT refers to the same assay named by the subsection heading."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "B cell ELISPOT",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S215"
+          ],
+          "evidence_text": "## Zostavax®-specific and total IgG B cell ELISPOT",
+          "reason": "B cell ELISPOT refers to the same ELISPOT assay for IgG-secreting B cells."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "freshly prepared peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S217"
+          ],
+          "evidence_text": "Freshly prepared PBMCs were resuspended in complete FBS media at 1×10 7 /ml and added to each well",
+          "reason": "The assay explicitly used freshly prepared PBMCs."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "VZV-specific and total IgG-secreting B cell spot counts",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S215",
+            "S221"
+          ],
+          "evidence_text": "plates were coated with either VZV cell lysate (Meridian Life Sciences) at 5 μg/well or Affinipure donkey anti-human IgG (H+L; Jackson Immunoresearch) at 100 ng/well in PBS overnight at 4°C... Developed plates were dried, scanned and analyzed using an automated ELISPOT counter (Cellular Technologies, Ltd)",
+          "reason": "The assay measured ELISPOT spots for VZV-specific and total IgG-producing B cells."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Freshly prepared PBMCs were resuspended in complete FBS media at 1×10 7 /ml and added to each well, followed by threefold dilution and then incubated overnight at 37°C.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S217"
+          ],
+          "evidence_text": "Freshly prepared PBMCs were resuspended in complete FBS media at 1×10 7 /ml and added to each well, followed by threefold dilution and then incubated overnight at 37°C.",
+          "reason": "The quote appears verbatim and is part of the assay procedure performed here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S217"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Zostavax®-specific IgG/IgA ELISA",
+      "assay_name": "Zostavax®-specific IgG/IgA ELISA",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Zostavax®-specific IgG/IgA ELISA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S222"
+          ],
+          "evidence_text": "## Zostavax®-specific IgG/IgA ELISA",
+          "reason": "The methods section explicitly names and describes this assay as performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "ELISA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S342"
+          ],
+          "evidence_text": "as measured by ELISA",
+          "reason": "The paper refers to the same IgG measurement assay as ELISA."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "plasma",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S224"
+          ],
+          "evidence_text": "Plasma samples were serially diluted",
+          "reason": "The assay methods explicitly state that plasma samples were used."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "VZV-specific IgG and IgA antibody titers against VZV cell lysate or VZV glycoprotein-only protein",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S222",
+            "S225",
+            "S227"
+          ],
+          "evidence_text": "Maxisorp plates (Nalgene-Nunc) were coated with either 0.5 μg/well VZV cell lysate (Meridian Life Sciences) or VZV glycoprotein-only protein (Merck) diluted in PBS and incubated overnight at 4°C. Plates were washed four times with PBS+0.1% Tween 20 and goat anti-mouse IgG or IgA HRP added at 1:5000 in blocking buffer for 1.5 hr at room temperature. The antibody titer was measured at the EC50.",
+          "reason": "The assay measures IgG or IgA antibody titers using VZV cell lysate or glycoprotein-coated plates."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Plasma samples were serially diluted in blocking buffer and incubated for 1.5 hr at room temperature.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S224"
+          ],
+          "evidence_text": "Plasma samples were serially diluted in blocking buffer and incubated for 1.5 hr at room temperature.",
+          "reason": "The quote appears verbatim and is part of the assay procedure performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S224"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Viral DNA detection",
+      "assay_name": "Viral DNA detection",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Viral DNA detection",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S228"
+          ],
+          "evidence_text": "## Viral DNA detection",
+          "reason": "This section heading identifies a DNA detection assay performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "PCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S231"
+          ],
+          "evidence_text": "PCR was carried out",
+          "reason": "The text explicitly describes this assay as PCR."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "nested PCR analysis",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S234"
+          ],
+          "evidence_text": "nested PCR analysis was carried out",
+          "reason": "The text explicitly states nested PCR analysis was part of this assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "whole blood",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S228",
+            "S230"
+          ],
+          "evidence_text": "The DNA was extracted with the QuickGene DNA Whole Blood kit per manufacturer’s recommendations (Autogen, Cat. No DB-S). Typical yield was 4–8 μg of DNA from 200 μL blood.",
+          "reason": "The assay used DNA extracted from blood with a whole-blood kit."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "VZV DNA detection and copy number in blood",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S232",
+            "S246"
+          ],
+          "evidence_text": "VZV genome open reading frame 63 (ORF63) was detected ... Sensitivity of the PCR assay was determined by adding cell-associated VZV from 500 to 16000 VZV DNA copies",
+          "reason": "The assay explicitly detects VZV DNA and the paper elsewhere refers to viral DNA copies in blood."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Amplification was performed with a RotorGene (RG-3000) real-time PCR System or the Bio-Rad CFX96 real-time PCR system, depending on availability.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S238"
+          ],
+          "evidence_text": "Amplification was performed with a RotorGene (RG-3000) real-time PCR System or the Bio-Rad CFX96 real-time PCR system, depending on availability.",
+          "reason": "The quote appears verbatim and describes the assay being performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S238"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Multiplex cytokine assays",
+      "assay_name": "Multiplex cytokine assays",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Multiplex cytokine assays",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S248",
+            "S249"
+          ],
+          "evidence_text": "## Multiplex cytokine assays\n[S248] Plasma samples from CPTs were stored at −80°C prior to cytokine analysis. [S249] Luminex assays were performed with the Beadlyte Human 10-Plex Multi-Cytokine Detection System (Upstate).",
+          "reason": "This methods subsection describes that multiplex cytokine measurement was performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "Luminex assays",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S249"
+          ],
+          "evidence_text": "Luminex assays were performed",
+          "reason": "This wording refers to the same cytokine measurement assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "plasma",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S248",
+            "S250"
+          ],
+          "evidence_text": "Plasma samples from CPTs were stored at −80°C prior to cytokine analysis. [S250] Plasma samples were run in duplicate",
+          "reason": "The assay was explicitly performed on plasma samples."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "multiplex cytokine concentrations",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S248",
+            "S249",
+            "S252"
+          ],
+          "evidence_text": "Plasma samples from CPTs were stored at −80°C prior to cytokine analysis. [S249] Luminex assays were performed with the Beadlyte Human 10-Plex Multi-Cytokine Detection System (Upstate). [S252] Only cytokines above limit of detection were included in further analysis.",
+          "reason": "The assay measured multiple cytokines in plasma."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Luminex assays were performed with the Beadlyte Human 10-Plex Multi-Cytokine Detection System (Upstate).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S249"
+          ],
+          "evidence_text": "Luminex assays were performed with the Beadlyte Human 10-Plex Multi-Cytokine Detection System (Upstate).",
+          "reason": "The quote appears verbatim and states the assay was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S249"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "PBMC Transcriptomics analysis",
+      "assay_name": "PBMC Transcriptomics analysis",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "PBMC Transcriptomics analysis",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S258"
+          ],
+          "evidence_text": "The transcriptomics analysis was performed",
+          "reason": "The text explicitly states that transcriptomics analysis was performed on PBMC-derived RNA."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "transcriptomics analysis",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S258"
+          ],
+          "evidence_text": "The transcriptomics analysis was performed",
+          "reason": "This wording refers to the same assay performed in the study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S259"
+          ],
+          "evidence_text": "Total RNA from PBMCs (~1.5 × 10 6 cells) was isolated",
+          "reason": "The assay used RNA isolated from PBMCs."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "PBMC gene expression profiles",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S53",
+            "S258",
+            "S260"
+          ],
+          "evidence_text": "We assessed the gene expression changes in PBMCsinduced by Zostavax® vaccination.",
+          "reason": "The assay measured gene expression in PBMCs."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Samples, after quality control, were hybridized on Human U133 Plus 2.0 Arrays (Affymetrix).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S260"
+          ],
+          "evidence_text": "Samples, after quality control, were hybridized on Human U133 Plus 2.0 Arrays (Affymetrix).",
+          "reason": "The quote appears verbatim and describes the assay being performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S260"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Plasma Metabolomics analysis",
+      "assay_name": "Plasma Metabolomics analysis",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Plasma Metabolomics analysis",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S261"
+          ],
+          "evidence_text": "Metabolomics analysis was performed similarly as previously described",
+          "reason": "The text explicitly states that metabolomics analysis was performed on plasma in this methods section."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "Metabolomics analysis",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S261"
+          ],
+          "evidence_text": "Metabolomics analysis was performed similarly as previously described",
+          "reason": "This wording refers to the same assay described in the section."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "plasma",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S262"
+          ],
+          "evidence_text": "65 μL of plasma",
+          "reason": "The assay was performed on plasma."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "metabolite peak intensities across positive and negative electrospray ionization; tandem MS-MS confirmation for selected metabolites",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S265",
+            "S267",
+            "S278"
+          ],
+          "evidence_text": "using both positive and negative electrospray ionization. ... Metabolite confirmation was performed with tandem MS-MS experiments ... data were log 2 transformed and averaged over replicates",
+          "reason": "The text supports metabolite measurements in positive and negative ionization modes and tandem MS-MS confirmation for some metabolites."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Mass spectral data were collected with a 10-minute reversed phase gradient on a Thermo Q Exactive mass spectrometer (Thermo Fisher, San Diego, CA) set to record from mass-to-charge ratio (m/z) 85 to 2000.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S264"
+          ],
+          "evidence_text": "Mass spectral data were collected with a 10-minute reversed phase gradient on a Thermo Q Exactive mass spectrometer (Thermo Fisher, San Diego, CA) set to record from mass-to-charge ratio (m/z) 85 to 2000.",
+          "reason": "The quote appears verbatim and describes the assay being performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S264"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "nested PCR analysis",
+      "assay_name": "nested PCR analysis",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "nested PCR analysis",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S234"
+          ],
+          "evidence_text": "nested PCR analysis was carried out",
+          "reason": "The text explicitly states that nested PCR analysis was performed in this study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "whole blood DNA extract",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S228",
+            "S230",
+            "S234"
+          ],
+          "evidence_text": "The DNA was extracted with the QuickGene DNA Whole Blood kit... Typical yield was 4–8 μg of DNA from 200 μL blood... nested PCR analysis was carried out on 1/40 of the volume of PCR product",
+          "reason": "The nested PCR was performed on PCR product derived from DNA extracted from whole blood."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "secondary amplification of VZV ORF63 DNA for increased sensitivity and sequence verification",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S234"
+          ],
+          "evidence_text": "In order to increase the sensitivity to detect VZV DNA ORF63, and to verify the PCR products having the same DNA sequence of VZV ORF63, nested PCR analysis was carried out",
+          "reason": "The sentence directly states the purpose and target of the nested PCR."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "In order to increase the sensitivity to detect VZV DNA ORF63, and to verify the PCR products having the same DNA sequence of VZV ORF63, nested PCR analysis was carried out on 1/40 of the volume of PCR product that did not initially contain detectable VZV DNA.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S234"
+          ],
+          "evidence_text": "In order to increase the sensitivity to detect VZV DNA ORF63, and to verify the PCR products having the same DNA sequence of VZV ORF63, nested PCR analysis was carried out on 1/40 of the volume of PCR product that did not initially contain detectable VZV DNA.",
+          "reason": "The quote appears verbatim and shows the assay was performed here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S234"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "partial sequencing of amplicons",
+      "assay_name": "partial sequencing of amplicons",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "partial sequencing of amplicons",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S245"
+          ],
+          "evidence_text": "partial sequencing of amplicons",
+          "reason": "The text explicitly states this procedure was performed on random positive samples."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "PCR amplicons from whole blood DNA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S228",
+            "S230",
+            "S231",
+            "S245"
+          ],
+          "evidence_text": "The DNA was extracted with the QuickGene DNA Whole Blood kit per manufacturer’s recommendations ... Typical yield was 4–8 μg of DNA from 200 μL blood. PCR was carried out using 200 ng of extracted DNA ... The type of VZV DNA detected was identified on random positive samples by partial sequencing of amplicons",
+          "reason": "The sequencing was performed on amplicons generated from DNA extracted from blood."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "sequence at codon 958 of ORF62 to distinguish vaccine strain VZV from wild type varicella",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S245"
+          ],
+          "evidence_text": "partial sequencing of amplicons to include codon 958 of ORF62, which distinguishes vaccine strain VZV (V-Oka) from wild type varicella",
+          "reason": "The text directly states the sequencing targeted codon 958 of ORF62 to distinguish vaccine from wild type VZV."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "The type of VZV DNA detected was identified on random positive samples by partial sequencing of amplicons to include codon 958 of ORF62, which distinguishes vaccine strain VZV (V-Oka) from wild type varicella",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S245"
+          ],
+          "evidence_text": "The type of VZV DNA detected was identified on random positive samples by partial sequencing of amplicons to include codon 958 of ORF62, which distinguishes vaccine strain VZV (V-Oka) from wild type varicella",
+          "reason": "The quote appears verbatim and describes the assay being performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S245"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Cytokine Bead Array (CBA)",
+      "assay_name": "Cytokine Bead Array (CBA)",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Cytokine Bead Array (CBA)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S257"
+          ],
+          "evidence_text": "using Cytokine Bead Array (CBA) kits",
+          "reason": "The text explicitly states this assay was used in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "Cytokine Bead Array",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S257"
+          ],
+          "evidence_text": "Cytokine Bead Array (CBA)",
+          "reason": "This wording refers to the same assay named in the source."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "CBA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S257"
+          ],
+          "evidence_text": "Cytokine Bead Array (CBA)",
+          "reason": "The abbreviation is explicitly introduced for the same assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "cell-free culture supernatants",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S257"
+          ],
+          "evidence_text": "Cell-free culture supernatants collected were analyzed",
+          "reason": "The assay is explicitly performed on cell-free culture supernatants."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "cytokine and chemokine concentrations including IL-6, TNF, CXCL8, CCL2, CXCL9 and CXCL10",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S257"
+          ],
+          "evidence_text": "analyzed for cytokines and chemokines, including IL-6, TNF, CXCL8, CCL2, CXCL9 and CXCL10",
+          "reason": "The text explicitly lists these analytes as what the assay measured."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Cell-free culture supernatants collected were analyzed for cytokines and chemokines, including IL-6, TNF, CXCL8, CCL2, CXCL9 and CXCL10 using Cytokine Bead Array (CBA) kits (BD Biosciences, San Diego, US)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S257"
+          ],
+          "evidence_text": "Cell-free culture supernatants collected were analyzed for cytokines and chemokines, including IL-6, TNF, CXCL8, CCL2, CXCL9 and CXCL10 using Cytokine Bead Array (CBA) kits (BD Biosciences, San Diego, US)",
+          "reason": "The quote appears verbatim and directly states the assay was performed here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S257"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

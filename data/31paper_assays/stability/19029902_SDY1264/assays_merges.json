@@ -1,0 +1,42 @@
+{
+  "summary": {
+    "groups_merged": 0,
+    "entries_folded": 0,
+    "review_unfolded": [],
+    "kept_apart": [
+      "serum neutralization of viral infectivity assay — plaque reduction neutralization test"
+    ],
+    "judge_failed": []
+  },
+  "results": [],
+  "key_map": {
+    "Multiplex analysis": "cytometric bead array assay",
+    "Flow cytometric analysis": "flow cytometry assay",
+    "neutralizing antibodies by cytopathic effect": "serum neutralization of viral infectivity assay",
+    "plaque reduction neutralization test": "serum neutralization of viral infectivity assay — plaque reduction neutralization test",
+    "microarray": "transcription profiling by array assay",
+    "RT-PCR": "real time reverse-transcription polymerase chain reaction assay",
+    "Immunofluorescence": "immunocytochemistry",
+    "immunoblot analysis": "western blot assay",
+    "ELISA": "enzyme-linked immunosorbent assay"
+  },
+  "judge": [
+    {
+      "label": "serum neutralization of viral infectivity assay",
+      "members": [
+        "neutralizing antibodies by cytopathic effect",
+        "plaque reduction neutralization test"
+      ],
+      "groups": [
+        [
+          "neutralizing antibodies by cytopathic effect"
+        ],
+        [
+          "plaque reduction neutralization test"
+        ]
+      ],
+      "reason": "These are different measurements because the stated techniques differ (CPE-based virus neutralization assay vs PRNT), even though both measure YFV neutralizing antibodies in blood-derived specimens.",
+      "error": null
+    }
+  ]
+}

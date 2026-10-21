@@ -97,6 +97,16 @@ EXTRACTION_SEED = 7
 #: cannot become a supported sibling's name. An entry without it is unchanged.
 REVIEW_FIELD = "identity_review"
 
+#: Joins an OBI label to a paper wording in the key of an entry round 5 kept apart from a
+#: sibling on the same term: `flow cytometry assay — intracellular cytokine staining`. The
+#: judge (app.agent.assay_fold_judge) ruled the two different measurements, so the entry cannot
+#: take the bare label -- the first member of the group holds it -- and cannot take its wording
+#: alone either, because the key is also what says the entry mapped to a term. Defined here
+#: rather than in assay_merger because contract_warnings reads it and the merger imports from
+#: this module, not the reverse. An em dash with spaces: no OBI label and no paper wording in
+#: the corpus contains one, so the label is `key.split(KEY_SEP, 1)[0]` without ambiguity.
+KEY_SEP = " — "
+
 
 def paper_names(entry: dict) -> list[str]:
     """Every wording an entry records for itself, whatever schema it is in.
@@ -267,10 +277,12 @@ def contract_warnings(registry: dict, *, expect_sentence_ids: bool = True,
     evidence quote and sentence ids that downstream steps need.
 
     `obi` is the registry's OBI mapping (assays_OBI.json), keyed the same way. After round 5 an
-    entry's key is its OBI label rather than one of its wordings, and the mapping is what says
-    which label that is. Given it, the key check is exact; without it, an entry round 5 has
-    visibly re-keyed -- `name_in_paper` is a list on every canonical entry -- is given the benefit
-    of the doubt, because the alternative warned on 135 of the 147 entries in the corpus.
+    entry's key is its OBI label rather than one of its wordings -- or the label, KEY_SEP and a
+    wording, for an entry the fold judge kept apart from a sibling on the same term -- and the
+    mapping is what says which label that is. Given it, the key check is exact; without it, an
+    entry round 5 has visibly re-keyed -- `name_in_paper` is a list on every canonical entry --
+    is given the benefit of the doubt, because the alternative warned on 135 of the 147 entries
+    in the corpus.
     """
     warnings: list[str] = []
     for key, entry in registry.items():
@@ -290,11 +302,13 @@ def contract_warnings(registry: dict, *, expect_sentence_ids: bool = True,
             warnings.append(f"{key}: aliases is {entry.get('aliases')!r}, not a list")
         # Before round 5 the key is the assay's one wording. After it, the key is the OBI label
         # and the wordings are a list, so the check becomes "the key is one of the names, or it is
-        # the term the entry mapped to" -- a registry whose key is neither is the defect.
+        # the term the entry mapped to" -- a registry whose key is neither is the defect. An
+        # entry the fold judge kept apart carries the label before KEY_SEP, and is checked on
+        # that: the wording after it is the entry's own, not a second claim about the term.
         names = paper_names(entry)
         label = ((obi or {}).get(key) or {}).get("obi_label") if isinstance(obi, dict) else None
         canonical = isinstance(entry.get("name_in_paper"), list)
-        if key in names or key == label or (obi is None and canonical):
+        if key in names or key.split(KEY_SEP, 1)[0] == label or (obi is None and canonical):
             continue
         warnings.append(f"{key}: name_in_paper is {entry.get('name_in_paper')!r}, not the key"
                         + (f" and the key is not its OBI label {label!r}" if label else ""))

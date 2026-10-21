@@ -432,3 +432,15 @@ async def test_each_extraction_call_is_seeded_and_labelled(monkeypatch):
 
     assert client.kwargs["seed"] == EXTRACTION_SEED
     assert list(trace.as_json()["extract"]) == ["run2"]
+
+
+def test_an_entry_kept_apart_under_a_composite_key_is_not_warned_about():
+    """Round 5 keys an entry the fold judge split from its sibling `<label> — <wording>`; the
+    label is still what the mapping says, so the key is checked on the part before KEY_SEP."""
+    from app.agent.assay_extractor import KEY_SEP
+
+    key = "enzyme-linked immunosorbent assay" + KEY_SEP + "ELISA kits"
+    entry = {**_CANONICAL["enzyme-linked immunosorbent assay"], "name_in_paper": ["ELISA kits"]}
+    obi = {key: _OBI["enzyme-linked immunosorbent assay"]}
+
+    assert contract_warnings({key: entry}, obi=obi) == []

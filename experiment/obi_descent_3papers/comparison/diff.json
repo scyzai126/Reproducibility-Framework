@@ -1,0 +1,797 @@
+{
+  "totals": {
+    "embedding": {
+      "papers": 3,
+      "benchmark_total": 18,
+      "ours_total": 18,
+      "matched": 18,
+      "exact": 11,
+      "missed": 0,
+      "extra": 0,
+      "obi_exact_rate": 0.6111111111111112,
+      "obi_recall": 0.6111111111111112,
+      "status_counts": {
+        "MATCH": 11,
+        "MATCH_GRANULARITY": 2,
+        "MATCH_OBI_CONFLICT": 3,
+        "MATCH_OBI_UNMAPPED": 2,
+        "SPLIT": 0,
+        "MISSED": 0,
+        "EXTRA": 0,
+        "UNSUPPORTED_EXTRA": 0
+      },
+      "unresolved": 0,
+      "errors": 0,
+      "backoffs": 0,
+      "calls": 41
+    },
+    "descend": {
+      "papers": 3,
+      "benchmark_total": 18,
+      "ours_total": 18,
+      "matched": 17,
+      "exact": 10,
+      "missed": 1,
+      "extra": 1,
+      "obi_exact_rate": 0.5882352941176471,
+      "obi_recall": 0.5555555555555556,
+      "status_counts": {
+        "MATCH": 10,
+        "MATCH_GRANULARITY": 1,
+        "MATCH_OBI_CONFLICT": 4,
+        "MATCH_OBI_UNMAPPED": 2,
+        "SPLIT": 0,
+        "MISSED": 1,
+        "EXTRA": 1,
+        "UNSUPPORTED_EXTRA": 0
+      },
+      "unresolved": 0,
+      "errors": 0,
+      "backoffs": 0,
+      "calls": 37
+    },
+    "hybrid": {
+      "papers": 3,
+      "benchmark_total": 18,
+      "ours_total": 18,
+      "matched": 18,
+      "exact": 11,
+      "missed": 0,
+      "extra": 0,
+      "obi_exact_rate": 0.6111111111111112,
+      "obi_recall": 0.6111111111111112,
+      "status_counts": {
+        "MATCH": 11,
+        "MATCH_GRANULARITY": 2,
+        "MATCH_OBI_CONFLICT": 3,
+        "MATCH_OBI_UNMAPPED": 2,
+        "SPLIT": 0,
+        "MISSED": 0,
+        "EXTRA": 0,
+        "UNSUPPORTED_EXTRA": 0
+      },
+      "unresolved": 0,
+      "errors": 0,
+      "backoffs": 0,
+      "calls": 11
+    }
+  },
+  "changed": {
+    "descend": [
+      {
+        "registry": "19029902_SDY1264",
+        "key": "serum neutralization of viral infectivity assay",
+        "embedding": {
+          "obi_id": "OBI:0000872",
+          "obi_label": "serum neutralization of viral infectivity assay",
+          "resource": "embedding_llm_normalized"
+        },
+        "descend": {
+          "obi_id": "OBI:0003796",
+          "obi_label": "pathogen neutralization assay",
+          "resource": "descend_llm",
+          "obi_path": [
+            "OBI:0003796"
+          ],
+          "obi_calls": 2,
+          "obi_backoff": false,
+          "obi_granularity": "BROAD",
+          "levels": [
+            {
+              "node": "OBI:0000070",
+              "reply": "81",
+              "n_candidates": 96
+            },
+            {
+              "node": "OBI:0003796",
+              "reply": "stop broad",
+              "n_candidates": 1
+            }
+          ]
+        },
+        "curator": {
+          "obi_id": "OBI:0000872",
+          "obi_label": "serum neutralization of viral infectivity assay"
+        },
+        "agrees_with_curator": "embedding",
+        "descend_term_is_compositional": false,
+        "descend_term_outside_pruned_index": false,
+        "status": {
+          "embedding": "MATCH",
+          "descend": "EXTRA",
+          "hybrid": "MATCH_GRANULARITY"
+        }
+      },
+      {
+        "registry": "19029902_SDY1264",
+        "key": "transcription profiling by array assay",
+        "embedding": {
+          "obi_id": "OBI:0001463",
+          "obi_label": "transcription profiling by array assay",
+          "resource": "exact_original_llm"
+        },
+        "descend": {
+          "obi_id": "OBI:0001985",
+          "obi_label": "microarray assay",
+          "resource": "exact_original_llm",
+          "obi_path": [
+            "OBI:0001985"
+          ],
+          "obi_calls": 1,
+          "obi_backoff": false,
+          "obi_granularity": "BROAD",
+          "levels": [
+            {
+              "node": "OBI:0001985",
+              "reply": "stop broad",
+              "n_candidates": 5
+            }
+          ]
+        },
+        "curator": {
+          "obi_id": "OBI:0001463",
+          "obi_label": "transcription profiling by array assay"
+        },
+        "agrees_with_curator": "embedding",
+        "descend_term_is_compositional": false,
+        "descend_term_outside_pruned_index": false,
+        "status": {
+          "embedding": "MATCH",
+          "descend": "MATCH_OBI_CONFLICT",
+          "hybrid": "MATCH"
+        }
+      },
+      {
+        "registry": "24336226_SDY1260",
+        "key": "cytometric bead array assay",
+        "embedding": {
+          "obi_id": "OBI:0000920",
+          "obi_label": "cytometric bead array assay",
+          "resource": "embedding_llm"
+        },
+        "descend": {
+          "obi_id": "OBI:0003116",
+          "obi_label": "antibody detection by cytometric bead array assay",
+          "resource": "descend_llm",
+          "obi_path": [
+            "OBI:0000443",
+            "OBI:0000920",
+            "OBI:0003116"
+          ],
+          "obi_calls": 3,
+          "obi_backoff": false,
+          "obi_granularity": "EXACT",
+          "levels": [
+            {
+              "node": "OBI:0000070",
+              "reply": "8",
+              "n_candidates": 96
+            },
+            {
+              "node": "OBI:0000443",
+              "reply": "11",
+              "n_candidates": 79
+            },
+            {
+              "node": "OBI:0000920",
+              "reply": "2 exact",
+              "n_candidates": 3
+            }
+          ]
+        },
+        "curator": {
+          "obi_id": "OBI:0003116",
+          "obi_label": "antibody detection by cytometric bead array assay"
+        },
+        "agrees_with_curator": "descend",
+        "descend_term_is_compositional": false,
+        "descend_term_outside_pruned_index": false,
+        "status": {
+          "embedding": "MATCH_GRANULARITY",
+          "descend": "MATCH",
+          "hybrid": "MATCH"
+        }
+      },
+      {
+        "registry": "24336226_SDY1260",
+        "key": "bacterial neutralization assay",
+        "embedding": {
+          "obi_id": "OBI:0003797",
+          "obi_label": "bacterial neutralization assay",
+          "resource": "embedding_llm"
+        },
+        "descend": {
+          "obi_id": "OBI:0000743",
+          "obi_label": "immune response assay",
+          "resource": "descend_llm",
+          "obi_path": [
+            "OBI:0000743"
+          ],
+          "obi_calls": 2,
+          "obi_backoff": false,
+          "obi_granularity": "BROAD",
+          "levels": [
+            {
+              "node": "OBI:0000070",
+              "reply": "16",
+              "n_candidates": 96
+            },
+            {
+              "node": "OBI:0000743",
+              "reply": "stop broad",
+              "n_candidates": 1
+            }
+          ]
+        },
+        "curator": {
+          "obi_id": null,
+          "obi_label": null
+        },
+        "agrees_with_curator": "no curated term",
+        "descend_term_is_compositional": false,
+        "descend_term_outside_pruned_index": false,
+        "status": {
+          "embedding": "MATCH_OBI_UNMAPPED",
+          "descend": "MATCH_OBI_UNMAPPED",
+          "hybrid": "MATCH_OBI_UNMAPPED"
+        }
+      },
+      {
+        "registry": "28854372_SDY1373",
+        "key": "bulk RNA-seq assay",
+        "embedding": {
+          "obi_id": "OBI:0003090",
+          "obi_label": "bulk RNA-seq assay",
+          "resource": "embedding_llm"
+        },
+        "descend": {
+          "obi_id": "OBI:0000424",
+          "obi_label": "transcription profiling assay",
+          "resource": "descend_llm",
+          "obi_path": [
+            "OBI:0000424"
+          ],
+          "obi_calls": 2,
+          "obi_backoff": false,
+          "obi_granularity": "BROAD",
+          "levels": [
+            {
+              "node": "OBI:0000070",
+              "reply": "5",
+              "n_candidates": 96
+            },
+            {
+              "node": "OBI:0000424",
+              "reply": "stop broad",
+              "n_candidates": 12
+            }
+          ]
+        },
+        "curator": {
+          "obi_id": "OBI:0002571",
+          "obi_label": "polyA-selected RNA sequencing assay"
+        },
+        "agrees_with_curator": "neither",
+        "descend_term_is_compositional": false,
+        "descend_term_outside_pruned_index": false,
+        "status": {
+          "embedding": "MATCH_OBI_CONFLICT",
+          "descend": "MATCH_OBI_CONFLICT",
+          "hybrid": "MATCH_OBI_CONFLICT"
+        }
+      }
+    ],
+    "hybrid": [
+      {
+        "registry": "19029902_SDY1264",
+        "key": "serum neutralization of viral infectivity assay",
+        "embedding": {
+          "obi_id": "OBI:0000872",
+          "obi_label": "serum neutralization of viral infectivity assay",
+          "resource": "embedding_llm_normalized"
+        },
+        "hybrid": {
+          "obi_id": "OBI:0000865",
+          "obi_label": "96-well neutralization assay",
+          "resource": "embedding_llm_descended",
+          "obi_path": [
+            "OBI:0000872",
+            "OBI:0000865"
+          ],
+          "obi_calls": 1,
+          "obi_backoff": false,
+          "obi_granularity": "BROAD",
+          "levels": [
+            {
+              "node": "OBI:0000872",
+              "reply": "1 broad",
+              "n_candidates": 1
+            }
+          ]
+        },
+        "curator": {
+          "obi_id": "OBI:0000872",
+          "obi_label": "serum neutralization of viral infectivity assay"
+        },
+        "agrees_with_curator": "embedding",
+        "hybrid_term_is_compositional": false,
+        "hybrid_term_outside_pruned_index": false,
+        "status": {
+          "embedding": "MATCH",
+          "descend": "EXTRA",
+          "hybrid": "MATCH_GRANULARITY"
+        }
+      },
+      {
+        "registry": "24336226_SDY1260",
+        "key": "cytometric bead array assay",
+        "embedding": {
+          "obi_id": "OBI:0000920",
+          "obi_label": "cytometric bead array assay",
+          "resource": "embedding_llm"
+        },
+        "hybrid": {
+          "obi_id": "OBI:0003116",
+          "obi_label": "antibody detection by cytometric bead array assay",
+          "resource": "embedding_llm_descended",
+          "obi_path": [
+            "OBI:0000920",
+            "OBI:0003116"
+          ],
+          "obi_calls": 1,
+          "obi_backoff": false,
+          "obi_granularity": "EXACT",
+          "levels": [
+            {
+              "node": "OBI:0000920",
+              "reply": "2 exact",
+              "n_candidates": 3
+            }
+          ]
+        },
+        "curator": {
+          "obi_id": "OBI:0003116",
+          "obi_label": "antibody detection by cytometric bead array assay"
+        },
+        "agrees_with_curator": "hybrid",
+        "hybrid_term_is_compositional": false,
+        "hybrid_term_outside_pruned_index": false,
+        "status": {
+          "embedding": "MATCH_GRANULARITY",
+          "descend": "MATCH",
+          "hybrid": "MATCH"
+        }
+      }
+    ]
+  },
+  "per_entry": [
+    {
+      "registry": "19029902_SDY1264",
+      "key": "cytometric bead array assay",
+      "curator": {
+        "obi_id": "OBI:0000920",
+        "obi_label": "cytometric bead array assay"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000920",
+        "status": "MATCH"
+      },
+      "descend": {
+        "obi_id": "OBI:0000920",
+        "status": "MATCH",
+        "obi_calls": 3
+      },
+      "hybrid": {
+        "obi_id": "OBI:0000920",
+        "status": "MATCH",
+        "obi_calls": 1
+      }
+    },
+    {
+      "registry": "19029902_SDY1264",
+      "key": "flow cytometry assay",
+      "curator": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000916",
+        "status": "MATCH"
+      },
+      "descend": {
+        "obi_id": "OBI:0000916",
+        "status": "MATCH",
+        "obi_calls": 3
+      },
+      "hybrid": {
+        "obi_id": "OBI:0000916",
+        "status": "MATCH",
+        "obi_calls": 1
+      }
+    },
+    {
+      "registry": "19029902_SDY1264",
+      "key": "serum neutralization of viral infectivity assay",
+      "curator": {
+        "obi_id": "OBI:0000872",
+        "obi_label": "serum neutralization of viral infectivity assay"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000872",
+        "status": "MATCH"
+      },
+      "descend": {
+        "obi_id": "OBI:0003796",
+        "status": "EXTRA",
+        "obi_calls": 2
+      },
+      "hybrid": {
+        "obi_id": "OBI:0000865",
+        "status": "MATCH_GRANULARITY",
+        "obi_calls": 1
+      }
+    },
+    {
+      "registry": "19029902_SDY1264",
+      "key": "transcription profiling by array assay",
+      "curator": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay"
+      },
+      "embedding": {
+        "obi_id": "OBI:0001463",
+        "status": "MATCH"
+      },
+      "descend": {
+        "obi_id": "OBI:0001985",
+        "status": "MATCH_OBI_CONFLICT",
+        "obi_calls": 1
+      },
+      "hybrid": {
+        "obi_id": "OBI:0001463",
+        "status": "MATCH",
+        "obi_calls": 1
+      }
+    },
+    {
+      "registry": "19029902_SDY1264",
+      "key": "reverse transcription polymerase chain reaction assay",
+      "curator": {
+        "obi_id": "OBI:0000911",
+        "obi_label": "real time reverse-transcription polymerase chain reaction assay"
+      },
+      "embedding": {
+        "obi_id": "OBI:0001170",
+        "status": "MATCH_OBI_CONFLICT"
+      },
+      "descend": {
+        "obi_id": "OBI:0001170",
+        "status": "MATCH_OBI_CONFLICT",
+        "obi_calls": 2
+      },
+      "hybrid": {
+        "obi_id": "OBI:0001170",
+        "status": "MATCH_OBI_CONFLICT",
+        "obi_calls": 0
+      }
+    },
+    {
+      "registry": "19029902_SDY1264",
+      "key": "fluorescence microscopy assay",
+      "curator": {
+        "obi_id": null,
+        "obi_label": null
+      },
+      "embedding": {
+        "obi_id": "CHMO:0000087",
+        "status": "MATCH_OBI_UNMAPPED"
+      },
+      "descend": {
+        "obi_id": "CHMO:0000087",
+        "status": "MATCH_OBI_UNMAPPED",
+        "obi_calls": 5
+      },
+      "hybrid": {
+        "obi_id": "CHMO:0000087",
+        "status": "MATCH_OBI_UNMAPPED",
+        "obi_calls": 1
+      }
+    },
+    {
+      "registry": "19029902_SDY1264",
+      "key": "western blot assay",
+      "curator": {
+        "obi_id": "OBI:0001978",
+        "obi_label": "immunoblot assay"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000854",
+        "status": "MATCH_GRANULARITY"
+      },
+      "descend": {
+        "obi_id": "OBI:0000854",
+        "status": "MATCH_GRANULARITY",
+        "obi_calls": 4
+      },
+      "hybrid": {
+        "obi_id": "OBI:0000854",
+        "status": "MATCH_GRANULARITY",
+        "obi_calls": 1
+      }
+    },
+    {
+      "registry": "19029902_SDY1264",
+      "key": "enzyme-linked immunosorbent assay",
+      "curator": {
+        "obi_id": "OBI:0000661",
+        "obi_label": "enzyme-linked immunosorbent assay"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000661",
+        "status": "MATCH"
+      },
+      "descend": {
+        "obi_id": "OBI:0000661",
+        "status": "MATCH",
+        "obi_calls": null
+      },
+      "hybrid": {
+        "obi_id": "OBI:0000661",
+        "status": "MATCH",
+        "obi_calls": 0
+      }
+    },
+    {
+      "registry": "24336226_SDY1260",
+      "key": "transcription profiling by array assay",
+      "curator": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay"
+      },
+      "embedding": {
+        "obi_id": "OBI:0001463",
+        "status": "MATCH"
+      },
+      "descend": {
+        "obi_id": "OBI:0001463",
+        "status": "MATCH",
+        "obi_calls": 3
+      },
+      "hybrid": {
+        "obi_id": "OBI:0001463",
+        "status": "MATCH",
+        "obi_calls": 1
+      }
+    },
+    {
+      "registry": "24336226_SDY1260",
+      "key": "enzyme-linked immunosorbent assay",
+      "curator": {
+        "obi_id": "OBI:0000661",
+        "obi_label": "enzyme-linked immunosorbent assay"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000661",
+        "status": "MATCH"
+      },
+      "descend": {
+        "obi_id": "OBI:0000661",
+        "status": "MATCH",
+        "obi_calls": null
+      },
+      "hybrid": {
+        "obi_id": "OBI:0000661",
+        "status": "MATCH",
+        "obi_calls": 0
+      }
+    },
+    {
+      "registry": "24336226_SDY1260",
+      "key": "cytometric bead array assay",
+      "curator": {
+        "obi_id": "OBI:0003116",
+        "obi_label": "antibody detection by cytometric bead array assay"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000920",
+        "status": "MATCH_GRANULARITY"
+      },
+      "descend": {
+        "obi_id": "OBI:0003116",
+        "status": "MATCH",
+        "obi_calls": 3
+      },
+      "hybrid": {
+        "obi_id": "OBI:0003116",
+        "status": "MATCH",
+        "obi_calls": 1
+      }
+    },
+    {
+      "registry": "24336226_SDY1260",
+      "key": "bacterial neutralization assay",
+      "curator": {
+        "obi_id": null,
+        "obi_label": null
+      },
+      "embedding": {
+        "obi_id": "OBI:0003797",
+        "status": "MATCH_OBI_UNMAPPED"
+      },
+      "descend": {
+        "obi_id": "OBI:0000743",
+        "status": "MATCH_OBI_UNMAPPED",
+        "obi_calls": 2
+      },
+      "hybrid": {
+        "obi_id": "OBI:0003797",
+        "status": "MATCH_OBI_UNMAPPED",
+        "obi_calls": 0
+      }
+    },
+    {
+      "registry": "24336226_SDY1260",
+      "key": "flow cytometry assay",
+      "curator": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000916",
+        "status": "MATCH"
+      },
+      "descend": {
+        "obi_id": "OBI:0000916",
+        "status": "MATCH",
+        "obi_calls": 1
+      },
+      "hybrid": {
+        "obi_id": "OBI:0000916",
+        "status": "MATCH",
+        "obi_calls": 1
+      }
+    },
+    {
+      "registry": "24336226_SDY1260",
+      "key": "enzyme-linked immunospot assay",
+      "curator": {
+        "obi_id": "OBI:0600031",
+        "obi_label": "enzyme-linked immunospot assay"
+      },
+      "embedding": {
+        "obi_id": "OBI:0600031",
+        "status": "MATCH"
+      },
+      "descend": {
+        "obi_id": "OBI:0600031",
+        "status": "MATCH",
+        "obi_calls": null
+      },
+      "hybrid": {
+        "obi_id": "OBI:0600031",
+        "status": "MATCH",
+        "obi_calls": 0
+      }
+    },
+    {
+      "registry": "28854372_SDY1373",
+      "key": "flow cytometry assay",
+      "curator": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000916",
+        "status": "MATCH"
+      },
+      "descend": {
+        "obi_id": "OBI:0000916",
+        "status": "MATCH",
+        "obi_calls": 3
+      },
+      "hybrid": {
+        "obi_id": "OBI:0000916",
+        "status": "MATCH",
+        "obi_calls": 1
+      }
+    },
+    {
+      "registry": "28854372_SDY1373",
+      "key": "cytometric bead array assay",
+      "curator": {
+        "obi_id": "OBI:0002970",
+        "obi_label": "multiplex bead-based protein state immunoassay"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000920",
+        "status": "MATCH_OBI_CONFLICT"
+      },
+      "descend": {
+        "obi_id": "OBI:0000920",
+        "status": "MATCH_OBI_CONFLICT",
+        "obi_calls": 3
+      },
+      "hybrid": {
+        "obi_id": "OBI:0000920",
+        "status": "MATCH_OBI_CONFLICT",
+        "obi_calls": 1
+      }
+    },
+    {
+      "registry": "28854372_SDY1373",
+      "key": "bulk RNA-seq assay",
+      "curator": {
+        "obi_id": "OBI:0002571",
+        "obi_label": "polyA-selected RNA sequencing assay"
+      },
+      "embedding": {
+        "obi_id": "OBI:0003090",
+        "status": "MATCH_OBI_CONFLICT"
+      },
+      "descend": {
+        "obi_id": "OBI:0000424",
+        "status": "MATCH_OBI_CONFLICT",
+        "obi_calls": 2
+      },
+      "hybrid": {
+        "obi_id": "OBI:0003090",
+        "status": "MATCH_OBI_CONFLICT",
+        "obi_calls": 0
+      }
+    },
+    {
+      "registry": "28854372_SDY1373",
+      "key": "enzyme-linked immunosorbent assay",
+      "curator": {
+        "obi_id": "OBI:0000661",
+        "obi_label": "enzyme-linked immunosorbent assay"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000661",
+        "status": "MATCH"
+      },
+      "descend": {
+        "obi_id": "OBI:0000661",
+        "status": "MATCH",
+        "obi_calls": null
+      },
+      "hybrid": {
+        "obi_id": "OBI:0000661",
+        "status": "MATCH",
+        "obi_calls": 0
+      }
+    }
+  ],
+  "changed_counts": {
+    "descend": {
+      "embedding": 2,
+      "descend": 1,
+      "no curated term": 1,
+      "neither": 1
+    },
+    "hybrid": {
+      "embedding": 1,
+      "hybrid": 1
+    }
+  }
+}

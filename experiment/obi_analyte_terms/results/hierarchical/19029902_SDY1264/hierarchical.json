@@ -1,0 +1,137 @@
+[
+  {
+    "key": "cytometric bead array assay",
+    "name_in_paper": "Multiplex analysis",
+    "family": {
+      "id": "OBI:0000920",
+      "label": "cytometric bead array assay",
+      "granularity": "EXACT",
+      "resource": "embedding_llm"
+    },
+    "n_children": 0,
+    "gate": "NO CHILDREN",
+    "reply": null,
+    "specific": null,
+    "reason": null
+  },
+  {
+    "key": "flow cytometry assay",
+    "name_in_paper": "Flow cytometric analysis",
+    "family": {
+      "id": "OBI:0000916",
+      "label": "flow cytometry assay",
+      "granularity": "EXACT",
+      "resource": "embedding_llm"
+    },
+    "n_children": 48,
+    "gate": "JUDGED",
+    "reply": "keep | the assay measures surface-marker frequencies (CD86, CD38, HLA-DR on monocytes, dendritic cells, and T cells) ex vivo, not a single named analyte produced by T cells in an epitope-specific stimulation assay.",
+    "specific": null,
+    "reason": "the assay measures surface-marker frequencies (CD86, CD38, HLA-DR on monocytes, dendritic cells, and T cells) ex vivo, not a single named analyte produced by T cells in an epitope-specific stimulation assay."
+  },
+  {
+    "key": "serum neutralization of viral infectivity assay",
+    "name_in_paper": "neutralizing antibodies by cytopathic effect",
+    "family": {
+      "id": "OBI:0000872",
+      "label": "serum neutralization of viral infectivity assay",
+      "granularity": "EXACT",
+      "resource": "embedding_llm_normalized"
+    },
+    "n_children": 0,
+    "gate": "NO CHILDREN",
+    "reply": null,
+    "specific": null,
+    "reason": null
+  },
+  {
+    "key": "serum neutralization of viral infectivity assay — plaque reduction neutralization test",
+    "name_in_paper": "plaque reduction neutralization test",
+    "family": {
+      "id": "OBI:0000872",
+      "label": "serum neutralization of viral infectivity assay",
+      "granularity": "BROAD",
+      "resource": "embedding_llm"
+    },
+    "n_children": 0,
+    "gate": "NO CHILDREN",
+    "reply": null,
+    "specific": null,
+    "reason": null
+  },
+  {
+    "key": "transcription profiling by array assay",
+    "name_in_paper": "microarray",
+    "family": {
+      "id": "OBI:0001463",
+      "label": "transcription profiling by array assay",
+      "granularity": "EXACT",
+      "resource": "exact_original_llm"
+    },
+    "n_children": 0,
+    "gate": "NO CHILDREN",
+    "reply": null,
+    "specific": null,
+    "reason": null
+  },
+  {
+    "key": "real time reverse-transcription polymerase chain reaction assay",
+    "name_in_paper": "RT-PCR",
+    "family": {
+      "id": "OBI:0000911",
+      "label": "real time reverse-transcription polymerase chain reaction assay",
+      "granularity": "EXACT",
+      "resource": "embedding_llm"
+    },
+    "n_children": 0,
+    "gate": "NO CHILDREN",
+    "reply": null,
+    "specific": null,
+    "reason": null
+  },
+  {
+    "key": "immunocytochemistry",
+    "name_in_paper": "Immunofluorescence",
+    "family": {
+      "id": "OBI:0002174",
+      "label": "immunocytochemistry",
+      "granularity": "EXACT",
+      "resource": "embedding_llm"
+    },
+    "n_children": 0,
+    "gate": "NO CHILDREN",
+    "reply": null,
+    "specific": null,
+    "reason": null
+  },
+  {
+    "key": "western blot assay",
+    "name_in_paper": "immunoblot analysis",
+    "family": {
+      "id": "OBI:0000854",
+      "label": "western blot assay",
+      "granularity": "EXACT",
+      "resource": "embedding_llm"
+    },
+    "n_children": 0,
+    "gate": "NO CHILDREN",
+    "reply": null,
+    "specific": null,
+    "reason": null
+  },
+  {
+    "key": "enzyme-linked immunosorbent assay",
+    "name_in_paper": "ELISA",
+    "family": {
+      "id": "OBI:0000661",
+      "label": "enzyme-linked immunosorbent assay",
+      "granularity": null,
+      "resource": "exact_original"
+    },
+    "n_children": 53,
+    "gate": "JUDGED",
+    "reply": "keep | the assay measures C3a concentration in plasma, and no candidate child matches C3a or supports epitope-specific T-cell production/release.",
+    "specific": null,
+    "reason": "the assay measures C3a concentration in plasma, and no candidate child matches C3a or supports epitope-specific T-cell production/release."
+  }
+]

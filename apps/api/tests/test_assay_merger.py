@@ -2,20 +2,26 @@
 
 Extraction keys by the paper's wording, so one assay described under two Methods subheadings lands
 two entries. This round groups by the term round 4 resolved, keys each group by the term's label,
-and folds the group into one entry. Deterministic and free -- no model is involved, so the tests
-are about the shaping rules and nothing else.
+and folds what a judge confirms is one measurement. The judge itself is tested in
+test_assay_fold_judge.py; here it is a partition handed in, so the tests are about the shaping
+rules and nothing else -- deterministic given the partition.
 
-The rule is deliberately coarser than the paper's language: one OBI term covers every ELISA a
-paper runs. What keeps that from costing a measurement is that each folded write-up's specimen,
-readouts and quote move to `additional_evidence`, so most of what follows is about nothing being
-dropped on the way.
+A shared term makes entries candidates, not one assay: 12 of the 18 folds on the 31-paper run
+merged different measurements. What keeps a confirmed fold from costing a measurement is that
+each folded write-up's specimen, readouts and quote move to `additional_evidence`, so much of
+what follows is about nothing being dropped on the way.
 """
 
-from app.agent.assay_extractor import MERGED_FIELD, paper_names, trim_registry
+from app.agent.assay_extractor import KEY_SEP, MERGED_FIELD, paper_names, trim_registry
 from app.agent.assay_merger import (
+    JUDGE_FAILED,
+    KEPT_APART,
     build_merge_report,
     canonical_groups,
     canonicalize_registry,
+    fold_candidates,
+    judge_failed,
+    kept_apart,
     key_map,
     merge_entries,
     review_unfolded,
@@ -274,7 +280,7 @@ def test_the_report_counts_groups_and_entries():
     report = build_merge_report(folds)
 
     assert report["summary"] == {"groups_merged": 1, "entries_folded": 1,
-                                 "review_unfolded": []}
+                                 "review_unfolded": [], "kept_apart": [], "judge_failed": []}
     assert report["results"][0]["key"] == "enzyme-linked immunosorbent assay"
 
 # ── a shared technique never links ───────────────────────────────────────────
@@ -441,3 +447,143 @@ def test_the_report_lists_reviewed_entries_left_unfolded():
     assert review_unfolded(assays, obi) == ["ELISA kits"]
     report = build_merge_report([], key_map(assays, obi), review_unfolded(assays, obi))
     assert report["summary"]["review_unfolded"] == ["ELISA kits"]
+
+
+# ── the judge's partition decides what folds ─────────────────────────────────
+#
+# SDY1630's three flow entries, all mapped to one term. The stimulation assay has its own
+# stimulation step and measures IFN-γ, not surface markers; the rule folded it anyway.
+
+_PHENO = {**FLOW, "name_in_paper": "Flow cytometry analysis and cell sorting", "aliases": [],
+          "sample_type": None, "readouts": "cell surface marker expression on NK cells"}
+_HIGHDIM = {**FLOW, "name_in_paper": "High-dimensional parameter flow cytometric analysis of NK "
+                                     "cell subsets",
+            "aliases": [], "sample_type": None, "readouts": "high-parameter NK cell marker profiles"}
+_STIM = {**FLOW, "name_in_paper": "In vitro cytokine stimulation and functional assays of NK cells",
+         "aliases": [], "sample_type": "PBMCs",
+         "readouts": "intracellular IFN-γ production after cytokine stimulation",
+         "evidence": {"section": "In vitro cytokine stimulation", "sentence_ids": ["S52"],
+                      "quote": "PBMCs were stimulated with IL-12 and IL-18."}}
+_SDY1630 = {"pheno": _PHENO, "highdim": _HIGHDIM, "stim": _STIM}
+_SDY1630_OBI = {key: _FLOW_TERM for key in _SDY1630}
+_SPLIT = {"flow cytometry assay": [["pheno", "highdim"], ["stim"]]}
+_STIM_KEY = ("flow cytometry assay" + KEY_SEP
+             + "In vitro cytokine stimulation and functional assays of NK cells")
+
+
+def test_a_judged_split_keeps_the_stimulation_assay_out_of_the_phenotyping():
+    merged, obi_out, folds = canonicalize_registry(_SDY1630, _SDY1630_OBI, _SPLIT)
+
+    assert list(merged) == ["flow cytometry assay", _STIM_KEY]
+    assert merged["flow cytometry assay"]["name_in_paper"] == [_PHENO["name_in_paper"],
+                                                               _HIGHDIM["name_in_paper"]]
+    assert merged[_STIM_KEY]["name_in_paper"] == [_STIM["name_in_paper"]]
+    assert "additional_evidence" not in merged[_STIM_KEY]
+    # The one confirmed fold is the report's; the kept-apart entry is not a fold.
+    assert [(f["key"], f["folded"]) for f in folds] == [("flow cytometry assay", ["highdim"])]
+
+
+def test_a_split_off_entry_keeps_the_term_and_says_why_it_stands_alone():
+    """Kept apart is not unmapped: the entry is still a flow cytometry assay, under the same
+    OBI id, and the mapping says so under the composite key."""
+    groups = canonical_groups(_SDY1630, _SDY1630_OBI, _SPLIT)
+    _, obi_out, _ = canonicalize_registry(_SDY1630, _SDY1630_OBI, _SPLIT)
+
+    assert [(g["key"], g["members"], g["alone"]) for g in groups] == [
+        ("flow cytometry assay", ["pheno", "highdim"], None),
+        (_STIM_KEY, ["stim"], KEPT_APART)]
+    assert KEPT_APART == "kept_apart"
+    assert list(obi_out) == ["flow cytometry assay", _STIM_KEY]
+    assert obi_out[_STIM_KEY]["obi_id"] == obi_out["flow cytometry assay"]["obi_id"] == "OBI:0000916"
+    assert obi_out[_STIM_KEY]["obi_label"] == "flow cytometry assay"
+
+
+def test_no_partition_is_todays_fold_byte_for_byte():
+    """`None` and `{}` both mean "nobody judged": the term alone folds, exactly as before the
+    judge existed. This is the path every caller that asks no judge is on."""
+    before = canonicalize_registry(_SDY1630, _SDY1630_OBI)
+
+    assert canonicalize_registry(_SDY1630, _SDY1630_OBI, None) == before
+    assert canonicalize_registry(_SDY1630, _SDY1630_OBI, {}) == before
+    assert list(before[0]) == ["flow cytometry assay"]
+    assert canonical_groups(_SDY1630, _SDY1630_OBI, {}) == canonical_groups(_SDY1630, _SDY1630_OBI)
+
+
+def test_a_failed_judgement_keeps_every_member_apart_and_folds_nothing():
+    """A fold is irreversible and a split is not, so a group the judge could not rule on stays
+    as the extractor left it: singletons, the first still under the bare label."""
+    merged, obi_out, folds = canonicalize_registry(_SDY1630, _SDY1630_OBI,
+                                                   {"flow cytometry assay": None})
+
+    assert list(merged) == ["flow cytometry assay",
+                            "flow cytometry assay" + KEY_SEP + _HIGHDIM["name_in_paper"],
+                            _STIM_KEY]
+    assert folds == []
+    assert all(g["alone"] == JUDGE_FAILED == "judge_failed"
+               for g in canonical_groups(_SDY1630, _SDY1630_OBI, {"flow cytometry assay": None}))
+    assert all(v["obi_id"] == "OBI:0000916" for v in obi_out.values())
+
+
+def test_the_report_always_carries_both_lists():
+    report = build_merge_report([])
+
+    assert report["summary"]["kept_apart"] == []
+    assert report["summary"]["judge_failed"] == []
+    assert "judge" not in report
+
+
+def test_kept_apart_and_judge_failed_read_the_partition():
+    assert kept_apart(_SDY1630, _SDY1630_OBI, _SPLIT) == [_STIM_KEY]
+    assert judge_failed(_SDY1630, _SDY1630_OBI, _SPLIT) == []
+    assert kept_apart(_SDY1630, _SDY1630_OBI, {"flow cytometry assay": None}) == []
+    # Deduped: three singletons, one label.
+    assert judge_failed(_SDY1630, _SDY1630_OBI, {"flow cytometry assay": None}) == [
+        "flow cytometry assay"]
+    assert kept_apart(_SDY1630, _SDY1630_OBI) == judge_failed(_SDY1630, _SDY1630_OBI) == []
+
+
+def test_the_report_carries_the_judges_reason_when_given():
+    records = [{"label": "flow cytometry assay", "members": list(_SDY1630),
+                "groups": _SPLIT["flow cytometry assay"], "reason": "its own stimulation step",
+                "error": None}]
+
+    report = build_merge_report([], key_map(_SDY1630, _SDY1630_OBI, _SPLIT),
+                                review_unfolded(_SDY1630, _SDY1630_OBI, _SPLIT),
+                                kept_apart(_SDY1630, _SDY1630_OBI, _SPLIT),
+                                judge_failed(_SDY1630, _SDY1630_OBI, _SPLIT), records)
+
+    assert report["summary"]["kept_apart"] == [_STIM_KEY]
+    assert report["judge"] == records
+
+
+def test_the_key_map_sends_the_stimulation_member_to_the_composite_key():
+    assert key_map(_SDY1630, _SDY1630_OBI, _SPLIT) == {
+        "pheno": "flow cytometry assay", "highdim": "flow cytometry assay", "stim": _STIM_KEY}
+
+
+def test_colliding_first_wordings_are_suffixed_not_overwritten():
+    """Two kept-apart sets whose first members share a wording would land on one composite key;
+    the second is suffixed, as a stand-alone entry colliding with a label already was."""
+    assays = {"a": {**FLOW, "name_in_paper": "ICS"}, "b": {**FLOW, "name_in_paper": "ICS"},
+              "c": {**FLOW, "name_in_paper": "ICS"}}
+    obi = {k: _FLOW_TERM for k in assays}
+
+    merged, _, _ = canonicalize_registry(assays, obi,
+                                         {"flow cytometry assay": [["a"], ["b"], ["c"]]})
+
+    assert list(merged) == ["flow cytometry assay", "flow cytometry assay" + KEY_SEP + "ICS",
+                            "flow cytometry assay" + KEY_SEP + "ICS (2)"]
+
+
+def test_fold_candidates_are_the_multi_member_label_groups_only():
+    """Singletons have nothing to judge; a reviewed entry and an unmapped one stand alone before
+    any judge is asked, so neither is a candidate."""
+    assays = {**_SDY1630, "kits": {**ELISA_KITS, "identity_review": _REVIEW}, "sba": SBA,
+              "elisa": ELISA}
+    obi = {**_SDY1630_OBI, "kits": _ELISA_TERM, "sba": _NO_TERM, "elisa": _ELISA_TERM}
+
+    candidates = fold_candidates(assays, obi)
+
+    assert [(g["obi_label"], g["members"]) for g in candidates] == [
+        ("flow cytometry assay", ["pheno", "highdim", "stim"])]
+    assert fold_candidates({"pheno": _PHENO}, {"pheno": _FLOW_TERM}) == []

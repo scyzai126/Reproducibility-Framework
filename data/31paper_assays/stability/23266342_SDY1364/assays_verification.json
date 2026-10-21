@@ -1,0 +1,279 @@
+{
+  "summary": {
+    "total": 4,
+    "accept": 4,
+    "review": 0,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {}
+  },
+  "results": [
+    {
+      "assay_id": "ex vivo IFNγ ELISpot assay",
+      "assay_name": "ex vivo IFNγ ELISpot assay",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "ex vivo IFNγ ELISpot assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S30"
+          ],
+          "evidence_text": "## Ex vivo IFNγ ELISpot assay",
+          "reason": "This section heading identifies the assay performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "IFNγ ELISpot",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S27"
+          ],
+          "evidence_text": "ex vivo interferon-gamma (IFNγ) ELISpot assay",
+          "reason": "This wording refers to the same ELISpot measurement."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "ELISpot assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S31"
+          ],
+          "evidence_text": "IFNγ ELISpot assays were performed",
+          "reason": "This is a shorter wording for the same assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "freshly isolated peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S31"
+          ],
+          "evidence_text": "freshly isolated PBMC",
+          "reason": "The assay was explicitly performed on freshly isolated PBMC."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "interferon-gamma spot-forming cells per million peripheral blood mononuclear cells in response to Ag85A peptide pools and purified protein derivative",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S34",
+            "S37",
+            "S42"
+          ],
+          "evidence_text": "The antigens used were a single pool of Ag85A peptides, consisting of 66 15mers, overlapping by 10 amino acids, (2 μg/ml each peptide). Responses to purified protein derivative (PPD) from M. tb (SSI) were also assessed at each time-point (20 μg/ml). Results are reported as spot-forming cells (SFC) per million PBMC",
+          "reason": "The text states the assay measured IFNγ ELISpot responses reported as SFC per million PBMC to Ag85A peptides and PPD."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "IFNγ ELISpot assays were performed on freshly isolated PBMC from all 24 subjects at screening and at 1, 2, 4, 12 and 24 weeks post-vaccination, using the Human IFNγ ELISpot (ALP) kit (Mabtech).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S31"
+          ],
+          "evidence_text": "IFNγ ELISpot assays were performed on freshly isolated PBMC from all 24 subjects at screening and at 1, 2, 4, 12 and 24 weeks post-vaccination, using the Human IFNγ ELISpot (ALP) kit (Mabtech).",
+          "reason": "The quote appears verbatim and explicitly states the assay was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S31"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Surface and intracellular cytokine staining",
+      "assay_name": "Surface and intracellular cytokine staining",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Surface and intracellular cytokine staining",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S44"
+          ],
+          "evidence_text": "## Surface and intracellular cytokine staining",
+          "reason": "This Methods subsection names a procedure performed in the study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S44"
+          ],
+          "evidence_text": "Frozen PBMC were thawed",
+          "reason": "The assay was performed on PBMC."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "CD4+ and CD8+ T-cell intracellular IFNγ, IL2 and TNFα after stimulation",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S49",
+            "S54"
+          ],
+          "evidence_text": "stained intracellularly for 30 min in the cold with a mix of: CD3/AF700, IFNγ/PECy7 (eBioscience), CD8/APC-AF750, IL2/PE (Beckman Coulter) and TNFα/AF647 ... Only live CD3+ cells were included in the analysis of CD4+ and CD8+ cell cytokine responses.",
+          "reason": "The assay measured intracellular IFNγ, IL2 and TNFα in CD4+ and CD8+ T-cell responses after stimulation."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Stained cells were immediately acquired using an LSR-II (Becton Dickinson).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S51"
+          ],
+          "evidence_text": "Stained cells were immediately acquired using an LSR-II (Becton Dickinson).",
+          "reason": "The quoted sentence appears verbatim and shows the assay was performed here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S51"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "chemokine receptor surface staining",
+      "assay_name": "chemokine receptor surface staining",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "chemokine receptor surface staining",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S55"
+          ],
+          "evidence_text": "we measured the expression of chemokine receptors by surface staining PBMC",
+          "reason": "The text explicitly describes this surface-staining measurement being performed in the study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S55"
+          ],
+          "evidence_text": "surface staining PBMC",
+          "reason": "The assay is explicitly performed on PBMC."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "surface expression of CCR4, CCR6, CCR7 and CXCR3 on CD4+ T cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S102",
+            "S135"
+          ],
+          "evidence_text": "measurement of CD4+ T cell surface expression of chemokine receptors CCR4, CCR6, CCR7 and CXCR3",
+          "reason": "The results explicitly state these chemokine receptors were measured as surface expression on CD4+ T cells."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "To assess the effect of vaccination route on cell trafficking we measured the expression of chemokine receptors by surface staining PBMC for 30 min at 37 °C with CCR4/PERCPCY5.5, CCR6/AF647 (Biolegend), CCR7/PECY7 and CXCR3/PECY5 (BD Bioscience) (clones TG6/CCR4, TG7/CCR6, 3D12 and 1C6/CXCR3 respectively).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S55"
+          ],
+          "evidence_text": "To assess the effect of vaccination route on cell trafficking we measured the expression of chemokine receptors by surface staining PBMC for 30 min at 37 °C with CCR4/PERCPCY5.5, CCR6/AF647 (Biolegend), CCR7/PECY7 and CXCR3/PECY5 (BD Bioscience) (clones TG6/CCR4, TG7/CCR6, 3D12 and 1C6/CXCR3 respectively).",
+          "reason": "The quoted sentence appears verbatim and shows the assay was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S55"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "IgG enzyme linked immunosorbent assay (ELISA)",
+      "assay_name": "IgG enzyme linked immunosorbent assay (ELISA)",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "IgG enzyme linked immunosorbent assay (ELISA)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S56",
+            "S57"
+          ],
+          "evidence_text": "Anti-r85A IgG was measured in serum samples collected at week 0, 2, 4 and 24. ELISA plates",
+          "reason": "The methods section describes an ELISA performed in this study to measure anti-r85A IgG."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "ELISA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S57"
+          ],
+          "evidence_text": "ELISA plates",
+          "reason": "This wording refers to the same assay described in the ELISA methods subsection."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "serum",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S56"
+          ],
+          "evidence_text": "serum samples",
+          "reason": "The assay was explicitly performed on serum samples."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "anti-r85A IgG optical density values",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S56",
+            "S63"
+          ],
+          "evidence_text": "Anti-r85A IgG was measured... Background-subtracted optical density (OD) values are presented.",
+          "reason": "The assay measured anti-r85A IgG and reported background-subtracted OD values."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Anti-r85A IgG was measured in serum samples collected at week 0, 2, 4 and 24.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S56"
+          ],
+          "evidence_text": "Anti-r85A IgG was measured in serum samples collected at week 0, 2, 4 and 24.",
+          "reason": "The quote appears verbatim and states that the measurement was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S56"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

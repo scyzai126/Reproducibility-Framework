@@ -1,0 +1,91 @@
+{
+  "flow cytometry assay": {
+    "name_in_paper": [
+      "Relative quantitation of bacterial RNA by flow cytometry",
+      "Bacterial viability stain"
+    ],
+    "standard_technique_name": "flow cytometry",
+    "aliases": [
+      "Bacterial viability stain/Assessment of mycobacterial membrane integrity",
+      "Assessment of mycobacterial membrane integrity"
+    ],
+    "sample_type": "Bacille Calmette-Guérin vaccine formulations",
+    "readouts": "bacterial RNA dye fluorescence intensity; RNA-positive bacterial events",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Relative quantitation of bacterial RNA by flow cytometry",
+      "sentence_ids": [
+        "S21"
+      ],
+      "quote": "Mean fluorescence intensity of the RNA dye was assessed by flow cytometry (LSR Fortessa, BD Biosciences)."
+    },
+    "additional_evidence": [
+      {
+        "name_in_paper": "Bacterial viability stain",
+        "sample_type": "Bacille Calmette-Guérin vaccine formulations",
+        "readouts": "mycobacterial membrane integrity; proportion of intact versus damaged bacterial cells",
+        "generate_claim": true,
+        "source": "methods",
+        "evidence": {
+          "section": "Bacterial viability stain/Assessment of mycobacterial membrane integrity",
+          "sentence_ids": [
+            "S17"
+          ],
+          "quote": "Cell membrane integrity was assessed by flow cytometry (LSR Fortessa, BD Biosciences)."
+        }
+      }
+    ],
+    "obi_id": "OBI:0000916",
+    "obi_label": "flow cytometry assay",
+    "resource": "embedding_llm_normalized",
+    "obi_confidence": 0.786,
+    "obi_granularity": "BROAD"
+  },
+  "culturable microbial count assay": {
+    "name_in_paper": [
+      "culturable microbial count assay"
+    ],
+    "standard_technique_name": "colony forming assay",
+    "aliases": [],
+    "sample_type": "Bacille Calmette-Guérin vaccine formulations",
+    "readouts": "colony-forming units",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "BCG culture in vitro",
+      "sentence_ids": [
+        "S23"
+      ],
+      "quote": "Actual CFU counts were obtained by the culturable microbial count assay and used as a proxy for mycobacterial viability."
+    },
+    "obi_id": null,
+    "obi_label": null,
+    "resource": "unresolved",
+    "obi_confidence": null,
+    "obi_granularity": null
+  },
+  "cytometric bead array assay": {
+    "name_in_paper": [
+      "Whole blood assay and cytokine/chemokine measurements"
+    ],
+    "standard_technique_name": "luminex",
+    "aliases": [],
+    "sample_type": "whole blood",
+    "readouts": "concentrations of 41 cytokines and chemokines",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Whole blood assay and cytokine/chemokine measurements",
+      "sentence_ids": [
+        "S37"
+      ],
+      "quote": "A fluorescent bead-based multianalyte xMAP technology cytokine kit (Milliplex Human Cytokine/Chemokine Immunoassay, Millipore Corp, Billerica, MA, USA) was employed to measure the concentration of 41 cytokines/chemokines covering the spectrum of Th1, Th2, Th17, chemoattractants and hematopoietic factors."
+    },
+    "obi_id": "OBI:0000920",
+    "obi_label": "cytometric bead array assay",
+    "resource": "embedding_llm_normalized",
+    "obi_confidence": 0.5311,
+    "obi_granularity": "EXACT"
+  }
+}

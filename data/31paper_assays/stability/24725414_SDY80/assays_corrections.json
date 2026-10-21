@@ -1,0 +1,69 @@
+{
+  "summary": {
+    "assays": 4,
+    "fields_re_extracted": 2,
+    "actions": {
+      "REAFFIRMED": 2
+    },
+    "reported_not_corrected": 0
+  },
+  "results": [
+    {
+      "assay_id": "microarray",
+      "assay_name": "microarray",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Virus-neutralizing titers",
+      "assay_name": "Virus-neutralizing titers",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "ELISpot assays",
+      "assay_name": "ELISpot assays",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "flow cytometric analyses",
+      "assay_name": "flow cytometric analyses",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REAFFIRMED",
+          "previous": [
+            "15-color flow cytometric analyses",
+            "flow cytometry",
+            "multiple 15-color flow cytometric analyses"
+          ],
+          "blind_answer": [
+            "multiple 15-color flow cytometric analyses",
+            "flow cytometric analyses",
+            "flow cytometry",
+            "cell population frequencies",
+            "cell populations",
+            "PBMC subsets",
+            "subset frequencies"
+          ],
+          "dropped": []
+        },
+        {
+          "field": "evidence",
+          "action": "REAFFIRMED",
+          "previous": "Frozen PBMCs from all time points for a subject were stained for 5 panels (Figure S1A) ( Biancotto et al., 2011 ) using a common antibody mix on the same day.",
+          "blind_answer": {
+            "quote": "Frozen PBMCs from all time points for a subject were stained for 5 panels (Figure S1A) ( Biancotto et al., 2011 ) using a common antibody mix on the same day.",
+            "sentence_ids": []
+          }
+        }
+      ],
+      "reported_not_corrected": []
+    }
+  ]
+}
