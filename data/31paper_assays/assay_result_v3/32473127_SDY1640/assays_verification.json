@@ -1,0 +1,520 @@
+{
+  "summary": {
+    "total": 7,
+    "accept": 7,
+    "review": 0,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {}
+  },
+  "results": [
+    {
+      "assay_id": "SARS-CoV-2 RBD ELISA",
+      "assay_name": "SARS-CoV-2 RBD ELISA",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "SARS-CoV-2 RBD ELISA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S293"
+          ],
+          "evidence_text": "SARS-CoV-2 Receptor Binding Domain (RBD) protein",
+          "reason": "The Methods subsection explicitly describes an ELISA performed on SARS-CoV-2 RBD."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "ELISA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S295"
+          ],
+          "evidence_text": "ELISA protocol generally followed that of the Krammer lab",
+          "reason": "This wording refers to the same assay technique."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "plasma",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S297",
+            "S298"
+          ],
+          "evidence_text": "Plasma was then added to the plates and incubated for 1.5 hours at room temperature. Prior to plasma addition to the plates, plasma was heat inactivated at 56°C for 30-60 minutes.",
+          "reason": "The assay explicitly used plasma as the specimen."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "anti-RBD IgG, IgM, and IgA titers measured by absorbance at 450 nm",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S302",
+            "S303",
+            "S304",
+            "S308",
+            "S310"
+          ],
+          "evidence_text": "For IgG, anti-human IgG peroxidase antibody produced in goat (Sigma A6029) was used at a 1:5000 dilution. For IgM, anti-human IgM peroxidase antibody produced in goat (Sigma A6907) was used at a 1:10,000 dilution. For IgA, anti-human IgA horseradish peroxidase antibody (Hybridoma Reagent Laboratory HP6123-HRP) was used at a 1:1,000 dilution. Plates were read on a Spectramax Plate Reader at 450 nm using SoftMax Pro, and ODs were background subtracted. Positive control standard was run on each plate and was used to calculate titers (relative units) for all samples using non-linear regression interpolations, done to quantify the amount of anti-RBD IgG, anti-RBD IgM, and anti-RBD IgA present in each specimen.",
+          "reason": "The text explicitly states the assay quantified anti-RBD IgG, IgM, and IgA and read plates at 450 nm to calculate titers."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Plates were read on a Spectramax Plate Reader at 450 nm using SoftMax Pro, and ODs were background subtracted.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S308"
+          ],
+          "evidence_text": "Plates were read on a Spectramax Plate Reader at 450 nm using SoftMax Pro, and ODs were background subtracted.",
+          "reason": "The quote appears verbatim and is part of the assay procedure performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S308"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "OC43 and NL63 coronavirus RBD ELISA",
+      "assay_name": "OC43 and NL63 coronavirus RBD ELISA",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "OC43 and NL63 coronavirus RBD ELISA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S313"
+          ],
+          "evidence_text": "An in-house ELISA at UNC was performed by coating with recombinant S RBD antigens (SARS-CoV-2, SARS-CoV, OC43-CoV and NL63-CoV)",
+          "reason": "The text explicitly states that an ELISA using OC43-CoV and NL63-CoV RBD antigens was performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "ELISA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S313"
+          ],
+          "evidence_text": "An in-house ELISA at UNC was performed",
+          "reason": "This wording refers to the same assay technique."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "serum",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S314"
+          ],
+          "evidence_text": "we added 1:20 diluted serum",
+          "reason": "The assay explicitly used serum."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "antigen-specific antibodies to coronavirus RBD measured at 405 nm",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S313",
+            "S315"
+          ],
+          "evidence_text": "coating with recombinant S RBD antigens (SARS-CoV-2, SARS-CoV, OC43-CoV and NL63-CoV) ... Antigen-specific antibodies (Ig) were measured at 405 nm",
+          "reason": "The assay measured antigen-specific antibodies against RBD antigens with absorbance read at 405 nm."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Antigen-specific antibodies (Ig) were measured at 405 nm by using alkaline phosphatase conjugated goat anti-human IgG, IgA and IgM Abs and 4-Nitrophenyl phosphate.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S315"
+          ],
+          "evidence_text": "Antigen-specific antibodies (Ig) were measured at 405 nm by using alkaline phosphatase conjugated goat anti-human IgG, IgA and IgM Abs and 4-Nitrophenyl phosphate.",
+          "reason": "The quote appears verbatim and describes measurement performed in this assay."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S315"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Direct ex vivo PBMC immune cell phenotyping",
+      "assay_name": "Direct ex vivo PBMC immune cell phenotyping",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Direct ex vivo PBMC immune cell phenotyping",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S316",
+            "S322"
+          ],
+          "evidence_text": "For the surface stain, 1x10 6 PBMCs were resuspended in 100 μl PBS with 2% FBS (FACS buffer) and stained with antibody cocktail for 1 hour at 4°C in the dark. All samples were acquired on a BD FACSymphony cell sorter (BD Biosciences, San Diego, CA).",
+          "reason": "The section describes a performed flow-cytometric immune cell phenotyping procedure on PBMCs."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "Phenotyping Flow Cytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S54"
+          ],
+          "evidence_text": "Figure S2 Phenotyping Flow Cytometry, Related to Figure 1",
+          "reason": "This wording refers to the same PBMC phenotyping flow cytometry assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S316"
+          ],
+          "evidence_text": "For the surface stain, 1x10 6 PBMCs were resuspended",
+          "reason": "The assay was explicitly performed on PBMCs."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "frequencies and phenotypes of mononuclear leukocyte subsets",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S49",
+            "S41"
+          ],
+          "evidence_text": "We defined a 21-color flow cytometry panel of mononuclear leukocyte lineage and phenotypic markers ( Table S2 ) to broadly assess the immunological cellular profile of recovered COVID-19 patients. Frequency of (D) CD3 + total T cells, (E) CD4 + T cells (CD4 + CD3 + ), (F) CD8 + T cells (CD8 + CD3 + ), (G) CD19 + B cells (CD19 + CD3 – ), (H) CD3 – CD19 – cells, and (I) CD14 + CD16 – monocytes",
+          "reason": "The text states this assay assessed lineage/phenotypic markers and frequencies of leukocyte subsets."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "All samples were acquired on a BD FACSymphony cell sorter (BD Biosciences, San Diego, CA).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S322"
+          ],
+          "evidence_text": "All samples were acquired on a BD FACSymphony cell sorter (BD Biosciences, San Diego, CA).",
+          "reason": "The quote appears verbatim and documents that this assay was performed."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S322"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Activation induced cell marker assay",
+      "assay_name": "Activation induced cell marker assay",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Activation induced cell marker assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S325",
+            "S326"
+          ],
+          "evidence_text": "## Activation induced cell marker assay [S326] Cells were cultured for 24 hours in the presence of SARS-CoV-2 specific MPs",
+          "reason": "The Methods section explicitly names and describes this assay as performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "AIM assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S329",
+            "S330"
+          ],
+          "evidence_text": "AIM assay are listed in Table S4 . [S330] AIM assays shown in Figures 2 and 3 and AIM assays shown in Figure 6",
+          "reason": "The text uses AIM assays to refer to the activation induced cell marker assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S326"
+          ],
+          "evidence_text": "1x10 6 PBMC per well",
+          "reason": "The assay was performed on PBMCs."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "frequency of antigen-specific AIM+ CD4+ and CD8+ T cells after peptide stimulation",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S76",
+            "S117"
+          ],
+          "evidence_text": "SARS-CoV-2-specific CD4 + T cells measured as percentage of AIM + (OX40 + CD137 + ) CD4 + T cells after stimulation of PBMCs with peptide pools",
+          "reason": "The study reports this assay measuring percentages of AIM-positive antigen-specific CD4 and CD8 T cells after peptide stimulation."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Cells were cultured for 24 hours in the presence of SARS-CoV-2 specific MPs [1 μg/ml] or 10 μg/mL PHA in 96-wells U bottom plates at 1x10 6 PBMC per well.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S326"
+          ],
+          "evidence_text": "Cells were cultured for 24 hours in the presence of SARS-CoV-2 specific MPs [1 μg/ml] or 10 μg/mL PHA in 96-wells U bottom plates at 1x10 6 PBMC per well.",
+          "reason": "The quote appears verbatim and describes the assay procedure performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S326"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Intracellular cytokine staining assay",
+      "assay_name": "Intracellular cytokine staining assay",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Intracellular cytokine staining assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S332"
+          ],
+          "evidence_text": "For the intracellular cytokine staining, PBMC were cultured in the presence of SARS-CoV-2 specific MPs [1 μg/ml] for 9 hours.",
+          "reason": "The methods explicitly describe performing intracellular cytokine staining in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "ICS assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S336"
+          ],
+          "evidence_text": "Antibodies used in the ICS assay are listed in Table S5 .",
+          "reason": "This wording refers to the same intracellular cytokine staining measurement."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S332"
+          ],
+          "evidence_text": "PBMC were cultured",
+          "reason": "The assay was performed on PBMCs."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "intracellular IFNγ, granzyme B, TNFα, and IL-10 production in CD8+ T cells after peptide stimulation",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S332",
+            "S337"
+          ],
+          "evidence_text": "PBMC were cultured in the presence of SARS-CoV-2 specific MPs [1 μg/ml] for 9 hours.... identification of IFNγ, GzB, TNFα, or IL-10 production on the total population of CD8 + T cells",
+          "reason": "The methods state peptide stimulation and measurement of these markers in CD8+ T cells."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "The gates applied for the identification of IFNγ, GzB, TNFα, or IL-10 production on the total population of CD8 + T cells were defined according to the cells cultured with DMSO for each individual.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S337"
+          ],
+          "evidence_text": "The gates applied for the identification of IFNγ, GzB, TNFα, or IL-10 production on the total population of CD8 + T cells were defined according to the cells cultured with DMSO for each individual.",
+          "reason": "The quote appears verbatim and pertains to the assay performed here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S337"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Cytokine bead assays",
+      "assay_name": "Cytokine bead assays",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Cytokine bead assays",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S338",
+            "S339"
+          ],
+          "evidence_text": "Supernatants were collected from 24-hour stimulation cultures of the AIM assays and stored in 96 well plates at −20°C. Cytokines in cell culture supernatants of the same samples used for AIM were quantified using a human Th cytokine panel (13-plex) kit (LEGENDplex, Biolegend) according to the manufacturer’s instruction.",
+          "reason": "The Methods section explicitly describes this cytokine bead assay as performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "LEGENDplex",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S339"
+          ],
+          "evidence_text": "human Th cytokine panel (13-plex) kit (LEGENDplex, Biolegend)",
+          "reason": "LEGENDplex is the named assay kit used for this cytokine bead assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "cell culture supernatants",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S339"
+          ],
+          "evidence_text": "Cytokines in cell culture supernatants of the same samples used for AIM were quantified",
+          "reason": "The assay was explicitly performed on cell culture supernatants."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "13 cytokine concentrations in stimulation-culture supernatants; beads analyzed by flow cytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S339",
+            "S340",
+            "S342",
+            "S343"
+          ],
+          "evidence_text": "Cytokines in cell culture supernatants of the same samples used for AIM were quantified using a human Th cytokine panel (13-plex) kit (LEGENDplex, Biolegend) according to the manufacturer’s instruction. Supernatants were mixed with beads coated with capture antibodies specific for IL-5, IL-13, IL-2, IL-6, IL-9, IL-10, IFNγ, TNFα, IL-17a, IL-17F, IL-4, IL-21 and IL-22 and incubated on a 96 well filter plate for 2 hours. Beads were analyzed by flow cytometry using a FACS Canto cytometer. Analysis was performed using the LEGENDplex analysis software v8.0, which distinguishes between the 13 different analytes on basis of bead size and internal dye.",
+          "reason": "The text states that 13 cytokine analytes were quantified in supernatants and that the beads were analyzed by flow cytometry."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Cytokines in cell culture supernatants of the same samples used for AIM were quantified using a human Th cytokine panel (13-plex) kit (LEGENDplex, Biolegend) according to the manufacturer’s instruction.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S339"
+          ],
+          "evidence_text": "Cytokines in cell culture supernatants of the same samples used for AIM were quantified using a human Th cytokine panel (13-plex) kit (LEGENDplex, Biolegend) according to the manufacturer’s instruction.",
+          "reason": "The quote appears verbatim and directly states that the assay was performed here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S339"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "lateral flow assay",
+      "assay_name": "lateral flow assay",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "lateral flow assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S266"
+          ],
+          "evidence_text": "a colloidal-gold immunochromatographic ‘lateral flow’ assay",
+          "reason": "The text explicitly states this assay was run on convalescent donor samples in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "colloidal-gold immunochromatographic ‘lateral flow’ assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S266"
+          ],
+          "evidence_text": "colloidal-gold immunochromatographic ‘lateral flow’ assay",
+          "reason": "This wording directly names the same assay performed here."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "lateral flow serology",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S26"
+          ],
+          "evidence_text": "Verification of SARS-CoV-2 exposure was attempted both by lateral flow serology",
+          "reason": "This phrase refers to the same lateral flow measurement used for SARS-CoV-2 exposure verification."
+        },
+        {
+          "field_name": "aliases[2]",
+          "proposed_value": "lateral flow immunoglobulin (Ig) tests",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S27"
+          ],
+          "evidence_text": "Most patients were confirmed positive by lateral flow immunoglobulin (Ig) tests",
+          "reason": "This wording refers to the same lateral flow assay used on the study patients."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "whole blood",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S266"
+          ],
+          "evidence_text": "whole blood from convalescent donors was run on a colloidal-gold immunochromatographic ‘lateral flow’ assay",
+          "reason": "The specimen used for this assay is explicitly stated."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "IgM or IgG antibodies directed against recombinant SARS-CoV-2 antigen",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S267"
+          ],
+          "evidence_text": "This assay detects IgM or IgG antibodies directed against recombinant SARS-CoV-2 antigen",
+          "reason": "The assay's measured analytes are explicitly described."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Following enrollment, whole blood from convalescent donors was run on a colloidal-gold immunochromatographic ‘lateral flow’ assay to evaluate for prior exposure to SARS-CoV-2.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S266"
+          ],
+          "evidence_text": "Following enrollment, whole blood from convalescent donors was run on a colloidal-gold immunochromatographic ‘lateral flow’ assay to evaluate for prior exposure to SARS-CoV-2.",
+          "reason": "The quote appears verbatim and states the assay was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S266"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}
