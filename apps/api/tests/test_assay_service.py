@@ -949,3 +949,40 @@ async def test_a_lone_broad_mapping_is_repicked_without_any_sibling(paper, monke
     assert canon["calls"] == 1 and canon["folds_blocked"] == 0
     assert canon["repicked"] == {"flow cytometry": {"from": "flow cytometry assay",
                                                      "to": "cytokine assay"}}
+
+
+_XML_LONG = """<article><front><article-meta><article-title>A Paper</article-title></article-meta>
+</front><body><sec><title>Methods</title><p>Serum IgG titers were measured by ELISA using plates coated with purified antigen.</p></sec></body></article>"""
+
+
+@pytest.mark.asyncio
+async def test_two_runs_quoting_one_sentence_under_different_names_vote_together(paper,
+                                                                                 monkeypatch):
+    """Run 2 renamed the assay, shared no alias and wrote a different technique string, but
+    quoted the same Methods sentence. The sentence ids are derived per run before the vote,
+    so it joins the cluster instead of being a minority of one."""
+    monkeypatch.setattr(assay_service, "EXTRACTIONS", 3)
+    (assay_service.XML_ROOT / "SDY1_111.xml").write_text(_XML_LONG, encoding="utf-8")
+    elisa = {**_ENTRY, "name_in_paper": "ELISA", "standard_technique_name":
+             "enzyme-linked immunosorbent assay", "readouts": "IgG titers",
+             "evidence": {"section": "Methods", "quote": "Serum IgG titers were measured by ELISA"}}
+    renamed = {**elisa, "name_in_paper": "enzyme immunoassay", "standard_technique_name":
+               "immunoassay", "evidence": {"section": "Methods",
+                                           "quote": "using plates coated with purified antigen"}}
+    client = _ExtractionClient([json.dumps({"ELISA": elisa}),
+                                json.dumps({"enzyme immunoassay": renamed}),
+                                json.dumps({"ELISA": elisa})], _verification_body())
+
+    result = await assay_report("111", "SDY1", client)
+
+    assert result["minority"] == {}
+    [entry] = result["assays"].values()
+    assert entry["name_in_paper"] == ["ELISA"]
+    pre = json.loads((paper / "assays_precorrection.json").read_text())
+    # The vote delivered one entry carrying run 2's wording as an alias...
+    assert pre["ELISA"]["aliases"] == ["enzyme immunoassay"]
+    assert pre["ELISA"]["evidence"]["sentence_ids"] == ["S1"]
+    assert pre["ELISA"]["source"] == "methods"
+    # ...and round 2's string check then removed it, since the paper never writes it. The vote
+    # aligns entries; it does not get to invent wordings past the verifier.
+    assert entry["aliases"] == []

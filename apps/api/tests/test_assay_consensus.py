@@ -181,3 +181,72 @@ def test_a_dissenting_run_that_merged_two_assays_leaks_no_sibling_name_as_an_ali
         "CPE", "Assay for YFV neutralizing antibodies"]
     assert registry["plaque reduction neutralization test"]["aliases"] == ["PRNT"]
     assert minority == {}
+
+
+# ── free-text fields vote leniently; names, quotes and booleans do not ───────
+
+def test_a_rewording_that_contains_the_other_agrees_and_the_shorter_is_delivered():
+    """SDY1264's Multiplex analysis: "Plasma samples from CPTs" in one run, "plasma" in another.
+    Run 1's verbose spelling used to stand because nothing matched it exactly."""
+    runs = [{"ELISA": _entry("ELISA", sample="Plasma samples from CPTs")},
+            {"ELISA": _entry("ELISA", sample="plasma")},
+            {"ELISA": _entry("ELISA", sample="serum")}]
+
+    assert consensus(runs)[0]["ELISA"]["sample_type"] == "plasma"
+
+
+def test_rewordings_sharing_most_of_their_words_agree():
+    long_a = "percentages of CD86+ antigen-presenting cells and CD38+ HLA-DR+ CD8+ T cells"
+    long_b = "percentages of CD86+ antigen-presenting cells and percentage of CD38+ HLA-DR+ CD8+ CD3+ T cells"
+    runs = [{"flow": _entry("flow", readouts="frequencies of monocytes and dendritic cells")},
+            {"flow": _entry("flow", readouts=long_b)},
+            {"flow": _entry("flow", readouts=long_a)}]
+
+    assert consensus(runs)[0]["flow"]["readouts"] == long_a  # the shorter of the agreeing pair
+
+
+def test_an_exact_majority_still_beats_a_lenient_one():
+    """Two runs wrote "24 cytokine concentrations"; the third's shorter wording is contained in
+    it, but the words two runs actually wrote win over the core."""
+    runs = [{"Luminex": _entry("Luminex", readouts="cytokine concentrations")},
+            {"Luminex": _entry("Luminex", readouts="24 cytokine concentrations")},
+            {"Luminex": _entry("Luminex", readouts="24 cytokine concentrations")}]
+
+    assert consensus(runs)[0]["Luminex"]["readouts"] == "24 cytokine concentrations"
+
+
+def test_a_null_never_agrees_with_a_stated_value():
+    runs = [{"RT-PCR": _entry("RT-PCR", sample="PBMC")},
+            {"RT-PCR": _entry("RT-PCR", sample=None)},
+            {"RT-PCR": _entry("RT-PCR", sample="whole blood")}]
+
+    assert consensus(runs)[0]["RT-PCR"]["sample_type"] == "PBMC"  # nothing agrees: run 1
+
+
+def test_the_quote_is_never_voted_leniently():
+    """A quote must be verbatim; the lenient rule could deliver a span only one run copied."""
+    runs = [{"ELISA": _entry("ELISA", quote="Serum IgG was measured by ELISA on day 28.")},
+            {"ELISA": _entry("ELISA", quote="Serum IgG was measured by ELISA.")},
+            {"ELISA": _entry("ELISA", quote="Titers were read at 450 nm.")}]
+
+    assert consensus(runs)[0]["ELISA"]["evidence"]["quote"] == \
+        "Serum IgG was measured by ELISA on day 28."
+
+
+def test_the_technique_votes_leniently_too():
+    runs = [{"FACS": _entry("FACS", technique="flow cytometry assay")},
+            {"FACS": _entry("FACS", technique="flow cytometry")},
+            {"FACS": _entry("FACS", technique="mass cytometry")}]
+
+    assert consensus(runs)[0]["FACS"]["standard_technique_name"] == "flow cytometry"
+
+
+def test_entries_quoting_the_same_sentence_align_on_sentence_ids_alone():
+    """Different name, no shared alias, different technique string: only the ids link them."""
+    a = _entry("ELISA", technique="enzyme-linked immunosorbent assay",
+               quote="Serum IgG was measured", ids=("S1",))
+    b = _entry("enzyme immunoassay", technique="immunoassay", quote="measured by ELISA",
+               ids=("S1",))
+
+    assert same_entry("ELISA", a, "enzyme immunoassay", b)
+    assert not same_entry("ELISA", a, "enzyme immunoassay", {**b, "evidence": {**b["evidence"], "sentence_ids": ["S2"]}})

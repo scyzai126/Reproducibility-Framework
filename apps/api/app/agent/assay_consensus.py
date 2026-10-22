@@ -18,8 +18,16 @@ out. Three extractions cost two more calls and turn that into a vote.
   * an aligned cluster present in a majority of runs becomes an entry; one present in fewer goes
     to `minority`, keyed by its own name, with the runs it appeared in -- reported as a MINORITY
     line rather than silently shipped or dropped;
-  * each field takes the value at least two runs agree on (case and whitespace folded), else the
-    first run's; aliases are the union, since an alias the paper does not contain is caught for
+  * each field takes the value at least two runs agree on. For `generate_claim`, the name and
+    the quote that is exact (case and whitespace folded), in its first spelling. For the three
+    free-text fields -- `standard_technique_name`, `sample_type`, `readouts` -- an exact majority
+    wins first; failing that, two rewordings of one value agree when one contains the other or
+    they share most of their words (token Jaccard >= 0.5), and the shortest value in the
+    agreeing group is delivered -- the core both runs asserted, without the words only one of
+    them added. Only when nothing agrees does the first run's value stand. Measured over the
+    stability runs, exact comparison alone let `readouts` and `sample_type` fall to run 1 on
+    about half the stable clusters ("plasma" against "Plasma samples from CPTs"), which is a
+    vote in name only. Aliases are the union, since an alias the paper does not contain is caught for
     free by round 2's string check, while one voted away is never recovered -- except a wording
     that is another delivered entry's name. A dissenting run that merged two assays lists the
     other one's name among its aliases, and the vote must not carry that over: SDY1264's CPE
@@ -91,6 +99,58 @@ def _vote(values: list[object]) -> object:
     return first_spelling[best[0]] if best[1] >= 2 else values[0]
 
 
+_STOP_WORDS = frozenset("and of the in by for with on to a an from".split())
+
+
+def _tokens(value: object) -> frozenset[str]:
+    """The content words of a free-text value: lowercase, alphanumeric runs of three or more
+    characters, a handful of function words dropped."""
+    words = re.findall(r"[a-z0-9]+", _fold(value))
+    return frozenset(w for w in words if len(w) >= 3 and w not in _STOP_WORDS)
+
+
+def _agree(a: object, b: object) -> bool:
+    """Whether two free-text values are rewordings of one answer.
+
+    Equal after folding, or one contains the other ("plasma" / "Plasma samples from CPTs"),
+    or they share most of their content words. A null agrees only with a null: a stated value
+    and a gap are two different answers, and two stated ones must still outvote a gap.
+    """
+    fa, fb = _fold(a), _fold(b)
+    if not fa or not fb:
+        return fa == fb
+    if fa == fb or fa in fb or fb in fa:
+        return True
+    ta, tb = _tokens(a), _tokens(b)
+    shared = ta & tb
+    union = ta | tb
+    return len(shared) >= 2 and len(shared) / len(union) >= 0.5
+
+
+def _vote_text(values: list[object]) -> object:
+    """A free-text field's vote: exact majority first, then lenient agreement, then run 1.
+
+    Step 2 scores each value by how many of the others it agrees with and delivers the best;
+    among equals the shortest wins, then run order. The shortest is the right tie-break because
+    an agreeing pair differ only in words one run added, and "say nothing rather than say
+    what's typical" is the extraction's own rule for those.
+    """
+    counts: dict[str, int] = {}
+    for value in values:
+        counts[_fold(value)] = counts.get(_fold(value), 0) + 1
+    if max(counts.values(), default=0) >= 2:
+        return _vote(values)
+    best, best_key = values[0] if values else None, None
+    for i, value in enumerate(values):
+        score = sum(1 for j, other in enumerate(values) if j != i and _agree(value, other))
+        if score == 0:
+            continue
+        key = (-score, len(_fold(value)), i)
+        if best_key is None or key < best_key:
+            best, best_key = value, key
+    return best
+
+
 def _voted_name(members: list[dict]) -> str:
     return str(_vote([paper_names(m)[0] if paper_names(m) else "" for m in members]) or
                (paper_names(members[0]) or [""])[0])
@@ -130,10 +190,10 @@ def _merge(members: list[dict], guarded: frozenset[int] = frozenset(),
 
     entry = {
         "name_in_paper": name,
-        "standard_technique_name": _vote([m.get("standard_technique_name") for m in members]),
+        "standard_technique_name": _vote_text([m.get("standard_technique_name") for m in members]),
         "aliases": aliases,
-        "sample_type": _vote([m.get("sample_type") for m in members]),
-        "readouts": _vote([m.get("readouts") for m in members]),
+        "sample_type": _vote_text([m.get("sample_type") for m in members]),
+        "readouts": _vote_text([m.get("readouts") for m in members]),
         "generate_claim": claim if isinstance(claim, bool) else None,
         "source": None,
         "evidence": {"section": (winner.get("evidence") or {}).get("section"),

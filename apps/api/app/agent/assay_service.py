@@ -944,13 +944,20 @@ async def _run_rounds(pubmed_id, study_accession, client, verify, correct, model
             f"{len(failed)} of {n_extract} extraction call(s) failed: "
             + "; ".join(f"{label}: {error}" for label, error in failed.items()))
     runs = [registry if registry is not None else {} for _, registry, _ in outcomes]
+    # Each run's quotes are located before the vote, so two runs that quoted the same sentence
+    # under different names align through the sentence ids (assay_consensus.same_entry). The
+    # vote used to run on registries whose ids clean_entry had just emptied, which left that
+    # link dead. XML only: a PDF text layer has no markers to locate against.
+    if kind == "xml":
+        for registry in runs:
+            derive_evidence_fields(registry, source_text)
     assays, minority = consensus(runs)
 
     # `source` and `evidence.sentence_ids` are not asked of the model; they are worked out here
-    # from each quote, before the registry is written or judged. Free, and exact where the quote
-    # is: locate_sentence_ids finds the sentences it came from and the section map says whether
-    # they are Methods. On a PDF there are no markers, so both stay empty -- the same contract
-    # that route already had.
+    # from the voted quote, once more, before the registry is written or judged. Free, and
+    # exact where the quote is: locate_sentence_ids finds the sentences it came from and the
+    # section map says whether they are Methods. On a PDF there are no markers, so both stay
+    # empty -- the same contract that route already had.
     derive_evidence_fields(assays, source_text)
 
     # Every file the previous run left now describes a different extraction. They go before
