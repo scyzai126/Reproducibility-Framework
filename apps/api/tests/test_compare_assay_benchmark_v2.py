@@ -213,7 +213,48 @@ def test_two_agent_entries_on_one_benchmark_term_are_a_split(mod, array_obi, tmp
 
     result = _compare(mod, array_obi, tmp_path, bench, ours)
 
-    assert [r["status"] for r in result["rows"]] == ["SPLIT"]
+    # The one-to-one pair keeps its own status; the second entry rides along as an annotation.
+    [row] = result["rows"]
+    assert row["status"] == "MATCH"
+    assert [o["key"] for o in row["ours"]] == ["flow cytometry assay", "flow cytometry assay (2)"]
+    assert row["also_on_term"] == ["flow cytometry assay (2)"]
+    assert result["metrics"]["exact"] == 1 and result["metrics"]["split"] == 1
+    assert result["metrics"]["extra"] == 0
+
+
+def test_two_curated_rows_on_one_term_pair_one_to_one_by_name(mod, array_obi, tmp_path):
+    """SDY1640 / SDY1655: the curator lists flow cytometry and ICS, both on `flow cytometry
+    assay`; round 5 kept the agent's two apart on that term. Name decides, both MATCH, no split."""
+    bench = {"flow cytometry": _entry("flow cytometry", "OBI:0000916"),
+             "intracellular cytokine staining": _entry("intracellular cytokine staining", "OBI:0000916")}
+    ours = {"flow cytometry assay": _ours("flow cytometry", "OBI:0000916", "flow cytometry assay"),
+            "flow cytometry assay (2)": _ours("intracellular cytokine staining", "OBI:0000916",
+                                              "flow cytometry assay")}
+
+    result = _compare(mod, array_obi, tmp_path, bench, ours)
+
+    assert _pairs(result) == {"flow cytometry": ("MATCH", ["flow cytometry assay"]),
+                              "intracellular cytokine staining": ("MATCH", ["flow cytometry assay (2)"])}
+    assert result["metrics"]["split"] == 0 and result["metrics"]["exact"] == 2
+
+
+def test_registry_dir_can_be_pointed_at_another_result_version(mod, tmp_path):
+    other = tmp_path / "assay_result_v3"
+    (other / "32473127_SDY1640").mkdir(parents=True)
+    (other / "32473127_SDY1640" / "assays_benchmark.json").write_text("{}")
+    bench_dir = tmp_path / "bench"
+    bench_dir.mkdir()
+    (bench_dir / "SDY1640_assays.json").write_text("{}")
+
+    mod.use_registry_dir(other)
+    pairs, skipped = mod.discover_pairs(None, bench_dir)
+
+    assert mod.OUT_DIR == other.resolve() / "comparison"
+    assert [p["registry"].name for p in pairs] == ["32473127_SDY1640"] and skipped == []
+
+
+def test_the_default_benchmark_is_the_current_curated_version(mod):
+    assert mod.BENCHMARK_DIR.name == "benchmark_assay_v5"
 
 
 def test_a_shared_sentence_pairs_entries_whose_terms_are_unrelated(mod, array_obi, tmp_path):

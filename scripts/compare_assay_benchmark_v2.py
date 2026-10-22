@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
-"""Compare the agent's assay registries against the v2 curated benchmark and render a review page.
+"""Compare the agent's assay registries against the curated benchmark, one-to-one, and render a
+review page. **This is the comparison to use**; `compare_assay_benchmark.py` is the matching
+library it imports from (tiers, statuses, the OBI graph) and its own report lets a curator row
+claim every agent entry on a tier, which is what this script was written to stop.
 
-`data/benchmark_assay/Benchmark_assays_v2/` is the curators' second pass. Two things differ from the
-v1 run that `compare_assay_benchmark.py` scores:
+`data/benchmark_assay/benchmark_assay_v5/` is the curators' latest pass (--benchmark-dir for
+another). Three things differ from the shared algorithm:
 
 * Several assay names a curator listed separately map to the same OBI term (four flow-cytometry
   panels in SDY1289, two ELISPOTs in SDY984). Each is matched on its own first; a row left without
@@ -12,17 +15,25 @@ v1 run that `compare_assay_benchmark.py` scores:
   generic term (CFSE and ADCC under `flow cytometry assay`) that the agent kept separate.
 * Some files are hand-edited JSON with trailing commas or an unclosed brace. They are repaired in
   memory, never on disk, and every repair is reported.
+* Each side is used once. A curator row is paired with one agent entry (a shared name outranks
+  a shared term), and its status is that pair's. Further agent entries left on the same OBI
+  term -- round 5 keeps a BROAD mapping apart from its sibling, so SDY1289 delivers three flow
+  cytometry entries against the curator's one -- are listed on the row as `also_on_term` and
+  counted as `split`, an annotation; they no longer turn a one-to-one MATCH into a SPLIT status.
 
 Matching tiers and statuses are the ones in `compare_assay_benchmark.py`, imported, not copied.
 No LLM call.
 
 Usage:
-    ./.venv/bin/python scripts/compare_assay_benchmark_v2.py [--only SDY1289]
+    python3 scripts/compare_assay_benchmark_v2.py [--only SDY1289] [--benchmark-dir DIR]
+                                                  [--registry-dir DIR] [--out-stem NAME]
 
-Reads  : data/benchmark_assay/Benchmark_assays_v2/*.json
+Reads  : data/benchmark_assay/benchmark_assay_v5/*.json
          data/31paper_assays/assay_result_v1/<pmid>_<SDY>/{assays_benchmark,assays_OBI}.json
          data/OBI/obi.obo
-Writes : data/benchmark_assay/comparison/benchmark_v2_vs_agent.{json,html}
+Writes : data/benchmark_assay/comparison/<out-stem>.{json,html} -- or, with --registry-dir,
+         <registry-dir>/comparison/<out-stem>.{json,html}, so another result version's report
+         never overwrites the default's.
 """
 
 from __future__ import annotations
@@ -49,10 +60,17 @@ from compare_assay_benchmark import (  # noqa: E402
 )
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-BENCHMARK_DIR = REPO_ROOT / "data" / "benchmark_assay" / "Benchmark_assays_v2"
+BENCHMARK_DIR = REPO_ROOT / "data" / "benchmark_assay" / "benchmark_assay_v5"
 REGISTRY_DIR = REPO_ROOT / "data" / "31paper_assays" / "assay_result_v1"
 OUT_DIR = REPO_ROOT / "data" / "benchmark_assay" / "comparison"
-OUT_STEM = "benchmark_v2_vs_agent"
+OUT_STEM = "benchmark_vs_agent"
+
+
+def use_registry_dir(path: Path) -> None:
+    """Score another result version. Its report goes beside it, under `<path>/comparison/`."""
+    global REGISTRY_DIR, OUT_DIR
+    REGISTRY_DIR = Path(path).resolve()
+    OUT_DIR = REGISTRY_DIR / "comparison"
 
 #: v2 filenames drop the PMID for the two studies that hold two papers each. Which paper each file
 #: covers was read off its content against the v1 files, which did carry the PMID.
@@ -406,11 +424,18 @@ def compare_paper(bench: dict, registry: Path, obi: ObiGraph) -> dict:
             continue
         tier, detail, signals = pairs[0][1]
         matches = [our_rows[k] for k, _ in pairs]
-        status, reason = status_for(tier, detail, bench_id, matches, obi)
+        # The status is the one-to-one pair's. The other agent entries on the same term ride
+        # along as `also_on_term`: the evidence still renders, the count is reported, and the
+        # pair's own MATCH is no longer hidden behind a SPLIT status.
+        status, reason = status_for(tier, detail, bench_id, matches[:1], obi)
         if tier in _EXTRA_TIER_REASON:
             reason = f"{_EXTRA_TIER_REASON[tier]}; {reason}"
+        also = [k for k, _ in pairs[1:]]
+        if also:
+            reason += f"; {len(also)} more agent entr{'y' if len(also) == 1 else 'ies'} on this term: " \
+                      + ", ".join(f"`{k}`" for k in also)
         rows.append({"status": status, "tier": tier, "signals": signals, "reason": reason,
-                     "benchmark": bench_side, "ours": matches})
+                     "benchmark": bench_side, "ours": matches, "also_on_term": also})
 
     for key, row in our_rows.items():
         if key not in used:
@@ -427,6 +452,8 @@ def compare_paper(bench: dict, registry: Path, obi: ObiGraph) -> dict:
             "exact": sum(r["status"] == "MATCH" for r in rows),
             "missed": sum(r["status"] == "MISSED" for r in rows),
             "extra": sum(r["status"] == "EXTRA" for r in rows),
+            # Rows paired one-to-one that have further agent entries on the same term.
+            "split": sum(bool(r.get("also_on_term")) for r in rows),
             "recall": round(matched / len(bench), 4) if bench else None,
         },
         "merged_groups": [v["merged_from"] for v in bench.values() if len(v["merged_from"]) > 1],
@@ -441,7 +468,7 @@ STATUS_INFO = {
     "MATCH_GRANULARITY": ("gran", "Same assay; one OBI term is a parent/child of the other"),
     "MATCH_OBI_CONFLICT": ("conflict", "Paired by name, but the two sides chose different OBI terms"),
     "MATCH_OBI_UNMAPPED": ("unmapped", "Paired by name, but one side has no OBI term"),
-    "SPLIT": ("split", "One benchmark assay matched several agent entries"),
+    "SPLIT": ("split", "Paired one-to-one, and more agent entries sit on the same term (an annotation on a MATCH row)"),
     "MISSED": ("missed", "In the benchmark, not found by the agent"),
     "EXTRA": ("extra", "Found by the agent, not in the benchmark"),
 }
@@ -526,6 +553,9 @@ def overall_totals(papers: list[dict]) -> dict:
         "status_counts": {s: sum(r["status"] == s for p in papers for r in p["rows"])
                           for s in STATUS_INFO},
     }
+    # SPLIT is an annotation now, not a status: the column counts rows that carry one.
+    totals["status_counts"]["SPLIT"] = sum(bool(r.get("also_on_term")) for p in papers for r in p["rows"])
+    totals["split"] = totals["status_counts"]["SPLIT"]
     totals["recall"] = ratio(totals["matched"], totals["benchmark_total"])
     totals["precision"] = ratio(totals["matched"], totals["ours_total"])
     totals["f1"] = ratio(2 * totals["precision"] * totals["recall"],
@@ -548,6 +578,7 @@ def render_html(report: dict) -> str:
         if p["repair"]:
             flags.append('<span class="tag warn" title="%s">JSON repaired</span>' % e(p["repair"]))
         counts = {s: sum(r["status"] == s for r in p["rows"]) for s in STATUS_INFO}
+        counts["SPLIT"] = sum(bool(r.get("also_on_term")) for r in p["rows"])
         summary_rows.append(
             f'<tr onclick="location.hash=\'{anchor}\'"><td><a href="#{anchor}">{p["study"]}</a></td><td>{p["pmid"]}</td>'
             f'<td class="n">{m["benchmark_total"]}</td><td class="n">{m["ours_total"]}</td>'
@@ -560,7 +591,9 @@ def render_html(report: dict) -> str:
             body.append(
                 f'<tr class="row" data-status="{r["status"]}">'
                 f'<td><span class="badge {cls}">{r["status"].replace("_", " ")}</span>'
-                f'<div class="sub">{e(r["tier"] or "")}</div>'
+                + (f'<div class="sub"><span class="tag">split {len(r["also_on_term"])}</span></div>'
+                   if r.get("also_on_term") else "")
+                + f'<div class="sub">{e(r["tier"] or "")}</div>'
                 + (f'<div class="sub">{e("; ".join(r.get("signals") or []))}</div>' if r.get("signals") else "")
                 + '</td>'
                 f'<td>{_bench_cell(r["benchmark"])}</td><td>{_ours_cell(r["ours"])}</td>'
@@ -586,6 +619,7 @@ def render_html(report: dict) -> str:
     # A report written before status_counts existed is recounted from its rows.
     status_counts = t.get("status_counts") or {
         s: sum(r["status"] == s for p in report["papers"] for r in p["rows"]) for s in STATUS_INFO}
+    status_counts["SPLIT"] = sum(bool(r.get("also_on_term")) for p in report["papers"] for r in p["rows"])
     total_row = (
         f'<tr><td>Total</td><td>{t["papers"]} papers</td>'
         f'<td class="n">{t["benchmark_total"]}</td><td class="n">{t["ours_total"]}</td>'
@@ -703,7 +737,13 @@ def main() -> None:
     parser.add_argument("--benchmark-dir", type=Path, default=BENCHMARK_DIR,
                         help="Folder of curated benchmark JSON files (default: Benchmark_assays_v2)")
     parser.add_argument("--out-stem", default=OUT_STEM, help="Output filename stem under comparison/")
+    parser.add_argument("--registry-dir", type=Path, default=None,
+                        help="Score the registries under this folder instead of the default "
+                             f"({REGISTRY_DIR.relative_to(REPO_ROOT)}); the report then goes to "
+                             "<registry-dir>/comparison/")
     args = parser.parse_args()
+    if args.registry_dir is not None:
+        use_registry_dir(args.registry_dir)
     benchmark_dir = args.benchmark_dir.resolve()
     out_stem = args.out_stem
 
@@ -755,11 +795,13 @@ def main() -> None:
             print(f"  MERGED   {p['study']}: {' + '.join(g)}")
     print(f"benchmark {totals['benchmark_total']} (raw {totals['benchmark_raw']}) | agent {totals['ours_total']} | "
           f"matched {totals['matched']} (exact {totals['exact']}) | missed {totals['missed']} | "
-          f"extra {totals['extra']} | recall {totals['recall']:.1%}")
+          f"extra {totals['extra']} | split {totals['split']} | recall {totals['recall']:.1%} | "
+          f"precision {totals['precision']:.1%} | obi exact {totals['obi_exact_rate']:.1%}")
     for p in papers:
         m = p["metrics"]
         print(f"  {p['study']:<8} {p['pmid']}  bench {m['benchmark_total']:>2} agent {m['ours_total']:>2} "
-              f"matched {m['matched']:>2} missed {m['missed']} extra {m['extra']:>2}")
+              f"matched {m['matched']:>2} exact {m['exact']:>2} missed {m['missed']} extra {m['extra']:>2}"
+              + (f" split {m['split']}" if m['split'] else ""))
     print(f"\nwrote {(OUT_DIR / out_stem).relative_to(REPO_ROOT)}.{{json,html}}")
 
 
