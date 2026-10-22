@@ -44,6 +44,8 @@ def stub_obi(monkeypatch):
                 for key, entry in assays.items()}
 
     monkeypatch.setattr(assay_service, "enrich_assays_with_obi", _fake)
+    # Round 5's re-pick is a real call too; by default it finds nothing and changes nothing.
+    monkeypatch.setattr(assay_service, "repick_blocked", lambda assays, obi, model: (obi, {}))
     return _fake
 
 
@@ -864,5 +866,61 @@ async def test_a_broad_mapping_is_delivered_apart_and_reported(paper, monkeypatc
     stored = json.loads((paper / "assays_merges.json").read_text())
     assert stored["blocked"] == [{
         "member": "flow cytometry for DC activation", "kept_apart_from": "flow cytometry assay",
-        "obi_id": "OBI:0000916", "obi_label": "flow cytometry assay", "reason": "mapping is BROAD"}]
+        "anchor": "flow cytometry", "obi_id": "OBI:0000916", "obi_label": "flow cytometry assay",
+        "reason": "mapping is BROAD"}]
     assert stored["key_map"]["flow cytometry for DC activation"] == "flow cytometry assay (2)"
+
+
+def _broad_panel_mapper(assays, *_args, **_kwargs):
+    return {key: {**entry, "obi_id": "OBI:0000916", "obi_label": "flow cytometry assay",
+                  "resource": "embedding_llm", "obi_confidence": 0.5,
+                  "obi_granularity": "BROAD" if "DC activation" in key else "EXACT"}
+            for key, entry in assays.items()}
+
+
+@pytest.mark.asyncio
+async def test_a_broad_mapping_that_blocked_a_fold_is_repicked(paper, monkeypatch):
+    """Round 5's one paid step: the panel's BROAD term is asked once more and gets its own."""
+    monkeypatch.setattr(assay_service, "EXTRACTIONS", 3)
+    monkeypatch.setattr(assay_service, "enrich_assays_with_obi", _broad_panel_mapper)
+
+    def fake_repick(assays, obi, model):
+        out = {k: dict(v) for k, v in obi.items()}
+        key = "flow cytometry for DC activation"
+        out[key].update(obi_id="OBI:0002766", obi_label="cytokine assay",
+                        resource="embedding_llm_repick", obi_confidence=0.6,
+                        obi_granularity="EXACT",
+                        obi_repicked_from={"obi_id": "OBI:0000916",
+                                           "obi_label": "flow cytometry assay"})
+        return out, {key: {"from": "flow cytometry assay", "to": "cytokine assay"}}
+    monkeypatch.setattr(assay_service, "repick_blocked", fake_repick)
+    client = _ExtractionClient([_dc_panel_body(True), _dc_panel_body(True), _dc_panel_body(False)],
+                               _verification_body())
+
+    result = await assay_report("111", "SDY1", client)
+
+    assert list(result["assays"]) == ["flow cytometry assay", "cytokine assay"]
+    canon = result["rounds"]["canonicalize"]
+    assert canon["calls"] == 1 and canon["folds_blocked"] == 0 and canon["entries_folded"] == 0
+    assert canon["repicked"] == {"flow cytometry for DC activation": {
+        "from": "flow cytometry assay", "to": "cytokine assay"}}
+    # 3 extractions + 2 verifications + round 4 billed at 2 per "embedding_llm" entry + 1 re-pick
+    assert result["meta"]["llm_calls"] == 3 + 2 + 4 + 1
+    obi = json.loads((paper / "assays_OBI.json").read_text())
+    assert obi["cytokine assay"]["obi_repicked_from"]["obi_id"] == "OBI:0000916"
+    assert json.loads((paper / "assays_merges.json").read_text())["blocked"] == []
+
+
+@pytest.mark.asyncio
+async def test_a_repick_that_finds_nothing_leaves_the_entry_apart(paper, monkeypatch):
+    monkeypatch.setattr(assay_service, "EXTRACTIONS", 3)
+    monkeypatch.setattr(assay_service, "enrich_assays_with_obi", _broad_panel_mapper)
+    monkeypatch.setattr(assay_service, "repick_blocked", lambda assays, obi, model: (obi, {}))
+    client = _ExtractionClient([_dc_panel_body(True), _dc_panel_body(True), _dc_panel_body(False)],
+                               _verification_body())
+
+    result = await assay_report("111", "SDY1", client)
+
+    assert list(result["assays"]) == ["flow cytometry assay", "flow cytometry assay (2)"]
+    canon = result["rounds"]["canonicalize"]
+    assert canon["calls"] == 0 and canon["folds_blocked"] == 1 and "repicked" not in canon

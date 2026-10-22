@@ -161,8 +161,8 @@ def blocked_folds(groups: list[dict]) -> list[dict]:
     """The folds the rules refused, as report records: which entry was kept apart from which
     group, on which term, and why. Empty when every shared term folded."""
     return [{"member": refusal["member"], "kept_apart_from": group["key"],
-             "obi_id": group["obi_id"], "obi_label": group["obi_label"],
-             "reason": refusal["reason"]}
+             "anchor": group["anchor"], "obi_id": group["obi_id"],
+             "obi_label": group["obi_label"], "reason": refusal["reason"]}
             for group in groups for refusal in group.get("refused") or []]
 
 

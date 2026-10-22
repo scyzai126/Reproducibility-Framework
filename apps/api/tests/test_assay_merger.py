@@ -429,7 +429,7 @@ def test_a_broad_mapping_is_kept_apart_and_reported():
     assert [(g["key"], g["members"]) for g in groups] == [
         ("flow cytometry assay", ["phenotyping"]), ("flow cytometry assay (2)", ["ICS"])]
     assert blocked_folds(groups) == [{
-        "member": "ICS", "kept_apart_from": "flow cytometry assay",
+        "member": "ICS", "kept_apart_from": "flow cytometry assay", "anchor": "phenotyping",
         "obi_id": "OBI:0000916", "obi_label": "flow cytometry assay", "reason": "mapping is BROAD"}]
     merged, obi_out, folds = canonicalize_registry(assays, obi)
     assert folds == []
@@ -495,7 +495,7 @@ def test_a_refused_entry_lands_on_its_own_key_in_the_key_map():
 
 
 def test_the_report_carries_the_blocked_folds():
-    blocked = [{"member": "ICS", "kept_apart_from": "flow cytometry assay",
+    blocked = [{"member": "ICS", "kept_apart_from": "flow cytometry assay", "anchor": "phenotyping",
                 "obi_id": "OBI:0000916", "obi_label": "flow cytometry assay",
                 "reason": "mapping is BROAD"}]
 

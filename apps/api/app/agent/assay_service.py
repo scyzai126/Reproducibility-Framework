@@ -64,7 +64,12 @@ from app.agent.assay_merger import (
     canonicalize_registry,
     key_map,
 )
-from app.agent.assay_obi_mapper import _build_lookup, _index_children, enrich_assays_with_obi
+from app.agent.assay_obi_mapper import (
+    _build_lookup,
+    _index_children,
+    enrich_assays_with_obi,
+    repick_blocked,
+)
 from app.agent.assay_registry import CORPUS_ROOT, RESULT_VERSION, normalize_assay_name
 from app.agent.assay_verifier import (
     build_report,
@@ -590,14 +595,22 @@ def estimate_run(pubmed_id: str, study_accession: str) -> dict:
         groups = canonical_groups(mapped_input, obi_by_entry)
         folds = [{"key": g["key"], "members": g["members"]}
                  for g in groups if len(g["members"]) > 1]
-        rounds.append({"round": 5, "name": "canonicalize", "calls": 0, "exact": True,
-                       "basis": "deterministic", "entries": len(mapped_input),
-                       "groups": len(groups), "folds": folds})
+        # The one paid step of round 5: a BROAD mapping that blocked a fold is asked once more.
+        # Sized from the last run's mapping like rounds 2-4, so "~".
+        repicks = sorted({key for r in blocked_folds(groups) if r["reason"] == "mapping is BROAD"
+                          for key in (r["member"], r.get("anchor"))
+                          if key and str((obi_by_entry or {}).get(key, {}).get("obi_granularity")
+                                         or "").upper() == "BROAD"})
+        rounds.append({"round": 5, "name": "canonicalize", "calls": len(repicks),
+                       "exact": not repicks, "basis": "last_run" if repicks else "deterministic",
+                       "entries": len(mapped_input), "groups": len(groups), "folds": folds,
+                       "repicks": repicks})
     else:
         # Free whether or not it can be sized, so the call count is 0 rather than None: "we
         # cannot tell you what this costs" would be a lie about a round that costs nothing.
         rounds.append({"round": 5, "name": "canonicalize", "calls": 0, "exact": True,
-                       "basis": "deterministic", "entries": None, "groups": None, "folds": []})
+                       "basis": "deterministic", "entries": None, "groups": None, "folds": [],
+                       "repicks": []})
 
     known = all(r["calls"] is not None for r in rounds)
     return {
@@ -1101,15 +1114,29 @@ async def _run_rounds(pubmed_id, study_accession, client, verify, correct, model
     else:
         _emit(round="canonicalize", state="running", total=len(assays))
         groups = canonical_groups(assays, obi)
+        # A BROAD mapping that kept a fold from happening is the one case this round pays
+        # for: the picker is asked once more, with the category term removed, whether a
+        # candidate names the function. A hit gives the entry a term of its own; "none" leaves
+        # it apart under the category, reported. to_thread like round 4: the client blocks.
+        repicked: dict = {}
+        if any(r["reason"] == "mapping is BROAD" for r in blocked_folds(groups)):
+            obi, repicked = await asyncio.to_thread(repick_blocked, assays, obi, model)
+            trace.write(raw_path)
+            if repicked:
+                groups = canonical_groups(assays, obi)
         keys = key_map(assays, obi)
         assays, obi, folds = canonicalize_registry(assays, obi)
         # The folds the rules refused are findings too: two entries on one term kept apart
         # because one mapping was BROAD or the techniques differ.
         merges = build_merge_report(folds, keys, blocked_folds(groups))
-        rounds["canonicalize"] = {"source": "canonical", "calls": 0,
+        n_repick = len(repicked)
+        calls += n_repick
+        rounds["canonicalize"] = {"source": "canonical", "calls": n_repick,
                                   "assays": len(assays), **merges["summary"]}
-        _emit(round="canonicalize", state="done", calls=0, assays=len(assays),
-              **merges["summary"])
+        if repicked:
+            rounds["canonicalize"]["repicked"] = repicked
+        _emit(round="canonicalize", state="done", calls=n_repick, assays=len(assays),
+              repicked=n_repick, **merges["summary"])
         merges_path.write_text(
             json.dumps(merges, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 

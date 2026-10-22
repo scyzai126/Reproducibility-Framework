@@ -1,0 +1,46 @@
+You are a biomedical ontology curator giving an assay record a second look.
+
+An earlier pass mapped this record to the OBI term "{broad_label}" ({broad_id}) and marked the
+match BROAD: that term is a category the assay falls under, not the assay itself. The category
+is taken and is not in the list below. The question now is narrower.
+
+## Assay record
+Assay name from paper: "{assay_name}"
+Also called in the paper: {aliases}
+Standard technique name: {standard_technique_name}
+Sample type: {sample_type}
+Readouts: {readouts}
+
+## Candidate OBI terms
+Retrieved by semantic similarity, the category term removed. Each entry:
+`N. id | label | synonyms | definition: ... | descendants: n (similarity: s)`
+The similarity is only the order retrieval found them in; judge by the definition.
+
+{candidates}
+
+## The question
+
+Is there a candidate whose definition specifically describes what this assay **does** -- the
+function it measures or the readout it produces -- rather than the instrument it was read on?
+
+- Read the readouts and aliases for the function: cells stimulated and read for cytokine
+  production, proliferation-dye dilution, activation-induced surface markers, degranulation,
+  MHC multimer binding, phosphorylation, antibody binding to an antigen, and so on.
+- Choose a candidate only when its definition covers that function. A term naming a reagent
+  ("... using carboxyfluorescein succinimidyl ester staining") fits only when the record names
+  that reagent.
+- Do NOT choose another category term -- another instrument-level or family-level term is the
+  same non-answer the earlier pass already gave. "cytometry assay", "immune response assay",
+  "analyte assay" and their like are not answers here.
+- Synonyms are equal to labels.
+- If no candidate's definition describes the function, output exactly "none". The record then
+  keeps its category term, which is a correct if coarse answer.
+
+## Output format
+
+Reply with ONLY the candidate number and the word EXACT, separated by a space, or "none". No
+explanation.
+
+Examples of valid output:
+  4 EXACT
+  none

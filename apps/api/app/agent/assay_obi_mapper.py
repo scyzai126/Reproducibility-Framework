@@ -276,7 +276,10 @@ def _load_embeddings() -> tuple[list[dict], np.ndarray]:
     return entries, matrix
 
 
+@lru_cache(maxsize=256)
 def _embed_query(text: str) -> np.ndarray:
+    """One embedding call per distinct query string per process. The vector for a string never
+    changes, and round 5's re-pick retrieves on the same queries round 4 just did."""
     client = OpenAI(api_key=settings.OPENAI_API_KEY)
     resp = client.embeddings.create(model=EMBED_MODEL, input=[text])
     vec = np.array(resp.data[0].embedding, dtype=np.float64)
@@ -593,6 +596,154 @@ def _embedding_llm_match(
         if picked.get("obi_id") not in {c["id"] for c in raw_pool}:
             picked["resource"] = "embedding_llm_normalized"
     return picked
+
+
+# ── Re-pick: a BROAD mapping that blocked a fold gets one narrower question ─────
+
+#: What a re-pick is attributed to. Paid, so not in assay_service._OBI_FREE_RESOURCES.
+REPICK_RESOURCE = "embedding_llm_repick"
+
+
+def build_repick_prompt(
+    assay_name: str,
+    candidates: list[dict[str, Any]],
+    broad_id: str,
+    broad_label: str,
+    sample_type: str = "",
+    readouts: str = "",
+    aliases: list[str] | None = None,
+    standard_technique_name: str = "",
+) -> str:
+    """Render repick_obi_assay.txt for one re-pick. The category term is named in the prompt and
+    must already be absent from `candidates`."""
+    named = [a.strip() for a in (aliases or []) if isinstance(a, str) and a.strip()]
+    return (
+        (_PROMPTS_DIR / "repick_obi_assay.txt").read_text(encoding="utf-8")
+        .replace("{assay_name}", assay_name)
+        .replace("{aliases}", ", ".join(named) if named else "none given")
+        .replace("{standard_technique_name}", standard_technique_name.strip() or "not given")
+        .replace("{broad_id}", broad_id)
+        .replace("{broad_label}", broad_label)
+        .replace("{candidates}",
+                 "\n".join(_candidate_line(i + 1, c) for i, c in enumerate(candidates)))
+        .replace("{sample_type}", sample_type.strip() or "not specified")
+        .replace("{readouts}", readouts.strip() or "not specified")
+    )
+
+
+def repick_obi(
+    key: str,
+    entry: dict[str, Any],
+    mapping: dict[str, Any],
+    terms_path: Path = _OBI_TERMS_PATH,
+    model: str = settings.OPENAI_MODEL,
+) -> dict[str, Any] | None:
+    """One more pick for an entry whose mapping the picker marked BROAD, with that term removed.
+
+    Round 5 refuses to fold a BROAD mapping onto a sibling on the same term, because BROAD means
+    the term is a category the assay falls under. This asks the narrower question the first
+    pick did not: with the category gone, does any candidate's definition describe the function?
+    SDY1640's intracellular cytokine staining had `cytokine assay` fourth in its own candidate
+    list and was still answered `flow cytometry assay, BROAD`.
+
+    Retrieval is the one round 4 did (paper wording + technique, merged), so with `_embed_query`
+    cached this costs one chat call. The reply and candidates are kept in the trace under
+    `repick`, beside the first pick's `obi` record rather than over it. Returns None when the
+    picker still finds nothing, or when there is nothing to retrieve with.
+    """
+    broad_id = str(mapping.get("obi_id") or "")
+    broad_label = str(mapping.get("obi_label") or "")
+    if not broad_id or not _EMBEDDINGS_PATH.exists():
+        return None
+    names = paper_names(entry)
+    name = (names[0] if names else key).strip()
+    raw_aliases = entry.get("aliases")
+    aliases = names[1:] + [a for a in (raw_aliases if isinstance(raw_aliases, list) else [])
+                           if isinstance(a, str)]
+    technique = str(entry.get("standard_technique_name") or "").strip()
+    sample_type = str(entry.get("sample_type") or "")
+    readouts = str(entry.get("readouts") or "")
+
+    allowed_ids = _term_ids(terms_path)
+    pools = [_top_k_candidates(_paper_query(name, aliases), allowed_ids=allowed_ids)]
+    if technique and technique.lower() != name.lower():
+        pools.append(_top_k_candidates(technique, allowed_ids=allowed_ids))
+    candidates = [c for c in _merge_candidates(*pools) if c["id"] != broad_id]
+    if not candidates:
+        return None
+
+    prompt = build_repick_prompt(
+        name, candidates, broad_id, broad_label, sample_type=sample_type, readouts=readouts,
+        aliases=aliases, standard_technique_name=technique if technique.lower() != name.lower() else "",
+    )
+    client = OpenAI(api_key=settings.OPENAI_API_KEY)
+    resp = client.chat.completions.create(
+        model=model, messages=[{"role": "user", "content": prompt}], temperature=0)
+    reply = (resp.choices[0].message.content or "").strip().lower()
+    assay_trace.record("repick", key, reply=reply, broad_id=broad_id, broad_label=broad_label,
+                       candidates=[_candidate_line(i + 1, c) for i, c in enumerate(candidates)])
+    idx, granularity = parse_pick_reply(reply, len(candidates))
+    if idx is None:
+        return None
+    chosen = candidates[idx]
+    return {
+        "obi_id": chosen["id"],
+        "obi_label": chosen["label"],
+        "resource": REPICK_RESOURCE,
+        "confidence": chosen.get("similarity"),
+        "granularity": granularity or "EXACT",
+    }
+
+
+def repick_blocked(
+    assays: dict[str, Any],
+    obi: dict[str, Any],
+    model: str = settings.OPENAI_MODEL,
+    terms_path: Path = _OBI_TERMS_PATH,
+) -> tuple[dict[str, Any], dict[str, dict[str, str]]]:
+    """Re-pick every BROAD mapping that kept a fold from happening. Returns (obi, repicked).
+
+    `repicked` is {key: {"from": old label, "to": new label}} for the entries whose term
+    changed; the returned mapping carries the new term on them with `obi_repicked_from` saying
+    what it was. An entry the picker still answers "none" for, or whose call fails, keeps its
+    BROAD term and stays apart -- the failure is logged, never raised, because the fold round
+    has already been paid for by everything before it.
+    """
+    # Imported here: the merger is model-free and the mapper is what calls models, so the
+    # dependency points this way only.
+    from app.agent.assay_merger import blocked_folds, canonical_groups
+
+    obi = {key: dict(value) for key, value in (obi or {}).items()}
+    broad_keys: list[str] = []
+    for record in blocked_folds(canonical_groups(assays, obi)):
+        if record.get("reason") != "mapping is BROAD":
+            continue
+        for key in (record["member"], record.get("anchor")):
+            if key and key not in broad_keys and _is_broad_mapping(obi.get(key) or {}):
+                broad_keys.append(key)
+
+    repicked: dict[str, dict[str, str]] = {}
+    for key in broad_keys:
+        mapping = obi[key]
+        try:
+            picked = repick_obi(key, assays.get(key) or {}, mapping, terms_path=terms_path,
+                                model=model)
+        except Exception as exc:  # noqa: BLE001 - one failed re-pick must not cost the round
+            logger.warning("%s: OBI re-pick failed - %s", key, exc)
+            continue
+        if not picked or picked["obi_id"] == mapping.get("obi_id"):
+            continue
+        repicked[key] = {"from": str(mapping.get("obi_label")), "to": picked["obi_label"]}
+        mapping["obi_repicked_from"] = {"obi_id": mapping.get("obi_id"),
+                                        "obi_label": mapping.get("obi_label")}
+        mapping.update({"obi_id": picked["obi_id"], "obi_label": picked["obi_label"],
+                        "resource": picked["resource"], "obi_confidence": picked["confidence"],
+                        "obi_granularity": picked["granularity"]})
+    return obi, repicked
+
+
+def _is_broad_mapping(mapping: dict[str, Any]) -> bool:
+    return str(mapping.get("obi_granularity") or "").upper() == "BROAD"
 
 
 # ── Public API ────────────────────────────────────────────────────────────────

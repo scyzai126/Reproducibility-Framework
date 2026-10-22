@@ -1153,3 +1153,151 @@ def test_the_pick_prompt_prefers_broad_to_none():
     prompt = build_pick_prompt("PRNT", [{"id": "OBI:1", "label": "x", "similarity": 0.5}])
 
     assert "PREFER BROAD TO NONE" in prompt
+
+
+# ── round 5 re-pick: a BROAD mapping that blocked a fold is asked once more ──
+
+_FLOW = {"id": "OBI:0000916", "label": "flow cytometry assay", "similarity": 0.7,
+         "definition": "A cytometry assay in which cells pass a laser."}
+_CYTOKINE = {"id": "OBI:0002766", "label": "cytokine assay", "similarity": 0.6,
+             "definition": "An analyte assay to study presence or amount of cytokines."}
+_CYTOMETRY = {"id": "OBI:0001977", "label": "cytometry assay", "similarity": 0.58}
+_ICS = {"name_in_paper": "Intracellular cytokine staining assay", "aliases": ["ICS"],
+        "standard_technique_name": "flow cytometry", "sample_type": "PBMC",
+        "readouts": "CD8+ T cells producing IFN-gamma after peptide stimulation"}
+_BROAD_FLOW = {"obi_id": "OBI:0000916", "obi_label": "flow cytometry assay",
+               "resource": "embedding_llm", "obi_confidence": 0.7, "obi_granularity": "BROAD"}
+
+
+def test_the_repick_prompt_names_the_category_term_and_lists_the_rest():
+    from app.agent.assay_obi_mapper import build_repick_prompt
+    prompt = build_repick_prompt("ICS", [_CYTOKINE, _CYTOMETRY], "OBI:0000916",
+                                 "flow cytometry assay", readouts="cytokine production")
+
+    assert '"flow cytometry assay" (OBI:0000916)' in prompt and "marked the\nmatch BROAD" in prompt
+    assert "1. OBI:0002766 | cytokine assay" in prompt and "2. OBI:0001977" in prompt
+    assert "Readouts: cytokine production" in prompt
+
+
+def test_repick_removes_the_broad_term_and_returns_the_pick(monkeypatch):
+    from app.agent import assay_obi_mapper, assay_trace
+    seen = {}
+    monkeypatch.setattr(assay_obi_mapper, "_top_k_candidates",
+                        lambda query, k=20, allowed_ids=None: [_FLOW, _CYTOKINE, _CYTOMETRY])
+    monkeypatch.setattr(assay_obi_mapper, "OpenAI", lambda **_: _PickClient("1 EXACT"))
+    real = assay_obi_mapper.build_repick_prompt
+
+    def spy(name, candidates, *a, **k):
+        seen["ids"] = [c["id"] for c in candidates]
+        return real(name, candidates, *a, **k)
+    monkeypatch.setattr(assay_obi_mapper, "build_repick_prompt", spy)
+
+    trace = assay_trace.start()
+    try:
+        picked = assay_obi_mapper.repick_obi("ICS key", _ICS, _BROAD_FLOW)
+    finally:
+        assay_trace.stop()
+
+    assert "OBI:0000916" not in seen["ids"]           # the category term is gone
+    assert picked == {"obi_id": "OBI:0002766", "obi_label": "cytokine assay",
+                      "resource": "embedding_llm_repick", "confidence": 0.6, "granularity": "EXACT"}
+    record = trace.as_json()["repick"]["ICS key"]
+    assert record["reply"] == "1 exact" and record["broad_id"] == "OBI:0000916"
+    assert record["candidates"][0].startswith("1. OBI:0002766 | cytokine assay")
+
+
+def test_repick_returns_none_when_the_picker_still_finds_nothing(monkeypatch):
+    from app.agent import assay_obi_mapper
+    monkeypatch.setattr(assay_obi_mapper, "_top_k_candidates",
+                        lambda query, k=20, allowed_ids=None: [_FLOW, _CYTOMETRY])
+    monkeypatch.setattr(assay_obi_mapper, "OpenAI", lambda **_: _PickClient("none"))
+
+    assert assay_obi_mapper.repick_obi("ICS", _ICS, _BROAD_FLOW) is None
+
+
+def test_repick_has_nothing_to_do_for_an_unmapped_entry(monkeypatch):
+    from app.agent import assay_obi_mapper
+    monkeypatch.setattr(assay_obi_mapper, "OpenAI", lambda **_: (_ for _ in ()).throw(AssertionError))
+
+    assert assay_obi_mapper.repick_obi("x", _ICS, {"obi_id": None, "obi_label": None}) is None
+
+
+def test_the_query_embedding_is_cached_per_process(monkeypatch):
+    from app.agent import assay_obi_mapper
+    calls = []
+
+    class _Embeddings:
+        def create(self, model, input):
+            calls.append(input[0])
+            return type("R", (), {"data": [type("D", (), {"embedding": [1.0, 0.0]})()]})()
+
+    monkeypatch.setattr(assay_obi_mapper, "OpenAI",
+                        lambda **_: type("C", (), {"embeddings": _Embeddings()})())
+    assay_obi_mapper._embed_query.cache_clear()
+
+    assay_obi_mapper._embed_query("a query no other test embeds")
+    assay_obi_mapper._embed_query("a query no other test embeds")
+
+    assert calls == ["a query no other test embeds"]
+    assay_obi_mapper._embed_query.cache_clear()
+
+
+def _registry_with_blocked_fold() -> tuple[dict, dict]:
+    pheno = {**_ICS, "name_in_paper": "phenotyping", "aliases": [], "readouts": "subset frequencies"}
+    assays = {"phenotyping": pheno, "ICS": _ICS}
+    obi = {"phenotyping": {**pheno, **_BROAD_FLOW, "obi_granularity": "EXACT"},
+           "ICS": {**_ICS, **_BROAD_FLOW}}
+    return assays, obi
+
+
+def test_repick_blocked_asks_only_for_the_broad_side_and_rewrites_its_term(monkeypatch):
+    from app.agent import assay_obi_mapper
+    asked = []
+
+    def fake(key, entry, mapping, **_):
+        asked.append(key)
+        return {"obi_id": "OBI:0002766", "obi_label": "cytokine assay",
+                "resource": "embedding_llm_repick", "confidence": 0.6, "granularity": "EXACT"}
+    monkeypatch.setattr(assay_obi_mapper, "repick_obi", fake)
+    assays, obi = _registry_with_blocked_fold()
+
+    out, repicked = assay_obi_mapper.repick_blocked(assays, obi)
+
+    assert asked == ["ICS"]  # the EXACT anchor is not re-asked
+    assert repicked == {"ICS": {"from": "flow cytometry assay", "to": "cytokine assay"}}
+    assert out["ICS"]["obi_id"] == "OBI:0002766" and out["ICS"]["resource"] == "embedding_llm_repick"
+    assert out["ICS"]["obi_granularity"] == "EXACT"
+    assert out["ICS"]["obi_repicked_from"] == {"obi_id": "OBI:0000916",
+                                               "obi_label": "flow cytometry assay"}
+    assert out["phenotyping"] == obi["phenotyping"]          # untouched
+    assert obi["ICS"]["obi_id"] == "OBI:0000916"              # the input mapping is not mutated
+
+
+def test_repick_blocked_leaves_a_none_and_a_failure_alone(monkeypatch, caplog):
+    from app.agent import assay_obi_mapper
+    assays, obi = _registry_with_blocked_fold()
+
+    monkeypatch.setattr(assay_obi_mapper, "repick_obi", lambda *a, **k: None)
+    out, repicked = assay_obi_mapper.repick_blocked(assays, obi)
+    assert repicked == {} and out["ICS"]["obi_granularity"] == "BROAD"
+
+    def boom(*a, **k):
+        raise RuntimeError("timed out")
+    monkeypatch.setattr(assay_obi_mapper, "repick_obi", boom)
+    out, repicked = assay_obi_mapper.repick_blocked(assays, obi)
+    assert repicked == {} and out["ICS"]["obi_id"] == "OBI:0000916"
+    assert "OBI re-pick failed" in caplog.text
+
+
+def test_repick_blocked_ignores_a_fold_refused_for_a_different_technique(monkeypatch):
+    from app.agent import assay_obi_mapper
+    monkeypatch.setattr(assay_obi_mapper, "repick_obi",
+                        lambda *a, **k: (_ for _ in ()).throw(AssertionError("must not be asked")))
+    exact = {**_BROAD_FLOW, "obi_granularity": "EXACT"}
+    assays = {"CPE": {**_ICS, "standard_technique_name": "cytopathic effect assay"},
+              "PRNT": {**_ICS, "standard_technique_name": "plaque reduction neutralization test"}}
+    obi = {"CPE": {**assays["CPE"], **exact}, "PRNT": {**assays["PRNT"], **exact}}
+
+    out, repicked = assay_obi_mapper.repick_blocked(assays, obi)
+
+    assert repicked == {} and out == obi
