@@ -107,3 +107,14 @@ def test_a_failed_extraction_call_is_a_warning_line(cli, capsys):
 
     out = capsys.readouterr().out
     assert "WARNING  extraction run2 failed: AssayExtractionError: model returned unparseable JSON" in out
+
+
+def test_a_blocked_fold_is_a_review_line(cli, capsys):
+    """Two entries on one term that round 5 kept apart: a reader decides, so it is printed."""
+    cli.report_result(_result(merges={"results": [], "key_map": {}, "blocked": [{
+        "member": "ICS", "kept_apart_from": "flow cytometry assay", "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay", "reason": "mapping is BROAD"}]}))
+
+    out = capsys.readouterr().out
+    assert ("REVIEW  not folded  ICS kept apart from flow cytometry assay (OBI:0000916): "
+            "mapping is BROAD") in out

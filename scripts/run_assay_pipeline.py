@@ -277,6 +277,12 @@ def report_result(result: dict) -> None:
     for record in (result.get("merges") or {}).get("results", []):
         print(f"  MERGED  {', '.join(record['folded'])} → {record['key']} "
               f"({record.get('obi_id') or 'no term'})")
+    # Two entries on one OBI term that round 5 kept apart -- a BROAD mapping, or two techniques
+    # reaching one term. Printed as REVIEW: a reader decides whether they are one assay.
+    for record in (result.get("merges") or {}).get("blocked", []):
+        print(f"  REVIEW  not folded  {record['member']} kept apart from "
+              f"{record['kept_apart_from']} ({record.get('obi_id') or 'no term'}): "
+              f"{record['reason']}")
     # A repair that was asked for, paid for, and then failed. It used to surface only as a count
     # inside the round's actions JSON, which is how 12 discarded alias corrections crossed a
     # 30-paper run unnoticed: the entry keeps exactly the field the verifier objected to.

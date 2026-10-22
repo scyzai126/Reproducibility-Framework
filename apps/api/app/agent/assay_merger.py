@@ -6,8 +6,24 @@ anti-meningococcal antibodies) and `ELISA kits` (cytokines in culture supernatan
 downstream caught it: `clean_registry` is a dict comprehension, and the verifier judges one entry
 at a time against the paper, never against a sibling.
 
-**Two entries are one assay when they share an OBI term. Nothing else folds.** The term is the
-OBI label the entry mapped to. A shared `standard_technique_name` used to be a second link, pulling
+**Two entries are one assay when they share an OBI term, the term is each one's identity, and
+they name the same technique. Nothing else folds.** The term is the `obi_id` the entry mapped to
+(the label is only the key it is delivered under). Three rules, each from a fold that cost a
+measurement:
+
+- Same `obi_id`, not same label: the id is what the mapper chose, and a label is a spelling of it.
+- A mapping the picker marked BROAD never folds, and nothing folds onto it: BROAD means the term
+  is a category the assay falls under, not the assay -- SDY1640's intracellular cytokine staining
+  was mapped to `flow cytometry assay` as BROAD because no candidate named the function, and the
+  fold then absorbed it into the paper's immunophenotyping, where the curator lists it on its own.
+- Two entries fold only when their `standard_technique_name` agree (or one is empty): the same term
+  reached from two different techniques (SDY1264's cytopathic-effect and plaque-reduction
+  neutralization tests) is two write-ups a reader should see side by side.
+
+An entry a rule keeps apart stays its own entry under the same label, suffixed, and is reported
+as a blocked fold (`REVIEW  not folded`) rather than silently kept or silently merged.
+
+A shared `standard_technique_name` used to be a second link, pulling
 an unmapped entry onto a mapped sibling with the same technique; it was removed because the
 technique is the instrument the numbers came off, and one instrument runs many assays. The link
 first folded mapped entries onto each other (SDY1640's AIM assay into its immunophenotyping,
@@ -49,43 +65,85 @@ _KEPT_ON_MEMBER = ("name_in_paper", "sample_type", "readouts", "generate_claim",
                    "evidence")
 
 
+def _technique(entry: dict) -> str:
+    return normalize_assay_name(str(entry.get("standard_technique_name") or ""))
+
+
+def _is_broad(mapped: dict) -> bool:
+    return str(mapped.get("obi_granularity") or "").upper() == "BROAD"
+
+
+def _refusal(anchor: dict, anchor_map: dict, entry: dict, mapped: dict) -> str | None:
+    """Why `entry` may not fold onto `anchor`, or None when the fold is justified."""
+    if _is_broad(anchor_map) or _is_broad(mapped):
+        return "mapping is BROAD"
+    a, b = _technique(anchor), _technique(entry)
+    if a and b and a != b:
+        return (f"standard_technique_name differs: {anchor.get('standard_technique_name')!r}"
+                f" vs {entry.get('standard_technique_name')!r}")
+    return None
+
+
+def _term(mapped: dict) -> str | None:
+    """The identity a mapping gives an entry: its id, or its label for a record with no id."""
+    return mapped.get("obi_id") or mapped.get("obi_label") or None
+
+
 def canonical_groups(assays: dict, obi: dict | None = None) -> list[dict]:
-    """Group the registry into assays: one group per OBI label, plus one per unmapped entry.
+    """Group the registry into assays: one group per OBI term, plus one per unmapped entry.
 
-    Two entries are linked when they map to the same OBI label; that is the only link, so the
-    groups are a bucketing on the label. Registry order is preserved, both between groups and
-    within them, so the first entry is the one whose fields survive the fold. Deterministic by
-    construction -- there is no scoring step to break a tie differently on a rerun.
+    Two entries are linked when they map to the same `obi_id` and the module's fold rules allow
+    it (same technique, neither mapping BROAD). Registry order is preserved, both between groups
+    and within them, so the first entry is the one whose fields survive the fold. Deterministic
+    by construction -- there is no scoring step to break a tie differently on a rerun.
 
-    The group is keyed by its OBI label, and the first member's mapping is the group's; an
-    unmapped entry keeps its own key and its own (unresolved) record.
+    A group is keyed by its OBI label, and the first member's mapping is the group's; an entry a
+    rule kept apart from an earlier group on the same term is its own group under the same label,
+    suffixed, and the earlier group records it under `refused` with the reason. An unmapped entry
+    keeps its own key and its own (unresolved) record.
     """
     obi = obi or {}
-    members_by_label: dict[str, list[str]] = {}
-    order: list[tuple[str, list[str]]] = []
+    groups: list[dict] = []
+    by_term: dict[str, list[dict]] = {}
     for key in assays:
         mapped = obi.get(key) or {}
-        label = mapped.get("obi_label")
-        if not label:
-            order.append((key, [key]))
+        term = _term(mapped)
+        if not term:
+            groups.append({"label": key, "members": [key], "mapped": mapped, "refused": []})
             continue
-        if label not in members_by_label:
-            members_by_label[label] = []
-            order.append((label, members_by_label[label]))
-        members_by_label[label].append(key)
+        candidates = by_term.setdefault(term, [])
+        reasons: list[tuple[dict, str]] = []
+        for group in candidates:
+            anchor = group["members"][0]
+            reason = _refusal(assays[anchor], obi.get(anchor) or {}, assays[key], mapped)
+            if reason is None:
+                group["members"].append(key)
+                break
+            reasons.append((group, reason))
+        else:
+            group = {"label": mapped.get("obi_label") or key, "members": [key], "mapped": mapped,
+                     "refused": []}
+            candidates.append(group)
+            groups.append(group)
+            if reasons:
+                # Refused from every earlier group on this term; the first is the one a reader
+                # expects it to have joined, so that is where the refusal is recorded.
+                reasons[0][0]["refused"].append({"member": key, "reason": reasons[0][1]})
 
-    groups: list[dict] = []
     taken: set[str] = set()
-    for key, members in order:
-        mapped = obi.get(members[0]) or {}
+    out: list[dict] = []
+    for group in groups:
+        mapped = group["mapped"]
         # An unmapped entry keeps its paper wording as its key, and nothing stops that wording
-        # from being another group's OBI label. Two groups on one key would overwrite each
-        # other in the registry, so the later one is suffixed instead of silently lost.
-        base, n = key, 2
+        # from being another group's OBI label; a refused entry shares its label with the group
+        # it was kept apart from. Two groups on one key would overwrite each other in the
+        # registry, so the later one is suffixed instead of silently lost.
+        base, key, n = group["label"], group["label"], 2
         while key in taken:
             key, n = f"{base} ({n})", n + 1
         taken.add(key)
-        groups.append({
+        members = group["members"]
+        out.append({
             "key": key,
             "members": members,
             "obi_id": mapped.get("obi_id"),
@@ -94,8 +152,18 @@ def canonical_groups(assays: dict, obi: dict | None = None) -> list[dict]:
             # Every member's own term. One label per group now that the technique link is gone;
             # kept so the merge report's shape, and every reader of it, stays the same.
             "member_labels": {m: (obi.get(m) or {}).get("obi_label") for m in members},
+            "refused": group["refused"],
         })
-    return groups
+    return out
+
+
+def blocked_folds(groups: list[dict]) -> list[dict]:
+    """The folds the rules refused, as report records: which entry was kept apart from which
+    group, on which term, and why. Empty when every shared term folded."""
+    return [{"member": refusal["member"], "kept_apart_from": group["key"],
+             "obi_id": group["obi_id"], "obi_label": group["obi_label"],
+             "reason": refusal["reason"]}
+            for group in groups for refusal in group.get("refused") or []]
 
 
 def merge_entries(winner: dict, losers: list[dict]) -> dict:
@@ -213,18 +281,24 @@ def compose_key_maps(earlier: dict[str, str] | None, later: dict[str, str]) -> d
     return composed
 
 
-def build_merge_report(folds: list[dict], keys: dict[str, str] | None = None) -> dict:
+def build_merge_report(folds: list[dict], keys: dict[str, str] | None = None,
+                       blocked: list[dict] | None = None) -> dict:
     """The round's findings, for assays_merges.json.
 
     `key_map` is written on every run, folds or not: it is what joins the pre-round-5 files to
     the canonical registry, and a paper that folded nothing re-keys every entry all the same.
+    `blocked` is every fold the rules refused (blocked_folds): a finding in its own right, since
+    two entries on one term that were kept apart is exactly what a reader checks.
     """
+    blocked = list(blocked or [])
     report = {
         "summary": {
             "groups_merged": len(folds),
             "entries_folded": sum(len(f["folded"]) for f in folds),
+            "folds_blocked": len(blocked),
         },
         "results": folds,
+        "blocked": blocked,
     }
     if keys is not None:
         report["key_map"] = keys

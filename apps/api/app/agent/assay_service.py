@@ -58,6 +58,7 @@ from app.agent.assay_extractor import (
 )
 from app.agent.assay_extractor_pdf import extract_assays_from_pdf
 from app.agent.assay_merger import (
+    blocked_folds,
     build_merge_report,
     canonical_groups,
     canonicalize_registry,
@@ -1099,9 +1100,12 @@ async def _run_rounds(pubmed_id, study_accession, client, verify, correct, model
         _emit(round="canonicalize", state="skipped", calls=0)
     else:
         _emit(round="canonicalize", state="running", total=len(assays))
+        groups = canonical_groups(assays, obi)
         keys = key_map(assays, obi)
         assays, obi, folds = canonicalize_registry(assays, obi)
-        merges = build_merge_report(folds, keys)
+        # The folds the rules refused are findings too: two entries on one term kept apart
+        # because one mapping was BROAD or the techniques differ.
+        merges = build_merge_report(folds, keys, blocked_folds(groups))
         rounds["canonicalize"] = {"source": "canonical", "calls": 0,
                                   "assays": len(assays), **merges["summary"]}
         _emit(round="canonicalize", state="done", calls=0, assays=len(assays),

@@ -383,7 +383,7 @@ async def test_two_entries_on_one_obi_term_leave_one_entry_keyed_by_that_term(pa
     # record cannot reconstruct.
     assert benchmark["flow cytometry assay"]["additional_evidence"][0]["name_in_paper"] == "ELISA kits"
     assert json.loads((paper / "assays_merges.json").read_text())["summary"] == {
-        "groups_merged": 1, "entries_folded": 1}
+        "groups_merged": 1, "entries_folded": 1, "folds_blocked": 0}
 
 
 @pytest.mark.asyncio
@@ -837,3 +837,32 @@ async def test_a_single_extraction_that_fails_still_raises(paper, monkeypatch):
 
     with pytest.raises(AssayExtractionError, match=r"1 of 1 extraction call\(s\) failed"):
         await assay_report("111", "SDY1", _Client("not json", _verification_body()))
+
+
+@pytest.mark.asyncio
+async def test_a_broad_mapping_is_delivered_apart_and_reported(paper, monkeypatch):
+    """Two entries on the stub's one term, the panel's mapping BROAD: round 5 keeps them apart,
+    counts the refusal and writes it to assays_merges.json."""
+    monkeypatch.setattr(assay_service, "EXTRACTIONS", 3)
+
+    def _broad_panel(assays, *_args, **_kwargs):
+        return {key: {**entry, "obi_id": "OBI:0000916", "obi_label": "flow cytometry assay",
+                      "resource": "embedding_llm", "obi_confidence": 0.5,
+                      "obi_granularity": "BROAD" if "DC activation" in key else "EXACT"}
+                for key, entry in assays.items()}
+    monkeypatch.setattr(assay_service, "enrich_assays_with_obi", _broad_panel)
+    client = _ExtractionClient([_dc_panel_body(True), _dc_panel_body(True), _dc_panel_body(False)],
+                               _verification_body())
+
+    result = await assay_report("111", "SDY1", client)
+
+    assert list(result["assays"]) == ["flow cytometry assay", "flow cytometry assay (2)"]
+    assert result["assays"]["flow cytometry assay (2)"]["name_in_paper"] == [
+        "flow cytometry for DC activation"]
+    assert result["rounds"]["canonicalize"]["folds_blocked"] == 1
+    assert result["rounds"]["canonicalize"]["entries_folded"] == 0
+    stored = json.loads((paper / "assays_merges.json").read_text())
+    assert stored["blocked"] == [{
+        "member": "flow cytometry for DC activation", "kept_apart_from": "flow cytometry assay",
+        "obi_id": "OBI:0000916", "obi_label": "flow cytometry assay", "reason": "mapping is BROAD"}]
+    assert stored["key_map"]["flow cytometry for DC activation"] == "flow cytometry assay (2)"

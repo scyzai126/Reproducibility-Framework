@@ -43,6 +43,7 @@ sys.path.insert(0, str(_REPO_ROOT / "apps" / "api"))
 
 from app.agent.assay_extractor import trim_registry
 from app.agent.assay_merger import (
+    blocked_folds,
     build_merge_report,
     canonical_groups,
     canonicalize_registry,
@@ -82,6 +83,10 @@ def dry_run(registry_dir: Path, remap: bool = False) -> int:
     print(f"{registry_dir.name}: {len(assays)} entry(ies) → {len(groups)}, keyed by OBI term")
     for group in folds:
         print(f"    {group['key']}   <=  {', '.join(group['members'])}")
+    for record in blocked_folds(groups):
+        print(f"    REVIEW  not folded  {record['member']} kept apart from "
+              f"{record['kept_apart_from']} ({record.get('obi_id') or 'no term'}): "
+              f"{record['reason']}")
     return len(assays) - len(groups)
 
 
@@ -113,14 +118,21 @@ def canonicalize_one(registry_dir: Path, remap: bool = False) -> None:
         return
 
     keys = compose_key_maps(stored.get("key_map"), key_map(assays, obi))
+    blocked = blocked_folds(canonical_groups(assays, obi))
     merged, obi_out, folds = canonicalize_registry(assays, obi)
     # Folds found by an earlier pass are findings too; a second pass over an already-folded
-    # registry finds none, and used to delete the only record of the first.
-    report = build_merge_report(list(stored.get("results") or []) + folds, keys)
+    # registry finds none, and used to delete the only record of the first. The same for the
+    # folds a pass refused.
+    report = build_merge_report(list(stored.get("results") or []) + folds, keys,
+                                list(stored.get("blocked") or []) + blocked)
     print(f"{registry_dir.name}: {len(assays)} → {len(merged)} entry(ies)")
     for record in folds:
         print(f"  MERGED  {', '.join(record['folded'])} → {record['key']} "
               f"({record.get('obi_id') or 'no term'})")
+    for record in blocked:
+        print(f"  REVIEW  not folded  {record['member']} kept apart from "
+              f"{record['kept_apart_from']} ({record.get('obi_id') or 'no term'}): "
+              f"{record['reason']}")
 
     # Only these four: the pipeline's other files describe rounds this script did not re-run,
     # and rewriting them from a registry they were not derived from would misreport those rounds.

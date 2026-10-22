@@ -13,6 +13,7 @@ dropped on the way.
 
 from app.agent.assay_extractor import MERGED_FIELD, paper_names, trim_registry
 from app.agent.assay_merger import (
+    blocked_folds,
     build_merge_report,
     canonical_groups,
     canonicalize_registry,
@@ -271,7 +272,7 @@ def test_the_report_counts_groups_and_entries():
 
     report = build_merge_report(folds)
 
-    assert report["summary"] == {"groups_merged": 1, "entries_folded": 1}
+    assert report["summary"] == {"groups_merged": 1, "entries_folded": 1, "folds_blocked": 0}
     assert report["results"][0]["key"] == "enzyme-linked immunosorbent assay"
 
 # ── a shared technique never links ───────────────────────────────────────────
@@ -382,3 +383,124 @@ def test_the_survivors_own_review_wins_and_an_unreviewed_member_gains_no_slot():
 
     assert merged["identity_review"] == mine
     assert "identity_review" not in merged["additional_evidence"][0]
+
+
+# ── the fold rules: same id, neither BROAD, same technique ───────────────────
+
+def _broad(term: dict) -> dict:
+    return {**term, "obi_granularity": "BROAD"}
+
+
+def _exact(term: dict) -> dict:
+    return {**term, "obi_granularity": "EXACT"}
+
+
+def test_grouping_is_by_obi_id_not_by_label_spelling():
+    assays = {"a": _tech("a", "flow cytometry"), "b": _tech("b", "flow cytometry")}
+    obi = {"a": _FLOW_TERM, "b": {**_FLOW_TERM, "obi_label": "Flow Cytometry Assay"}}
+
+    groups = canonical_groups(assays, obi)
+
+    assert [g["members"] for g in groups] == [["a", "b"]]
+    assert groups[0]["key"] == "flow cytometry assay"  # the anchor's spelling
+
+
+def test_the_same_label_on_two_ids_stays_two_groups():
+    assays = {"a": _tech("a", "flow cytometry"), "b": _tech("b", "flow cytometry")}
+    obi = {"a": _FLOW_TERM, "b": {**_FLOW_TERM, "obi_id": "OBI:9999999"}}
+
+    groups = canonical_groups(assays, obi)
+
+    assert [g["members"] for g in groups] == [["a"], ["b"]]
+    assert [g["key"] for g in groups] == ["flow cytometry assay", "flow cytometry assay (2)"]
+    assert blocked_folds(groups) == []  # different terms: nothing was refused, nothing to report
+
+
+def test_a_broad_mapping_is_kept_apart_and_reported():
+    """SDY1640: immunophenotyping and intracellular cytokine staining both on `flow cytometry
+    assay`, the ICS as BROAD because no candidate named the function. Folding absorbed the ICS
+    into the phenotyping; the curator lists it on its own."""
+    assays = {"phenotyping": _tech("phenotyping", "flow cytometry"),
+              "ICS": _tech("ICS", "flow cytometry")}
+    obi = {"phenotyping": _exact(_FLOW_TERM), "ICS": _broad(_FLOW_TERM)}
+
+    groups = canonical_groups(assays, obi)
+
+    assert [(g["key"], g["members"]) for g in groups] == [
+        ("flow cytometry assay", ["phenotyping"]), ("flow cytometry assay (2)", ["ICS"])]
+    assert blocked_folds(groups) == [{
+        "member": "ICS", "kept_apart_from": "flow cytometry assay",
+        "obi_id": "OBI:0000916", "obi_label": "flow cytometry assay", "reason": "mapping is BROAD"}]
+    merged, obi_out, folds = canonicalize_registry(assays, obi)
+    assert folds == []
+    assert list(merged) == ["flow cytometry assay", "flow cytometry assay (2)"]
+    assert merged["flow cytometry assay (2)"]["name_in_paper"] == ["ICS"]
+    assert obi_out["flow cytometry assay (2)"]["obi_granularity"] == "BROAD"
+
+
+def test_nothing_folds_onto_a_broad_anchor_either():
+    assays = {"ICS": _tech("ICS", "flow cytometry"),
+              "phenotyping": _tech("phenotyping", "flow cytometry")}
+    obi = {"ICS": _broad(_FLOW_TERM), "phenotyping": _exact(_FLOW_TERM)}
+
+    groups = canonical_groups(assays, obi)
+
+    assert [g["members"] for g in groups] == [["ICS"], ["phenotyping"]]
+    assert [b["member"] for b in blocked_folds(groups)] == ["phenotyping"]
+
+
+def test_two_techniques_on_one_term_stay_two_entries():
+    """SDY1264: a cytopathic-effect test and a plaque-reduction test both resolved to `serum
+    neutralization of viral infectivity assay`."""
+    term = {"obi_id": "OBI:0000872", "obi_label": "serum neutralization of viral infectivity assay"}
+    assays = {"CPE": _tech("CPE", "cytopathic effect neutralization assay"),
+              "PRNT": _tech("PRNT", "plaque reduction neutralization test")}
+
+    groups = canonical_groups(assays, {"CPE": _exact(term), "PRNT": _exact(term)})
+
+    assert [g["members"] for g in groups] == [["CPE"], ["PRNT"]]
+    [blocked] = blocked_folds(groups)
+    assert blocked["member"] == "PRNT"
+    assert blocked["reason"] == ("standard_technique_name differs: "
+                                 "'cytopathic effect neutralization assay' vs "
+                                 "'plaque reduction neutralization test'")
+
+
+def test_an_empty_technique_on_one_side_still_folds():
+    assays = {"ELISA": _tech("ELISA", "enzyme-linked immunosorbent assay"),
+              "ELISA kits": _tech("ELISA kits", None)}
+
+    groups = canonical_groups(assays, {"ELISA": _exact(_ELISA_TERM), "ELISA kits": _exact(_ELISA_TERM)})
+
+    assert [g["members"] for g in groups] == [["ELISA", "ELISA kits"]]
+    assert blocked_folds(groups) == []
+
+
+def test_the_same_technique_spelt_differently_still_folds():
+    assays = {"a": _tech("a", "Flow Cytometry"), "b": _tech("b", "flow cytometry assay")}
+
+    groups = canonical_groups(assays, {"a": _FLOW_TERM, "b": _FLOW_TERM})
+
+    assert [g["members"] for g in groups] == [["a", "b"]]
+
+
+def test_a_refused_entry_lands_on_its_own_key_in_the_key_map():
+    from app.agent.assay_merger import key_map
+    assays = {"phenotyping": _tech("phenotyping", "flow cytometry"),
+              "ICS": _tech("ICS", "flow cytometry")}
+    obi = {"phenotyping": _exact(_FLOW_TERM), "ICS": _broad(_FLOW_TERM)}
+
+    assert key_map(assays, obi) == {"phenotyping": "flow cytometry assay",
+                                    "ICS": "flow cytometry assay (2)"}
+
+
+def test_the_report_carries_the_blocked_folds():
+    blocked = [{"member": "ICS", "kept_apart_from": "flow cytometry assay",
+                "obi_id": "OBI:0000916", "obi_label": "flow cytometry assay",
+                "reason": "mapping is BROAD"}]
+
+    report = build_merge_report([], blocked=blocked)
+
+    assert report["summary"] == {"groups_merged": 0, "entries_folded": 0, "folds_blocked": 1}
+    assert report["blocked"] == blocked
+    assert build_merge_report([])["blocked"] == []
