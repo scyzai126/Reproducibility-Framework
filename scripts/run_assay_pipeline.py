@@ -50,8 +50,8 @@ of against the sentences it names, and the methods-vs-results cross-check report
 **--dry-run makes no API call** and reports the projected bill. Run it first: a 10-assay paper
 is upwards of 30 calls. Round 1 is EXTRACTIONS calls (3), voted; rounds 2-4 are sized from what the last run's
 extraction found, once one exists on disk -- each from the file that round actually read, since
-round 5 re-keys assays.json. Round 5 is free unless a BROAD mapping kept a fold from
-happening: then one call per such entry asks the picker for a more specific term (REPICKED).
+round 5 re-keys assays.json. Round 5 is free except for one call per mapping the picker
+marked BROAD, which asks it once more for a term naming the function (REPICKED).
 
 Usage:
     python3 scripts/run_assay_pipeline.py <registry_dir> [--dry-run]
@@ -195,7 +195,7 @@ def _dry_run(pmid: str, sdy: str) -> None:
         for group in canon["folds"]:
             print(f"      folds onto {group['key']}: {', '.join(group['members'])}")
         for key in repicks:
-            print(f"      re-picks a BROAD term that blocked a fold: {key}")
+            print(f"      re-picks a BROAD term: {key}")
     else:
         print("  round 5 canon:   will run, free                       0 calls")
 

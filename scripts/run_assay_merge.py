@@ -14,8 +14,8 @@ by OBI label, with every wording in `name_in_paper` and every folded write-up in
 `--dry-run` prints what would change without writing.
 
 `--map` runs round 4 first -- **the one thing here that costs**: 2-3 calls per assay name the OBI
-vocabulary does not carry verbatim, plus one call per BROAD mapping that keeps a fold from
-happening (round 5's re-pick, reported `REPICKED`). It is the recovery path when a pipeline run's OBI round
+vocabulary does not carry verbatim, plus one call per mapping the picker marked BROAD (round
+5's re-pick, reported `REPICKED`). It is the recovery path when a pipeline run's OBI round
 failed, and it maps `assays_corrected.json` when there is one (the registry round 4 reads),
 else `assays.json`. `--map --dry-run` prints the call count without calling anything.
 
@@ -99,14 +99,14 @@ def canonicalize_one(registry_dir: Path, remap: bool = False) -> None:
         # Imported here, not at the top: it is the one paid step, and a plain canonicalize
         # should not even load the client.
         from app.agent import assay_trace
-        from app.agent.assay_obi_mapper import enrich_assays_with_obi, repick_blocked
+        from app.agent.assay_obi_mapper import enrich_assays_with_obi, repick_broad
         # The picks are kept like a full run keeps them, merged into the file the full run wrote.
         trace = assay_trace.start()
         try:
             obi = enrich_assays_with_obi(assays)
-            # Round 5's one paid step, as the pipeline runs it: a BROAD mapping that would keep
-            # a fold from happening is asked once more.
-            obi, repicked = repick_blocked(assays, obi)
+            # Round 5's one paid step, as the pipeline runs it: every BROAD mapping is asked
+            # once more for a term naming the function.
+            obi, repicked = repick_broad(assays, obi)
         finally:
             assay_trace.stop()
         trace.write(registry_dir / assay_trace.RAW_FILE)

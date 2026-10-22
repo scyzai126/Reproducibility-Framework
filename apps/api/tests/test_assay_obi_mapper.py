@@ -1250,7 +1250,7 @@ def _registry_with_blocked_fold() -> tuple[dict, dict]:
     return assays, obi
 
 
-def test_repick_blocked_asks_only_for_the_broad_side_and_rewrites_its_term(monkeypatch):
+def test_repick_broad_asks_only_for_the_broad_side_and_rewrites_its_term(monkeypatch):
     from app.agent import assay_obi_mapper
     asked = []
 
@@ -1261,7 +1261,7 @@ def test_repick_blocked_asks_only_for_the_broad_side_and_rewrites_its_term(monke
     monkeypatch.setattr(assay_obi_mapper, "repick_obi", fake)
     assays, obi = _registry_with_blocked_fold()
 
-    out, repicked = assay_obi_mapper.repick_blocked(assays, obi)
+    out, repicked = assay_obi_mapper.repick_broad(assays, obi)
 
     assert asked == ["ICS"]  # the EXACT anchor is not re-asked
     assert repicked == {"ICS": {"from": "flow cytometry assay", "to": "cytokine assay"}}
@@ -1273,23 +1273,23 @@ def test_repick_blocked_asks_only_for_the_broad_side_and_rewrites_its_term(monke
     assert obi["ICS"]["obi_id"] == "OBI:0000916"              # the input mapping is not mutated
 
 
-def test_repick_blocked_leaves_a_none_and_a_failure_alone(monkeypatch, caplog):
+def test_repick_broad_leaves_a_none_and_a_failure_alone(monkeypatch, caplog):
     from app.agent import assay_obi_mapper
     assays, obi = _registry_with_blocked_fold()
 
     monkeypatch.setattr(assay_obi_mapper, "repick_obi", lambda *a, **k: None)
-    out, repicked = assay_obi_mapper.repick_blocked(assays, obi)
+    out, repicked = assay_obi_mapper.repick_broad(assays, obi)
     assert repicked == {} and out["ICS"]["obi_granularity"] == "BROAD"
 
     def boom(*a, **k):
         raise RuntimeError("timed out")
     monkeypatch.setattr(assay_obi_mapper, "repick_obi", boom)
-    out, repicked = assay_obi_mapper.repick_blocked(assays, obi)
+    out, repicked = assay_obi_mapper.repick_broad(assays, obi)
     assert repicked == {} and out["ICS"]["obi_id"] == "OBI:0000916"
     assert "OBI re-pick failed" in caplog.text
 
 
-def test_repick_blocked_ignores_a_fold_refused_for_a_different_technique(monkeypatch):
+def test_repick_broad_ignores_a_fold_refused_for_a_different_technique(monkeypatch):
     from app.agent import assay_obi_mapper
     monkeypatch.setattr(assay_obi_mapper, "repick_obi",
                         lambda *a, **k: (_ for _ in ()).throw(AssertionError("must not be asked")))
@@ -1298,6 +1298,29 @@ def test_repick_blocked_ignores_a_fold_refused_for_a_different_technique(monkeyp
               "PRNT": {**_ICS, "standard_technique_name": "plaque reduction neutralization test"}}
     obi = {"CPE": {**assays["CPE"], **exact}, "PRNT": {**assays["PRNT"], **exact}}
 
-    out, repicked = assay_obi_mapper.repick_blocked(assays, obi)
+    out, repicked = assay_obi_mapper.repick_broad(assays, obi)
 
     assert repicked == {} and out == obi
+
+
+def test_repick_broad_asks_for_a_lone_broad_entry_too(monkeypatch):
+    """The trigger is the mapping, not a conflict: a BROAD entry with no sibling on its term
+    is asked once more all the same."""
+    from app.agent import assay_obi_mapper
+    asked = []
+
+    def fake(key, entry, mapping, **_):
+        asked.append(key)
+        return {"obi_id": "OBI:0002766", "obi_label": "cytokine assay",
+                "resource": "embedding_llm_repick", "confidence": 0.6, "granularity": "EXACT"}
+    monkeypatch.setattr(assay_obi_mapper, "repick_obi", fake)
+    exact_elisa = {"obi_id": "OBI:0000661", "obi_label": "enzyme-linked immunosorbent assay",
+                   "obi_granularity": "EXACT"}
+    assays = {"ELISA": {**_ICS, "name_in_paper": "ELISA"}, "ICS": _ICS}
+    obi = {"ELISA": {**assays["ELISA"], **exact_elisa}, "ICS": {**_ICS, **_BROAD_FLOW}}
+
+    out, repicked = assay_obi_mapper.repick_broad(assays, obi)
+
+    assert asked == ["ICS"]
+    assert list(repicked) == ["ICS"] and out["ICS"]["obi_label"] == "cytokine assay"
+    assert out["ELISA"] == obi["ELISA"]

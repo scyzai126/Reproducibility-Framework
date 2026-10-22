@@ -257,7 +257,23 @@ def test_the_estimate_names_the_entries_that_would_fold_onto_one_term(paper, voc
 
     assert (canon["entries"], canon["groups"]) == (2, 1)
     assert canon["folds"][0]["members"] == ["ELISA", "ELISA kits"]
-    assert canon["calls"] == 0
+    assert canon["calls"] == 0 and canon["exact"] is True and canon["repicks"] == []
+
+
+def test_the_estimate_prices_a_broad_mapping_at_one_repick_call(paper, vocabulary):
+    """Round 5's one paid step: a mapping the last run's picker marked BROAD is asked once more,
+    sibling or not. Sized from the stored mapping, so "~" like rounds 2-4."""
+    _store(paper,
+           {"ELISA": _ENTRY, "ICS": {**_ENTRY, "name_in_paper": "ICS"}},
+           obi={"ELISA": {"obi_id": "OBI:0000661", "obi_label": "ELISA",
+                          "obi_granularity": "EXACT"},
+                "ICS": {"obi_id": "OBI:0000916", "obi_label": "flow cytometry assay",
+                        "obi_granularity": "BROAD"}})
+
+    canon = [r for r in estimate_run("111", "SDY1")["rounds"] if r["name"] == "canonicalize"][0]
+
+    assert canon["repicks"] == ["ICS"]
+    assert canon["calls"] == 1 and canon["exact"] is False and canon["basis"] == "last_run"
 
 
 # ── the whole bill ────────────────────────────────────────────────────────────

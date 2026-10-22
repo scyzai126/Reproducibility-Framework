@@ -49,6 +49,48 @@ export function collectFindings(result: AssayRunResult | null | undefined): Find
     findings.push({ kind: 'DROPPED', subject: key, detail: record?.reason ?? 'rejected' });
   }
 
+  // Entries fewer than a majority of the extraction calls found: not delivered, but listed, the
+  // way the CLI's MINORITY line lists them -- a rare miss and a Results-only admission both look
+  // like this, and a reader decides which.
+  for (const [key, record] of Object.entries(
+    (result.minority ?? {}) as Record<string, Record<string, unknown>>,
+  )) {
+    const runs = (record?.runs as string[] | undefined) ?? [];
+    const quote = String(
+      ((record?.entry as Record<string, unknown> | undefined)?.evidence as Record<string, unknown> | undefined)
+        ?.quote ?? '',
+    );
+    findings.push({
+      kind: 'MINORITY',
+      subject: key,
+      detail: `found by ${runs.length} of ${record?.of ?? '?'} extractions; not delivered — ${quote.slice(0, 120)}`,
+    });
+  }
+
+  // A BROAD mapping round 5 asked once more, and the term it has now: the entry's identity
+  // changed after round 4 reported it.
+  const canon = (result.rounds?.canonicalize ?? {}) as Record<string, unknown>;
+  for (const [key, change] of Object.entries(
+    (canon.repicked ?? {}) as Record<string, { from?: string; to?: string }>,
+  )) {
+    findings.push({
+      kind: 'REPICKED',
+      subject: key,
+      detail: `${change?.from ?? '?'} (BROAD) → ${change?.to ?? '?'}`,
+    });
+  }
+
+  // Two entries on one OBI term that round 5 kept apart -- a BROAD mapping the re-pick could
+  // not improve, or two techniques reaching one term. A reader decides whether they are one.
+  const blocked = (result.merges?.blocked as Record<string, unknown>[] | undefined) ?? [];
+  for (const record of blocked) {
+    findings.push({
+      kind: 'REVIEW',
+      subject: String(record.member ?? ''),
+      detail: `not folded: kept apart from ${record.kept_apart_from} (${record.obi_id ?? 'no term'}): ${record.reason ?? ''}`,
+    });
+  }
+
   // Round 5's folds. The OBI term is coarser than the paper's wording, and a fold is exactly
   // where that coarseness shows — so it is reported per fold, not counted.
   const merges = (result.merges?.results as Record<string, unknown>[] | undefined) ?? [];
@@ -121,6 +163,7 @@ export function collectFindings(result: AssayRunResult | null | undefined): Find
 export const FINDING_ORDER: Finding['kind'][] = [
   'REJECT',
   'DROPPED',
+  'MINORITY',
   'CORRECT FAILED',
   'OBI FAILED',
   'REVIEW',
@@ -128,6 +171,7 @@ export const FINDING_ORDER: Finding['kind'][] = [
   'UNMAPPED',
   'QUOTE MISSING',
   'SOURCE MISMATCH',
+  'REPICKED',
   'MERGED',
 ];
 
@@ -148,5 +192,7 @@ export const FINDING_TONE: Record<Finding['kind'], string> = {
   UNMAPPED: 'bg-amber-50 text-amber-800 border-amber-200',
   'QUOTE MISSING': 'bg-amber-50 text-amber-800 border-amber-200',
   'SOURCE MISMATCH': 'bg-amber-50 text-amber-800 border-amber-200',
+  MINORITY: 'bg-amber-50 text-amber-800 border-amber-200',
+  REPICKED: 'bg-gray-100 text-gray-700 border-gray-200',
   MERGED: 'bg-gray-100 text-gray-700 border-gray-200',
 };

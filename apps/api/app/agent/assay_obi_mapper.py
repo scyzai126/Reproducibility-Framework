@@ -598,7 +598,7 @@ def _embedding_llm_match(
     return picked
 
 
-# ── Re-pick: a BROAD mapping that blocked a fold gets one narrower question ─────
+# ── Re-pick: every BROAD mapping gets one narrower question ──────────────────────
 
 #: What a re-pick is attributed to. Paid, so not in assay_service._OBI_FREE_RESOURCES.
 REPICK_RESOURCE = "embedding_llm_repick"
@@ -640,9 +640,9 @@ def repick_obi(
 ) -> dict[str, Any] | None:
     """One more pick for an entry whose mapping the picker marked BROAD, with that term removed.
 
-    Round 5 refuses to fold a BROAD mapping onto a sibling on the same term, because BROAD means
-    the term is a category the assay falls under. This asks the narrower question the first
-    pick did not: with the category gone, does any candidate's definition describe the function?
+    BROAD means the term is a category the assay falls under, not the assay. This asks the
+    narrower question the first pick did not: with the category gone, does any candidate's
+    definition describe the function?
     SDY1640's intracellular cytokine staining had `cytokine assay` fourth in its own candidate
     list and was still answered `flow cytometry assay, BROAD`.
 
@@ -695,36 +695,30 @@ def repick_obi(
     }
 
 
-def repick_blocked(
+def repick_broad(
     assays: dict[str, Any],
     obi: dict[str, Any],
     model: str = settings.OPENAI_MODEL,
     terms_path: Path = _OBI_TERMS_PATH,
 ) -> tuple[dict[str, Any], dict[str, dict[str, str]]]:
-    """Re-pick every BROAD mapping that kept a fold from happening. Returns (obi, repicked).
+    """Re-pick every BROAD mapping in the registry. Returns (obi, repicked).
+
+    The trigger is the mapping, not a conflict: BROAD says the term is a category the assay
+    falls under, and that is as true for an entry with no sibling on the term as for one whose
+    fold round 5 refused. It used to fire only for the latter, which left ten of the corpus's
+    twelve BROAD mappings on their category term with nobody asking again.
 
     `repicked` is {key: {"from": old label, "to": new label}} for the entries whose term
     changed; the returned mapping carries the new term on them with `obi_repicked_from` saying
     what it was. An entry the picker still answers "none" for, or whose call fails, keeps its
-    BROAD term and stays apart -- the failure is logged, never raised, because the fold round
-    has already been paid for by everything before it.
+    BROAD term -- the failure is logged, never raised, because everything before this step has
+    already been paid for.
     """
-    # Imported here: the merger is model-free and the mapper is what calls models, so the
-    # dependency points this way only.
-    from app.agent.assay_merger import blocked_folds, canonical_groups
-
     obi = {key: dict(value) for key, value in (obi or {}).items()}
-    broad_keys: list[str] = []
-    for record in blocked_folds(canonical_groups(assays, obi)):
-        if record.get("reason") != "mapping is BROAD":
-            continue
-        for key in (record["member"], record.get("anchor")):
-            if key and key not in broad_keys and _is_broad_mapping(obi.get(key) or {}):
-                broad_keys.append(key)
-
     repicked: dict[str, dict[str, str]] = {}
-    for key in broad_keys:
-        mapping = obi[key]
+    for key, mapping in obi.items():
+        if not _is_broad_mapping(mapping):
+            continue
         try:
             picked = repick_obi(key, assays.get(key) or {}, mapping, terms_path=terms_path,
                                 model=model)

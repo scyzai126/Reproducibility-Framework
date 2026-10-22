@@ -68,7 +68,7 @@ from app.agent.assay_obi_mapper import (
     _build_lookup,
     _index_children,
     enrich_assays_with_obi,
-    repick_blocked,
+    repick_broad,
 )
 from app.agent.assay_registry import CORPUS_ROOT, RESULT_VERSION, normalize_assay_name
 from app.agent.assay_verifier import (
@@ -595,12 +595,11 @@ def estimate_run(pubmed_id: str, study_accession: str) -> dict:
         groups = canonical_groups(mapped_input, obi_by_entry)
         folds = [{"key": g["key"], "members": g["members"]}
                  for g in groups if len(g["members"]) > 1]
-        # The one paid step of round 5: a BROAD mapping that blocked a fold is asked once more.
-        # Sized from the last run's mapping like rounds 2-4, so "~".
-        repicks = sorted({key for r in blocked_folds(groups) if r["reason"] == "mapping is BROAD"
-                          for key in (r["member"], r.get("anchor"))
-                          if key and str((obi_by_entry or {}).get(key, {}).get("obi_granularity")
-                                         or "").upper() == "BROAD"})
+        # The one paid step of round 5: every BROAD mapping is asked once more. Sized from the
+        # last run's mapping like rounds 2-4, so "~".
+        repicks = [key for key in mapped_input
+                   if str((obi_by_entry or {}).get(key, {}).get("obi_granularity") or "").upper()
+                   == "BROAD"]
         rounds.append({"round": 5, "name": "canonicalize", "calls": len(repicks),
                        "exact": not repicks, "basis": "last_run" if repicks else "deterministic",
                        "entries": len(mapped_input), "groups": len(groups), "folds": folds,
@@ -1114,13 +1113,14 @@ async def _run_rounds(pubmed_id, study_accession, client, verify, correct, model
     else:
         _emit(round="canonicalize", state="running", total=len(assays))
         groups = canonical_groups(assays, obi)
-        # A BROAD mapping that kept a fold from happening is the one case this round pays
-        # for: the picker is asked once more, with the category term removed, whether a
-        # candidate names the function. A hit gives the entry a term of its own; "none" leaves
-        # it apart under the category, reported. to_thread like round 4: the client blocks.
+        # A BROAD mapping is the one thing this round pays for: the picker is asked once more,
+        # with the category term removed, whether a candidate names the function. A hit gives
+        # the entry a term of its own and the fold rules are re-run on it; "none" leaves it on
+        # the category -- and apart from any sibling there, reported. to_thread like round 4:
+        # the client blocks.
         repicked: dict = {}
-        if any(r["reason"] == "mapping is BROAD" for r in blocked_folds(groups)):
-            obi, repicked = await asyncio.to_thread(repick_blocked, assays, obi, model)
+        if any(str(m.get("obi_granularity") or "").upper() == "BROAD" for m in obi.values()):
+            obi, repicked = await asyncio.to_thread(repick_broad, assays, obi, model)
             trace.write(raw_path)
             if repicked:
                 groups = canonical_groups(assays, obi)

@@ -277,6 +277,8 @@ export interface AssayEstimateRound {
   groups: number | null;
   /** Round 5: entries that would fold onto one OBI term. */
   folds: { key: string; members: string[] }[];
+  /** Round 5: entries whose last mapping was BROAD — each is asked once more, one call. */
+  repicks: string[];
 }
 
 export interface AssayEstimate extends PaperRef {
@@ -447,6 +449,8 @@ export type FindingKind =
   | 'REVIEW'
   | 'REJECT'
   | 'DROPPED'
+  | 'MINORITY'
+  | 'REPICKED'
   | 'MERGED'
   | 'UNMAPPED'
   | 'CORRECT FAILED'
