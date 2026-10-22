@@ -186,3 +186,27 @@ async def test_the_dry_run_makes_no_call(corpus, runner, monkeypatch, capsys):
     out = capsys.readouterr().out
     assert "~30 calls for the 1 that have run before" in out
     assert "plus 1 that cannot be sized" in out
+
+
+@pytest.mark.asyncio
+async def test_result_version_routes_every_paper_under_that_folder(corpus, runner, monkeypatch,
+                                                                   tmp_path):
+    """--result-version: each paper's folder is created under data/31paper_assays/<NAME>/ before
+    the run, so done_path and the pipeline land there instead of in the cache."""
+    xml_dir, _registry_root = corpus
+    from app.agent import assay_service
+    corpus_root = tmp_path / "corpus"
+    monkeypatch.setattr(assay_service, "CORPUS_ROOT", corpus_root)
+    monkeypatch.setattr(assay_service, "XML_ROOT", xml_dir)
+    monkeypatch.setattr(assay_service, "PDF_ROOT", tmp_path / "pdf")
+    # The real registry_dir, so the test proves the folder it finds is the version's.
+    monkeypatch.setattr(runner, "registry_dir", assay_service.registry_dir)
+    seen = []
+    monkeypatch.setattr(runner, "assay_report",
+                        _fake_report(runner, corpus_root / "assay_result_v3", seen))
+
+    await runner.main(xml_dir, [], force=False, dry=False, result_version="assay_result_v3")
+
+    assert sorted(seen) == ["111", "222"]
+    assert (corpus_root / "assay_result_v3" / "111_SDY1" / "assays_benchmark.json").exists()
+    assert runner.done_path("222", "SDY2") == corpus_root / "assay_result_v3" / "222_SDY2" / "assays_benchmark.json"

@@ -22,9 +22,13 @@ interruption at paper 28 does not cost the first 27 again -- the pipeline writes
 so its presence means the paper finished. Pass --force to re-run regardless -- which is what you
 want after editing a prompt, since the pipeline itself never reuses anything.
 
+`--result-version NAME` writes every paper under `data/31paper_assays/NAME/` instead of the
+configured result folder (each paper's folder is created there first), the way the single-paper
+CLI's flag of the same name does -- for a fresh pass of the corpus beside the last one.
+
 Usage:
     python3 scripts/run_assay_batch.py [--xml-dir data/JAT_XML] [--dry-run] [--force]
-                                       [--only PMID [PMID ...]]
+                                       [--only PMID [PMID ...]] [--result-version NAME]
 
 Example:
     python3 scripts/run_assay_batch.py --dry-run
@@ -41,6 +45,7 @@ _REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_REPO_ROOT / "apps" / "api"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+from app.agent import assay_service
 from app.agent.assay_service import (
     PDF_ROOT,
     REGISTRY_ROOT,
@@ -52,7 +57,7 @@ from app.agent.assay_service import (
     split_stem,
 )
 from app.agent.claim_parser import _get_client
-from run_assay_pipeline import report_result
+from run_assay_pipeline import report_result, use_result_version
 
 XML_DIR = _REPO_ROOT / "data" / "JAT_XML"
 
@@ -131,7 +136,8 @@ async def run_one(pmid: str, sdy: str, client) -> dict:
     return result
 
 
-async def main(xml_dir: Path, only: list[str], force: bool, dry: bool) -> None:
+async def main(xml_dir: Path, only: list[str], force: bool, dry: bool,
+               result_version: str = "") -> None:
     if not xml_dir.is_dir():
         raise SystemExit(f"No such directory: {xml_dir}")
 
@@ -139,6 +145,11 @@ async def main(xml_dir: Path, only: list[str], force: bool, dry: bool) -> None:
     if not papers:
         raise SystemExit(f"No papers matched under {xml_dir}")
     print(f"{len(papers)} paper(s) under {xml_dir}\n")
+    if result_version.strip():
+        # Every paper's folder is created under the version first, so done_path and
+        # registry_dir resolve there rather than treating the paper as new (-> the cache).
+        for pmid, sdy, _path in papers:
+            use_result_version(result_version.strip(), pmid, sdy)
 
     if dry:
         dry_run(papers, force)
@@ -170,7 +181,8 @@ async def main(xml_dir: Path, only: list[str], force: bool, dry: bool) -> None:
           f"{calls} call(s) spent this run")
     for pmid, reason in failed:
         print(f"  FAILED  {pmid}: {reason}")
-    print(f"  deliverables: {_display_path(REGISTRY_ROOT)}/<pmid>_<SDY>/assays_benchmark.json")
+    root = assay_service.REGISTRY_ROOT if result_version.strip() else REGISTRY_ROOT
+    print(f"  deliverables: {_display_path(root)}/<pmid>_<SDY>/assays_benchmark.json")
 
 
 if __name__ == "__main__":
@@ -183,5 +195,8 @@ if __name__ == "__main__":
                         help="re-run papers whose assays_benchmark.json already exists")
     parser.add_argument("--dry-run", action="store_true",
                         help="report the projected call count; makes no API call")
+    parser.add_argument("--result-version", metavar="NAME", default="",
+                        help="write under data/31paper_assays/NAME/ instead of the configured "
+                             "result folder (e.g. assay_result_v3); folders are created")
     args = parser.parse_args()
-    asyncio.run(main(args.xml_dir, args.only, args.force, args.dry_run))
+    asyncio.run(main(args.xml_dir, args.only, args.force, args.dry_run, args.result_version))
