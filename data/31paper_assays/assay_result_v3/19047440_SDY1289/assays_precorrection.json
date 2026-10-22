@@ -1,4 +1,23 @@
 {
+  "gene array analysis": {
+    "name_in_paper": "gene array analysis",
+    "standard_technique_name": "transcription profiling by array",
+    "aliases": [
+      "microarray analyses",
+      "gene arrays"
+    ],
+    "sample_type": "whole blood",
+    "readouts": "gene expression levels",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Gene array analysis of whole-blood and VaxDesign samples.",
+      "sentence_ids": [
+        "S124"
+      ],
+      "quote": "The biotinylated cRNA was hybridized onto Illumina Human RefSeq-8 BeadChips v2 (Montreal and Lausanne samples) or v3 (VaxDesign samples) at 58°C for 20 h and quantified using Illumina BeadStation 500GX scanner and Illumina BeadStudio v3 software."
+    }
+  },
   "qPCR validation": {
     "name_in_paper": "qPCR validation",
     "standard_technique_name": "real time polymerase chain reaction",
@@ -6,7 +25,7 @@
       "qPCR",
       "quantitative real-time PCR"
     ],
-    "sample_type": "RNA samples from whole blood",
+    "sample_type": "whole-blood RNA",
     "readouts": "expression levels of selected genes",
     "generate_claim": true,
     "source": "methods",
@@ -16,24 +35,6 @@
         "S133"
       ],
       "quote": "Changes in gene expression observed by microarray analyses were verified by qPCR."
-    }
-  },
-  "lysis plaque assay": {
-    "name_in_paper": "lysis plaque assay",
-    "standard_technique_name": "plaque assay",
-    "aliases": [
-      "plaque assay"
-    ],
-    "sample_type": "Vero cells",
-    "readouts": "viral titers and confirmation of virus inactivation",
-    "generate_claim": false,
-    "source": "methods",
-    "evidence": {
-      "section": "In vitro infection of immature DCs with YF17D.",
-      "sentence_ids": [
-        "S149"
-      ],
-      "quote": "Viral stocks were titrated on Vero cells by lysis plaque assay."
     }
   },
   "IL-1β ELISA": {
@@ -59,7 +60,7 @@
     "standard_technique_name": "flow cytometry",
     "aliases": [],
     "sample_type": "peripheral blood mononuclear cells",
-    "readouts": "T cell proliferative responses measured by CFSE dilution",
+    "readouts": "T cell proliferative response measured by CFSE dilution after peptide stimulation",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
@@ -78,7 +79,7 @@
       "cytometric bead assay"
     ],
     "sample_type": "peripheral blood mononuclear cell supernatants",
-    "readouts": "levels of IL-2, IL-4, IL-5, IL-10, IFN-γ, and TNF; beads read on a flow cytometer",
+    "readouts": "levels of IL-2, IL-4, IL-5, IL-10, IFN-γ, and TNF",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
@@ -93,10 +94,11 @@
     "name_in_paper": "Flow cytometric analysis of IFN-γ/IL-2–producing activated CD4 T cells",
     "standard_technique_name": "flow cytometry",
     "aliases": [
-      "polychromatic flow cytometry"
+      "polychromatic flow cytometry",
+      "FACS analysis"
     ],
     "sample_type": "peripheral blood mononuclear cells",
-    "readouts": "frequencies of activated CD4 T cells expressing CD154, IL-2, and IFN-γ after peptide stimulation",
+    "readouts": "frequencies of activated vaccine-specific CD4 T cells expressing CD154, IL-2, and IFN-γ",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
@@ -111,8 +113,8 @@
     "name_in_paper": "CD4 + T cell stimulation assay",
     "standard_technique_name": "flow cytometry",
     "aliases": [],
-    "sample_type": "autologous CD4 positive T cells co-cultured with dendritic cells",
-    "readouts": "intracellular IFN-γ, IL-5, IL-13, and CD154 expression in activated CD4 T cells",
+    "sample_type": "purified CD4 positive T cells co-cultured with autologous dendritic cells",
+    "readouts": "intracellular IFN-γ, IL-5, IL-13, and CD154 expression in CD4 positive T cells",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
@@ -125,10 +127,10 @@
   },
   "Multiplex cytokine analysis": {
     "name_in_paper": "Multiplex cytokine analysis",
-    "standard_technique_name": "multiplex bead-based immunoassay",
+    "standard_technique_name": "Luminex",
     "aliases": [],
     "sample_type": "supernatants from dendritic cell/T cell co-cultures",
-    "readouts": "cytokine concentrations in culture supernatants measured on a bead-based reader",
+    "readouts": "cytokine concentrations in culture supernatants measured on a Bio-Plex reader",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
@@ -139,32 +141,15 @@
       "quote": "At the time the lymphocytes were harvested from DC/T cell co-cultures, the supernatants were also collected and stored frozen until analyzed for cytokine production using the Beadlyte human 22-plex Multi-cytokine Detection System (Millipore) on a Bio-Plex reader (Bio-Rad Laboratories)."
     }
   },
-  "gene array analysis": {
-    "name_in_paper": "gene array analysis",
-    "standard_technique_name": "transcription profiling by array",
-    "aliases": [
-      "microarray analyses"
-    ],
-    "sample_type": "whole blood",
-    "readouts": "gene expression levels",
-    "generate_claim": true,
-    "source": "methods",
-    "evidence": {
-      "section": "Gene array analysis of whole-blood and VaxDesign samples.",
-      "sentence_ids": [
-        "S124"
-      ],
-      "quote": "The biotinylated cRNA was hybridized onto Illumina Human RefSeq-8 BeadChips v2 (Montreal and Lausanne samples) or v3 (VaxDesign samples) at 58°C for 20 h and quantified using Illumina BeadStation 500GX scanner and Illumina BeadStudio v3 software."
-    }
-  },
   "FACS analysis of PBMCs": {
     "name_in_paper": "FACS analysis of PBMCs",
     "standard_technique_name": "flow cytometry",
     "aliases": [
-      "FACS"
+      "FACS",
+      "FACS analysis of long-term vaccine-specific CD4+ T cells"
     ],
     "sample_type": "peripheral blood mononuclear cells",
-    "readouts": "frequencies of central memory CD4 T cells expressing CD154 and Th1/Th2 phenotype markers after peptide stimulation and restimulation",
+    "readouts": "frequencies of central memory Th1 and Th2 CD4 T cells expressing CD154 after peptide stimulation",
     "generate_claim": true,
     "source": "methods",
     "evidence": {

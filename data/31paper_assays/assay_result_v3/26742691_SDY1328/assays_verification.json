@@ -1,0 +1,524 @@
+{
+  "summary": {
+    "total": 8,
+    "accept": 3,
+    "review": 4,
+    "reject": 1,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {
+      "name_in_paper": {
+        "NOT_SUPPORTED": 1,
+        "CONTRADICTED": 1
+      },
+      "aliases[]": {
+        "NOT_SUPPORTED": 1
+      },
+      "sample_type": {
+        "NOT_SUPPORTED": 2,
+        "CONTRADICTED": 1
+      },
+      "readouts": {
+        "NOT_SUPPORTED": 2
+      }
+    }
+  },
+  "results": [
+    {
+      "assay_id": "GM1-enzyme-linked immunosorbent assay (ELISA)",
+      "assay_name": "GM1-enzyme-linked immunosorbent assay (ELISA)",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "GM1-enzyme-linked immunosorbent assay (ELISA)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S122"
+          ],
+          "evidence_text": "GM1-enzyme-linked immunosorbent assay (ELISA)",
+          "reason": "The Methods explicitly states this assay was used to quantify anti-CTB IgG."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "ELISA assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S125"
+          ],
+          "evidence_text": "the ELISA assay",
+          "reason": "This wording refers to the same GM1-based ELISA measurement."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "serum samples",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S122"
+          ],
+          "evidence_text": "in serum samples",
+          "reason": "The assay is explicitly described as quantifying anti-CTB IgG in serum samples."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "anti-Cholera toxin B subunit IgG antibody titres measured by optical density",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S122",
+            "S134",
+            "S136"
+          ],
+          "evidence_text": "Anti-Cholera toxin B subunit (CTB) IgG were quantified in serum samples ... optical density (OD) was measured at 450/620 nm ... The antibody titre was defined as the midpoint (or IC50) of the titration curve.",
+          "reason": "The text states the assay quantified anti-CTB IgG and measured OD to derive antibody titre."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Anti-Cholera toxin B subunit (CTB) IgG were quantified in serum samples according to a GM1-enzyme-linked immunosorbent assay (ELISA) method adapted from Svennerholm et al.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S122"
+          ],
+          "evidence_text": "Anti-Cholera toxin B subunit (CTB) IgG were quantified in serum samples according to a GM1-enzyme-linked immunosorbent assay (ELISA) method adapted from Svennerholm et al.",
+          "reason": "The quote appears verbatim and states the assay was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S122"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "MONOLISA Anti-HBs PLUS kit",
+      "assay_name": "MONOLISA Anti-HBs PLUS kit",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "MONOLISA Anti-HBs PLUS kit",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S138"
+          ],
+          "evidence_text": "using the MONOLISA Anti-HBs PLUS kit",
+          "reason": "The study explicitly states this kit was used to quantify anti-HBsAg antibodies."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "serum samples",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S138"
+          ],
+          "evidence_text": "quantified in serum samples",
+          "reason": "The assay is explicitly described as being performed on serum samples."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "anti-hepatitis B surface antigen total antibody levels measured by optical density",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S138",
+            "S143",
+            "S144"
+          ],
+          "evidence_text": "Anti-hepatitis B surface antigen (anti-HBsAg) total antibodies were quantified in serum samples using the MONOLISA Anti-HBs PLUS kit (Bio-Rad catalogue number 72566). ... OD was measured at 450/620 nm using a spectrophotometer. The determination of anti-HBs levels has been standardized by use of the WHO Anti-HBs reference preparation expressed in mIU ml −1 .",
+          "reason": "The text states the assay quantified anti-HBsAg total antibodies and included OD measurement."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Anti-hepatitis B surface antigen (anti-HBsAg) total antibodies were quantified in serum samples using the MONOLISA Anti-HBs PLUS kit (Bio-Rad catalogue number 72566).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S138"
+          ],
+          "evidence_text": "Anti-hepatitis B surface antigen (anti-HBsAg) total antibodies were quantified in serum samples using the MONOLISA Anti-HBs PLUS kit (Bio-Rad catalogue number 72566).",
+          "reason": "The quote appears verbatim and directly describes the assay being performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S138"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "commercially available kit",
+      "assay_name": "commercially available kit",
+      "assay_identity_verdict": "NOT_SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "commercially available kit",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "This phrase names no specific assay technique and is too vague to identify a reproducible measurement procedure."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "Anti-Diphtheria IgG",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "This refers to the analyte measured, not the assay itself."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "serum samples",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S146"
+          ],
+          "evidence_text": "in serum samples",
+          "reason": "The assay is explicitly stated to quantify Anti-Diphtheria IgG in serum samples."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "anti-Diphtheria IgG concentrations measured by optical density",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S146",
+            "S151",
+            "S152"
+          ],
+          "evidence_text": "Anti-Diphtheria IgG were quantified in serum samples using a commercially available kit ... OD was measured at 450/620 nm ... The Anti-Diphtheria toxin IgG concentrations were expressed in IU ml −1",
+          "reason": "The text states the assay quantified Anti-Diphtheria IgG concentrations and measured OD as part of the assay."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Anti-Diphtheria IgG were quantified in serum samples using a commercially available kit (Sekisui Virotech, catalogue number EC129.00).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S146"
+          ],
+          "evidence_text": "Anti-Diphtheria IgG were quantified in serum samples using a commercially available kit (Sekisui Virotech, catalogue number EC129.00).",
+          "reason": "The quote appears verbatim and describes a measurement performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S146"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    },
+    {
+      "assay_id": "Anti-Tetanus IgG",
+      "assay_name": "Anti-Tetanus IgG",
+      "assay_identity_verdict": "CONTRADICTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Anti-Tetanus IgG",
+          "verdict": "CONTRADICTED",
+          "evidence_sentence_ids": [
+            "S154"
+          ],
+          "evidence_text": "Anti-Tetanus IgG were quantified using a commercially available kit",
+          "reason": "This names the measured analyte rather than an assay procedure, so it is an endpoint not an assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "serum samples",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "The assay identity is not a valid assay, so the specimen cannot be verified as linked to that assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "anti-Tetanus IgG concentrations measured by optical density",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "The proposed assay is an endpoint rather than a procedure, so this readout-to-assay relationship is not verifiable."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Anti-Tetanus IgG were quantified using a commercially available kit (Sekisui Virotech, catalogue number EC124.00).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S154"
+          ],
+          "evidence_text": "Anti-Tetanus IgG were quantified using a commercially available kit (Sekisui Virotech, catalogue number EC124.00).",
+          "reason": "The quote appears verbatim and describes a measurement performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S154"
+      },
+      "conflict_detected": true,
+      "record_verdict": "REJECT",
+      "model_record_verdict": "REJECT"
+    },
+    {
+      "assay_id": "microarray",
+      "assay_name": "microarray",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "microarray",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S190"
+          ],
+          "evidence_text": "microarray experiments",
+          "reason": "The text explicitly refers to microarray experiments performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "microarray experiments",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S190"
+          ],
+          "evidence_text": "microarray experiments",
+          "reason": "This wording refers to the same assay performed here."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "whole blood",
+          "verdict": "CONTRADICTED",
+          "evidence_sentence_ids": [
+            "S184"
+          ],
+          "evidence_text": "RNA was isolated from PAXgene blood samples",
+          "reason": "The assay sample is specified as PAXgene blood samples, not whole blood."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "gene expression intensities of blood transcripts",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S169"
+          ],
+          "evidence_text": "the log2 expression of transcript ( x )",
+          "reason": "The assay output is transcript expression values."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Three-hundred and thirty-five samples passing quality control were then amplified using the NuGEN amplification protocol and hybridized to Affymetrix HuRSTA-2a520709 chips (Affymetrix, Santa Clara, CA).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S186"
+          ],
+          "evidence_text": "Three-hundred and thirty-five samples passing quality control were then amplified using the NuGEN amplification protocol and hybridized to Affymetrix HuRSTA-2a520709 chips (Affymetrix, Santa Clara, CA).",
+          "reason": "The quote appears verbatim and describes the assay being performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S186"
+      },
+      "conflict_detected": true,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    },
+    {
+      "assay_id": "Polychromatic FCM",
+      "assay_name": "Polychromatic FCM",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Polychromatic FCM",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S211",
+            "S222"
+          ],
+          "evidence_text": "## Polychromatic FCM\n[S212] Phenotypic analysis of T-cell and innate cell subsets was performed",
+          "reason": "The Methods section explicitly describes polychromatic FCM being performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "FCM",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S223"
+          ],
+          "evidence_text": "individual FCM markers",
+          "reason": "FCM is used in the text to refer to the same cytometry assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "whole blood and peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S212",
+            "S213"
+          ],
+          "evidence_text": "Phenotypic analysis of T-cell and innate cell subsets was performed by staining whole blood collected in EDTA Vacutainer tubes. Blood for B-cell analysis was collected in Na-Heparin Vacutainer tubes and further processed by density gradient centrifugation through Ficoll to obtain peripheral blood mononuclear cells (PBMC)",
+          "reason": "The assay used whole blood for T-cell and innate-cell panels and PBMC for B-cell analysis."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "frequencies and absolute counts of T-cell, B-cell, and innate immune cell subsets",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "The text supports frequencies and absolute enumeration for some cellular subsets, but does not clearly establish absolute counts for T-cell, B-cell, and innate subsets as the assay-wide readout."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Three FCM panels ( Supplementary Table 5 ) were respectively used to determine frequencies of T cells, B cells and innate immune cells obtained from the 174 pre-vaccination (Visit 2) samples of the study cohort.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S222"
+          ],
+          "evidence_text": "Three FCM panels ( Supplementary Table 5 ) were respectively used to determine frequencies of T cells, B cells and innate immune cells obtained from the 174 pre-vaccination (Visit 2) samples of the study cohort.",
+          "reason": "The quote appears verbatim and directly states that the FCM assay was performed on study samples."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S222"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "multiplex ELISA protocol Human Inflammation multianalyte profiling",
+      "assay_name": "multiplex ELISA protocol Human Inflammation multianalyte profiling",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "multiplex ELISA protocol Human Inflammation multianalyte profiling",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S231"
+          ],
+          "evidence_text": "using the multiplex ELISA protocol Human Inflammation multianalyte profiling",
+          "reason": "The text explicitly states this protocol was used for analysis in this study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "serum samples",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S231"
+          ],
+          "evidence_text": "Serum samples were shipped to RBM for analysis",
+          "reason": "The assay is explicitly performed on serum samples."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "concentrations of inflammatory cytokines and chemokines",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S229",
+            "S230"
+          ],
+          "evidence_text": "A panel of 45 cytokines/chemokines was measured... Samples were assayed to determine the concentration of inflammatory proteins",
+          "reason": "The assay measured cytokines/chemokines as concentrations of inflammatory proteins."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Serum samples were shipped to RBM for analysis using the multiplex ELISA protocol Human Inflammation multianalyte profiling ( Supplementary Table 5b ).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S231"
+          ],
+          "evidence_text": "Serum samples were shipped to RBM for analysis using the multiplex ELISA protocol Human Inflammation multianalyte profiling ( Supplementary Table 5b ).",
+          "reason": "The quote appears verbatim and shows the assay was performed on study samples."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S231"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "complete blood count",
+      "assay_name": "complete blood count",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "complete blood count",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S235"
+          ],
+          "evidence_text": "3 standard haematologic markers (complete blood count) was measured",
+          "reason": "The text explicitly states that complete blood count was measured in this study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "blood",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "The sentence mentions pre-vaccination samples but does not explicitly identify the specimen as blood for this assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "3 standard haematologic markers including red blood cell counts",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S235",
+            "S99"
+          ],
+          "evidence_text": "A panel of 3 standard haematologic markers (complete blood count) was measured",
+          "reason": "The assay is explicitly described as measuring three haematologic markers, and RBC counts are identified elsewhere as one of those haematologic markers."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "A panel of 3 standard haematologic markers (complete blood count) was measured on the 174 pre-vaccination samples taken 28 days prior to vaccination (V1) of the EM131 cohort.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S235"
+          ],
+          "evidence_text": "A panel of 3 standard haematologic markers (complete blood count) was measured on the 174 pre-vaccination samples taken 28 days prior to vaccination (V1) of the EM131 cohort.",
+          "reason": "The quote appears verbatim and directly states that the assay was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S235"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    }
+  ]
+}

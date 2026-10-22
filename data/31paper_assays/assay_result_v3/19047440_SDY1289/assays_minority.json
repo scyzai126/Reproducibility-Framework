@@ -1,26 +1,47 @@
 {
-  "gene array analysis of whole-blood and VaxDesign samples": {
+  "lysis plaque assay": {
     "entry": {
-      "name_in_paper": "gene array analysis of whole-blood and VaxDesign samples",
-      "standard_technique_name": "transcription profiling by array",
+      "name_in_paper": "lysis plaque assay",
+      "standard_technique_name": "plaque assay",
       "aliases": [
-        "gene array",
-        "microarray"
+        "plaque assay"
       ],
-      "sample_type": "whole blood",
-      "readouts": "gene expression levels measured on Illumina bead arrays",
-      "generate_claim": true,
+      "sample_type": "Vero cells",
+      "readouts": "viral titers and confirmation of virus inactivation",
+      "generate_claim": false,
       "source": "methods",
       "evidence": {
-        "section": "Gene array analysis of whole-blood and VaxDesign samples.",
+        "section": "In vitro infection of immature DCs with YF17D.",
         "sentence_ids": [
-          "S124"
+          "S149"
         ],
-        "quote": "The biotinylated cRNA was hybridized onto Illumina Human RefSeq-8 BeadChips v2 (Montreal and Lausanne samples) or v3 (VaxDesign samples) at 58°C for 20 h and quantified using Illumina BeadStation 500GX scanner and Illumina BeadStudio v3 software."
+        "quote": "Viral stocks were titrated on Vero cells by lysis plaque assay."
       }
     },
     "runs": [
       "run1"
+    ],
+    "of": 3
+  },
+  "Ki67 flow cytometry": {
+    "entry": {
+      "name_in_paper": "Ki67 flow cytometry",
+      "standard_technique_name": "flow cytometry",
+      "aliases": [],
+      "sample_type": "peripheral blood mononuclear cells",
+      "readouts": "frequencies of Ki67-positive proliferating leukocyte subsets",
+      "generate_claim": true,
+      "source": "results",
+      "evidence": {
+        "section": "YF17D vaccination leads to the proliferation and expansion of several leukocyte subtypes",
+        "sentence_ids": [
+          "S52"
+        ],
+        "quote": "To do so, PBMCs from 6 volunteers, sampled at day 0, 3, 7, 10, 14, and 28 after vaccination, were stained with anti-Ki67and other specific antibodies to identify, by flow cytometry, different cell subsets that are actively proliferating."
+      }
+    },
+    "runs": [
+      "run2"
     ],
     "of": 3
   }

@@ -44,7 +44,17 @@
             "S169"
           ],
           "evidence_text": "using the US CDC real-time RT-qPCR primer/probe sets",
-          "reason": "This wording denotes the same RT-qPCR assay used for SARS-CoV-2 RNA detection."
+          "reason": "This phrase denotes the same RT-qPCR assay used for SARS-CoV-2 RNA detection."
+        },
+        {
+          "field_name": "aliases[2]",
+          "proposed_value": "qPCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S171"
+          ],
+          "evidence_text": "assayed by qPCR",
+          "reason": "The text uses qPCR to refer to the same viral RNA assay."
         },
         {
           "field_name": "sample_type",
@@ -54,7 +64,7 @@
             "S167"
           ],
           "evidence_text": "from nasopharyngeal samples",
-          "reason": "The assay is explicitly described as being performed on nasopharyngeal samples."
+          "reason": "The assay is explicitly stated to be performed on nasopharyngeal samples."
         },
         {
           "field_name": "readouts",
@@ -66,7 +76,7 @@
             "S170"
           ],
           "evidence_text": "RNA concentrations were measured from nasopharyngeal samples by RT-qPCR... For SARS-CoV-2 RNA detection... Virus RNA copies were quantified",
-          "reason": "The text states that the assay detected SARS-CoV-2 RNA and quantified virus RNA copies."
+          "reason": "The assay measured SARS-CoV-2 RNA and quantified virus RNA copies."
         },
         {
           "field_name": "evidence.quote",
@@ -76,7 +86,7 @@
             "S167"
           ],
           "evidence_text": "RNA concentrations were measured from nasopharyngeal samples by RT-qPCR as previously described 23 .",
-          "reason": "The quote appears verbatim and directly states that the assay was performed here."
+          "reason": "The quote appears verbatim and states that the assay was performed in this study."
         }
       ],
       "quote_check": {
@@ -103,7 +113,7 @@
             "S177"
           ],
           "evidence_text": "measured with Human Cytokine Array/Chemokine Array 71–403 Plex Panel (HD71)",
-          "reason": "The text explicitly states this measurement was performed with that named panel."
+          "reason": "The text explicitly states this measurement panel was used in the study."
         },
         {
           "field_name": "sample_type",
@@ -113,8 +123,8 @@
             "S176",
             "S177"
           ],
-          "evidence_text": "Patient serum was isolated as before and aliquots were stored in −80°C. Sera were shipped to Eve Technologies (Calgary, Alberta, Canada) on dry ice, and levels of cytokines and chemokines were measured",
-          "reason": "The assay is explicitly described as being run on sera/patient serum."
+          "evidence_text": "Patient serum was isolated as before and aliquots were stored in −80°C. Sera were shipped to Eve Technologies (Calgary, Alberta, Canada) on dry ice, and levels of cytokines and chemokines were measured with Human Cytokine Array/Chemokine Array 71–403 Plex Panel (HD71).",
+          "reason": "The assay was explicitly performed on sera/patient serum."
         },
         {
           "field_name": "readouts",
@@ -124,7 +134,7 @@
             "S177"
           ],
           "evidence_text": "levels of cytokines and chemokines were measured",
-          "reason": "The text directly states the assay measured cytokine and chemokine levels."
+          "reason": "The text directly states that the assay measured cytokine and chemokine levels."
         },
         {
           "field_name": "evidence.quote",
@@ -134,7 +144,7 @@
             "S177"
           ],
           "evidence_text": "Sera were shipped to Eve Technologies (Calgary, Alberta, Canada) on dry ice, and levels of cytokines and chemokines were measured with Human Cytokine Array/Chemokine Array 71–403 Plex Panel (HD71).",
-          "reason": "The quote appears verbatim and describes the assay being performed in this study."
+          "reason": "The quote appears verbatim and shows the assay was performed on study samples."
         }
       ],
       "quote_check": {
@@ -170,30 +180,31 @@
           "evidence_sentence_ids": [
             "S186"
           ],
-          "evidence_text": "freshly isolated PBMCs",
-          "reason": "The flow cytometry methods explicitly state that freshly isolated PBMCs were used."
+          "evidence_text": "Briefly, freshly isolated PBMCs were plated at 1–2 × 10 6 cells / well in a 96 well U-bottom plate.",
+          "reason": "The flow cytometry procedure explicitly used freshly isolated PBMCs."
         },
         {
           "field_name": "readouts",
           "proposed_value": "leukocyte subset frequencies and phenotypes",
           "verdict": "SUPPORTED",
           "evidence_sentence_ids": [
+            "S13",
+            "S23",
             "S24",
-            "S32",
             "S202"
           ],
-          "evidence_text": "by flow cytometry and ELISA to quantify leukocytes and soluble mediators, respectively",
-          "reason": "The text links flow cytometry to quantifying leukocytes, and the marker panels identify immune cell subsets and phenotypic markers."
+          "evidence_text": "leukocyte profiles (by flow cytometry using freshly isolated peripheral blood mononuclear cells; PBMCs).",
+          "reason": "The text states flow cytometry was used to assess leukocyte profiles, supporting leukocyte subset frequencies and phenotypes as the readout."
         },
         {
           "field_name": "evidence.quote",
-          "proposed_value": "Briefly, freshly isolated PBMCs were plated at 1–2 × 10 6 cells / well in a 96 well U-bottom plate.",
+          "proposed_value": "Finally, intracellular staining cocktails were directly added to each sample for 1 hour at 4°C.",
           "verdict": "SUPPORTED",
           "evidence_sentence_ids": [
-            "S186"
+            "S199"
           ],
-          "evidence_text": "Briefly, freshly isolated PBMCs were plated at 1–2 × 10 6 cells / well in a 96 well U-bottom plate.",
-          "reason": "The quoted sentence appears verbatim in the Flow cytometry methods and describes the assay being performed here."
+          "evidence_text": "Finally, intracellular staining cocktails were directly added to each sample for 1 hour at 4°C.",
+          "reason": "The quoted sentence appears verbatim in the Flow cytometry methods and is part of the performed assay procedure."
         }
       ],
       "quote_check": {
@@ -201,7 +212,7 @@
         "located_ids": [],
         "status": "found",
         "verdict": "SUPPORTED",
-        "detail": "quote found in sentences S186"
+        "detail": "quote found in sentences S199"
       },
       "conflict_detected": false,
       "record_verdict": "ACCEPT",
@@ -220,7 +231,7 @@
             "S192"
           ],
           "evidence_text": "For intracellular cytokine staining following stimulation",
-          "reason": "The methods explicitly describe intracellular cytokine staining being performed in this study."
+          "reason": "The Methods explicitly describe intracellular cytokine staining being performed."
         },
         {
           "field_name": "sample_type",
@@ -231,20 +242,19 @@
             "S192"
           ],
           "evidence_text": "freshly isolated PBMCs were plated at 1–2 × 10 6 cells / well in a 96 well U-bottom plate. For intracellular cytokine staining following stimulation, cells were resuspended",
-          "reason": "The intracellular cytokine staining procedure is described on cells that were introduced as freshly isolated PBMCs."
+          "reason": "The intracellular cytokine staining procedure is described on the PBMCs plated for flow cytometry."
         },
         {
           "field_name": "readouts",
-          "proposed_value": "intracellular cytokine-positive cells after stimulation",
+          "proposed_value": "intracellular cytokine production after stimulation",
           "verdict": "SUPPORTED",
           "evidence_sentence_ids": [
             "S193",
             "S194",
-            "S196",
-            "S199"
+            "S196"
           ],
-          "evidence_text": "these cells were washed and stimulated with 1X Cell Stimulation Cocktail... To quantify intracellular cytokines, these samples were permeabilized... Finally, intracellular staining cocktails were directly added to each sample",
-          "reason": "The assay measures intracellular cytokines in stimulated cells, consistent with cytokine-positive cells after stimulation."
+          "evidence_text": "these cells were washed and stimulated with 1X Cell Stimulation Cocktail ... 5X Stimulation Cocktail (plus protein transport 442 inhibitor) ... To quantify intracellular cytokines",
+          "reason": "The assay involved stimulation followed by quantification of intracellular cytokines."
         },
         {
           "field_name": "evidence.quote",
@@ -254,7 +264,7 @@
             "S192"
           ],
           "evidence_text": "For intracellular cytokine staining following stimulation, cells were resuspended in 200 μL cRPMI (RPMI-1640 supplemented with 10% FBS, 2 mM L-glutamine, 100 U/ml penicillin, and 100 mg/ml streptomycin, 1mM Sodium Pyruvate, and 50uM 2-Mercaptoethanol) and stored at 4°C overnight.",
-          "reason": "The quoted sentence appears verbatim and describes the assay procedure performed here."
+          "reason": "The quote appears verbatim and describes the assay procedure performed in this study."
         }
       ],
       "quote_check": {

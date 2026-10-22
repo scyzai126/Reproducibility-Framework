@@ -1,0 +1,100 @@
+{
+  "flow cytometry assay": {
+    "name_in_paper": [
+      "Flow Cytometry Analysis"
+    ],
+    "standard_technique_name": "flow cytometry",
+    "aliases": [],
+    "sample_type": "peripheral blood mononuclear cells",
+    "readouts": "frequency and surface marker expression of monocytes, dendritic cells, and NK cell subsets",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Flow Cytometry Analysis",
+      "sentence_ids": [
+        "S106"
+      ],
+      "quote": "PBMC samples were frozen in liquid nitrogen, thawed, stained, and acquired on an LSR Fortessa flow cytometer."
+    },
+    "obi_id": "OBI:0000916",
+    "obi_label": "flow cytometry assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.7859,
+    "obi_granularity": "EXACT"
+  },
+  "cytometric bead array assay": {
+    "name_in_paper": [
+      "Cytokine and Chemokine Multiplex Analysis"
+    ],
+    "standard_technique_name": "Luminex",
+    "aliases": [
+      "Luminex assay",
+      "13-plex assay"
+    ],
+    "sample_type": "plasma",
+    "readouts": "concentrations of 13 cytokines and chemokines",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Cytokine and Chemokine Multiplex Analysis",
+      "sentence_ids": [
+        "S116"
+      ],
+      "quote": "Samples were read in duplicates according to the manufacturer’s protocol on a Bio-Plex Luminex-200 (Bio-Rad) and analyzed using Bio-Plex Manager software."
+    },
+    "obi_id": "OBI:0000920",
+    "obi_label": "cytometric bead array assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.638,
+    "obi_granularity": "EXACT"
+  },
+  "enzyme-linked immunosorbent assay": {
+    "name_in_paper": [
+      "ELISA"
+    ],
+    "standard_technique_name": "enzyme-linked immunosorbent assay",
+    "aliases": [],
+    "sample_type": null,
+    "readouts": "EBOV-GP-binding antibody levels",
+    "generate_claim": true,
+    "source": "results",
+    "evidence": {
+      "section": "EBOV-GP-Binding Antibody Responses Induced by the Vaccine",
+      "sentence_ids": [
+        "S42"
+      ],
+      "quote": "GP-specific antibody responses were measured using an ELISA in two centralized laboratories (Marburg, Germany and United States Army Medical Research Institute for Infectious Diseases [USAMRIID], USA) on days 0, 7, 14, 28, 56, 84, and 180."
+    },
+    "obi_id": "OBI:0000661",
+    "obi_label": "enzyme-linked immunosorbent assay",
+    "resource": "exact_original",
+    "obi_confidence": "high",
+    "obi_granularity": null
+  },
+  "bulk RNA-seq assay": {
+    "name_in_paper": [
+      "RNA Extraction and Next-Generation RNA Sequencing"
+    ],
+    "standard_technique_name": "bulk RNA sequencing",
+    "aliases": [
+      "RNA-seq",
+      "Next-Generation RNA Sequencing"
+    ],
+    "sample_type": "whole blood",
+    "readouts": "whole-blood gene expression levels and gene-level read counts",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "RNA Extraction and Next-Generation RNA Sequencing",
+      "sentence_ids": [
+        "S123"
+      ],
+      "quote": "Diluted libraries were multiplex-sequenced on the Illumina HiSeq 2500 instrument (single read, 50-bp run)."
+    },
+    "obi_id": "OBI:0003090",
+    "obi_label": "bulk RNA-seq assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.6904,
+    "obi_granularity": "EXACT"
+  }
+}

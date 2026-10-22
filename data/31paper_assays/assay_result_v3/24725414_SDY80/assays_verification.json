@@ -1,0 +1,265 @@
+{
+  "summary": {
+    "total": 4,
+    "accept": 4,
+    "review": 0,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {}
+  },
+  "results": [
+    {
+      "assay_id": "microarray",
+      "assay_name": "microarray",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "microarray",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S11"
+          ],
+          "evidence_text": "transcriptome analyses using microarrays",
+          "reason": "The text explicitly states that microarray-based transcriptome analyses were included in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "transcriptome analyses using microarrays",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S11"
+          ],
+          "evidence_text": "transcriptome analyses using microarrays",
+          "reason": "This phrase refers to the same assay performed in the study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S4",
+            "S129"
+          ],
+          "evidence_text": "Peripheral blood mononuclear cell transcriptomes",
+          "reason": "The assay's transcriptomes are explicitly described as coming from peripheral blood mononuclear cells."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "transcript abundance across genes",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S23"
+          ],
+          "evidence_text": "Transcript abundance for day 0 PBMCs also showed substantial variation",
+          "reason": "The text explicitly describes transcript abundance as the quantity assessed."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "PBMCs were cryopreserved or lysed and stored at -80C for subsequent RNA extraction using miRNeasy (Qiagen) and hybridization to HG 1.0 ST arrays (Affymetrix).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S129"
+          ],
+          "evidence_text": "PBMCs were cryopreserved or lysed and stored at -80C for subsequent RNA extraction using miRNeasy (Qiagen) and hybridization to HG 1.0 ST arrays (Affymetrix).",
+          "reason": "The quote appears verbatim and describes the assay being performed on study samples."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S129"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "flow cytometric analyses",
+      "assay_name": "flow cytometric analyses",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "flow cytometric analyses",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S11"
+          ],
+          "evidence_text": "multiple 15-color flow cytometric analyses",
+          "reason": "The text explicitly states that flow cytometric analyses were included in this study's assays."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "multiple 15-color flow cytometric analyses",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S11"
+          ],
+          "evidence_text": "multiple 15-color flow cytometric analyses",
+          "reason": "This wording directly refers to the same assay performed in the study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S130"
+          ],
+          "evidence_text": "Frozen PBMCs from all time points for a subject were stained for 5 panels",
+          "reason": "The assay was performed on PBMCs."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "cell population frequencies expressed as percent of parent population",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S131"
+          ],
+          "evidence_text": "Cell frequencies were expressed as percent of parent population.",
+          "reason": "The text explicitly states the flow assay readout as cell frequencies expressed relative to parent populations."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Frozen PBMCs from all time points for a subject were stained for 5 panels (Figure S1A) ( Biancotto et al., 2011 ) using a common antibody mix on the same day.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S130"
+          ],
+          "evidence_text": "Frozen PBMCs from all time points for a subject were stained for 5 panels (Figure S1A) ( Biancotto et al., 2011 ) using a common antibody mix on the same day.",
+          "reason": "The quote appears verbatim and describes assay processing performed on this study's samples."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S130"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Virus-neutralizing titers",
+      "assay_name": "Virus-neutralizing titers",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Virus-neutralizing titers",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S132"
+          ],
+          "evidence_text": "Virus-neutralizing titers",
+          "reason": "The methods explicitly state that virus-neutralizing titers were determined in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "influenza-specific serum neutralization titers",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S11"
+          ],
+          "evidence_text": "influenza-specific serum neutralization titers",
+          "reason": "This wording refers to the same neutralization-titer measurement listed among the study assays."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "serum",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S10",
+            "S11"
+          ],
+          "evidence_text": "Purified PBMCs and sera were frozen to allow subsequent assessments to be performed at the same time for a given individual, thereby minimizing batch effects. For the present study, assays included antibody-forming cell responses, influenza-specific serum neutralization titers",
+          "reason": "The text links serum specifically to the neutralization titers by naming them as serum neutralization titers."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "highest serum dilution that completely suppressed virus replication",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S133"
+          ],
+          "evidence_text": "Reported titers were the highest dilution that completely suppressed virus replication.",
+          "reason": "The methods explicitly define the reported titer readout this way."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Virus-neutralizing titers (A/California/07/2009 (H1N1pdm09), H1N1 A/Brisbane/59/07, H3N2 A/Uruguay/716/07, and B/Brisbane/60/2001) were determined according to ( Hancock et al., 2009 ).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S132"
+          ],
+          "evidence_text": "Virus-neutralizing titers (A/California/07/2009 (H1N1pdm09), H1N1 A/Brisbane/59/07, H3N2 A/Uruguay/716/07, and B/Brisbane/60/2001) were determined according to ( Hancock et al., 2009 ).",
+          "reason": "The quote appears verbatim and states that the titers were determined in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S132"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "ELISpot assays",
+      "assay_name": "ELISpot assays",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "ELISpot assays",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S134"
+          ],
+          "evidence_text": "measured by ELISpot assays",
+          "reason": "The text explicitly states ELISpot assays were used in this study."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "total and influenza-specific IgG/A frequencies of antibody-secreting cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S134"
+          ],
+          "evidence_text": "Total and influenza-specific IgG/A frequencies of antibody-secreting cells were measured by ELISpot assays",
+          "reason": "The sentence directly states these were the quantities measured by the ELISpot assays."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Total and influenza-specific IgG/A frequencies of antibody-secreting cells were measured by ELISpot assays modified for frozen samples ( Ho et al., 2011 ).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S134"
+          ],
+          "evidence_text": "Total and influenza-specific IgG/A frequencies of antibody-secreting cells were measured by ELISpot assays modified for frozen samples ( Ho et al., 2011 ).",
+          "reason": "The quote appears verbatim and describes the assay being performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S134"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

@@ -1,4 +1,22 @@
 {
+  "transcription profiling by array assay": {
+    "name_in_paper": [
+      "gene array analysis"
+    ],
+    "aliases": [
+      "microarray analyses",
+      "gene arrays"
+    ],
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Gene array analysis of whole-blood and VaxDesign samples.",
+      "sentence_ids": [
+        "S124"
+      ],
+      "quote": "The biotinylated cRNA was hybridized onto Illumina Human RefSeq-8 BeadChips v2 (Montreal and Lausanne samples) or v3 (VaxDesign samples) at 58°C for 20 h and quantified using Illumina BeadStation 500GX scanner and Illumina BeadStudio v3 software."
+    }
+  },
   "real time reverse-transcription polymerase chain reaction assay": {
     "name_in_paper": [
       "qPCR validation"
@@ -15,23 +33,6 @@
         "S133"
       ],
       "quote": "Changes in gene expression observed by microarray analyses were verified by qPCR."
-    }
-  },
-  "viral plaque assay": {
-    "name_in_paper": [
-      "lysis plaque assay"
-    ],
-    "aliases": [
-      "plaque assay"
-    ],
-    "generate_claim": false,
-    "source": "methods",
-    "evidence": {
-      "section": "In vitro infection of immature DCs with YF17D.",
-      "sentence_ids": [
-        "S149"
-      ],
-      "quote": "Viral stocks were titrated on Vero cells by lysis plaque assay."
     }
   },
   "enzyme-linked immunosorbent assay": {
@@ -89,7 +90,8 @@
       "Flow cytometric analysis of IFN-γ/IL-2–producing activated CD4 T cells"
     ],
     "aliases": [
-      "polychromatic flow cytometry"
+      "polychromatic flow cytometry",
+      "FACS analysis"
     ],
     "generate_claim": true,
     "source": "methods",
@@ -131,28 +133,13 @@
       "quote": "At the time the lymphocytes were harvested from DC/T cell co-cultures, the supernatants were also collected and stored frozen until analyzed for cytokine production using the Beadlyte human 22-plex Multi-cytokine Detection System (Millipore) on a Bio-Plex reader (Bio-Rad Laboratories)."
     }
   },
-  "transcription profiling by array assay": {
-    "name_in_paper": [
-      "gene array analysis"
-    ],
-    "aliases": [
-      "microarray analyses"
-    ],
-    "generate_claim": true,
-    "source": "methods",
-    "evidence": {
-      "section": "Gene array analysis of whole-blood and VaxDesign samples.",
-      "sentence_ids": [
-        "S124"
-      ],
-      "quote": "The biotinylated cRNA was hybridized onto Illumina Human RefSeq-8 BeadChips v2 (Montreal and Lausanne samples) or v3 (VaxDesign samples) at 58°C for 20 h and quantified using Illumina BeadStation 500GX scanner and Illumina BeadStudio v3 software."
-    }
-  },
   "flow cytometry assay (3)": {
     "name_in_paper": [
       "FACS analysis of PBMCs"
     ],
-    "aliases": [],
+    "aliases": [
+      "FACS"
+    ],
     "generate_claim": true,
     "source": "methods",
     "evidence": {
@@ -164,7 +151,7 @@
     },
     "identity_review": {
       "verdict": "NOT_SUPPORTED",
-      "reason": "The cited section describes flow cytometric analysis of activated CD4 T cells, not an assay named \"FACS analysis of PBMCs.\""
+      "reason": "The text describes flow cytometric analysis of activated CD4 T cells, but not an assay named \"FACS analysis of PBMCs.\""
     }
   }
 }

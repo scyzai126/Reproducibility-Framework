@@ -1,0 +1,336 @@
+{
+  "summary": {
+    "total": 5,
+    "accept": 3,
+    "review": 2,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {
+      "aliases[]": {
+        "CONTRADICTED": 2
+      }
+    }
+  },
+  "results": [
+    {
+      "assay_id": "Affymetrix Exon Arrays",
+      "assay_name": "Affymetrix Exon Arrays",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Affymetrix Exon Arrays",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Affymetrix Exon Arrays.",
+          "reason": "This subsection heading identifies a microarray assay performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "Human Exon ST 1.0 microarray platform",
+          "verdict": "CONTRADICTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "using the Human Exon ST 1.0 microarray platform (Affymetrix)",
+          "reason": "This is the platform/instrument name, not an alias for the assay itself."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "microarrays",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Microarrays and Quantitative Real-Time PCR.",
+          "reason": "The text uses this wording to refer to the assay category that includes the Affymetrix exon array measurement."
+        },
+        {
+          "field_name": "aliases[2]",
+          "proposed_value": "microarray analysis",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "for RNA purification and microarray analysis.",
+          "reason": "This wording refers to the same microarray measurement procedure."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "RNA was extracted from PBMC using the RNeasy Protect Cell protocol (Qiagen).",
+          "reason": "The Affymetrix exon arrays were performed on RNA extracted from PBMC."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "gene and exon-level RNA expression in peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "RNA expression for the in vivo study and one in vitro study was analyzed using the Human Exon ST 1.0 microarray platform (Affymetrix)",
+          "reason": "The assay measured RNA expression, and the surrounding text explicitly discusses gene-level and exon-level analyses on PBMC-derived RNA."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "RNA expression for the in vivo study and one in vitro study was analyzed using the Human Exon ST 1.0 microarray platform (Affymetrix)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "RNA expression for the in vivo study and one in vitro study was analyzed using the Human Exon ST 1.0 microarray platform (Affymetrix)",
+          "reason": "The quote appears verbatim and states that the assay was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in the whole document"
+      },
+      "conflict_detected": true,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    },
+    {
+      "assay_id": "Agilent 3′ Arrays",
+      "assay_name": "Agilent 3′ Arrays",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Agilent 3′ Arrays",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Agilent 3′ Arrays.",
+          "reason": "This section heading names a microarray assay that was performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "Agilent SurePrint G3 Human GE 8 × 60K microarray platform",
+          "verdict": "CONTRADICTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "using the Agilent SurePrint G3 Human GE 8 × 60K microarray platform (Agilent Technologies)",
+          "reason": "This is the platform/instrument name, not an alias for the assay itself."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "For comparative in vitro profiling, 16 samples were analyzed: PBMC obtained from four Ad5 seronegative donors",
+          "reason": "The Agilent 3′ array assay was performed on PBMC samples in the comparative in vitro study."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "gene expression in peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "RNA from the MRKAd5 vs. YF-17D comparative in vitro study was analyzed using the Agilent SurePrint G3 Human GE 8 × 60K microarray platform",
+          "reason": "The text states that RNA from PBMC samples was analyzed by microarray, supporting gene expression profiling in PBMC."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "RNA from the MRKAd5 vs. YF-17D comparative in vitro study was analyzed using the Agilent SurePrint G3 Human GE 8 × 60K microarray platform (Agilent Technologies)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "RNA from the MRKAd5 vs. YF-17D comparative in vitro study was analyzed using the Agilent SurePrint G3 Human GE 8 × 60K microarray platform (Agilent Technologies)",
+          "reason": "The quote appears verbatim and explicitly states that this assay was performed in the study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in the whole document"
+      },
+      "conflict_detected": true,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    },
+    {
+      "assay_id": "Quantitative Real-Time PCR",
+      "assay_name": "Quantitative Real-Time PCR",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Quantitative Real-Time PCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Quantitative real-time PCR was performed as described in ref. 17.",
+          "reason": "The text explicitly states that quantitative real-time PCR was performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "Quantitative RT-PCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Quantitative RT-PCR validation of the differential expression of module-associated genes identified by microarray analysis.",
+          "reason": "This wording refers to the same assay as quantitative real-time PCR."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "PBMC were isolated from blood as previously described (57). RNA was extracted from PBMC using the RNeasy Protect Cell protocol (Qiagen).",
+          "reason": "The quantitative PCR appears in the same methods subsection describing RNA extracted from PBMC for these expression assays."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "mRNA expression levels of selected genes",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "We validated the microarray results at the transcript, protein, and cellular levels. First, we quantified and confirmed the differential expression of mRNAs associated with several vaccine-regulated modules, including “Interferon response” [C-X-C motif chemokine 10 (CXCL10), ISG-15, and STAT1] (Fig. 1C).",
+          "reason": "The text states that the assay quantified differential expression of mRNAs for specific genes."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Quantitative real-time PCR was performed as described in ref. 17.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Quantitative real-time PCR was performed as described in ref. 17.",
+          "reason": "The quote appears verbatim and explicitly indicates the assay was performed here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in the whole document"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Multiplex Cytokine Analysis",
+      "assay_name": "Multiplex Cytokine Analysis",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Multiplex Cytokine Analysis",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Multiplex Cytokine Analysis.",
+          "reason": "This is a Methods subsection heading for an assay performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "multiplex serum analyte analysis",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "using multiplex serum analyte analysis",
+          "reason": "This wording refers to the same multiplex cytokine measurement assay."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "Luminex",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "samples were analyzed on a Luminex 200 (Luminex)",
+          "reason": "Here Luminex names the bead-based multiplex assay platform used for this measurement."
+        },
+        {
+          "field_name": "aliases[2]",
+          "proposed_value": "multiplex analyte analysis",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Protein-level validation of vaccine-induced cytokine and chemokine differential expression by multiplex analyte analysis.",
+          "reason": "This wording refers to the same multiplex cytokine measurement assay."
+        },
+        {
+          "field_name": "aliases[3]",
+          "proposed_value": "multiplex serum cytokine analysis",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "we confirmed at the protein level by multiplex serum cytokine analysis",
+          "reason": "This wording refers to the same assay measuring serum cytokines."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "serum and peripheral blood mononuclear cell supernatants",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Serum cytokine analysis was performed ... PBMC supernatants were assayed similarly for a subset of the analytes.",
+          "reason": "The assay was explicitly performed on serum and also on PBMC supernatants."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "cytokine and chemokine concentrations measured with bead-based multiplex assays on a Luminex 200",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Serum cytokine analysis was performed ... and samples were analyzed on a Luminex 200 (Luminex).",
+          "reason": "The text states multiplex measurement of cytokines and chemokines and analysis on a Luminex 200."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Serum cytokine analysis was performed using the Lincoplex High Sensitivity kit",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Serum cytokine analysis was performed using the Lincoplex High Sensitivity kit",
+          "reason": "This exact quote appears verbatim and describes the assay being performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in the whole document"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Enumeration and Phenotyping of Fresh Blood Cell Populations",
+      "assay_name": "Enumeration and Phenotyping of Fresh Blood Cell Populations",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Enumeration and Phenotyping of Fresh Blood Cell Populations",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Enumeration and Phenotyping of Fresh Blood Cell Populations.",
+          "reason": "This section heading names a measurement procedure performed in the study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "whole blood",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "For further phenotyping, whole blood was diluted 1:10 in Pharmlyse RBC lysis buffer (BD)",
+          "reason": "The assay section explicitly states whole blood was used for phenotyping."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "counts and immunophenotypes of circulating blood cell populations",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Enumeration and Phenotyping of Fresh Blood Cell Populations. Trucount tubes (BD) were stained with CD45-ΑPC, CD14-PE, CD3-PerCp, and CD8-FITC (all from BD). For further phenotyping, whole blood was diluted 1:10 in Pharmlyse RBC lysis buffer (BD) ... Cells were fixed with PBS containing 1% paraformaldehyde and stored at 4 °C until analysis by flow cytometry.",
+          "reason": "The section describes staining and flow-cytometric analysis for enumeration and phenotyping of blood cell populations."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Cells were fixed with PBS containing 1% paraformaldehyde and stored at 4 °C until analysis by flow cytometry.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": "Cells were ﬁxed with PBS containing 1% paraformaldehyde and stored at 4 °C until analysis by ﬂow cytometry.",
+          "reason": "The quoted sentence appears verbatim in the source and indicates the assay was performed here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in the whole document"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

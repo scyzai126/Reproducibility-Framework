@@ -1,0 +1,118 @@
+{
+  "summary": {
+    "assays": 8,
+    "fields_re_extracted": 3,
+    "actions": {
+      "REPLACED": 3
+    },
+    "reported_not_corrected": 2
+  },
+  "results": [
+    {
+      "assay_id": "DNA microarray",
+      "assay_name": "DNA microarray",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "ELISA",
+      "assay_name": "ELISA",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "anti-DT IgG capture microsphere assay",
+      "assay_name": "anti-DT IgG capture microsphere assay",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "serum bactericidal titers (SBA)",
+      "assay_name": "serum bactericidal titers (SBA)",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "flow cytometry",
+      "assay_name": "flow cytometry",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "FACS",
+            "Measurement of antibody secreting cells by FACS and ELISpot"
+          ],
+          "blind_answer": [
+            "FACS",
+            "flow cytometry"
+          ],
+          "dropped": [
+            "Measurement of antibody secreting cells by FACS and ELISpot"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "ELISpot",
+      "assay_name": "ELISpot",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "FACS staining",
+      "assay_name": "FACS staining",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "flow cytometry staining"
+          ],
+          "blind_answer": [
+            "flow cytometry",
+            "FACS"
+          ],
+          "dropped": [
+            "flow cytometry staining"
+          ]
+        }
+      ],
+      "reported_not_corrected": [
+        {
+          "field_name": "name_in_paper",
+          "verdict": "NOT_SUPPORTED",
+          "reason": "The source describes cells being stained and acquired on an instrument but does not name the assay as \"FACS staining,\" and this wording denotes a staining step rather than a clearly identified assay."
+        }
+      ]
+    },
+    {
+      "assay_id": "ELISA kits",
+      "assay_name": "ELISA kits",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "readouts",
+          "action": "REPLACED",
+          "previous": "IL-6, TNF, IL-12p40, and IL-1b concentrations",
+          "blind_answer": "IL-6, TNF, and IL-12p40 in cell supernatants"
+        }
+      ],
+      "reported_not_corrected": [
+        {
+          "field_name": "name_in_paper",
+          "verdict": "NOT_SUPPORTED",
+          "reason": "\"ELISA kits\" names a product category rather than the assay identity used in the paper."
+        }
+      ]
+    }
+  ]
+}

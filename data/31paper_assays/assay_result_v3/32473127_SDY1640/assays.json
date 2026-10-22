@@ -9,7 +9,7 @@
       "ELISA"
     ],
     "sample_type": "plasma",
-    "readouts": "anti-RBD IgG, IgM, and IgA titers measured by absorbance at 450 nm",
+    "readouts": "anti-RBD IgG, IgM, and IgA titers measured by plate absorbance at 450 nm",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
@@ -42,10 +42,11 @@
     ],
     "standard_technique_name": "flow cytometry",
     "aliases": [
-      "Phenotyping Flow Cytometry"
+      "Phenotyping Flow Cytometry",
+      "Immunophenotyping of mononuclear leukocytes"
     ],
     "sample_type": "peripheral blood mononuclear cells",
-    "readouts": "frequencies and phenotypes of mononuclear leukocyte subsets",
+    "readouts": "frequencies of mononuclear leukocyte lineage and phenotypic marker-defined cell populations",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
@@ -62,7 +63,8 @@
     ],
     "standard_technique_name": "flow cytometry",
     "aliases": [
-      "AIM assay"
+      "AIM assay",
+      "activation induced marker (AIM) assays"
     ],
     "sample_type": "peripheral blood mononuclear cells",
     "readouts": "frequency of antigen-specific AIM+ CD4+ and CD8+ T cells after peptide stimulation",
@@ -76,16 +78,17 @@
       "quote": "Cells were cultured for 24 hours in the presence of SARS-CoV-2 specific MPs [1 μg/ml] or 10 μg/mL PHA in 96-wells U bottom plates at 1x10 6 PBMC per well."
     }
   },
-  "cytokine assay": {
+  "flow cytometry assay (2)": {
     "name_in_paper": [
       "Intracellular cytokine staining assay"
     ],
     "standard_technique_name": "flow cytometry",
     "aliases": [
-      "ICS assay"
+      "ICS assay",
+      "intracellular cytokine staining (ICS)"
     ],
     "sample_type": "peripheral blood mononuclear cells",
-    "readouts": "intracellular IFNγ, granzyme B, TNFα, and IL-10 production in CD8+ T cells after peptide stimulation",
+    "readouts": "IFNγ, granzyme B, TNFα, and IL-10 production in CD8+ T cells after peptide stimulation",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
@@ -102,7 +105,8 @@
     ],
     "standard_technique_name": "cytometric bead array",
     "aliases": [
-      "LEGENDplex"
+      "LEGENDplex",
+      "human Th cytokine panel (13-plex) kit"
     ],
     "sample_type": "cell culture supernatants",
     "readouts": "13 cytokine concentrations in stimulation-culture supernatants; beads analyzed by flow cytometry",
@@ -122,9 +126,9 @@
     ],
     "standard_technique_name": "lateral flow immunoassay",
     "aliases": [
-      "colloidal-gold immunochromatographic ‘lateral flow’ assay",
       "lateral flow serology",
-      "lateral flow immunoglobulin (Ig) tests"
+      "lateral flow immunoglobulin (Ig) tests",
+      "colloidal-gold immunochromatographic ‘lateral flow’ assay"
     ],
     "sample_type": "whole blood",
     "readouts": "IgM or IgG antibodies directed against recombinant SARS-CoV-2 antigen",

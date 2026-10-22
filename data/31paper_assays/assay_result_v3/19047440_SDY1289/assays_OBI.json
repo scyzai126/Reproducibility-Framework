@@ -1,4 +1,30 @@
 {
+  "transcription profiling by array assay": {
+    "name_in_paper": [
+      "gene array analysis"
+    ],
+    "standard_technique_name": "transcription profiling by array",
+    "aliases": [
+      "microarray analyses",
+      "gene arrays"
+    ],
+    "sample_type": "whole blood",
+    "readouts": "gene expression levels",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Gene array analysis of whole-blood and VaxDesign samples.",
+      "sentence_ids": [
+        "S124"
+      ],
+      "quote": "The biotinylated cRNA was hybridized onto Illumina Human RefSeq-8 BeadChips v2 (Montreal and Lausanne samples) or v3 (VaxDesign samples) at 58°C for 20 h and quantified using Illumina BeadStation 500GX scanner and Illumina BeadStudio v3 software."
+    },
+    "obi_id": "OBI:0001463",
+    "obi_label": "transcription profiling by array assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.8293,
+    "obi_granularity": "EXACT"
+  },
   "real time reverse-transcription polymerase chain reaction assay": {
     "name_in_paper": [
       "qPCR validation"
@@ -25,31 +51,6 @@
     "obi_confidence": 0.6535,
     "obi_granularity": "EXACT"
   },
-  "viral plaque assay": {
-    "name_in_paper": [
-      "lysis plaque assay"
-    ],
-    "standard_technique_name": "plaque assay",
-    "aliases": [
-      "plaque assay"
-    ],
-    "sample_type": "Vero cells",
-    "readouts": "viral titers and confirmation of virus inactivation",
-    "generate_claim": false,
-    "source": "methods",
-    "evidence": {
-      "section": "In vitro infection of immature DCs with YF17D.",
-      "sentence_ids": [
-        "S149"
-      ],
-      "quote": "Viral stocks were titrated on Vero cells by lysis plaque assay."
-    },
-    "obi_id": "OBI:0003798",
-    "obi_label": "viral plaque assay",
-    "resource": "embedding_llm",
-    "obi_confidence": 0.7216,
-    "obi_granularity": "EXACT"
-  },
   "enzyme-linked immunosorbent assay": {
     "name_in_paper": [
       "IL-1β ELISA"
@@ -59,7 +60,7 @@
       "ELISA"
     ],
     "sample_type": "supernatants from monocyte-derived dendritic cells",
-    "readouts": "IL-1β secretion/production in supernatants from monocyte-derived dendritic cells",
+    "readouts": "IL-1β concentration",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
@@ -72,7 +73,7 @@
     "obi_id": "OBI:0000661",
     "obi_label": "enzyme-linked immunosorbent assay",
     "resource": "embedding_llm",
-    "obi_confidence": 0.7588,
+    "obi_confidence": 0.7589,
     "obi_granularity": "EXACT"
   },
   "cell proliferation assay using carboxyfluorescein succinimidyl ester staining": {
@@ -82,7 +83,7 @@
     "standard_technique_name": "flow cytometry",
     "aliases": [],
     "sample_type": "peripheral blood mononuclear cells",
-    "readouts": "T cell proliferative responses measured by CFSE dilution",
+    "readouts": "T cell proliferative response measured by CFSE dilution after peptide stimulation",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
@@ -108,7 +109,7 @@
       "cytometric bead assay"
     ],
     "sample_type": "peripheral blood mononuclear cell supernatants",
-    "readouts": "Levels of the cytokines IL-2, IL-4, IL-5, IL-10, IFN-γ, and TNF in PBMC supernatants",
+    "readouts": "levels of IL-2, IL-4, IL-5, IL-10, IFN-γ, and TNF",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
@@ -130,10 +131,11 @@
     ],
     "standard_technique_name": "flow cytometry",
     "aliases": [
-      "polychromatic flow cytometry"
+      "polychromatic flow cytometry",
+      "FACS analysis"
     ],
     "sample_type": "peripheral blood mononuclear cells",
-    "readouts": "frequencies of activated CD4 T cells expressing CD154, IL-2, and IFN-γ after peptide stimulation",
+    "readouts": "frequencies of activated vaccine-specific CD4 T cells expressing CD154, IL-2, and IFN-γ",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
@@ -146,7 +148,7 @@
     "obi_id": "OBI:0000916",
     "obi_label": "flow cytometry assay",
     "resource": "embedding_llm",
-    "obi_confidence": 0.786,
+    "obi_confidence": 0.7859,
     "obi_granularity": "BROAD"
   },
   "flow cytometry assay (2)": {
@@ -155,8 +157,8 @@
     ],
     "standard_technique_name": "flow cytometry",
     "aliases": [],
-    "sample_type": "autologous CD4 positive T cells co-cultured with dendritic cells",
-    "readouts": "intracellular IFN-γ, IL-5, IL-13, and CD154 expression in activated CD4 T cells",
+    "sample_type": "purified CD4 positive T cells co-cultured with autologous dendritic cells",
+    "readouts": "intracellular IFN-γ, IL-5, IL-13, and CD154 expression in CD4 positive T cells",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
@@ -169,17 +171,17 @@
     "obi_id": "OBI:0000916",
     "obi_label": "flow cytometry assay",
     "resource": "embedding_llm_normalized",
-    "obi_confidence": 0.786,
+    "obi_confidence": 0.7859,
     "obi_granularity": "BROAD"
   },
   "cytometric bead array assay": {
     "name_in_paper": [
       "Multiplex cytokine analysis"
     ],
-    "standard_technique_name": "multiplex bead-based immunoassay",
+    "standard_technique_name": "Luminex",
     "aliases": [],
     "sample_type": "supernatants from dendritic cell/T cell co-cultures",
-    "readouts": "cytokine concentrations in culture supernatants measured on a bead-based reader",
+    "readouts": "cytokine concentrations in culture supernatants measured on a Bio-Plex reader",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
@@ -192,32 +194,7 @@
     "obi_id": "OBI:0000920",
     "obi_label": "cytometric bead array assay",
     "resource": "embedding_llm_normalized",
-    "obi_confidence": 0.5686,
-    "obi_granularity": "EXACT"
-  },
-  "transcription profiling by array assay": {
-    "name_in_paper": [
-      "gene array analysis"
-    ],
-    "standard_technique_name": "transcription profiling by array",
-    "aliases": [
-      "microarray analyses"
-    ],
-    "sample_type": "whole blood",
-    "readouts": "gene expression levels",
-    "generate_claim": true,
-    "source": "methods",
-    "evidence": {
-      "section": "Gene array analysis of whole-blood and VaxDesign samples.",
-      "sentence_ids": [
-        "S124"
-      ],
-      "quote": "The biotinylated cRNA was hybridized onto Illumina Human RefSeq-8 BeadChips v2 (Montreal and Lausanne samples) or v3 (VaxDesign samples) at 58°C for 20 h and quantified using Illumina BeadStation 500GX scanner and Illumina BeadStudio v3 software."
-    },
-    "obi_id": "OBI:0001463",
-    "obi_label": "transcription profiling by array assay",
-    "resource": "embedding_llm",
-    "obi_confidence": 0.8293,
+    "obi_confidence": 0.5991,
     "obi_granularity": "EXACT"
   },
   "flow cytometry assay (3)": {
@@ -225,9 +202,11 @@
       "FACS analysis of PBMCs"
     ],
     "standard_technique_name": "flow cytometry",
-    "aliases": [],
+    "aliases": [
+      "FACS"
+    ],
     "sample_type": "peripheral blood mononuclear cells",
-    "readouts": "frequencies of central memory CD4 T cells expressing CD154 and Th1/Th2 phenotype markers after peptide stimulation and restimulation",
+    "readouts": "frequencies of central memory Th1 and Th2 CD4 T cells expressing CD154 after peptide stimulation",
     "generate_claim": true,
     "source": "methods",
     "evidence": {
@@ -239,12 +218,12 @@
     },
     "identity_review": {
       "verdict": "NOT_SUPPORTED",
-      "reason": "The cited section describes flow cytometric analysis of activated CD4 T cells, not an assay named \"FACS analysis of PBMCs.\""
+      "reason": "The text describes flow cytometric analysis of activated CD4 T cells, but not an assay named \"FACS analysis of PBMCs.\""
     },
     "obi_id": "OBI:0000916",
     "obi_label": "flow cytometry assay",
     "resource": "embedding_llm",
-    "obi_confidence": 0.786,
+    "obi_confidence": 0.7859,
     "obi_granularity": "EXACT"
   }
 }

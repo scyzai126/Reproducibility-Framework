@@ -1,0 +1,59 @@
+{
+  "summary": {
+    "assays": 4,
+    "fields_re_extracted": 2,
+    "actions": {
+      "REAFFIRMED": 1,
+      "UNCHANGED": 1
+    },
+    "reported_not_corrected": 0
+  },
+  "results": [
+    {
+      "assay_id": "anti-DENV IgG and IgM ELISA",
+      "assay_name": "anti-DENV IgG and IgM ELISA",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "sample_type",
+          "action": "REAFFIRMED",
+          "previous": "acute phase serum",
+          "blind_answer": "acute phase serum"
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Reverse transcription-PCR",
+      "assay_name": "Reverse transcription-PCR",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "evidence",
+          "action": "UNCHANGED",
+          "previous": "Reverse transcription-PCR was performed by using the DV1 and DV3 primer set and the ALD 1 and ALD 2 primer set in one reaction with details specified previously.",
+          "blind_answer": {
+            "quote": "“Reverse transcription-PCR was performed by using the DV1 and DV3 primer set [ 13 ] and the ALD 1 and ALD 2 primer set [ 14 ] in one reaction with details specified previously [ 15 ].”",
+            "sentence_ids": []
+          },
+          "note": "replacement quote rejected: quote does not appear anywhere in the document"
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Flow cytometry analysis",
+      "assay_name": "Flow cytometry analysis",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "RNA Sequencing",
+      "assay_name": "RNA Sequencing",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    }
+  ]
+}

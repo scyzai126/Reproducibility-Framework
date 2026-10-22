@@ -1,0 +1,101 @@
+{
+  "summary": {
+    "assays": 7,
+    "fields_re_extracted": 4,
+    "actions": {
+      "REPLACED": 3,
+      "CLEARED": 1
+    },
+    "reported_not_corrected": 1
+  },
+  "results": [
+    {
+      "assay_id": "GM1-enzyme-linked immunosorbent assay (ELISA)",
+      "assay_name": "GM1-enzyme-linked immunosorbent assay (ELISA)",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "MONOLISA Anti-HBs PLUS kit",
+      "assay_name": "MONOLISA Anti-HBs PLUS kit",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "commercially available kit",
+      "assay_name": "commercially available kit",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "Anti-Diphtheria IgG"
+          ],
+          "blind_answer": [],
+          "dropped": [
+            "Anti-Diphtheria IgG"
+          ]
+        }
+      ],
+      "reported_not_corrected": [
+        {
+          "field_name": "name_in_paper",
+          "verdict": "NOT_SUPPORTED",
+          "reason": "This phrase names no specific assay technique and is too vague to identify a reproducible measurement procedure."
+        }
+      ]
+    },
+    {
+      "assay_id": "microarray",
+      "assay_name": "microarray",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "sample_type",
+          "action": "REPLACED",
+          "previous": "whole blood",
+          "blind_answer": "PAXgene blood samples"
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Polychromatic FCM",
+      "assay_name": "Polychromatic FCM",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "readouts",
+          "action": "REPLACED",
+          "previous": "frequencies and absolute counts of T-cell, B-cell, and innate immune cell subsets",
+          "blind_answer": "Frequencies of T-cell, B-cell, and innate immune cell subsets, including absolute enumeration of cellular subsets per microliter of blood and median fluorescence intensity for markers such as CD40 on pDCs."
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "multiplex ELISA protocol Human Inflammation multianalyte profiling",
+      "assay_name": "multiplex ELISA protocol Human Inflammation multianalyte profiling",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "complete blood count",
+      "assay_name": "complete blood count",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "sample_type",
+          "action": "CLEARED",
+          "previous": "blood",
+          "blind_answer": null
+        }
+      ],
+      "reported_not_corrected": []
+    }
+  ]
+}

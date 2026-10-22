@@ -1,0 +1,88 @@
+{
+  "summary": {
+    "assays": 5,
+    "fields_re_extracted": 3,
+    "actions": {
+      "REPLACED": 3
+    },
+    "reported_not_corrected": 0
+  },
+  "results": [
+    {
+      "assay_id": "microarray",
+      "assay_name": "microarray",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "flow cytometric characterisation of B cells and plasma cells",
+      "assay_name": "flow cytometric characterisation of B cells and plasma cells",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "flow cytometry",
+            "Antibodies for flow cytometric characterisation of B cells and plasma cells"
+          ],
+          "blind_answer": [
+            "flow cytometry",
+            "flow cytometric data",
+            "Flow cytometric analysis"
+          ],
+          "dropped": [
+            "Antibodies for flow cytometric characterisation of B cells and plasma cells"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Serum bactericidal assay",
+      "assay_name": "Serum bactericidal assay",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "B-cell enzyme-linked immunospot assay",
+      "assay_name": "B-cell enzyme-linked immunospot assay",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Quantitative real-time PCR",
+      "assay_name": "Quantitative real-time PCR",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "sample_type",
+          "action": "REPLACED",
+          "previous": "peripheral blood",
+          "blind_answer": "Total RNA extracted from PAXgene™ tubes"
+        },
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "real-time PCR (RT-PCR)",
+            "RT-PCR",
+            "quantitative PCR",
+            "real-time PCR"
+          ],
+          "blind_answer": [
+            "real-time PCR",
+            "RT-PCR"
+          ],
+          "dropped": [
+            "quantitative PCR"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    }
+  ]
+}

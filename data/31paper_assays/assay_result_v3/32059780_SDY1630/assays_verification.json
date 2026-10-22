@@ -1,0 +1,310 @@
+{
+  "summary": {
+    "total": 5,
+    "accept": 3,
+    "review": 2,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {
+      "name_in_paper": {
+        "NOT_SUPPORTED": 2
+      }
+    }
+  },
+  "results": [
+    {
+      "assay_id": "Flow cytometry analysis and cell sorting",
+      "assay_name": "Flow cytometry analysis and cell sorting",
+      "assay_identity_verdict": "NOT_SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Flow cytometry analysis and cell sorting",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "This heading combines a measurement assay with a sample-sorting preparation step rather than naming a single assay."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "flow cytometric analysis",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S104"
+          ],
+          "evidence_text": "For flow cytometric analysis",
+          "reason": "This wording refers to the flow cytometry measurement performed in the study."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "cell surface and intracellular marker expression on NK cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S104",
+            "S106"
+          ],
+          "evidence_text": "For flow cytometric analysis, cells were stained in 96-well U-bottom plates in the dark using antibody panels (see Key Resources Table ). For intracellular staining, surface stained cells were fixed for 25min at RT in fixing buffer",
+          "reason": "The methods explicitly describe surface and intracellular staining for flow cytometric analysis, supporting marker expression as the readout."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "For flow cytometric analysis, cells were stained in 96-well U-bottom plates in the dark using antibody panels (see Key Resources Table ).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S104"
+          ],
+          "evidence_text": "For flow cytometric analysis, cells were stained in 96-well U-bottom plates in the dark using antibody panels (see Key Resources Table ).",
+          "reason": "The quote appears verbatim and shows that flow cytometric analysis was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S104"
+      },
+      "conflict_detected": true,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    },
+    {
+      "assay_id": "High-dimensional parameter flow cytometric analysis of NK cell subsets",
+      "assay_name": "High-dimensional parameter flow cytometric analysis of NK cell subsets",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "High-dimensional parameter flow cytometric analysis of NK cell subsets",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S114"
+          ],
+          "evidence_text": "For high parameter analysis using the BD Symphony panels",
+          "reason": "The methods section explicitly describes performing high-parameter flow cytometric analysis."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "high parameter analysis",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S114"
+          ],
+          "evidence_text": "For high parameter analysis using the BD Symphony panels",
+          "reason": "This wording refers to the same assay described in the subsection."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "high-dimensional NK cell marker expression profiles",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S121",
+            "S218",
+            "S224"
+          ],
+          "evidence_text": "NK cell populations (defined as live, CD45 + CD14 − CD19 − CD3 − CD56 + lymphocytes) were exported and high-dimensional analyses were performed",
+          "reason": "The assay generated multidimensional NK-cell marker-expression data for downstream analysis."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Samples were analyzed on the LSR Fortessa X50 (‘‘Symphony’’) cytometer (BD Bioscience).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S119"
+          ],
+          "evidence_text": "Samples were analyzed on the LSR Fortessa X50 (‘‘Symphony’’) cytometer (BD Bioscience).",
+          "reason": "The quoted sentence appears verbatim and shows the assay was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S119"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "In vitro cytokine stimulation and functional assays of NK cells",
+      "assay_name": "In vitro cytokine stimulation and functional assays of NK cells",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "In vitro cytokine stimulation and functional assays of NK cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S122",
+            "S126"
+          ],
+          "evidence_text": "NK cells (CD45 + CD56 + CD3 − ) sorted from freshly processed tissue sites (see above) were cultured",
+          "reason": "The section describes functional assays actually performed on NK cells in this study."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "IFN-γ production after cytokine stimulation measured by intracellular staining",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S37",
+            "S125"
+          ],
+          "evidence_text": "Culturing NK cells from blood, BM, spleen, lung, and LLNs with a cytokine cocktail (IL-12, IL-15, and IL-18) induced IFN-γ production",
+          "reason": "The text explicitly states IFN-γ production after cytokine stimulation and that intracellular staining was performed."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "NK cells (CD45 + CD56 + CD3 − ) sorted from freshly processed tissue sites (see above) were cultured in 96-well u-bottom plates in RPMI-1640 medium containing fetal bovine serum (10%) with or without 10ng/ml IL-12 (PeproTech, cat# 200–12), 100ng/ml IL-15 (PeproTech, cat# 200–15) and 100ng/ml IL-18 (MBL International Corp.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S122",
+            "S123"
+          ],
+          "evidence_text": "NK cells (CD45 + CD56 + CD3 − ) sorted from freshly processed tissue sites (see above) were cultured in 96-well u-bottom plates in RPMI-1640 medium containing fetal bovine serum (10%) with or without 10ng/ml IL-12 (PeproTech, cat# 200–12), 100ng/ml IL-15 (PeproTech, cat# 200–15) and 100ng/ml IL-18 (MBL International Corp.",
+          "reason": "The quoted text appears verbatim across the sentence break and describes the assay being performed here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S122"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "measuring degranulation by NK cells",
+      "assay_name": "measuring degranulation by NK cells",
+      "assay_identity_verdict": "NOT_SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "measuring degranulation by NK cells",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "This is a purpose clause/readout description rather than a clearly named assay technique."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "CD107a expression after co-culture with K562 cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S38",
+            "S126",
+            "S127",
+            "S184"
+          ],
+          "evidence_text": "we also tested the functional potential of NK cells activated in the presence of a MHC class I-negative tumor cell line in vitro by staining for the expression of lysosomal-associated membrane protein 1 (LAMP-1: CD107a), a marker for degranulation",
+          "reason": "The text explicitly states CD107a staining after K562 co-culture was used to assess degranulation."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "For measuring degranulation by NK cells, 30,000–50,000 sorted, overnight rested NK cells were incubated with K562 cells (ATCC: CCL-243; provided by Emily Mace, Columbia University) at a 2:1 effector to target (NK: K562) ratio in a 96-well tissue culture plate at 37°C at 5% CO 2 for 4 hours.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S126"
+          ],
+          "evidence_text": "For measuring degranulation by NK cells, 30,000–50,000 sorted, overnight rested NK cells were incubated with K562 cells (ATCC: CCL-243; provided by Emily Mace, Columbia University) at a 2:1 effector to target (NK: K562) ratio in a 96-well tissue culture plate at 37°C at 5% CO 2 for 4 hours.",
+          "reason": "The quote appears verbatim and describes an assay performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S126"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    },
+    {
+      "assay_id": "Whole transcriptome profiling of NK cell subsets",
+      "assay_name": "Whole transcriptome profiling of NK cell subsets",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Whole transcriptome profiling of NK cell subsets",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S130"
+          ],
+          "evidence_text": "RNA was isolated from sorted CD56 bright CD16 − and CD56 dim CD16 + NK cells",
+          "reason": "The Methods subsection title and content establish that whole transcriptome profiling of NK cell subsets was performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "whole transcriptome profiling",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S41"
+          ],
+          "evidence_text": "we performed whole transcriptome profiling by RNA sequencing (RNA-seq)",
+          "reason": "This wording refers to the same assay performed in the study."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "RNA-seq",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S41"
+          ],
+          "evidence_text": "RNA sequencing (RNA-seq)",
+          "reason": "The text explicitly names RNA-seq as the technique used for this assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "sorted CD56 bright CD16 − and CD56 dim CD16 + natural killer cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S130"
+          ],
+          "evidence_text": "sorted CD56 bright CD16 − and CD56 dim CD16 + NK cells",
+          "reason": "The source explicitly states these sorted NK cell subsets were used for this assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "whole-transcriptome gene expression profiles",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S41",
+            "S42"
+          ],
+          "evidence_text": "we performed whole transcriptome profiling by RNA sequencing (RNA-seq) ... Analysis of the whole transcriptome identified global signatures of 1,083 genes differentially expressed (DE)",
+          "reason": "The assay measured transcriptome-wide gene expression differences."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Samples were sequenced at Genewiz (South Plainfield, NJ) using a HiSeq2500 system (Illumina).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S131"
+          ],
+          "evidence_text": "Samples were sequenced at Genewiz (South Plainfield, NJ) using a HiSeq2500 system (Illumina).",
+          "reason": "The quote appears verbatim and describes sequencing performed for this study's samples."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S131"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

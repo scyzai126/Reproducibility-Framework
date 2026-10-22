@@ -1,0 +1,496 @@
+{
+  "summary": {
+    "total": 6,
+    "accept": 3,
+    "review": 3,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {
+      "aliases[]": {
+        "NOT_SUPPORTED": 1,
+        "CONTRADICTED": 1
+      },
+      "name_in_paper": {
+        "NOT_SUPPORTED": 1
+      }
+    }
+  },
+  "results": [
+    {
+      "assay_id": "plaque reduction neutralization test (PRNT)",
+      "assay_name": "plaque reduction neutralization test (PRNT)",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "plaque reduction neutralization test (PRNT)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S19"
+          ],
+          "evidence_text": "Anti-YFV neutralizing antibodies were measured by the plaque reduction neutralization test (PRNT).",
+          "reason": "The text explicitly states this assay was used in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "Plaque assay for quantitation of yellow fever virus-neutralizing antibodies",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S18",
+            "S19"
+          ],
+          "evidence_text": "Plaque assay for quantitation of yellow fever virus-neutralizing antibodies",
+          "reason": "This section heading names the same assay described immediately below."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "PRNT",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S19"
+          ],
+          "evidence_text": "plaque reduction neutralization test (PRNT)",
+          "reason": "The abbreviation is explicitly given for the assay."
+        },
+        {
+          "field_name": "aliases[2]",
+          "proposed_value": "plaque reduction neutralization test",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S19"
+          ],
+          "evidence_text": "plaque reduction neutralization test",
+          "reason": "This is the assay name stated in the methods."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "plasma",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S18"
+          ],
+          "evidence_text": "Plasma samples were heated to 56° for 30 min to inactivate complement.",
+          "reason": "The assay procedure explicitly begins with plasma samples."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "yellow fever virus neutralizing antibody titers measured by plaque reduction",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S19",
+            "S24"
+          ],
+          "evidence_text": "Anti-YFV neutralizing antibodies were measured by the plaque reduction neutralization test (PRNT).",
+          "reason": "The assay is explicitly described as measuring anti-YFV neutralizing antibodies, with plaque counting as the assay basis."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Anti-YFV neutralizing antibodies were measured by the plaque reduction neutralization test (PRNT).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S19"
+          ],
+          "evidence_text": "Anti-YFV neutralizing antibodies were measured by the plaque reduction neutralization test (PRNT).",
+          "reason": "The quote appears verbatim and directly states the assay was performed here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S19"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Immunofluorescence assay to detect anti-Japanese encephalitis virus and anti-West Nile virus antibodies",
+      "assay_name": "Immunofluorescence assay to detect anti-Japanese encephalitis virus and anti-West Nile virus antibodies",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Immunofluorescence assay to detect anti-Japanese encephalitis virus and anti-West Nile virus antibodies",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S25"
+          ],
+          "evidence_text": "To determine the presence of anti-Japanese encephalitis virus (JEV) and anti-West Nile virus (WNV) antibodies in the serum samples, fluorescence microscopy was employed.",
+          "reason": "The Methods section explicitly describes this immunofluorescence-based assay as performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "immunofluorescence assays",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S176"
+          ],
+          "evidence_text": "We therefore performed immunofluorescence assays to investigate baseline serum reactivity to West Nile Virus (WNV) and Japanese encephalitis virus (JEV).",
+          "reason": "This wording refers to the same assay performed in the study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "serum",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S25"
+          ],
+          "evidence_text": "in the serum samples",
+          "reason": "The assay is explicitly stated to use serum samples."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "antibodies reactive against Japanese encephalitis virus and West Nile virus detected by fluorescence microscopy",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S25",
+            "S31"
+          ],
+          "evidence_text": "To determine the presence of anti-Japanese encephalitis virus (JEV) and anti-West Nile virus (WNV) antibodies in the serum samples, fluorescence microscopy was employed. Serological cross-reactions with JEV and WNV from all test samples were identified using a fluorescence microscope.",
+          "reason": "The text states that the assay detected anti-JEV and anti-WNV antibodies using fluorescence microscopy."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "To determine the presence of anti-Japanese encephalitis virus (JEV) and anti-West Nile virus (WNV) antibodies in the serum samples, fluorescence microscopy was employed.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S25"
+          ],
+          "evidence_text": "To determine the presence of anti-Japanese encephalitis virus (JEV) and anti-West Nile virus (WNV) antibodies in the serum samples, fluorescence microscopy was employed.",
+          "reason": "The quote appears verbatim and describes the assay being performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S25"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "flow cytometry",
+      "assay_name": "flow cytometry",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "flow cytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S32",
+            "S45"
+          ],
+          "evidence_text": "For all phenotype panels, one million cells were surface-stained with the antibody cocktails shown in Table 1 . Events were acquired on a BD LSRFortessa instrument",
+          "reason": "The Methods section describes a flow-cytometry staining and acquisition procedure performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "FACS",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S298"
+          ],
+          "evidence_text": "Antibodies included in the FACS panels",
+          "reason": "This wording refers to the same flow-cytometry assay panels used in the study."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "Immunophenotyping",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S262"
+          ],
+          "evidence_text": "Immunophenotyping was performed by flow cytometry.",
+          "reason": "The text explicitly uses immunophenotyping to refer to the flow-cytometry measurement."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S39",
+            "S41"
+          ],
+          "evidence_text": "The target cells were co-cultured with 1 million PBMCs (effector cells) ... For analysis of T cell function, 1 million PBMCs were stimulated",
+          "reason": "The flow-cytometry procedures explicitly used PBMCs."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "immune cell subset frequencies and phenotype marker expression",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S151",
+            "S261",
+            "S262"
+          ],
+          "evidence_text": "we next stained PBMCs obtained prevaccination and at Day 7, Day 14, Day 28, and Day 86 postvaccination with 5 antibody panels aimed at detecting the following: monocytes and dendritic cell (DC) phenotype, natural killer (NK) phenotype, B cell phenotype, NK function and T cell function ... Percentages of (A) monocytes, (B, C) dendritic cells, and (D to F) NK cells out of total peripheral blood mononuclear cells ... Immunophenotyping was performed by flow cytometry.",
+          "reason": "The assay measured frequencies of immune cell subsets and their phenotypic marker-defined populations."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "For all phenotype panels, one million cells were surface-stained with the antibody cocktails shown in Table 1 .",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S32"
+          ],
+          "evidence_text": "For all phenotype panels, one million cells were surface-stained with the antibody cocktails shown in Table 1 .",
+          "reason": "The quoted sentence appears verbatim and is part of the study's flow-cytometry methods."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S32"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "NK-mediated ADCC assay",
+      "assay_name": "NK-mediated ADCC assay",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "NK-mediated ADCC assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S35"
+          ],
+          "evidence_text": "In the NK-mediated ADCC assay",
+          "reason": "The Methods explicitly names and describes this assay as performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "ADCC assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S157"
+          ],
+          "evidence_text": "the antibody-dependent cell-mediated cytotoxicity (ADCC) assay",
+          "reason": "This wording refers to the same NK-mediated ADCC measurement."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "antibody-dependent cell-mediated cytotoxicity (ADCC) assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S157"
+          ],
+          "evidence_text": "the antibody-dependent cell-mediated cytotoxicity (ADCC) assay",
+          "reason": "The Results use this as the name of the same assay."
+        },
+        {
+          "field_name": "aliases[2]",
+          "proposed_value": "NK function",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "This denotes a broader measured function/panel category rather than a clear alias for the assay itself."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S36",
+            "S39"
+          ],
+          "evidence_text": "The cells are then co-cultured with PBMCs as effector cells and NK function is assessed. ... The target cells were co-cultured with 1 million PBMCs (effector cells)",
+          "reason": "The assay explicitly uses PBMCs as the effector-cell specimen."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "natural killer cell antibody-dependent cytotoxic activity measured by CD107a, IFN-γ, and TNF-α staining",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S39",
+            "S40",
+            "S159"
+          ],
+          "evidence_text": "The target cells were co-cultured with 1 million PBMCs (effector cells) and then incubated with anti-CD107a antibodies and Golgi-Stop ... stained intracellularly with Alexa Fluor 700-conjugated anti-IFN-γ and FITC-conjugated anti-TNF-α antibodies. ... NK-mediated cytotoxicity, as assessed by ADCC activity or secretion of the cytokines TNF-α, IFN-γ, and CD107a",
+          "reason": "The text directly links ADCC/NK cytotoxicity assessment to CD107a, IFN-γ, and TNF-α measurements."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "In the NK-mediated ADCC assay, target cells are coated with anti-P815 antibodies to serve as the Fc target cells for NK-mediated ADCC ( 23 ).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S35"
+          ],
+          "evidence_text": "In the NK-mediated ADCC assay, target cells are coated with anti-P815 antibodies to serve as the Fc target cells for NK-mediated ADCC ( 23 ).",
+          "reason": "The quote appears verbatim and is part of the study's Methods describing the assay performed."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S35"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "T cell function",
+      "assay_name": "T cell function",
+      "assay_identity_verdict": "NOT_SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "T cell function",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "The text describes analysis of T cell function but does not present this phrase as a distinct assay technique name."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "intracellular cytokine staining",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S270"
+          ],
+          "evidence_text": "subjected to intracellular cytokine staining to measure T cell function",
+          "reason": "This wording refers to the measurement procedure used for the T cell function analysis."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S41"
+          ],
+          "evidence_text": "1 million PBMCs were stimulated",
+          "reason": "The assay was performed on PBMCs."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "intracellular IL2, IFNγ, and TNFα in peptide-stimulated T cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S41",
+            "S44"
+          ],
+          "evidence_text": "For analysis of T cell function, 1 million PBMCs were stimulated with Env peptide pools, nonstructural protein (NS1) peptide pools... Cells were permeabilized and stained intracellularly using PE-conjugated anti-IL2, Alexa Fluor 700-conjugated anti-IFNγ, and APC-conjugated anti-TNFα antibodies.",
+          "reason": "The text explicitly states peptide stimulation and intracellular staining for IL2, IFNγ, and TNFα."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "For analysis of T cell function, 1 million PBMCs were stimulated with Env peptide pools, nonstructural protein (NS1) peptide pools (a kind gift from Dr.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S41"
+          ],
+          "evidence_text": "For analysis of T cell function, 1 million PBMCs were stimulated with Env peptide pools, nonstructural protein (NS1) peptide pools (a kind gift from Dr.",
+          "reason": "The quoted text appears verbatim and describes the procedure being performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S41"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    },
+    {
+      "assay_id": "microarray hybridization",
+      "assay_name": "microarray hybridization",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "microarray hybridization",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S47",
+            "S53",
+            "S54"
+          ],
+          "evidence_text": "To obtain biotin-labeled cRNA, total RNA was amplified, labeled, and purified using the GeneChip 3’IVT Express Kit (Affymetrix, Santa Clara, CA, USA) following the manufacturer’s instructions. After hybridization on Human PrimeView Arrays for 16 h at 45°C and rotation at 60 rpm in a Hybridization Oven 640 (Affymetrix), slides were washed and stained with a Fluidics Station 450 system (Affymetrix).",
+          "reason": "The methods explicitly describe performing array hybridization on study RNA samples."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "RNA preparation and microarray hybridization",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S47",
+            "S54"
+          ],
+          "evidence_text": "After hybridization on Human PrimeView Arrays for 16 h at 45°C and rotation at 60 rpm in a Hybridization Oven 640 (Affymetrix)",
+          "reason": "This heading refers to the same assay procedure described in the methods."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "Affymetrix arrays",
+          "verdict": "CONTRADICTED",
+          "evidence_sentence_ids": [
+            "S54",
+            "S55"
+          ],
+          "evidence_text": "Human PrimeView Arrays ... GeneChip Scanner 3000 (Affymetrix)",
+          "reason": "This is a product/platform name, not an alias for the assay technique itself."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S47"
+          ],
+          "evidence_text": "After PMBC isolation, 1 × 10 6 PBMCs were immediately lysed in 1 ml of TRIzol",
+          "reason": "The assay input RNA was prepared from PBMCs."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "gene expression intensity data from hybridized PBMC RNA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S56"
+          ],
+          "evidence_text": "Affymetrix GCOS software was used to perform image analysis and generate raw intensity data.",
+          "reason": "The assay generated raw intensity data from the hybridized RNA samples."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "After hybridization on Human PrimeView Arrays for 16 h at 45°C and rotation at 60 rpm in a Hybridization Oven 640 (Affymetrix), slides were washed and stained with a Fluidics Station 450 system (Affymetrix).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S54"
+          ],
+          "evidence_text": "After hybridization on Human PrimeView Arrays for 16 h at 45°C and rotation at 60 rpm in a Hybridization Oven 640 (Affymetrix), slides were washed and stained with a Fluidics Station 450 system (Affymetrix).",
+          "reason": "The quote appears verbatim and describes the assay being performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S54"
+      },
+      "conflict_detected": true,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    }
+  ]
+}

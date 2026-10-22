@@ -1,0 +1,116 @@
+{
+  "summary": {
+    "assays": 9,
+    "fields_re_extracted": 3,
+    "actions": {
+      "REPLACED": 3
+    },
+    "reported_not_corrected": 0
+  },
+  "results": [
+    {
+      "assay_id": "Multiplex analysis",
+      "assay_name": "Multiplex analysis",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Flow cytometric analysis",
+      "assay_name": "Flow cytometric analysis",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "neutralizing antibodies by CPE",
+      "assay_name": "neutralizing antibodies by CPE",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "PRNT",
+      "assay_name": "PRNT",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "sample_type",
+          "action": "REPLACED",
+          "previous": "serum",
+          "blind_answer": "sera"
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "microarray",
+      "assay_name": "microarray",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "Affymetrix Human Genome U133 Plus 2.0 Array",
+            "transcriptional profiling"
+          ],
+          "blind_answer": [
+            "transcriptional profiling",
+            "microarray analysis",
+            "microarray data"
+          ],
+          "dropped": [
+            "Affymetrix Human Genome U133 Plus 2.0 Array"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "RT-PCR",
+      "assay_name": "RT-PCR",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "Two-step RT-PCR",
+            "TaqMan Gene Expression Plate Assay"
+          ],
+          "blind_answer": [
+            "relative RT-PCR expression",
+            "RT-PCR analysis",
+            "two-step RT-PCR"
+          ],
+          "dropped": [
+            "TaqMan Gene Expression Plate Assay"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "immunofluorescence",
+      "assay_name": "immunofluorescence",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "immunoblot analysis",
+      "assay_name": "immunoblot analysis",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "ELISA",
+      "assay_name": "ELISA",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    }
+  ]
+}

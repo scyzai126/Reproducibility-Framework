@@ -1,0 +1,142 @@
+{
+  "summary": {
+    "assays": 10,
+    "fields_re_extracted": 5,
+    "actions": {
+      "REPLACED": 2,
+      "REAFFIRMED": 2,
+      "CLEARED": 1
+    },
+    "reported_not_corrected": 0
+  },
+  "results": [
+    {
+      "assay_id": "Anti-spike binding enzyme-linked immunosorbent assay",
+      "assay_name": "Anti-spike binding enzyme-linked immunosorbent assay",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "enzyme-linked immunosorbent assay",
+            "ELISA"
+          ],
+          "blind_answer": [
+            "enzyme-linked immunosorbent assay"
+          ],
+          "dropped": [
+            "ELISA"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Focus reduction neutralization titre assay",
+      "assay_name": "Focus reduction neutralization titre assay",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "FRNT assay against the variants of concern",
+      "assay_name": "FRNT assay against the variants of concern",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "sample_type",
+          "action": "REAFFIRMED",
+          "previous": "samples",
+          "blind_answer": "samples"
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Intracellular cytokine staining assay",
+      "assay_name": "Intracellular cytokine staining assay",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Bead-based antigen arrays",
+      "assay_name": "Bead-based antigen arrays",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "CyTOF analysis of whole-blood samples",
+      "assay_name": "CyTOF analysis of whole-blood samples",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Plasma protein profiling using multiplex Olink panel",
+      "assay_name": "Plasma protein profiling using multiplex Olink panel",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Bulk transcriptomics",
+      "assay_name": "Bulk transcriptomics",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "CITE-seq",
+      "assay_name": "CITE-seq",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "cellular indexing of transcriptomes and epitopes by sequencing (CITE-seq)",
+            "10x Genomics scRNA-seq",
+            "scRNA-seq"
+          ],
+          "blind_answer": [
+            "single-cell transcriptomics analysis",
+            "single-cell transcriptional profiling",
+            "single-cell profiling"
+          ],
+          "dropped": [
+            "10x Genomics scRNA-seq",
+            "scRNA-seq"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "RNA isolation and qPCR",
+      "assay_name": "RNA isolation and qPCR",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "readouts",
+          "action": "CLEARED",
+          "previous": "gene expression measured from cDNA by SYBR green real-time PCR",
+          "blind_answer": null
+        },
+        {
+          "field": "aliases",
+          "action": "REAFFIRMED",
+          "previous": [
+            "qPCR"
+          ],
+          "blind_answer": [
+            "qPCR"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    }
+  ]
+}

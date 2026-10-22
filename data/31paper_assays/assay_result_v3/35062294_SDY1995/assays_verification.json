@@ -1,0 +1,281 @@
+{
+  "summary": {
+    "total": 4,
+    "accept": 2,
+    "review": 2,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 1,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {
+      "sample_type": {
+        "NOT_SUPPORTED": 1
+      },
+      "evidence.quote": {
+        "CONTRADICTED": 1
+      }
+    }
+  },
+  "results": [
+    {
+      "assay_id": "anti-DENV IgG and IgM ELISA",
+      "assay_name": "anti-DENV IgG and IgM ELISA",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "anti-DENV IgG and IgM ELISA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S32"
+          ],
+          "evidence_text": "DENV serology tests were performed with anti-DENV IgG and IgM ELISA",
+          "reason": "The text explicitly states this ELISA was performed in the study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "acute phase serum",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "Acute phase serum is mentioned for diagnostic confirmation criteria, not explicitly as the specimen for the ELISA in S32."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "dengue IgG and IgM serology",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S32"
+          ],
+          "evidence_text": "DENV serology tests were performed with anti-DENV IgG and IgM ELISA",
+          "reason": "The assay is explicitly described as serology testing for anti-DENV IgG and IgM."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "DENV serology tests were performed with anti-DENV IgG and IgM ELISA as previously described.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S32"
+          ],
+          "evidence_text": "DENV serology tests were performed with anti-DENV IgG and IgM ELISA as previously described",
+          "reason": "The quoted text appears verbatim apart from terminal punctuation and states the assay was performed here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S32, except for trailing punctuation not in the source"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Reverse transcription-PCR",
+      "assay_name": "Reverse transcription-PCR",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Reverse transcription-PCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S33"
+          ],
+          "evidence_text": "Reverse transcription-PCR was performed",
+          "reason": "The text explicitly states that reverse transcription-PCR was performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "reverse transcription polymerase chain reaction (RT-PCR)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S13"
+          ],
+          "evidence_text": "positive reverse transcription polymerase chain reaction (RT-PCR) of DENV RNA",
+          "reason": "This wording refers to the same PCR assay used for dengue RNA detection."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "RT-PCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S13"
+          ],
+          "evidence_text": "RT-PCR",
+          "reason": "The abbreviation is explicitly used for the same reverse transcription polymerase chain reaction assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "acute phase serum",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S13"
+          ],
+          "evidence_text": "in acute phase serum: (1) positive reverse transcription polymerase chain reaction (RT-PCR) of DENV RNA",
+          "reason": "The text directly links RT-PCR of DENV RNA to acute phase serum."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "dengue virus RNA detection",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S13"
+          ],
+          "evidence_text": "positive reverse transcription polymerase chain reaction (RT-PCR) of DENV RNA",
+          "reason": "The assay readout is detection of DENV RNA."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Reverse transcription-PCR was performed by using the DV1 and DV3 primer set and the ALD 1 and ALD 2 primer set in one reaction with details specified previously.",
+          "verdict": "CONTRADICTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "quote does not appear anywhere in the document"
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "missing",
+        "verdict": "CONTRADICTED",
+        "detail": "quote does not appear anywhere in the document"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Flow cytometry analysis",
+      "assay_name": "Flow cytometry analysis",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Flow cytometry analysis",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S9",
+            "S72"
+          ],
+          "evidence_text": "The aim of this study was to investigate the association of the gene expression profiles and phenotypic attributes of CD4 + CD8 + double-positive (DP) cells with plasma leakage in dengue diseases by RNA-sequencing and flow cytometry.",
+          "reason": "The text explicitly states that flow cytometry was performed in this study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S34"
+          ],
+          "evidence_text": "PBMCs were stained with anti-human CD3, CD4, CD8, CD14, CD19, CD56, and live/dead viability antibodies.",
+          "reason": "PBMCs are explicitly stated as the specimen used for this assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "frequencies and phenotypes of CD4+CD8+ double-positive, CD4+ single-positive, and CD8+ single-positive T cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S9",
+            "S72",
+            "S73"
+          ],
+          "evidence_text": "Initial phenotyping of peripheral blood mononuclear cells (PBMC) from the two groups (D+L and D-L) was determined by flow cytometry. Specifically, the proportions of CD4 + CD8 + double-positive (DP), CD4 + single-positive (SP), and CD8 + SP T cells in acute DENV infection was assessed",
+          "reason": "The assay is explicitly described as phenotyping PBMCs and assessing proportions of the listed T-cell subsets."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "PBMCs were stained with anti-human CD3, CD4, CD8, CD14, CD19, CD56, and live/dead viability antibodies.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S34"
+          ],
+          "evidence_text": "PBMCs were stained with anti-human CD3, CD4, CD8, CD14, CD19, CD56, and live/dead viability antibodies.",
+          "reason": "The quote appears verbatim and describes a flow-cytometry staining step performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S34, except for trailing punctuation not in the source"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "RNA Sequencing",
+      "assay_name": "RNA Sequencing",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "RNA Sequencing",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S44"
+          ],
+          "evidence_text": "Samples were sequenced in 3 batches using a NovaSeq 6000 system",
+          "reason": "The text explicitly states sequencing was performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "RNA-sequencing",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S9"
+          ],
+          "evidence_text": "by RNA-sequencing and flow cytometry",
+          "reason": "This wording refers to the same sequencing assay performed in the study."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "RNA-seq",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S81"
+          ],
+          "evidence_text": "Cell subsets were sorted and RNA-seq performed",
+          "reason": "This wording refers to the same assay performed on the sorted cell subsets."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "whole-transcriptome gene expression profiles from sorted T-cell subsets",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S45",
+            "S80",
+            "S81"
+          ],
+          "evidence_text": "Both whole transcriptome amplification and sequencing library preparations were performed in a 96-well format to reduce assay-to-assay variability. To investigate the nature of CD4 + CD8 + DP cells in acute DENV infection, we further characterized their transcriptomic profiles and compared with CD4 + or CD8 + single-positive (SP) cells. Cell subsets were sorted and RNA-seq performed",
+          "reason": "The text supports that the assay generated whole-transcriptome transcriptomic profiles from sorted T-cell subsets."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Samples were sequenced in 3 batches using a NovaSeq 6000 system (Illumina, San Diego, CA, USA) to obtain 50-bp paired-end reads.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S44"
+          ],
+          "evidence_text": "Samples were sequenced in 3 batches using a NovaSeq 6000 system (Illumina, San Diego, CA, USA) to obtain 50-bp paired-end reads.",
+          "reason": "The quote appears verbatim and directly describes sequencing performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S44"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

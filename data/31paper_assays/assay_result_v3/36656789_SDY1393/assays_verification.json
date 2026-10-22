@@ -1,0 +1,203 @@
+{
+  "summary": {
+    "total": 3,
+    "accept": 3,
+    "review": 0,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {}
+  },
+  "results": [
+    {
+      "assay_id": "standard hemagglutination inhibition assay",
+      "assay_name": "standard hemagglutination inhibition assay",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "standard hemagglutination inhibition assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S103"
+          ],
+          "evidence_text": "using a standard hemagglutination inhibition assay",
+          "reason": "The text explicitly states this assay was used in the study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "serum",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S103"
+          ],
+          "evidence_text": "using serum samples obtained at day 0 and 28",
+          "reason": "The assay is explicitly described as using serum samples."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "influenza vaccine antibody titers",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S37",
+            "S38",
+            "S103"
+          ],
+          "evidence_text": "Influenza vaccine antibody response was measured using a standard hemagglutination inhibition assay (HAI).",
+          "reason": "The assay is explicitly used to measure antibody response, and the text further discusses HAI titers."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Antibody response to vaccination was assessed using serum samples obtained at day 0 and 28 using a standard hemagglutination inhibition assay (Frey et al., 2010 ).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S103"
+          ],
+          "evidence_text": "Antibody response to vaccination was assessed using serum samples obtained at day 0 and 28 using a standard hemagglutination inhibition assay (Frey et al., 2010 ).",
+          "reason": "The quote appears verbatim and states the assay was performed on study samples."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S103"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Flow cytometry",
+      "assay_name": "Flow cytometry",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Flow cytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S109",
+            "S120"
+          ],
+          "evidence_text": "## Flow cytometry",
+          "reason": "The Methods section explicitly describes flow cytometry being performed in this study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "platelet-rich plasma",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S108",
+            "S118"
+          ],
+          "evidence_text": "The straw‐colored platelet rich plasma (PRP) was carefully transferred to a 15 ml conical tube for RNA extraction and flow cytometry.",
+          "reason": "The text explicitly states that PRP was used for flow cytometry."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "surface expression and percent positive platelets for CD40L, CD62P, and CD63 activation markers",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S75",
+            "S124"
+          ],
+          "evidence_text": "We assessed the state of platelet activation at the protein level by determining the surface expression of p‐selectin (CD62p, encoded by the SELP gene), CD40 Ligand (CD40L) and CD63 by flow cytometry",
+          "reason": "The study states that flow cytometry measured surface expression of CD62p, CD40L, and CD63 and estimated percentages of marker-positive platelet particles."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "The activation status of platelets was further estimated as percentage of CD41+ CD40L+, CD41+CD62P+ and CD41+CD63+ particles.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S124"
+          ],
+          "evidence_text": "The activation status of platelets was further estimated as percentage of CD41+ CD40L+, CD41+CD62P+ and CD41+CD63+ particles.",
+          "reason": "The quote appears verbatim and directly describes the flow cytometry measurement performed here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S124"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "RNA-seq",
+      "assay_name": "RNA-seq",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "RNA-seq",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S143"
+          ],
+          "evidence_text": "RNA‐seq libraries were prepared",
+          "reason": "The text explicitly states that RNA-seq libraries were prepared in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "RNASeq",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S210"
+          ],
+          "evidence_text": "Cohort characteristics for RNASeq analysis",
+          "reason": "RNASeq is used in the paper to refer to the same sequencing assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "platelet-rich plasma",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S132",
+            "S137"
+          ],
+          "evidence_text": "About 500 μl PRP was added to 700 μl of QIAsol lysis reagent",
+          "reason": "The RNA preparation for this assay was performed on PRP."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "platelet RNA expression levels",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S17",
+            "S142"
+          ],
+          "evidence_text": "elucidation of the platelet transcriptome via RNA‐seq",
+          "reason": "The assay is explicitly described as being used to characterize the platelet transcriptome."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "RNA‐seq libraries were prepared using the Takara Bio SMARTer Stranded Total RNA‐Seq‐kit ‐ Pico Input Mammalian per the manufacturer's instructions.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S143"
+          ],
+          "evidence_text": "RNA‐seq libraries were prepared using the Takara Bio SMARTer Stranded Total RNA‐Seq‐kit ‐ Pico Input Mammalian per the manufacturer's instructions.",
+          "reason": "The quote appears verbatim and describes the assay being performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S143"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}
