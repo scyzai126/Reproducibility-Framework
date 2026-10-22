@@ -20,21 +20,41 @@ The similarity is only the order retrieval found them in; judge by the definitio
 
 ## The question
 
-Is there a candidate whose definition specifically describes what this assay **does** -- the
-function it measures or the readout it produces -- rather than the instrument it was read on?
+The earlier pass stopped at a technique-level category. Is there a candidate that is **the same
+technique made more specific** -- a child or protocol-level term of that category, not a
+different kind of term?
 
-- Read the readouts and aliases for the function: cells stimulated and read for cytokine
-  production, proliferation-dye dilution, activation-induced surface markers, degranulation,
-  MHC multimer binding, phosphorylation, antibody binding to an antigen, and so on.
-- Choose a candidate only when its definition covers that function. A term naming a reagent
-  ("... using carboxyfluorescein succinimidyl ester staining") fits only when the record names
-  that reagent.
-- Do NOT choose another category term -- another instrument-level or family-level term is the
-  same non-answer the earlier pass already gave. "cytometry assay", "immune response assay",
-  "analyte assay" and their like are not answers here.
-- Synonyms are equal to labels.
-- If no candidate's definition describes the function, output exactly "none". The record then
-  keeps its category term, which is a correct if coarse answer.
+What counts as more specific, within the technique:
+
+- A named functional protocol run on that instrument: an activation-induced marker (AIM)
+  assay, a proliferation-dye or CFSE assay, ELISPOT, a hemagglutination inhibition assay, a
+  plaque-reduction or focus-reduction neutralization test, MHC multimer/tetramer staining.
+- A qualifier the record states: single-cell or bulk for sequencing, reverse-transcription or
+  real-time for PCR, bead-based multiplex rather than a single-analyte plate assay.
+
+Choose such a candidate only when the record's name, aliases or readouts state the thing that
+makes it specific. A term naming a reagent ("... using carboxyfluorescein succinimidyl ester
+staining") fits only when the record names that reagent.
+
+**Never choose a term that classifies by analyte or purpose** -- "cytokine assay", "analyte
+assay", "immune response assay", any "assay detecting ..." or "assay measuring ..." term.
+The readouts already record what was measured; such a term says nothing about how the
+measurement was made, and it is not a more specific form of the technique the earlier pass
+chose. A category term of another kind ("cytometry assay", "immunoassay") is no answer either.
+
+Multiplex immunoassays, the same rule the first pass follows: one sample assayed for many
+analytes at once on beads -- "multiplex", a panel of dozens of cytokines or chemokines, Luminex,
+xMAP, Bio-Plex, Milliplex, a "... Plex Panel", a "multiplex ELISA" -- is "cytometric bead array
+assay"; the beads read on a flow cytometer (LEGENDplex, BD CBA, "beads analyzed by flow
+cytometry") is "analyte detection by flow based bead assay"; Olink is "Olink assay" /
+"proximity extension assay"; Meso Scale Discovery (MSD, ECL) is "electrochemiluminescence
+assay". The "antigen detection by ..." child adds nothing for a cytokine panel, and a plate
+assay measuring one analyte per well stays "enzyme-linked immunosorbent assay".
+
+Synonyms are equal to labels.
+
+If no candidate is the same technique made more specific, output exactly "none". The record
+then keeps its category term, which is a correct if coarse answer, and stays an entry of its own.
 
 ## Output format
 

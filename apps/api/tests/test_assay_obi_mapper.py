@@ -1179,6 +1179,21 @@ def test_the_repick_prompt_names_the_category_term_and_lists_the_rest():
     assert "Readouts: cytokine production" in prompt
 
 
+def test_the_repick_prompt_asks_for_the_same_technique_made_more_specific():
+    """The mapping principle: technique first, qualifiers only from the text, never an
+    analyte-class term. On the first v3 runs both successful re-picks chose `cytokine assay`
+    where the curator wants `flow cytometry assay` / `cytometric bead array assay`."""
+    from app.agent.assay_obi_mapper import build_repick_prompt
+    prompt = build_repick_prompt("HD71 panel", [_CYTOKINE, _CYTOMETRY], "OBI:0000916",
+                                 "flow cytometry assay")
+
+    assert "the same\ntechnique made more specific" in prompt
+    assert "Never choose a term that classifies by analyte or purpose" in prompt
+    assert '"cytokine assay"' in prompt  # named as a term not to choose
+    assert '"cytometric bead array\nassay"' in prompt and "Olink assay" in prompt
+    assert "function it measures or the readout it produces" not in prompt
+
+
 def test_repick_removes_the_broad_term_and_returns_the_pick(monkeypatch):
     from app.agent import assay_obi_mapper, assay_trace
     seen = {}
