@@ -70,6 +70,7 @@ from pathlib import Path
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_REPO_ROOT / "apps" / "api"))
 
+from app.agent import assay_service
 from app.agent.assay_extractor import contract_warnings, paper_names
 from app.agent.assay_service import (
     PaperNotFoundError,
@@ -331,6 +332,27 @@ def report_result(result: dict) -> None:
         print(f"  {meta['raw_path']}  every model reply this run paid for, by round")
 
 
+def use_result_version(version: str, pmid: str, sdy: str) -> Path:
+    """Route this paper's run into `data/31paper_assays/<version>/` instead of the configured
+    result folder, and return the registry directory it will write.
+
+    assay_service.registry_dir only keeps a benchmark paper under REGISTRY_ROOT when its folder
+    already exists there -- otherwise the paper is treated as new and lands in the cache -- so
+    the folder is created here. Named `<pmid>_<SDY>`, or `_pdf` when the paper has no JATS XML
+    and a PDF, the way registry_dir names it. The folder is not emptied: the run deletes every
+    stale output of its own before writing, so a re-run over an existing version is the same
+    overwrite-in-place as a re-run over the configured one.
+    """
+    assay_service.REGISTRY_ROOT = assay_service.CORPUS_ROOT / version
+    name = f"{pmid.strip()}_{sdy.strip()}"
+    if (assay_service.locate_paper_xml(pmid, sdy) is None
+            and assay_service.locate_paper_pdf(pmid, sdy) is not None):
+        name += assay_service.PDF_DIR_SUFFIX
+    target = assay_service.REGISTRY_ROOT / name
+    target.mkdir(parents=True, exist_ok=True)
+    return target
+
+
 async def main(pmid: str, sdy: str) -> None:
     try:
         result = await assay_report(pmid, sdy, _get_client(), verify=True, correct=True)
@@ -348,6 +370,9 @@ if __name__ == "__main__":
     parser.add_argument("--sdy", default="", help="study accession (instead of registry_dir)")
     parser.add_argument("--dry-run", action="store_true",
                         help="report the projected call count; makes no API call")
+    parser.add_argument("--result-version", metavar="NAME", default="",
+                        help="write under data/31paper_assays/NAME/ instead of the configured "
+                             "result folder (e.g. assay_result_v3); the folder is created")
     args = parser.parse_args()
 
     if args.registry_dir is not None:
@@ -356,6 +381,9 @@ if __name__ == "__main__":
         pubmed_id, study = args.pmid.strip(), args.sdy.strip()
     else:
         parser.error("give a registry directory, or --pmid/--sdy")
+
+    if args.result_version.strip():
+        use_result_version(args.result_version.strip(), pubmed_id, study)
 
     if args.dry_run:
         _dry_run(pubmed_id, study)

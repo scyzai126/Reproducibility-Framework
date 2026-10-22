@@ -700,8 +700,13 @@ def repick_broad(
     obi: dict[str, Any],
     model: str = settings.OPENAI_MODEL,
     terms_path: Path = _OBI_TERMS_PATH,
-) -> tuple[dict[str, Any], dict[str, dict[str, str]]]:
-    """Re-pick every BROAD mapping in the registry. Returns (obi, repicked).
+) -> tuple[dict[str, Any], dict[str, dict[str, str]], int]:
+    """Re-pick every BROAD mapping in the registry. Returns (obi, repicked, attempts).
+
+    `attempts` is the number of picker calls made -- one per BROAD mapping -- whether or not the
+    answer changed the term, because a "none" was paid for too. The first version billed only
+    the entries whose term changed, and SDY1289's two BROAD flow entries, both answered "none",
+    showed as a free round.
 
     The trigger is the mapping, not a conflict: BROAD says the term is a category the assay
     falls under, and that is as true for an entry with no sibling on the term as for one whose
@@ -716,9 +721,11 @@ def repick_broad(
     """
     obi = {key: dict(value) for key, value in (obi or {}).items()}
     repicked: dict[str, dict[str, str]] = {}
+    attempts = 0
     for key, mapping in obi.items():
         if not _is_broad_mapping(mapping):
             continue
+        attempts += 1
         try:
             picked = repick_obi(key, assays.get(key) or {}, mapping, terms_path=terms_path,
                                 model=model)
@@ -733,7 +740,7 @@ def repick_broad(
         mapping.update({"obi_id": picked["obi_id"], "obi_label": picked["obi_label"],
                         "resource": picked["resource"], "obi_confidence": picked["confidence"],
                         "obi_granularity": picked["granularity"]})
-    return obi, repicked
+    return obi, repicked, attempts
 
 
 def _is_broad_mapping(mapping: dict[str, Any]) -> bool:

@@ -106,7 +106,7 @@ def canonicalize_one(registry_dir: Path, remap: bool = False) -> None:
             obi = enrich_assays_with_obi(assays)
             # Round 5's one paid step, as the pipeline runs it: every BROAD mapping is asked
             # once more for a term naming the function.
-            obi, repicked = repick_broad(assays, obi)
+            obi, repicked, _attempts = repick_broad(assays, obi)
         finally:
             assay_trace.stop()
         trace.write(registry_dir / assay_trace.RAW_FILE)

@@ -432,3 +432,18 @@ async def test_each_extraction_call_is_seeded_and_labelled(monkeypatch):
 
     assert client.kwargs["seed"] == EXTRACTION_SEED
     assert list(trace.as_json()["extract"]) == ["run2"]
+
+
+def test_a_suffixed_canonical_key_is_not_warned_about():
+    """Round 5 keeps two entries on one OBI term apart as `<label>` and `<label> (2)`; the
+    suffix is the registry's, and the second key still answers to the label it maps to."""
+    from app.agent.assay_extractor import contract_warnings
+    entry = {"name_in_paper": ["intracellular cytokine staining"], "aliases": [],
+             "source": "methods",
+             "evidence": {"section": "Methods", "sentence_ids": ["S1"], "quote": "Cells were stained."}}
+    registry = {"flow cytometry assay (2)": entry}
+    obi = {"flow cytometry assay (2)": {"obi_label": "flow cytometry assay"}}
+
+    assert contract_warnings(registry, obi=obi) == []
+    assert any("not the key" in w for w in contract_warnings(
+        {"flow cytometry assay (2)": entry}, obi={"flow cytometry assay (2)": {"obi_label": "ELISA"}}))

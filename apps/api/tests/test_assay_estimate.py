@@ -407,3 +407,16 @@ def test_the_dry_run_exits_with_the_scripts_own_wording_for_a_missing_paper(pape
     assert message.startswith(
         "No paper for pubmed_id='999' study_accession='SDY999': ")
     assert "no JATS XML under " in message and "no PDF under " in message
+
+
+def test_result_version_routes_the_run_into_that_folder(paper, pipeline_script, monkeypatch, tmp_path):
+    """--result-version writes under data/31paper_assays/<NAME>/ without touching the configured
+    version: the folder is created so registry_dir keeps the paper there rather than in the cache."""
+    corpus = tmp_path / "corpus"
+    monkeypatch.setattr(assay_service, "CORPUS_ROOT", corpus)
+
+    target = pipeline_script.use_result_version("assay_result_v3", "111", "SDY1")
+
+    assert target == corpus / "assay_result_v3" / "111_SDY1" and target.is_dir()
+    assert assay_service.REGISTRY_ROOT == corpus / "assay_result_v3"
+    assert assay_service.registry_dir("111", "SDY1") == target

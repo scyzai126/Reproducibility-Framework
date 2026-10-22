@@ -45,7 +45,7 @@ def stub_obi(monkeypatch):
 
     monkeypatch.setattr(assay_service, "enrich_assays_with_obi", _fake)
     # Round 5's re-pick is a real call too; by default it finds nothing and changes nothing.
-    monkeypatch.setattr(assay_service, "repick_broad", lambda assays, obi, model: (obi, {}))
+    monkeypatch.setattr(assay_service, "repick_broad", lambda assays, obi, model: (obi, {}, 0))
     return _fake
 
 
@@ -892,7 +892,7 @@ async def test_a_broad_mapping_that_blocked_a_fold_is_repicked(paper, monkeypatc
                         obi_granularity="EXACT",
                         obi_repicked_from={"obi_id": "OBI:0000916",
                                            "obi_label": "flow cytometry assay"})
-        return out, {key: {"from": "flow cytometry assay", "to": "cytokine assay"}}
+        return out, {key: {"from": "flow cytometry assay", "to": "cytokine assay"}}, 1
     monkeypatch.setattr(assay_service, "repick_broad", fake_repick)
     client = _ExtractionClient([_dc_panel_body(True), _dc_panel_body(True), _dc_panel_body(False)],
                                _verification_body())
@@ -915,7 +915,7 @@ async def test_a_broad_mapping_that_blocked_a_fold_is_repicked(paper, monkeypatc
 async def test_a_repick_that_finds_nothing_leaves_the_entry_apart(paper, monkeypatch):
     monkeypatch.setattr(assay_service, "EXTRACTIONS", 3)
     monkeypatch.setattr(assay_service, "enrich_assays_with_obi", _broad_panel_mapper)
-    monkeypatch.setattr(assay_service, "repick_broad", lambda assays, obi, model: (obi, {}))
+    monkeypatch.setattr(assay_service, "repick_broad", lambda assays, obi, model: (obi, {}, 1))
     client = _ExtractionClient([_dc_panel_body(True), _dc_panel_body(True), _dc_panel_body(False)],
                                _verification_body())
 
@@ -923,7 +923,8 @@ async def test_a_repick_that_finds_nothing_leaves_the_entry_apart(paper, monkeyp
 
     assert list(result["assays"]) == ["flow cytometry assay", "flow cytometry assay (2)"]
     canon = result["rounds"]["canonicalize"]
-    assert canon["calls"] == 0 and canon["folds_blocked"] == 1 and "repicked" not in canon
+    # The "none" answer was still one paid call.
+    assert canon["calls"] == 1 and canon["folds_blocked"] == 1 and "repicked" not in canon
 
 
 @pytest.mark.asyncio
@@ -939,7 +940,7 @@ async def test_a_lone_broad_mapping_is_repicked_without_any_sibling(paper, monke
         out = {k: dict(v) for k, v in obi.items()}
         out["flow cytometry"].update(obi_id="OBI:0002766", obi_label="cytokine assay",
                                      resource="embedding_llm_repick", obi_granularity="EXACT")
-        return out, {"flow cytometry": {"from": "flow cytometry assay", "to": "cytokine assay"}}
+        return out, {"flow cytometry": {"from": "flow cytometry assay", "to": "cytokine assay"}}, 1
     monkeypatch.setattr(assay_service, "repick_broad", fake_repick)
 
     result = await assay_report("111", "SDY1", _Client(_extraction_body(), _verification_body()))

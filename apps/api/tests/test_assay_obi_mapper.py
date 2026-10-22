@@ -1261,9 +1261,10 @@ def test_repick_broad_asks_only_for_the_broad_side_and_rewrites_its_term(monkeyp
     monkeypatch.setattr(assay_obi_mapper, "repick_obi", fake)
     assays, obi = _registry_with_blocked_fold()
 
-    out, repicked = assay_obi_mapper.repick_broad(assays, obi)
+    out, repicked, attempts = assay_obi_mapper.repick_broad(assays, obi)
 
     assert asked == ["ICS"]  # the EXACT anchor is not re-asked
+    assert attempts == 1
     assert repicked == {"ICS": {"from": "flow cytometry assay", "to": "cytokine assay"}}
     assert out["ICS"]["obi_id"] == "OBI:0002766" and out["ICS"]["resource"] == "embedding_llm_repick"
     assert out["ICS"]["obi_granularity"] == "EXACT"
@@ -1278,13 +1279,14 @@ def test_repick_broad_leaves_a_none_and_a_failure_alone(monkeypatch, caplog):
     assays, obi = _registry_with_blocked_fold()
 
     monkeypatch.setattr(assay_obi_mapper, "repick_obi", lambda *a, **k: None)
-    out, repicked = assay_obi_mapper.repick_broad(assays, obi)
+    out, repicked, attempts = assay_obi_mapper.repick_broad(assays, obi)
     assert repicked == {} and out["ICS"]["obi_granularity"] == "BROAD"
+    assert attempts == 1  # "none" was still a paid call
 
     def boom(*a, **k):
         raise RuntimeError("timed out")
     monkeypatch.setattr(assay_obi_mapper, "repick_obi", boom)
-    out, repicked = assay_obi_mapper.repick_broad(assays, obi)
+    out, repicked, attempts = assay_obi_mapper.repick_broad(assays, obi)
     assert repicked == {} and out["ICS"]["obi_id"] == "OBI:0000916"
     assert "OBI re-pick failed" in caplog.text
 
@@ -1298,9 +1300,9 @@ def test_repick_broad_ignores_a_fold_refused_for_a_different_technique(monkeypat
               "PRNT": {**_ICS, "standard_technique_name": "plaque reduction neutralization test"}}
     obi = {"CPE": {**assays["CPE"], **exact}, "PRNT": {**assays["PRNT"], **exact}}
 
-    out, repicked = assay_obi_mapper.repick_broad(assays, obi)
+    out, repicked, attempts = assay_obi_mapper.repick_broad(assays, obi)
 
-    assert repicked == {} and out == obi
+    assert repicked == {} and out == obi and attempts == 0
 
 
 def test_repick_broad_asks_for_a_lone_broad_entry_too(monkeypatch):
@@ -1319,7 +1321,7 @@ def test_repick_broad_asks_for_a_lone_broad_entry_too(monkeypatch):
     assays = {"ELISA": {**_ICS, "name_in_paper": "ELISA"}, "ICS": _ICS}
     obi = {"ELISA": {**assays["ELISA"], **exact_elisa}, "ICS": {**_ICS, **_BROAD_FLOW}}
 
-    out, repicked = assay_obi_mapper.repick_broad(assays, obi)
+    out, repicked, attempts = assay_obi_mapper.repick_broad(assays, obi)
 
     assert asked == ["ICS"]
     assert list(repicked) == ["ICS"] and out["ICS"]["obi_label"] == "cytokine assay"

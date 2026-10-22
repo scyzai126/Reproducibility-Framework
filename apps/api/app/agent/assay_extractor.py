@@ -20,6 +20,7 @@ ones defaulted, so a partially malformed answer costs its bad fields rather than
 """
 
 import json
+import re
 import logging
 
 from openai import AsyncOpenAI
@@ -243,6 +244,10 @@ def _unwrap(parsed: dict) -> dict:
     return parsed
 
 
+#: The ` (n)` round 5 appends when two entries share a key (assay_merger.canonical_groups).
+_KEY_SUFFIX = re.compile(r" \(\d+\)$")
+
+
 def contract_warnings(registry: dict, *, expect_sentence_ids: bool = True,
                       obi: dict | None = None) -> list[str]:
     """Contract violations worth telling a human about, without failing the extraction.
@@ -293,7 +298,10 @@ def contract_warnings(registry: dict, *, expect_sentence_ids: bool = True,
         names = paper_names(entry)
         label = ((obi or {}).get(key) or {}).get("obi_label") if isinstance(obi, dict) else None
         canonical = isinstance(entry.get("name_in_paper"), list)
-        if key in names or key == label or (obi is None and canonical):
+        # Round 5 keeps two entries on one term apart under `<label> (2)`, `<label> (3)`: the
+        # suffix is the registry's, not a wording, so the key still answers to its label.
+        unsuffixed = _KEY_SUFFIX.sub("", key)
+        if key in names or unsuffixed == label or (obi is None and canonical):
             continue
         warnings.append(f"{key}: name_in_paper is {entry.get('name_in_paper')!r}, not the key"
                         + (f" and the key is not its OBI label {label!r}" if label else ""))

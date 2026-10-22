@@ -55,3 +55,24 @@ def test_every_benchmark_filename_starts_with_its_study_accession(path: Path):
 
     assert module._BENCH_NAME.match(path.name), \
         f"{path.name} does not start with SDY<n>[_<pmid>]"
+
+
+def test_the_comparison_can_be_pointed_at_another_result_version(tmp_path, monkeypatch):
+    """--registry-dir scores a different result folder and writes its report beside it."""
+    import importlib.util, json
+
+    script = BENCHMARK_DIR.parents[2] / "scripts" / "compare_assay_benchmark.py"
+    spec = importlib.util.spec_from_file_location("compare_assay_benchmark_v3", script)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    other = tmp_path / "assay_result_v3"
+    (other / "32473127_SDY1640").mkdir(parents=True)
+    (other / "32473127_SDY1640" / "assays_benchmark.json").write_text("{}", encoding="utf-8")
+
+    module.use_registry_dir(other)
+    pairs, skipped = module.discover_pairs("SDY1640")
+
+    assert module.OUT_DIR == other.resolve() / "comparison"
+    assert [p["registry"].name for p in pairs] == ["32473127_SDY1640"] if pairs and "registry" in pairs[0] \
+        else len(pairs) == 1
+    assert not any("SDY1640" in s for s in skipped)

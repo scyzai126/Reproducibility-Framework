@@ -191,6 +191,14 @@ def bench_evidence(entry: dict) -> dict:
 _BENCH_NAME = re.compile(r"^(SDY\d+)(?:_(\d{7,8}))?")
 
 
+def use_registry_dir(path: Path) -> None:
+    """Point the comparison at another result version. Its report goes beside it, under
+    `<path>/comparison/`, so scoring assay_result_v3 never overwrites assay_result_v1's files."""
+    global REGISTRY_DIR, OUT_DIR
+    REGISTRY_DIR = Path(path).resolve()
+    OUT_DIR = REGISTRY_DIR / "comparison"
+
+
 def discover_pairs(only: str | None = None) -> tuple[list[dict], list[str]]:
     """Pair each benchmark file with its registry directory.
 
@@ -531,7 +539,13 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--only", help="Restrict to one study accession, e.g. SDY2189")
     parser.add_argument("--stdout", action="store_true", help="Print the Markdown report instead of writing files")
+    parser.add_argument("--registry-dir", type=Path, default=None,
+                        help="Score the registries under this folder instead of the default "
+                             f"({REGISTRY_DIR.relative_to(REPO_ROOT)}); the report is then "
+                             "written under <registry-dir>/comparison/, not over the default's")
     args = parser.parse_args()
+    if args.registry_dir is not None:
+        use_registry_dir(args.registry_dir)
 
     obi = ObiGraph()
     pairs, skipped = discover_pairs(args.only)

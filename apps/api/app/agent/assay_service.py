@@ -1126,8 +1126,9 @@ async def _run_rounds(pubmed_id, study_accession, client, verify, correct, model
         # the category -- and apart from any sibling there, reported. to_thread like round 4:
         # the client blocks.
         repicked: dict = {}
+        n_repick = 0
         if any(str(m.get("obi_granularity") or "").upper() == "BROAD" for m in obi.values()):
-            obi, repicked = await asyncio.to_thread(repick_broad, assays, obi, model)
+            obi, repicked, n_repick = await asyncio.to_thread(repick_broad, assays, obi, model)
             trace.write(raw_path)
             if repicked:
                 groups = canonical_groups(assays, obi)
@@ -1136,7 +1137,7 @@ async def _run_rounds(pubmed_id, study_accession, client, verify, correct, model
         # The folds the rules refused are findings too: two entries on one term kept apart
         # because one mapping was BROAD or the techniques differ.
         merges = build_merge_report(folds, keys, blocked_folds(groups))
-        n_repick = len(repicked)
+        # Billed per attempt, not per changed term: a re-pick answered "none" cost the same.
         calls += n_repick
         rounds["canonicalize"] = {"source": "canonical", "calls": n_repick,
                                   "assays": len(assays), **merges["summary"]}
