@@ -6,7 +6,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.agent import assay_service
-from app.agent.assay_extractor import TRIMMED_FIELDS
+from app.agent.assay_extractor import TRIMMED_FIELDS, AssayExtractionError
 from app.agent.assay_service import (
     NothingToDoError,
     PaperNotFoundError,
@@ -774,3 +774,66 @@ def test_the_estimate_prices_round_one_at_the_extraction_count(paper, monkeypatc
     rounds = {r["name"]: r for r in assay_service.estimate_run("111", "SDY1")["rounds"]}
 
     assert rounds["extract"]["calls"] == 3 and rounds["extract"]["extractions"] == 3
+
+
+# ── round 1 tolerates a failed extraction call ───────────────────────────────
+
+@pytest.mark.asyncio
+async def test_one_failed_extraction_call_is_reported_and_the_vote_proceeds(paper, monkeypatch):
+    """One reply of three is garbage: the two that answered still make a majority."""
+    monkeypatch.setattr(assay_service, "EXTRACTIONS", 3)
+    client = _ExtractionClient([_dc_panel_body(True), "not json at all", _dc_panel_body(True)],
+                               _verification_body())
+
+    result = await assay_report("111", "SDY1", client)
+
+    extract = result["rounds"]["extract"]
+    assert extract["calls"] == 3 and extract["extractions"] == 3
+    assert list(extract["failed"]) == ["run2"]
+    assert extract["failed"]["run2"].startswith("AssayExtractionError: model returned unparseable")
+    assert client.calls == 5  # 3 extractions (the failed one was still made) + 2 verifications
+    # Both answering runs had the panel: 2 of 3, delivered (folded onto the stub's one term).
+    assert result["assays"]["flow cytometry assay"]["name_in_paper"] == [
+        "flow cytometry", "flow cytometry for DC activation"]
+    assert extract["minority"] == 0
+    raw = json.loads((paper / "assays_raw.json").read_text())
+    assert sorted(raw["extract"]) == ["run1", "run2", "run3"]
+    assert raw["extract"]["run2"]["reply"] == "not json at all"
+
+
+@pytest.mark.asyncio
+async def test_a_failed_call_still_counts_toward_the_majority_of_three(paper, monkeypatch):
+    """An entry only one answering run found is MINORITY of 3, not of 2: the failed run
+    stays in its slot as a run that found nothing."""
+    monkeypatch.setattr(assay_service, "EXTRACTIONS", 3)
+    client = _ExtractionClient([_dc_panel_body(True), "not json", _dc_panel_body(False)],
+                               _verification_body())
+
+    result = await assay_report("111", "SDY1", client)
+
+    assert list(result["assays"]) == ["flow cytometry assay"]
+    record = result["minority"]["flow cytometry for DC activation"]
+    assert record["runs"] == ["run1"] and record["of"] == 3
+    assert list(result["rounds"]["extract"]["failed"]) == ["run2"]
+
+
+@pytest.mark.asyncio
+async def test_two_failed_extraction_calls_abort_the_paper(paper, monkeypatch):
+    monkeypatch.setattr(assay_service, "EXTRACTIONS", 3)
+    client = _ExtractionClient(["not json", _dc_panel_body(True), "also not json"],
+                               _verification_body())
+
+    with pytest.raises(AssayExtractionError, match=r"2 of 3 extraction call\(s\) failed") as exc:
+        await assay_report("111", "SDY1", client)
+
+    assert "run1:" in str(exc.value) and "run3:" in str(exc.value) and "run2" not in str(exc.value)
+    assert client.calls == 3
+    assert not (paper / "assays_precorrection.json").exists()
+
+
+@pytest.mark.asyncio
+async def test_a_single_extraction_that_fails_still_raises(paper, monkeypatch):
+    monkeypatch.setattr(assay_service, "EXTRACTIONS", 1)
+
+    with pytest.raises(AssayExtractionError, match=r"1 of 1 extraction call\(s\) failed"):
+        await assay_report("111", "SDY1", _Client("not json", _verification_body()))

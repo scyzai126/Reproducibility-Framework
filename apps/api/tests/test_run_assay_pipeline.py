@@ -97,3 +97,13 @@ def test_a_registry_keyed_by_obi_label_is_not_warned_about(cli, capsys):
                                       "resource": "exact_original"}}))
 
     assert "not the key" not in capsys.readouterr().out
+
+
+def test_a_failed_extraction_call_is_a_warning_line(cli, capsys):
+    """Round 1 voted around a reply that was not a registry; the count alone would hide it."""
+    cli.report_result(_result(rounds={"extract": {
+        "source": "extracted", "calls": 3, "extractions": 3, "assays": 1, "minority": 0,
+        "failed": {"run2": "AssayExtractionError: model returned unparseable JSON: Expecting value"}}}))
+
+    out = capsys.readouterr().out
+    assert "WARNING  extraction run2 failed: AssayExtractionError: model returned unparseable JSON" in out

@@ -48,7 +48,7 @@ of against the sentences it names, and the methods-vs-results cross-check report
 --dry-run names the source it would use, so which route a paper takes is visible before paying.
 
 **--dry-run makes no API call** and reports the projected bill. Run it first: a 10-assay paper
-is upwards of 30 calls. Round 1 is one call; rounds 2-4 are sized from what the last run's
+is upwards of 30 calls. Round 1 is EXTRACTIONS calls (3), voted; rounds 2-4 are sized from what the last run's
 extraction found, once one exists on disk -- each from the file that round actually read, since
 round 5 re-keys assays.json. Round 5 is free.
 
@@ -216,6 +216,11 @@ def report_result(result: dict) -> None:
         extra = {k: v for k, v in row.items() if k not in ("source", "calls")}
         print(f"  {name:8} {row.get('source', '?'):10} {row.get('calls', 0)} call(s)"
               + (f"  {json.dumps(extra)}" if extra else ""))
+    # An extraction call that answered with nothing usable. The vote went on without it, so the
+    # majority was taken over fewer replies than were paid for -- printed, not folded into the
+    # count above, because it is a reason to read the MINORITY lines more carefully.
+    for label, error in (result["rounds"].get("extract", {}).get("failed") or {}).items():
+        print(f"  WARNING  extraction {label} failed: {error}")
 
     assays = result["assays"]
     check = result["quote_check"]
