@@ -328,7 +328,7 @@ def paper_source_text(xml_path: Path) -> tuple[str, str]:
     would make the cited ids uncheckable.
     """
     raw = xml_path.read_bytes()
-    parsed = parse_jats_xml(raw.decode("utf-8"))
+    parsed = parse_jats_xml(raw.decode("utf-8"), include_extended_data=True)
     if not parsed or not parsed.strip():
         raise PaperNotFoundError(f"{xml_path.name} yielded no text")
     return (article_title(raw) or xml_path.stem), number_sentences(parsed)

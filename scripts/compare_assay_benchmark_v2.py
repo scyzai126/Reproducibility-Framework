@@ -136,9 +136,17 @@ def load_lenient(path: Path) -> tuple[dict | None, str | None, str | None]:
     """(data, repair, error). `repair` names what was fixed in memory; the file is left untouched."""
     text = path.read_text(encoding="utf-8")
     try:
-        return json.loads(text), None, None
+        data = json.loads(text)
     except json.JSONDecodeError as first:
         original = f"{first.msg} at line {first.lineno} col {first.colno}"
+    else:
+        # A missing `}` mid-file that an extra one at the end balances still parses, with every
+        # later entry nested inside the unclosed one (SDY1669).
+        data, hoisted = _hoist_nested_entries(data)
+        if not hoisted:
+            return data, None, None
+        return data, (f"un-nested {len(hoisted)} entries swallowed by an unclosed one "
+                      f"({', '.join(hoisted)}); the file parsed, its braces balanced by a stray one"), None
     repairs = [
         ("removed trailing commas", _strip_trailing_commas),
         ("closed unbalanced braces", _close_open_brackets),
@@ -634,6 +642,35 @@ def render_html(report: dict) -> str:
     status_counts = t.get("status_counts") or {
         s: sum(r["status"] == s for p in report["papers"] for r in p["rows"]) for s in STATUS_INFO}
     status_counts["SPLIT"] = sum(bool(r.get("also_on_term")) for p in report["papers"] for r in p["rows"])
+    # The two rate tiles, written out as the sum they are. Both denominators are the benchmark,
+    # so what separates them is only which statuses the numerator admits.
+    obi_ok_n = t.get("obi_ok", t["exact"])
+    gap = t["matched"] - obi_ok_n
+    rates = (
+        '<div class="rates">'
+        f'<p><b>recall</b> = matched &divide; benchmark assays = '
+        f'<code>{t["matched"]} / {t["benchmark_total"]}</code> = <b>{t["recall"]:.1%}</b>'
+        '<br><span class="sub">A benchmark row counts as matched once the scorer pairs it with an '
+        'agent entry on any tier, whether or not the two agree on a term: '
+        f'MATCH ({status_counts["MATCH"]}) + MATCH GRANULARITY ({status_counts["MATCH_GRANULARITY"]})'
+        f' + MATCH OBI CONFLICT ({status_counts["MATCH_OBI_CONFLICT"]})'
+        f' + MATCH OBI UNMAPPED ({status_counts["MATCH_OBI_UNMAPPED"]}) = {t["matched"]}. '
+        'Only MISSED, a row no tier could pair, lowers it.</span></p>'
+        f'<p><b>OBI recall</b> = ontology-paired &divide; benchmark assays = '
+        f'<code>({status_counts["MATCH"]} + {status_counts["MATCH_GRANULARITY"]})'
+        f' / {t["benchmark_total"]}</code> = <code>{obi_ok_n} / {t["benchmark_total"]}</code>'
+        f' = <b>{t["obi_recall"]:.1%}</b>'
+        '<br><span class="sub">Only a pairing the ontology itself made counts: the same term '
+        '(MATCH), or one term a parent or child of the other (MATCH GRANULARITY). A row paired by '
+        'a shared name or quote carries a different or missing term, so CONFLICT and UNMAPPED '
+        f'count toward recall and not here &mdash; that gap is the {gap} '
+        f'{"row" if gap == 1 else "rows"} between the two tiles.</span></p>'
+        f'<p class="sub">Both denominators are {t["benchmark_total"]}, not the '
+        f'{t["benchmark_raw"]} rows the curators wrote: rows sharing an OBI id within one paper '
+        'merge into a single row before matching when the agent delivered one entry on that '
+        'term.</p>'
+        '</div>'
+    )
     total_row = (
         f'<tr><td>Total</td><td>{t["papers"]} papers</td>'
         f'<td class="n">{t["benchmark_total"]}</td><td class="n">{t["ours_total"]}</td>'
@@ -660,6 +697,10 @@ code{{background:var(--code);padding:0 4px;border-radius:4px;font-size:12px}}
 .kpis{{display:flex;flex-wrap:wrap;gap:12px;margin:16px 0}}
 .kpi{{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 14px;min-width:120px}}
 .kpi b{{display:block;font-size:22px}} .kpi span{{color:var(--muted);font-size:12px}}
+.rates{{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin:0 0 16px}}
+.rates p{{margin:6px 0;font-size:13px;line-height:1.5}}
+.rates code{{background:var(--code);padding:1px 5px;border-radius:4px}}
+.rates .sub{{color:var(--muted)}}
 .toolbar{{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:10px 0;display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center}}
 .toolbar label{{display:inline-flex;gap:4px;align-items:center;cursor:pointer}}
 .toolbar label .sub{{display:none}}
@@ -702,9 +743,10 @@ benchmark entries that share an OBI id within a paper are merged into one row be
 <div class="kpi"><b>{t["matched"]}</b><span>matched (exact OBI {t["exact"]})</span></div>
 <div class="kpi"><b>{t["missed"]}</b><span>missed</span></div>
 <div class="kpi"><b>{t["extra"]}</b><span>extra</span></div>
-<div class="kpi"><b>{t["recall"]:.1%}</b><span>recall</span></div>
-<div class="kpi"><b>{t.get("obi_recall", 0):.1%}</b><span>OBI recall (same or parent/child term)</span></div>
+<div class="kpi" title="matched / benchmark assays — every matched tier counts; only MISSED lowers it"><b>{t["recall"]:.1%}</b><span>recall</span></div>
+<div class="kpi" title="(MATCH + MATCH GRANULARITY) / benchmark assays — only a pairing the ontology made"><b>{t.get("obi_recall", 0):.1%}</b><span>OBI recall (same or parent/child term)</span></div>
 </div>
+{rates}
 <details><summary>Status legend &amp; notes</summary>
 <ul>{"".join(f'<li><span class="badge {c}">{s.replace("_", " ")}</span> {e(d)}</li>' for s, (c, d) in STATUS_INFO.items())}</ul>
 <p>Agent registries with no {e(label)} benchmark (not scored): {e(nobench)}</p>

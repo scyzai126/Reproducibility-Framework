@@ -82,7 +82,7 @@ def paper_text(xml_path: Path) -> tuple[str, str]:
     number_sentences -- so a cited `[S<n>]` id means the same sentence on both sides. Any
     other source of text would make the ids uncheckable.
     """
-    parsed = parse_jats_xml(xml_path.read_text(encoding="utf-8"))
+    parsed = parse_jats_xml(xml_path.read_text(encoding="utf-8"), include_extended_data=True)
     if not parsed or not parsed.strip():
         raise SystemExit(f"{xml_path} yielded no text; verify against the PDF is not supported")
 

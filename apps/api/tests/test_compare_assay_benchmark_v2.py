@@ -88,6 +88,16 @@ def test_missing_brace_mid_file_does_not_nest_later_entries(mod, tmp_path):
     assert "un-nested 1" in repair
 
 
+def test_missing_brace_balanced_by_a_stray_one_still_un_nests(mod, tmp_path):
+    # Valid JSON: the `}` missing after "a" is made up by an extra one at the end.
+    path = tmp_path / "f.json"
+    path.write_text('{"a": {"name_in_paper": "a", "x": {"y": 1},\n "b": {"name_in_paper": "b"}\n}}')
+    data, repair, _ = mod.load_lenient(path)
+    assert list(data) == ["a", "b"]
+    assert data["a"] == {"name_in_paper": "a", "x": {"y": 1}}
+    assert "un-nested 1" in repair
+
+
 def test_unrepairable_json_reports_error(mod, tmp_path):
     path = tmp_path / "f.json"
     path.write_text('{"a": nonsense}')
@@ -419,3 +429,22 @@ def test_html_shows_total_row(mod):
     assert "Overall statistics" not in page
     assert "<tfoot><tr><td>Total</td>" in page
     assert "<span>precision</span>" not in page and "<span>F1</span>" not in page
+
+
+def test_html_spells_out_how_both_recalls_are_computed(mod):
+    """The two tiles share a denominator, so the page has to say which statuses each admits."""
+    papers = [_paper(["MATCH", "MATCH_GRANULARITY", "MATCH_OBI_CONFLICT", "MISSED"],
+                     4, 4, 3, 1, 1, 0, obi_ok=2)]
+    report = {"benchmark_dir": "b", "registry_dir": "r", "papers": papers,
+              "totals": {"papers": 1, "skipped": [], "registries_without_benchmark": [],
+                         **mod.overall_totals(papers)}}
+
+    page = mod.render_html(report)
+
+    assert '<div class="rates">' in page
+    # recall: every matched tier over the benchmark rows.
+    assert "<code>3 / 4</code>" in page
+    assert "MATCH OBI CONFLICT (1)" in page
+    # OBI recall: MATCH + MATCH GRANULARITY only, and the gap to recall named.
+    assert "<code>(1 + 1) / 4</code>" in page and "<code>2 / 4</code>" in page
+    assert "that gap is the 1 row " in page  # singular, not "1 rows"

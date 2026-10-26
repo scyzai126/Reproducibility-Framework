@@ -61,6 +61,35 @@ def test_parse_jats_xml_skips_abstract_sections_during_body_walk():
     assert "## Results  [results]\nBody result." in parsed
 
 
+def test_parse_jats_xml_extended_data_captions_are_opt_in():
+    """Off by default for the claim pipeline; the assay pipeline turns it on.
+
+    SDY2189 names SIMOA in its author contributions, which this parser drops, and in an
+    Extended Data legend. With the legend gone too, nothing in the text says the assay
+    was run, and extraction cannot propose it.
+    """
+    xml = """
+    <article>
+      <body>
+        <sec><title>Results</title><p>Body result.</p></sec>
+        <fig><label>Figure 1</label><caption><p>Main figure caption.</p></caption></fig>
+        <fig>
+          <label>Extended Data Fig. 7</label>
+          <caption><p>IFN-alpha2 measured by single-molecule array.</p></caption>
+        </fig>
+      </body>
+    </article>
+    """
+
+    default = parse_jats_xml(xml)
+    assert "Main figure caption." in default
+    assert "single-molecule array" not in default
+
+    with_extended = parse_jats_xml(xml, include_extended_data=True)
+    assert "Main figure caption." in with_extended
+    assert "single-molecule array" in with_extended
+
+
 def test_parse_jats_xml_skips_figures_and_tables_in_excluded_sections():
     xml = """
     <article>

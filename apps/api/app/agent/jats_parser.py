@@ -305,7 +305,7 @@ def _truncate_blocks(blocks: list[str], limit: int) -> str:
     return sep.join(out)
 
 
-def parse_jats_xml(xml_text: str) -> str:
+def parse_jats_xml(xml_text: str, include_extended_data: bool = False) -> str:
     """Extract structured text from JATS XML: sections, figures, and tables.
 
     Output order: the abstract, then every surviving section in *document order*,
@@ -329,6 +329,13 @@ def parse_jats_xml(xml_text: str) -> str:
     and their text reaches the caller in full, in place. The canonical type drives
     only that inheritance and which empty header-only sections are retained; it
     never reorders or filters.
+
+    `include_extended_data` keeps Extended Data figure captions in the Figures block.
+    It is off by default, which is what the claim pipeline reads. The assay pipeline
+    turns it on because a paper can name an assay nowhere else: SDY2189 runs SIMOA and
+    says so only in the author contributions, which this parser drops, and in the
+    Extended Data Fig. 7 legend. Extraction and verification must pass the same value,
+    or a cited `[S<n>]` id means a different sentence on each side.
     """
     if not xml_text.strip():
         return ""
@@ -456,7 +463,7 @@ def parse_jats_xml(xml_text: str) -> str:
             continue
         label_tag = _first_descendant(fig, "label")
         label = _text_content(label_tag) if label_tag is not None else "Figure"
-        if "extended data" in label.lower():
+        if not include_extended_data and "extended data" in label.lower():
             continue
         cap_title, cap_body = _extract_figure_caption_parts(fig)
         _append_fig_block(label, cap_title, cap_body)

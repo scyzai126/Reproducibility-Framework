@@ -7,29 +7,29 @@
     "registries_without_benchmark": [
       "comparison"
     ],
-    "benchmark_raw": 152,
-    "benchmark_total": 150,
-    "ours_total": 168,
-    "matched": 149,
-    "exact": 131,
-    "obi_ok": 135,
+    "benchmark_raw": 158,
+    "benchmark_total": 157,
+    "ours_total": 177,
+    "matched": 156,
+    "exact": 140,
+    "obi_ok": 145,
     "missed": 1,
-    "extra": 9,
+    "extra": 4,
     "status_counts": {
-      "MATCH": 131,
-      "MATCH_GRANULARITY": 4,
-      "MATCH_OBI_CONFLICT": 8,
+      "MATCH": 140,
+      "MATCH_GRANULARITY": 5,
+      "MATCH_OBI_CONFLICT": 5,
       "MATCH_OBI_UNMAPPED": 6,
-      "SPLIT": 9,
+      "SPLIT": 15,
       "MISSED": 1,
-      "EXTRA": 9
+      "EXTRA": 4
     },
-    "split": 9,
-    "recall": 0.9933333333333333,
-    "precision": 0.8869047619047619,
-    "f1": 0.9371069182389937,
-    "obi_exact_rate": 0.8791946308724832,
-    "obi_recall": 0.9
+    "split": 15,
+    "recall": 0.9936305732484076,
+    "precision": 0.8813559322033898,
+    "f1": 0.934131736526946,
+    "obi_exact_rate": 0.8974358974358975,
+    "obi_recall": 0.9235668789808917
   },
   "papers": [
     {
@@ -41,13 +41,13 @@
       "benchmark_raw_total": 6,
       "metrics": {
         "benchmark_total": 6,
-        "ours_total": 6,
+        "ours_total": 8,
         "matched": 6,
         "exact": 4,
         "obi_ok": 5,
         "missed": 0,
         "extra": 0,
-        "split": 0,
+        "split": 2,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -60,7 +60,7 @@
             "short name",
             "quote names the other side"
           ],
-          "reason": "same OBI term",
+          "reason": "same OBI term; 1 more agent entry on this term: `enzyme-linked immunosorbent assay (2)`",
           "benchmark": {
             "key": "ELISA",
             "obi_id": "OBI:0000661",
@@ -83,8 +83,7 @@
             {
               "key": "enzyme-linked immunosorbent assay",
               "name_in_paper": [
-                "ELISA",
-                "ELISA kits"
+                "ELISA"
               ],
               "aliases": [
                 "Measurement of anti-Meningococcal antibodies by ELISA"
@@ -100,9 +99,31 @@
                 "quote": "Serum samples were pre-diluted 1:25 and then serially diluted (2-fold) seven times in SC buffer (PBS with 5% NBBS and 0.1% Brij35)."
               },
               "generate_claim": true
+            },
+            {
+              "key": "enzyme-linked immunosorbent assay (2)",
+              "name_in_paper": [
+                "ELISA kits"
+              ],
+              "aliases": [
+                "ELISA"
+              ],
+              "obi_id": "OBI:0000661",
+              "obi_label": "enzyme-linked immunosorbent assay",
+              "source": "methods",
+              "evidence": {
+                "section": "In vitro DC activation",
+                "sentence_ids": [
+                  "S348"
+                ],
+                "quote": "Cell supernatants were harvested and assessed for IL-6, TNF and IL-12p40 using ELISA kits, according to manufacturer’s instructions (BD Biosciences, catalog numbers 555220, 555212, 555171)."
+              },
+              "generate_claim": true
             }
           ],
-          "also_on_term": []
+          "also_on_term": [
+            "enzyme-linked immunosorbent assay (2)"
+          ]
         },
         {
           "status": "MATCH_GRANULARITY",
@@ -166,7 +187,7 @@
             "short name",
             "quote names the other side"
           ],
-          "reason": "same OBI term",
+          "reason": "same OBI term; 1 more agent entry on this term: `flow cytometry assay (2)`",
           "benchmark": {
             "key": "flow cytometry",
             "obi_id": "OBI:0000916",
@@ -191,8 +212,7 @@
             {
               "key": "flow cytometry assay",
               "name_in_paper": [
-                "flow cytometry",
-                "FACS staining"
+                "flow cytometry"
               ],
               "aliases": [
                 "FACS"
@@ -208,9 +228,29 @@
                 "quote": "Blood ASC were identified by flow cytometry as CD3 neg , CD20 neg , CD38 hi , CD27 hi , CD19 + cells as described previously 56 ."
               },
               "generate_claim": true
+            },
+            {
+              "key": "flow cytometry assay (2)",
+              "name_in_paper": [
+                "FACS staining"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0000916",
+              "obi_label": "flow cytometry assay",
+              "source": "methods",
+              "evidence": {
+                "section": "In vitro DC activation",
+                "sentence_ids": [
+                  "S346"
+                ],
+                "quote": "Cells were stained with CD80-FITC, CD83-PE, HLA-DR-PerCP and CD86-APC (BD Biosciences, San Jose, CA), acquired on an LSR and analysed using FlowJo."
+              },
+              "generate_claim": true
             }
           ],
-          "also_on_term": []
+          "also_on_term": [
+            "flow cytometry assay (2)"
+          ]
         },
         {
           "status": "MATCH",
@@ -1275,22 +1315,17 @@
       "repair": null,
       "benchmark_raw_total": 7,
       "metrics": {
-        "benchmark_total": 6,
-        "ours_total": 6,
-        "matched": 6,
-        "exact": 6,
-        "obi_ok": 6,
+        "benchmark_total": 7,
+        "ours_total": 8,
+        "matched": 7,
+        "exact": 7,
+        "obi_ok": 7,
         "missed": 0,
         "extra": 0,
-        "split": 0,
+        "split": 1,
         "recall": 1.0
       },
-      "merged_groups": [
-        [
-          "Inhibition ELISA",
-          "IgM_capture_ELISA"
-        ]
-      ],
+      "merged_groups": [],
       "rows": [
         {
           "status": "MATCH",
@@ -1473,7 +1508,7 @@
             "name containment",
             "quote names the other side"
           ],
-          "reason": "same OBI term",
+          "reason": "same OBI term; 1 more agent entry on this term: `real time reverse-transcription polymerase chain reaction assay (2)`",
           "benchmark": {
             "key": "real-time RT–PCR",
             "obi_id": "OBI:0000911",
@@ -1500,12 +1535,9 @@
             {
               "key": "real time reverse-transcription polymerase chain reaction assay",
               "name_in_paper": [
-                "real-time RT–PCR",
-                "CHIKV viral titer assays"
+                "real-time RT–PCR"
               ],
-              "aliases": [
-                "viral titer assays"
-              ],
+              "aliases": [],
               "obi_id": "OBI:0000911",
               "obi_label": "real time reverse-transcription polymerase chain reaction assay",
               "source": "methods",
@@ -1515,6 +1547,81 @@
                   "S155"
                 ],
                 "quote": "Chikungunya cases were laboratory-confirmed by detection of CHIKV using real-time RT–PCR (Waggoner et al, 2016), in some cases followed by virus isolation, in acute-phase samples."
+              },
+              "generate_claim": false
+            },
+            {
+              "key": "real time reverse-transcription polymerase chain reaction assay (2)",
+              "name_in_paper": [
+                "CHIKV viral titer assays"
+              ],
+              "aliases": [
+                "viral titer assays"
+              ],
+              "obi_id": "OBI:0000911",
+              "obi_label": "real time reverse-transcription polymerase chain reaction assay",
+              "source": "methods",
+              "evidence": {
+                "section": "Viral titer assays",
+                "sentence_ids": [
+                  "S200"
+                ],
+                "quote": "Primers for the E1 gene were designed to quantify CHIKV copies in each patient and were used at 300 nM final concentration."
+              },
+              "generate_claim": true
+            }
+          ],
+          "also_on_term": [
+            "real time reverse-transcription polymerase chain reaction assay (2)"
+          ]
+        },
+        {
+          "status": "MATCH",
+          "tier": "obi_exact",
+          "signals": [
+            "same name",
+            "name containment",
+            "quote names the other side",
+            "shared evidence sentence"
+          ],
+          "reason": "same OBI term",
+          "benchmark": {
+            "key": "Inhibition ELISA",
+            "obi_id": "OBI:0000661",
+            "obi_label": "enzyme-linked immunosorbent assay",
+            "name_in_paper": "Inhibition ELISA",
+            "aliases": [
+              "Inhibition ELISA",
+              "antibody titer by Inhibition ELISA"
+            ],
+            "merged_from": [
+              "Inhibition ELISA"
+            ],
+            "generate_claim": true,
+            "quotes": [
+              {
+                "type": "text",
+                "section": "Materials and Methods",
+                "quote": "In addition, seroconversion by IgM capture ELISA and/or a >4-fold increase in antibody titer by Inhibition ELISA in paired acute and convalescent sera were evaluated (Galo et al, 2017)... The titer of anti-CHIKV antibodies was determined in acute- and convalescent-phase samples."
+              }
+            ]
+          },
+          "ours": [
+            {
+              "key": "enzyme-linked immunosorbent assay (2)",
+              "name_in_paper": [
+                "Inhibition ELISA"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0000661",
+              "obi_label": "enzyme-linked immunosorbent assay",
+              "source": "methods",
+              "evidence": {
+                "section": "Study participants",
+                "sentence_ids": [
+                  "S156"
+                ],
+                "quote": "In addition, seroconversion by IgM capture ELISA and/or a >4-fold increase in antibody titer by Inhibition ELISA in paired acute and convalescent sera were evaluated (Galo et al , 2017 )."
               },
               "generate_claim": true
             }
@@ -1532,37 +1639,23 @@
           ],
           "reason": "same OBI term",
           "benchmark": {
-            "key": "Inhibition ELISA",
+            "key": "IgM_capture_ELISA",
             "obi_id": "OBI:0000661",
             "obi_label": "enzyme-linked immunosorbent assay",
-            "name_in_paper": [
-              "Inhibition ELISA",
-              "IgM_capture_ELISA",
-              "IgM capture ELISA"
-            ],
+            "name_in_paper": "IgM capture ELISA",
             "aliases": [
-              "Inhibition ELISA",
-              "antibody titer by Inhibition ELISA",
               "IgM capture ELISA",
               "seroconversion by IgM capture ELISA",
               "anti-CHIKV IgM ELISA"
             ],
             "merged_from": [
-              "Inhibition ELISA",
               "IgM_capture_ELISA"
             ],
-            "generate_claim": true,
+            "generate_claim": false,
             "quotes": [
               {
-                "type": "text",
                 "section": "Materials and Methods",
-                "quote": "In addition, seroconversion by IgM capture ELISA and/or a >4-fold increase in antibody titer by Inhibition ELISA in paired acute and convalescent sera were evaluated (Galo et al, 2017)... The titer of anti-CHIKV antibodies was determined in acute- and convalescent-phase samples.",
-                "from": "Inhibition ELISA"
-              },
-              {
-                "section": "Materials and Methods",
-                "quote": "In addition, seroconversion by IgM capture ELISA and/or a >4-fold increase in antibody titer by Inhibition ELISA in paired acute and convalescent sera were evaluated (Galo et al, 2017).",
-                "from": "IgM_capture_ELISA"
+                "quote": "In addition, seroconversion by IgM capture ELISA and/or a >4-fold increase in antibody titer by Inhibition ELISA in paired acute and convalescent sera were evaluated (Galo et al, 2017)."
               }
             ]
           },
@@ -1570,8 +1663,7 @@
             {
               "key": "enzyme-linked immunosorbent assay",
               "name_in_paper": [
-                "IgM capture ELISA",
-                "Inhibition ELISA"
+                "IgM capture ELISA"
               ],
               "aliases": [],
               "obi_id": "OBI:0000661",
@@ -1584,7 +1676,7 @@
                 ],
                 "quote": "In addition, seroconversion by IgM capture ELISA and/or a >4-fold increase in antibody titer by Inhibition ELISA in paired acute and convalescent sera were evaluated (Galo et al , 2017 )."
               },
-              "generate_claim": true
+              "generate_claim": false
             }
           ],
           "also_on_term": []
@@ -1655,8 +1747,8 @@
         "benchmark_total": 7,
         "ours_total": 9,
         "matched": 7,
-        "exact": 5,
-        "obi_ok": 5,
+        "exact": 6,
+        "obi_ok": 6,
         "missed": 0,
         "extra": 0,
         "split": 1,
@@ -1946,19 +2038,19 @@
           ]
         },
         {
-          "status": "MATCH_OBI_CONFLICT",
-          "tier": "name",
+          "status": "MATCH",
+          "tier": "obi_exact",
           "signals": [
             "same name",
             "name containment",
             "short name",
             "shared evidence sentence"
           ],
-          "reason": "benchmark maps this assay to OBI:00003582 ?; we mapped it to OBI:0003582 cell proliferation assay using carboxyfluorescein succinimidyl ester staining",
+          "reason": "same OBI term",
           "benchmark": {
             "key": "CFSE labeling",
-            "obi_id": "OBI:00003582",
-            "obi_label": null,
+            "obi_id": "OBI:0003582",
+            "obi_label": "cell proliferation assay using carboxyfluorescein succinimidyl ester staining",
             "name_in_paper": "CFSE labeling",
             "aliases": [
               "CFSE labeling",
@@ -2127,13 +2219,13 @@
       "benchmark_raw_total": 4,
       "metrics": {
         "benchmark_total": 4,
-        "ours_total": 4,
+        "ours_total": 5,
         "matched": 4,
         "exact": 4,
         "obi_ok": 4,
         "missed": 0,
         "extra": 0,
-        "split": 0,
+        "split": 1,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -2147,7 +2239,7 @@
             "quote names the other side",
             "shared evidence sentence"
           ],
-          "reason": "same OBI term",
+          "reason": "same OBI term; 1 more agent entry on this term: `transcription profiling by array assay (2)`",
           "benchmark": {
             "key": "Affymetrix Exon Microarray",
             "obi_id": "OBI:0001463",
@@ -2176,8 +2268,7 @@
             {
               "key": "transcription profiling by array assay",
               "name_in_paper": [
-                "Affymetrix Exon Arrays",
-                "Agilent 3′ Arrays"
+                "Affymetrix Exon Arrays"
               ],
               "aliases": [
                 "microarrays",
@@ -2192,9 +2283,27 @@
                 "quote": "RNA expression for the in vivo study and one in vitro study was analyzed using the Human Exon ST 1.0 microarray platform (Affymetrix)"
               },
               "generate_claim": true
+            },
+            {
+              "key": "transcription profiling by array assay (2)",
+              "name_in_paper": [
+                "Agilent 3′ Arrays"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0001463",
+              "obi_label": "transcription profiling by array assay",
+              "source": null,
+              "evidence": {
+                "section": "Agilent 3′ Arrays",
+                "sentence_ids": [],
+                "quote": "RNA from the MRKAd5 vs. YF-17D comparative in vitro study was analyzed using the Agilent SurePrint G3 Human GE 8 × 60K microarray platform (Agilent Technologies)"
+              },
+              "generate_claim": true
             }
           ],
-          "also_on_term": []
+          "also_on_term": [
+            "transcription profiling by array assay (2)"
+          ]
         },
         {
           "status": "MATCH",
@@ -2567,8 +2676,8 @@
         "benchmark_total": 5,
         "ours_total": 6,
         "matched": 5,
-        "exact": 4,
-        "obi_ok": 4,
+        "exact": 5,
+        "obi_ok": 5,
         "missed": 0,
         "extra": 0,
         "split": 1,
@@ -2834,19 +2943,19 @@
           "also_on_term": []
         },
         {
-          "status": "MATCH_OBI_CONFLICT",
-          "tier": "name",
+          "status": "MATCH",
+          "tier": "obi_exact",
           "signals": [
             "same name",
             "name containment",
             "quote names the other side",
             "shared evidence sentence"
           ],
-          "reason": "benchmark maps this assay to CHMO:0000087 fluorescence microscopy assay; we mapped it to OBI:0001632 immuno staining assay",
+          "reason": "same OBI term",
           "benchmark": {
             "key": "immunofluorescence_assay",
-            "obi_id": "CHMO:0000087",
-            "obi_label": "fluorescence microscopy assay",
+            "obi_id": "OBI:0001632",
+            "obi_label": "immuno staining assay",
             "name_in_paper": "immunofluorescence assay",
             "aliases": [
               "IFA",
@@ -3227,13 +3336,13 @@
       "benchmark_raw_total": 5,
       "metrics": {
         "benchmark_total": 5,
-        "ours_total": 6,
+        "ours_total": 7,
         "matched": 5,
         "exact": 3,
         "obi_ok": 3,
         "missed": 0,
         "extra": 1,
-        "split": 0,
+        "split": 1,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -3467,7 +3576,7 @@
             "quote names the other side",
             "shared evidence sentence"
           ],
-          "reason": "same OBI term",
+          "reason": "same OBI term; 1 more agent entry on this term: `enzyme-linked immunosorbent assay (2)`",
           "benchmark": {
             "key": "GM1-enzyme-linked immunosorbent assay",
             "obi_id": "OBI:0000661",
@@ -3496,8 +3605,7 @@
             {
               "key": "enzyme-linked immunosorbent assay",
               "name_in_paper": [
-                "GM1-enzyme-linked immunosorbent assay (ELISA)",
-                "commercially available kit"
+                "GM1-enzyme-linked immunosorbent assay (ELISA)"
               ],
               "aliases": [
                 "ELISA assay"
@@ -3513,9 +3621,29 @@
                 "quote": "Anti-Cholera toxin B subunit (CTB) IgG were quantified in serum samples according to a GM1-enzyme-linked immunosorbent assay (ELISA) method adapted from Svennerholm et al."
               },
               "generate_claim": true
+            },
+            {
+              "key": "enzyme-linked immunosorbent assay (2)",
+              "name_in_paper": [
+                "commercially available kit"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0000661",
+              "obi_label": "enzyme-linked immunosorbent assay",
+              "source": "methods",
+              "evidence": {
+                "section": "Antibody titres",
+                "sentence_ids": [
+                  "S146"
+                ],
+                "quote": "Anti-Diphtheria IgG were quantified in serum samples using a commercially available kit (Sekisui Virotech, catalogue number EC129.00)."
+              },
+              "generate_claim": false
             }
           ],
-          "also_on_term": []
+          "also_on_term": [
+            "enzyme-linked immunosorbent assay (2)"
+          ]
         },
         {
           "status": "EXTRA",
@@ -5085,7 +5213,7 @@
       "benchmark_raw_total": 3,
       "metrics": {
         "benchmark_total": 3,
-        "ours_total": 4,
+        "ours_total": 5,
         "matched": 3,
         "exact": 2,
         "obi_ok": 2,
@@ -5105,7 +5233,7 @@
             "quote names the other side",
             "shared evidence sentence"
           ],
-          "reason": "same OBI term; 1 more agent entry on this term: `flow cytometry assay (3)`",
+          "reason": "same OBI term; 2 more agent entries on this term: `flow cytometry assay (2)`, `flow cytometry assay (4)`",
           "benchmark": {
             "key": "flow cytometry analysis",
             "obi_id": "OBI:0000916",
@@ -5132,12 +5260,10 @@
             {
               "key": "flow cytometry assay",
               "name_in_paper": [
-                "Flow cytometry analysis and cell sorting",
-                "High-dimensional parameter flow cytometric analysis of NK cell subsets"
+                "Flow cytometry analysis and cell sorting"
               ],
               "aliases": [
-                "flow cytometric analysis",
-                "high parameter analysis"
+                "flow cytometric analysis"
               ],
               "obi_id": "OBI:0000916",
               "obi_label": "flow cytometry assay",
@@ -5152,7 +5278,27 @@
               "generate_claim": true
             },
             {
-              "key": "flow cytometry assay (3)",
+              "key": "flow cytometry assay (2)",
+              "name_in_paper": [
+                "High-dimensional parameter flow cytometric analysis of NK cell subsets"
+              ],
+              "aliases": [
+                "high parameter analysis"
+              ],
+              "obi_id": "OBI:0000916",
+              "obi_label": "flow cytometry assay",
+              "source": "methods",
+              "evidence": {
+                "section": "High-dimensional parameter flow cytometric analysis of NK cell subsets",
+                "sentence_ids": [
+                  "S119"
+                ],
+                "quote": "Samples were analyzed on the LSR Fortessa X50 (‘‘Symphony’’) cytometer (BD Bioscience)."
+              },
+              "generate_claim": true
+            },
+            {
+              "key": "flow cytometry assay (4)",
               "name_in_paper": [
                 "measuring degranulation by NK cells"
               ],
@@ -5171,7 +5317,8 @@
             }
           ],
           "also_on_term": [
-            "flow cytometry assay (3)"
+            "flow cytometry assay (2)",
+            "flow cytometry assay (4)"
           ]
         },
         {
@@ -5205,7 +5352,7 @@
           },
           "ours": [
             {
-              "key": "flow cytometry assay (2)",
+              "key": "flow cytometry assay (3)",
               "name_in_paper": [
                 "In vitro cytokine stimulation and functional assays of NK cells"
               ],
@@ -5299,13 +5446,13 @@
       "benchmark_raw_total": 6,
       "metrics": {
         "benchmark_total": 6,
-        "ours_total": 6,
+        "ours_total": 7,
         "matched": 6,
         "exact": 5,
         "obi_ok": 5,
         "missed": 0,
         "extra": 0,
-        "split": 0,
+        "split": 1,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -5495,7 +5642,7 @@
             "name containment",
             "short name"
           ],
-          "reason": "same OBI term",
+          "reason": "same OBI term; 1 more agent entry on this term: `enzyme-linked immunosorbent assay (2)`",
           "benchmark": {
             "key": "SARS-CoV-2 RBD ELISA",
             "obi_id": "OBI:0000661",
@@ -5529,8 +5676,7 @@
             {
               "key": "enzyme-linked immunosorbent assay",
               "name_in_paper": [
-                "SARS-CoV-2 RBD ELISA",
-                "OC43 and NL63 coronavirus RBD ELISA"
+                "SARS-CoV-2 RBD ELISA"
               ],
               "aliases": [
                 "ELISA"
@@ -5546,9 +5692,31 @@
                 "quote": "Plates were read on a Spectramax Plate Reader at 450 nm using SoftMax Pro, and ODs were background subtracted."
               },
               "generate_claim": true
+            },
+            {
+              "key": "enzyme-linked immunosorbent assay (2)",
+              "name_in_paper": [
+                "OC43 and NL63 coronavirus RBD ELISA"
+              ],
+              "aliases": [
+                "ELISA"
+              ],
+              "obi_id": "OBI:0000661",
+              "obi_label": "enzyme-linked immunosorbent assay",
+              "source": "methods",
+              "evidence": {
+                "section": "OC43 and NL63 coronavirus RBD ELISA",
+                "sentence_ids": [
+                  "S315"
+                ],
+                "quote": "Antigen-specific antibodies (Ig) were measured at 405 nm by using alkaline phosphatase conjugated goat anti-human IgG, IgA and IgM Abs and 4-Nitrophenyl phosphate."
+              },
+              "generate_claim": true
             }
           ],
-          "also_on_term": []
+          "also_on_term": [
+            "enzyme-linked immunosorbent assay (2)"
+          ]
         },
         {
           "status": "MATCH_OBI_UNMAPPED",
@@ -6170,19 +6338,24 @@
       "benchmark_file": "data/benchmark_assay/benchmark_assay_v5/SDY1669_assays_AS_v2.json",
       "registry_dir": "data/31paper_assays/assay_result_v3/32788292_SDY1669",
       "repair": null,
-      "benchmark_raw_total": 3,
+      "benchmark_raw_total": 9,
       "metrics": {
-        "benchmark_total": 3,
+        "benchmark_total": 8,
         "ours_total": 8,
-        "matched": 3,
-        "exact": 2,
-        "obi_ok": 2,
+        "matched": 8,
+        "exact": 7,
+        "obi_ok": 8,
         "missed": 0,
-        "extra": 5,
+        "extra": 0,
         "split": 0,
         "recall": 1.0
       },
-      "merged_groups": [],
+      "merged_groups": [
+        [
+          "intracellular staining assay",
+          "Flow cytometry analysis of PBMCs"
+        ]
+      ],
       "rows": [
         {
           "status": "MATCH",
@@ -6258,22 +6431,34 @@
             "key": "intracellular staining assay",
             "obi_id": "OBI:0000916",
             "obi_label": "flow cytometry assay",
-            "name_in_paper": "intracellular staining assay",
+            "name_in_paper": [
+              "intracellular staining assay",
+              "Flow cytometry analysis of PBMCs"
+            ],
             "aliases": [
               "intracellular staining assay to detect cytokine responses",
               "In vitro stimulation",
               "Flow cytometry analysis of ex vivo stimulated human peripheral blood leukocytes",
               "flow cytometry analysis",
-              "ex vivo stimulation"
+              "ex vivo stimulation",
+              "flow cytometry",
+              "Flow: HLA-DR levels (CITE-seq samples)"
             ],
             "merged_from": [
-              "intracellular staining assay"
+              "intracellular staining assay",
+              "Flow cytometry analysis of PBMCs"
             ],
             "generate_claim": true,
             "quotes": [
               {
                 "section": "Results",
-                "quote": "we performed ex vivo stimulation of PBMCs from healthy or COVID-19–infected individuals, using a mixture of synthetic TLR7 and TLR 8 (TLR7/8) and TLR3 ligands, which are known to be expressed by viruses, and we performed an intracellular staining assay to detect cytokine responses."
+                "quote": "we performed ex vivo stimulation of PBMCs from healthy or COVID-19–infected individuals, using a mixture of synthetic TLR7 and TLR 8 (TLR7/8) and TLR3 ligands, which are known to be expressed by viruses, and we performed an intracellular staining assay to detect cytokine responses.",
+                "from": "intracellular staining assay"
+              },
+              {
+                "section": "Results",
+                "quote": "we observed a reduction in the expression of the proteins CD86 and human leukocyte antigen class DR (HLA-DR) on monocytes and mDCs of COVID-19 patients, which was most pronounced in subjects with severe COVID-19 infection (Fig. 5A and fig. S16A).",
+                "from": "Flow cytometry analysis of PBMCs"
               }
             ]
           },
@@ -6302,29 +6487,146 @@
           "also_on_term": []
         },
         {
-          "status": "MATCH_OBI_CONFLICT",
-          "tier": "name_containment",
+          "status": "MATCH",
+          "tier": "obi_exact",
           "signals": [
-            "name containment"
+            "same name",
+            "name containment",
+            "short name",
+            "quote names the other side",
+            "shared evidence sentence"
           ],
-          "reason": "benchmark maps this assay to OBI:0000916 flow cytometry assay; we mapped it to OBI:0003788 cellular indexing of transcriptomes and epitopes by sequencing",
+          "reason": "same OBI term",
           "benchmark": {
-            "key": "Flow cytometry analysis of PBMCs",
-            "obi_id": "OBI:0000916",
-            "obi_label": "flow cytometry assay",
-            "name_in_paper": "Flow cytometry analysis of PBMCs",
+            "key": "Olink multiplex inflammation panel",
+            "obi_id": "OBI:0003112",
+            "obi_label": "Olink assay",
+            "name_in_paper": "Olink multiplex inflammation panel",
             "aliases": [
-              "flow cytometry",
-              "Flow: HLA-DR levels (CITE-seq samples)"
+              "Olink proteomics",
+              "multiplex analysis by Olink",
+              "Olink",
+              "Olink multiplex inflammation panel",
+              "Olink Proteomics"
             ],
             "merged_from": [
-              "Flow cytometry analysis of PBMCs"
+              "Olink multiplex inflammation panel"
             ],
             "generate_claim": true,
             "quotes": [
               {
+                "type": "text",
                 "section": "Results",
-                "quote": "we observed a reduction in the expression of the proteins CD86 and human leukocyte antigen class DR (HLA-DR) on monocytes and mDCs of COVID-19 patients, which was most pronounced in subjects with severe COVID-19 infection (Fig. 5A and fig. S16A)."
+                "quote": "we evaluated cytokines and chemokines in plasma samples from the Atlanta cohort using the Olink multiplex inflammation panel that measures 92 different cytokines and chemokines."
+              }
+            ]
+          },
+          "ours": [
+            {
+              "key": "Olink assay",
+              "name_in_paper": [
+                "Olink multiplex inflammation panel"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0003112",
+              "obi_label": "Olink assay",
+              "source": "results",
+              "evidence": {
+                "section": "Enhanced concentrations of cytokines and inflammatory mediators in plasma from COVID-19 patients",
+                "sentence_ids": [
+                  "S58"
+                ],
+                "quote": "Therefore, we evaluated cytokines and chemokines in plasma samples from the Atlanta cohort using the Olink multiplex inflammation panel that measures 92 different cytokines and chemokines."
+              },
+              "generate_claim": true
+            }
+          ],
+          "also_on_term": []
+        },
+        {
+          "status": "MATCH",
+          "tier": "obi_exact",
+          "signals": [
+            "same name",
+            "name containment",
+            "short name",
+            "quote names the other side"
+          ],
+          "reason": "same OBI term",
+          "benchmark": {
+            "key": "enzyme-linked immunosorbent assay (ELISA)",
+            "obi_id": "OBI:0000661",
+            "obi_label": "enzyme-linked immunosorbent assay",
+            "name_in_paper": "enzyme-linked immunosorbent assay (ELISA)",
+            "aliases": [
+              "ELISA",
+              "enzyme-linked immunosorbent assay",
+              "IFN-α ELISA of plasma",
+              "highly sensitive ELISA enabled by single molecule array (SIMoA) technology"
+            ],
+            "merged_from": [
+              "enzyme-linked immunosorbent assay (ELISA)"
+            ],
+            "generate_claim": true,
+            "quotes": [
+              {
+                "type": "text",
+                "section": "Results",
+                "quote": "we used an enzyme-linked immunosorbent assay (ELISA) to independently validate these results. Consistent with the multiplex Olink analysis, we found a significant increase of these inflammatory mediators in the plasma of severe and intensive care unit (ICU) COVID-19 patients."
+              }
+            ]
+          },
+          "ours": [
+            {
+              "key": "enzyme-linked immunosorbent assay",
+              "name_in_paper": [
+                "enzyme-linked immunosorbent assay (ELISA)"
+              ],
+              "aliases": [
+                "ELISA"
+              ],
+              "obi_id": "OBI:0000661",
+              "obi_label": "enzyme-linked immunosorbent assay",
+              "source": "results",
+              "evidence": {
+                "section": "Enhanced concentrations of cytokines and inflammatory mediators in plasma from COVID-19 patients",
+                "sentence_ids": [
+                  "S69"
+                ],
+                "quote": "Given the pronounced and unappreciated observations of the enhanced plasma concentrations of TNFSF14, EN-RAGE, and OSM and their correlation to disease severity, we used an enzyme-linked immunosorbent assay (ELISA) to independently validate these results."
+              },
+              "generate_claim": true
+            }
+          ],
+          "also_on_term": []
+        },
+        {
+          "status": "MATCH",
+          "tier": "obi_exact",
+          "signals": [
+            "same name",
+            "name containment",
+            "quote names the other side"
+          ],
+          "reason": "same OBI term",
+          "benchmark": {
+            "key": "cellular indexing of transcriptomes and epitopes by sequencing (CITE-seq)",
+            "obi_id": "OBI:0003788",
+            "obi_label": "cellular indexing of transcriptomes and epitopes by sequencing",
+            "name_in_paper": "cellular indexing of transcriptomes and epitopes by sequencing (CITE-seq)",
+            "aliases": [
+              "CITE-seq",
+              "CITE-seq analysis"
+            ],
+            "merged_from": [
+              "cellular indexing of transcriptomes and epitopes by sequencing (CITE-seq)"
+            ],
+            "generate_claim": true,
+            "quotes": [
+              {
+                "type": "text",
+                "section": "Results",
+                "quote": "we used cellular indexing of transcriptomes and epitopes by sequencing (CITE-seq) and profiled the gene and protein expression in PBMC samples of COVID-19–infected individuals. Cryopreserved PBMC samples from a total of 12 age-matched subjects in the Atlanta cohort (five healthy controls and seven COVID-19 patients; Table 2) were enriched for DCs, stained using a cocktail of 36 DNA-labeled antibodies (table S2), and analyzed using droplet-based single-cell gene expression profiling approaches (Fig. 4A)."
               }
             ]
           },
@@ -6353,67 +6655,41 @@
           "also_on_term": []
         },
         {
-          "status": "EXTRA",
-          "tier": null,
-          "signals": [],
-          "reason": "agent found it in the paper; the benchmark does not list it",
-          "benchmark": null,
-          "ours": [
-            {
-              "key": "Olink assay",
-              "name_in_paper": [
-                "Olink multiplex inflammation panel"
-              ],
-              "aliases": [],
-              "obi_id": "OBI:0003112",
-              "obi_label": "Olink assay",
-              "source": "results",
-              "evidence": {
-                "section": "Enhanced concentrations of cytokines and inflammatory mediators in plasma from COVID-19 patients",
-                "sentence_ids": [
-                  "S58"
-                ],
-                "quote": "Therefore, we evaluated cytokines and chemokines in plasma samples from the Atlanta cohort using the Olink multiplex inflammation panel that measures 92 different cytokines and chemokines."
-              },
-              "generate_claim": true
-            }
-          ]
-        },
-        {
-          "status": "EXTRA",
-          "tier": null,
-          "signals": [],
-          "reason": "agent found it in the paper; the benchmark does not list it",
-          "benchmark": null,
-          "ours": [
-            {
-              "key": "enzyme-linked immunosorbent assay",
-              "name_in_paper": [
-                "enzyme-linked immunosorbent assay (ELISA)"
-              ],
-              "aliases": [
-                "ELISA"
-              ],
-              "obi_id": "OBI:0000661",
-              "obi_label": "enzyme-linked immunosorbent assay",
-              "source": "results",
-              "evidence": {
-                "section": "Enhanced concentrations of cytokines and inflammatory mediators in plasma from COVID-19 patients",
-                "sentence_ids": [
-                  "S69"
-                ],
-                "quote": "Given the pronounced and unappreciated observations of the enhanced plasma concentrations of TNFSF14, EN-RAGE, and OSM and their correlation to disease severity, we used an enzyme-linked immunosorbent assay (ELISA) to independently validate these results."
-              },
-              "generate_claim": true
-            }
-          ]
-        },
-        {
-          "status": "EXTRA",
-          "tier": null,
-          "signals": [],
-          "reason": "agent found it in the paper; the benchmark does not list it",
-          "benchmark": null,
+          "status": "MATCH",
+          "tier": "obi_exact",
+          "signals": [
+            "same name",
+            "name containment",
+            "quote names the other side",
+            "shared evidence sentence"
+          ],
+          "reason": "same OBI term",
+          "benchmark": {
+            "key": "bulk RNA sequencing (RNA-seq)",
+            "obi_id": "OBI:0003090",
+            "obi_label": "bulk RNA-seq assay",
+            "name_in_paper": "bulk RNA sequencing (RNA-seq)",
+            "aliases": [
+              "Bulk RNA-seq",
+              "bulk RNA sequencing",
+              "RNA-seq",
+              "bulk RNA-seq",
+              "bulk PBMC transcriptomics",
+              "bulk transcriptomics",
+              "transcriptomics of bulk peripheral blood mononuclear cells"
+            ],
+            "merged_from": [
+              "bulk RNA sequencing (RNA-seq)"
+            ],
+            "generate_claim": true,
+            "quotes": [
+              {
+                "type": "text",
+                "section": "Results",
+                "quote": "To investigate this further and to independently validate the observations in the CITE-seq analysis, we performed bulk RNA sequencing (RNA-seq) analysis of PBMCs in an extended group of subjects (17 COVID-19 patients and 17 healthy controls) from the same cohort."
+              }
+            ]
+          },
           "ours": [
             {
               "key": "bulk RNA-seq assay",
@@ -6435,14 +6711,40 @@
               },
               "generate_claim": true
             }
-          ]
+          ],
+          "also_on_term": []
         },
         {
-          "status": "EXTRA",
-          "tier": null,
-          "signals": [],
-          "reason": "agent found it in the paper; the benchmark does not list it",
-          "benchmark": null,
+          "status": "MATCH_GRANULARITY",
+          "tier": "obi_ancestry",
+          "signals": [
+            "shared evidence sentence"
+          ],
+          "reason": "our term OBI:0002692 polymerase chain reaction assay is broader than the benchmark's OBI:0000893 real time polymerase chain reaction assay",
+          "benchmark": {
+            "key": "PCR quantitation of bacterial 16S ribosomal RNA (rRNA) gene product",
+            "obi_id": "OBI:0000893",
+            "obi_label": "real time polymerase chain reaction assay",
+            "name_in_paper": "PCR quantitation of bacterial 16S ribosomal RNA (rRNA) gene product",
+            "aliases": [
+              "qPCR (Bacterial 16S rRNA gene)",
+              "PCR quantitation of bacterial 16S rRNA gene product",
+              "qPCR",
+              "quantitative PCR",
+              "bacterial DNA measurement"
+            ],
+            "merged_from": [
+              "PCR quantitation of bacterial 16S ribosomal RNA (rRNA) gene product"
+            ],
+            "generate_claim": true,
+            "quotes": [
+              {
+                "type": "text",
+                "section": "Results",
+                "quote": "the plasma of severe and ICU patients had significantly higher levels of bacterial DNA, as measured by PCR quantitation of bacterial 16S ribosomal RNA (rRNA) gene product"
+              }
+            ]
+          },
           "ours": [
             {
               "key": "polymerase chain reaction assay",
@@ -6463,14 +6765,43 @@
               },
               "generate_claim": true
             }
-          ]
+          ],
+          "also_on_term": []
         },
         {
-          "status": "EXTRA",
-          "tier": null,
-          "signals": [],
-          "reason": "agent found it in the paper; the benchmark does not list it",
-          "benchmark": null,
+          "status": "MATCH",
+          "tier": "obi_exact",
+          "signals": [
+            "same name",
+            "name containment",
+            "short name",
+            "quote names the other side",
+            "shared evidence sentence"
+          ],
+          "reason": "same OBI term",
+          "benchmark": {
+            "key": "TLR4-based reporter assay",
+            "obi_id": "OBI:0003793",
+            "obi_label": "bacterial lipopolysaccharide detection in plasma assay",
+            "name_in_paper": "TLR4-based reporter assay",
+            "aliases": [
+              "LPS in plasma",
+              "bacterial lipopolysaccharide (LPS) measurement",
+              "TLR4-based reporter assay",
+              "LPS"
+            ],
+            "merged_from": [
+              "TLR4-based reporter assay"
+            ],
+            "generate_claim": true,
+            "quotes": [
+              {
+                "type": "text",
+                "section": "Results",
+                "quote": "of LPS, as measured by a TLR4-based reporter assay (Fig. 6, A and B)."
+              }
+            ]
+          },
           "ours": [
             {
               "key": "bacterial lipopolysaccharide detection in plasma assay",
@@ -6491,7 +6822,8 @@
               },
               "generate_claim": true
             }
-          ]
+          ],
+          "also_on_term": []
         }
       ]
     },
@@ -9036,22 +9368,17 @@
       "repair": null,
       "benchmark_raw_total": 9,
       "metrics": {
-        "benchmark_total": 8,
-        "ours_total": 11,
-        "matched": 8,
-        "exact": 7,
-        "obi_ok": 7,
+        "benchmark_total": 9,
+        "ours_total": 12,
+        "matched": 9,
+        "exact": 8,
+        "obi_ok": 8,
         "missed": 0,
         "extra": 2,
         "split": 1,
         "recall": 1.0
       },
-      "merged_groups": [
-        [
-          "Zostavax-specific IFN-γ, IL-4 and IL-21 ELISPOT",
-          "Zostavax-specific and total IgG B cell ELISPOT"
-        ]
-      ],
+      "merged_groups": [],
       "rows": [
         {
           "status": "MATCH",
@@ -9122,10 +9449,7 @@
             "key": "Zostavax-specific IFN-γ, IL-4 and IL-21 ELISPOT",
             "obi_id": "OBI:0600031",
             "obi_label": "enzyme-linked immunospot assay",
-            "name_in_paper": [
-              "Zostavax-specific IFN-γ, IL-4 and IL-21 ELISPOT",
-              "Zostavax-specific and total IgG B cell ELISPOT"
-            ],
+            "name_in_paper": "Zostavax-specific IFN-γ, IL-4 and IL-21 ELISPOT",
             "aliases": [
               "ELISPOT",
               "ELISPOT assay",
@@ -9135,31 +9459,17 @@
               "IL-21 ELISPOT",
               "SFC (spot forming cells)",
               "antigen-specific CD4+ T cell ELISPOT",
-              "CD8+ T cell ELISPOT",
-              "B cell ELISPOT",
-              "IgG B cell ELISPOT",
-              "VZV-specific IgG ELISPOT",
-              "plasmablast ELISPOT",
-              "antibody-secreting cell ELISPOT",
-              "Zostavax-specific plasmablasts"
+              "CD8+ T cell ELISPOT"
             ],
             "merged_from": [
-              "Zostavax-specific IFN-γ, IL-4 and IL-21 ELISPOT",
-              "Zostavax-specific and total IgG B cell ELISPOT"
+              "Zostavax-specific IFN-γ, IL-4 and IL-21 ELISPOT"
             ],
             "generate_claim": true,
             "quotes": [
               {
                 "type": "text",
                 "section": "Methods",
-                "quote": "Ninety-six well filter plates (Millipore–S2EM004M99 for IFN-γ; MAIPS4510 for IL-4 and IL-21) were coated with either purified anti-human IFN-γ (BD Biosciences; 1:200), anti-human IL-4 (BD Biosciences; 1:200) or anti-human IL-21 (MABTECH; 1:50) in PBS overnight at 4°C... Cryopreserved cells (3–5×10^5/well) were resuspended in RPMI 1640 + 10% human AB serum... stimulated with either media alone, 0.25 μg of VZV cell lysate... or VZV HLA-A2-restricted peptide pool... The cells were then incubated overnight at 37°C... Developed plates were dried, scanned and analyzed using an automated ELISPOT counter (Cellular Technologies, Ltd).",
-                "from": "Zostavax-specific IFN-γ, IL-4 and IL-21 ELISPOT"
-              },
-              {
-                "type": "text",
-                "section": "Methods",
-                "quote": "Ninety-six well filter plates (Millipore–MSHAN4B50) were coated with either VZV cell lysate (Meridian Life Sciences) at 5 μg/well or Affinipure donkey anti-human IgG (H+L; Jackson Immunoresearch) at 100 ng/well in PBS overnight at 4°C... Freshly prepared PBMCs were resuspended in complete FBS media at 1×10^7/ml and added to each well, followed by threefold dilution and then incubated overnight at 37°C... Developed plates were dried, scanned and analyzed using an automated ELISPOT counter (Cellular Technologies, Ltd).",
-                "from": "Zostavax-specific and total IgG B cell ELISPOT"
+                "quote": "Ninety-six well filter plates (Millipore–S2EM004M99 for IFN-γ; MAIPS4510 for IL-4 and IL-21) were coated with either purified anti-human IFN-γ (BD Biosciences; 1:200), anti-human IL-4 (BD Biosciences; 1:200) or anti-human IL-21 (MABTECH; 1:50) in PBS overnight at 4°C... Cryopreserved cells (3–5×10^5/well) were resuspended in RPMI 1640 + 10% human AB serum... stimulated with either media alone, 0.25 μg of VZV cell lysate... or VZV HLA-A2-restricted peptide pool... The cells were then incubated overnight at 37°C... Developed plates were dried, scanned and analyzed using an automated ELISPOT counter (Cellular Technologies, Ltd)."
               }
             ]
           },
@@ -9167,8 +9477,7 @@
             {
               "key": "enzyme-linked immunospot assay",
               "name_in_paper": [
-                "Zostavax®-specific IFN-γ, IL-4 and IL-21 ELISPOT",
-                "Zostavax®-specific and total IgG B cell ELISPOT"
+                "Zostavax®-specific IFN-γ, IL-4 and IL-21 ELISPOT"
               ],
               "aliases": [
                 "ELISPOT"
@@ -9182,6 +9491,65 @@
                   "S209"
                 ],
                 "quote": "Cryopreserved cells (3–5×10 5 /well) were resuspended in RPMI 1640 + 10% human AB serum (Sigma Aldrich), penicillin, streptomycin, L-glutamine and 2-mercaptoethanol and added to each plate, stimulated with either media alone, 0.25 μg of VZV cell lysate (Meridian Life Sciences - Strain Ellen grade II detergent free) or VZV HLA-A2-restricted peptide pool (ILIEGIFFV (Ribonucleotide reductase subunit 2 ( Chiu et al., 2014 )), DLLYFVCLGV (ORF34; previously identified in Ahmed laboratory), ALWALPHAA (IE62 ( van der Heiden et al., 2009 )), SLPRSRTPI (IE62 (Frey et al., 2003)) and SAPLPSNRV (IE62 (Frey et al., 2003)))."
+              },
+              "generate_claim": true
+            }
+          ],
+          "also_on_term": []
+        },
+        {
+          "status": "MATCH",
+          "tier": "obi_exact",
+          "signals": [
+            "same name",
+            "name containment",
+            "quote names the other side",
+            "shared evidence sentence"
+          ],
+          "reason": "same OBI term",
+          "benchmark": {
+            "key": "Zostavax-specific and total IgG B cell ELISPOT",
+            "obi_id": "OBI:0600031",
+            "obi_label": "enzyme-linked immunospot assay",
+            "name_in_paper": "Zostavax-specific and total IgG B cell ELISPOT",
+            "aliases": [
+              "B cell ELISPOT",
+              "IgG B cell ELISPOT",
+              "VZV-specific IgG ELISPOT",
+              "plasmablast ELISPOT",
+              "antibody-secreting cell ELISPOT",
+              "Zostavax-specific plasmablasts"
+            ],
+            "merged_from": [
+              "Zostavax-specific and total IgG B cell ELISPOT"
+            ],
+            "generate_claim": true,
+            "quotes": [
+              {
+                "type": "text",
+                "section": "Methods",
+                "quote": "Ninety-six well filter plates (Millipore–MSHAN4B50) were coated with either VZV cell lysate (Meridian Life Sciences) at 5 μg/well or Affinipure donkey anti-human IgG (H+L; Jackson Immunoresearch) at 100 ng/well in PBS overnight at 4°C... Freshly prepared PBMCs were resuspended in complete FBS media at 1×10^7/ml and added to each well, followed by threefold dilution and then incubated overnight at 37°C... Developed plates were dried, scanned and analyzed using an automated ELISPOT counter (Cellular Technologies, Ltd)."
+              }
+            ]
+          },
+          "ours": [
+            {
+              "key": "enzyme-linked immunospot assay (2)",
+              "name_in_paper": [
+                "Zostavax®-specific and total IgG B cell ELISPOT"
+              ],
+              "aliases": [
+                "ELISPOT"
+              ],
+              "obi_id": "OBI:0600031",
+              "obi_label": "enzyme-linked immunospot assay",
+              "source": "methods",
+              "evidence": {
+                "section": "Zostavax®-specific and total IgG B cell ELISPOT",
+                "sentence_ids": [
+                  "S217"
+                ],
+                "quote": "Freshly prepared PBMCs were resuspended in complete FBS media at 1×10 7 /ml and added to each well, followed by threefold dilution and then incubated overnight at 37°C."
               },
               "generate_claim": true
             }
