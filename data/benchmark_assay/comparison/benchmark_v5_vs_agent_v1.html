@@ -60,7 +60,7 @@ benchmark entries that share an OBI id within a paper are merged into one row be
 <div class="kpi"><b>7</b><span>missed</span></div>
 <div class="kpi"><b>10</b><span>extra</span></div>
 <div class="kpi"><b>95.3%</b><span>recall</span></div>
-<div class="kpi"><b>85.8%</b><span>OBI recall (same term as curator)</span></div>
+<div class="kpi"><b>88.5%</b><span>OBI recall (same or parent/child term)</span></div>
 </div>
 <details><summary>Status legend &amp; notes</summary>
 <ul><li><span class="badge match">MATCH</span> Same OBI term on both sides</li><li><span class="badge gran">MATCH GRANULARITY</span> Same assay; one OBI term is a parent/child of the other</li><li><span class="badge conflict">MATCH OBI CONFLICT</span> Paired by name, but the two sides chose different OBI terms</li><li><span class="badge unmapped">MATCH OBI UNMAPPED</span> Paired by name, but one side has no OBI term</li><li><span class="badge split">SPLIT</span> Paired one-to-one, and more agent entries sit on the same term (an annotation on a MATCH row)</li><li><span class="badge missed">MISSED</span> In the benchmark, not found by the agent</li><li><span class="badge extra">EXTRA</span> Found by the agent, not in the benchmark</li></ul>

@@ -190,6 +190,8 @@ def test_a_shared_ancestor_does_not_steal_the_entry_that_also_shares_the_quote(m
     assert pairs["global gene expression analysis"] == ("MATCH_OBI_CONFLICT",
         ["transcription profiling by array assay"])
     assert result["metrics"]["extra"] == 0
+    # The granularity pair counts toward OBI recall; the conflict pair is found but not on term.
+    assert (result["metrics"]["exact"], result["metrics"]["obi_ok"]) == (0, 1)
 
 
 def test_one_agent_entry_is_never_counted_under_two_benchmark_rows(mod, array_obi, tmp_path):
@@ -369,11 +371,12 @@ def test_unmapped_leftovers_never_fold(mod, array_obi, tmp_path):
 
 # ── Overall statistics ────────────────────────────────────────────────────────
 
-def _paper(rows, bench, ours, matched, exact, missed, extra):
+def _paper(rows, bench, ours, matched, exact, missed, extra, obi_ok=None):
     return {"study": "SDY1", "pmid": "1", "benchmark_file": "b.json", "registry_dir": "r",
             "repair": None, "benchmark_raw_total": bench, "merged_groups": [],
             "metrics": {"benchmark_total": bench, "ours_total": ours, "matched": matched,
                         "exact": exact, "missed": missed, "extra": extra,
+                        "obi_ok": exact if obi_ok is None else obi_ok,
                         "recall": matched / bench if bench else 0.0},
             "rows": [{"status": s, "tier": None, "signals": [], "reason": "",
                       "benchmark": None, "ours": []} for s in rows]}
@@ -381,7 +384,7 @@ def _paper(rows, bench, ours, matched, exact, missed, extra):
 
 def test_overall_totals_count_statuses_and_rates(mod):
     papers = [_paper(["MATCH", "MATCH", "MISSED", "EXTRA"], 3, 3, 2, 2, 1, 1),
-              _paper(["MATCH_GRANULARITY", "EXTRA"], 1, 2, 1, 0, 0, 1)]
+              _paper(["MATCH_GRANULARITY", "EXTRA"], 1, 2, 1, 0, 0, 1, obi_ok=1)]
 
     t = mod.overall_totals(papers)
 
@@ -394,7 +397,8 @@ def test_overall_totals_count_statuses_and_rates(mod):
     assert t["precision"] == pytest.approx(3 / 5)
     assert t["f1"] == pytest.approx(2 * 0.6 * 0.75 / (0.6 + 0.75))
     assert t["obi_exact_rate"] == pytest.approx(2 / 3)
-    assert t["obi_recall"] == pytest.approx(2 / 4)
+    # A parent/child pairing counts as an OBI recall; only a name-made pairing does not.
+    assert t["obi_recall"] == pytest.approx(3 / 4)
 
 
 def test_overall_totals_with_nothing_scored_are_zero_not_errors(mod):

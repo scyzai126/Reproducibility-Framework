@@ -263,6 +263,8 @@ PAIR_TIERS = TIERS + ["short_name", "evidence"]
 #: SDY984's BD CBA (`antigen detection by cytometric bead array assay`) is a separate assay from
 #: the Luminex panel the benchmark lists under `cytometric bead array assay`, and stays EXTRA.
 _SPLIT_TIERS = ("obi_exact",)
+#: Statuses whose pairing the ontology made, counted by `obi_recall`.
+OBI_OK_STATUSES = {"MATCH", "MATCH_GRANULARITY"}
 
 _SHORT = (3, 5)
 _SENTENCE_MIN_WORDS = 8
@@ -450,6 +452,9 @@ def compare_paper(bench: dict, registry: Path, obi: ObiGraph) -> dict:
             "ours_total": len(ours),
             "matched": matched,
             "exact": sum(r["status"] == "MATCH" for r in rows),
+            # Paired by the ontology: the same term, or one an ancestor of the other. A pair the
+            # names made (CONFLICT, UNMAPPED) is a found assay on a wrong or missing term.
+            "obi_ok": sum(r["status"] in OBI_OK_STATUSES for r in rows),
             "missed": sum(r["status"] == "MISSED" for r in rows),
             "extra": sum(r["status"] == "EXTRA" for r in rows),
             # Rows paired one-to-one that have further agent entries on the same term.
@@ -541,7 +546,8 @@ def overall_totals(papers: list[dict]) -> dict:
     `status_counts` counts comparison rows by status, so MATCH..SPLIT and MISSED are benchmark
     rows and EXTRA is agent rows. Precision is matched / agent assays; `obi_exact_rate` is the
     share of matched assays that landed on the identical OBI term, and `obi_recall` the share of
-    benchmark assays the agent gave that identical term. A zero denominator gives 0.0.
+    benchmark assays the ontology paired (MATCH or MATCH_GRANULARITY): a row the names paired
+    carries a different or missing term and does not count. A zero denominator gives 0.0.
     """
     def ratio(num: float, den: float) -> float:
         return num / den if den else 0.0
@@ -549,7 +555,7 @@ def overall_totals(papers: list[dict]) -> dict:
     totals = {
         "benchmark_raw": sum(p["benchmark_raw_total"] for p in papers),
         **{k: sum(p["metrics"][k] for p in papers)
-           for k in ("benchmark_total", "ours_total", "matched", "exact", "missed", "extra")},
+           for k in ("benchmark_total", "ours_total", "matched", "exact", "obi_ok", "missed", "extra")},
         "status_counts": {s: sum(r["status"] == s for p in papers for r in p["rows"])
                           for s in STATUS_INFO},
     }
@@ -561,7 +567,7 @@ def overall_totals(papers: list[dict]) -> dict:
     totals["f1"] = ratio(2 * totals["precision"] * totals["recall"],
                          totals["precision"] + totals["recall"])
     totals["obi_exact_rate"] = ratio(totals["exact"], totals["matched"])
-    totals["obi_recall"] = ratio(totals["exact"], totals["benchmark_total"])
+    totals["obi_recall"] = ratio(totals["obi_ok"], totals["benchmark_total"])
     return totals
 
 
@@ -689,7 +695,7 @@ benchmark entries that share an OBI id within a paper are merged into one row be
 <div class="kpi"><b>{t["missed"]}</b><span>missed</span></div>
 <div class="kpi"><b>{t["extra"]}</b><span>extra</span></div>
 <div class="kpi"><b>{t["recall"]:.1%}</b><span>recall</span></div>
-<div class="kpi"><b>{t.get("obi_recall", 0):.1%}</b><span>OBI recall (same term as curator)</span></div>
+<div class="kpi"><b>{t.get("obi_recall", 0):.1%}</b><span>OBI recall (same or parent/child term)</span></div>
 </div>
 <details><summary>Status legend &amp; notes</summary>
 <ul>{"".join(f'<li><span class="badge {c}">{s.replace("_", " ")}</span> {e(d)}</li>' for s, (c, d) in STATUS_INFO.items())}</ul>
