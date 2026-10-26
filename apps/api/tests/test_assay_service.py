@@ -754,10 +754,11 @@ async def test_an_entry_two_of_three_calls_found_is_delivered(paper, monkeypatch
 
     assert result["rounds"]["extract"]["minority"] == 0
     assert not (paper / "assays_minority.json").exists()
-    # Two assays, both mapped by the stub to one term, so round 5 folds them: the panel
-    # survives as a second wording rather than disappearing.
-    assert result["assays"]["flow cytometry assay"]["name_in_paper"] == [
-        "flow cytometry", "flow cytometry for DC activation"]
+    # Two assays on the stub's one term, measuring different analytes, so round 5 keeps them
+    # apart: the panel is delivered under its own key rather than as a second wording.
+    assert list(result["assays"]) == ["flow cytometry assay", "flow cytometry assay (2)"]
+    assert result["assays"]["flow cytometry assay (2)"]["name_in_paper"] == [
+        "flow cytometry for DC activation"]
 
 
 @pytest.mark.asyncio
@@ -794,9 +795,10 @@ async def test_one_failed_extraction_call_is_reported_and_the_vote_proceeds(pape
     assert list(extract["failed"]) == ["run2"]
     assert extract["failed"]["run2"].startswith("AssayExtractionError: model returned unparseable")
     assert client.calls == 5  # 3 extractions (the failed one was still made) + 2 verifications
-    # Both answering runs had the panel: 2 of 3, delivered (folded onto the stub's one term).
-    assert result["assays"]["flow cytometry assay"]["name_in_paper"] == [
-        "flow cytometry", "flow cytometry for DC activation"]
+    # Both answering runs had the panel: 2 of 3, so it is delivered -- on the stub's one term,
+    # but as its own entry, because its readouts are not the other's.
+    assert result["assays"]["flow cytometry assay (2)"]["name_in_paper"] == [
+        "flow cytometry for DC activation"]
     assert extract["minority"] == 0
     raw = json.loads((paper / "assays_raw.json").read_text())
     assert sorted(raw["extract"]) == ["run1", "run2", "run3"]
@@ -843,8 +845,9 @@ async def test_a_single_extraction_that_fails_still_raises(paper, monkeypatch):
 
 @pytest.mark.asyncio
 async def test_a_broad_mapping_is_delivered_apart_and_reported(paper, monkeypatch):
-    """Two entries on the stub's one term, the panel's mapping BROAD: round 5 keeps them apart,
-    counts the refusal and writes it to assays_merges.json."""
+    """Two entries on the stub's one term measuring different analytes: round 5 keeps them apart,
+    counts the refusal and writes it to assays_merges.json. The panel's mapping is BROAD here too,
+    which no longer carries the refusal on its own -- the readouts do."""
     monkeypatch.setattr(assay_service, "EXTRACTIONS", 3)
 
     def _broad_panel(assays, *_args, **_kwargs):
@@ -867,7 +870,7 @@ async def test_a_broad_mapping_is_delivered_apart_and_reported(paper, monkeypatc
     assert stored["blocked"] == [{
         "member": "flow cytometry for DC activation", "kept_apart_from": "flow cytometry assay",
         "anchor": "flow cytometry", "obi_id": "OBI:0000916", "obi_label": "flow cytometry assay",
-        "reason": "mapping is BROAD"}]
+        "reason": "readouts differs: 'cell frequencies' vs 'CD80 and CD86 on DCs'"}]
     assert stored["key_map"]["flow cytometry for DC activation"] == "flow cytometry assay (2)"
 
 

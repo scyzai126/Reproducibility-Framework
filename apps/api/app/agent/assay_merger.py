@@ -6,19 +6,24 @@ anti-meningococcal antibodies) and `ELISA kits` (cytokines in culture supernatan
 downstream caught it: `clean_registry` is a dict comprehension, and the verifier judges one entry
 at a time against the paper, never against a sibling.
 
-**Two entries are one assay when they share an OBI term, the term is each one's identity, and
-they name the same technique. Nothing else folds.** The term is the `obi_id` the entry mapped to
-(the label is only the key it is delivered under). Three rules, each from a fold that cost a
+**Two entries are one assay when they share an OBI term and the same measurement identity --
+technique, analyte and specimen. Nothing else folds.** The term is the `obi_id` the entry mapped
+to (the label is only the key it is delivered under). Two rules, each from a fold that cost a
 measurement:
 
 - Same `obi_id`, not same label: the id is what the mapper chose, and a label is a spelling of it.
-- A mapping the picker marked BROAD never folds, and nothing folds onto it: BROAD means the term
-  is a category the assay falls under, not the assay -- SDY1640's intracellular cytokine staining
-  was mapped to `flow cytometry assay` as BROAD because no candidate named the function, and the
-  fold then absorbed it into the paper's immunophenotyping, where the curator lists it on its own.
-- Two entries fold only when their `standard_technique_name` agree (or one is empty): the same term
+- Same identity triple, the one round 1 extracts by: `standard_technique_name`, `readouts` and
+  `sample_type` must not conflict, though a field absent on one side never blocks. The same term
   reached from two different techniques (SDY1264's cytopathic-effect and plaque-reduction
-  neutralization tests) is two write-ups a reader should see side by side.
+  neutralization tests) is two write-ups a reader should see side by side; so is one technique
+  pointed at two analytes (SDY984's IFN-gamma and IgG ELISPOTs, SDY1260's serum-antibody and
+  supernatant-cytokine ELISAs), which the curator lists apart and an earlier rule folded.
+
+Because `readouts` is a sentence the model wrote rather than a value copied from a span, this
+rule folds only entries whose readout prose matches outright, so it refuses far more than it
+accepts. That is the intended direction: the adjudication counts nine merge-or-drop faults
+against three over-splits, and an entry kept apart is visible as `REVIEW  not folded` while a
+measurement folded away is not.
 
 An entry a rule keeps apart stays its own entry under the same label, suffixed, and is reported
 as a blocked fold (`REVIEW  not folded`) rather than silently kept or silently merged.
@@ -65,22 +70,53 @@ _KEPT_ON_MEMBER = ("name_in_paper", "sample_type", "readouts", "generate_claim",
                    "evidence")
 
 
-def _technique(entry: dict) -> str:
-    return normalize_assay_name(str(entry.get("standard_technique_name") or ""))
+#: The identity triple round 1 extracts by: the technique, the analyte it measures, and the
+#: specimen it measures it in (`extract_assays.txt`, "One entry per distinct measurement").
+#: Two entries are one assay only when all three agree, so these are the legs a fold is tested on.
+#: `sample_type` is the one leg compared loosely -- see `_differs`.
+_IDENTITY_FIELDS = ("standard_technique_name", "sample_type", "readouts")
+
+#: Legs where one side naming the specimen more fully than the other is the same specimen, not a
+#: second one: SDY1364 wrote 'frozen peripheral blood mononuclear cells' against 'peripheral blood
+#: mononuclear cells', SDY2189 'sera samples' against 'samples'. Nothing similar holds of a
+#: technique or a readout, where a longer string routinely names a different measurement.
+_CONTAINMENT_FIELDS = frozenset({"sample_type"})
 
 
-def _is_broad(mapped: dict) -> bool:
-    return str(mapped.get("obi_granularity") or "").upper() == "BROAD"
+def _field(entry: dict, name: str) -> str:
+    return normalize_assay_name(str(entry.get(name) or ""))
 
 
-def _refusal(anchor: dict, anchor_map: dict, entry: dict, mapped: dict) -> str | None:
-    """Why `entry` may not fold onto `anchor`, or None when the fold is justified."""
-    if _is_broad(anchor_map) or _is_broad(mapped):
-        return "mapping is BROAD"
-    a, b = _technique(anchor), _technique(entry)
-    if a and b and a != b:
-        return (f"standard_technique_name differs: {anchor.get('standard_technique_name')!r}"
-                f" vs {entry.get('standard_technique_name')!r}")
+def _differs(field: str, a: str, b: str) -> bool:
+    """Whether two non-empty values of `field` name different things."""
+    if a == b:
+        return False
+    if field in _CONTAINMENT_FIELDS:
+        return a not in b and b not in a
+    return True
+
+
+def _refusal(anchor: dict, entry: dict) -> str | None:
+    """Why `entry` may not fold onto `anchor`, or None when the fold is justified.
+
+    The test is the extraction's own identity triple, not the mapping's quality. A leg present on
+    only one side never blocks -- an absent field is a gap in the write-up, not a difference --
+    so a null `sample_type` on either side leaves the other two legs to decide, and one side
+    naming the specimen more fully than the other is the same specimen (`_CONTAINMENT_FIELDS`).
+
+    `obi_granularity` was this rule's first leg: a mapping the picker marked BROAD never folded,
+    and nothing folded onto it. It was dropped because BROAD describes the term, not the assay.
+    The picker marks it when no candidate names the assay's function, which for a whole class is
+    permanent rather than fixable -- `_is_generic_assay_label` prunes the compositional labels
+    that would name it, so the round 5 re-pick answered `none` on all 27 BROAD mappings in the
+    31-paper corpus. Every pair BROAD kept apart differs on `readouts` too, so the splits it was
+    protecting survive this rule; what it could not do was keep SDY984's two ELISPOTs or SDY1260's
+    two ELISAs apart, both mapped EXACT on one term and folded although their analytes differ.
+    """
+    for field in _IDENTITY_FIELDS:
+        a, b = _field(anchor, field), _field(entry, field)
+        if a and b and _differs(field, a, b):
+            return f"{field} differs: {anchor.get(field)!r} vs {entry.get(field)!r}"
     return None
 
 
@@ -115,7 +151,7 @@ def canonical_groups(assays: dict, obi: dict | None = None) -> list[dict]:
         reasons: list[tuple[dict, str]] = []
         for group in candidates:
             anchor = group["members"][0]
-            reason = _refusal(assays[anchor], obi.get(anchor) or {}, assays[key], mapped)
+            reason = _refusal(assays[anchor], assays[key])
             if reason is None:
                 group["members"].append(key)
                 break

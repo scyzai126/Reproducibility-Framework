@@ -46,6 +46,21 @@ ELISA_KITS = {
                  "quote": "Supernatants were assessed for IL-6 using ELISA kits."},
 }
 
+#: The same serum measurement as ELISA under a second wording -- same analyte, same specimen,
+#: a Results mention beside the Methods one. This is what a fold is for, and what the mechanics
+#: tests below exercise. ELISA_KITS is deliberately not that: it measures other analytes in
+#: another specimen, so the identity triple keeps it apart.
+ELISA_AGAIN = {
+    "name_in_paper": "anti-polysaccharide IgG ELISA",
+    "aliases": ["IgG ELISA"],
+    "sample_type": "serum samples",
+    "readouts": "polysaccharide-specific IgG",
+    "generate_claim": False,
+    "source": "results",
+    "evidence": {"section": "Antibody responses", "sentence_ids": ["S9"],
+                 "quote": "IgG titers rose by day 28 as measured by ELISA."},
+}
+
 FLOW = {
     "name_in_paper": "flow cytometry",
     "aliases": ["FACS"],
@@ -74,11 +89,11 @@ _NO_TERM = {"obi_id": None, "obi_label": None, "resource": "unresolved"}
 
 def test_entries_on_one_term_form_one_group_in_registry_order():
     groups = canonical_groups(
-        {"ELISA": ELISA, "flow cytometry": FLOW, "ELISA kits": ELISA_KITS},
-        {"ELISA": _ELISA_TERM, "flow cytometry": _FLOW_TERM, "ELISA kits": _ELISA_TERM})
+        {"ELISA": ELISA, "flow cytometry": FLOW, "anti-polysaccharide IgG ELISA": ELISA_AGAIN},
+        {"ELISA": _ELISA_TERM, "flow cytometry": _FLOW_TERM, "anti-polysaccharide IgG ELISA": _ELISA_TERM})
 
     assert [(g["key"], g["members"]) for g in groups] == [
-        ("enzyme-linked immunosorbent assay", ["ELISA", "ELISA kits"]),
+        ("enzyme-linked immunosorbent assay", ["ELISA", "anti-polysaccharide IgG ELISA"]),
         ("flow cytometry assay", ["flow cytometry"]),
     ]
 
@@ -205,18 +220,18 @@ def test_canonicalizing_twice_keeps_the_blocks_the_first_pass_wrote():
 
 
 def test_the_registry_is_rekeyed_by_obi_label_and_the_duplicate_is_gone():
-    assays = {"ELISA": ELISA, "ELISA kits": ELISA_KITS, "flow cytometry": FLOW}
-    obi = {"ELISA": _ELISA_TERM, "ELISA kits": _ELISA_TERM, "flow cytometry": _FLOW_TERM}
+    assays = {"ELISA": ELISA, "anti-polysaccharide IgG ELISA": ELISA_AGAIN, "flow cytometry": FLOW}
+    obi = {"ELISA": _ELISA_TERM, "anti-polysaccharide IgG ELISA": _ELISA_TERM, "flow cytometry": _FLOW_TERM}
 
     merged, obi_out, folds = canonicalize_registry(assays, obi)
 
     assert list(merged) == ["enzyme-linked immunosorbent assay", "flow cytometry assay"]
     # The mapping is re-keyed identically: the three files are looked up across each other.
     assert list(obi_out) == list(merged)
-    assert folds[0]["folded"] == ["ELISA kits"]
+    assert folds[0]["folded"] == ["anti-polysaccharide IgG ELISA"]
     assert folds[0]["obi_id"] == "OBI:0000661"
     # The inputs are not mutated.
-    assert list(assays) == ["ELISA", "ELISA kits", "flow cytometry"]
+    assert list(assays) == ["ELISA", "anti-polysaccharide IgG ELISA", "flow cytometry"]
 
 
 def test_name_in_paper_is_a_list_even_when_nothing_folded():
@@ -237,11 +252,11 @@ def test_an_unmapped_entry_keeps_its_paper_name_as_its_key():
 
 
 def test_the_mapping_carries_the_merged_names_not_just_the_one_it_looked_up():
-    _, obi_out, _ = canonicalize_registry({"ELISA": ELISA, "ELISA kits": ELISA_KITS},
-                                          {"ELISA": _ELISA_TERM, "ELISA kits": _ELISA_TERM})
+    _, obi_out, _ = canonicalize_registry({"ELISA": ELISA, "anti-polysaccharide IgG ELISA": ELISA_AGAIN},
+                                          {"ELISA": _ELISA_TERM, "anti-polysaccharide IgG ELISA": _ELISA_TERM})
 
     entry = obi_out["enzyme-linked immunosorbent assay"]
-    assert entry["name_in_paper"] == ["ELISA", "ELISA kits"]
+    assert entry["name_in_paper"] == ["ELISA", "anti-polysaccharide IgG ELISA"]
     assert entry["obi_id"] == "OBI:0000661"
 
 
@@ -255,19 +270,19 @@ def test_without_a_mapping_nothing_is_rekeyed_and_nothing_folds():
 
 
 def test_the_deliverable_shows_one_entry_with_both_wordings_and_both_quotes():
-    merged, _, _ = canonicalize_registry({"ELISA": ELISA, "ELISA kits": ELISA_KITS},
-                                         {"ELISA": _ELISA_TERM, "ELISA kits": _ELISA_TERM})
+    merged, _, _ = canonicalize_registry({"ELISA": ELISA, "anti-polysaccharide IgG ELISA": ELISA_AGAIN},
+                                         {"ELISA": _ELISA_TERM, "anti-polysaccharide IgG ELISA": _ELISA_TERM})
 
     trimmed = trim_registry(merged)["enzyme-linked immunosorbent assay"]
 
-    assert trimmed["name_in_paper"] == ["ELISA", "ELISA kits"]
+    assert trimmed["name_in_paper"] == ["ELISA", "anti-polysaccharide IgG ELISA"]
     assert trimmed["evidence"]["section"] == "Measurement of anti-Meningococcal antibodies by ELISA"
-    assert trimmed[MERGED_FIELD][0]["evidence"]["section"] == "In vitro DC activation"
+    assert trimmed[MERGED_FIELD][0]["evidence"]["section"] == "Antibody responses"
 
 
 def test_the_report_counts_groups_and_entries():
-    _, _, folds = canonicalize_registry({"ELISA": ELISA, "ELISA kits": ELISA_KITS, "flow": FLOW},
-                                        {"ELISA": _ELISA_TERM, "ELISA kits": _ELISA_TERM,
+    _, _, folds = canonicalize_registry({"ELISA": ELISA, "anti-polysaccharide IgG ELISA": ELISA_AGAIN, "flow": FLOW},
+                                        {"ELISA": _ELISA_TERM, "anti-polysaccharide IgG ELISA": _ELISA_TERM,
                                          "flow": _FLOW_TERM})
 
     report = build_merge_report(folds)
@@ -385,10 +400,18 @@ def test_the_survivors_own_review_wins_and_an_unreviewed_member_gains_no_slot():
     assert "identity_review" not in merged["additional_evidence"][0]
 
 
-# ── the fold rules: same id, neither BROAD, same technique ───────────────────
+# ── the fold rules: same id, same identity triple ────────────────────────────
 
 def _broad(term: dict) -> dict:
     return {**term, "obi_granularity": "BROAD"}
+
+
+def _measures(name: str, *, readouts: str | None = "cell frequencies",
+              sample_type: str | None = "PBMCs") -> dict:
+    """An entry whose technique is shared and whose analyte/specimen the caller sets."""
+    return {**FLOW, "name_in_paper": name, "aliases": [],
+            "standard_technique_name": "flow cytometry",
+            "readouts": readouts, "sample_type": sample_type}
 
 
 def _exact(term: dict) -> dict:
@@ -416,12 +439,12 @@ def test_the_same_label_on_two_ids_stays_two_groups():
     assert blocked_folds(groups) == []  # different terms: nothing was refused, nothing to report
 
 
-def test_a_broad_mapping_is_kept_apart_and_reported():
+def test_a_different_analyte_is_kept_apart_and_reported():
     """SDY1640: immunophenotyping and intracellular cytokine staining both on `flow cytometry
-    assay`, the ICS as BROAD because no candidate named the function. Folding absorbed the ICS
-    into the phenotyping; the curator lists it on its own."""
-    assays = {"phenotyping": _tech("phenotyping", "flow cytometry"),
-              "ICS": _tech("ICS", "flow cytometry")}
+    assay`. Folding absorbed the ICS into the phenotyping; the curator lists it on its own. The
+    mapping's BROAD flag used to do this; the readouts do it now."""
+    assays = {"phenotyping": _measures("phenotyping", readouts="cell subset frequencies"),
+              "ICS": _measures("ICS", readouts="intracellular IFN-gamma after stimulation")}
     obi = {"phenotyping": _exact(_FLOW_TERM), "ICS": _broad(_FLOW_TERM)}
 
     groups = canonical_groups(assays, obi)
@@ -430,7 +453,9 @@ def test_a_broad_mapping_is_kept_apart_and_reported():
         ("flow cytometry assay", ["phenotyping"]), ("flow cytometry assay (2)", ["ICS"])]
     assert blocked_folds(groups) == [{
         "member": "ICS", "kept_apart_from": "flow cytometry assay", "anchor": "phenotyping",
-        "obi_id": "OBI:0000916", "obi_label": "flow cytometry assay", "reason": "mapping is BROAD"}]
+        "obi_id": "OBI:0000916", "obi_label": "flow cytometry assay",
+        "reason": "readouts differs: 'cell subset frequencies' vs "
+                  "'intracellular IFN-gamma after stimulation'"}]
     merged, obi_out, folds = canonicalize_registry(assays, obi)
     assert folds == []
     assert list(merged) == ["flow cytometry assay", "flow cytometry assay (2)"]
@@ -438,15 +463,96 @@ def test_a_broad_mapping_is_kept_apart_and_reported():
     assert obi_out["flow cytometry assay (2)"]["obi_granularity"] == "BROAD"
 
 
-def test_nothing_folds_onto_a_broad_anchor_either():
-    assays = {"ICS": _tech("ICS", "flow cytometry"),
-              "phenotyping": _tech("phenotyping", "flow cytometry")}
-    obi = {"ICS": _broad(_FLOW_TERM), "phenotyping": _exact(_FLOW_TERM)}
+def test_a_broad_mapping_is_no_longer_a_reason_on_its_own():
+    """BROAD describes the term, not the assay. Two write-ups of one measurement fold whatever the
+    picker's granularity was -- the re-pick answered `none` on all 27 BROAD mappings in the
+    corpus, so keeping BROAD as a leg would split a paper's one assay for good."""
+    assays = {"phenotyping": _measures("phenotyping"), "FACS": _measures("FACS")}
+    obi = {"phenotyping": _broad(_FLOW_TERM), "FACS": _exact(_FLOW_TERM)}
 
     groups = canonical_groups(assays, obi)
 
-    assert [g["members"] for g in groups] == [["ICS"], ["phenotyping"]]
-    assert [b["member"] for b in blocked_folds(groups)] == ["phenotyping"]
+    assert [g["members"] for g in groups] == [["phenotyping", "FACS"]]
+    assert blocked_folds(groups) == []
+
+
+def test_a_different_specimen_is_kept_apart():
+    """SDY1260: serum anti-meningococcal antibodies and cytokines in culture supernatants, both
+    `enzyme-linked immunosorbent assay`, same readouts prose would still not make them one."""
+    assays = {"serum ELISA": _measures("serum ELISA", sample_type="serum"),
+              "supernatant ELISA": _measures("supernatant ELISA", sample_type="cell supernatants")}
+    obi = {"serum ELISA": _exact(_ELISA_TERM), "supernatant ELISA": _exact(_ELISA_TERM)}
+
+    groups = canonical_groups(assays, obi)
+
+    assert [g["members"] for g in groups] == [["serum ELISA"], ["supernatant ELISA"]]
+    [blocked] = blocked_folds(groups)
+    assert blocked["reason"] == "sample_type differs: 'serum' vs 'cell supernatants'"
+
+
+def test_the_two_elisas_this_round_used_to_fold_now_stay_apart():
+    """SDY1260 runs an ELISA for serum anti-meningococcal IgG and ELISA kits for IL-6, TNF and
+    IL-12p40 in DC culture supernatants. Both map to `enzyme-linked immunosorbent assay`, and this
+    round folded them from the day it was written -- the pair is its module docstring's opening
+    example. They are two measurements by the extraction's own triple, and the curator files the
+    analogous SDY1288 pair as two rows, so the fold was taking a measurement off the deliverable.
+    """
+    assays = {"ELISA": ELISA, "ELISA kits": ELISA_KITS}
+
+    groups = canonical_groups(assays, {"ELISA": _ELISA_TERM, "ELISA kits": _ELISA_TERM})
+
+    assert [g["key"] for g in groups] == ["enzyme-linked immunosorbent assay",
+                                          "enzyme-linked immunosorbent assay (2)"]
+    [blocked] = blocked_folds(groups)
+    assert blocked["reason"] == "sample_type differs: 'serum samples' vs 'Cell supernatants'"
+    # Both findings survive: the fold used to OR them into one True.
+    merged, _, _ = canonicalize_registry(assays, {"ELISA": _ELISA_TERM, "ELISA kits": _ELISA_TERM})
+    assert merged["enzyme-linked immunosorbent assay"]["generate_claim"] is True
+    assert merged["enzyme-linked immunosorbent assay (2)"]["generate_claim"] is False
+
+
+def test_a_specimen_named_more_fully_on_one_side_still_folds():
+    """SDY1364 wrote 'frozen peripheral blood mononuclear cells' against 'peripheral blood
+    mononuclear cells', SDY2189 'sera samples' against 'samples'. One write-up being fuller than
+    the other is not a second specimen, so the containment check lets these fold."""
+    assays = {"flow": _measures("flow", sample_type="peripheral blood mononuclear cells"),
+              "FACS": _measures("FACS", sample_type="frozen peripheral blood mononuclear cells")}
+
+    groups = canonical_groups(assays, {"flow": _exact(_FLOW_TERM), "FACS": _exact(_FLOW_TERM)})
+
+    assert [g["members"] for g in groups] == [["flow", "FACS"]]
+    assert blocked_folds(groups) == []
+
+
+def test_containment_does_not_excuse_a_different_specimen():
+    """'serum' is not a longer spelling of 'cell supernatants', and neither contains the other."""
+    assays = {"a": _measures("a", sample_type="serum"),
+              "b": _measures("b", sample_type="cell supernatants")}
+
+    groups = canonical_groups(assays, {"a": _exact(_ELISA_TERM), "b": _exact(_ELISA_TERM)})
+
+    assert [g["members"] for g in groups] == [["a"], ["b"]]
+
+
+def test_a_longer_readout_is_never_the_same_readout():
+    """Containment is the specimen leg's alone: a fuller readout routinely names another
+    measurement, so SDY212's phosphoflow must not fold into a readout it happens to contain."""
+    assays = {"a": _measures("a", readouts="phosphorylation of STAT1"),
+              "b": _measures("b", readouts="phosphorylation of STAT1 after cytokine stimulation")}
+
+    groups = canonical_groups(assays, {"a": _exact(_FLOW_TERM), "b": _exact(_FLOW_TERM)})
+
+    assert [g["members"] for g in groups] == [["a"], ["b"]]
+
+
+def test_an_absent_analyte_on_one_side_still_folds():
+    """A gap in the write-up is not a difference: the other legs decide."""
+    assays = {"flow": _measures("flow"), "FACS": _measures("FACS", readouts=None)}
+
+    groups = canonical_groups(assays, {"flow": _exact(_FLOW_TERM), "FACS": _exact(_FLOW_TERM)})
+
+    assert [g["members"] for g in groups] == [["flow", "FACS"]]
+    assert blocked_folds(groups) == []
 
 
 def test_two_techniques_on_one_term_stay_two_entries():
@@ -486,8 +592,8 @@ def test_the_same_technique_spelt_differently_still_folds():
 
 def test_a_refused_entry_lands_on_its_own_key_in_the_key_map():
     from app.agent.assay_merger import key_map
-    assays = {"phenotyping": _tech("phenotyping", "flow cytometry"),
-              "ICS": _tech("ICS", "flow cytometry")}
+    assays = {"phenotyping": _measures("phenotyping", readouts="cell subset frequencies"),
+              "ICS": _measures("ICS", readouts="intracellular IFN-gamma after stimulation")}
     obi = {"phenotyping": _exact(_FLOW_TERM), "ICS": _broad(_FLOW_TERM)}
 
     assert key_map(assays, obi) == {"phenotyping": "flow cytometry assay",

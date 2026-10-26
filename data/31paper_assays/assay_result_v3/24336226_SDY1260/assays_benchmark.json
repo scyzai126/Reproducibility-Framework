@@ -19,8 +19,7 @@
   },
   "enzyme-linked immunosorbent assay": {
     "name_in_paper": [
-      "ELISA",
-      "ELISA kits"
+      "ELISA"
     ],
     "aliases": [
       "Measurement of anti-Meningococcal antibodies by ELISA"
@@ -33,27 +32,7 @@
         "S274"
       ],
       "quote": "Serum samples were pre-diluted 1:25 and then serially diluted (2-fold) seven times in SC buffer (PBS with 5% NBBS and 0.1% Brij35)."
-    },
-    "additional_evidence": [
-      {
-        "name_in_paper": "ELISA kits",
-        "sample_type": "cell supernatants",
-        "readouts": "IL-6, TNF, and IL-12p40 in cell supernatants",
-        "generate_claim": true,
-        "source": "methods",
-        "evidence": {
-          "section": "In vitro DC activation",
-          "sentence_ids": [
-            "S348"
-          ],
-          "quote": "Cell supernatants were harvested and assessed for IL-6, TNF and IL-12p40 using ELISA kits, according to manufacturer’s instructions (BD Biosciences, catalog numbers 555220, 555212, 555171)."
-        },
-        "identity_review": {
-          "verdict": "NOT_SUPPORTED",
-          "reason": "\"ELISA kits\" names a product category rather than the assay identity used in the paper."
-        }
-      }
-    ]
+    }
   },
   "cytometric bead array assay": {
     "name_in_paper": [
@@ -94,8 +73,7 @@
   },
   "flow cytometry assay": {
     "name_in_paper": [
-      "flow cytometry",
-      "FACS staining"
+      "flow cytometry"
     ],
     "aliases": [
       "FACS"
@@ -108,27 +86,7 @@
         "S304"
       ],
       "quote": "Blood ASC were identified by flow cytometry as CD3 neg , CD20 neg , CD38 hi , CD27 hi , CD19 + cells as described previously 56 ."
-    },
-    "additional_evidence": [
-      {
-        "name_in_paper": "FACS staining",
-        "sample_type": "blood myeloid dendritic cells and monocyte-derived dendritic cells",
-        "readouts": "surface expression of CD80, CD83, HLA-DR and CD86 on stimulated dendritic cells",
-        "generate_claim": true,
-        "source": "methods",
-        "evidence": {
-          "section": "In vitro DC activation",
-          "sentence_ids": [
-            "S346"
-          ],
-          "quote": "Cells were stained with CD80-FITC, CD83-PE, HLA-DR-PerCP and CD86-APC (BD Biosciences, San Jose, CA), acquired on an LSR and analysed using FlowJo."
-        },
-        "identity_review": {
-          "verdict": "NOT_SUPPORTED",
-          "reason": "The source describes cells being stained and acquired on an instrument but does not name the assay as \"FACS staining,\" and this wording denotes a staining step rather than a clearly identified assay."
-        }
-      }
-    ]
+    }
   },
   "enzyme-linked immunospot assay": {
     "name_in_paper": [
@@ -145,6 +103,46 @@
         "S305"
       ],
       "quote": "Antigen specific and total IgG, IgM, and IgA secreting cells were quantified by ELISpot."
+    }
+  },
+  "flow cytometry assay (2)": {
+    "name_in_paper": [
+      "FACS staining"
+    ],
+    "aliases": [],
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "In vitro DC activation",
+      "sentence_ids": [
+        "S346"
+      ],
+      "quote": "Cells were stained with CD80-FITC, CD83-PE, HLA-DR-PerCP and CD86-APC (BD Biosciences, San Jose, CA), acquired on an LSR and analysed using FlowJo."
+    },
+    "identity_review": {
+      "verdict": "NOT_SUPPORTED",
+      "reason": "The source describes cells being stained and acquired on an instrument but does not name the assay as \"FACS staining,\" and this wording denotes a staining step rather than a clearly identified assay."
+    }
+  },
+  "enzyme-linked immunosorbent assay (2)": {
+    "name_in_paper": [
+      "ELISA kits"
+    ],
+    "aliases": [
+      "ELISA"
+    ],
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "In vitro DC activation",
+      "sentence_ids": [
+        "S348"
+      ],
+      "quote": "Cell supernatants were harvested and assessed for IL-6, TNF and IL-12p40 using ELISA kits, according to manufacturer’s instructions (BD Biosciences, catalog numbers 555220, 555212, 555171)."
+    },
+    "identity_review": {
+      "verdict": "NOT_SUPPORTED",
+      "reason": "\"ELISA kits\" names a product category rather than the assay identity used in the paper."
     }
   }
 }

@@ -1,28 +1,19 @@
 {
   "summary": {
-    "groups_merged": 1,
-    "entries_folded": 1,
-    "folds_blocked": 1
+    "groups_merged": 0,
+    "entries_folded": 0,
+    "folds_blocked": 2
   },
-  "results": [
+  "results": [],
+  "blocked": [
     {
-      "key": "enzyme-linked immunospot assay",
+      "member": "Zostavax®-specific and total IgG B cell ELISPOT",
+      "kept_apart_from": "enzyme-linked immunospot assay",
+      "anchor": "Zostavax®-specific IFN-γ, IL-4 and IL-21 ELISPOT",
       "obi_id": "OBI:0600031",
       "obi_label": "enzyme-linked immunospot assay",
-      "members": [
-        "Zostavax®-specific IFN-γ, IL-4 and IL-21 ELISPOT",
-        "Zostavax®-specific and total IgG B cell ELISPOT"
-      ],
-      "folded": [
-        "Zostavax®-specific and total IgG B cell ELISPOT"
-      ],
-      "member_labels": {
-        "Zostavax®-specific IFN-γ, IL-4 and IL-21 ELISPOT": "enzyme-linked immunospot assay",
-        "Zostavax®-specific and total IgG B cell ELISPOT": "enzyme-linked immunospot assay"
-      }
-    }
-  ],
-  "blocked": [
+      "reason": "sample_type differs: 'cryopreserved peripheral blood mononuclear cells' vs 'freshly prepared peripheral blood mononuclear cells'"
+    },
     {
       "member": "Cytokine Bead Array (CBA)",
       "kept_apart_from": "cytometric bead array assay",
@@ -35,7 +26,7 @@
   "key_map": {
     "Flow cytometry": "flow cytometry assay",
     "Zostavax®-specific IFN-γ, IL-4 and IL-21 ELISPOT": "enzyme-linked immunospot assay",
-    "Zostavax®-specific and total IgG B cell ELISPOT": "enzyme-linked immunospot assay",
+    "Zostavax®-specific and total IgG B cell ELISPOT": "enzyme-linked immunospot assay (2)",
     "Zostavax®-specific IgG/IgA ELISA": "enzyme-linked immunosorbent assay",
     "Viral DNA detection": "real time polymerase chain reaction assay",
     "nested PCR analysis": "polymerase chain reaction assay",

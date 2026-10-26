@@ -1,40 +1,31 @@
 {
   "summary": {
-    "groups_merged": 1,
-    "entries_folded": 1,
-    "folds_blocked": 1
+    "groups_merged": 0,
+    "entries_folded": 0,
+    "folds_blocked": 2
   },
-  "results": [
+  "results": [],
+  "blocked": [
     {
-      "key": "enzyme-linked immunosorbent assay",
+      "member": "OC43 and NL63 coronavirus RBD ELISA",
+      "kept_apart_from": "enzyme-linked immunosorbent assay",
+      "anchor": "SARS-CoV-2 RBD ELISA",
       "obi_id": "OBI:0000661",
       "obi_label": "enzyme-linked immunosorbent assay",
-      "members": [
-        "SARS-CoV-2 RBD ELISA",
-        "OC43 and NL63 coronavirus RBD ELISA"
-      ],
-      "folded": [
-        "OC43 and NL63 coronavirus RBD ELISA"
-      ],
-      "member_labels": {
-        "SARS-CoV-2 RBD ELISA": "enzyme-linked immunosorbent assay",
-        "OC43 and NL63 coronavirus RBD ELISA": "enzyme-linked immunosorbent assay"
-      }
-    }
-  ],
-  "blocked": [
+      "reason": "sample_type differs: 'plasma' vs 'serum'"
+    },
     {
       "member": "Intracellular cytokine staining assay",
       "kept_apart_from": "flow cytometry assay",
       "anchor": "Direct ex vivo PBMC immune cell phenotyping",
       "obi_id": "OBI:0000916",
       "obi_label": "flow cytometry assay",
-      "reason": "mapping is BROAD"
+      "reason": "readouts differs: 'frequencies of mononuclear leukocyte lineage and phenotypic marker-defined cell populations' vs 'IFNγ, granzyme B, TNFα, and IL-10 production in CD8+ T cells after peptide stimulation'"
     }
   ],
   "key_map": {
     "SARS-CoV-2 RBD ELISA": "enzyme-linked immunosorbent assay",
-    "OC43 and NL63 coronavirus RBD ELISA": "enzyme-linked immunosorbent assay",
+    "OC43 and NL63 coronavirus RBD ELISA": "enzyme-linked immunosorbent assay (2)",
     "Direct ex vivo PBMC immune cell phenotyping": "flow cytometry assay",
     "Activation induced cell marker assay": "T cell activation induced marker assay",
     "Intracellular cytokine staining assay": "flow cytometry assay (2)",

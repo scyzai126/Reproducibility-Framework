@@ -1,52 +1,36 @@
 {
   "summary": {
-    "groups_merged": 2,
-    "entries_folded": 2,
-    "folds_blocked": 0
+    "groups_merged": 0,
+    "entries_folded": 0,
+    "folds_blocked": 2
   },
-  "results": [
+  "results": [],
+  "blocked": [
     {
-      "key": "real time reverse-transcription polymerase chain reaction assay",
+      "member": "CHIKV viral titer assays",
+      "kept_apart_from": "real time reverse-transcription polymerase chain reaction assay",
+      "anchor": "real-time RT–PCR",
       "obi_id": "OBI:0000911",
       "obi_label": "real time reverse-transcription polymerase chain reaction assay",
-      "members": [
-        "real-time RT–PCR",
-        "CHIKV viral titer assays"
-      ],
-      "folded": [
-        "CHIKV viral titer assays"
-      ],
-      "member_labels": {
-        "real-time RT–PCR": "real time reverse-transcription polymerase chain reaction assay",
-        "CHIKV viral titer assays": "real time reverse-transcription polymerase chain reaction assay"
-      }
+      "reason": "sample_type differs: 'acute-phase samples' vs 'patient serum'"
     },
     {
-      "key": "enzyme-linked immunosorbent assay",
+      "member": "Inhibition ELISA",
+      "kept_apart_from": "enzyme-linked immunosorbent assay",
+      "anchor": "IgM capture ELISA",
       "obi_id": "OBI:0000661",
       "obi_label": "enzyme-linked immunosorbent assay",
-      "members": [
-        "IgM capture ELISA",
-        "Inhibition ELISA"
-      ],
-      "folded": [
-        "Inhibition ELISA"
-      ],
-      "member_labels": {
-        "IgM capture ELISA": "enzyme-linked immunosorbent assay",
-        "Inhibition ELISA": "enzyme-linked immunosorbent assay"
-      }
+      "reason": "readouts differs: 'IgM seroconversion' vs 'anti-CHIKV antibody titer increase'"
     }
   ],
-  "blocked": [],
   "key_map": {
     "real-time RT–PCR": "real time reverse-transcription polymerase chain reaction assay",
-    "CHIKV viral titer assays": "real time reverse-transcription polymerase chain reaction assay",
     "virus isolation": "infectious agent detection assay",
     "IgM capture ELISA": "enzyme-linked immunosorbent assay",
-    "Inhibition ELISA": "enzyme-linked immunosorbent assay",
+    "Inhibition ELISA": "enzyme-linked immunosorbent assay (2)",
     "mass cytometry for cellular phenotyping": "cytometry time of flight assay",
     "multiplex ELISA": "cytometric bead array assay",
+    "CHIKV viral titer assays": "real time reverse-transcription polymerase chain reaction assay (2)",
     "RNA-seq": "bulk RNA-seq assay"
   }
 }

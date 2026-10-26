@@ -1,13 +1,10 @@
 {
   "real time reverse-transcription polymerase chain reaction assay": {
     "name_in_paper": [
-      "real-time RT–PCR",
-      "CHIKV viral titer assays"
+      "real-time RT–PCR"
     ],
-    "aliases": [
-      "viral titer assays"
-    ],
-    "generate_claim": true,
+    "aliases": [],
+    "generate_claim": false,
     "source": "methods",
     "evidence": {
       "section": "Study participants",
@@ -15,23 +12,7 @@
         "S155"
       ],
       "quote": "Chikungunya cases were laboratory-confirmed by detection of CHIKV using real-time RT–PCR (Waggoner et al, 2016), in some cases followed by virus isolation, in acute-phase samples."
-    },
-    "additional_evidence": [
-      {
-        "name_in_paper": "CHIKV viral titer assays",
-        "sample_type": "patient serum",
-        "readouts": "CHIKV copies",
-        "generate_claim": true,
-        "source": "methods",
-        "evidence": {
-          "section": "Viral titer assays",
-          "sentence_ids": [
-            "S200"
-          ],
-          "quote": "Primers for the E1 gene were designed to quantify CHIKV copies in each patient and were used at 300 nM final concentration."
-        }
-      }
-    ]
+    }
   },
   "infectious agent detection assay": {
     "name_in_paper": [
@@ -50,7 +31,21 @@
   },
   "enzyme-linked immunosorbent assay": {
     "name_in_paper": [
-      "IgM capture ELISA",
+      "IgM capture ELISA"
+    ],
+    "aliases": [],
+    "generate_claim": false,
+    "source": "methods",
+    "evidence": {
+      "section": "Study participants",
+      "sentence_ids": [
+        "S156"
+      ],
+      "quote": "In addition, seroconversion by IgM capture ELISA and/or a >4-fold increase in antibody titer by Inhibition ELISA in paired acute and convalescent sera were evaluated (Galo et al , 2017 )."
+    }
+  },
+  "enzyme-linked immunosorbent assay (2)": {
+    "name_in_paper": [
       "Inhibition ELISA"
     ],
     "aliases": [],
@@ -62,23 +57,7 @@
         "S156"
       ],
       "quote": "In addition, seroconversion by IgM capture ELISA and/or a >4-fold increase in antibody titer by Inhibition ELISA in paired acute and convalescent sera were evaluated (Galo et al , 2017 )."
-    },
-    "additional_evidence": [
-      {
-        "name_in_paper": "Inhibition ELISA",
-        "sample_type": "paired acute and convalescent sera",
-        "readouts": "anti-CHIKV antibody titer increase",
-        "generate_claim": true,
-        "source": "methods",
-        "evidence": {
-          "section": "Study participants",
-          "sentence_ids": [
-            "S156"
-          ],
-          "quote": "In addition, seroconversion by IgM capture ELISA and/or a >4-fold increase in antibody titer by Inhibition ELISA in paired acute and convalescent sera were evaluated (Galo et al , 2017 )."
-        }
-      }
-    ]
+    }
   },
   "cytometry time of flight assay": {
     "name_in_paper": [
@@ -114,6 +93,23 @@
         "S192"
       ],
       "quote": "Cytokines and chemokines were measured using a multiplex ELISA‐based assay (Luminex)."
+    }
+  },
+  "real time reverse-transcription polymerase chain reaction assay (2)": {
+    "name_in_paper": [
+      "CHIKV viral titer assays"
+    ],
+    "aliases": [
+      "viral titer assays"
+    ],
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Viral titer assays",
+      "sentence_ids": [
+        "S200"
+      ],
+      "quote": "Primers for the E1 gene were designed to quantify CHIKV copies in each patient and were used at 300 nM final concentration."
     }
   },
   "bulk RNA-seq assay": {
