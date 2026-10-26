@@ -1,4 +1,4 @@
-"""scripts/build_obi_assay_terms.py: the unpruned assay branch with its `is_a` edges."""
+"""scripts/build_obi_assay_terms.py: the unpruned assay branch, raw OBO stanza fields."""
 
 import importlib.util
 import json
@@ -28,7 +28,7 @@ def: "A planned process." []
 [Term]
 id: OBI:0000001
 name: family assay
-def: "Has children." []
+def: "Has children." [PMID:1]
 synonym: "family" EXACT []
 is_a: OBI:0000070 ! assay
 
@@ -42,6 +42,7 @@ id: OBI:0000003
 name: child two, also under another branch
 is_a: OBI:0000001 ! family assay
 is_a: OBI:9999999 ! outside the assay branch
+xref: SOME:thing
 
 [Term]
 id: OBI:0000004
@@ -67,31 +68,27 @@ def test_branch_holds_only_assay_descendants(small):
     assert set(small) == {"OBI:0000001", "OBI:0000002", "OBI:0000003"}
 
 
-def test_is_a_is_kept_verbatim_including_a_parent_outside_the_branch(small):
-    assert small["OBI:0000001"]["is_a"] == [{"id": "OBI:0000070", "label": "assay"}]
+def test_stanza_fields_are_copied_verbatim(small):
+    assert small["OBI:0000001"] == {
+        "id": "OBI:0000001",
+        "name": "family assay",
+        "def": '"Has children." [PMID:1]',
+        "synonym": ['"family" EXACT []'],
+        "is_a": ["OBI:0000070 ! assay"],
+    }
+
+
+def test_is_a_keeps_every_parent_including_one_outside_the_branch(small):
     assert small["OBI:0000003"]["is_a"] == [
-        {"id": "OBI:0000001", "label": "family assay"},
-        {"id": "OBI:9999999", "label": "outside the assay branch"},
+        "OBI:0000001 ! family assay",
+        "OBI:9999999 ! outside the assay branch",
     ]
 
 
-def test_children_and_counts_say_whether_a_term_is_a_leaf(small):
-    family = small["OBI:0000001"]
-    assert family["children"] == [
-        {"id": "OBI:0000002", "label": "child one"},
-        {"id": "OBI:0000003", "label": "child two, also under another branch"},
-    ]
-    assert family["n_children"] == 2 and family["n_descendants"] == 2
+def test_list_tags_are_lists_even_when_absent_and_unknown_tags_are_kept(small):
     leaf = small["OBI:0000002"]
-    assert leaf["children"] == [] and leaf["n_children"] == 0 and leaf["n_descendants"] == 0
-
-
-def test_core_fields_match_the_pruned_index_shape(small):
-    family = small["OBI:0000001"]
-    assert family["label"] == "family assay"
-    assert family["synonyms"] == ["family"]
-    assert family["definition"] == "Has children."
-    assert small["OBI:0000002"]["definition"] == ""  # no def: line
+    assert leaf["synonym"] == [] and "def" not in leaf
+    assert small["OBI:0000003"]["xref"] == ["SOME:thing"]
 
 
 def test_committed_file_is_reproducible_from_obi_obo(mod):

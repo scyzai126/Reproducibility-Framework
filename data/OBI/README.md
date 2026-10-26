@@ -9,7 +9,7 @@ each term's `definition` and `n_descendants` — one command, from `obi.obo` alo
 |---|---|---|---|
 | `obi_generic_index.json` | 701 | 212 KB | **Live vocabulary.** Exact matching + the candidate pool for semantic search. Derived — do not hand-edit. |
 | `obi_generic_embeddings.json` | 701 | 28 MB | **Live vectors.** `text-embedding-3-small`, 1536-dim, one row per index term — see *The vectors*. |
-| `obi_assay_terms_full.json` | 1794 | 1.2 MB | **Unpruned assay branch, with edges.** Every `is_a` descendant of `assay`, each with `is_a` parents, direct `children`, `n_children` and `n_descendants`, plus the index's core fields. For experiments over the full vocabulary (`run_obi_map.py --terms`); not on the serving path. Derived by `scripts/build_obi_assay_terms.py` — do not hand-edit. |
+| `obi_assay_terms_full.json` | 1794 | 0.8 MB | **Unpruned assay branch, raw stanzas.** Every `is_a` descendant of `assay`, each `[Term]` stanza as one object with its OBO tags verbatim (`id`, `name`, `def`, `synonym[]`, `is_a[]`), nothing reshaped. Invert `is_a` to find a term's children. For experiments over the full vocabulary; not on the serving path. Derived by `scripts/build_obi_assay_terms.py` — do not hand-edit. |
 | `obi.obo` | 5218 | 1.5 MB | Upstream OBI release 2026-05-08. The only source: the index and the 1794-term assay branch are both derived from it. Off the serving path, but required to rebuild. |
 | `README.md` | — | — | This file: the record of what each prune removes and why. |
 
@@ -173,8 +173,8 @@ it safe not to commit the removed lists.
   source: `scripts/prune_obi_domain.py` derives the assay branch, the `is_a` graph, definitions
   and descendant counts from it. **Not** on the serving path. To move to a newer OBI release,
   replace this file and rerun both scripts under *Rebuilding*. `obi_assay_terms_full.json` is
-  the same 1794-term branch written out with its `is_a` edges (restored 2026-10-26 by
-  `scripts/build_obi_assay_terms.py`; the 2026-10-02 version had no edges).
+  the same 1794-term branch written out as raw stanzas, `is_a` included (restored 2026-10-26 by
+  `scripts/build_obi_assay_terms.py`; the 2026-10-02 version had no `is_a`).
 - The domain prune is expressed as **subtree roots, not label keywords**, so it survives an OBI
   release bump. Depth cutoffs, leaf/internal splits and keyword lists were all evaluated and
   rejected: the branch is too shallow (705 of the old 1262 terms sat at depth 2) and domain
