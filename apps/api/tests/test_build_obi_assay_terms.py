@@ -1,4 +1,4 @@
-"""scripts/build_obi_assay_terms.py: the unpruned assay branch, raw OBO stanza fields."""
+"""scripts/build_obi_assay_terms.py: the unpruned assay branch, in the index's format."""
 
 import importlib.util
 import json
@@ -7,6 +7,7 @@ from pathlib import Path
 import pytest
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
+INDEX_PATH = REPO_ROOT / "data" / "OBI" / "obi_generic_index.json"
 
 
 @pytest.fixture(scope="module")
@@ -42,7 +43,6 @@ id: OBI:0000003
 name: child two, also under another branch
 is_a: OBI:0000001 ! family assay
 is_a: OBI:9999999 ! outside the assay branch
-xref: SOME:thing
 
 [Term]
 id: OBI:0000004
@@ -68,27 +68,21 @@ def test_branch_holds_only_assay_descendants(small):
     assert set(small) == {"OBI:0000001", "OBI:0000002", "OBI:0000003"}
 
 
-def test_stanza_fields_are_copied_verbatim(small):
+def test_entry_has_the_index_fields_with_parsed_values(small):
     assert small["OBI:0000001"] == {
         "id": "OBI:0000001",
-        "name": "family assay",
-        "def": '"Has children." [PMID:1]',
-        "synonym": ['"family" EXACT []'],
-        "is_a": ["OBI:0000070 ! assay"],
+        "label": "family assay",
+        "synonyms": ["family"],
+        "is_a": ["OBI:0000070"],
+        "definition": "Has children.",
+        "n_descendants": 2,
     }
+    leaf = small["OBI:0000002"]
+    assert leaf["synonyms"] == [] and leaf["definition"] == "" and leaf["n_descendants"] == 0
 
 
 def test_is_a_keeps_every_parent_including_one_outside_the_branch(small):
-    assert small["OBI:0000003"]["is_a"] == [
-        "OBI:0000001 ! family assay",
-        "OBI:9999999 ! outside the assay branch",
-    ]
-
-
-def test_list_tags_are_lists_even_when_absent_and_unknown_tags_are_kept(small):
-    leaf = small["OBI:0000002"]
-    assert leaf["synonym"] == [] and "def" not in leaf
-    assert small["OBI:0000003"]["xref"] == ["SOME:thing"]
+    assert small["OBI:0000003"]["is_a"] == ["OBI:0000001", "OBI:9999999"]
 
 
 def test_committed_file_is_reproducible_from_obi_obo(mod):
@@ -98,7 +92,11 @@ def test_committed_file_is_reproducible_from_obi_obo(mod):
     assert len(committed) == 1794
 
 
-def test_committed_file_is_a_superset_of_the_pruned_index(mod):
-    full = {t["id"] for t in json.loads(mod.OUTPUT_PATH.read_text(encoding="utf-8"))}
-    pruned = json.loads((REPO_ROOT / "data" / "OBI" / "obi_generic_index.json").read_text(encoding="utf-8"))
-    assert {t["id"] for t in pruned} <= full
+def test_committed_file_has_the_same_shape_as_the_index_and_contains_it(mod):
+    """Same keys in the same order, and every index entry appears unchanged in the full list."""
+    full = json.loads(mod.OUTPUT_PATH.read_text(encoding="utf-8"))
+    index = json.loads(INDEX_PATH.read_text(encoding="utf-8"))
+
+    assert {tuple(t) for t in full} == {tuple(index[0])}
+    by_id = {t["id"]: t for t in full}
+    assert all(by_id[t["id"]] == t for t in index)

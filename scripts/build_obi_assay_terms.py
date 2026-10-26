@@ -1,18 +1,21 @@
 #!/usr/bin/env python3
-"""Write the full OBI assay branch, raw stanza fields unchanged, to `obi_assay_terms_full.json`.
+"""Write the full OBI assay branch, in the index's format, to `obi_assay_terms_full.json`.
 
     obi.obo  5218  --[ assay branch ]-->  1794
 
 This is stage 0 of `scripts/prune_obi_domain.py` and nothing more: every `is_a` descendant of
 `OBI:0000070 assay` (root excluded), in `obi.obo` order, with **no** compositional or domain
-prune and **no** reshaping. Each entry is the term's `[Term]` stanza as a JSON object: one key
-per OBO tag, the value copied verbatim from the line after `tag: `. `id`, `name` and `def` are
-strings; `synonym` and `is_a` are lists (a list even when the stanza has one line, empty when
-it has none), so `is_a` reads `"OBI:0001977 ! cytometry assay"` exactly as the file has it.
-Any other tag an OBI release adds is carried the same way, as a list.
+prune. It exists so an experiment can run the mapper over the unpruned vocabulary.
 
-Whether a term has children is not stored; invert `is_a` over the list to get it. Obsolete
-terms carry no `is_a` and so never enter the branch.
+The entries have exactly the fields of `obi_generic_index.json`, built by the same two helpers
+(`assay_branch` and `annotate`), so either file can be handed to `run_obi_map.py --terms`:
+
+    id, label, synonyms, is_a, definition, n_descendants
+
+`is_a` is the parent ids from the full ontology in OBO order (the root `assay` appears as a
+parent, never as an entry); `n_descendants` counts distinct `is_a` descendants in the full
+ontology, self excluded, so 0 means leaf. Obsolete terms carry no `is_a` and never enter the
+branch.
 
 Run under the repo-root `.venv` (the prune module imports the mapper, which needs numpy):
 
@@ -24,58 +27,26 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from collections import defaultdict
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
-from prune_obi_domain import ASSAY_ROOT, OBO_PATH, subtree  # noqa: E402
+from prune_obi_domain import OBO_PATH, annotate, assay_branch, parse_obo  # noqa: E402
 
 OUTPUT_PATH = REPO_ROOT / "data" / "OBI" / "obi_assay_terms_full.json"
 
-SCALAR_TAGS = ("id", "name", "def")
-LIST_TAGS = ("synonym", "is_a")
-
-
-def read_stanzas(obo_path: Path) -> list[dict]:
-    """Every [Term] stanza in file order, tags verbatim: scalars as strings, the rest as lists."""
-    stanzas: list[dict] = []
-    for block in obo_path.read_text(encoding="utf-8").split("\n[")[1:]:
-        if not block.startswith("Term]"):
-            continue
-        term: dict = {}
-        for line in block.split("\n")[1:]:
-            if ": " not in line:
-                continue
-            tag, value = line.split(": ", 1)
-            if tag in SCALAR_TAGS:
-                term[tag] = value
-            else:
-                term.setdefault(tag, []).append(value)
-        for tag in LIST_TAGS:
-            term.setdefault(tag, [])
-        if term.get("id"):
-            stanzas.append(term)
-    return stanzas
-
 
 def build_terms(obo_path: Path = OBO_PATH) -> list[dict]:
-    """The assay branch of `obo_path`, raw stanzas, in file order."""
-    stanzas = read_stanzas(obo_path)
-    children: dict[str, list[str]] = defaultdict(list)
-    for term in stanzas:
-        for parent in term["is_a"]:
-            children[parent.split("!")[0].strip()].append(term["id"])
-    branch = subtree(ASSAY_ROOT, children) - {ASSAY_ROOT}
-    return [t for t in stanzas if t["id"] in branch]
+    """The assay branch of `obo_path`, annotated like the index, in file order."""
+    _, children, definitions = parse_obo(obo_path)
+    return annotate(assay_branch(obo_path), definitions, children)
 
 
 def summary(terms: list[dict]) -> str:
-    parents = {p.split("!")[0].strip() for t in terms for p in t["is_a"]}
-    with_children = sum(t["id"] in parents for t in terms)
+    leaves = sum(t["n_descendants"] == 0 for t in terms)
     multi = sum(len(t["is_a"]) > 1 for t in terms)
-    return (f"{len(terms)} assay terms: {len(terms) - with_children} leaves, {with_children} with "
-            f"children, {multi} with more than one parent")
+    return (f"{len(terms)} assay terms: {leaves} leaves, {len(terms) - leaves} with descendants, "
+            f"{multi} with more than one parent")
 
 
 def main() -> None:
