@@ -571,6 +571,12 @@ def overall_totals(papers: list[dict]) -> dict:
     return totals
 
 
+def _obi_recall(m: dict) -> float:
+    """Per-paper OBI recall; a report written before `obi_ok` existed falls back to `exact`."""
+    ok = m.get("obi_ok", m.get("exact", 0))
+    return ok / m["benchmark_total"] if m.get("benchmark_total") else 0.0
+
+
 def render_html(report: dict) -> str:
     t = report["totals"]
     summary_rows = []
@@ -589,7 +595,8 @@ def render_html(report: dict) -> str:
             f'<tr onclick="location.hash=\'{anchor}\'"><td><a href="#{anchor}">{p["study"]}</a></td><td>{p["pmid"]}</td>'
             f'<td class="n">{m["benchmark_total"]}</td><td class="n">{m["ours_total"]}</td>'
             + "".join(f'<td class="n {STATUS_INFO[s][0]}-c">{counts[s] or ""}</td>' for s in STATUS_INFO)
-            + f'<td class="n"><b>{m["recall"]:.0%}</b></td><td>{" ".join(flags)}</td></tr>'
+            + f'<td class="n"><b>{m["recall"]:.0%}</b></td>'
+            + f'<td class="n">{_obi_recall(m):.0%}</td><td>{" ".join(flags)}</td></tr>'
         )
         body = []
         for r in p["rows"]:
@@ -610,7 +617,8 @@ def render_html(report: dict) -> str:
             f'<section class="paper" id="{anchor}"><h2>{p["study"]} <span class="pmid">PMID {p["pmid"]}</span></h2>'
             f'<p class="meta">benchmark <b>{m["benchmark_total"]}</b> (after merge) · agent <b>{m["ours_total"]}</b> · '
             f'matched <b>{m["matched"]}</b> (exact OBI {m["exact"]}) · missed <b>{m["missed"]}</b> · '
-            f'extra <b>{m["extra"]}</b> · recall <b>{m["recall"]:.0%}</b></p>'
+            f'extra <b>{m["extra"]}</b> · recall <b>{m["recall"]:.0%}</b> · '
+            f'OBI recall <b>{_obi_recall(m):.0%}</b></p>'
             f'<p class="files"><code>{e(p["benchmark_file"])}</code> vs <code>{e(p["registry_dir"])}</code></p>{note}'
             f'<table class="cmp"><thead><tr><th>Status</th><th>Benchmark assay</th><th>Agent assay</th>'
             f'<th>Why</th><th>Evidence</th></tr></thead><tbody>{"".join(body)}</tbody></table></section>'
@@ -630,7 +638,7 @@ def render_html(report: dict) -> str:
         f'<tr><td>Total</td><td>{t["papers"]} papers</td>'
         f'<td class="n">{t["benchmark_total"]}</td><td class="n">{t["ours_total"]}</td>'
         + "".join(f'<td class="n {c}-c">{status_counts[s] or ""}</td>' for s, (c, _) in STATUS_INFO.items())
-        + f'<td class="n">{t["recall"]:.0%}</td><td></td></tr>'
+        + f'<td class="n">{t["recall"]:.0%}</td><td class="n">{t.get("obi_recall", 0):.0%}</td><td></td></tr>'
     )
 
     return f"""<!doctype html>
@@ -706,7 +714,7 @@ benchmark entries that share an OBI id within a paper are merged into one row be
 <h2 style="margin-top:20px">Per paper</h2>
 <div class="wrap"><table class="summary"><thead><tr><th>Study</th><th>PMID</th><th>Bench</th><th>Agent</th>
 {"".join(f'<th class="{c}-c">{s.replace("MATCH_", "").replace("_", " ")}</th>' for s, (c, _) in STATUS_INFO.items())}
-<th>Recall</th><th>Notes</th></tr></thead><tbody>{"".join(summary_rows)}</tbody>
+<th>Recall</th><th title="same or parent/child OBI term">OBI recall</th><th>Notes</th></tr></thead><tbody>{"".join(summary_rows)}</tbody>
 <tfoot>{total_row}</tfoot></table></div>
 <div class="toolbar">{legend}
 <input type="search" id="q" placeholder="Search assay, OBI, quote…">
