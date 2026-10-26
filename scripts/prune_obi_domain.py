@@ -6,8 +6,8 @@ Builds `obi_generic_index.json` from `obi.obo` in three stages:
     5218  --[ assay branch ]-->  1794  --[ measuring/detecting compositional filter ]-->  1249
           --[ tier A-I subtrees ]-->  701
 
-**Stage 0** keeps the `is_a` descendants of `OBI:0000070 assay`. Each kept term then gets its
-`definition` and `n_descendants` from `obi.obo` (see `annotate`).
+**Stage 0** keeps the `is_a` descendants of `OBI:0000070 assay`, each with its `is_a` parent ids.
+Each kept term then gets its `definition` and `n_descendants` from `obi.obo` (see `annotate`).
 
 **Stage 1** drops the IEDB-style compositional labels (*"… assay measuring epitope specific X
 production by Y cells"*). It reuses `_is_generic_assay_term` from the mapper so the rule has one
@@ -160,8 +160,13 @@ def parse_obo(
 def assay_branch(path: Path) -> list[dict]:
     """The full assay vocabulary: every descendant of `assay` (root excluded), in file order.
 
-    Each entry is {id, label, synonyms}. This is the 1794-term list every prune starts from, and
-    the vocabulary scripts/compare_assay_benchmark.py resolves curator keys against.
+    Each entry is {id, label, synonyms, is_a}. This is the 1794-term list every prune starts
+    from, and the vocabulary scripts/compare_assay_benchmark.py resolves curator keys against.
+
+    `is_a` is the stanza's parent ids, in OBO order, from the **full** ontology: a parent may be
+    `assay` itself or a term a later prune removes, so an edge in the index need not have both
+    ends in it. It is kept so an index entry says where it hangs without a reader re-parsing
+    `obi.obo`; the mapper's `_index_children` still derives the in-index edges from the OBO.
     """
     terms = read_terms(path)
     children: dict[str, list[str]] = defaultdict(list)
@@ -170,7 +175,7 @@ def assay_branch(path: Path) -> list[dict]:
             children[parent].append(term["id"])
     branch = subtree(ASSAY_ROOT, children) - {ASSAY_ROOT}
     return [
-        {"id": t["id"], "label": t["name"], "synonyms": t["synonyms"]}
+        {"id": t["id"], "label": t["name"], "synonyms": t["synonyms"], "is_a": t["parents"]}
         for t in terms
         if t["id"] in branch
     ]

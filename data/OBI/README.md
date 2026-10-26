@@ -25,11 +25,14 @@ entry is:
   "id": "OBI:0600031",
   "label": "enzyme-linked immunospot assay",
   "synonyms": ["ELISPOT assay"],
+  "is_a": ["OBI:0001977", "OBI:0003587"],
   "definition": "A cytometry assay in which cells are cultured on a surface coated with ...",
   "n_descendants": 43
 }
 ```
 
+`is_a` is the stanza's parent ids in OBO order, from the **full** `obi.obo`: a parent can be
+`assay` itself or a term the prune removed, so an edge need not have both ends in the index.
 `definition` is the OBO `def:` text (all 701 have one). `n_descendants` counts distinct `is_a`
 descendants in the **full** `obi.obo`, self excluded — not within the index. ELISPOT's 43 are all
 compositional terms the prune removed, so it is broad in OBI and a leaf here.

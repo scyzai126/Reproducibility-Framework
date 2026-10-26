@@ -721,6 +721,29 @@ def test_index_is_reproducible_from_the_full_source():
     assert rebuilt == committed
 
 
+def test_index_entries_carry_their_is_a_parents():
+    """Every index term says where it hangs, as the full ontology's parent ids.
+
+    A parent may be `assay` itself or a term the prune removed, so the edge need not have both
+    ends in the index -- but every term has at least one, since reaching the branch at all means
+    a chain of `is_a` from `assay`.
+    """
+    import json
+
+    from app.agent.assay_obi_mapper import _OBI_DIR
+
+    index = json.loads((_OBI_DIR / "obi_generic_index.json").read_text(encoding="utf-8"))
+    by_id = {t["id"]: t for t in index}
+
+    assert all(isinstance(t["is_a"], list) and t["is_a"] for t in index)
+    assert all(p.split(":")[0].isupper() and " " not in p for t in index for p in t["is_a"])
+    # ELISPOT keeps both of its OBO parents, in OBO order.
+    assert by_id["OBI:0600031"]["is_a"] == ["OBI:0001977", "OBI:0003587"]
+    # A top-level term's parent is the assay root, which is not an index entry.
+    assert "OBI:0000070" not in by_id
+    assert any("OBI:0000070" in t["is_a"] for t in index)
+
+
 def test_domain_prune_keeps_the_immunology_core():
     from app.agent.assay_obi_mapper import _OBI_TERMS_PATH, _term_ids
 
