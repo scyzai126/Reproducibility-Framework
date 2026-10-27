@@ -1,0 +1,387 @@
+<title>Assay Mapping Workflow</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Public+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column (~760px) with full-width diagram panels; a lab-report feel — cool paper, slate ink, teal for the pipeline, amber for anything that costs an LLM call. */
+:root {
+  --bg: #f5f7f8;
+  --panel: #ffffff;
+  --ink: #18232b;
+  --muted: #56656f;
+  --line: #d5dde2;
+  --accent: #0d6b6b;
+  --accent-soft: #e1f0ef;
+  --llm: #a8620a;
+  --llm-soft: #fbefdc;
+  --good: #2d7a3e;
+  --bad: #b2412f;
+  --display: "Newsreader", Georgia, "Times New Roman", serif;
+  --body: "Public Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11181d; --panel: #18222a; --ink: #e3eaee; --muted: #9aabb6; --line: #2c3a44;
+    --accent: #5cc2bd; --accent-soft: #163634; --llm: #e7a44a; --llm-soft: #3a2a14;
+    --good: #6cc47e; --bad: #ec8a78; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11181d; --panel: #18222a; --ink: #e3eaee; --muted: #9aabb6; --line: #2c3a44;
+  --accent: #5cc2bd; --accent-soft: #163634; --llm: #e7a44a; --llm-soft: #3a2a14;
+  --good: #6cc47e; --bad: #ec8a78; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.6;
+  padding-block: 40px 72px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+main { max-width: 1040px; margin: 0 auto; display: grid; gap: 56px; }
+.prose { max-width: 720px; }
+h1, h2, h3 { font-family: var(--display); font-weight: 600; text-wrap: balance; line-height: 1.2; margin: 0; }
+h1 { font-size: clamp(2rem, 5vw, 2.9rem); }
+h2 { font-size: 1.7rem; }
+h3 { font-size: 1.15rem; }
+p { margin: 0; }
+section { display: grid; gap: 18px; }
+.eyebrow { font-family: var(--mono); font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+.lede { font-size: 1.12rem; color: var(--muted); max-width: 720px; }
+code, .mono { font-family: var(--mono); font-size: .86em; }
+code { background: var(--accent-soft); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+.muted { color: var(--muted); }
+.key { display: flex; flex-wrap: wrap; gap: 18px; font-size: .85rem; color: var(--muted); }
+.key span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+.key .k-step::before { background: var(--accent); }
+.key .k-llm::before { background: var(--llm); }
+
+/* pipeline strip */
+.pipeline { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0; align-items: stretch; }
+.stage { position: relative; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 14px 12px 12px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.stage + .stage { margin-left: 22px; }
+.stage + .stage::before { content: "→"; position: absolute; left: -19px; top: 32px; color: var(--accent); font-size: 1rem; }
+.stage .tag { font-family: var(--mono); font-size: .7rem; color: var(--accent); letter-spacing: .06em; }
+.stage h3 { font-family: var(--body); font-size: .98rem; font-weight: 600; }
+.stage p { font-size: .82rem; color: var(--muted); line-height: 1.45; }
+.stage .cost { margin-top: 4px; font-family: var(--mono); font-size: .72rem; color: var(--llm); background: var(--llm-soft); border-radius: 4px; padding: 2px 6px; justify-self: start; }
+.stage.io { background: var(--accent-soft); border-color: transparent; }
+.stage.io .cost { color: var(--accent); background: transparent; padding: 0; }
+@media (max-width: 880px) {
+  .pipeline { grid-template-columns: 1fr; gap: 22px; }
+  .stage + .stage { margin-left: 0; }
+  .stage + .stage::before { content: "↓"; left: 50%; top: -22px; }
+}
+
+/* round details */
+.rounds { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.round { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 18px 20px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.round header { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.round dl { margin: 0; display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 6px 12px; font-size: .9rem; }
+.round dt { font-family: var(--mono); font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); padding-top: 3px; }
+.round dd { margin: 0; min-width: 0; }
+.pill { font-family: var(--mono); font-size: .72rem; color: var(--llm); background: var(--llm-soft); border-radius: 999px; padding: 2px 9px; white-space: nowrap; }
+.pill.free { color: var(--accent); background: var(--accent-soft); }
+@media (max-width: 720px) { .rounds { grid-template-columns: 1fr; } }
+
+/* diagrams */
+.figure { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 20px; display: grid; gap: 12px; min-width: 0; }
+.scroll { overflow-x: auto; }
+.figure figcaption { font-size: .85rem; color: var(--muted); }
+svg { display: block; }
+svg text { font-family: var(--body); fill: var(--ink); }
+svg .t-sub { fill: var(--muted); font-size: 11.5px; }
+svg .t-mono { font-family: var(--mono); font-size: 10.5px; fill: var(--muted); }
+svg .t-edge { font-family: var(--mono); font-size: 10.5px; fill: var(--accent); }
+svg .n { fill: var(--panel); stroke: var(--line); stroke-width: 1.2; }
+svg .n-q { fill: var(--bg); stroke: var(--muted); stroke-width: 1.2; stroke-dasharray: 4 3; }
+svg .n-llm { fill: var(--llm-soft); stroke: var(--llm); stroke-width: 1.2; }
+svg .n-ok { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.2; }
+svg .n-new { fill: var(--llm-soft); stroke: var(--llm); stroke-width: 2; }
+svg .n-end { fill: var(--panel); stroke: var(--bad); stroke-width: 1.2; }
+svg .e { stroke: var(--accent); stroke-width: 1.4; fill: none; }
+svg .ah { fill: var(--accent); }
+svg .bar-agent { fill: var(--accent); }
+svg .bar-alt { fill: var(--muted); opacity: .55; }
+svg .bar-llm { fill: var(--llm); }
+svg .grid { stroke: var(--line); stroke-width: 1; }
+
+/* example trace */
+.trace { display: grid; gap: 0; border-left: 2px solid var(--accent); margin-left: 6px; }
+.trace li { list-style: none; position: relative; padding: 0 0 18px 22px; display: grid; gap: 4px; min-width: 0; }
+.trace li::before { content: ""; position: absolute; left: -7px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--bg); border: 2px solid var(--accent); }
+.trace ol { margin: 0; padding: 0; }
+.trace .step { font-family: var(--mono); font-size: .74rem; color: var(--accent); letter-spacing: .05em; text-transform: uppercase; }
+blockquote { margin: 0; padding: 10px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; font-family: var(--display); font-size: 1.05rem; }
+
+/* results */
+.stats { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+.stat { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; display: grid; gap: 2px; }
+.stat b { font-family: var(--display); font-size: 1.9rem; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.stat span { font-size: .8rem; color: var(--muted); }
+@media (max-width: 760px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+table { border-collapse: collapse; width: 100%; font-size: .9rem; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-family: var(--mono); font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 500; }
+td.num { text-align: right; white-space: nowrap; }
+.win { color: var(--good); font-weight: 600; }
+.lose { color: var(--bad); font-weight: 600; }
+footer { font-size: .82rem; color: var(--muted); max-width: 720px; display: grid; gap: 6px; }
+a { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+</style>
+
+<main>
+  <header class="prose" style="display:grid;gap:14px">
+    <div class="eyebrow">ImmPort claim reproduction · assay agent · October 2026</div>
+    <h1>From a paper's methods to OBI assay terms</h1>
+    <p class="lede">The agent reads one immunology paper and returns every assay the authors performed, each tied to the sentence that describes it and to a term in the Ontology for Biomedical Investigations (OBI). Five rounds turn the paper into that registry: extract, verify, correct, map to OBI, fold. On 31 curated ImmPort papers it finds 156 of 157 curated assays and gives 140 of the 156 matched assays exactly the curator's OBI term.</p>
+  </header>
+
+  <section>
+    <div class="eyebrow">The whole pipeline</div>
+    <h2>Five rounds, one command</h2>
+    <p class="prose muted">Every round reads the previous round's file and writes its own, so a wrong entry can be traced back to the round that produced it. Every model reply is kept in <code>assays_raw.json</code>.</p>
+    <div class="pipeline" role="list">
+      <div class="stage io" role="listitem"><span class="tag">INPUT</span><h3>Paper</h3><p>Full-text JATS XML from PMC, the PDF when no XML exists. Sentences are numbered [S1], [S2]…</p><span class="cost">no call</span></div>
+      <div class="stage" role="listitem"><span class="tag">ROUND 1</span><h3>Extract ×3, vote</h3><p>Three independent extractions. An assay is kept when at least two of the three found it.</p><span class="cost">3 calls</span></div>
+      <div class="stage" role="listitem"><span class="tag">ROUND 2</span><h3>Verify</h3><p>A judge checks each field against the quoted sentence. Quotes are first checked verbatim by code.</p><span class="cost">1 per assay</span></div>
+      <div class="stage" role="listitem"><span class="tag">ROUND 3</span><h3>Correct</h3><p>Rejected assays are dropped. Each doubtful field is asked again, blind.</p><span class="cost">1 per flagged field</span></div>
+      <div class="stage" role="listitem"><span class="tag">ROUND 4</span><h3>Map to OBI</h3><p>Exact name match, else embedding search over 701 terms and an LLM pick. Full-list fallback on "none".</p><span class="cost">0–2 chat calls per assay</span></div>
+      <div class="stage" role="listitem"><span class="tag">ROUND 5</span><h3>Re-pick, fold</h3><p>BROAD terms are asked once more. Entries that are the same measurement merge.</p><span class="cost">1 per BROAD; fold is code</span></div>
+      <div class="stage io" role="listitem"><span class="tag">OUTPUT</span><h3>Registry</h3><p><code>assays_benchmark.json</code>, keyed by OBI label, one entry per measurement.</p><span class="cost">compared to curator</span></div>
+    </div>
+    <div class="key"><span class="k-step">deterministic step</span><span class="k-llm">costs LLM calls (gpt-5.4, temperature 0)</span></div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Round by round</div>
+    <h2>What each round reads, decides and writes</h2>
+    <div class="rounds">
+      <article class="round">
+        <header><h3>1 · Extract and vote</h3><span class="pill">3 calls</span></header>
+        <dl>
+          <dt>Asks for</dt><dd>Seven fields per assay: <code>name_in_paper</code>, <code>standard_technique_name</code>, <code>aliases</code>, <code>sample_type</code>, <code>readouts</code>, <code>generate_claim</code>, <code>evidence</code> (section + quote).</dd>
+          <dt>Derived</dt><dd><code>source</code> (methods / results) and <code>sentence_ids</code> are computed from the quote by code, never proposed by the model.</dd>
+          <dt>Vote</dt><dd>Runs are aligned by name, alias, shared sentence or quote. An assay found by fewer than 2 of 3 runs goes to <code>assays_minority.json</code> and is not delivered.</dd>
+        </dl>
+      </article>
+      <article class="round">
+        <header><h3>2 · Verify</h3><span class="pill">1 per assay</span></header>
+        <dl>
+          <dt>Free checks</dt><dd>The quote must appear verbatim in the sentences it cites; every alias must appear in the paper.</dd>
+          <dt>Judge</dt><dd>Each field is SUPPORTED, NOT_SUPPORTED or CONTRADICTED by the evidence. A skipped field is NOT_REPORTED.</dd>
+          <dt>Verdict</dt><dd>Code, not the model, derives it: identity contradicted → REJECT; any field not supported → REVIEW; otherwise ACCEPT.</dd>
+        </dl>
+      </article>
+      <article class="round">
+        <header><h3>3 · Correct</h3><span class="pill">1 per flagged field</span></header>
+        <dl>
+          <dt>Drop</dt><dd>REJECT assays move to <code>assays_rejected.json</code>.</dd>
+          <dt>Repair</dt><dd>For each flagged field the model is asked what the paper says, without seeing the old value or the complaint. Result: REAFFIRMED, REPLACED or CLEARED.</dd>
+          <dt>Never</dt><dd>The assay's identity is never rewritten. A doubtful identity is marked <code>identity_review</code> in the output instead.</dd>
+        </dl>
+      </article>
+      <article class="round">
+        <header><h3>5 · Re-pick and fold</h3><span class="pill">1 per BROAD</span></header>
+        <dl>
+          <dt>Re-pick</dt><dd>A term the picker marked BROAD (a correct category, less specific than the assay) is asked once more with that term removed.</dd>
+          <dt>Fold</dt><dd>Two entries merge only when they share the OBI term and agree on technique, sample type and readouts. One entry is one measurement, so two serum neutralization assays on different samples stay apart.</dd>
+          <dt>Key</dt><dd>The registry is re-keyed by OBI label; every wording the paper used is kept in <code>name_in_paper</code>.</dd>
+        </dl>
+      </article>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Round 4 in detail</div>
+    <h2>How one assay reaches an OBI term</h2>
+    <p class="prose muted">The vocabulary is OBI's assay branch, pruned from 1,794 terms to 701. Pruning removed IEDB-style compositional labels ("… assay measuring epitope specific …") and out-of-scope terms, which otherwise crowd the plain family terms out of the search results.</p>
+    <figure class="figure" style="margin:0">
+      <div class="scroll">
+        <svg viewBox="0 0 760 578" width="760" height="578" role="img" aria-labelledby="obi-title">
+          <title id="obi-title">Decision flow for mapping one assay to an OBI term</title>
+          <defs>
+            <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker>
+          </defs>
+
+          <!-- edges -->
+          <path class="e" d="M380 54 V80" marker-end="url(#ah)"/>
+          <path class="e" d="M530 105 H558" marker-end="url(#ah)"/>
+          <text class="t-edge" x="534" y="96">yes, no</text>
+          <text class="t-edge" x="534" y="124">children</text>
+          <path class="e" d="M230 105 H110 V158" marker-end="url(#ah)"/>
+          <text class="t-edge" x="118" y="98">yes, has children</text>
+          <path class="e" d="M380 130 V158" marker-end="url(#ah)"/>
+          <text class="t-edge" x="388" y="148">no</text>
+          <path class="e" d="M110 226 V284 H228" marker-end="url(#ah)"/>
+          <text class="t-edge" x="118" y="250">pinned into list</text>
+          <path class="e" d="M380 226 V254" marker-end="url(#ah)"/>
+          <path class="e" d="M530 284 H558" marker-end="url(#ah)"/>
+          <text class="t-edge" x="533" y="276">term</text>
+          <path class="e" d="M380 312 V344" marker-end="url(#ah)"/>
+          <text class="t-edge" x="388" y="332">"none"</text>
+          <path class="e" d="M530 371 H558" marker-end="url(#ah)"/>
+          <text class="t-edge" x="535" y="363">yes</text>
+          <path class="e" d="M380 396 V424" marker-end="url(#ah)"/>
+          <text class="t-edge" x="388" y="414">no</text>
+          <path class="e" d="M530 454 H558" marker-end="url(#ah)"/>
+          <text class="t-edge" x="533" y="446">term</text>
+          <path class="e" d="M380 482 V514" marker-end="url(#ah)"/>
+          <text class="t-edge" x="388" y="502">"none"</text>
+
+          <!-- nodes -->
+          <rect class="n" x="280" y="10" width="200" height="44" rx="8"/>
+          <text x="380" y="30" text-anchor="middle" font-weight="600" font-size="13.5">Assay from round 3</text>
+          <text class="t-sub" x="380" y="46" text-anchor="middle">name, aliases, technique, readouts</text>
+
+          <rect class="n-q" x="230" y="80" width="300" height="50" rx="8"/>
+          <text x="380" y="101" text-anchor="middle" font-weight="600" font-size="13">Paper's own name matches a term</text>
+          <text x="380" y="119" text-anchor="middle" font-weight="600" font-size="13">label or synonym exactly?</text>
+
+          <rect class="n-ok" x="560" y="80" width="190" height="50" rx="8"/>
+          <text x="655" y="101" text-anchor="middle" font-weight="600" font-size="13">Mapped, no call</text>
+          <text class="t-mono" x="655" y="119" text-anchor="middle">exact_original</text>
+
+          <rect class="n" x="10" y="160" width="200" height="66" rx="8"/>
+          <text x="110" y="182" text-anchor="middle" font-weight="600" font-size="12.5">Hit + its child terms</text>
+          <text class="t-sub" x="110" y="199" text-anchor="middle">"RNA-seq" also offers bulk</text>
+          <text class="t-sub" x="110" y="215" text-anchor="middle">and single-cell RNA-seq</text>
+
+          <rect class="n" x="230" y="160" width="300" height="66" rx="8"/>
+          <text x="380" y="181" text-anchor="middle" font-weight="600" font-size="13">Embedding search: top 20 of 701</text>
+          <text class="t-sub" x="380" y="199" text-anchor="middle">query A: paper name | aliases (14 slots)</text>
+          <text class="t-sub" x="380" y="215" text-anchor="middle">query B: standard technique name (6 slots)</text>
+
+          <rect class="n-llm" x="230" y="256" width="300" height="56" rx="8"/>
+          <text x="380" y="278" text-anchor="middle" font-weight="600" font-size="13">LLM picker reads the definitions</text>
+          <text class="t-sub" x="380" y="297" text-anchor="middle">reply: "3 EXACT", "7 BROAD" or "none"</text>
+
+          <rect class="n-ok" x="560" y="256" width="190" height="56" rx="8"/>
+          <text x="655" y="277" text-anchor="middle" font-weight="600" font-size="13">Mapped</text>
+          <text class="t-sub" x="655" y="296" text-anchor="middle">BROAD → re-picked in round 5</text>
+
+          <rect class="n-q" x="230" y="346" width="300" height="50" rx="8"/>
+          <text x="380" y="376" text-anchor="middle" font-weight="600" font-size="13">Was there an exact name hit?</text>
+
+          <rect class="n-ok" x="560" y="346" width="190" height="50" rx="8"/>
+          <text x="655" y="367" text-anchor="middle" font-weight="600" font-size="13">Keep the exact hit</text>
+          <text class="t-mono" x="655" y="385" text-anchor="middle">exact_original_llm</text>
+
+          <rect class="n-new" x="230" y="426" width="300" height="56" rx="8"/>
+          <text x="380" y="448" text-anchor="middle" font-weight="600" font-size="13">Full-list fallback (new)</text>
+          <text class="t-sub" x="380" y="467" text-anchor="middle">one call with all 701 terms in the prompt</text>
+
+          <rect class="n-ok" x="560" y="426" width="190" height="56" rx="8"/>
+          <text x="655" y="447" text-anchor="middle" font-weight="600" font-size="13">Mapped</text>
+          <text class="t-sub" x="655" y="466" text-anchor="middle">never re-picked</text>
+
+          <rect class="n-end" x="270" y="516" width="220" height="50" rx="8"/>
+          <text x="380" y="537" text-anchor="middle" font-weight="600" font-size="13">Unresolved</text>
+          <text class="t-sub" x="380" y="555" text-anchor="middle">kept under its paper name, flagged</text>
+        </svg>
+      </div>
+      <figcaption>Dashed boxes are code decisions; amber boxes are LLM calls. Retrieval decides which 20 terms the picker can see; the picker decides which one is right, and may refuse. The full list is used only after a refusal: given all 701 terms for every assay, the picker stops at parent terms and scored 128 exact against 141 for search + pick.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <div class="eyebrow">Worked example · SDY180, PMID 23601689</div>
+    <h2>Haemagglutination inhibition, followed through every round</h2>
+    <div class="trace"><ol>
+      <li><span class="step">Paper, sentence S136</span>
+        <blockquote>"Neutralizing antibody titers were determined as the reciprocal value of the highest dilution that displayed no hemagglutinating activity."</blockquote>
+        <p class="muted">Section: Hemagglutinin Inhibition and Virus-Neutralization Assays for Quantitating Seasonal Influenza Virus Neutralizing Antibodies.</p></li>
+      <li><span class="step">Round 1 · extract and vote</span>
+        <p><code>name_in_paper</code> "Hemagglutinin Inhibition" · <code>standard_technique_name</code> "hemagglutination inhibition" · <code>sample_type</code> "human sera" · <code>readouts</code> "influenza neutralizing antibody titers" · four aliases, two of them long section headings.</p></li>
+      <li><span class="step">Round 2 · verify</span>
+        <p>Identity SUPPORTED. Three of the four aliases NOT_SUPPORTED: they are headings, not names of the assay. Verdict REVIEW.</p></li>
+      <li><span class="step">Round 3 · correct</span>
+        <p>Aliases asked again, blind, and REPLACED by "HAI" and "HAI titers".</p></li>
+      <li><span class="step">Round 4 · map to OBI</span>
+        <p>No exact name hit. Embedding search puts <code>OBI:0000875</code> viral hemagglutination inhibition assay first (similarity 0.78); the picker replies "1 exact".</p></li>
+      <li><span class="step">Round 5 · fold, deliver</span>
+        <p>Nothing to re-pick or fold. Delivered under the key "viral hemagglutination inhibition assay", which matches the curator's term.</p></li>
+    </ol></div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Results · 31 papers vs curated benchmark v5</div>
+    <h2>Where the agent stands</h2>
+    <div class="stats">
+      <div class="stat"><b>99.4%</b><span>recall: 156 of 157 curated assays found</span></div>
+      <div class="stat"><b>88.1%</b><span>precision: 156 of 177 agent entries pair with a curated assay</span></div>
+      <div class="stat"><b>93.4%</b><span>F1</span></div>
+      <div class="stat"><b>89.7%</b><span>exact OBI term: 140 of 156 matched</span></div>
+      <div class="stat"><b>92.4%</b><span>OBI recall: same or parent / child term</span></div>
+    </div>
+    <figure class="figure" style="margin:0">
+      <h3>Exact OBI terms (same as the curator), out of 157 curated assays</h3>
+      <div class="scroll">
+        <svg viewBox="0 0 760 300" width="760" height="300" role="img" aria-labelledby="bars-title">
+          <title id="bars-title">Exact OBI matches for each mapping approach</title>
+          <!-- scale: x = 300 + v / 160 * 420 -->
+          <line class="grid" x1="300" y1="14" x2="300" y2="262"/>
+          <line class="grid" x1="431.25" y1="14" x2="431.25" y2="262"/>
+          <line class="grid" x1="562.5" y1="14" x2="562.5" y2="262"/>
+          <line class="grid" x1="693.75" y1="14" x2="693.75" y2="262"/>
+          <text class="t-mono" x="300" y="282" text-anchor="middle">0</text>
+          <text class="t-mono" x="431.25" y="282" text-anchor="middle">50</text>
+          <text class="t-mono" x="562.5" y="282" text-anchor="middle">100</text>
+          <text class="t-mono" x="693.75" y="282" text-anchor="middle">150</text>
+
+          <text x="290" y="34" text-anchor="end" font-size="13" font-weight="600">Agent v3 (stored run)</text>
+          <rect class="bar-agent" x="300" y="20" width="367.5" height="20" rx="2"/>
+          <text x="673" y="35" font-size="12.5" font-weight="600">140</text>
+
+          <text x="290" y="68" text-anchor="end" font-size="13">Re-run, 701-term vocabulary</text>
+          <rect class="bar-agent" x="300" y="54" width="370.1" height="20" rx="2"/>
+          <text x="676" y="69" font-size="12.5">141</text>
+
+          <text x="290" y="102" text-anchor="end" font-size="13">Re-run, 1,249-term vocabulary</text>
+          <rect class="bar-alt" x="300" y="88" width="367.5" height="20" rx="2"/>
+          <text x="673" y="103" font-size="12.5">140</text>
+
+          <text x="290" y="136" text-anchor="end" font-size="13">Re-run, 1,794-term vocabulary</text>
+          <rect class="bar-alt" x="300" y="122" width="341.3" height="20" rx="2"/>
+          <text x="647" y="137" font-size="12.5">130</text>
+
+          <text x="290" y="170" text-anchor="end" font-size="13">All 701 terms shown to the picker</text>
+          <rect class="bar-alt" x="300" y="156" width="336" height="20" rx="2"/>
+          <text x="642" y="171" font-size="12.5">128</text>
+
+          <text x="290" y="204" text-anchor="end" font-size="13">One GPT call, labels resolved</text>
+          <rect class="bar-llm" x="300" y="190" width="197.7" height="20" rx="2"/>
+          <text x="504" y="205" font-size="12.5">75</text>
+
+          <text x="290" y="238" text-anchor="end" font-size="13">One GPT call, OBI ids as given</text>
+          <rect class="bar-llm" x="300" y="224" width="36" height="20" rx="2"/>
+          <text x="342" y="239" font-size="12.5">14</text>
+        </svg>
+      </div>
+      <figcaption>Teal: the agent as it runs. Grey: the same agent with one part swapped. Amber: no agent, one GPT call per paper asked for the assays and their OBI ids from memory (mean of 3 runs). That baseline finds the assays about as well, but 217 of ~250 OBI ids it writes per run belong to a different term.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <div class="eyebrow">Why it is built this way</div>
+    <h2>The experiments behind each choice</h2>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Question</th><th>Tested</th><th>Result</th><th>Decision</th></tr></thead>
+        <tbody>
+          <tr><td>Why use an agent instead of one GPT call?</td><td>One call per paper, 3 runs × 31 papers</td><td>Same recall, but 14 exact ids (75 if labels are looked up) vs 140; 69 extra entries vs 4</td><td class="win">Agent</td></tr>
+          <tr><td>How big should the vocabulary be?</td><td>701 vs 1,249 vs 1,794 terms, round 4 only</td><td>141 / 140 / 130 exact</td><td class="win">701 pruned</td></tr>
+          <tr><td>Does embedding search lose terms the picker would find?</td><td>All 701 terms in the prompt vs top 20, 31 papers</td><td>128 vs 141 exact; 5 entries won, 18 lost, mostly to parent terms (bulk RNA-seq → RNA-seq)</td><td class="win">Search + pick</td></tr>
+          <tr><td>What about assays search cannot reach?</td><td>Full list only after the picker says "none"</td><td>"complete blood count" → hematology assay; only entries with no term are affected</td><td class="win">Fallback added</td></tr>
+          <tr><td>Are BROAD terms wrong terms?</td><td>Audit of the 27 BROAD mappings in v3</td><td>20 match the curator exactly (flow cytometry, neutralization); 2 do not; 5 have no curated term</td><td>Kept; not a fallback trigger</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <p>Model: gpt-5.4 at temperature 0; embeddings: text-embedding-3-small. Benchmark: curated assay tables for 31 ImmPort studies (v5), scored by <code>compare_assay_benchmark_v2.py</code>.</p>
+    <p>The stored v3 results predate the full-list fallback. Two v3 entries are unmapped, both in SDY1328: "complete blood count" and a "multianalyte profiling" panel.</p>
+  </footer>
+</main>
