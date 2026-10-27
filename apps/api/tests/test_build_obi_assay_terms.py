@@ -85,8 +85,14 @@ def test_is_a_keeps_every_parent_including_one_outside_the_branch(small):
     assert small["OBI:0000003"]["is_a"] == ["OBI:0000001", "OBI:9999999"]
 
 
+def _skip_unless_built(path: Path) -> None:
+    if not path.exists():
+        pytest.skip(f"{path.name} is gitignored; build it with scripts/build_obi_assay_terms.py")
+
+
 def test_committed_file_is_reproducible_from_obi_obo(mod):
-    """The committed list must be exactly what re-running the script produces."""
+    """The list on disk must be exactly what re-running the script produces."""
+    _skip_unless_built(mod.OUTPUT_PATH)
     committed = json.loads(mod.OUTPUT_PATH.read_text(encoding="utf-8"))
     assert committed == mod.build_terms(mod.OBO_PATH)
     assert len(committed) == 1794
@@ -94,6 +100,7 @@ def test_committed_file_is_reproducible_from_obi_obo(mod):
 
 def test_committed_file_has_the_same_shape_as_the_index_and_contains_it(mod):
     """Same keys in the same order, and every index entry appears unchanged in the full list."""
+    _skip_unless_built(mod.OUTPUT_PATH)
     full = json.loads(mod.OUTPUT_PATH.read_text(encoding="utf-8"))
     index = json.loads(INDEX_PATH.read_text(encoding="utf-8"))
 

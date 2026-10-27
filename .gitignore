@@ -36,3 +36,11 @@ data/JAT_XML_vaccine1000/
 
 # Office lock files
 ~$*
+
+# OBI experiment vocabularies: the full assay branch (1794) and its stage-1 cut (1249), with
+# their vectors (73MB + 51MB). Rebuildable — see data/OBI/README.md "Rebuilding"; only the
+# pruned 701-term index and vectors the mapper serves from are committed.
+data/OBI/obi_assay_full_index.json
+data/OBI/obi_assay_full_embeddings.json
+data/OBI/obi_assay_noncompositional_index.json
+data/OBI/obi_assay_noncompositional_embeddings.json

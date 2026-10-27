@@ -735,6 +735,10 @@ def test_stage1_index_is_reproducible_and_the_three_lists_nest():
     prune = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(prune)
 
+    for name in ("obi_assay_full_index.json", "obi_assay_noncompositional_index.json"):
+        if not (_OBI_DIR / name).exists():
+            pytest.skip(f"{name} is gitignored; rebuild per data/OBI/README.md")
+
     _, rebuilt_generic, _, _ = prune.build_index(prune.OBO_PATH)
     load = lambda name: json.loads((_OBI_DIR / name).read_text(encoding="utf-8"))
     full, generic, pruned = (load(n) for n in (

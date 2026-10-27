@@ -9,10 +9,10 @@ each term's `definition` and `n_descendants` — one command, from `obi.obo` alo
 |---|---|---|---|
 | `obi_assay_pruned_index.json` | 701 | 212 KB | **Live vocabulary.** Exact matching + the candidate pool for semantic search. Derived — do not hand-edit. |
 | `obi_assay_pruned_embeddings.json` | 701 | 28 MB | **Live vectors.** `text-embedding-3-small`, 1536-dim, one row per index term, in index order — see *The vectors*. |
-| `obi_assay_noncompositional_embeddings.json` | 1249 | 51 MB | Vectors for the stage-1 list, derived from the full file by id with no API call. Experiment only. |
-| `obi_assay_full_embeddings.json` | 1794 | 73 MB | Vectors for the full assay branch — the one paid embedding run (2026-10-27); the other two files are subsets of it, vector for vector. Experiment only. |
-| `obi_assay_noncompositional_index.json` | 1249 | 0.4 MB | **Stage 1 only.** The assay branch with the measuring/detecting compositional labels removed and every domain still in — the 701 index before its domain prune. Same six fields; written by `scripts/prune_obi_domain.py` alongside the pruned index, for experiments that attribute an effect to one prune at a time. Not on the serving path. Derived — do not hand-edit. |
-| `obi_assay_full_index.json` | 1794 | 0.7 MB | **Unpruned assay branch.** Every `is_a` descendant of `assay`, in exactly the index's format (same six fields, same helpers), so `run_obi_map.py --terms` can take it for a full-vocabulary experiment. Not on the serving path. Derived by `scripts/build_obi_assay_terms.py` — do not hand-edit. |
+| `obi_assay_noncompositional_embeddings.json` | 1249 | 51 MB | Vectors for the stage-1 list, derived from the full file by id with no API call. Experiment only. **Gitignored** — see *Rebuilding*. |
+| `obi_assay_full_embeddings.json` | 1794 | 73 MB | Vectors for the full assay branch — one paid embedding run; the other two files are subsets of it, vector for vector. Experiment only. **Gitignored** — see *Rebuilding*. |
+| `obi_assay_noncompositional_index.json` | 1249 | 0.4 MB | **Stage 1 only.** The assay branch with the measuring/detecting compositional labels removed and every domain still in — the 701 index before its domain prune. Same six fields; written by `scripts/prune_obi_domain.py` alongside the pruned index, for experiments that attribute an effect to one prune at a time. Not on the serving path. Derived — do not hand-edit. **Gitignored** — see *Rebuilding*. |
+| `obi_assay_full_index.json` | 1794 | 0.7 MB | **Unpruned assay branch.** Every `is_a` descendant of `assay`, in exactly the index's format (same six fields, same helpers), so `run_obi_map.py --terms` can take it for a full-vocabulary experiment. Not on the serving path. Derived by `scripts/build_obi_assay_terms.py` — do not hand-edit. **Gitignored** — see *Rebuilding*. |
 | `obi.obo` | 5218 | 1.5 MB | Upstream OBI release 2026-05-08. The only source: the index and the 1794-term assay branch are both derived from it. Off the serving path, but required to rebuild. |
 | `README.md` | — | — | This file: the record of what each prune removes and why. |
 
@@ -165,6 +165,24 @@ it safe not to commit the removed lists.
 # After any index change: re-embed changed rows, drop removed ones (a no-op otherwise).
 ./.venv/bin/python scripts/build_obi_embeddings.py
 ```
+
+The four experiment files (full 1794 and noncompositional 1249, index and vectors) are
+gitignored. A fresh clone rebuilds them in three commands and one paid embedding run; the
+two smaller vector files are then cut from the full one by id, free:
+
+```bash
+./.venv/bin/python scripts/build_obi_assay_terms.py             # obi_assay_full_index.json
+./.venv/bin/python scripts/prune_obi_domain.py                  # ...noncompositional_index.json too
+./.venv/bin/python scripts/build_obi_embeddings.py \
+    --terms data/OBI/obi_assay_full_index.json \
+    --out data/OBI/obi_assay_full_embeddings.json               # the one paid run
+./.venv/bin/python scripts/build_obi_embeddings.py \
+    --terms data/OBI/obi_assay_noncompositional_index.json \
+    --out data/OBI/obi_assay_noncompositional_embeddings.json \
+    --reuse data/OBI/obi_assay_full_embeddings.json             # 0 to embed
+```
+
+The tests that compare the three lists skip when these files are absent.
 
 ## Notes
 
