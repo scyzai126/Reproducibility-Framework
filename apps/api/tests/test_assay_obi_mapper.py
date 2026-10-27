@@ -722,7 +722,7 @@ def test_index_is_reproducible_from_the_full_source():
 
 
 def test_stage1_index_is_reproducible_and_the_three_lists_nest():
-    """obi_assay_generic_index.json is stage 1 of the same prune; full ⊃ generic ⊃ pruned,
+    """obi_assay_noncompositional_index.json is stage 1 of the same prune; full ⊃ generic ⊃ pruned,
     with every shared entry byte-identical and in the same relative order."""
     import importlib.util
     import json
@@ -738,7 +738,7 @@ def test_stage1_index_is_reproducible_and_the_three_lists_nest():
     _, rebuilt_generic, _, _ = prune.build_index(prune.OBO_PATH)
     load = lambda name: json.loads((_OBI_DIR / name).read_text(encoding="utf-8"))
     full, generic, pruned = (load(n) for n in (
-        "obi_assay_full_index.json", "obi_assay_generic_index.json", "obi_assay_pruned_index.json"))
+        "obi_assay_full_index.json", "obi_assay_noncompositional_index.json", "obi_assay_pruned_index.json"))
 
     assert rebuilt_generic == generic
     assert len(full) > len(generic) > len(pruned)
