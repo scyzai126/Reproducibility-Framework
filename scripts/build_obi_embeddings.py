@@ -1,7 +1,7 @@
 """Build and cache embeddings for all OBI assay terms.
 
-Reads  : data/OBI/obi_generic_index.json
-Writes : data/OBI/obi_generic_embeddings.json
+Reads  : data/OBI/obi_assay_pruned_index.json
+Writes : data/OBI/obi_assay_pruned_embeddings.json
 
 Each entry in the output:
   {
@@ -29,8 +29,8 @@ from openai import OpenAI
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 OBI_DIR = REPO_ROOT / "data" / "OBI"
-OBI_TERMS_PATH = OBI_DIR / "obi_generic_index.json"
-OUTPUT_PATH = OBI_DIR / "obi_generic_embeddings.json"
+OBI_TERMS_PATH = OBI_DIR / "obi_assay_pruned_index.json"
+OUTPUT_PATH = OBI_DIR / "obi_assay_pruned_embeddings.json"
 
 EMBED_MODEL = "text-embedding-3-small"
 BATCH_SIZE = 100  # texts per API call

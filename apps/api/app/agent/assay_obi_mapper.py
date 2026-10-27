@@ -54,15 +54,15 @@ logger = logging.getLogger(__name__)
 _REPO_ROOT = Path(__file__).resolve().parents[4]
 _OBI_DIR = _REPO_ROOT / "data" / "OBI"
 # Pruned vocabulary + matching vectors — see data/OBI/README.md for how they are built.
-_OBI_TERMS_PATH = _OBI_DIR / "obi_generic_index.json"
-_EMBEDDINGS_PATH = _OBI_DIR / "obi_generic_embeddings.json"
+_OBI_TERMS_PATH = _OBI_DIR / "obi_assay_pruned_index.json"
+_EMBEDDINGS_PATH = _OBI_DIR / "obi_assay_pruned_embeddings.json"
 #: Source of the `is_a` edges. The index carries no parent links, only `n_descendants`, which
 #: counts the full ontology and so calls ELISA (53) a parent though the index holds none of them.
 _OBO_PATH = _OBI_DIR / "obi.obo"
 _PROMPTS_DIR = _REPO_ROOT / "apps" / "api" / "app" / "prompts"
 
 #: Not settings.OPENAI_MODEL: this one names an *embedding* model, and the vectors in
-#: obi_generic_embeddings.json were built with it. Changing it silently invalidates every one
+#: obi_assay_pruned_embeddings.json were built with it. Changing it silently invalidates every one
 #: of them -- a query embedded by a different model is not comparable to that matrix.
 EMBED_MODEL = "text-embedding-3-small"
 #: Candidates the picker sees. 20, not 10, since 2026-10-02: over 150 benchmark rows the

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Derive the live OBI assay vocabulary from the full assay branch.
 
-Builds `obi_generic_index.json` from `obi.obo` in three stages:
+Builds `obi_assay_pruned_index.json` from `obi.obo` in three stages:
 
     5218  --[ assay branch ]-->  1794  --[ measuring/detecting compositional filter ]-->  1249
           --[ tier A-I subtrees ]-->  701
@@ -44,7 +44,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 OBI_DIR = REPO_ROOT / "data" / "OBI"
 OBO_PATH = OBI_DIR / "obi.obo"
-INDEX_PATH = OBI_DIR / "obi_generic_index.json"
+INDEX_PATH = OBI_DIR / "obi_assay_pruned_index.json"
 
 sys.path.insert(0, str(REPO_ROOT / "apps" / "api"))
 from app.agent.assay_obi_mapper import _is_generic_assay_term  # noqa: E402

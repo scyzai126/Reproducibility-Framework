@@ -1,15 +1,15 @@
 # OBI assay vocabularies
 
 The assay vocabulary and vectors used by `apps/api/app/agent/assay_obi_mapper.py`.
-**`obi_generic_index.json` is the live vocabulary the mapper searches.** It is a *derived* file:
+**`obi_assay_pruned_index.json` is the live vocabulary the mapper searches.** It is a *derived* file:
 `scripts/prune_obi_domain.py` takes the assay branch of `obi.obo`, applies two prunes, and adds
 each term's `definition` and `n_descendants` — one command, from `obi.obo` alone.
 
 | file | terms | size | role |
 |---|---|---|---|
-| `obi_generic_index.json` | 701 | 212 KB | **Live vocabulary.** Exact matching + the candidate pool for semantic search. Derived — do not hand-edit. |
-| `obi_generic_embeddings.json` | 701 | 28 MB | **Live vectors.** `text-embedding-3-small`, 1536-dim, one row per index term — see *The vectors*. |
-| `obi_assay_terms_full.json` | 1794 | 0.7 MB | **Unpruned assay branch.** Every `is_a` descendant of `assay`, in exactly the index's format (same six fields, same helpers), so `run_obi_map.py --terms` can take it for a full-vocabulary experiment. Not on the serving path. Derived by `scripts/build_obi_assay_terms.py` — do not hand-edit. |
+| `obi_assay_pruned_index.json` | 701 | 212 KB | **Live vocabulary.** Exact matching + the candidate pool for semantic search. Derived — do not hand-edit. |
+| `obi_assay_pruned_embeddings.json` | 701 | 28 MB | **Live vectors.** `text-embedding-3-small`, 1536-dim, one row per index term — see *The vectors*. **Not on disk since 2026-10-27** (deleted ahead of the full-vocabulary experiment; the former `obi_generic_embeddings.json` is in git history). Rebuild with `scripts/build_obi_embeddings.py`; the full list's vectors go to `obi_assay_full_embeddings.json`. |
+| `obi_assay_full_index.json` | 1794 | 0.7 MB | **Unpruned assay branch.** Every `is_a` descendant of `assay`, in exactly the index's format (same six fields, same helpers), so `run_obi_map.py --terms` can take it for a full-vocabulary experiment. Not on the serving path. Derived by `scripts/build_obi_assay_terms.py` — do not hand-edit. |
 | `obi.obo` | 5218 | 1.5 MB | Upstream OBI release 2026-05-08. The only source: the index and the 1794-term assay branch are both derived from it. Off the serving path, but required to rebuild. |
 | `README.md` | — | — | This file: the record of what each prune removes and why. |
 
@@ -119,7 +119,7 @@ selected.
 
 ## The vectors
 
-`obi_generic_embeddings.json` holds exactly the index's 701 terms, in index order. Since
+`obi_assay_pruned_embeddings.json` holds exactly the index's 701 terms, in index order. Since
 2026-10-02 each row is embedded from **`label | synonyms | definition`** (`embed_input`); before
 that it was `label | synonyms` over the unpruned 1262 terms. Adding the definition changes
 retrieval, so benchmark results from before that date are not directly comparable.
@@ -137,7 +137,7 @@ The mapper still reconciles vectors with the index **by id** in `_top_k_candidat
 ## Rebuilding
 
 One command. It reads `obi.obo`, takes the assay branch, applies both prunes, adds `definition`
-and `n_descendants`, and rewrites `obi_generic_index.json`. Idempotent — rebuilding always lands on the same terms in the same
+and `n_descendants`, and rewrites `obi_assay_pruned_index.json`. Idempotent — rebuilding always lands on the same terms in the same
 order, so a rerun is a no-op.
 
 ```bash
@@ -175,7 +175,7 @@ it safe not to commit the removed lists.
 - `obi.obo` — full OBI release 2026-05-08 (5218 terms), the upstream ontology and the **only**
   source: `scripts/prune_obi_domain.py` derives the assay branch, the `is_a` graph, definitions
   and descendant counts from it. **Not** on the serving path. To move to a newer OBI release,
-  replace this file and rerun both scripts under *Rebuilding*. `obi_assay_terms_full.json` is
+  replace this file and rerun both scripts under *Rebuilding*. `obi_assay_full_index.json` is
   the same 1794-term branch written out in the index's format (restored 2026-10-26 by
   `scripts/build_obi_assay_terms.py`; the 2026-10-02 version had only id, label and synonyms).
 - The domain prune is expressed as **subtree roots, not label keywords**, so it survives an OBI

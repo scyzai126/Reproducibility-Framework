@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Write the full OBI assay branch, in the index's format, to `obi_assay_terms_full.json`.
+"""Write the full OBI assay branch, in the index's format, to `obi_assay_full_index.json`.
 
     obi.obo  5218  --[ assay branch ]-->  1794
 
@@ -7,7 +7,7 @@ This is stage 0 of `scripts/prune_obi_domain.py` and nothing more: every `is_a` 
 `OBI:0000070 assay` (root excluded), in `obi.obo` order, with **no** compositional or domain
 prune. It exists so an experiment can run the mapper over the unpruned vocabulary.
 
-The entries have exactly the fields of `obi_generic_index.json`, built by the same two helpers
+The entries have exactly the fields of `obi_assay_pruned_index.json`, built by the same two helpers
 (`assay_branch` and `annotate`), so either file can be handed to `run_obi_map.py --terms`:
 
     id, label, synonyms, is_a, definition, n_descendants
@@ -33,7 +33,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 from prune_obi_domain import OBO_PATH, annotate, assay_branch, parse_obo  # noqa: E402
 
-OUTPUT_PATH = REPO_ROOT / "data" / "OBI" / "obi_assay_terms_full.json"
+OUTPUT_PATH = REPO_ROOT / "data" / "OBI" / "obi_assay_full_index.json"
 
 
 def build_terms(obo_path: Path = OBO_PATH) -> list[dict]:

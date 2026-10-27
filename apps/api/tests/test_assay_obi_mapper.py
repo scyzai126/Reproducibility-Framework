@@ -323,7 +323,7 @@ def test_filter_still_guards_an_unpruned_vocabulary(tmp_path):
     # top of the compositional filter it is also domain-pruned (scripts/prune_obi_domain.py),
     # which no label regex can express. Subset is the property worth guarding — a domain prune
     # only ever removes.
-    live = _term_ids(_OBI_DIR / "obi_generic_index.json")
+    live = _term_ids(_OBI_DIR / "obi_assay_pruned_index.json")
     assert set(live) <= set(ids)
 
 
@@ -714,7 +714,7 @@ def test_index_is_reproducible_from_the_full_source():
 
     _, _, rebuilt, _ = prune.build_index(prune.OBO_PATH)
 
-    committed = json.loads((_OBI_DIR / "obi_generic_index.json").read_text(encoding="utf-8"))
+    committed = json.loads((_OBI_DIR / "obi_assay_pruned_index.json").read_text(encoding="utf-8"))
 
     # Order matters, not just membership: _build_lookup uses setdefault, so index order decides
     # which term wins a synonym collision.
@@ -732,7 +732,7 @@ def test_index_entries_carry_their_is_a_parents():
 
     from app.agent.assay_obi_mapper import _OBI_DIR
 
-    index = json.loads((_OBI_DIR / "obi_generic_index.json").read_text(encoding="utf-8"))
+    index = json.loads((_OBI_DIR / "obi_assay_pruned_index.json").read_text(encoding="utf-8"))
     by_id = {t["id"]: t for t in index}
 
     assert all(isinstance(t["is_a"], list) and t["is_a"] for t in index)
