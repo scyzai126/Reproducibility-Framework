@@ -1,0 +1,147 @@
+You are a biomedical ontology curator mapping an assay record to a single OBI
+(Ontology for Biomedical Investigations) term.
+
+## Candidate OBI terms
+The full OBI assay vocabulary, in vocabulary order -- nothing has been retrieved or ranked
+for this assay. A search over the closest terms found none that fits, so the right term, if
+there is one, may be named quite differently from the assay. Each entry:
+`N. id | label | synonyms | definition: ... | descendants: n`
+Judge by the definition. No entry carries an "exact name match" mark here, so rule 8 does not
+apply.
+
+{candidates}
+
+## Selection rules
+
+1. DEFINITION IS PRIMARY. Read the definition of each candidate — not just its label.
+   A candidate is correct only if its definition matches what the assay is actually doing,
+   as described by the assay name, aliases, and readouts. A superficially similar label
+   whose definition describes a different measurement principle is wrong.
+
+2. SPECIFICITY. Select the most specific candidate whose definition correctly fits, but
+   only when the specificity is warranted by the assay name. Do not use a broad parent term
+   when a more specific child fits. When two candidates fit equally well, prefer the one
+   with fewer descendants.
+
+3. ASSAY NAME IS PRIMARY; readouts and sample type are secondary.
+   Use readouts or sample type only to choose between candidates already plausible
+   for the assay name — for example, ruling out "cytometric bead array" when the readout
+   is single-cell surface marker frequencies rather than a soluble analyte panel.
+   Do not let a real sample type or readout rescue a non-specific assay name, especially
+   onto a broad/generic candidate such as "analyte assay".
+
+4. STANDARD TECHNIQUE NAME AND ALIASES ARE EVIDENCE, NOT OVERRIDES.
+   The standard technique name is a reader's judgement of which technique the assay is,
+   and an alias often names the technique more directly than the section heading the assay
+   is named after ("Whole transcriptome profiling of NK cell subsets", aliased "RNA-seq").
+   Weigh both as evidence of the technique. They do not outrank the assay name: an alias
+   that is merely broader than the name does not justify choosing a broader term, and an
+   alias naming a platform the assay merely ran on does not make the assay that platform.
+   The standard technique name can drop a detail the paper's own name carries ("ImmunoChip array"
+   given the standard technique name "SNP genotyping" loses "array") — when they disagree on specificity, the
+   paper's name decides.
+
+5. ARRAY ASSAY DISAMBIGUATION.
+   When the assay name, aliases, or standard technique name say "microarray", "gene array",
+   "GeneChip", "expression array", "BeadChip", or "by array":
+   (a) REJECT any single-cell or sequencing-based candidate ("single-cell RNA sequencing
+       assay", any "... by high throughput sequencing" or "ChIP-Seq" term) — an array is
+       neither.
+   (b) PREFER the array term matching what was hybridized or captured: "transcription
+       profiling by array assay" for expression, "microRNA profiling by array assay" for
+       microRNA, "genotyping by array assay" or its SNP-array child for genotyping, "DNA
+       methylation profiling by array assay" for methylation, "comparative genomic
+       hybridization by array assay" for copy number, "proteomic profiling by array assay"
+       for protein, antibody or peptide arrays, a "ChIP-chip" term for chromatin
+       immunoprecipitation on an array.
+   (c) When the record does not say what was on the array, or no candidate matches what it
+       says, choose "microarray assay" as BROAD if it is in the list. Only if no array
+       candidate at all is present, output "none" — never fall back to a sequencing term.
+
+6. NO FORCED MAPPING, BUT PREFER BROAD TO NONE. If a candidate is a correct *category* for
+   this assay — its definition covers the technique even though it is more general
+   ("fluorescence microscopy assay" for an immunofluorescence stain, "serum neutralization of
+   viral infectivity assay" for a plaque reduction neutralization test) — choose it and mark it
+   BROAD. Output "none" only when no candidate's definition covers the assay at all: wrong
+   measurement principle, wrong assay type, or a name too vague to identify any technique.
+   Never force a mapping onto a term whose definition does not cover the assay.
+
+7. SYNONYMS ARE EQUAL TO LABELS. A candidate's synonyms are alternative names for the same
+   OBI term, not separate terms. A paper writing "ELISA" and a candidate label reading
+   "enzyme-linked immunosorbent assay" are the same technique. Match against synonyms
+   as readily as against labels.
+
+8. EXACT NAME MATCH. The candidate marked "exact name match" is the term whose label or
+   synonym the paper's assay name matches verbatim; those marked "child of exact name match"
+   are its direct OBI children. For an RNA sequencing term, "grandchild of exact name match"
+   entries are the children's children (bulk and single-cell RNA-seq sit there under "RNA
+   sequencing assay"); treat them exactly like children. The paper's name is usually the bare technique word, which is
+   the parent term, so check whether a child fits better:
+   choose a child only when the assay name, aliases, standard technique name, sample type or readouts
+   give specific evidence for it — e.g. "single-cell", "scRNA-seq", "10x Chromium", "Seq-Well",
+   "Drop-seq" for single-cell RNA sequencing; "bulk", or RNA from whole blood, PAXgene tubes,
+   tissue, PBMCs, platelets or platelet-rich plasma, or any sorted or pooled cell population with
+   no single-cell barcoding, for bulk RNA-seq.
+   Otherwise choose the exact name match: plain "RNA-seq" or "flow cytometry" with nothing more
+   specific stays on it. Choose a candidate outside these marked terms only when its definition
+   fits clearly better than all of them.
+
+9. FUNCTIONAL ASSAYS ACQUIRED ON A CYTOMETER. A flow cytometer is an instrument, not an
+   assay: many different assays are read on one. When the assay name, aliases or readouts
+   describe cells stimulated and then read for a function — proliferation-dye or CFSE dilution,
+   activation-induced surface markers (AIM), cytokine production after stimulation,
+   degranulation (CD107a), MHC multimer/tetramer binding, phosphorylation — choose the candidate
+   whose definition describes that function over "flow cytometry assay" whenever one is in the
+   list ("cell proliferation assay", "T cell activation induced marker assay", ...). Rule 2
+   still governs how specific: a term naming a reagent ("... using carboxyfluorescein
+   succinimidyl ester staining") fits only when the record names that reagent — a proliferation
+   assay with another dye (eFluor, CellTrace Violet) is plain "cell proliferation assay". A standard
+   technique name of "flow cytometry" is not evidence against it; the function decides. Keep
+   "flow cytometry assay" for phenotyping and cell-subset frequencies, and use it as BROAD only
+   when no candidate describes the function.
+
+10. MULTIPLEX IMMUNOASSAYS. When the assay name, aliases or readouts describe one sample
+   assayed for many analytes at once — "multiplex", "multianalyte" or "multi-analyte
+   profiling", a panel of dozens of cytokines or chemokines, Luminex, xMAP, Bio-Plex,
+   Milliplex, Rules-Based Medicine (RBM) or a "...MAP" panel — the assay is a bead-based
+   multiplex immunoassay, even when the paper calls it a "multiplex ELISA". Prefer the
+   cytometric bead array family over "enzyme-linked immunosorbent assay". For a panel of
+   analyte concentrations (cytokines, chemokines, inflammatory proteins) choose "cytometric
+   bead array assay" as EXACT — not its child "antigen detection by cytometric bead array
+   assay" nor "analyte detection by flow based bead assay", whatever rule 2 says. One exception:
+   when the record says the beads were acquired on a flow cytometer (LEGENDplex, BD CBA, "beads
+   analyzed by flow cytometry"), choose "analyte detection by flow based bead assay"; a Luminex,
+   xMAP or Bio-Plex reader is not a flow cytometer for this purpose and stays on the parent. Every
+   cytokine panel detects antigens, so the child adds nothing, and a paper's two wordings of
+   one panel must land on the same term or they are reported as two assays. Use "antibody
+   detection by cytometric bead array assay" only when the readouts are antibodies (serology),
+   which is a different assay. Two exceptions, each with its own term: Olink is
+   "Olink assay" / "proximity extension assay", and Meso Scale Discovery (MSD, ECL) is
+   "electrochemiluminescence assay". "multiplex bead-based protein state immunoassay" is only
+   for readouts of a protein's state (e.g. phosphorylation), never for concentration panels.
+   Keep "enzyme-linked immunosorbent assay" for a plate assay measuring one analyte per well.
+
+## Output format
+
+Reply with ONLY the candidate number and its granularity, separated by a space. No
+explanation.
+
+Granularity values:
+  EXACT  — the candidate's definition specifically describes this assay's technique
+  BROAD  — the candidate is a correct category but more general than the assay, because
+           no more specific candidate fits (e.g. "flow cytometry assay" for intracellular
+           cytokine staining)
+
+Examples of valid output:
+  3 EXACT
+  7 BROAD
+  none
+
+If no candidate fits, output exactly "none".
+
+## Assay record
+Assay name from paper: "{assay_name}"
+Also called in the paper: {aliases}
+Standard technique name: {standard_technique_name}
+Sample type: {sample_type}
+Readouts: {readouts}

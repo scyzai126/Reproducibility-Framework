@@ -7,6 +7,8 @@ Matching chain (stops at first hit):
       into step 2's candidates, and the picker chooses
                                        → resource: exact_original_llm
   2. Embedding top-K + LLM pick        → resource: embedding_llm,        confidence: <float>
+  3. Only when step 2's picker answers "none" and there was no exact hit: one more pick over
+     the whole vocabulary            → resource: fulllist_llm,         confidence: None
 
 Only the paper's own name is an exact key. Step 2 retrieves on it and on `standard_technique_name` and
 merges the two candidate pools. `standard_technique_name` is the extractor's judgement of which
@@ -31,6 +33,13 @@ and never on its bulk or single-cell child. So an exact hit only answers outrigh
 index holds nothing more specific under it (ELISA, ELISpot: their compositional children were
 pruned). Otherwise it becomes a guaranteed candidate, together with its direct children, which
 embedding retrieval on a bare "RNA-seq" does not reliably rank.
+
+Step 3 is for the names retrieval cannot reach at all. "complete blood count" does not embed
+near `hematology assay`, nor "multianalyte profiling" near `cytometric bead array assay`, and
+those were the two entries of the 31-paper v3 results left unmapped. Shown all 701 terms, the
+picker finds both. It is a fallback and not the default: given the whole list for every entry,
+the picker stops at parent terms ("RNA-seq" for bulk RNA-seq, "genotyping by array" for SNP
+array) and scored 128 exact against step 2's 141 (docs/obi_fulllist_llm_vs_embedding.md).
 """
 
 from __future__ import annotations
@@ -581,6 +590,14 @@ def _embedding_llm_match(
         else "",
         registry_key=registry_key,
     )
+    if not picked and not exact_hit:
+        return _fulllist_pick(
+            display_name or query, sample_type=sample_type, readouts=readouts, model=model,
+            aliases=aliases,
+            standard_technique_name=normalized if normalized.lower() != (display_name or query).strip().lower()
+            else "",
+            registry_key=registry_key,
+        )
     if exact_hit:
         if not picked:
             return {**fallback, "resource": "exact_original_llm"}
@@ -596,6 +613,88 @@ def _embedding_llm_match(
         if picked.get("obi_id") not in {c["id"] for c in raw_pool}:
             picked["resource"] = "embedding_llm_normalized"
     return picked
+
+
+# ── Full-list fallback: the picker said none of the retrieved terms fits ─────────
+
+#: What a full-list pick is attributed to. Paid, so not in assay_service._OBI_FREE_RESOURCES.
+FULLLIST_RESOURCE = "fulllist_llm"
+
+
+def _fulllist_candidates(terms_path: Path = _OBI_TERMS_PATH) -> list[dict[str, Any]]:
+    """Every term the vocabulary allows, in index order, as the picker renders a candidate."""
+    allowed = _term_ids(terms_path)
+    return [{"id": t["id"], "label": t["label"],
+             "text": " | ".join([t["label"], *(str(s) for s in t.get("synonyms") or [])]),
+             "definition": t.get("definition") or "", "n_descendants": t.get("n_descendants"),
+             "similarity": None}
+            for t in json.loads(terms_path.read_text(encoding="utf-8"))
+            if t.get("id") in allowed]
+
+
+def build_fulllist_prompt(
+    assay_name: str,
+    candidates: list[dict[str, Any]],
+    sample_type: str = "",
+    readouts: str = "",
+    aliases: list[str] | None = None,
+    standard_technique_name: str = "",
+) -> str:
+    """Render resolver_obi_assay_fulllist.txt. The term list comes before the assay record, so
+    every call of a run shares one long prefix the provider caches (95% of prompt tokens in the
+    31-paper experiment)."""
+    named = [a.strip() for a in (aliases or []) if isinstance(a, str) and a.strip()]
+    lines = [_candidate_line(i + 1, c).removesuffix(" ()") for i, c in enumerate(candidates)]
+    return (
+        (_PROMPTS_DIR / "resolver_obi_assay_fulllist.txt").read_text(encoding="utf-8")
+        .replace("{candidates}", "\n".join(lines))
+        .replace("{assay_name}", assay_name)
+        .replace("{aliases}", ", ".join(named) if named else "none given")
+        .replace("{standard_technique_name}", standard_technique_name.strip() or "not given")
+        .replace("{sample_type}", sample_type.strip() or "not specified")
+        .replace("{readouts}", readouts.strip() or "not specified")
+    )
+
+
+def _fulllist_pick(
+    assay_name: str,
+    sample_type: str = "",
+    readouts: str = "",
+    model: str = settings.OPENAI_MODEL,
+    aliases: list[str] | None = None,
+    standard_technique_name: str = "",
+    registry_key: str = "",
+    terms_path: Path = _OBI_TERMS_PATH,
+) -> dict[str, Any] | None:
+    """One pick over the whole vocabulary, for an entry the retrieved candidates could not map.
+
+    The mapping it returns is never re-picked (see repick_broad): the re-pick retrieves the
+    same top-K that just failed this entry, so it could only move it back onto a term step 2
+    already rejected.
+    """
+    candidates = _fulllist_candidates(terms_path)
+    if not candidates:
+        return None
+    prompt = build_fulllist_prompt(assay_name, candidates, sample_type, readouts, aliases,
+                                   standard_technique_name)
+    client = OpenAI(api_key=settings.OPENAI_API_KEY)
+    resp = client.chat.completions.create(
+        model=model, messages=[{"role": "user", "content": prompt}], temperature=0)
+    reply = (resp.choices[0].message.content or "").strip().lower()
+    # The candidates are the vocabulary, the same for every entry, so only their count is kept.
+    assay_trace.record("obi_fulllist", registry_key or assay_name, reply=reply,
+                       n_candidates=len(candidates))
+    idx, granularity = parse_pick_reply(reply, len(candidates))
+    if idx is None:
+        return None
+    chosen = candidates[idx]
+    return {
+        "obi_id": chosen["id"],
+        "obi_label": chosen["label"],
+        "resource": FULLLIST_RESOURCE,
+        "confidence": None,
+        "granularity": granularity,
+    }
 
 
 # ── Re-pick: every BROAD mapping gets one narrower question ──────────────────────
@@ -718,12 +817,15 @@ def repick_broad(
     what it was. An entry the picker still answers "none" for, or whose call fails, keeps its
     BROAD term -- the failure is logged, never raised, because everything before this step has
     already been paid for.
+
+    A BROAD mapping from the full-list fallback is not asked again: the re-pick retrieves the
+    top-K whose picker already answered "none" for that entry.
     """
     obi = {key: dict(value) for key, value in (obi or {}).items()}
     repicked: dict[str, dict[str, str]] = {}
     attempts = 0
     for key, mapping in obi.items():
-        if not _is_broad_mapping(mapping):
+        if not _is_broad_mapping(mapping) or mapping.get("resource") == FULLLIST_RESOURCE:
             continue
         attempts += 1
         try:

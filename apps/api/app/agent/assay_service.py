@@ -373,6 +373,8 @@ def quote_report(assays: dict, source_text: str) -> dict:
 #: `return` as exact_original without touching the network. Omitting it billed a 4-assay paper 8 calls for
 #: a round that made none.
 _OBI_FREE_RESOURCES = ("exact_original", "exact_normalized_llm")
+#: Resources whose entry also paid assay_obi_mapper._fulllist_pick, one call on top of step 2.
+_OBI_FULLLIST_BILLED = ("fulllist_llm", "unresolved")
 
 
 def _obi_query(key: str, entry: dict) -> tuple[str, str]:
@@ -403,8 +405,12 @@ def obi_calls(obi: dict) -> int:
     _embedding_llm_match bails before calling anything and every miss still reads
     "unresolved"; and an entry whose lookup raised ("error") is billed as though every call it
     would have made went through. Over-reporting a bill is the safer direction to be wrong in.
+
+    An entry the step-2 picker answered "none" for, with no exact hit, paid one more call over
+    the whole vocabulary: it ends "fulllist_llm" if that pick landed and "unresolved" if not.
     """
-    return sum(obi_query_calls(key, entry) for key, entry in (obi or {}).items()
+    return sum(obi_query_calls(key, entry) + (entry.get("resource") in _OBI_FULLLIST_BILLED)
+               for key, entry in (obi or {}).items()
                if entry.get("resource") not in _OBI_FREE_RESOURCES)
 
 

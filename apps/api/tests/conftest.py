@@ -17,6 +17,16 @@ def _isolated_assay_cache(tmp_path, monkeypatch):
 
 
 @pytest.fixture(autouse=True)
+def _no_fulllist_pick(monkeypatch):
+    """Every "none" from a stubbed step-2 picker would otherwise reach the real full-list
+    fallback, and the suite's stub key 401s. Its own tests call the real function, imported
+    before this patch."""
+    from app.agent import assay_obi_mapper
+
+    monkeypatch.setattr(assay_obi_mapper, "_fulllist_pick", lambda *a, **k: None)
+
+
+@pytest.fixture(autouse=True)
 def _single_extraction(monkeypatch):
     """The chain tests drive round 1 with one canned body each. The default of three voted
     extractions is covered by its own tests, which set this back to 3."""

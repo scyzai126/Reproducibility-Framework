@@ -305,8 +305,10 @@ def test_only_the_names_the_vocabulary_missed_are_billed():
 
 
 def test_an_assay_the_llm_declined_is_billed_like_one_it_matched():
-    """"unresolved" means the model was asked and said none -- the two calls were spent."""
-    assert obi_calls({"a": {"resource": "unresolved"}}) == 2
+    """"unresolved" means the model was asked and said none, then asked again over the whole
+    vocabulary and said none again -- the embedding, both picks were spent."""
+    assert obi_calls({"a": {"resource": "unresolved"}}) == 3
+    assert obi_calls({"a": {"resource": "fulllist_llm"}}) == 3
 
 
 def test_the_summary_names_the_assays_that_did_not_resolve():
@@ -336,4 +338,4 @@ def test_a_normalized_exact_match_is_billed_as_free():
     assert obi_calls({"a": {"resource": "exact_original"}}) == 0
     assert obi_calls({"a": {"resource": "embedding_llm"}}) == 2
     assert obi_calls({"a": {"resource": "embedding_llm_normalized"}}) == 2
-    assert obi_calls({"a": {"resource": "unresolved"}}) == 2
+    assert obi_calls({"a": {"resource": "unresolved"}}) == 3

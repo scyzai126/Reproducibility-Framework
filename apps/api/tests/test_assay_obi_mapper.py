@@ -1399,3 +1399,84 @@ def test_repick_broad_asks_for_a_lone_broad_entry_too(monkeypatch):
     assert asked == ["ICS"]
     assert list(repicked) == ["ICS"] and out["ICS"]["obi_label"] == "cytokine assay"
     assert out["ELISA"] == obi["ELISA"]
+
+
+# ── Full-list fallback ────────────────────────────────────────────────────────
+
+from app.agent.assay_obi_mapper import _fulllist_pick as _real_fulllist_pick  # noqa: E402
+
+
+def test_a_none_from_the_picker_without_an_exact_hit_asks_the_full_list(monkeypatch):
+    from app.agent import assay_obi_mapper
+    asked = []
+    monkeypatch.setattr(assay_obi_mapper, "_top_k_candidates", lambda *a, **k: [_FLOW])
+    monkeypatch.setattr(assay_obi_mapper, "_llm_pick", lambda *a, **k: None)
+
+    def fake(name, **kw):
+        asked.append((name, kw["standard_technique_name"], kw["readouts"]))
+        return {"obi_id": "OBI:0000630", "obi_label": "hematology assay",
+                "resource": "fulllist_llm", "confidence": None, "granularity": "BROAD"}
+    monkeypatch.setattr(assay_obi_mapper, "_fulllist_pick", fake)
+
+    mapped = map_assay_to_obi("complete blood count", "hematology analysis", readouts="WBC")
+
+    assert asked == [("complete blood count", "hematology analysis", "WBC")]
+    assert mapped["obi_id"] == "OBI:0000630" and mapped["resource"] == "fulllist_llm"
+
+
+def test_the_full_list_is_not_asked_when_the_picker_chose(monkeypatch):
+    from app.agent import assay_obi_mapper
+    monkeypatch.setattr(assay_obi_mapper, "_top_k_candidates", lambda *a, **k: [_FLOW])
+    monkeypatch.setattr(assay_obi_mapper, "_llm_pick", lambda *a, **k: {
+        "obi_id": _FLOW["id"], "obi_label": _FLOW["label"], "resource": "embedding_llm",
+        "confidence": 0.7, "granularity": "EXACT"})
+    monkeypatch.setattr(assay_obi_mapper, "_fulllist_pick",
+                        lambda *a, **k: (_ for _ in ()).throw(AssertionError("must not be asked")))
+
+    assert map_assay_to_obi("staining panel", "")["resource"] == "embedding_llm"
+
+
+def test_the_full_list_is_not_asked_when_an_exact_hit_is_the_floor(monkeypatch):
+    from app.agent import assay_obi_mapper
+    _no_pick(monkeypatch)
+    monkeypatch.setattr(assay_obi_mapper, "_fulllist_pick",
+                        lambda *a, **k: (_ for _ in ()).throw(AssertionError("must not be asked")))
+
+    assert map_assay_to_obi("CyTOF", "CyTOF")["resource"] == "exact_original_llm"
+
+
+def test_the_full_list_prompt_shows_every_term_before_the_record():
+    from app.agent import assay_obi_mapper
+    candidates = assay_obi_mapper._fulllist_candidates()
+    prompt = assay_obi_mapper.build_fulllist_prompt("complete blood count", candidates,
+                                                    readouts="WBC")
+
+    assert len(candidates) == len(assay_obi_mapper._term_ids(assay_obi_mapper._OBI_TERMS_PATH))
+    assert f"{len(candidates)}. {candidates[-1]['id']} | " in prompt
+    assert prompt.index(f"{len(candidates)}. ") < prompt.index('Assay name from paper: "complete blood count"')
+    assert "similarity" not in prompt.split("## Selection rules")[0].split("{candidates}")[-1]
+    assert "{" not in prompt.split("## Assay record")[1]
+
+
+def test_the_full_list_pick_parses_and_attributes(monkeypatch):
+    from app.agent import assay_obi_mapper
+    candidates = assay_obi_mapper._fulllist_candidates()
+    monkeypatch.setattr(assay_obi_mapper, "OpenAI", lambda **_: _PickClient("3 broad"))
+    picked = _real_fulllist_pick("complete blood count")
+    assert picked == {"obi_id": candidates[2]["id"], "obi_label": candidates[2]["label"],
+                      "resource": "fulllist_llm", "confidence": None, "granularity": "BROAD"}
+
+    monkeypatch.setattr(assay_obi_mapper, "OpenAI", lambda **_: _PickClient("none"))
+    assert _real_fulllist_pick("complete blood count") is None
+
+
+def test_repick_broad_skips_a_full_list_mapping(monkeypatch):
+    from app.agent import assay_obi_mapper
+    monkeypatch.setattr(assay_obi_mapper, "repick_obi",
+                        lambda *a, **k: (_ for _ in ()).throw(AssertionError("must not be asked")))
+    obi = {"CBC": {"obi_id": "OBI:0000630", "obi_label": "hematology assay",
+                   "resource": "fulllist_llm", "obi_granularity": "BROAD"}}
+
+    out, repicked, attempts = assay_obi_mapper.repick_broad({"CBC": {}}, obi)
+
+    assert out == obi and repicked == {} and attempts == 0
