@@ -9,6 +9,65 @@ the 545 IEDB-style labels (*"ELISPOT assay measuring epitope specific IFN-γ pro
 cells"*). `pruned`, the live pool, also removes 548 out-of-scope domain terms (hospital
 analyzer panels, entomology, electrophysiology, metrology, …).
 
+## How the 701 were chosen: the filter chain
+
+`data/OBI/obi.obo` (OBI release 2026-05-08) holds 5218 terms. Three steps take it to 701,
+each reproducible from the OBO alone (`scripts/prune_obi_domain.py`; the first step is also
+`scripts/build_obi_assay_terms.py`).
+
+| step | keeps | removes | result |
+|---|---|---|---|
+| 0. assay branch | every `is_a` descendant of `OBI:0000070 assay` | 3423 non-assay terms | 1794 |
+| 1. compositional labels | labels without *measuring* / *detecting* | 545 | 1249 |
+| 2. out-of-scope domains | everything outside nine subtrees and the clinical-panel band | 548 | 701 |
+
+**Step 0: keep only assays (5218 → 1794).** OBI imports terms from about thirty other
+ontologies and defines many non-assay classes of its own. Dropped here: `planning`,
+`study design`, `data transformation`, `specimen` (OBI process and material classes);
+`insulin`, `water` (CHEBI chemicals); `uterine cervix`, `pituitary gland` (UBERON anatomy);
+`primary cultured cell` (CL); `chromatin` (GO). None of these can be the answer to "which
+assay did the paper run", so none should be a candidate. Four CHMO microscopy and
+chromatography terms stay because OBI files them under `assay`.
+
+**Step 1: drop the compositional labels (1794 → 1249).** The IEDB contributed hundreds of
+terms that bake an analyte and a cell type into the assay name: `ELISPOT assay measuring
+epitope specific interferon-gamma production by T cells`, `cytometric bead array assay
+measuring epitope specific IP-10 production by T cells`, `measuring glucose concentration in
+blood serum assay`. The rule is one regex, `\b(measuring|detecting)\b`, on the label. Why:
+these are near-duplicates of a family term (ELISPOT, CBA, flow cytometry) and they outnumber
+it (43 of the 45 ELISPOT-shaped labels are compositional), so in a top-20 retrieval they bury
+the term the curators actually use. The A/B below measures the cost of leaving them in:
+10 exact. One label is pinned back, `OBI:1110179 MHC tetramer/multimer assay measuring
+binding of a T cell epitope:MHC:TCR complex`, because OBI names it as the replacement for the
+retired tetramer staining term and the family has no plain term left.
+
+**Step 2: drop whole domains that never appear in an immunology paper (1249 → 701).** Nine
+groups, each defined by `is_a` subtree roots so it survives an OBI release bump:
+
+| tier | domain | example dropped | terms |
+|---|---|---|---|
+| A | hospital analyzer panels (`OBI:21xxxxx`, filtered by label) | `panel5 venous blood sodium assay`, `CBC with manual differential venous blood neutrophil count assay` | 333 |
+| B | insecticide resistance | `insecticide resistance bioassay` | 26 |
+| C | clinical examination | `coma severity assay`, `physical examination of an organism` | 51 |
+| D | electrophysiology | `patch clamp assay` | 28 |
+| E | nucleic-acid structure probing | `DEPC structure mapping assay`, `footprinting assay` | 61 |
+| F | 3D structure determination | `NMR 3D molecular structure determination assay` | 22 |
+| G | vector biology | `mosquito membrane feeding assay` | 4 |
+| H | physical metrology | `temperature measurement assay`, `color detection assay` | 17 |
+| I | surveys and trial designs | `handedness assay`, `Bernoulli trial` | 6 |
+
+(Tiers overlap through multiple inheritance, so the column sums past 548.) Why: these terms
+are semantic near-neighbours of ones we want and the mapper has no similarity threshold to
+keep them out, so a decoy that reaches the top 20 reaches the LLM. Tier A is the only one
+filtered by label rather than wholesale: the clinical band also holds plain analyte readouts a
+paper does cite (`C-reactive protein assay`, `neutrophil count assay`), so only the
+instrument- and panel-qualified labels go, and each one's plain sibling stays. Two families
+are whitelisted back because the tier would leave them with nothing: the IgG / IgM / IgA /
+IgE quantitation terms (OBI has no bare `IgG assay`), and `OBI:0000912 X-ray crystallography`.
+The A/B below measures this step at 1 exact (SDY1293), which is what "never appears in an
+immunology paper" predicts: rarely decisive, never harmful, and it removed no term any paper
+in the corpus was curated to.
+
 ## Results
 
 | | `pruned` (701) | `noncompositional` (1249) | `full` (1794) |
@@ -70,65 +129,6 @@ assay` was #8 and was picked. In the 1249 list eight `OBI:21xxxxx` clinical-pane
 slots (`manual differential bodily fluid macrophage count assay` at #1, three `CBC with manual
 differential venous blood …` terms further down); `microscopy assay` was not shown and the
 picker took `blood microbiology assay`. The domain prune removes exactly those panel terms.
-
-## How the 701 were chosen: the filter chain
-
-`data/OBI/obi.obo` (OBI release 2026-05-08) holds 5218 terms. Three steps take it to 701,
-each reproducible from the OBO alone (`scripts/prune_obi_domain.py`; the first step is also
-`scripts/build_obi_assay_terms.py`).
-
-| step | keeps | removes | result |
-|---|---|---|---|
-| 0. assay branch | every `is_a` descendant of `OBI:0000070 assay` | 3423 non-assay terms | 1794 |
-| 1. compositional labels | labels without *measuring* / *detecting* | 545 | 1249 |
-| 2. out-of-scope domains | everything outside nine subtrees and the clinical-panel band | 548 | 701 |
-
-**Step 0: keep only assays (5218 → 1794).** OBI imports terms from about thirty other
-ontologies and defines many non-assay classes of its own. Dropped here: `planning`,
-`study design`, `data transformation`, `specimen` (OBI process and material classes);
-`insulin`, `water` (CHEBI chemicals); `uterine cervix`, `pituitary gland` (UBERON anatomy);
-`primary cultured cell` (CL); `chromatin` (GO). None of these can be the answer to "which
-assay did the paper run", so none should be a candidate. Four CHMO microscopy and
-chromatography terms stay because OBI files them under `assay`.
-
-**Step 1: drop the compositional labels (1794 → 1249).** The IEDB contributed hundreds of
-terms that bake an analyte and a cell type into the assay name: `ELISPOT assay measuring
-epitope specific interferon-gamma production by T cells`, `cytometric bead array assay
-measuring epitope specific IP-10 production by T cells`, `measuring glucose concentration in
-blood serum assay`. The rule is one regex, `\b(measuring|detecting)\b`, on the label. Why:
-these are near-duplicates of a family term (ELISPOT, CBA, flow cytometry) and they outnumber
-it (43 of the 45 ELISPOT-shaped labels are compositional), so in a top-20 retrieval they bury
-the term the curators actually use. The A/B above measures the cost of leaving them in:
-10 exact. One label is pinned back, `OBI:1110179 MHC tetramer/multimer assay measuring
-binding of a T cell epitope:MHC:TCR complex`, because OBI names it as the replacement for the
-retired tetramer staining term and the family has no plain term left.
-
-**Step 2: drop whole domains that never appear in an immunology paper (1249 → 701).** Nine
-groups, each defined by `is_a` subtree roots so it survives an OBI release bump:
-
-| tier | domain | example dropped | terms |
-|---|---|---|---|
-| A | hospital analyzer panels (`OBI:21xxxxx`, filtered by label) | `panel5 venous blood sodium assay`, `CBC with manual differential venous blood neutrophil count assay` | 333 |
-| B | insecticide resistance | `insecticide resistance bioassay` | 26 |
-| C | clinical examination | `coma severity assay`, `physical examination of an organism` | 51 |
-| D | electrophysiology | `patch clamp assay` | 28 |
-| E | nucleic-acid structure probing | `DEPC structure mapping assay`, `footprinting assay` | 61 |
-| F | 3D structure determination | `NMR 3D molecular structure determination assay` | 22 |
-| G | vector biology | `mosquito membrane feeding assay` | 4 |
-| H | physical metrology | `temperature measurement assay`, `color detection assay` | 17 |
-| I | surveys and trial designs | `handedness assay`, `Bernoulli trial` | 6 |
-
-(Tiers overlap through multiple inheritance, so the column sums past 548.) Why: these terms
-are semantic near-neighbours of ones we want and the mapper has no similarity threshold to
-keep them out, so a decoy that reaches the top 20 reaches the LLM. Tier A is the only one
-filtered by label rather than wholesale: the clinical band also holds plain analyte readouts a
-paper does cite (`C-reactive protein assay`, `neutrophil count assay`), so only the
-instrument- and panel-qualified labels go, and each one's plain sibling stays. Two families
-are whitelisted back because the tier would leave them with nothing: the IgG / IgM / IgA /
-IgE quantitation terms (OBI has no bare `IgG assay`), and `OBI:0000912 X-ray crystallography`.
-The A/B above measures this step at 1 exact (SDY1293), which is what "never appears in an
-immunology paper" predicts: rarely decisive, never harmful, and it removed no term any paper
-in the corpus was curated to.
 
 ## Recommendation
 
