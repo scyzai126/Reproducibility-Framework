@@ -1,7 +1,12 @@
-"""Build and cache embeddings for all OBI assay terms.
+"""Build and cache embeddings for an OBI assay vocabulary.
 
-Reads  : data/OBI/obi_assay_pruned_index.json
-Writes : data/OBI/obi_assay_pruned_embeddings.json
+Reads  : data/OBI/obi_assay_pruned_index.json        (--terms)
+Writes : data/OBI/obi_assay_pruned_embeddings.json   (--out)
+Reuses : vectors from --reuse files (default: the output itself) whenever a row's
+         (id, embed_input) is unchanged, so a rerun is free and a nested vocabulary is
+         derived from a larger one's file with no API call at all: the three lists in
+         data/OBI (full 1794 ⊃ noncompositional 1249 ⊃ pruned 701) share entries byte for
+         byte, so one paid run over the full list feeds the other two.
 
 Each entry in the output:
   {
@@ -17,9 +22,14 @@ the definition is embedded but kept out of it. The output always holds exactly t
 in index order. A row is re-embedded only when its `embed_input` changed, so a rerun is free.
 
 Usage:
-  python scripts/build_obi_embeddings.py
+  python scripts/build_obi_embeddings.py                       # pruned 701, in place
+  python scripts/build_obi_embeddings.py --terms data/OBI/obi_assay_full_index.json \
+      --out data/OBI/obi_assay_full_embeddings.json            # one paid run
+  python scripts/build_obi_embeddings.py --reuse data/OBI/obi_assay_full_embeddings.json
+                                                               # pruned 701 from it, free
 """
 
+import argparse
 import json
 import sys
 import time
@@ -56,16 +66,31 @@ def embed_batch(client: OpenAI, texts: list[str]) -> list[list[float]]:
 
 
 def main() -> None:
-    terms = json.loads(OBI_TERMS_PATH.read_text(encoding="utf-8"))
-    print(f"Loaded {len(terms)} OBI terms from {OBI_TERMS_PATH.name}")
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--terms", type=Path, default=OBI_TERMS_PATH, help="vocabulary to embed")
+    parser.add_argument("--out", type=Path, default=OUTPUT_PATH, help="embeddings file to write")
+    parser.add_argument("--reuse", type=Path, nargs="*", default=None,
+                        help="embeddings files to reuse vectors from (default: --out itself)")
+    args = parser.parse_args()
+    terms_path, output_path = args.terms, args.out
+    reuse_paths = args.reuse if args.reuse is not None else [output_path]
+
+    terms = json.loads(terms_path.read_text(encoding="utf-8"))
+    print(f"Loaded {len(terms)} OBI terms from {terms_path.name}")
 
     # Reuse a cached vector only when it was embedded from the same input string
     old_rows: list[dict] = []
-    if OUTPUT_PATH.exists():
-        old_rows = json.loads(OUTPUT_PATH.read_text(encoding="utf-8"))
-    cached = {
-        (r["id"], r["embed_input"]): r["embedding"] for r in old_rows if "embed_input" in r
-    }
+    if output_path.exists():
+        old_rows = json.loads(output_path.read_text(encoding="utf-8"))
+    cached: dict[tuple[str, str], list[float]] = {}
+    for path in reuse_paths:
+        if not path.exists():
+            continue
+        rows_in = old_rows if path == output_path else json.loads(path.read_text(encoding="utf-8"))
+        for r in rows_in:
+            if "embed_input" in r:
+                cached.setdefault((r["id"], r["embed_input"]), r["embedding"])
+        print(f"  reusable vectors from {path.name}: {len(rows_in)}")
 
     rows = [
         {
@@ -91,12 +116,12 @@ def main() -> None:
                 cached[(row["id"], row["embed_input"])] = embedding
 
     results = [{**r, "embedding": cached[(r["id"], r["embed_input"])]} for r in rows]
-    if not to_embed and len(results) == len(old_rows):
+    if not to_embed and results == old_rows:
         print("Nothing to do.")
         return
 
-    OUTPUT_PATH.write_text(json.dumps(results, indent=2, ensure_ascii=False))
-    print(f"\nSaved {len(results)} embeddings → {OUTPUT_PATH}")
+    output_path.write_text(json.dumps(results, indent=2, ensure_ascii=False))
+    print(f"\nSaved {len(results)} embeddings → {output_path}")
     print(f"Dimensions: {len(results[0]['embedding'])}")
 
 
