@@ -30,6 +30,8 @@ the same code against benchmark v5:
             resumable: a registry whose assays_OBI.json exists is skipped unless --force
     score   comparison/r<k>.{json,html} via scripts/compare_assay_benchmark_v2.py (free)
     report  comparison/{summary.md, diff.json}, with the delivered v3 registry as the agent column (free)
+    relabel runs_label/r<k>/: the same replies with each term found by the model's label (free);
+            `score --label` / `report --label` then write comparison/label/
 
 Usage, from the repo root:
     ./.venv/bin/python experiment/llm_baseline/run_llm_baseline.py run --runs 3 --dry-run
@@ -62,6 +64,9 @@ OBO_PATH = REPO_ROOT / "data" / "OBI" / "obi.obo"
 PROMPT_PATH = HERE / "prompt.txt"
 RUNS_DIR = HERE / "runs"
 COMPARISON_DIR = HERE / "comparison"
+#: The label-resolved reading: same replies, the term found by the model's label rather than its id.
+LABEL_RUNS_DIR = HERE / "runs_label"
+LABEL_COMPARISON_DIR = COMPARISON_DIR / "label"
 COMPARATOR = REPO_ROOT / "scripts" / "compare_assay_benchmark_v2.py"
 
 AGENT = "agent"
@@ -110,6 +115,14 @@ class ObiIds:
         for stanza in obo_path.read_text(encoding="utf-8").split("\n[")[1:]:
             if "\nis_obsolete: true" in stanza and (m := re.search(r"^id: (\S+)", stanza, re.M)):
                 self.obsolete.add(m.group(1))
+        # Label -> id over live terms, names before synonyms so a synonym never shadows a name.
+        self.by_label: dict[str, str] = {}
+        live = [t for t in self.name if t not in self.obsolete and not self.name[t].startswith("obsolete")]
+        for t in live:
+            self.by_label.setdefault(_loose(self.name[t]), t)
+        for t in live:
+            for form in self.forms[t]:
+                self.by_label.setdefault(form, t)
 
     @staticmethod
     def canonical(obi_id: object) -> str | None:
@@ -207,6 +220,31 @@ def to_registry(assays: list[dict], ids: ObiIds) -> tuple[dict, dict]:
             "name_in_paper": bench[key]["name_in_paper"],
         }
     return bench, obi
+
+
+def relabel(obi: dict, ids: ObiIds) -> dict:
+    """assays_OBI.json read by the model's label: the term whose name or synonym it is, else the
+    model's own id when that is a live term. The most generous reading of a reply -- the model
+    often names the term right with a wrong id, and sometimes the reverse (`OBI:0000893` called
+    "quantitative PCR assay"), so neither the id nor the label alone is the baseline's best."""
+    out = {}
+    for key, e in obi.items():
+        by_label = ids.by_label.get(_loose(e.get("claimed_label") or ""))
+        term = by_label or e.get("obi_id")
+        out[key] = {**e, "obi_id": term, "obi_label": ids.name[term] if term else None,
+                    "resolved_by": "label" if by_label else ("id" if term else None)}
+    return out
+
+
+def run_relabel(runs_dir: Path = RUNS_DIR, label_dir: Path = LABEL_RUNS_DIR) -> None:
+    ids = ObiIds()
+    for run in run_names(runs_dir):
+        for reg in sorted(d for d in (runs_dir / run).iterdir() if (d / "assays_OBI.json").is_file()):
+            out = label_dir / run / reg.name
+            out.mkdir(parents=True, exist_ok=True)
+            for name in ("raw.json", "assays_benchmark.json"):
+                shutil.copyfile(reg / name, out / name)
+            _write(out / "assays_OBI.json", relabel(_read(reg / "assays_OBI.json"), ids))
 
 
 async def call_one(client, model: str, registry: Path, out_dir: Path, ids: ObiIds) -> dict:
@@ -463,15 +501,20 @@ def main() -> None:
     r.add_argument("--dry-run", action="store_true")
     r.add_argument("--only")
     r.add_argument("--force", action="store_true")
-    sub.add_parser("score")
-    sub.add_parser("report")
+    sub.add_parser("relabel")
+    for name in ("score", "report"):
+        sub.add_parser(name).add_argument("--label", action="store_true",
+                                          help="the label-resolved runs (runs_label/, comparison/label/)")
     args = parser.parse_args()
+    dirs = (LABEL_RUNS_DIR, LABEL_COMPARISON_DIR) if getattr(args, "label", False) else (RUNS_DIR, COMPARISON_DIR)
     if args.cmd == "run":
         run_calls(args.runs, args.dry_run, args.only, args.force)
+    elif args.cmd == "relabel":
+        run_relabel()
     elif args.cmd == "score":
-        run_score()
+        run_score(*dirs)
     else:
-        print(run_report())
+        print(run_report(*dirs))
 
 
 if __name__ == "__main__":

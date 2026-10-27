@@ -146,3 +146,23 @@ def test_summary_table_mean_and_range(mod):
 def test_majority_tie_goes_to_first_run(mod):
     assert mod.majority(["MATCH", "MISSED"]) == "MATCH"
     assert mod.majority(["MISSED", "MATCH", "MATCH"]) == "MATCH"
+
+
+def test_relabel_reads_the_label(mod, ids):
+    obi = {
+        "a": {"obi_id": "OBI:0000661", "id_status": "label_mismatch",
+              "claimed_id": "OBI:0000661", "claimed_label": "flow cytometry"},
+        "b": {"obi_id": None, "id_status": "nonexistent", "claimed_label": "ELISA"},
+        "c": {"obi_id": "OBI:0000916", "id_status": "valid", "claimed_label": None},
+        "d": {"obi_id": None, "id_status": "nonexistent", "claimed_label": "Luminex"},
+        "f": {"obi_id": "OBI:0000661", "id_status": "label_mismatch", "claimed_label": "an ELISA kit"},
+        "e": {"obi_id": None, "id_status": "nonexistent", "claimed_label": "old assay"},
+    }
+    out = mod.relabel(obi, ids)
+    assert out["a"]["obi_id"] == "OBI:0000916" and out["a"]["resolved_by"] == "label"
+    assert out["b"]["obi_id"] == "OBI:0000661"  # a synonym resolves
+    assert out["c"]["obi_id"] == "OBI:0000916" and out["c"]["resolved_by"] == "id"
+    assert out["d"]["obi_id"] is None and out["d"]["resolved_by"] is None
+    assert out["e"]["obi_id"] is None  # an obsolete term is never a resolution
+    # A paraphrased label that resolves to nothing keeps the model's own live id.
+    assert out["f"]["obi_id"] == "OBI:0000661" and out["f"]["resolved_by"] == "id"
