@@ -74,3 +74,12 @@ def test_patch_restored(mod):
     with mod.FullList():
         assert mapper._embedding_llm_match is mod.fulllist_match
     assert mapper._embedding_llm_match is original
+
+
+def test_select_all_keeps_worst_first(mod, tmp_path):
+    report = {"papers": [_paper("1_SDYA", ["MATCH"]), _paper("2_SDYB", ["MATCH_OBI_CONFLICT"]),
+                         _paper("3_SDYC", ["MATCH"])]}
+    top = mod.select_papers(report, source=tmp_path, n=1)
+    every = mod.select_papers(report, source=tmp_path, n=31)
+    assert [p["registry"] for p in every][:1] == [p["registry"] for p in top]
+    assert len(every) == 3

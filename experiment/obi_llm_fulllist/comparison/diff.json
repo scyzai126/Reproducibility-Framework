@@ -9,78 +9,127 @@
     "32473127_SDY1640",
     "32005538_SDY1596",
     "32059780_SDY1630",
-    "32717743_SDY1655"
+    "32717743_SDY1655",
+    "32788292_SDY1669",
+    "34252919_SDY2189",
+    "25834109_SDY212",
+    "30150281_SDY1288",
+    "23601689_SDY180",
+    "28687661_SDY1294",
+    "30111633_SDY1389",
+    "23151505_SDY1291_pdf",
+    "23844129_SDY1364",
+    "28137280_SDY1325",
+    "23266342_SDY1364",
+    "23878721_SDY1276",
+    "24725414_SDY80",
+    "31624246_SDY1654",
+    "35062294_SDY1995",
+    "35455361_SDY1991",
+    "20078211_SDY1293_pdf",
+    "21357945_SDY1276_pdf",
+    "25367297_SDY404_pdf",
+    "34128959_SDY1708",
+    "36656789_SDY1393"
   ],
   "totals": {
     "fulllist": {
-      "papers": 10,
-      "benchmark_total": 55,
-      "ours_total": 70,
-      "matched": 55,
-      "exact": 41,
-      "obi_ok": 47,
-      "obi_exact_rate": 0.7454545454545455,
-      "obi_recall": 0.8545454545454545,
+      "papers": 31,
+      "benchmark_total": 157,
+      "ours_total": 177,
+      "matched": 156,
+      "exact": 128,
+      "obi_ok": 141,
+      "obi_exact_rate": 0.8205128205128205,
+      "obi_recall": 0.8980891719745223,
       "status_counts": {
-        "MATCH": 41,
-        "MATCH_GRANULARITY": 6,
-        "MATCH_OBI_CONFLICT": 4,
-        "MATCH_OBI_UNMAPPED": 4,
-        "SPLIT": 8,
-        "MISSED": 0,
-        "EXTRA": 4
+        "MATCH": 128,
+        "MATCH_GRANULARITY": 13,
+        "MATCH_OBI_CONFLICT": 10,
+        "MATCH_OBI_UNMAPPED": 5,
+        "SPLIT": 13,
+        "MISSED": 1,
+        "EXTRA": 5
       }
     },
     "embedding": {
-      "papers": 10,
-      "benchmark_total": 55,
-      "ours_total": 70,
-      "matched": 55,
-      "exact": 40,
-      "obi_ok": 44,
-      "obi_exact_rate": 0.7272727272727273,
-      "obi_recall": 0.8,
+      "papers": 31,
+      "benchmark_total": 157,
+      "ours_total": 177,
+      "matched": 156,
+      "exact": 141,
+      "obi_ok": 145,
+      "obi_exact_rate": 0.9038461538461539,
+      "obi_recall": 0.9235668789808917,
       "status_counts": {
-        "MATCH": 40,
+        "MATCH": 141,
         "MATCH_GRANULARITY": 4,
         "MATCH_OBI_CONFLICT": 5,
         "MATCH_OBI_UNMAPPED": 6,
-        "SPLIT": 8,
-        "MISSED": 0,
+        "SPLIT": 14,
+        "MISSED": 1,
         "EXTRA": 5
       }
     },
     "v3_reference": {
-      "papers": 10,
-      "benchmark_total": 55,
-      "ours_total": 70,
-      "matched": 55,
-      "exact": 40,
-      "obi_ok": 44,
-      "obi_exact_rate": 0.7272727272727273,
-      "obi_recall": 0.8,
+      "papers": 31,
+      "benchmark_total": 157,
+      "ours_total": 177,
+      "matched": 156,
+      "exact": 140,
+      "obi_ok": 145,
+      "obi_exact_rate": 0.8974358974358975,
+      "obi_recall": 0.9235668789808917,
       "status_counts": {
-        "MATCH": 40,
-        "MATCH_GRANULARITY": 4,
+        "MATCH": 140,
+        "MATCH_GRANULARITY": 5,
         "MATCH_OBI_CONFLICT": 5,
         "MATCH_OBI_UNMAPPED": 6,
-        "SPLIT": 9,
-        "MISSED": 0,
+        "SPLIT": 15,
+        "MISSED": 1,
         "EXTRA": 4
       }
     }
   },
   "spent": {
-    "calls": 66,
-    "prompt_tokens": 2575585,
-    "cached_tokens": 2443008,
-    "completion_tokens": 342
+    "calls": 170,
+    "prompt_tokens": 6634421,
+    "cached_tokens": 6330112,
+    "completion_tokens": 877
   },
   "verdicts": {
-    "same": 61,
+    "same": 153,
     "won": 5,
-    "lost": 3,
+    "lost": 18,
     "changed": 1
+  },
+  "groups": {
+    "first 10 (worst under embedding)": {
+      "entries": 70,
+      "exact": {
+        "fulllist": 52,
+        "embedding": 50,
+        "v3_reference": 51
+      },
+      "verdicts": {
+        "same": 61,
+        "won": 5,
+        "lost": 3,
+        "changed": 1
+      }
+    },
+    "other 21": {
+      "entries": 107,
+      "exact": {
+        "fulllist": 92,
+        "embedding": 107,
+        "v3_reference": 106
+      },
+      "verdicts": {
+        "same": 92,
+        "lost": 15
+      }
+    }
   },
   "rows": [
     {
@@ -624,6 +673,906 @@
       "verdict": "same"
     },
     {
+      "registry": "20078211_SDY1293_pdf",
+      "key": "transcription profiling by array assay",
+      "curator": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "20078211_SDY1293_pdf",
+      "key": "real time reverse-transcription polymerase chain reaction assay",
+      "curator": {
+        "obi_id": "OBI:0000911",
+        "obi_label": "real time reverse-transcription polymerase chain reaction assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000893",
+        "obi_label": "real time polymerase chain reaction assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH_OBI_CONFLICT"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000911",
+        "obi_label": "real time reverse-transcription polymerase chain reaction assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000911",
+        "obi_label": "real time reverse-transcription polymerase chain reaction assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "lost"
+    },
+    {
+      "registry": "20078211_SDY1293_pdf",
+      "key": "microscopy assay",
+      "curator": {
+        "obi_id": "OBI:0002119",
+        "obi_label": "microscopy assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0002119",
+        "obi_label": "microscopy assay",
+        "granularity": "BROAD",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0002119",
+        "obi_label": "microscopy assay",
+        "granularity": "BROAD",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0002119",
+        "obi_label": "microscopy assay",
+        "granularity": "BROAD",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "21357945_SDY1276_pdf",
+      "key": "transcription profiling by array assay",
+      "curator": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "21357945_SDY1276_pdf",
+      "key": "viral hemagglutination inhibition assay",
+      "curator": {
+        "obi_id": "OBI:0000875",
+        "obi_label": "viral hemagglutination inhibition assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000875",
+        "obi_label": "viral hemagglutination inhibition assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000875",
+        "obi_label": "viral hemagglutination inhibition assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000875",
+        "obi_label": "viral hemagglutination inhibition assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "21357945_SDY1276_pdf",
+      "key": "serum neutralization of viral infectivity assay",
+      "curator": {
+        "obi_id": "OBI:0000872",
+        "obi_label": "serum neutralization of viral infectivity assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000872",
+        "obi_label": "serum neutralization of viral infectivity assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000872",
+        "obi_label": "serum neutralization of viral infectivity assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000872",
+        "obi_label": "serum neutralization of viral infectivity assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "23151505_SDY1291_pdf",
+      "key": "transcription profiling by array assay",
+      "curator": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "23151505_SDY1291_pdf",
+      "key": "transcription profiling by array assay (2)",
+      "curator": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "23151505_SDY1291_pdf",
+      "key": "real time reverse-transcription polymerase chain reaction assay",
+      "curator": {
+        "obi_id": "OBI:0000911",
+        "obi_label": "real time reverse-transcription polymerase chain reaction assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000911",
+        "obi_label": "real time reverse-transcription polymerase chain reaction assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000911",
+        "obi_label": "real time reverse-transcription polymerase chain reaction assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000911",
+        "obi_label": "real time reverse-transcription polymerase chain reaction assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "23151505_SDY1291_pdf",
+      "key": "cytometric bead array assay",
+      "curator": {
+        "obi_id": "OBI:0000920",
+        "obi_label": "cytometric bead array assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000920",
+        "obi_label": "cytometric bead array assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000920",
+        "obi_label": "cytometric bead array assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000920",
+        "obi_label": "cytometric bead array assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "23151505_SDY1291_pdf",
+      "key": "flow cytometry assay",
+      "curator": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm_normalized",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm_normalized",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "23266342_SDY1364",
+      "key": "enzyme-linked immunospot assay",
+      "curator": {
+        "obi_id": "OBI:0600031",
+        "obi_label": "enzyme-linked immunospot assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0600031",
+        "obi_label": "enzyme-linked immunospot assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0600031",
+        "obi_label": "enzyme-linked immunospot assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0600031",
+        "obi_label": "enzyme-linked immunospot assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "23266342_SDY1364",
+      "key": "flow cytometry assay",
+      "curator": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "BROAD",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "BROAD",
+        "resource": "embedding_llm_normalized",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "BROAD",
+        "resource": "embedding_llm_normalized",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "23266342_SDY1364",
+      "key": "enzyme-linked immunosorbent assay",
+      "curator": {
+        "obi_id": "OBI:0000661",
+        "obi_label": "enzyme-linked immunosorbent assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000661",
+        "obi_label": "enzyme-linked immunosorbent assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000661",
+        "obi_label": "enzyme-linked immunosorbent assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000661",
+        "obi_label": "enzyme-linked immunosorbent assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "23266342_SDY1364",
+      "key": "flow cytometry assay (2)",
+      "curator": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "BROAD",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm_normalized",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm_normalized",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "23601689_SDY180",
+      "key": "transcription profiling by array assay",
+      "curator": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "23601689_SDY180",
+      "key": "flow cytometry assay",
+      "curator": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "23601689_SDY180",
+      "key": "viral hemagglutination inhibition assay",
+      "curator": {
+        "obi_id": "OBI:0000875",
+        "obi_label": "viral hemagglutination inhibition assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000875",
+        "obi_label": "viral hemagglutination inhibition assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000875",
+        "obi_label": "viral hemagglutination inhibition assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000875",
+        "obi_label": "viral hemagglutination inhibition assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "23601689_SDY180",
+      "key": "serum neutralization of viral infectivity assay",
+      "curator": {
+        "obi_id": "OBI:0000872",
+        "obi_label": "serum neutralization of viral infectivity assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000872",
+        "obi_label": "serum neutralization of viral infectivity assay",
+        "granularity": "BROAD",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000872",
+        "obi_label": "serum neutralization of viral infectivity assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000872",
+        "obi_label": "serum neutralization of viral infectivity assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "23601689_SDY180",
+      "key": "cytometric bead array assay",
+      "curator": {
+        "obi_id": "OBI:0000920",
+        "obi_label": "cytometric bead array assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000920",
+        "obi_label": "cytometric bead array assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000920",
+        "obi_label": "cytometric bead array assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000920",
+        "obi_label": "cytometric bead array assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "23601689_SDY180",
+      "key": "single-value binding of antibody with reporter to antigen assay",
+      "curator": {
+        "obi_id": "OBI:0002773",
+        "obi_label": "single-value binding of antibody with reporter to antigen assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0002773",
+        "obi_label": "single-value binding of antibody with reporter to antigen assay",
+        "granularity": "BROAD",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0002773",
+        "obi_label": "single-value binding of antibody with reporter to antigen assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0002773",
+        "obi_label": "single-value binding of antibody with reporter to antigen assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "23844129_SDY1364",
+      "key": "enzyme-linked immunospot assay",
+      "curator": {
+        "obi_id": "OBI:0600031",
+        "obi_label": "enzyme-linked immunospot assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0600031",
+        "obi_label": "enzyme-linked immunospot assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0600031",
+        "obi_label": "enzyme-linked immunospot assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0600031",
+        "obi_label": "enzyme-linked immunospot assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "23844129_SDY1364",
+      "key": "transcription profiling by array assay",
+      "curator": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "23844129_SDY1364",
+      "key": "real time reverse-transcription polymerase chain reaction assay",
+      "curator": {
+        "obi_id": "OBI:0000911",
+        "obi_label": "real time reverse-transcription polymerase chain reaction assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000911",
+        "obi_label": "real time reverse-transcription polymerase chain reaction assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000911",
+        "obi_label": "real time reverse-transcription polymerase chain reaction assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000911",
+        "obi_label": "real time reverse-transcription polymerase chain reaction assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "23844129_SDY1364",
+      "key": "flow cytometry assay",
+      "curator": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "23844129_SDY1364",
+      "key": "western blot assay",
+      "curator": {
+        "obi_id": "OBI:0000854",
+        "obi_label": "western blot assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000854",
+        "obi_label": "western blot assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000854",
+        "obi_label": "western blot assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000854",
+        "obi_label": "western blot assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "23878721_SDY1276",
+      "key": "genotyping by SNP array assay",
+      "curator": {
+        "obi_id": "OBI:0002031",
+        "obi_label": "genotyping by SNP array assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0001274",
+        "obi_label": "genotyping by array assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH_GRANULARITY"
+      },
+      "embedding": {
+        "obi_id": "OBI:0002031",
+        "obi_label": "genotyping by SNP array assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0002031",
+        "obi_label": "genotyping by SNP array assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "lost"
+    },
+    {
+      "registry": "23878721_SDY1276",
+      "key": "transcription profiling by array assay",
+      "curator": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "23878721_SDY1276",
+      "key": "viral hemagglutination inhibition assay",
+      "curator": {
+        "obi_id": "OBI:0000875",
+        "obi_label": "viral hemagglutination inhibition assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000875",
+        "obi_label": "viral hemagglutination inhibition assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000875",
+        "obi_label": "viral hemagglutination inhibition assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000875",
+        "obi_label": "viral hemagglutination inhibition assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "23878721_SDY1276",
+      "key": "serum neutralization of viral infectivity assay",
+      "curator": {
+        "obi_id": "OBI:0000872",
+        "obi_label": "serum neutralization of viral infectivity assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000872",
+        "obi_label": "serum neutralization of viral infectivity assay",
+        "granularity": "BROAD",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000872",
+        "obi_label": "serum neutralization of viral infectivity assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000872",
+        "obi_label": "serum neutralization of viral infectivity assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
       "registry": "24336226_SDY1260",
       "key": "transcription profiling by array assay",
       "curator": {
@@ -864,6 +1813,486 @@
       "verdict": "same"
     },
     {
+      "registry": "24725414_SDY80",
+      "key": "transcription profiling by array assay",
+      "curator": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "24725414_SDY80",
+      "key": "flow cytometry assay",
+      "curator": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "24725414_SDY80",
+      "key": "serum neutralization of viral infectivity assay",
+      "curator": {
+        "obi_id": "OBI:0000872",
+        "obi_label": "serum neutralization of viral infectivity assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000872",
+        "obi_label": "serum neutralization of viral infectivity assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000872",
+        "obi_label": "serum neutralization of viral infectivity assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000872",
+        "obi_label": "serum neutralization of viral infectivity assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "24725414_SDY80",
+      "key": "enzyme-linked immunospot assay",
+      "curator": {
+        "obi_id": "OBI:0600031",
+        "obi_label": "enzyme-linked immunospot assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0600031",
+        "obi_label": "enzyme-linked immunospot assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0600031",
+        "obi_label": "enzyme-linked immunospot assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0600031",
+        "obi_label": "enzyme-linked immunospot assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "25367297_SDY404_pdf",
+      "key": "flow cytometry assay",
+      "curator": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "25367297_SDY404_pdf",
+      "key": "viral hemagglutination inhibition assay",
+      "curator": {
+        "obi_id": "OBI:0000875",
+        "obi_label": "viral hemagglutination inhibition assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000875",
+        "obi_label": "viral hemagglutination inhibition assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000875",
+        "obi_label": "viral hemagglutination inhibition assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000875",
+        "obi_label": "viral hemagglutination inhibition assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "25367297_SDY404_pdf",
+      "key": "western blot assay",
+      "curator": {
+        "obi_id": "OBI:0000854",
+        "obi_label": "western blot assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000854",
+        "obi_label": "western blot assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000854",
+        "obi_label": "western blot assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000854",
+        "obi_label": "western blot assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "25834109_SDY212",
+      "key": "enzyme-linked immunosorbent assay",
+      "curator": {
+        "obi_id": "OBI:0000661",
+        "obi_label": "enzyme-linked immunosorbent assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000661",
+        "obi_label": "enzyme-linked immunosorbent assay",
+        "granularity": null,
+        "resource": "exact_original",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000661",
+        "obi_label": "enzyme-linked immunosorbent assay",
+        "granularity": null,
+        "resource": "exact_original",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000661",
+        "obi_label": "enzyme-linked immunosorbent assay",
+        "granularity": null,
+        "resource": "exact_original",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "25834109_SDY212",
+      "key": "transcription profiling by array assay",
+      "curator": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "25834109_SDY212",
+      "key": "flow cytometry assay",
+      "curator": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm_normalized",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm_normalized",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "25834109_SDY212",
+      "key": "flow cytometry assay (2)",
+      "curator": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "BROAD",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "BROAD",
+        "resource": "embedding_llm_normalized",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "BROAD",
+        "resource": "embedding_llm_normalized",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "25834109_SDY212",
+      "key": "cytometric bead array assay",
+      "curator": {
+        "obi_id": "OBI:0000920",
+        "obi_label": "cytometric bead array assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000920",
+        "obi_label": "cytometric bead array assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000920",
+        "obi_label": "cytometric bead array assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm_normalized",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000920",
+        "obi_label": "cytometric bead array assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm_normalized",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "25834109_SDY212",
+      "key": "viral hemagglutination inhibition assay",
+      "curator": {
+        "obi_id": "OBI:0000875",
+        "obi_label": "viral hemagglutination inhibition assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000875",
+        "obi_label": "viral hemagglutination inhibition assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000875",
+        "obi_label": "viral hemagglutination inhibition assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000875",
+        "obi_label": "viral hemagglutination inhibition assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "25834109_SDY212",
+      "key": "viral plaque assay",
+      "curator": {
+        "obi_id": "OBI:0003798",
+        "obi_label": "viral plaque assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0003798",
+        "obi_label": "viral plaque assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0003798",
+        "obi_label": "viral plaque assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0003798",
+        "obi_label": "viral plaque assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "25834109_SDY212",
+      "key": "genotyping by SNP array assay",
+      "curator": {
+        "obi_id": "OBI:0002031",
+        "obi_label": "genotyping by SNP array assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0001274",
+        "obi_label": "genotyping by array assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH_GRANULARITY"
+      },
+      "embedding": {
+        "obi_id": "OBI:0002031",
+        "obi_label": "genotyping by SNP array assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0002031",
+        "obi_label": "genotyping by SNP array assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "lost"
+    },
+    {
+      "registry": "25834109_SDY212",
+      "key": "MHC tetramer/multimer assay measuring binding of a T cell epitope:MHC:TCR complex",
+      "curator": {
+        "obi_id": "OBI:1110179",
+        "obi_label": "MHC tetramer/multimer assay measuring binding of a T cell epitope:MHC:TCR complex"
+      },
+      "fulllist": {
+        "obi_id": "OBI:1110179",
+        "obi_label": "MHC tetramer/multimer assay measuring binding of a T cell epitope:MHC:TCR complex",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:1110179",
+        "obi_label": "MHC tetramer/multimer assay measuring binding of a T cell epitope:MHC:TCR complex",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:1110179",
+        "obi_label": "MHC tetramer/multimer assay measuring binding of a T cell epitope:MHC:TCR complex",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
       "registry": "26742691_SDY1328",
       "key": "enzyme-linked immunosorbent assay",
       "curator": {
@@ -1072,6 +2501,156 @@
         "status": "MATCH_OBI_UNMAPPED"
       },
       "verdict": "won"
+    },
+    {
+      "registry": "28137280_SDY1325",
+      "key": "transcription profiling by array assay",
+      "curator": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "28137280_SDY1325",
+      "key": "flow cytometry assay",
+      "curator": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "28137280_SDY1325",
+      "key": "bacterial neutralization assay",
+      "curator": {
+        "obi_id": "OBI:0003797",
+        "obi_label": "bacterial neutralization assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0003796",
+        "obi_label": "pathogen neutralization assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH_GRANULARITY"
+      },
+      "embedding": {
+        "obi_id": "OBI:0003797",
+        "obi_label": "bacterial neutralization assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0003797",
+        "obi_label": "bacterial neutralization assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "lost"
+    },
+    {
+      "registry": "28137280_SDY1325",
+      "key": "enzyme-linked immunospot assay",
+      "curator": {
+        "obi_id": "OBI:0600031",
+        "obi_label": "enzyme-linked immunospot assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0600031",
+        "obi_label": "enzyme-linked immunospot assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0600031",
+        "obi_label": "enzyme-linked immunospot assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0600031",
+        "obi_label": "enzyme-linked immunospot assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "28137280_SDY1325",
+      "key": "real time reverse-transcription polymerase chain reaction assay",
+      "curator": {
+        "obi_id": "OBI:0000911",
+        "obi_label": "real time reverse-transcription polymerase chain reaction assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000911",
+        "obi_label": "real time reverse-transcription polymerase chain reaction assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000911",
+        "obi_label": "real time reverse-transcription polymerase chain reaction assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000911",
+        "obi_label": "real time reverse-transcription polymerase chain reaction assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
     },
     {
       "registry": "28502771_SDY984",
@@ -1428,6 +3007,186 @@
       "verdict": "same"
     },
     {
+      "registry": "28687661_SDY1294",
+      "key": "serum neutralization of viral infectivity assay",
+      "curator": {
+        "obi_id": "OBI:0000872",
+        "obi_label": "serum neutralization of viral infectivity assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000872",
+        "obi_label": "serum neutralization of viral infectivity assay",
+        "granularity": "BROAD",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000872",
+        "obi_label": "serum neutralization of viral infectivity assay",
+        "granularity": "BROAD",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000872",
+        "obi_label": "serum neutralization of viral infectivity assay",
+        "granularity": "BROAD",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "28687661_SDY1294",
+      "key": "immuno staining assay",
+      "curator": {
+        "obi_id": "OBI:0001632",
+        "obi_label": "immuno staining assay"
+      },
+      "fulllist": {
+        "obi_id": "CHMO:0000087",
+        "obi_label": "fluorescence microscopy assay",
+        "granularity": "BROAD",
+        "resource": "fulllist_llm",
+        "status": "MATCH_OBI_CONFLICT"
+      },
+      "embedding": {
+        "obi_id": "OBI:0001632",
+        "obi_label": "immuno staining assay",
+        "granularity": "BROAD",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0001632",
+        "obi_label": "immuno staining assay",
+        "granularity": "BROAD",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "lost"
+    },
+    {
+      "registry": "28687661_SDY1294",
+      "key": "flow cytometry assay",
+      "curator": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "28687661_SDY1294",
+      "key": "cell-cell killing assay",
+      "curator": {
+        "obi_id": "OBI:0000882",
+        "obi_label": "cell-cell killing assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "BROAD",
+        "resource": "fulllist_llm",
+        "status": "MATCH_OBI_CONFLICT"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000882",
+        "obi_label": "cell-cell killing assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000882",
+        "obi_label": "cell-cell killing assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "lost"
+    },
+    {
+      "registry": "28687661_SDY1294",
+      "key": "flow cytometry assay (2)",
+      "curator": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "BROAD",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "BROAD",
+        "resource": "embedding_llm_normalized",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "BROAD",
+        "resource": "embedding_llm_normalized",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "28687661_SDY1294",
+      "key": "transcription profiling by array assay",
+      "curator": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0001463",
+        "obi_label": "transcription profiling by array assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
       "registry": "28854372_SDY1373",
       "key": "flow cytometry assay",
       "curator": {
@@ -1544,6 +3303,546 @@
         "granularity": "EXACT",
         "resource": "embedding_llm",
         "status": "MATCH_OBI_CONFLICT"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "30111633_SDY1389",
+      "key": "flow cytometry assay",
+      "curator": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "30111633_SDY1389",
+      "key": "bulk RNA-seq assay",
+      "curator": {
+        "obi_id": "OBI:0003090",
+        "obi_label": "bulk RNA-seq assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0003090",
+        "obi_label": "bulk RNA-seq assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0003090",
+        "obi_label": "bulk RNA-seq assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0003090",
+        "obi_label": "bulk RNA-seq assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "30111633_SDY1389",
+      "key": "cytometry time of flight assay",
+      "curator": {
+        "obi_id": "OBI:0002115",
+        "obi_label": "cytometry time of flight assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0002115",
+        "obi_label": "cytometry time of flight assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0002115",
+        "obi_label": "cytometry time of flight assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0002115",
+        "obi_label": "cytometry time of flight assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "30111633_SDY1389",
+      "key": "cell proliferation assay",
+      "curator": {
+        "obi_id": "OBI:0000891",
+        "obi_label": "cell proliferation assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000891",
+        "obi_label": "cell proliferation assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000891",
+        "obi_label": "cell proliferation assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000891",
+        "obi_label": "cell proliferation assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "30111633_SDY1389",
+      "key": "MHC tetramer/multimer assay measuring binding of a T cell epitope:MHC:TCR complex",
+      "curator": {
+        "obi_id": "OBI:1110179",
+        "obi_label": "MHC tetramer/multimer assay measuring binding of a T cell epitope:MHC:TCR complex"
+      },
+      "fulllist": {
+        "obi_id": "OBI:1110179",
+        "obi_label": "MHC tetramer/multimer assay measuring binding of a T cell epitope:MHC:TCR complex",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:1110179",
+        "obi_label": "MHC tetramer/multimer assay measuring binding of a T cell epitope:MHC:TCR complex",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:1110179",
+        "obi_label": "MHC tetramer/multimer assay measuring binding of a T cell epitope:MHC:TCR complex",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "30111633_SDY1389",
+      "key": "T cell receptor repertoire sequencing assay",
+      "curator": {
+        "obi_id": "OBI:0002990",
+        "obi_label": "T cell receptor repertoire sequencing assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0002990",
+        "obi_label": "T cell receptor repertoire sequencing assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0002990",
+        "obi_label": "T cell receptor repertoire sequencing assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0002990",
+        "obi_label": "T cell receptor repertoire sequencing assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "30150281_SDY1288",
+      "key": "real time reverse-transcription polymerase chain reaction assay",
+      "curator": {
+        "obi_id": "OBI:0000911",
+        "obi_label": "real time reverse-transcription polymerase chain reaction assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000911",
+        "obi_label": "real time reverse-transcription polymerase chain reaction assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000911",
+        "obi_label": "real time reverse-transcription polymerase chain reaction assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000911",
+        "obi_label": "real time reverse-transcription polymerase chain reaction assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "30150281_SDY1288",
+      "key": "infectious agent detection assay",
+      "curator": {
+        "obi_id": "OBI:0001187",
+        "obi_label": "infectious agent detection assay"
+      },
+      "fulllist": {
+        "obi_id": null,
+        "obi_label": null,
+        "granularity": null,
+        "resource": "unresolved",
+        "status": "MATCH_OBI_UNMAPPED"
+      },
+      "embedding": {
+        "obi_id": "OBI:0001187",
+        "obi_label": "infectious agent detection assay",
+        "granularity": "BROAD",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0001187",
+        "obi_label": "infectious agent detection assay",
+        "granularity": "BROAD",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "lost"
+    },
+    {
+      "registry": "30150281_SDY1288",
+      "key": "enzyme-linked immunosorbent assay",
+      "curator": {
+        "obi_id": "OBI:0000661",
+        "obi_label": "enzyme-linked immunosorbent assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000661",
+        "obi_label": "enzyme-linked immunosorbent assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000661",
+        "obi_label": "enzyme-linked immunosorbent assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000661",
+        "obi_label": "enzyme-linked immunosorbent assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "30150281_SDY1288",
+      "key": "enzyme-linked immunosorbent assay (2)",
+      "curator": {
+        "obi_id": "OBI:0000661",
+        "obi_label": "enzyme-linked immunosorbent assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000661",
+        "obi_label": "enzyme-linked immunosorbent assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000661",
+        "obi_label": "enzyme-linked immunosorbent assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000661",
+        "obi_label": "enzyme-linked immunosorbent assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "30150281_SDY1288",
+      "key": "cytometry time of flight assay",
+      "curator": {
+        "obi_id": "OBI:0002115",
+        "obi_label": "cytometry time of flight assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0002115",
+        "obi_label": "cytometry time of flight assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0002115",
+        "obi_label": "cytometry time of flight assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0002115",
+        "obi_label": "cytometry time of flight assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "30150281_SDY1288",
+      "key": "cytometric bead array assay",
+      "curator": {
+        "obi_id": "OBI:0000920",
+        "obi_label": "cytometric bead array assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000920",
+        "obi_label": "cytometric bead array assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000920",
+        "obi_label": "cytometric bead array assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000920",
+        "obi_label": "cytometric bead array assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "30150281_SDY1288",
+      "key": "real time reverse-transcription polymerase chain reaction assay (2)",
+      "curator": {
+        "obi_id": "OBI:0000911",
+        "obi_label": "real time reverse-transcription polymerase chain reaction assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000911",
+        "obi_label": "real time reverse-transcription polymerase chain reaction assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000911",
+        "obi_label": "real time reverse-transcription polymerase chain reaction assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm_normalized",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000911",
+        "obi_label": "real time reverse-transcription polymerase chain reaction assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "30150281_SDY1288",
+      "key": "bulk RNA-seq assay",
+      "curator": {
+        "obi_id": "OBI:0003090",
+        "obi_label": "bulk RNA-seq assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0001271",
+        "obi_label": "RNA-seq assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH_GRANULARITY"
+      },
+      "embedding": {
+        "obi_id": "OBI:0003090",
+        "obi_label": "bulk RNA-seq assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0003090",
+        "obi_label": "bulk RNA-seq assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "verdict": "lost"
+    },
+    {
+      "registry": "31624246_SDY1654",
+      "key": "single-cell RNA sequencing assay",
+      "curator": {
+        "obi_id": "OBI:0002631",
+        "obi_label": "single-cell RNA sequencing assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0002631",
+        "obi_label": "single-cell RNA sequencing assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0002631",
+        "obi_label": "single-cell RNA sequencing assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0002631",
+        "obi_label": "single-cell RNA sequencing assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "31624246_SDY1654",
+      "key": "cell proliferation assay",
+      "curator": {
+        "obi_id": "OBI:0000891",
+        "obi_label": "cell proliferation assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000891",
+        "obi_label": "cell proliferation assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000891",
+        "obi_label": "cell proliferation assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000891",
+        "obi_label": "cell proliferation assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "31624246_SDY1654",
+      "key": "real time reverse-transcription polymerase chain reaction assay",
+      "curator": {
+        "obi_id": "OBI:0000911",
+        "obi_label": "real time reverse-transcription polymerase chain reaction assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000893",
+        "obi_label": "real time polymerase chain reaction assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH_OBI_CONFLICT"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000911",
+        "obi_label": "real time reverse-transcription polymerase chain reaction assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000911",
+        "obi_label": "real time reverse-transcription polymerase chain reaction assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "lost"
+    },
+    {
+      "registry": "31624246_SDY1654",
+      "key": "flow cytometry assay",
+      "curator": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
       },
       "verdict": "same"
     },
@@ -2170,6 +4469,966 @@
         "obi_label": "flow cytometry assay",
         "granularity": "BROAD",
         "resource": "embedding_llm_normalized",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "32788292_SDY1669",
+      "key": "cytometry time of flight assay",
+      "curator": {
+        "obi_id": "OBI:0002115",
+        "obi_label": "cytometry time of flight assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0002115",
+        "obi_label": "cytometry time of flight assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0002115",
+        "obi_label": "cytometry time of flight assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0002115",
+        "obi_label": "cytometry time of flight assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "32788292_SDY1669",
+      "key": "flow cytometry assay",
+      "curator": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "BROAD",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "BROAD",
+        "resource": "embedding_llm_normalized",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "BROAD",
+        "resource": "embedding_llm_normalized",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "32788292_SDY1669",
+      "key": "Olink assay",
+      "curator": {
+        "obi_id": "OBI:0003112",
+        "obi_label": "Olink assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0003112",
+        "obi_label": "Olink assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0003112",
+        "obi_label": "Olink assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0003112",
+        "obi_label": "Olink assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "32788292_SDY1669",
+      "key": "enzyme-linked immunosorbent assay",
+      "curator": {
+        "obi_id": "OBI:0000661",
+        "obi_label": "enzyme-linked immunosorbent assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000661",
+        "obi_label": "enzyme-linked immunosorbent assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000661",
+        "obi_label": "enzyme-linked immunosorbent assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000661",
+        "obi_label": "enzyme-linked immunosorbent assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "32788292_SDY1669",
+      "key": "cellular indexing of transcriptomes and epitopes by sequencing",
+      "curator": {
+        "obi_id": "OBI:0003788",
+        "obi_label": "cellular indexing of transcriptomes and epitopes by sequencing"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0003788",
+        "obi_label": "cellular indexing of transcriptomes and epitopes by sequencing",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0003788",
+        "obi_label": "cellular indexing of transcriptomes and epitopes by sequencing",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0003788",
+        "obi_label": "cellular indexing of transcriptomes and epitopes by sequencing",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "32788292_SDY1669",
+      "key": "bulk RNA-seq assay",
+      "curator": {
+        "obi_id": "OBI:0003090",
+        "obi_label": "bulk RNA-seq assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0003090",
+        "obi_label": "bulk RNA-seq assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0003090",
+        "obi_label": "bulk RNA-seq assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0003090",
+        "obi_label": "bulk RNA-seq assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "32788292_SDY1669",
+      "key": "polymerase chain reaction assay",
+      "curator": {
+        "obi_id": "OBI:0000893",
+        "obi_label": "real time polymerase chain reaction assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0002692",
+        "obi_label": "polymerase chain reaction assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH_GRANULARITY"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000893",
+        "obi_label": "real time polymerase chain reaction assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0002692",
+        "obi_label": "polymerase chain reaction assay",
+        "granularity": "BROAD",
+        "resource": "embedding_llm_normalized",
+        "status": "MATCH_GRANULARITY"
+      },
+      "verdict": "lost"
+    },
+    {
+      "registry": "32788292_SDY1669",
+      "key": "bacterial lipopolysaccharide detection in plasma assay",
+      "curator": {
+        "obi_id": "OBI:0003793",
+        "obi_label": "bacterial lipopolysaccharide detection in plasma assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0002082",
+        "obi_label": "reporter gene assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH_OBI_CONFLICT"
+      },
+      "embedding": {
+        "obi_id": "OBI:0003793",
+        "obi_label": "bacterial lipopolysaccharide detection in plasma assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0003793",
+        "obi_label": "bacterial lipopolysaccharide detection in plasma assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "lost"
+    },
+    {
+      "registry": "34128959_SDY1708",
+      "key": "single-cell RNA sequencing assay",
+      "curator": {
+        "obi_id": "OBI:0002631",
+        "obi_label": "single-cell RNA sequencing assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0002631",
+        "obi_label": "single-cell RNA sequencing assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0002631",
+        "obi_label": "single-cell RNA sequencing assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0002631",
+        "obi_label": "single-cell RNA sequencing assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "34128959_SDY1708",
+      "key": "cytometry time of flight assay",
+      "curator": {
+        "obi_id": "OBI:0002115",
+        "obi_label": "cytometry time of flight assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0002115",
+        "obi_label": "cytometry time of flight assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0002115",
+        "obi_label": "cytometry time of flight assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0002115",
+        "obi_label": "cytometry time of flight assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "34128959_SDY1708",
+      "key": "single-cell ATAC-seq",
+      "curator": {
+        "obi_id": "OBI:0002764",
+        "obi_label": "single-cell ATAC-seq"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0002764",
+        "obi_label": "single-cell ATAC-seq",
+        "granularity": null,
+        "resource": "exact_original",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0002764",
+        "obi_label": "single-cell ATAC-seq",
+        "granularity": null,
+        "resource": "exact_original",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0002764",
+        "obi_label": "single-cell ATAC-seq",
+        "granularity": null,
+        "resource": "exact_original",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "34252919_SDY2189",
+      "key": "enzyme-linked immunosorbent assay",
+      "curator": {
+        "obi_id": "OBI:0000661",
+        "obi_label": "enzyme-linked immunosorbent assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000661",
+        "obi_label": "enzyme-linked immunosorbent assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000661",
+        "obi_label": "enzyme-linked immunosorbent assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000661",
+        "obi_label": "enzyme-linked immunosorbent assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "34252919_SDY2189",
+      "key": "serum neutralization of viral infectivity assay",
+      "curator": {
+        "obi_id": "OBI:0000872",
+        "obi_label": "serum neutralization of viral infectivity assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000872",
+        "obi_label": "serum neutralization of viral infectivity assay",
+        "granularity": "BROAD",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000872",
+        "obi_label": "serum neutralization of viral infectivity assay",
+        "granularity": "BROAD",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000872",
+        "obi_label": "serum neutralization of viral infectivity assay",
+        "granularity": "BROAD",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "34252919_SDY2189",
+      "key": "serum neutralization of viral infectivity assay (2)",
+      "curator": {
+        "obi_id": "OBI:0000872",
+        "obi_label": "serum neutralization of viral infectivity assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0003796",
+        "obi_label": "pathogen neutralization assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "EXTRA"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000872",
+        "obi_label": "serum neutralization of viral infectivity assay",
+        "granularity": "BROAD",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000872",
+        "obi_label": "serum neutralization of viral infectivity assay",
+        "granularity": "BROAD",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "lost"
+    },
+    {
+      "registry": "34252919_SDY2189",
+      "key": "flow cytometry assay",
+      "curator": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "BROAD",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "BROAD",
+        "resource": "embedding_llm_normalized",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "BROAD",
+        "resource": "embedding_llm_normalized",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "34252919_SDY2189",
+      "key": "antibody detection by cytometric bead array assay",
+      "curator": {
+        "obi_id": "OBI:0003116",
+        "obi_label": "antibody detection by cytometric bead array assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000920",
+        "obi_label": "cytometric bead array assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH_GRANULARITY"
+      },
+      "embedding": {
+        "obi_id": "OBI:0003116",
+        "obi_label": "antibody detection by cytometric bead array assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0003116",
+        "obi_label": "antibody detection by cytometric bead array assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "lost"
+    },
+    {
+      "registry": "34252919_SDY2189",
+      "key": "cytometry time of flight assay",
+      "curator": {
+        "obi_id": "OBI:0002115",
+        "obi_label": "cytometry time of flight assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0002115",
+        "obi_label": "cytometry time of flight assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0002115",
+        "obi_label": "cytometry time of flight assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0002115",
+        "obi_label": "cytometry time of flight assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "34252919_SDY2189",
+      "key": "Olink assay",
+      "curator": {
+        "obi_id": "OBI:0003112",
+        "obi_label": "Olink assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0003112",
+        "obi_label": "Olink assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0003112",
+        "obi_label": "Olink assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0003112",
+        "obi_label": "Olink assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "34252919_SDY2189",
+      "key": "bulk RNA-seq assay",
+      "curator": {
+        "obi_id": "OBI:0003090",
+        "obi_label": "bulk RNA-seq assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0003090",
+        "obi_label": "bulk RNA-seq assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0003090",
+        "obi_label": "bulk RNA-seq assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0003090",
+        "obi_label": "bulk RNA-seq assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "34252919_SDY2189",
+      "key": "cellular indexing of transcriptomes and epitopes by sequencing",
+      "curator": {
+        "obi_id": "OBI:0003788",
+        "obi_label": "cellular indexing of transcriptomes and epitopes by sequencing"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0003788",
+        "obi_label": "cellular indexing of transcriptomes and epitopes by sequencing",
+        "granularity": null,
+        "resource": "exact_original",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0003788",
+        "obi_label": "cellular indexing of transcriptomes and epitopes by sequencing",
+        "granularity": null,
+        "resource": "exact_original",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0003788",
+        "obi_label": "cellular indexing of transcriptomes and epitopes by sequencing",
+        "granularity": null,
+        "resource": "exact_original",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "34252919_SDY2189",
+      "key": "real time reverse-transcription polymerase chain reaction assay",
+      "curator": {
+        "obi_id": "OBI:0000911",
+        "obi_label": "real time reverse-transcription polymerase chain reaction assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000911",
+        "obi_label": "real time reverse-transcription polymerase chain reaction assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000911",
+        "obi_label": "real time reverse-transcription polymerase chain reaction assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000911",
+        "obi_label": "real time reverse-transcription polymerase chain reaction assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "35062294_SDY1995",
+      "key": "enzyme-linked immunosorbent assay",
+      "curator": {
+        "obi_id": "OBI:0000661",
+        "obi_label": "enzyme-linked immunosorbent assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000661",
+        "obi_label": "enzyme-linked immunosorbent assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000661",
+        "obi_label": "enzyme-linked immunosorbent assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000661",
+        "obi_label": "enzyme-linked immunosorbent assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "35062294_SDY1995",
+      "key": "reverse transcription polymerase chain reaction assay",
+      "curator": {
+        "obi_id": "OBI:0001170",
+        "obi_label": "reverse transcription polymerase chain reaction assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0001170",
+        "obi_label": "reverse transcription polymerase chain reaction assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0001170",
+        "obi_label": "reverse transcription polymerase chain reaction assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0001170",
+        "obi_label": "reverse transcription polymerase chain reaction assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "35062294_SDY1995",
+      "key": "flow cytometry assay",
+      "curator": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "35062294_SDY1995",
+      "key": "bulk RNA-seq assay",
+      "curator": {
+        "obi_id": "OBI:0003090",
+        "obi_label": "bulk RNA-seq assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0003090",
+        "obi_label": "bulk RNA-seq assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0003090",
+        "obi_label": "bulk RNA-seq assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0003090",
+        "obi_label": "bulk RNA-seq assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "35455361_SDY1991",
+      "key": "enzyme-linked immunosorbent assay",
+      "curator": {
+        "obi_id": "OBI:0000661",
+        "obi_label": "enzyme-linked immunosorbent assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000661",
+        "obi_label": "enzyme-linked immunosorbent assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000661",
+        "obi_label": "enzyme-linked immunosorbent assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000661",
+        "obi_label": "enzyme-linked immunosorbent assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "35455361_SDY1991",
+      "key": "pathogen neutralization assay",
+      "curator": {
+        "obi_id": "OBI:0003796",
+        "obi_label": "pathogen neutralization assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000872",
+        "obi_label": "serum neutralization of viral infectivity assay",
+        "granularity": "BROAD",
+        "resource": "fulllist_llm",
+        "status": "MATCH_OBI_CONFLICT"
+      },
+      "embedding": {
+        "obi_id": "OBI:0003796",
+        "obi_label": "pathogen neutralization assay",
+        "granularity": "BROAD",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0003796",
+        "obi_label": "pathogen neutralization assay",
+        "granularity": "BROAD",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "lost"
+    },
+    {
+      "registry": "35455361_SDY1991",
+      "key": "flow cytometry assay",
+      "curator": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "BROAD",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "BROAD",
+        "resource": "embedding_llm_normalized",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "BROAD",
+        "resource": "embedding_llm_normalized",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "35455361_SDY1991",
+      "key": "bulk RNA-seq assay",
+      "curator": {
+        "obi_id": "OBI:0003090",
+        "obi_label": "bulk RNA-seq assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0001271",
+        "obi_label": "RNA-seq assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH_GRANULARITY"
+      },
+      "embedding": {
+        "obi_id": "OBI:0003090",
+        "obi_label": "bulk RNA-seq assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0003090",
+        "obi_label": "bulk RNA-seq assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "lost"
+    },
+    {
+      "registry": "36656789_SDY1393",
+      "key": "viral hemagglutination inhibition assay",
+      "curator": {
+        "obi_id": "OBI:0000875",
+        "obi_label": "viral hemagglutination inhibition assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000875",
+        "obi_label": "viral hemagglutination inhibition assay",
+        "granularity": "EXACT",
+        "resource": "fulllist_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000875",
+        "obi_label": "viral hemagglutination inhibition assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000875",
+        "obi_label": "viral hemagglutination inhibition assay",
+        "granularity": "EXACT",
+        "resource": "embedding_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "36656789_SDY1393",
+      "key": "flow cytometry assay",
+      "curator": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0000916",
+        "obi_label": "flow cytometry assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "verdict": "same"
+    },
+    {
+      "registry": "36656789_SDY1393",
+      "key": "bulk RNA-seq assay",
+      "curator": {
+        "obi_id": "OBI:0003090",
+        "obi_label": "bulk RNA-seq assay"
+      },
+      "fulllist": {
+        "obi_id": "OBI:0003090",
+        "obi_label": "bulk RNA-seq assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "embedding": {
+        "obi_id": "OBI:0003090",
+        "obi_label": "bulk RNA-seq assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
+        "status": "MATCH"
+      },
+      "v3_reference": {
+        "obi_id": "OBI:0003090",
+        "obi_label": "bulk RNA-seq assay",
+        "granularity": "EXACT",
+        "resource": "exact_original_llm",
         "status": "MATCH"
       },
       "verdict": "same"

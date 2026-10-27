@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Full-list LLM vs embedding retrieval for round 4 (map to OBI), on the 10 worst papers.
+"""Full-list LLM vs embedding retrieval for round 4 (map to OBI), worst papers first.
 
 Round 4 today retrieves 20 candidates from the pruned 701-term vocabulary by embedding and asks
 one LLM call to pick among them. This arm drops retrieval: every assay that reaches the paid
@@ -13,7 +13,7 @@ The baseline is free: the same 10 registries mapped by embedding in experiment/o
 (arm `pruned`, same input, same vocabulary, same day) and, as a second embedding column that
 shows run-to-run variance, the stored v3 mapping.
 
-    select  papers.json: the 10 registries with most non-exact matched rows in obi_vocab_v3's
+    select  [--n N] papers.json: the N (default 10, 31 = all) registries with most non-exact matched rows in obi_vocab_v3's
             pruned report (ties: same count in the v3 reference, then entry count). Free.
     map     [--dry-run] [--only SDY] [--force]
             runs/fulllist/<registry>/{assays.json, assays_benchmark.json, assays_OBI.json,
@@ -99,9 +99,9 @@ def select_papers(report: dict, reference: dict | None = None, source: Path = SO
              "entries": entries(name)} for name in ranked[:n]]
 
 
-def run_select() -> list[dict]:
+def run_select(n: int = N_PAPERS) -> list[dict]:
     reference = _read(REFERENCE_REPORT) if REFERENCE_REPORT.exists() else None
-    papers = select_papers(_read(EMBEDDING_REPORT), reference)
+    papers = select_papers(_read(EMBEDDING_REPORT), reference, n=n)
     _write(PAPERS_PATH, papers)
     for p in papers:
         print(f"   {p['registry']:24} non-exact embedding {p['non_exact_embedding']}  "
@@ -406,17 +406,31 @@ def run_report(runs_dir: Path = RUNS_DIR, comparison_dir: Path = COMPARISON_DIR)
             spent.update({"calls": 1, **{k: u[k] for k in ("prompt_tokens", "cached_tokens",
                                                             "completion_tokens")}})
     rows = entry_rows(runs_dir, reports)
-    summary = {"papers": [p["registry"] for p in _read(PAPERS_PATH)], "totals": totals,
-               "spent": dict(spent), "verdicts": dict(Counter(r["verdict"] for r in rows)), "rows": rows}
+    papers = [p["registry"] for p in _read(PAPERS_PATH)]
+    groups = {f"first {N_PAPERS} (worst under embedding)": set(papers[:N_PAPERS]),
+              f"other {len(papers) - N_PAPERS}": set(papers[N_PAPERS:])}
+    summary = {"papers": papers, "totals": totals, "spent": dict(spent),
+               "verdicts": dict(Counter(r["verdict"] for r in rows)),
+               "groups": {name: group_counts([r for r in rows if r["registry"] in regs], list(reports))
+                          for name, regs in groups.items() if regs},
+               "rows": rows}
     _write(comparison_dir / "diff.json", summary)
     (comparison_dir / "summary.md").write_text(render_summary(summary), encoding="utf-8")
     print(render_summary(summary))
     return summary
 
 
+def group_counts(rows: list[dict], arms: list[str]) -> dict:
+    """Entries the scorer called MATCH per arm, and the won/lost verdicts, over a set of rows."""
+    return {"entries": len(rows),
+            "exact": {arm: sum(1 for r in rows if (r.get(arm) or {}).get("status") == "MATCH") for arm in arms},
+            "verdicts": dict(Counter(r["verdict"] for r in rows))}
+
+
 def render_summary(summary: dict) -> str:
     names = list(summary["totals"])
-    lines = ["# Full-list LLM (701 terms) vs embedding top-20, 10 worst papers of assay_result_v3", "",
+    lines = [f"# Full-list LLM (701 terms) vs embedding top-20, {len(summary['papers'])} papers of "
+             "assay_result_v3", "",
              "Papers: " + ", ".join(summary["papers"]), "",
              "| metric | " + " | ".join(names) + " |", "|---|" + "---|" * len(names)]
     keys = [("papers scored", "papers"), ("curated rows", "benchmark_total"), ("agent entries", "ours_total"),
@@ -430,6 +444,12 @@ def render_summary(summary: dict) -> str:
     for status in ("MATCH", *_NON_EXACT, "SPLIT", "MISSED", "EXTRA"):
         lines.append(f"| {status} | " + " | ".join(
             str(summary["totals"][n]["status_counts"].get(status, 0)) for n in names) + " |")
+    if len(summary.get("groups") or {}) > 1:
+        lines += ["", "| group | entries | " + " | ".join(f"{n} MATCH entries" for n in names)
+                  + " | verdicts |", "|---|---|" + "---|" * len(names) + "---|"]
+        for name, g in summary["groups"].items():
+            lines.append(f"| {name} | {g['entries']} | " + " | ".join(str(g["exact"][n]) for n in names)
+                         + f" | {g['verdicts']} |")
     lines += ["", f"Full-list spend: {summary['spent']}", "",
               f"## Per entry, embedding vs fulllist ({summary['verdicts']})", "",
               "| registry | entry | curator | " + " | ".join(names) + " | verdict |",
@@ -447,7 +467,8 @@ def render_summary(summary: dict) -> str:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = parser.add_subparsers(dest="command", required=True)
-    sub.add_parser("select")
+    s = sub.add_parser("select")
+    s.add_argument("--n", type=int, default=N_PAPERS, help="how many papers, worst first (31 = all)")
     m = sub.add_parser("map")
     m.add_argument("--dry-run", action="store_true")
     m.add_argument("--only", help="one study accession, e.g. SDY2189")
@@ -456,7 +477,7 @@ def main() -> None:
     sub.add_parser("report")
     args = parser.parse_args()
     if args.command == "select":
-        run_select()
+        run_select(args.n)
     elif args.command == "map":
         run_map(args.dry_run, args.only, args.force)
     elif args.command == "score":

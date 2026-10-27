@@ -1,28 +1,33 @@
-# Full-list LLM (701 terms) vs embedding top-20, 10 worst papers of assay_result_v3
+# Full-list LLM (701 terms) vs embedding top-20, 31 papers of assay_result_v3
 
-Papers: 19029902_SDY1264, 24336226_SDY1260, 26742691_SDY1328, 28854372_SDY1373, 28502771_SDY984, 19047440_SDY1289, 32473127_SDY1640, 32005538_SDY1596, 32059780_SDY1630, 32717743_SDY1655
+Papers: 19029902_SDY1264, 24336226_SDY1260, 26742691_SDY1328, 28854372_SDY1373, 28502771_SDY984, 19047440_SDY1289, 32473127_SDY1640, 32005538_SDY1596, 32059780_SDY1630, 32717743_SDY1655, 32788292_SDY1669, 34252919_SDY2189, 25834109_SDY212, 30150281_SDY1288, 23601689_SDY180, 28687661_SDY1294, 30111633_SDY1389, 23151505_SDY1291_pdf, 23844129_SDY1364, 28137280_SDY1325, 23266342_SDY1364, 23878721_SDY1276, 24725414_SDY80, 31624246_SDY1654, 35062294_SDY1995, 35455361_SDY1991, 20078211_SDY1293_pdf, 21357945_SDY1276_pdf, 25367297_SDY404_pdf, 34128959_SDY1708, 36656789_SDY1393
 
 | metric | fulllist | embedding | v3_reference |
 |---|---|---|---|
-| papers scored | 10 | 10 | 10 |
-| curated rows | 55 | 55 | 55 |
-| agent entries | 70 | 70 | 70 |
-| matched | 55 | 55 | 55 |
-| exact (same OBI term as curator) | 41 | 40 | 40 |
-| OBI ok (same or parent/child) | 47 | 44 | 44 |
-| obi_exact_rate | 74.5% | 72.7% | 72.7% |
-| obi_recall | 85.5% | 80.0% | 80.0% |
-| MATCH | 41 | 40 | 40 |
-| MATCH_GRANULARITY | 6 | 4 | 4 |
-| MATCH_OBI_CONFLICT | 4 | 5 | 5 |
-| MATCH_OBI_UNMAPPED | 4 | 6 | 6 |
-| SPLIT | 8 | 8 | 9 |
-| MISSED | 0 | 0 | 0 |
-| EXTRA | 4 | 5 | 4 |
+| papers scored | 31 | 31 | 31 |
+| curated rows | 157 | 157 | 157 |
+| agent entries | 177 | 177 | 177 |
+| matched | 156 | 156 | 156 |
+| exact (same OBI term as curator) | 128 | 141 | 140 |
+| OBI ok (same or parent/child) | 141 | 145 | 145 |
+| obi_exact_rate | 82.1% | 90.4% | 89.7% |
+| obi_recall | 89.8% | 92.4% | 92.4% |
+| MATCH | 128 | 141 | 140 |
+| MATCH_GRANULARITY | 13 | 4 | 5 |
+| MATCH_OBI_CONFLICT | 10 | 5 | 5 |
+| MATCH_OBI_UNMAPPED | 5 | 6 | 6 |
+| SPLIT | 13 | 14 | 15 |
+| MISSED | 1 | 1 | 1 |
+| EXTRA | 5 | 5 | 4 |
 
-Full-list spend: {'calls': 66, 'prompt_tokens': 2575585, 'cached_tokens': 2443008, 'completion_tokens': 342}
+| group | entries | fulllist MATCH entries | embedding MATCH entries | v3_reference MATCH entries | verdicts |
+|---|---|---|---|---|---|
+| first 10 (worst under embedding) | 70 | 52 | 50 | 51 | {'same': 61, 'won': 5, 'lost': 3, 'changed': 1} |
+| other 21 | 107 | 92 | 107 | 106 | {'same': 92, 'lost': 15} |
 
-## Per entry, embedding vs fulllist ({'same': 61, 'won': 5, 'lost': 3, 'changed': 1})
+Full-list spend: {'calls': 170, 'prompt_tokens': 6634421, 'cached_tokens': 6330112, 'completion_tokens': 877}
+
+## Per entry, embedding vs fulllist ({'same': 153, 'won': 5, 'lost': 18, 'changed': 1})
 
 | registry | entry | curator | fulllist | embedding | v3_reference | verdict |
 |---|---|---|---|---|---|---|
@@ -32,8 +37,23 @@ Full-list spend: {'calls': 66, 'prompt_tokens': 2575585, 'cached_tokens': 244300
 | 26742691_SDY1328 | surface HBV antibody assay | enzyme-linked immunosorbent assay | enzyme-linked immunosorbent assay (MATCH) | surface HBV antibody assay (EXTRA) | surface HBV antibody assay (EXTRA) | won |
 | 28502771_SDY984 | cytometric bead array assay (2) | cytometric bead array assay | cytometric bead array assay (MATCH) | analyte detection by flow based bead assay (EXTRA) | cytometric bead array assay (MATCH) | won |
 | 19047440_SDY1289 | analyte detection by flow based bead assay | analyte detection by flow based bead assay | cytometric bead array assay (MATCH_GRANULARITY) | analyte detection by flow based bead assay (MATCH) | analyte detection by flow based bead assay (MATCH) | lost |
+| 20078211_SDY1293_pdf | real time reverse-transcription polymerase chain reaction assay | real time reverse-transcription polymerase chain reaction assay | real time polymerase chain reaction assay (MATCH_OBI_CONFLICT) | real time reverse-transcription polymerase chain reaction assay (MATCH) | real time reverse-transcription polymerase chain reaction assay (MATCH) | lost |
+| 23878721_SDY1276 | genotyping by SNP array assay | genotyping by SNP array assay | genotyping by array assay (MATCH_GRANULARITY) | genotyping by SNP array assay (MATCH) | genotyping by SNP array assay (MATCH) | lost |
+| 25834109_SDY212 | genotyping by SNP array assay | genotyping by SNP array assay | genotyping by array assay (MATCH_GRANULARITY) | genotyping by SNP array assay (MATCH) | genotyping by SNP array assay (MATCH) | lost |
+| 28137280_SDY1325 | bacterial neutralization assay | bacterial neutralization assay | pathogen neutralization assay (MATCH_GRANULARITY) | bacterial neutralization assay (MATCH) | bacterial neutralization assay (MATCH) | lost |
+| 28687661_SDY1294 | cell-cell killing assay | cell-cell killing assay | flow cytometry assay (MATCH_OBI_CONFLICT) | cell-cell killing assay (MATCH) | cell-cell killing assay (MATCH) | lost |
+| 28687661_SDY1294 | immuno staining assay | immuno staining assay | fluorescence microscopy assay (MATCH_OBI_CONFLICT) | immuno staining assay (MATCH) | immuno staining assay (MATCH) | lost |
+| 30150281_SDY1288 | bulk RNA-seq assay | bulk RNA-seq assay | RNA-seq assay (MATCH_GRANULARITY) | bulk RNA-seq assay (MATCH) | bulk RNA-seq assay (MATCH) | lost |
+| 30150281_SDY1288 | infectious agent detection assay | infectious agent detection assay | — (MATCH_OBI_UNMAPPED) | infectious agent detection assay (MATCH) | infectious agent detection assay (MATCH) | lost |
+| 31624246_SDY1654 | real time reverse-transcription polymerase chain reaction assay | real time reverse-transcription polymerase chain reaction assay | real time polymerase chain reaction assay (MATCH_OBI_CONFLICT) | real time reverse-transcription polymerase chain reaction assay (MATCH) | real time reverse-transcription polymerase chain reaction assay (MATCH) | lost |
 | 32005538_SDY1596 | flow cytometry assay | flow cytometry assay | cell viability assay (EXTRA) | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | lost |
 | 32059780_SDY1630 | bulk RNA-seq assay | bulk RNA-seq assay | RNA-seq assay (MATCH_GRANULARITY) | bulk RNA-seq assay (MATCH) | bulk RNA-seq assay (MATCH) | lost |
+| 32788292_SDY1669 | bacterial lipopolysaccharide detection in plasma assay | bacterial lipopolysaccharide detection in plasma assay | reporter gene assay (MATCH_OBI_CONFLICT) | bacterial lipopolysaccharide detection in plasma assay (MATCH) | bacterial lipopolysaccharide detection in plasma assay (MATCH) | lost |
+| 32788292_SDY1669 | polymerase chain reaction assay | real time polymerase chain reaction assay | polymerase chain reaction assay (MATCH_GRANULARITY) | real time polymerase chain reaction assay (MATCH) | polymerase chain reaction assay (MATCH_GRANULARITY) | lost |
+| 34252919_SDY2189 | antibody detection by cytometric bead array assay | antibody detection by cytometric bead array assay | cytometric bead array assay (MATCH_GRANULARITY) | antibody detection by cytometric bead array assay (MATCH) | antibody detection by cytometric bead array assay (MATCH) | lost |
+| 34252919_SDY2189 | serum neutralization of viral infectivity assay (2) | serum neutralization of viral infectivity assay | pathogen neutralization assay (EXTRA) | serum neutralization of viral infectivity assay (MATCH) | serum neutralization of viral infectivity assay (MATCH) | lost |
+| 35455361_SDY1991 | bulk RNA-seq assay | bulk RNA-seq assay | RNA-seq assay (MATCH_GRANULARITY) | bulk RNA-seq assay (MATCH) | bulk RNA-seq assay (MATCH) | lost |
+| 35455361_SDY1991 | pathogen neutralization assay | pathogen neutralization assay | serum neutralization of viral infectivity assay (MATCH_OBI_CONFLICT) | pathogen neutralization assay (MATCH) | pathogen neutralization assay (MATCH) | lost |
 | 32005538_SDY1596 | blood assay | — | — (EXTRA) | blood assay (EXTRA) | blood assay (EXTRA) | changed |
 | 19029902_SDY1264 | cytometric bead array assay | cytometric bead array assay | cytometric bead array assay (MATCH) | cytometric bead array assay (MATCH) | cytometric bead array assay (MATCH) | same |
 | 19029902_SDY1264 | enzyme-linked immunosorbent assay | enzyme-linked immunosorbent assay | enzyme-linked immunosorbent assay (MATCH) | enzyme-linked immunosorbent assay (MATCH) | enzyme-linked immunosorbent assay (MATCH) | same |
@@ -51,6 +71,34 @@ Full-list spend: {'calls': 66, 'prompt_tokens': 2575585, 'cached_tokens': 244300
 | 19047440_SDY1289 | flow cytometry assay (2) | flow cytometry assay | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | same |
 | 19047440_SDY1289 | flow cytometry assay (3) | flow cytometry assay | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | same |
 | 19047440_SDY1289 | transcription profiling by array assay | transcription profiling by array assay | transcription profiling by array assay (MATCH) | transcription profiling by array assay (MATCH) | transcription profiling by array assay (MATCH) | same |
+| 20078211_SDY1293_pdf | microscopy assay | microscopy assay | microscopy assay (MATCH) | microscopy assay (MATCH) | microscopy assay (MATCH) | same |
+| 20078211_SDY1293_pdf | transcription profiling by array assay | transcription profiling by array assay | transcription profiling by array assay (MATCH) | transcription profiling by array assay (MATCH) | transcription profiling by array assay (MATCH) | same |
+| 21357945_SDY1276_pdf | serum neutralization of viral infectivity assay | serum neutralization of viral infectivity assay | serum neutralization of viral infectivity assay (MATCH) | serum neutralization of viral infectivity assay (MATCH) | serum neutralization of viral infectivity assay (MATCH) | same |
+| 21357945_SDY1276_pdf | transcription profiling by array assay | transcription profiling by array assay | transcription profiling by array assay (MATCH) | transcription profiling by array assay (MATCH) | transcription profiling by array assay (MATCH) | same |
+| 21357945_SDY1276_pdf | viral hemagglutination inhibition assay | viral hemagglutination inhibition assay | viral hemagglutination inhibition assay (MATCH) | viral hemagglutination inhibition assay (MATCH) | viral hemagglutination inhibition assay (MATCH) | same |
+| 23151505_SDY1291_pdf | cytometric bead array assay | cytometric bead array assay | cytometric bead array assay (MATCH) | cytometric bead array assay (MATCH) | cytometric bead array assay (MATCH) | same |
+| 23151505_SDY1291_pdf | flow cytometry assay | flow cytometry assay | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | same |
+| 23151505_SDY1291_pdf | real time reverse-transcription polymerase chain reaction assay | real time reverse-transcription polymerase chain reaction assay | real time reverse-transcription polymerase chain reaction assay (MATCH) | real time reverse-transcription polymerase chain reaction assay (MATCH) | real time reverse-transcription polymerase chain reaction assay (MATCH) | same |
+| 23151505_SDY1291_pdf | transcription profiling by array assay | transcription profiling by array assay | transcription profiling by array assay (MATCH) | transcription profiling by array assay (MATCH) | transcription profiling by array assay (MATCH) | same |
+| 23151505_SDY1291_pdf | transcription profiling by array assay (2) | transcription profiling by array assay | transcription profiling by array assay (MATCH) | transcription profiling by array assay (MATCH) | transcription profiling by array assay (MATCH) | same |
+| 23266342_SDY1364 | enzyme-linked immunosorbent assay | enzyme-linked immunosorbent assay | enzyme-linked immunosorbent assay (MATCH) | enzyme-linked immunosorbent assay (MATCH) | enzyme-linked immunosorbent assay (MATCH) | same |
+| 23266342_SDY1364 | enzyme-linked immunospot assay | enzyme-linked immunospot assay | enzyme-linked immunospot assay (MATCH) | enzyme-linked immunospot assay (MATCH) | enzyme-linked immunospot assay (MATCH) | same |
+| 23266342_SDY1364 | flow cytometry assay | flow cytometry assay | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | same |
+| 23266342_SDY1364 | flow cytometry assay (2) | flow cytometry assay | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | same |
+| 23601689_SDY180 | cytometric bead array assay | cytometric bead array assay | cytometric bead array assay (MATCH) | cytometric bead array assay (MATCH) | cytometric bead array assay (MATCH) | same |
+| 23601689_SDY180 | flow cytometry assay | flow cytometry assay | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | same |
+| 23601689_SDY180 | serum neutralization of viral infectivity assay | serum neutralization of viral infectivity assay | serum neutralization of viral infectivity assay (MATCH) | serum neutralization of viral infectivity assay (MATCH) | serum neutralization of viral infectivity assay (MATCH) | same |
+| 23601689_SDY180 | single-value binding of antibody with reporter to antigen assay | single-value binding of antibody with reporter to antigen assay | single-value binding of antibody with reporter to antigen assay (MATCH) | single-value binding of antibody with reporter to antigen assay (MATCH) | single-value binding of antibody with reporter to antigen assay (MATCH) | same |
+| 23601689_SDY180 | transcription profiling by array assay | transcription profiling by array assay | transcription profiling by array assay (MATCH) | transcription profiling by array assay (MATCH) | transcription profiling by array assay (MATCH) | same |
+| 23601689_SDY180 | viral hemagglutination inhibition assay | viral hemagglutination inhibition assay | viral hemagglutination inhibition assay (MATCH) | viral hemagglutination inhibition assay (MATCH) | viral hemagglutination inhibition assay (MATCH) | same |
+| 23844129_SDY1364 | enzyme-linked immunospot assay | enzyme-linked immunospot assay | enzyme-linked immunospot assay (MATCH) | enzyme-linked immunospot assay (MATCH) | enzyme-linked immunospot assay (MATCH) | same |
+| 23844129_SDY1364 | flow cytometry assay | flow cytometry assay | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | same |
+| 23844129_SDY1364 | real time reverse-transcription polymerase chain reaction assay | real time reverse-transcription polymerase chain reaction assay | real time reverse-transcription polymerase chain reaction assay (MATCH) | real time reverse-transcription polymerase chain reaction assay (MATCH) | real time reverse-transcription polymerase chain reaction assay (MATCH) | same |
+| 23844129_SDY1364 | transcription profiling by array assay | transcription profiling by array assay | transcription profiling by array assay (MATCH) | transcription profiling by array assay (MATCH) | transcription profiling by array assay (MATCH) | same |
+| 23844129_SDY1364 | western blot assay | western blot assay | western blot assay (MATCH) | western blot assay (MATCH) | western blot assay (MATCH) | same |
+| 23878721_SDY1276 | serum neutralization of viral infectivity assay | serum neutralization of viral infectivity assay | serum neutralization of viral infectivity assay (MATCH) | serum neutralization of viral infectivity assay (MATCH) | serum neutralization of viral infectivity assay (MATCH) | same |
+| 23878721_SDY1276 | transcription profiling by array assay | transcription profiling by array assay | transcription profiling by array assay (MATCH) | transcription profiling by array assay (MATCH) | transcription profiling by array assay (MATCH) | same |
+| 23878721_SDY1276 | viral hemagglutination inhibition assay | viral hemagglutination inhibition assay | viral hemagglutination inhibition assay (MATCH) | viral hemagglutination inhibition assay (MATCH) | viral hemagglutination inhibition assay (MATCH) | same |
 | 24336226_SDY1260 | bacterial neutralization assay | — | bacterial neutralization assay (MATCH_OBI_UNMAPPED) | bacterial neutralization assay (MATCH_OBI_UNMAPPED) | bacterial neutralization assay (MATCH_OBI_UNMAPPED) | same |
 | 24336226_SDY1260 | cytometric bead array assay | antibody detection by cytometric bead array assay | cytometric bead array assay (MATCH_GRANULARITY) | cytometric bead array assay (MATCH_GRANULARITY) | cytometric bead array assay (MATCH_GRANULARITY) | same |
 | 24336226_SDY1260 | enzyme-linked immunosorbent assay | enzyme-linked immunosorbent assay | enzyme-linked immunosorbent assay (MATCH) | enzyme-linked immunosorbent assay (MATCH) | enzyme-linked immunosorbent assay (MATCH) | same |
@@ -59,10 +107,29 @@ Full-list spend: {'calls': 66, 'prompt_tokens': 2575585, 'cached_tokens': 244300
 | 24336226_SDY1260 | flow cytometry assay | flow cytometry assay | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | same |
 | 24336226_SDY1260 | flow cytometry assay (2) | flow cytometry assay | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | same |
 | 24336226_SDY1260 | transcription profiling by array assay | transcription profiling by array assay | transcription profiling by array assay (MATCH) | transcription profiling by array assay (MATCH) | transcription profiling by array assay (MATCH) | same |
+| 24725414_SDY80 | enzyme-linked immunospot assay | enzyme-linked immunospot assay | enzyme-linked immunospot assay (MATCH) | enzyme-linked immunospot assay (MATCH) | enzyme-linked immunospot assay (MATCH) | same |
+| 24725414_SDY80 | flow cytometry assay | flow cytometry assay | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | same |
+| 24725414_SDY80 | serum neutralization of viral infectivity assay | serum neutralization of viral infectivity assay | serum neutralization of viral infectivity assay (MATCH) | serum neutralization of viral infectivity assay (MATCH) | serum neutralization of viral infectivity assay (MATCH) | same |
+| 24725414_SDY80 | transcription profiling by array assay | transcription profiling by array assay | transcription profiling by array assay (MATCH) | transcription profiling by array assay (MATCH) | transcription profiling by array assay (MATCH) | same |
+| 25367297_SDY404_pdf | flow cytometry assay | flow cytometry assay | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | same |
+| 25367297_SDY404_pdf | viral hemagglutination inhibition assay | viral hemagglutination inhibition assay | viral hemagglutination inhibition assay (MATCH) | viral hemagglutination inhibition assay (MATCH) | viral hemagglutination inhibition assay (MATCH) | same |
+| 25367297_SDY404_pdf | western blot assay | western blot assay | western blot assay (MATCH) | western blot assay (MATCH) | western blot assay (MATCH) | same |
+| 25834109_SDY212 | MHC tetramer/multimer assay measuring binding of a T cell epitope:MHC:TCR complex | MHC tetramer/multimer assay measuring binding of a T cell epitope:MHC:TCR complex | MHC tetramer/multimer assay measuring binding of a T cell epitope:MHC:TCR complex (MATCH) | MHC tetramer/multimer assay measuring binding of a T cell epitope:MHC:TCR complex (MATCH) | MHC tetramer/multimer assay measuring binding of a T cell epitope:MHC:TCR complex (MATCH) | same |
+| 25834109_SDY212 | cytometric bead array assay | cytometric bead array assay | cytometric bead array assay (MATCH) | cytometric bead array assay (MATCH) | cytometric bead array assay (MATCH) | same |
+| 25834109_SDY212 | enzyme-linked immunosorbent assay | enzyme-linked immunosorbent assay | enzyme-linked immunosorbent assay (MATCH) | enzyme-linked immunosorbent assay (MATCH) | enzyme-linked immunosorbent assay (MATCH) | same |
+| 25834109_SDY212 | flow cytometry assay | flow cytometry assay | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | same |
+| 25834109_SDY212 | flow cytometry assay (2) | flow cytometry assay | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | same |
+| 25834109_SDY212 | transcription profiling by array assay | transcription profiling by array assay | transcription profiling by array assay (MATCH) | transcription profiling by array assay (MATCH) | transcription profiling by array assay (MATCH) | same |
+| 25834109_SDY212 | viral hemagglutination inhibition assay | viral hemagglutination inhibition assay | viral hemagglutination inhibition assay (MATCH) | viral hemagglutination inhibition assay (MATCH) | viral hemagglutination inhibition assay (MATCH) | same |
+| 25834109_SDY212 | viral plaque assay | viral plaque assay | viral plaque assay (MATCH) | viral plaque assay (MATCH) | viral plaque assay (MATCH) | same |
 | 26742691_SDY1328 | enzyme-linked immunosorbent assay | enzyme-linked immunosorbent assay | enzyme-linked immunosorbent assay (MATCH) | enzyme-linked immunosorbent assay (MATCH) | enzyme-linked immunosorbent assay (MATCH) | same |
 | 26742691_SDY1328 | enzyme-linked immunosorbent assay (2) | enzyme-linked immunosorbent assay | enzyme-linked immunosorbent assay (MATCH) | enzyme-linked immunosorbent assay (MATCH) | enzyme-linked immunosorbent assay (MATCH) | same |
 | 26742691_SDY1328 | flow cytometry assay | flow cytometry assay | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | same |
 | 26742691_SDY1328 | transcription profiling by array assay | transcription profiling by array assay | transcription profiling by array assay (MATCH) | transcription profiling by array assay (MATCH) | transcription profiling by array assay (MATCH) | same |
+| 28137280_SDY1325 | enzyme-linked immunospot assay | enzyme-linked immunospot assay | enzyme-linked immunospot assay (MATCH) | enzyme-linked immunospot assay (MATCH) | enzyme-linked immunospot assay (MATCH) | same |
+| 28137280_SDY1325 | flow cytometry assay | flow cytometry assay | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | same |
+| 28137280_SDY1325 | real time reverse-transcription polymerase chain reaction assay | real time reverse-transcription polymerase chain reaction assay | real time reverse-transcription polymerase chain reaction assay (MATCH) | real time reverse-transcription polymerase chain reaction assay (MATCH) | real time reverse-transcription polymerase chain reaction assay (MATCH) | same |
+| 28137280_SDY1325 | transcription profiling by array assay | transcription profiling by array assay | transcription profiling by array assay (MATCH) | transcription profiling by array assay (MATCH) | transcription profiling by array assay (MATCH) | same |
 | 28502771_SDY984 | amplicon sequencing assay | amplicon sequencing assay | amplicon sequencing assay (MATCH) | amplicon sequencing assay (MATCH) | amplicon sequencing assay (MATCH) | same |
 | 28502771_SDY984 | cytometric bead array assay | cytometric bead array assay | cytometric bead array assay (MATCH) | cytometric bead array assay (MATCH) | cytometric bead array assay (MATCH) | same |
 | 28502771_SDY984 | enzyme-linked immunosorbent assay | enzyme-linked immunosorbent assay | enzyme-linked immunosorbent assay (MATCH) | enzyme-linked immunosorbent assay (MATCH) | enzyme-linked immunosorbent assay (MATCH) | same |
@@ -74,10 +141,29 @@ Full-list spend: {'calls': 66, 'prompt_tokens': 2575585, 'cached_tokens': 244300
 | 28502771_SDY984 | real time polymerase chain reaction assay | real time polymerase chain reaction assay | real time polymerase chain reaction assay (MATCH) | real time polymerase chain reaction assay (MATCH) | real time polymerase chain reaction assay (MATCH) | same |
 | 28502771_SDY984 | tandem mass spectrometry assay | — | tandem mass spectrometry assay (EXTRA) | tandem mass spectrometry assay (EXTRA) | tandem mass spectrometry assay (EXTRA) | same |
 | 28502771_SDY984 | transcription profiling by array assay | transcription profiling by array assay | transcription profiling by array assay (MATCH) | transcription profiling by array assay (MATCH) | transcription profiling by array assay (MATCH) | same |
+| 28687661_SDY1294 | flow cytometry assay | flow cytometry assay | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | same |
+| 28687661_SDY1294 | flow cytometry assay (2) | flow cytometry assay | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | same |
+| 28687661_SDY1294 | serum neutralization of viral infectivity assay | serum neutralization of viral infectivity assay | serum neutralization of viral infectivity assay (MATCH) | serum neutralization of viral infectivity assay (MATCH) | serum neutralization of viral infectivity assay (MATCH) | same |
+| 28687661_SDY1294 | transcription profiling by array assay | transcription profiling by array assay | transcription profiling by array assay (MATCH) | transcription profiling by array assay (MATCH) | transcription profiling by array assay (MATCH) | same |
 | 28854372_SDY1373 | bulk RNA-seq assay | polyA-selected RNA sequencing assay | bulk RNA-seq assay (MATCH_OBI_CONFLICT) | bulk RNA-seq assay (MATCH_OBI_CONFLICT) | bulk RNA-seq assay (MATCH_OBI_CONFLICT) | same |
 | 28854372_SDY1373 | cytometric bead array assay | analyte detection by flow based bead assay | cytometric bead array assay (MATCH_GRANULARITY) | cytometric bead array assay (MATCH_GRANULARITY) | cytometric bead array assay (MATCH_GRANULARITY) | same |
 | 28854372_SDY1373 | enzyme-linked immunosorbent assay | enzyme-linked immunosorbent assay | enzyme-linked immunosorbent assay (MATCH) | enzyme-linked immunosorbent assay (MATCH) | enzyme-linked immunosorbent assay (MATCH) | same |
 | 28854372_SDY1373 | flow cytometry assay | flow cytometry assay | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | same |
+| 30111633_SDY1389 | MHC tetramer/multimer assay measuring binding of a T cell epitope:MHC:TCR complex | MHC tetramer/multimer assay measuring binding of a T cell epitope:MHC:TCR complex | MHC tetramer/multimer assay measuring binding of a T cell epitope:MHC:TCR complex (MATCH) | MHC tetramer/multimer assay measuring binding of a T cell epitope:MHC:TCR complex (MATCH) | MHC tetramer/multimer assay measuring binding of a T cell epitope:MHC:TCR complex (MATCH) | same |
+| 30111633_SDY1389 | T cell receptor repertoire sequencing assay | T cell receptor repertoire sequencing assay | T cell receptor repertoire sequencing assay (MATCH) | T cell receptor repertoire sequencing assay (MATCH) | T cell receptor repertoire sequencing assay (MATCH) | same |
+| 30111633_SDY1389 | bulk RNA-seq assay | bulk RNA-seq assay | bulk RNA-seq assay (MATCH) | bulk RNA-seq assay (MATCH) | bulk RNA-seq assay (MATCH) | same |
+| 30111633_SDY1389 | cell proliferation assay | cell proliferation assay | cell proliferation assay (MATCH) | cell proliferation assay (MATCH) | cell proliferation assay (MATCH) | same |
+| 30111633_SDY1389 | cytometry time of flight assay | cytometry time of flight assay | cytometry time of flight assay (MATCH) | cytometry time of flight assay (MATCH) | cytometry time of flight assay (MATCH) | same |
+| 30111633_SDY1389 | flow cytometry assay | flow cytometry assay | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | same |
+| 30150281_SDY1288 | cytometric bead array assay | cytometric bead array assay | cytometric bead array assay (MATCH) | cytometric bead array assay (MATCH) | cytometric bead array assay (MATCH) | same |
+| 30150281_SDY1288 | cytometry time of flight assay | cytometry time of flight assay | cytometry time of flight assay (MATCH) | cytometry time of flight assay (MATCH) | cytometry time of flight assay (MATCH) | same |
+| 30150281_SDY1288 | enzyme-linked immunosorbent assay | enzyme-linked immunosorbent assay | enzyme-linked immunosorbent assay (MATCH) | enzyme-linked immunosorbent assay (MATCH) | enzyme-linked immunosorbent assay (MATCH) | same |
+| 30150281_SDY1288 | enzyme-linked immunosorbent assay (2) | enzyme-linked immunosorbent assay | enzyme-linked immunosorbent assay (MATCH) | enzyme-linked immunosorbent assay (MATCH) | enzyme-linked immunosorbent assay (MATCH) | same |
+| 30150281_SDY1288 | real time reverse-transcription polymerase chain reaction assay | real time reverse-transcription polymerase chain reaction assay | real time reverse-transcription polymerase chain reaction assay (MATCH) | real time reverse-transcription polymerase chain reaction assay (MATCH) | real time reverse-transcription polymerase chain reaction assay (MATCH) | same |
+| 30150281_SDY1288 | real time reverse-transcription polymerase chain reaction assay (2) | real time reverse-transcription polymerase chain reaction assay | real time reverse-transcription polymerase chain reaction assay (MATCH) | real time reverse-transcription polymerase chain reaction assay (MATCH) | real time reverse-transcription polymerase chain reaction assay (MATCH) | same |
+| 31624246_SDY1654 | cell proliferation assay | cell proliferation assay | cell proliferation assay (MATCH) | cell proliferation assay (MATCH) | cell proliferation assay (MATCH) | same |
+| 31624246_SDY1654 | flow cytometry assay | flow cytometry assay | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | same |
+| 31624246_SDY1654 | single-cell RNA sequencing assay | single-cell RNA sequencing assay | single-cell RNA sequencing assay (MATCH) | single-cell RNA sequencing assay (MATCH) | single-cell RNA sequencing assay (MATCH) | same |
 | 32005538_SDY1596 | cytometric bead array assay | cytometric bead array assay | cytometric bead array assay (MATCH) | cytometric bead array assay (MATCH) | cytometric bead array assay (MATCH) | same |
 | 32005538_SDY1596 | flow cytometry assay (2) | flow cytometry assay | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | same |
 | 32005538_SDY1596 | population count assay | — | population count assay (MATCH_OBI_UNMAPPED) | population count assay (MATCH_OBI_UNMAPPED) | population count assay (MATCH_OBI_UNMAPPED) | same |
@@ -96,3 +182,29 @@ Full-list spend: {'calls': 66, 'prompt_tokens': 2575585, 'cached_tokens': 244300
 | 32717743_SDY1655 | flow cytometry assay | flow cytometry assay | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | same |
 | 32717743_SDY1655 | flow cytometry assay (2) | flow cytometry assay | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | same |
 | 32717743_SDY1655 | real time reverse-transcription polymerase chain reaction assay | real time reverse-transcription polymerase chain reaction assay | real time reverse-transcription polymerase chain reaction assay (MATCH) | real time reverse-transcription polymerase chain reaction assay (MATCH) | real time reverse-transcription polymerase chain reaction assay (MATCH) | same |
+| 32788292_SDY1669 | Olink assay | Olink assay | Olink assay (MATCH) | Olink assay (MATCH) | Olink assay (MATCH) | same |
+| 32788292_SDY1669 | bulk RNA-seq assay | bulk RNA-seq assay | bulk RNA-seq assay (MATCH) | bulk RNA-seq assay (MATCH) | bulk RNA-seq assay (MATCH) | same |
+| 32788292_SDY1669 | cellular indexing of transcriptomes and epitopes by sequencing | cellular indexing of transcriptomes and epitopes by sequencing | cellular indexing of transcriptomes and epitopes by sequencing (MATCH) | cellular indexing of transcriptomes and epitopes by sequencing (MATCH) | cellular indexing of transcriptomes and epitopes by sequencing (MATCH) | same |
+| 32788292_SDY1669 | cytometry time of flight assay | cytometry time of flight assay | cytometry time of flight assay (MATCH) | cytometry time of flight assay (MATCH) | cytometry time of flight assay (MATCH) | same |
+| 32788292_SDY1669 | enzyme-linked immunosorbent assay | enzyme-linked immunosorbent assay | enzyme-linked immunosorbent assay (MATCH) | enzyme-linked immunosorbent assay (MATCH) | enzyme-linked immunosorbent assay (MATCH) | same |
+| 32788292_SDY1669 | flow cytometry assay | flow cytometry assay | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | same |
+| 34128959_SDY1708 | cytometry time of flight assay | cytometry time of flight assay | cytometry time of flight assay (MATCH) | cytometry time of flight assay (MATCH) | cytometry time of flight assay (MATCH) | same |
+| 34128959_SDY1708 | single-cell ATAC-seq | single-cell ATAC-seq | single-cell ATAC-seq (MATCH) | single-cell ATAC-seq (MATCH) | single-cell ATAC-seq (MATCH) | same |
+| 34128959_SDY1708 | single-cell RNA sequencing assay | single-cell RNA sequencing assay | single-cell RNA sequencing assay (MATCH) | single-cell RNA sequencing assay (MATCH) | single-cell RNA sequencing assay (MATCH) | same |
+| 34252919_SDY2189 | Olink assay | Olink assay | Olink assay (MATCH) | Olink assay (MATCH) | Olink assay (MATCH) | same |
+| 34252919_SDY2189 | bulk RNA-seq assay | bulk RNA-seq assay | bulk RNA-seq assay (MATCH) | bulk RNA-seq assay (MATCH) | bulk RNA-seq assay (MATCH) | same |
+| 34252919_SDY2189 | cellular indexing of transcriptomes and epitopes by sequencing | cellular indexing of transcriptomes and epitopes by sequencing | cellular indexing of transcriptomes and epitopes by sequencing (MATCH) | cellular indexing of transcriptomes and epitopes by sequencing (MATCH) | cellular indexing of transcriptomes and epitopes by sequencing (MATCH) | same |
+| 34252919_SDY2189 | cytometry time of flight assay | cytometry time of flight assay | cytometry time of flight assay (MATCH) | cytometry time of flight assay (MATCH) | cytometry time of flight assay (MATCH) | same |
+| 34252919_SDY2189 | enzyme-linked immunosorbent assay | enzyme-linked immunosorbent assay | enzyme-linked immunosorbent assay (MATCH) | enzyme-linked immunosorbent assay (MATCH) | enzyme-linked immunosorbent assay (MATCH) | same |
+| 34252919_SDY2189 | flow cytometry assay | flow cytometry assay | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | same |
+| 34252919_SDY2189 | real time reverse-transcription polymerase chain reaction assay | real time reverse-transcription polymerase chain reaction assay | real time reverse-transcription polymerase chain reaction assay (MATCH) | real time reverse-transcription polymerase chain reaction assay (MATCH) | real time reverse-transcription polymerase chain reaction assay (MATCH) | same |
+| 34252919_SDY2189 | serum neutralization of viral infectivity assay | serum neutralization of viral infectivity assay | serum neutralization of viral infectivity assay (MATCH) | serum neutralization of viral infectivity assay (MATCH) | serum neutralization of viral infectivity assay (MATCH) | same |
+| 35062294_SDY1995 | bulk RNA-seq assay | bulk RNA-seq assay | bulk RNA-seq assay (MATCH) | bulk RNA-seq assay (MATCH) | bulk RNA-seq assay (MATCH) | same |
+| 35062294_SDY1995 | enzyme-linked immunosorbent assay | enzyme-linked immunosorbent assay | enzyme-linked immunosorbent assay (MATCH) | enzyme-linked immunosorbent assay (MATCH) | enzyme-linked immunosorbent assay (MATCH) | same |
+| 35062294_SDY1995 | flow cytometry assay | flow cytometry assay | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | same |
+| 35062294_SDY1995 | reverse transcription polymerase chain reaction assay | reverse transcription polymerase chain reaction assay | reverse transcription polymerase chain reaction assay (MATCH) | reverse transcription polymerase chain reaction assay (MATCH) | reverse transcription polymerase chain reaction assay (MATCH) | same |
+| 35455361_SDY1991 | enzyme-linked immunosorbent assay | enzyme-linked immunosorbent assay | enzyme-linked immunosorbent assay (MATCH) | enzyme-linked immunosorbent assay (MATCH) | enzyme-linked immunosorbent assay (MATCH) | same |
+| 35455361_SDY1991 | flow cytometry assay | flow cytometry assay | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | same |
+| 36656789_SDY1393 | bulk RNA-seq assay | bulk RNA-seq assay | bulk RNA-seq assay (MATCH) | bulk RNA-seq assay (MATCH) | bulk RNA-seq assay (MATCH) | same |
+| 36656789_SDY1393 | flow cytometry assay | flow cytometry assay | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | flow cytometry assay (MATCH) | same |
+| 36656789_SDY1393 | viral hemagglutination inhibition assay | viral hemagglutination inhibition assay | viral hemagglutination inhibition assay (MATCH) | viral hemagglutination inhibition assay (MATCH) | viral hemagglutination inhibition assay (MATCH) | same |
