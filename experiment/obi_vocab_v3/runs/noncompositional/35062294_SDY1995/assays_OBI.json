@@ -1,0 +1,98 @@
+{
+  "enzyme-linked immunosorbent assay": {
+    "name_in_paper": [
+      "anti-DENV IgG and IgM ELISA"
+    ],
+    "standard_technique_name": "enzyme-linked immunosorbent assay",
+    "aliases": [],
+    "sample_type": "acute phase serum",
+    "readouts": "dengue IgG and IgM serology",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "2.2. Dengue Serology and PCR Tests",
+      "sentence_ids": [
+        "S32"
+      ],
+      "quote": "DENV serology tests were performed with anti-DENV IgG and IgM ELISA as previously described."
+    },
+    "obi_id": "OBI:0000661",
+    "obi_label": "enzyme-linked immunosorbent assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.7588,
+    "obi_granularity": "EXACT"
+  },
+  "reverse transcription polymerase chain reaction assay": {
+    "name_in_paper": [
+      "Reverse transcription-PCR"
+    ],
+    "standard_technique_name": "reverse transcription polymerase chain reaction",
+    "aliases": [
+      "reverse transcription polymerase chain reaction (RT-PCR)",
+      "RT-PCR"
+    ],
+    "sample_type": "acute phase serum",
+    "readouts": "dengue virus RNA detection",
+    "generate_claim": true,
+    "source": null,
+    "evidence": {
+      "section": "2.2. Dengue Serology and PCR Tests",
+      "sentence_ids": [],
+      "quote": "Reverse transcription-PCR was performed by using the DV1 and DV3 primer set and the ALD 1 and ALD 2 primer set in one reaction with details specified previously."
+    },
+    "obi_id": "OBI:0001170",
+    "obi_label": "reverse transcription polymerase chain reaction assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.7381,
+    "obi_granularity": "EXACT"
+  },
+  "flow cytometry assay": {
+    "name_in_paper": [
+      "Flow cytometry analysis"
+    ],
+    "standard_technique_name": "flow cytometry",
+    "aliases": [],
+    "sample_type": "peripheral blood mononuclear cells",
+    "readouts": "frequencies and phenotypes of CD4+CD8+ double-positive, CD4+ single-positive, and CD8+ single-positive T cells",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "2.3. Flow Cytometry Analysis and Cell Sorting for RNA Sequencing",
+      "sentence_ids": [
+        "S34"
+      ],
+      "quote": "PBMCs were stained with anti-human CD3, CD4, CD8, CD14, CD19, CD56, and live/dead viability antibodies."
+    },
+    "obi_id": "OBI:0000916",
+    "obi_label": "flow cytometry assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.7858,
+    "obi_granularity": "EXACT"
+  },
+  "bulk RNA-seq assay": {
+    "name_in_paper": [
+      "RNA Sequencing"
+    ],
+    "standard_technique_name": "bulk RNA sequencing",
+    "aliases": [
+      "RNA-sequencing",
+      "RNA-seq"
+    ],
+    "sample_type": null,
+    "readouts": "whole-transcriptome gene expression profiles from sorted T-cell subsets",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "2.4. RNA Sequencing",
+      "sentence_ids": [
+        "S44"
+      ],
+      "quote": "Samples were sequenced in 3 batches using a NovaSeq 6000 system (Illumina, San Diego, CA, USA) to obtain 50-bp paired-end reads."
+    },
+    "obi_id": "OBI:0003090",
+    "obi_label": "bulk RNA-seq assay",
+    "resource": "exact_original_llm",
+    "obi_confidence": 0.6904,
+    "obi_granularity": "EXACT"
+  }
+}

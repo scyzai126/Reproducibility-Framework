@@ -1,24 +1,24 @@
 # Pruned (701) vs full (1794) vocabulary, assay_result_v3 against benchmark v5
 
-| metric | pruned | full | v3_reference |
-|---|---|---|---|
-| papers scored | 31 | 31 | 31 |
-| curated rows | 157 | 157 | 157 |
-| agent entries | 177 | 177 | 177 |
-| matched | 156 | 156 | 156 |
-| exact (same OBI term as curator) | 141 | 130 | 140 |
-| OBI ok (same or parent/child) | 145 | 139 | 145 |
-| obi_exact_rate | 90.4% | 83.3% | 89.7% |
-| obi_recall | 92.4% | 88.5% | 92.4% |
-| unresolved (no term) | 2 | 3 | 2 |
-| lookup errors | 0 | 0 | 0 |
-| calls spent | 495 | 510 | 338 |
-| MATCH | 141 | 130 | 140 |
-| MATCH_GRANULARITY | 4 | 9 | 5 |
-| MATCH_OBI_CONFLICT | 5 | 10 | 5 |
-| MATCH_OBI_UNMAPPED | 6 | 7 | 6 |
-| MISSED | 1 | 1 | 1 |
-| EXTRA | 5 | 4 | 4 |
+| metric | pruned | full | noncompositional | v3_reference |
+|---|---|---|---|---|
+| papers scored | 31 | 31 | 31 | 31 |
+| curated rows | 157 | 157 | 157 | 157 |
+| agent entries | 177 | 177 | 177 | 177 |
+| matched | 156 | 156 | 156 | 156 |
+| exact (same OBI term as curator) | 141 | 130 | 140 | 140 |
+| OBI ok (same or parent/child) | 145 | 139 | 144 | 145 |
+| obi_exact_rate | 90.4% | 83.3% | 89.7% | 89.7% |
+| obi_recall | 92.4% | 88.5% | 91.7% | 92.4% |
+| unresolved (no term) | 2 | 3 | 2 | 2 |
+| lookup errors | 0 | 0 | 0 | 0 |
+| calls spent | 495 | 510 | 495 | 338 |
+| MATCH | 141 | 130 | 140 | 140 |
+| MATCH_GRANULARITY | 4 | 9 | 4 | 5 |
+| MATCH_OBI_CONFLICT | 5 | 10 | 6 | 5 |
+| MATCH_OBI_UNMAPPED | 6 | 7 | 6 | 6 |
+| MISSED | 1 | 1 | 1 | 1 |
+| EXTRA | 5 | 4 | 5 | 4 |
 
 ## pruned vs full: entries that chose different terms (15)
 
@@ -41,6 +41,14 @@ counts: {'pruned': 12, 'no curated term': 1, 'full': 1, 'neither': 1, 'changed':
 | 32788292_SDY1669 | bacterial lipopolysaccharide detection in plasma assay | OBI:0003793 bacterial lipopolysaccharide detection in plasma assay | OBI:0000904 reporter cell line analyte detection bioassay | OBI:0003793 bacterial lipopolysaccharide detection in plasma assay | pruned |
 | 34252919_SDY2189 | enzyme-linked immunosorbent assay | OBI:0000661 enzyme-linked immunosorbent assay | OBI:0001657 ELISA measuring binding of a B cell epitope:antibody complex (compositional) | OBI:0000661 enzyme-linked immunosorbent assay | pruned |
 | 35455361_SDY1991 | flow cytometry assay | OBI:0000916 flow cytometry assay | OBI:1110207 assay detecting IFN-gamma production (compositional) | OBI:0000916 flow cytometry assay | pruned |
+
+## pruned vs noncompositional: entries that chose different terms (1)
+
+counts: {'pruned': 1, 'changed': 1, 'noncompositional_term_compositional': 0, 'noncompositional_term_outside_pruned_index': 0}
+
+| registry | entry | pruned | noncompositional | curator | agrees |
+|---|---|---|---|---|---|
+| 20078211_SDY1293_pdf | microscopy assay | OBI:0002119 microscopy assay | OBI:0002649 blood microbiology assay | OBI:0002119 microscopy assay | pruned |
 
 ## pruned vs v3_reference: entries that chose different terms (2)
 

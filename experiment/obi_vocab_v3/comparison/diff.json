@@ -48,6 +48,30 @@
       "errors": 0,
       "calls": 510
     },
+    "noncompositional": {
+      "papers": 31,
+      "benchmark_total": 157,
+      "ours_total": 177,
+      "matched": 156,
+      "exact": 140,
+      "obi_ok": 144,
+      "missed": 1,
+      "extra": 5,
+      "obi_exact_rate": 0.8974358974358975,
+      "obi_recall": 0.9171974522292994,
+      "status_counts": {
+        "MATCH": 140,
+        "MATCH_GRANULARITY": 4,
+        "MATCH_OBI_CONFLICT": 6,
+        "MATCH_OBI_UNMAPPED": 6,
+        "SPLIT": 14,
+        "MISSED": 1,
+        "EXTRA": 5
+      },
+      "unresolved": 2,
+      "errors": 0,
+      "calls": 495
+    },
     "v3_reference": {
       "papers": 31,
       "benchmark_total": 157,
@@ -493,6 +517,36 @@
         }
       }
     ],
+    "pruned_vs_noncompositional": [
+      {
+        "registry": "20078211_SDY1293_pdf",
+        "key": "microscopy assay",
+        "pruned": {
+          "obi_id": "OBI:0002119",
+          "obi_label": "microscopy assay",
+          "resource": "embedding_llm",
+          "granularity": "BROAD"
+        },
+        "noncompositional": {
+          "obi_id": "OBI:0002649",
+          "obi_label": "blood microbiology assay",
+          "resource": "embedding_llm",
+          "granularity": "BROAD"
+        },
+        "curator": {
+          "obi_id": "OBI:0002119",
+          "obi_label": "microscopy assay"
+        },
+        "agrees_with_curator": "pruned",
+        "noncompositional_term_is_compositional": false,
+        "noncompositional_term_outside_pruned_index": false,
+        "noncompositional_term_outside_noncompositional_index": false,
+        "status": {
+          "pruned": "MATCH",
+          "noncompositional": "MATCH_OBI_CONFLICT"
+        }
+      }
+    ],
     "pruned_vs_v3_reference": [
       {
         "registry": "28502771_SDY984",
@@ -558,6 +612,12 @@
       "changed": 15,
       "full_term_compositional": 7,
       "full_term_outside_pruned_index": 7
+    },
+    "pruned_vs_noncompositional": {
+      "pruned": 1,
+      "changed": 1,
+      "noncompositional_term_compositional": 0,
+      "noncompositional_term_outside_pruned_index": 0
     },
     "pruned_vs_v3_reference": {
       "no curated term": 1,
