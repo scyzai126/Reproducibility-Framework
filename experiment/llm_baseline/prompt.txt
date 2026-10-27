@@ -1,0 +1,12 @@
+Read this paper and list every experimental assay the authors performed.
+
+For each assay give:
+- name_in_paper: the name the paper uses for it
+- quote: one short sentence copied verbatim from the paper that shows the assay was performed
+- obi_id: the best matching assay term in OBI (Ontology for Biomedical Investigations), e.g. OBI:0000070
+- obi_label: that term's OBI label
+
+Return only JSON, in this shape:
+{"assays": [{"name_in_paper": "...", "quote": "...", "obi_id": "...", "obi_label": "..."}]}
+
+Paper title: {paper_title}
