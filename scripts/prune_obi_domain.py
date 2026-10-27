@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Derive the live OBI assay vocabulary from the full assay branch.
 
-Builds `obi_assay_pruned_index.json` from `obi.obo` in three stages:
+Builds `obi_assay_pruned_index.json` from `obi.obo` in three stages, and also writes the
+stage-1 result, `obi_assay_generic_index.json` (1249 terms: compositional labels gone, every
+domain still in), for experiments that want to attribute an effect to one prune at a time:
 
     5218  --[ assay branch ]-->  1794  --[ measuring/detecting compositional filter ]-->  1249
           --[ tier A-I subtrees ]-->  701
@@ -27,7 +29,7 @@ goes and why; `--show-dropped` reprints the terms themselves on demand. Because 
 derived from `obi.obo` and the roots below, it is reproducible and verified as such by
 `apps/api/tests/test_assay_obi_mapper.py::test_index_is_reproducible_from_the_full_source`.
 
-Idempotent — rebuilding from source always lands on the same 701 terms in the same order.
+Idempotent — rebuilding from source always lands on the same 701 (and 1249) terms in the same order.
 
     ./.venv/bin/python scripts/prune_obi_domain.py [--dry-run] [--show-dropped]
 """
@@ -45,6 +47,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 OBI_DIR = REPO_ROOT / "data" / "OBI"
 OBO_PATH = OBI_DIR / "obi.obo"
 INDEX_PATH = OBI_DIR / "obi_assay_pruned_index.json"
+GENERIC_PATH = OBI_DIR / "obi_assay_generic_index.json"  # stage 1 only
 
 sys.path.insert(0, str(REPO_ROOT / "apps" / "api"))
 from app.agent.assay_obi_mapper import _is_generic_assay_term  # noqa: E402
@@ -228,21 +231,26 @@ def annotate(
 
 
 def build_index(obo_path: Path = OBO_PATH) -> tuple[list[dict], list[dict], list[dict], list[dict]]:
-    """Run every stage from obi.obo. Returns (assay branch, generic, kept, removed)."""
+    """Run every stage from obi.obo. Returns (assay branch, generic, kept, removed).
+
+    `generic` and `kept` are annotated alike, so an entry reads the same in
+    `obi_assay_generic_index.json` and `obi_assay_pruned_index.json` (and in the full list
+    scripts/build_obi_assay_terms.py writes with the same helpers).
+    """
     source = assay_branch(obo_path)
+    _, children, definitions = parse_obo(obo_path)
 
     # Stage 1 — compositional labels
-    generic = [t for t in source if _is_generic_assay_term(t["id"], t["label"])]
+    generic = annotate(
+        [t for t in source if _is_generic_assay_term(t["id"], t["label"])], definitions, children
+    )
 
     # Stage 2 — out-of-scope domains
-    _, children, definitions = parse_obo(obo_path)
     dropped_ids = out_of_scope_ids(generic, children)
 
     # Entries keep their fields and obi.obo order: _build_lookup indexes synonyms with
     # setdefault, so index order decides synonym-collision ties.
-    kept = annotate(
-        [t for t in generic if t["id"] not in dropped_ids], definitions, children
-    )
+    kept = [t for t in generic if t["id"] not in dropped_ids]
     removed = [t for t in generic if t["id"] in dropped_ids]
     return source, generic, kept, removed
 
@@ -274,10 +282,9 @@ def main() -> None:
         print("--dry-run: nothing written")
         return
 
-    INDEX_PATH.write_text(
-        json.dumps(kept, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
-    )
-    print(f"wrote {INDEX_PATH.relative_to(REPO_ROOT)} ({len(kept)} terms)")
+    for path, terms in ((GENERIC_PATH, generic), (INDEX_PATH, kept)):
+        path.write_text(json.dumps(terms, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        print(f"wrote {path.relative_to(REPO_ROOT)} ({len(terms)} terms)")
 
 
 if __name__ == "__main__":

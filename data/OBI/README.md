@@ -9,6 +9,7 @@ each term's `definition` and `n_descendants` — one command, from `obi.obo` alo
 |---|---|---|---|
 | `obi_assay_pruned_index.json` | 701 | 212 KB | **Live vocabulary.** Exact matching + the candidate pool for semantic search. Derived — do not hand-edit. |
 | `obi_assay_pruned_embeddings.json` | 701 | 28 MB | **Live vectors.** `text-embedding-3-small`, 1536-dim, one row per index term — see *The vectors*. **Not on disk since 2026-10-27** (deleted ahead of the full-vocabulary experiment; the former `obi_generic_embeddings.json` is in git history). Rebuild with `scripts/build_obi_embeddings.py`; the full list's vectors go to `obi_assay_full_embeddings.json`. |
+| `obi_assay_generic_index.json` | 1249 | 0.4 MB | **Stage 1 only.** The assay branch with the measuring/detecting compositional labels removed and every domain still in — the 701 index before its domain prune. Same six fields; written by `scripts/prune_obi_domain.py` alongside the pruned index, for experiments that attribute an effect to one prune at a time. Not on the serving path. Derived — do not hand-edit. |
 | `obi_assay_full_index.json` | 1794 | 0.7 MB | **Unpruned assay branch.** Every `is_a` descendant of `assay`, in exactly the index's format (same six fields, same helpers), so `run_obi_map.py --terms` can take it for a full-vocabulary experiment. Not on the serving path. Derived by `scripts/build_obi_assay_terms.py` — do not hand-edit. |
 | `obi.obo` | 5218 | 1.5 MB | Upstream OBI release 2026-05-08. The only source: the index and the 1794-term assay branch are both derived from it. Off the serving path, but required to rebuild. |
 | `README.md` | — | — | This file: the record of what each prune removes and why. |
@@ -137,7 +138,7 @@ The mapper still reconciles vectors with the index **by id** in `_top_k_candidat
 ## Rebuilding
 
 One command. It reads `obi.obo`, takes the assay branch, applies both prunes, adds `definition`
-and `n_descendants`, and rewrites `obi_assay_pruned_index.json`. Idempotent — rebuilding always lands on the same terms in the same
+and `n_descendants`, and rewrites `obi_assay_pruned_index.json` and `obi_assay_generic_index.json`. Idempotent — rebuilding always lands on the same terms in the same
 order, so a rerun is a no-op.
 
 ```bash
