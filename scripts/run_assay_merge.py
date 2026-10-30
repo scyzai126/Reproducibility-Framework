@@ -105,7 +105,8 @@ def canonicalize_one(registry_dir: Path, remap: bool = False) -> None:
         try:
             obi = enrich_assays_with_obi(assays)
             # Round 5's one paid step, as the pipeline runs it: every BROAD mapping is asked
-            # once more for a term naming the function.
+            # once more, over the whole vocabulary minus that term, for the same technique made
+            # more specific; a parent or sibling answer is refused.
             obi, repicked, _attempts = repick_broad(assays, obi)
         finally:
             assay_trace.stop()

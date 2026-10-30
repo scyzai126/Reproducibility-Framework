@@ -891,7 +891,7 @@ async def test_a_broad_mapping_that_blocked_a_fold_is_repicked(paper, monkeypatc
         out = {k: dict(v) for k, v in obi.items()}
         key = "flow cytometry for DC activation"
         out[key].update(obi_id="OBI:0002766", obi_label="cytokine assay",
-                        resource="embedding_llm_repick", obi_confidence=0.6,
+                        resource="fulllist_llm_repick", obi_confidence=0.6,
                         obi_granularity="EXACT",
                         obi_repicked_from={"obi_id": "OBI:0000916",
                                            "obi_label": "flow cytometry assay"})
@@ -942,7 +942,7 @@ async def test_a_lone_broad_mapping_is_repicked_without_any_sibling(paper, monke
     def fake_repick(assays, obi, model):
         out = {k: dict(v) for k, v in obi.items()}
         out["flow cytometry"].update(obi_id="OBI:0002766", obi_label="cytokine assay",
-                                     resource="embedding_llm_repick", obi_granularity="EXACT")
+                                     resource="fulllist_llm_repick", obi_granularity="EXACT")
         return out, {"flow cytometry": {"from": "flow cytometry assay", "to": "cytokine assay"}}, 1
     monkeypatch.setattr(assay_service, "repick_broad", fake_repick)
 

@@ -51,7 +51,9 @@ of against the sentences it names, and the methods-vs-results cross-check report
 is upwards of 30 calls. Round 1 is EXTRACTIONS calls (3), voted; rounds 2-4 are sized from what the last run's
 extraction found, once one exists on disk -- each from the file that round actually read, since
 round 5 re-keys assays.json. Round 5 is free except for one call per mapping the picker
-marked BROAD, which asks it once more for a term naming the function (REPICKED).
+marked BROAD, which asks it once more over the whole vocabulary, minus that term, for the same
+technique made more specific (REPICKED); an answer that is not a descendant of the BROAD term is
+refused and the entry keeps its category.
 
 Usage:
     python3 scripts/run_assay_pipeline.py <registry_dir> [--dry-run]

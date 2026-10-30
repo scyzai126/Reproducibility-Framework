@@ -69,6 +69,7 @@ from app.agent.assay_obi_mapper import (
     _index_children,
     enrich_assays_with_obi,
     repick_broad,
+    repick_can_help,
 )
 from app.agent.assay_registry import CORPUS_ROOT, RESULT_VERSION, normalize_assay_name
 from app.agent.assay_verifier import (
@@ -601,11 +602,13 @@ def estimate_run(pubmed_id: str, study_accession: str) -> dict:
         groups = canonical_groups(mapped_input, obi_by_entry)
         folds = [{"key": g["key"], "members": g["members"]}
                  for g in groups if len(g["members"]) > 1]
-        # The one paid step of round 5: every BROAD mapping is asked once more. Sized from the
-        # last run's mapping like rounds 2-4, so "~".
+        # The one paid step of round 5: every BROAD mapping whose term has a descendant in the
+        # vocabulary is asked once more (repick_can_help -- the same test the round applies, so
+        # a term with nothing under it is not billed here either). Sized from the last run's
+        # mapping like rounds 2-4, so "~".
         repicks = [key for key in mapped_input
                    if str((obi_by_entry or {}).get(key, {}).get("obi_granularity") or "").upper()
-                   == "BROAD"]
+                   == "BROAD" and repick_can_help((obi_by_entry or {}).get(key, {}))]
         rounds.append({"round": 5, "name": "canonicalize", "calls": len(repicks),
                        "exact": not repicks, "basis": "last_run" if repicks else "deterministic",
                        "entries": len(mapped_input), "groups": len(groups), "folds": folds,

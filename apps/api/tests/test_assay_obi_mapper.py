@@ -1235,6 +1235,12 @@ def test_the_repick_prompt_names_the_category_term_and_lists_the_rest():
     assert '"flow cytometry assay" (OBI:0000916)' in prompt and "marked the\nmatch BROAD" in prompt
     assert "1. OBI:0002766 | cytokine assay" in prompt and "2. OBI:0001977" in prompt
     assert "Readouts: cytokine production" in prompt
+    # The list is the whole vocabulary minus one term, the same text for every re-pick on that
+    # term, so it leads and the per-entry record trails: the provider caches the shared prefix.
+    assert prompt.index("## Candidate OBI terms") < prompt.index("## The question")
+    assert prompt.index("## The question") < prompt.index("## Assay record")
+    assert "The full OBI assay vocabulary" in prompt
+    assert "(similarity: None)" not in prompt and " ()" not in prompt
 
 
 def test_the_repick_prompt_asks_for_the_same_technique_made_more_specific():
@@ -1252,11 +1258,23 @@ def test_the_repick_prompt_asks_for_the_same_technique_made_more_specific():
     assert "function it measures or the readout it produces" not in prompt
 
 
+def _repick_vocabulary(monkeypatch, *terms, children=None):
+    """The re-pick reads the whole vocabulary, not round 4's retrieval: stub that, and the
+    `is_a` map its descendant guard checks against. Retrieval must not be touched at all."""
+    from app.agent import assay_obi_mapper
+    monkeypatch.setattr(assay_obi_mapper, "_fulllist_candidates",
+                        lambda terms_path=None: [dict(t) for t in terms])
+    monkeypatch.setattr(assay_obi_mapper, "_index_children",
+                        lambda terms_path=None: children or {})
+    monkeypatch.setattr(assay_obi_mapper, "_top_k_candidates",
+                        lambda *a, **k: (_ for _ in ()).throw(AssertionError("no retrieval")))
+
+
 def test_repick_removes_the_broad_term_and_returns_the_pick(monkeypatch):
     from app.agent import assay_obi_mapper, assay_trace
     seen = {}
-    monkeypatch.setattr(assay_obi_mapper, "_top_k_candidates",
-                        lambda query, k=20, allowed_ids=None: [_FLOW, _CYTOKINE, _CYTOMETRY])
+    _repick_vocabulary(monkeypatch, _FLOW, _CYTOKINE, _CYTOMETRY,
+                       children={"OBI:0000916": ("OBI:0002766",)})
     monkeypatch.setattr(assay_obi_mapper, "OpenAI", lambda **_: _PickClient("1 EXACT"))
     real = assay_obi_mapper.build_repick_prompt
 
@@ -1271,18 +1289,69 @@ def test_repick_removes_the_broad_term_and_returns_the_pick(monkeypatch):
     finally:
         assay_trace.stop()
 
-    assert "OBI:0000916" not in seen["ids"]           # the category term is gone
+    assert seen["ids"] == ["OBI:0002766", "OBI:0001977"]  # the whole list, the category gone
     assert picked == {"obi_id": "OBI:0002766", "obi_label": "cytokine assay",
-                      "resource": "embedding_llm_repick", "confidence": 0.6, "granularity": "EXACT"}
+                      "resource": "fulllist_llm_repick", "confidence": None, "granularity": "EXACT"}
     record = trace.as_json()["repick"]["ICS key"]
     assert record["reply"] == "1 exact" and record["broad_id"] == "OBI:0000916"
-    assert record["candidates"][0].startswith("1. OBI:0002766 | cytokine assay")
+    # 700 candidate lines per re-pick would be the vocabulary written out once per entry.
+    assert record["n_candidates"] == 2 and "candidates" not in record and "rejected" not in record
+
+
+def test_repick_refuses_a_term_that_is_not_under_the_category(monkeypatch):
+    """The full-list A/B showed the picker, handed the whole vocabulary, moving a BROAD entry
+    to a parent (`pathogen neutralization assay`) or a sibling (`cell viability assay`). Neither
+    is the technique made more specific, so the entry keeps its category term."""
+    from app.agent import assay_obi_mapper, assay_trace
+    # cytokine assay is in the list but is not an is_a descendant of flow cytometry assay.
+    _repick_vocabulary(monkeypatch, _FLOW, _CYTOKINE, _CYTOMETRY,
+                       children={"OBI:0001977": ("OBI:0000916",)})
+    monkeypatch.setattr(assay_obi_mapper, "OpenAI", lambda **_: _PickClient("1 EXACT"))
+
+    trace = assay_trace.start()
+    try:
+        picked = assay_obi_mapper.repick_obi("ICS key", _ICS, _BROAD_FLOW)
+    finally:
+        assay_trace.stop()
+
+    assert picked is None
+    record = trace.as_json()["repick"]["ICS key"]
+    assert record["reply"] == "1 exact" and record["rejected"] == "OBI:0002766 cytokine assay"
+
+
+def test_repick_accepts_a_grandchild_of_the_category(monkeypatch):
+    from app.agent import assay_obi_mapper
+    _repick_vocabulary(monkeypatch, _FLOW, _CYTOKINE, _CYTOMETRY,
+                       children={"OBI:0000916": ("OBI:0001977",), "OBI:0001977": ("OBI:0002766",)})
+    monkeypatch.setattr(assay_obi_mapper, "OpenAI", lambda **_: _PickClient("1 EXACT"))
+
+    picked = assay_obi_mapper.repick_obi("ICS key", _ICS, _BROAD_FLOW)
+
+    assert picked and picked["obi_id"] == "OBI:0002766"
+
+
+def test_repick_needs_no_embeddings(monkeypatch, tmp_path):
+    """The re-pick reads the vocabulary, not the vectors; a missing embeddings file used to
+    skip it silently."""
+    from app.agent import assay_obi_mapper
+    _repick_vocabulary(monkeypatch, _FLOW, _CYTOKINE, children={"OBI:0000916": ("OBI:0002766",)})
+    monkeypatch.setattr(assay_obi_mapper, "_EMBEDDINGS_PATH", tmp_path / "missing.json")
+    monkeypatch.setattr(assay_obi_mapper, "OpenAI", lambda **_: _PickClient("1 EXACT"))
+
+    assert assay_obi_mapper.repick_obi("ICS key", _ICS, _BROAD_FLOW)["obi_id"] == "OBI:0002766"
+
+
+def test_descends_from_walks_is_a_edges_and_is_not_reflexive():
+    from app.agent.assay_obi_mapper import _descends_from
+    children = {"a": ("b",), "b": ("c",), "c": ("a",)}  # a cycle must not hang the walk
+    assert _descends_from("c", "a", children) and _descends_from("b", "a", children)
+    assert not _descends_from("a", "a", {"a": ("b",)}) and not _descends_from("x", "a", children)
+    assert not _descends_from("b", "a", {})
 
 
 def test_repick_returns_none_when_the_picker_still_finds_nothing(monkeypatch):
     from app.agent import assay_obi_mapper
-    monkeypatch.setattr(assay_obi_mapper, "_top_k_candidates",
-                        lambda query, k=20, allowed_ids=None: [_FLOW, _CYTOMETRY])
+    _repick_vocabulary(monkeypatch, _FLOW, _CYTOMETRY)
     monkeypatch.setattr(assay_obi_mapper, "OpenAI", lambda **_: _PickClient("none"))
 
     assert assay_obi_mapper.repick_obi("ICS", _ICS, _BROAD_FLOW) is None
@@ -1315,12 +1384,32 @@ def test_the_query_embedding_is_cached_per_process(monkeypatch):
     assay_obi_mapper._embed_query.cache_clear()
 
 
-def _registry_with_blocked_fold() -> tuple[dict, dict]:
+def _registry_with_blocked_fold(monkeypatch=None) -> tuple[dict, dict]:
     pheno = {**_ICS, "name_in_paper": "phenotyping", "aliases": [], "readouts": "subset frequencies"}
     assays = {"phenotyping": pheno, "ICS": _ICS}
     obi = {"phenotyping": {**pheno, **_BROAD_FLOW, "obi_granularity": "EXACT"},
            "ICS": {**_ICS, **_BROAD_FLOW}}
+    if monkeypatch is not None:
+        # flow cytometry assay has something under it, so the re-pick is worth a call.
+        from app.agent import assay_obi_mapper
+        monkeypatch.setattr(assay_obi_mapper, "_index_children",
+                            lambda terms_path=None: {"OBI:0000916": ("OBI:0002766",)})
     return assays, obi
+
+
+def test_repick_broad_skips_a_term_with_nothing_under_it(monkeypatch):
+    """`population count assay` is BROAD and has no descendant in the vocabulary: the guard
+    would refuse every answer, so no call is made and none is billed."""
+    from app.agent import assay_obi_mapper
+    monkeypatch.setattr(assay_obi_mapper, "repick_obi",
+                        lambda *a, **k: (_ for _ in ()).throw(AssertionError("must not be asked")))
+    monkeypatch.setattr(assay_obi_mapper, "_index_children", lambda terms_path=None: {})
+    assays, obi = _registry_with_blocked_fold()
+
+    out, repicked, attempts = assay_obi_mapper.repick_broad(assays, obi)
+
+    assert attempts == 0 and repicked == {} and out["ICS"]["obi_granularity"] == "BROAD"
+    assert not assay_obi_mapper.repick_can_help(obi["ICS"])
 
 
 def test_repick_broad_asks_only_for_the_broad_side_and_rewrites_its_term(monkeypatch):
@@ -1330,16 +1419,16 @@ def test_repick_broad_asks_only_for_the_broad_side_and_rewrites_its_term(monkeyp
     def fake(key, entry, mapping, **_):
         asked.append(key)
         return {"obi_id": "OBI:0002766", "obi_label": "cytokine assay",
-                "resource": "embedding_llm_repick", "confidence": 0.6, "granularity": "EXACT"}
+                "resource": "fulllist_llm_repick", "confidence": None, "granularity": "EXACT"}
     monkeypatch.setattr(assay_obi_mapper, "repick_obi", fake)
-    assays, obi = _registry_with_blocked_fold()
+    assays, obi = _registry_with_blocked_fold(monkeypatch)
 
     out, repicked, attempts = assay_obi_mapper.repick_broad(assays, obi)
 
     assert asked == ["ICS"]  # the EXACT anchor is not re-asked
     assert attempts == 1
     assert repicked == {"ICS": {"from": "flow cytometry assay", "to": "cytokine assay"}}
-    assert out["ICS"]["obi_id"] == "OBI:0002766" and out["ICS"]["resource"] == "embedding_llm_repick"
+    assert out["ICS"]["obi_id"] == "OBI:0002766" and out["ICS"]["resource"] == "fulllist_llm_repick"
     assert out["ICS"]["obi_granularity"] == "EXACT"
     assert out["ICS"]["obi_repicked_from"] == {"obi_id": "OBI:0000916",
                                                "obi_label": "flow cytometry assay"}
@@ -1349,7 +1438,7 @@ def test_repick_broad_asks_only_for_the_broad_side_and_rewrites_its_term(monkeyp
 
 def test_repick_broad_leaves_a_none_and_a_failure_alone(monkeypatch, caplog):
     from app.agent import assay_obi_mapper
-    assays, obi = _registry_with_blocked_fold()
+    assays, obi = _registry_with_blocked_fold(monkeypatch)
 
     monkeypatch.setattr(assay_obi_mapper, "repick_obi", lambda *a, **k: None)
     out, repicked, attempts = assay_obi_mapper.repick_broad(assays, obi)
@@ -1387,8 +1476,10 @@ def test_repick_broad_asks_for_a_lone_broad_entry_too(monkeypatch):
     def fake(key, entry, mapping, **_):
         asked.append(key)
         return {"obi_id": "OBI:0002766", "obi_label": "cytokine assay",
-                "resource": "embedding_llm_repick", "confidence": 0.6, "granularity": "EXACT"}
+                "resource": "fulllist_llm_repick", "confidence": None, "granularity": "EXACT"}
     monkeypatch.setattr(assay_obi_mapper, "repick_obi", fake)
+    monkeypatch.setattr(assay_obi_mapper, "_index_children",
+                        lambda terms_path=None: {"OBI:0000916": ("OBI:0002766",)})
     exact_elisa = {"obi_id": "OBI:0000661", "obi_label": "enzyme-linked immunosorbent assay",
                    "obi_granularity": "EXACT"}
     assays = {"ELISA": {**_ICS, "name_in_paper": "ELISA"}, "ICS": _ICS}
