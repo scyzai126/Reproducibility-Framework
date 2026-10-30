@@ -50,10 +50,9 @@ of against the sentences it names, and the methods-vs-results cross-check report
 **--dry-run makes no API call** and reports the projected bill. Run it first: a 10-assay paper
 is upwards of 30 calls. Round 1 is EXTRACTIONS calls (3), voted; rounds 2-4 are sized from what the last run's
 extraction found, once one exists on disk -- each from the file that round actually read, since
-round 5 re-keys assays.json. Round 5 is free except for one call per mapping the picker
-marked BROAD, which asks it once more over the whole vocabulary, minus that term, for the same
-technique made more specific (REPICKED); an answer that is not a descendant of the BROAD term is
-refused and the entry keeps its category.
+round 5 re-keys assays.json. Round 5 is free: a mapping the picker marked BROAD keeps its
+category term (the re-pick that used to be billed here was removed 2026-10-30 after 52 asks
+changed nothing correctly -- experiment/obi_repick_fulllist/).
 
 Usage:
     python3 scripts/run_assay_pipeline.py <registry_dir> [--dry-run]
@@ -191,14 +190,10 @@ def _dry_run(pmid: str, sdy: str) -> None:
         print("  round 4 OBI:     will run, 2-3 calls per unmatched   ? calls")
 
     if canon["entries"] is not None:
-        repicks = canon.get("repicks") or []
-        cost = f"~{len(repicks)} calls" if repicks else "0 calls"
-        print(f"  round 5 canon:   will run                            {cost}"
+        print(f"  round 5 canon:   will run                            0 calls"
               f"   ({canon['entries']} entries \u2192 {canon['groups']}, keyed by OBI term)")
         for group in canon["folds"]:
             print(f"      folds onto {group['key']}: {', '.join(group['members'])}")
-        for key in repicks:
-            print(f"      re-picks a BROAD term: {key}")
     else:
         print("  round 5 canon:   will run, free                       0 calls")
 
@@ -285,12 +280,8 @@ def report_result(result: dict) -> None:
     for record in (result.get("merges") or {}).get("results", []):
         print(f"  MERGED  {', '.join(record['folded'])} → {record['key']} "
               f"({record.get('obi_id') or 'no term'})")
-    # A BROAD mapping that blocked a fold and was asked once more: the term it had, and the
-    # term it has now. Printed because the entry's identity changed after round 4 reported it.
-    for key, change in (result["rounds"].get("canonicalize", {}).get("repicked") or {}).items():
-        print(f"  REPICKED  {key}: {change['from']} (BROAD) → {change['to']}")
-    # Two entries on one OBI term that round 5 kept apart -- a BROAD mapping, or two techniques
-    # reaching one term. Printed as REVIEW: a reader decides whether they are one assay.
+    # Two entries on one OBI term that round 5 kept apart because their technique, sample type
+    # or readouts differ. Printed as REVIEW: a reader decides whether they are one assay.
     for record in (result.get("merges") or {}).get("blocked", []):
         print(f"  REVIEW  not folded  {record['member']} kept apart from "
               f"{record['kept_apart_from']} ({record.get('obi_id') or 'no term'}): "

@@ -22,7 +22,7 @@ const ROUND_DOES: Record<string, string> = {
   verify: 'judges every entry, one call each',
   correct: 'repairs what verification refused, one call per flagged field',
   obi: 'resolves each name to an OBI term; exact matches are free',
-  canonicalize: 'keys by OBI term and folds duplicates; one call per BROAD mapping asked again',
+  canonicalize: 'keys by OBI term and folds duplicates; free',
   data_availability:
     'runs alongside the assays: finds where the study deposited its data; one call when the paper names an accession, repository lookups free',
 };
@@ -42,13 +42,8 @@ function roundNote(round: AssayEstimateRound): string {
       return `${round.rejected} assay(s) set aside last run`;
     case 'obi':
       return `${round.free_matches} of ${round.assays} match the vocabulary for free`;
-    case 'canonicalize': {
-      const repicks = round.repicks?.length ?? 0;
-      return (
-        `${round.entries} entries → ${round.groups}, keyed by OBI term` +
-        (repicks ? `, ${repicks} re-pick${repicks === 1 ? '' : 's'}` : '')
-      );
-    }
+    case 'canonicalize':
+      return `${round.entries} entries → ${round.groups}, keyed by OBI term`;
     case 'data_availability':
       return round.entries
         ? `${round.entries} accession-like ID${round.entries === 1 ? '' : 's'} named in the paper`
@@ -76,7 +71,6 @@ export default function AssayEstimateCard({ estimate, onConfirm, busy }: Props) 
     : 'Cost unknown until round 1 finishes';
   const paidMisses = estimate.rounds.find((r) => r.name === 'obi')?.misses ?? [];
   const folds = estimate.rounds.find((r) => r.name === 'canonicalize')?.folds ?? [];
-  const repicks = estimate.rounds.find((r) => r.name === 'canonicalize')?.repicks ?? [];
 
   return (
     <section className="border border-gray-200 rounded-xl bg-white shadow-sm overflow-hidden">
@@ -136,21 +130,6 @@ export default function AssayEstimateCard({ estimate, onConfirm, busy }: Props) 
                 <li key={fold.key} className="text-gray-700 pl-3 border-l-2 border-gray-200">
                   folds onto <span className="font-medium">{fold.key}</span>:{' '}
                   {fold.members.join(', ')}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {repicks.length > 0 && (
-          <div className="mt-3 text-xs">
-            <p className="text-gray-500 mb-1">
-              BROAD terms that will be asked once more — one call each:
-            </p>
-            <ul className="space-y-0.5">
-              {repicks.map((name) => (
-                <li key={name} className="text-gray-700 pl-3 border-l-2 border-amber-200">
-                  {name}
                 </li>
               ))}
             </ul>

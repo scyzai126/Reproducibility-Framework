@@ -118,12 +118,3 @@ def test_a_blocked_fold_is_a_review_line(cli, capsys):
     out = capsys.readouterr().out
     assert ("REVIEW  not folded  ICS kept apart from flow cytometry assay (OBI:0000916): "
             "mapping is BROAD") in out
-
-
-def test_a_repicked_term_is_a_line_of_its_own(cli, capsys):
-    cli.report_result(_result(rounds={"canonicalize": {
-        "source": "canonical", "calls": 1, "assays": 2, "groups_merged": 0, "entries_folded": 0,
-        "folds_blocked": 0,
-        "repicked": {"ICS": {"from": "flow cytometry assay", "to": "cytokine assay"}}}}))
-
-    assert "REPICKED  ICS: flow cytometry assay (BROAD) → cytokine assay" in capsys.readouterr().out

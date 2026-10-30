@@ -67,21 +67,8 @@ export function collectFindings(result: AssayRunResult | null | undefined): Find
     });
   }
 
-  // A BROAD mapping round 5 asked once more, and the term it has now: the entry's identity
-  // changed after round 4 reported it.
-  const canon = (result.rounds?.canonicalize ?? {}) as Record<string, unknown>;
-  for (const [key, change] of Object.entries(
-    (canon.repicked ?? {}) as Record<string, { from?: string; to?: string }>,
-  )) {
-    findings.push({
-      kind: 'REPICKED',
-      subject: key,
-      detail: `${change?.from ?? '?'} (BROAD) → ${change?.to ?? '?'}`,
-    });
-  }
-
-  // Two entries on one OBI term that round 5 kept apart -- a BROAD mapping the re-pick could
-  // not improve, or two techniques reaching one term. A reader decides whether they are one.
+  // Two entries on one OBI term that round 5 kept apart because their technique, sample type
+  // or readouts differ. A reader decides whether they are one assay.
   const blocked = (result.merges?.blocked as Record<string, unknown>[] | undefined) ?? [];
   for (const record of blocked) {
     findings.push({
@@ -171,7 +158,6 @@ export const FINDING_ORDER: Finding['kind'][] = [
   'UNMAPPED',
   'QUOTE MISSING',
   'SOURCE MISMATCH',
-  'REPICKED',
   'MERGED',
 ];
 
@@ -193,6 +179,5 @@ export const FINDING_TONE: Record<Finding['kind'], string> = {
   'QUOTE MISSING': 'bg-amber-50 text-amber-800 border-amber-200',
   'SOURCE MISMATCH': 'bg-amber-50 text-amber-800 border-amber-200',
   MINORITY: 'bg-amber-50 text-amber-800 border-amber-200',
-  REPICKED: 'bg-gray-100 text-gray-700 border-gray-200',
   MERGED: 'bg-gray-100 text-gray-700 border-gray-200',
 };

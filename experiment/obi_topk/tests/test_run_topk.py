@@ -111,8 +111,8 @@ def test_widened_list_wraps_and_restores_the_mapper(monkeypatch):
 
 
 def test_widened_list_reaches_the_mapper_call_sites(monkeypatch):
-    """The wrapper must change what _embedding_llm_match and repick_obi actually retrieve, not
-    only the module attributes: both look the functions up by global name at call time."""
+    """The wrapper must change what _embedding_llm_match actually retrieves, not only the module
+    attributes: it looks the functions up by global name at call time."""
     from app.agent import assay_obi_mapper as m
 
     seen = []
@@ -121,7 +121,5 @@ def test_widened_list_reaches_the_mapper_call_sites(monkeypatch):
     monkeypatch.setattr(m._EMBEDDINGS_PATH.__class__, "exists", lambda self: True)
     with rt.WidenedList(30):
         m._embedding_llm_match("ELISA", standard_technique_query="enzyme-linked immunosorbent assay")
-        m.repick_obi("k", {"name_in_paper": ["ELISA"], "standard_technique_name": "immunoassay"},
-                     {"obi_id": "OBI:1", "obi_label": "assay"})
     assert ("top", 30) in seen and ("merge", 30, 21) in seen
     assert all(s[1] == 30 for s in seen)

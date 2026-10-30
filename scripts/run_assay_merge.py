@@ -14,8 +14,7 @@ by OBI label, with every wording in `name_in_paper` and every folded write-up in
 `--dry-run` prints what would change without writing.
 
 `--map` runs round 4 first -- **the one thing here that costs**: 2-3 calls per assay name the OBI
-vocabulary does not carry verbatim, plus one call per mapping the picker marked BROAD (round
-5's re-pick, reported `REPICKED`). It is the recovery path when a pipeline run's OBI round
+vocabulary does not carry verbatim. It is the recovery path when a pipeline run's OBI round
 failed, and it maps `assays_corrected.json` when there is one (the registry round 4 reads),
 else `assays.json`. `--map --dry-run` prints the call count without calling anything.
 
@@ -99,15 +98,11 @@ def canonicalize_one(registry_dir: Path, remap: bool = False) -> None:
         # Imported here, not at the top: it is the one paid step, and a plain canonicalize
         # should not even load the client.
         from app.agent import assay_trace
-        from app.agent.assay_obi_mapper import enrich_assays_with_obi, repick_broad
+        from app.agent.assay_obi_mapper import enrich_assays_with_obi
         # The picks are kept like a full run keeps them, merged into the file the full run wrote.
         trace = assay_trace.start()
         try:
             obi = enrich_assays_with_obi(assays)
-            # Round 5's one paid step, as the pipeline runs it: every BROAD mapping is asked
-            # once more, over the whole vocabulary minus that term, for the same technique made
-            # more specific; a parent or sibling answer is refused.
-            obi, repicked, _attempts = repick_broad(assays, obi)
         finally:
             assay_trace.stop()
         trace.write(registry_dir / assay_trace.RAW_FILE)
@@ -118,8 +113,6 @@ def canonicalize_one(registry_dir: Path, remap: bool = False) -> None:
                 print(f"  OBI ERROR  {key}: {entry.get('obi_error')}")
             elif not entry.get("obi_id"):
                 print(f"  UNMAPPED  {key}: no OBI term")
-        for key, change in repicked.items():
-            print(f"  REPICKED  {key}: {change['from']} (BROAD) → {change['to']}")
     if obi is None:
         print(f"{registry_dir.name}: no assays_OBI.json; pass --map to run the OBI round first")
         return

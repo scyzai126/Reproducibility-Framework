@@ -62,7 +62,9 @@ not move it; a convention sheet agreed with the curator and a benchmark fix will
    under flow cytometry, so the descendant guard let it through. The curator has no ICS row for
    SDY1289 and no OBI ids in that file, so the benchmark score does not move either way. Net:
    the full-vocabulary re-pick buys nothing on this corpus and can introduce a definition-level
-   error; the recommendation to cut it stands, and the decision is the user's.
+   error. **Removed the same day** (commit after `5985f57`): round 5 is now free and
+   deterministic, a BROAD mapping keeps its category term, and the step lives on with its
+   evidence in `experiment/obi_repick_fulllist/` (vendored code + `prompt.txt`).
 2. **A judgement call on blocked folds.** 15 SPLIT rows cost 0.036 precision; ~7 of the
    un-folded pairs read as one protocol written twice (SDY1630, SDY1260 flow pairs). Blocked
    pairs are rare (~20 corpus-wide), so one call per blocked pair with both quotes
