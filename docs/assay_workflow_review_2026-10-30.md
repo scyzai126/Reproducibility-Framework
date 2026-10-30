@@ -50,6 +50,19 @@ not move it; a convention sheet agreed with the curator and a benchmark fix will
    that term. Expected gain on the corpus is zero: the full-list A/B named a finer term for 0 of
    these 27 (22 same category BROAD, 3 another category, 2 none), because the vocabulary has no
    term for ICS, degranulation, PRNT or FRNT. The cost stays one call per BROAD mapping.
+   **Measured the same day** (`experiment/obi_repick_fulllist/run.py`, on copies of the v3
+   registries): 25 entries asked, 2 skipped because their term has nothing under it in the
+   vocabulary, 24 answered `none`, **1 changed, and wrongly**: SDY1289's "Flow cytometric
+   analysis of IFN-γ/IL-2–producing activated CD4 T cells" (PBMC stimulated with peptide pools
+   under Brefeldin A, stained for CD154, IL-2 and IFN-γ) moved from `flow cytometry assay` to
+   `T cell activation induced marker assay` (OBI:0003230), whose definition reads "detects
+   antigen-specific T cells *without the need to identify their cytokine production*". The
+   record's readouts are cytokine production; this is intracellular cytokine staining, for which
+   the pruned vocabulary has no term, and the AIM term is a sibling protocol that happens to sit
+   under flow cytometry, so the descendant guard let it through. The curator has no ICS row for
+   SDY1289 and no OBI ids in that file, so the benchmark score does not move either way. Net:
+   the full-vocabulary re-pick buys nothing on this corpus and can introduce a definition-level
+   error; the recommendation to cut it stands, and the decision is the user's.
 2. **A judgement call on blocked folds.** 15 SPLIT rows cost 0.036 precision; ~7 of the
    un-folded pairs read as one protocol written twice (SDY1630, SDY1260 flow pairs). Blocked
    pairs are rare (~20 corpus-wide), so one call per blocked pair with both quotes
