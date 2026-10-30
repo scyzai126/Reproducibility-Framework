@@ -111,7 +111,7 @@ _ENRICHED_FIELDS = ("platform", "sample_type", "readouts")
 #: moved into a versioned subfolder and every root that still pointed one level up found nothing.
 CORPUS_ROOT = Path(__file__).resolve().parents[4] / "data" / "31paper_assays"
 RESULT_VERSION = "assay_result_v1"
-#: Where scripts/run_assay_extract.py writes its registries.
+#: Where the benchmark papers' registries live (assay_service.REGISTRY_ROOT reads the same).
 _REGISTRY_ROOT = CORPUS_ROOT / RESULT_VERSION
 #: Where a paper outside the benchmark keeps its registry (assay_service.CACHE_ROOT).
 _CACHE_ROOT = Path(__file__).resolve().parents[4] / "data" / "cache" / "assays"
@@ -121,7 +121,7 @@ def load_verified_registry(pubmed_id: str, study_accession: str) -> dict:
     """Read the extracted registry for a paper, or `{}` when there is none.
 
     The directory is `<pmid>_<SDY>`, but the swapped spelling is tried too, for the reason
-    run_assay_verify.locate_xml gives: the directory schemes in this repo were named
+    assay_service.locate_paper_xml gives: the directory schemes in this repo were named
     independently and disagree on the order of the two halves.
 
     A missing or malformed file is not an error. This registry is an optional enrichment --

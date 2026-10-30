@@ -8,9 +8,9 @@ changed and why.
 **Corrections are blind.** The correcting model is never shown the disputed value or the
 verifier's complaint — it is asked what the paper says for that field and answers from the
 text alone. Showing it the rejected string would anchor it: a model handed
-`platform: "NextSeq 2000" — CONTRADICTED` edits that string, where a model asked "what
-instrument does the text state" reads the paper. The difference shows up most in the answer
-that matters: `null`. `sample_type` and `platform` are the two fields extraction invents, so
+`sample_type: "PBMCs" — CONTRADICTED` edits that string, where a model asked "what specimen
+does the text state" reads the paper. The difference shows up most in the answer
+that matters: `null`. `sample_type` is the field extraction invents most readily, so
 "the paper does not say" is very often the right repair, and an anchored corrector almost
 never produces it -- it supplies another plausible guess.
 
@@ -32,7 +32,6 @@ change carries its provenance, so an extracted value and a repaired one stay dis
 import asyncio
 import json
 import logging
-from pathlib import Path
 
 from openai import AsyncOpenAI
 
@@ -480,36 +479,3 @@ def drop_rejected(assays: dict, verification: dict) -> tuple[dict, dict]:
         else:
             kept[key] = entry
     return kept, dropped
-
-
-# ── Promotion ────────────────────────────────────────────────────────────────
-
-def promote_registry(registry_dir) -> dict:
-    """Install assays_corrected.json as the registry the pipeline reads.
-
-    The pre-correction registry is kept as assays_precorrection.json rather than overwritten,
-    so the extracted-vs-repaired distinction survives promotion -- it moves into the filename
-    instead of being lost. Re-promoting does not clobber that snapshot: the first one is the
-    only unrepaired version there will ever be.
-
-    Raises FileNotFoundError when there is nothing corrected to promote. Lives here rather
-    than in the runner so the CLI and the HTTP route install a registry the same way.
-    """
-    registry_dir = Path(registry_dir)
-    corrected = registry_dir / "assays_corrected.json"
-    if not corrected.exists():
-        raise FileNotFoundError(f"no assays_corrected.json in {registry_dir}")
-
-    registry = registry_dir / "assays.json"
-    snapshot = registry_dir / "assays_precorrection.json"
-    snapshotted = False
-    if registry.exists() and not snapshot.exists():
-        snapshot.write_text(registry.read_text(encoding="utf-8"), encoding="utf-8")
-        snapshotted = True
-
-    registry.write_text(corrected.read_text(encoding="utf-8"), encoding="utf-8")
-    return {
-        "promoted": str(corrected.name),
-        "snapshot_written": snapshotted,
-        "snapshot": str(snapshot.name) if snapshot.exists() else None,
-    }

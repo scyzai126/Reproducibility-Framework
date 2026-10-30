@@ -12,9 +12,8 @@ chain is the same code on the same files. Entries from a PDF carry `sentence_ids
 check searches the whole document and neither field can be derived.
 
 **Every request runs all five rounds.** Results are written to disk under
-data/31paper_assays, and the files are the same ones the CLI scripts read and write,
-so a registry built here is visible to run_assay_verify.py and vice versa — but a stored one
-is never served back. A request costs 1 + N + F calls every time.
+data/31paper_assays, and the files are the same ones scripts/run_assay_pipeline.py writes
+and scripts/run_assay_merge.py reads — but a stored one is never served back. A request costs EXTRACTIONS + N + F + O calls every time.
 
 Reuse used to be the default, and it was removed rather than narrowed. Round 1's cache could
 not be dropped on its own: a freshly extracted registry invalidates any stored verification
@@ -75,6 +74,7 @@ from app.agent.assay_verifier import (
     check_quote_verbatim,
     check_source_section,
     derive_evidence_fields,
+    drop_absent_aliases,
     mark_identity_reviews,
     verify_registry,
 )
@@ -163,7 +163,7 @@ def locate_paper_xml(pubmed_id: str, study_accession: str) -> Path | None:
 
     The registry directories are `<pmid>_<SDY>` and the XML files `<SDY>_<pmid>` -- the two
     schemes were named independently and disagree, so both orders are tried rather than one
-    being assumed. Mirrors run_assay_verify.locate_xml.
+    being assumed.
     """
     pmid, sdy = (pubmed_id or "").strip(), (study_accession or "").strip()
     stems = [s for s in (f"{sdy}_{pmid}", f"{pmid}_{sdy}") if s.strip("_")]
@@ -323,7 +323,7 @@ def paper_source_text(xml_path: Path) -> tuple[str, str]:
     """(title, sentence-numbered text) — the same parse every assay pass reads from.
 
     Identical to what the CLI scripts produce, so an `[S<n>]` id means the same sentence
-    whether an entry was built here or by run_assay_extract.py. Any other source of text
+    whether an entry was built here or by scripts/run_assay_pipeline.py. Any other source of text
     would make the cited ids uncheckable.
     """
     raw = xml_path.read_bytes()
@@ -838,8 +838,8 @@ async def assay_report(
     beside it. A run that dies part-way therefore leaves no assays.json at all rather than one
     that cannot be told apart from a verified registry.
 
-    Every paper costs 1 + N + F + O calls, every time. Nothing is served from disk: asking
-    twice pays twice, and the second answer is the one that reflects the current prompts.
+    Every paper costs EXTRACTIONS + N + F + O calls, every time. Nothing is served from disk:
+    asking twice pays twice, and the second answer is the one that reflects the current prompts.
 
     `on_progress` is fired at each round boundary, and once per assay during round 2, for a
     caller watching a run it did not block on. It is a listener, not a participant: it cannot
@@ -960,6 +960,10 @@ async def _run_rounds(pubmed_id, study_accession, client, verify, correct, model
     # section map says whether they are Methods. On a PDF there are no markers, so both stay
     # empty -- the same contract that route already had.
     derive_evidence_fields(assays, source_text)
+    # The vote unions aliases across runs, so a wording one run invented reaches here. One the
+    # paper does not contain is removed now, for free, rather than reaching round 2 as a
+    # NOT_SUPPORTED position that forces REVIEW and buys a round-3 call to delete it.
+    aliases_dropped = drop_absent_aliases(assays, source_text)
 
     # Every file the previous run left now describes a different extraction. They go before
     # anything of this run's is written -- assays.json and the deliverable included -- so a run
@@ -985,6 +989,9 @@ async def _run_rounds(pubmed_id, study_accession, client, verify, correct, model
         # Paid for and answered with nothing usable: the vote went on without them, and a
         # reader should know the majority was taken over fewer replies than were made.
         rounds["extract"]["failed"] = failed
+    if aliases_dropped:
+        # Wordings the vote carried that the paper does not contain, removed before verification.
+        rounds["extract"]["aliases_dropped"] = aliases_dropped
     # Says why an empty or thin extraction may be: with no Methods section (a short report whose
     # methods sit in a supplement) round 1 had only the main text to read. XML only -- a PDF's
     # text layer carries no section tags to tell.
@@ -992,8 +999,6 @@ async def _run_rounds(pubmed_id, study_accession, client, verify, correct, model
         rounds["extract"]["no_methods"] = True
     _emit(round="extract", state="done", calls=n_extract, assays=len(assays),
           minority=len(minority), failed=sorted(failed))
-
-    warnings = contract_warnings(assays, expect_sentence_ids=(kind == "xml"))
 
     # ── Round 2: verify ───────────────────────────────────────────────────────
     verification = None
@@ -1139,9 +1144,9 @@ async def _run_rounds(pubmed_id, study_accession, client, verify, correct, model
 
     # ── Promote ───────────────────────────────────────────────────────────────
     # Only now, with every round done, is assays.json written -- the corrected, canonical
-    # registry -- and the OBI mapping and the deliverable beside it, keyed the same way. The
-    # consequence is that `run_assay_correct.py --promote` alone does not refresh the
-    # deliverable, and does not re-canonicalize.
+    # registry -- and the OBI mapping and the deliverable beside it, keyed the same way. Nothing
+    # else writes it: the step-wise scripts that promoted a corrected registry on their own,
+    # skipping rounds 4 and 5, were removed 2026-10-30.
     if obi is not None:
         obi_path.write_text(json.dumps(obi, indent=2, ensure_ascii=False) + "\n",
                             encoding="utf-8")
@@ -1149,6 +1154,11 @@ async def _run_rounds(pubmed_id, study_accession, client, verify, correct, model
                              encoding="utf-8")
     benchmark_path.write_text(
         json.dumps(trim_registry(assays), indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    # On the registry as delivered -- corrected, re-keyed, with the mapping that says which key
+    # is an OBI label -- the same call the CLI makes. Taken after round 1, as it used to be, the
+    # list named pre-correction gaps under keys round 5 had since replaced, and the web UI
+    # rendered it as the run's findings.
+    warnings = contract_warnings(assays, expect_sentence_ids=(kind == "xml"), obi=obi)
 
     return {
         "study_accession": study_accession,

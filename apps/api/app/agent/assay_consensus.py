@@ -24,12 +24,20 @@ out. Three extractions cost two more calls and turn that into a vote.
     wins first; failing that, two rewordings of one value agree when one contains the other or
     they share most of their words (token Jaccard >= 0.5), and the shortest value in the
     agreeing group is delivered -- the core both runs asserted, without the words only one of
-    them added. Only when nothing agrees does the first run's value stand. Measured over the
-    stability runs, exact comparison alone let `readouts` and `sample_type` fall to run 1 on
+    them added. Only when nothing agrees does the *anchor* member's value stand: the cluster's
+    members are ordered by content, never by which slot a reply landed in -- first-tier members
+    before one attached in the second tier (the dissenter), then the member whose quote the paper
+    places in Methods, then the one placed anywhere, then the longest quote. Every fallback reads
+    the same first member, so an entry nobody agreed on is one coherent write-up rather than
+    run1's name beside run2's quote, and the same three replies vote the same way in any order.
+    Measured over the stored v3 replies, 22 of 178 delivered clusters changed a field with run
+    order before this, SDY212's tetramer entry among them: the attached run's Figure-caption
+    quote about viral titer stood in for the Methods sentence two runs had cited. Measured over
+    the stability runs, exact comparison alone let `readouts` and `sample_type` fall to run 1 on
     about half the stable clusters ("plasma" against "Plasma samples from CPTs"), which is a
-    vote in name only. Aliases are the union, since an alias the paper does not contain is caught for
-    free by round 2's string check, while one voted away is never recovered -- except a wording
-    that is another delivered entry's name. A dissenting run that merged two assays lists the
+    vote in name only. Aliases are the union, since an alias the paper does not contain is
+    removed for free by assay_verifier.drop_absent_aliases before round 2 ever sees it, while one
+    voted away is never recovered -- except a wording that is another delivered entry's name. A dissenting run that merged two assays lists the
     other one's name among its aliases, and the vote must not carry that over: SDY1264's CPE
     entry came out aliased "PRNT", and round 2 then had to contradict it. So a member that
     joined its cluster in the second tier -- a lone entry attached by alias, sentence or quote,
@@ -42,6 +50,7 @@ With one registry it is the identity: the single extraction, untouched.
 
 from __future__ import annotations
 
+import json
 import re
 
 from app.agent.assay_extractor import ENTRY_FIELDS, paper_names
@@ -88,7 +97,8 @@ def _fold(value: object) -> str:
 
 
 def _vote(values: list[object]) -> object:
-    """The value at least two runs agree on after folding, in its first spelling; else the first."""
+    """The value at least two runs agree on after folding, in its first spelling; else the
+    first -- which is the anchor member's, since consensus orders members before voting."""
     counts: dict[str, int] = {}
     first_spelling: dict[str, object] = {}
     for value in values:
@@ -128,10 +138,11 @@ def _agree(a: object, b: object) -> bool:
 
 
 def _vote_text(values: list[object]) -> object:
-    """A free-text field's vote: exact majority first, then lenient agreement, then run 1.
+    """A free-text field's vote: exact majority first, then lenient agreement, then the anchor.
 
     Step 2 scores each value by how many of the others it agrees with and delivers the best;
-    among equals the shortest wins, then run order. The shortest is the right tie-break because
+    among equals the shortest wins, then member order -- the anchor order consensus set, not
+    run order. The shortest is the right tie-break because
     an agreeing pair differ only in words one run added, and "say nothing rather than say
     what's typical" is the extraction's own rule for those.
     """
@@ -202,6 +213,21 @@ def _merge(members: list[dict], guarded: frozenset[int] = frozenset(),
     return {field: entry[field] for field in ENTRY_FIELDS}
 
 
+def _anchor_rank(entry: dict) -> tuple:
+    """Where a member sorts for the fallbacks, by content alone.
+
+    A quote the paper places in Methods first (`source` is derived per run before the vote), then
+    one placed anywhere, then one not found; then the longest quote, since among sentences the
+    paper places alike the fuller one pins the assay and the shorter is more often "stained as
+    described previously"; then the whole entry, so two members that differ only in a field
+    nobody agreed on still sort the same way in every run order. A PDF registry has no ids, so
+    there every member ranks on its quote's length.
+    """
+    evidence = entry.get("evidence") or {}
+    placed = 0 if entry.get("source") == "methods" else 1 if evidence.get("sentence_ids") else 2
+    return (placed, -len(_quote(entry)), json.dumps(entry, sort_keys=True, ensure_ascii=False))
+
+
 def _unique(key: str, taken: set[str]) -> str:
     base, n = key, 2
     while key in taken:
@@ -215,16 +241,30 @@ def _strict_key(key: str, entry: dict) -> str:
     return normalize_assay_name(names[0] if names else key) or normalize_assay_name(key) or key
 
 
+def _is_lone(cluster: dict[str, list[str]]) -> bool:
+    """One run, one key: the only shape tier 2 moves."""
+    return len(cluster) == 1 and len(next(iter(cluster.values()))) == 1
+
+
 def cluster_for_vote(runs: list[tuple[str, dict]]
                      ) -> tuple[list[dict[str, list[str]]], set[tuple[str, str]]]:
     """Two-tier alignment for voting: exact name first, then `same_entry` for lone entries.
     Returns the clusters and the (label, key) nodes that joined one in the second tier.
 
     Tier 1 groups entries whose normalized `name_in_paper` is identical. Tier 2 takes each
-    cluster that only one run produced and, in order, attaches it to the first earlier-or-later
-    cluster one of whose members `same_entry` matches -- provided that cluster has no member from
+    cluster that only one run produced -- one run, one key -- and attaches it to the cluster, earlier
+    or later, one of whose members `same_entry` matches, provided that cluster has no member from
     the same run. That proviso is the whole point: a run's two entries are two assays by that
     run's judgement, and the vote must count them, not merge them.
+
+    **The result does not depend on which reply was called "run1".** The three extraction calls
+    run concurrently and are labelled by slot, so the same three replies must vote the same way
+    whatever order they came back in. Lone clusters are therefore visited by their normalized
+    name, not by run; a lone entry with several possible hosts joins the one more runs agree on,
+    and between equals the one whose normalized name sorts first. Tier 2 used to walk clusters in
+    run order and look only at the clusters already passed, so a run1-only wording could never
+    join a run2+run3 cluster that named the same assay differently: re-voting the stored replies
+    of the 31 benchmark papers in their three rotations changed the minority set on 10 of them.
     """
     registries = dict(runs)
     clusters: list[dict[str, list[str]]] = []
@@ -236,25 +276,38 @@ def cluster_for_vote(runs: list[tuple[str, dict]]
                 by_strict[strict] = {}
                 clusters.append(by_strict[strict])
             by_strict[strict].setdefault(label, []).append(key)
+    strict_of = {id(cluster): strict for strict, cluster in by_strict.items()}
 
     def matches(cluster: dict[str, list[str]], label: str, key: str) -> bool:
         return any(same_entry(k, registries[l][k], key, registries[label][key])
                    for l, keys in cluster.items() for k in keys)
 
-    merged: list[dict[str, list[str]]] = []
-    attached: set[tuple[str, str]] = set()
-    for cluster in clusters:
-        if len(cluster) == 1:
-            (label, keys), = cluster.items()
-            if len(keys) == 1:
-                home = next((c for c in merged if label not in c and matches(c, label, keys[0])),
-                            None)
-                if home is not None:
-                    home.setdefault(label, []).append(keys[0])
-                    attached.add((label, keys[0]))
+    def candidates() -> list[tuple[int, str, str, dict, dict]]:
+        """Every (lone, host) pair the rules allow, best first: the host more runs agree on,
+        then the lone entry's normalized name, then the host's."""
+        found = []
+        for strict, cluster in by_strict.items():
+            if not _is_lone(cluster):
+                continue
+            label, (key,) = next(iter(cluster.items()))
+            for host in clusters:
+                if host is cluster or not host or label in host or not matches(host, label, key):
                     continue
-        merged.append(cluster)
-    return merged, attached
+                found.append((-len(host), strict, strict_of[id(host)], cluster, host))
+        return sorted(found, key=lambda c: c[:3])
+
+    attached: set[tuple[str, str]] = set()
+    # One attachment at a time, always the best pair left, because each one changes the field:
+    # a host gains a run (and so closes to that run's other lone entries), and a lone cluster
+    # that gained a member is a host now rather than something to move.
+    while (best := candidates()):
+        _, _, _, cluster, home = best[0]
+        label, (key,) = next(iter(cluster.items()))
+        home.setdefault(label, []).append(key)
+        attached.add((label, key))
+        cluster.clear()
+    # Emptied clusters were absorbed; the rest keep their first-appearance order.
+    return [cluster for cluster in clusters if cluster], attached
 
 
 def consensus(registries: list[dict]) -> tuple[dict, dict]:
@@ -275,7 +328,11 @@ def consensus(registries: list[dict]) -> tuple[dict, dict]:
     delivered: list[tuple[list[dict], frozenset[int], str]] = []
     for cluster in clusters:
         present = [label for label in labels if cluster.get(label)]
-        nodes = [(label, key) for label in labels for key in cluster.get(label, [])]
+        # Anchor order, not run order: first-tier members before an attached one, then by content
+        # (_anchor_rank). Every "nothing agrees" fallback below reads the first member, so this is
+        # what makes the delivered fields independent of which reply was called run1.
+        nodes = sorted(((label, key) for label in labels for key in cluster.get(label, [])),
+                       key=lambda node: (node in attached, _anchor_rank(by_label[node[0]][node[1]])))
         members = [by_label[label][key] for label, key in nodes]
         first_key = nodes[0][1]
         if len(present) < needed:

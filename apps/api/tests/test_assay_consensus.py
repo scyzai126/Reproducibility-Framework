@@ -90,8 +90,9 @@ def test_aliases_are_the_union_and_other_runs_names_become_aliases():
     registry, _ = consensus(runs)
 
     assert list(registry) == ["flow cytometry"]
-    assert registry["flow cytometry"]["aliases"] == [
-        "FACS", "Flow cytometric analysis", "fluorescence-activated cell sorting"]
+    # Order is the anchor order (by content), not run order; the set is what matters.
+    assert set(registry["flow cytometry"]["aliases"]) == {
+        "FACS", "Flow cytometric analysis", "fluorescence-activated cell sorting"}
 
 
 def test_the_quote_is_voted_and_its_section_travels_with_it():
@@ -224,7 +225,8 @@ def test_a_null_never_agrees_with_a_stated_value():
 
 
 def test_the_quote_is_never_voted_leniently():
-    """A quote must be verbatim; the lenient rule could deliver a span only one run copied."""
+    """A quote must be verbatim; the lenient rule could deliver a span only one run copied.
+    Nothing agrees here, so the anchor's stands: all three are placed alike, so the longest."""
     runs = [{"ELISA": _entry("ELISA", quote="Serum IgG was measured by ELISA on day 28.")},
             {"ELISA": _entry("ELISA", quote="Serum IgG was measured by ELISA.")},
             {"ELISA": _entry("ELISA", quote="Titers were read at 450 nm.")}]
@@ -250,3 +252,139 @@ def test_entries_quoting_the_same_sentence_align_on_sentence_ids_alone():
 
     assert same_entry("ELISA", a, "enzyme immunoassay", b)
     assert not same_entry("ELISA", a, "enzyme immunoassay", {**b, "evidence": {**b["evidence"], "sentence_ids": ["S2"]}})
+
+
+# ── order independence ────────────────────────────────────────────────────────
+
+def _ics(name, aliases):
+    return _entry(name, "flow cytometry", "PBMC were stained for intracellular IFN-g.", ("S10",),
+                  sample="PBMCs", readouts="IFN-g production", aliases=aliases)
+
+
+ICS_SHORT = {"ICS": _ics("ICS", ["intracellular cytokine staining"])}
+ICS_LONG = {"intracellular cytokine staining": _ics("intracellular cytokine staining", ["ICS"])}
+
+
+def _rotations(runs):
+    return [runs[i:] + runs[:i] for i in range(len(runs))]
+
+
+def test_the_vote_does_not_depend_on_which_reply_was_called_run1():
+    """The three extraction calls run concurrently and are labelled by slot, so the same
+    replies must vote the same way in any order. Tier 2 used to look only at clusters already
+    passed, in run order, so the odd wording out joined its cluster only when it came last."""
+    runs = [ICS_SHORT, ICS_LONG, ICS_LONG]
+
+    outcomes = [consensus(order) for order in _rotations(runs)]
+
+    for registry, minority in outcomes:
+        assert list(registry) == ["intracellular cytokine staining"]
+        assert minority == {}
+        assert registry["intracellular cytokine staining"]["aliases"] == ["ICS"]
+
+
+def test_a_lone_wording_in_the_first_run_joins_a_later_cluster_that_names_the_same_assay():
+    """The case the old walk could never align: run1's wording with no earlier cluster to join."""
+    registry, minority = consensus([ICS_SHORT, ICS_LONG, ICS_LONG])
+
+    assert minority == {}
+    assert list(registry) == ["intracellular cytokine staining"]
+
+
+def test_a_lone_wording_prefers_the_host_more_runs_agree_on():
+    """Two possible hosts, one backed by two runs and one by a single run: the majority wins,
+    whatever order the runs came in."""
+    other = {"flow cytometry": _entry("flow cytometry", "flow cytometry",
+                                      "Cells were acquired on an LSRII.", ("S5",),
+                                      sample="PBMCs", readouts="cell frequencies",
+                                      aliases=["ICS"])}
+    runs = [{**ICS_SHORT}, {**ICS_LONG}, {**ICS_LONG, **other}]
+
+    for order in _rotations(runs):
+        registry, minority = consensus(order)
+        assert "intracellular cytokine staining" in registry
+        assert registry["intracellular cytokine staining"]["aliases"] == ["ICS"]
+        assert list(minority) == ["flow cytometry"]
+
+
+def test_two_lone_wordings_from_different_runs_still_form_a_majority_in_any_order():
+    """Neither wording has a two-run host; the two lone entries must find each other."""
+    runs = [ICS_SHORT, ICS_LONG, {"ELISA": ELISA}]
+
+    for order in _rotations(runs):
+        registry, minority = consensus(order)
+        (key, entry), = registry.items()
+        assert {key, *entry["aliases"]} == {"ICS", "intracellular cytokine staining"}
+        assert list(minority) == ["ELISA"]
+        assert len(minority["ELISA"]["runs"]) == 1
+
+
+def test_the_same_run_guard_still_holds_in_every_order():
+    """`ELISA (2)` aliased "ELISA" from the run that also produced `ELISA` may never join it."""
+    a = _entry("ELISA")
+    dup = _entry("ELISA (2)", quote="Supernatants were assessed by ELISA.", ids=("S9",),
+                 aliases=["ELISA"])
+    runs = [{"ELISA": a}, {"ELISA": a, "ELISA (2)": dup}, {"ELISA": a}]
+
+    for order in _rotations(runs):
+        registry, minority = consensus(order)
+        assert list(registry) == ["ELISA"]
+        assert list(minority) == ["ELISA (2)"]
+
+
+# ── the fallbacks read the anchor member, never slot run1 ─────────────────────
+
+def test_fallback_fields_are_the_same_in_every_rotation():
+    """Three different answers on every field: nothing agrees, and what stands must not depend on
+    which reply was called run1. Measured on the stored v3 replies, 22 of 178 delivered clusters
+    changed a field with run order before the anchor rule."""
+    runs = [{"ELISA": _entry("ELISA", quote="Serum IgG was measured by ELISA on day 28.",
+                             sample="serum", readouts="IgG titers", claim=True)},
+            {"ELISA": _entry("ELISA", quote="Serum IgG was measured by ELISA.",
+                             sample="plasma", readouts="antibody levels", claim=False)},
+            {"ELISA": _entry("ELISA", quote="Titers were read at 450 nm.",
+                             sample="whole blood", readouts="optical density", claim=None)}]
+
+    results = [consensus(order)[0]["ELISA"] for order in _rotations(runs)]
+
+    assert results[0] == results[1] == results[2]
+    # One coherent write-up, not run1's name beside run2's quote.
+    anchor = runs[0]["ELISA"]  # placed alike, so the longest quote
+    assert results[0]["sample_type"] == anchor["sample_type"]
+    assert results[0]["generate_claim"] == anchor["generate_claim"]
+    assert results[0]["evidence"]["quote"] == anchor["evidence"]["quote"]
+
+
+def test_an_attached_dissenter_never_anchors_the_entry():
+    """SDY212: run1's lone "Tetramer staining" quoted a Figure caption about viral titer; run2 and
+    run3 agreed on the name and each quoted a different Methods sentence. No quote has a majority,
+    and the one delivered must be a Methods sentence whatever order the replies came back in."""
+    caption = _entry("Tetramer staining", "flow cytometry",
+                     "Seven days after infection, IAV-specific T cells were enumerated by tetramer.",
+                     ("S40",), aliases=["tetramer"])
+    caption["source"] = "results"
+    long_name = "Tetramer and Phenotypic Staining of CD8 T Cells"
+    a = _entry(long_name, "flow cytometry", "Class I monomers were synthesized and tetramerized.",
+               ("S12",), aliases=["tetramer"])
+    b = _entry(long_name, "flow cytometry", "Staining was done as described previously.",
+               ("S13",), aliases=["tetramer"])
+    a["source"] = b["source"] = "methods"
+
+    for order in _rotations([{"Tetramer staining": caption}, {long_name: a}, {long_name: b}]):
+        registry, minority = consensus(order)
+        assert minority == {}
+        (entry,) = registry.values()
+        assert entry["name_in_paper"] == long_name
+        assert entry["evidence"]["quote"] in (a["evidence"]["quote"], b["evidence"]["quote"])
+
+
+def test_a_quote_the_paper_places_in_methods_anchors_over_one_placed_elsewhere():
+    methods = _entry("ELISA", quote="Serum IgG was measured by ELISA using a commercial kit.",
+                     ids=("S3",))
+    methods["source"] = "methods"
+    results = _entry("ELISA", quote="IgG rose.", ids=("S9",))
+    results["source"] = "results"
+    unplaced = _entry("ELISA", quote="IgG was quantified.", ids=())
+
+    for order in _rotations([{"ELISA": results}, {"ELISA": unplaced}, {"ELISA": methods}]):
+        assert consensus(order)[0]["ELISA"]["evidence"]["quote"] == methods["evidence"]["quote"]

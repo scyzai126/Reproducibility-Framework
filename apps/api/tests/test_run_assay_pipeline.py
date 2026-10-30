@@ -118,3 +118,33 @@ def test_a_blocked_fold_is_a_review_line(cli, capsys):
     out = capsys.readouterr().out
     assert ("REVIEW  not folded  ICS kept apart from flow cytometry assay (OBI:0000916): "
             "mapping is BROAD") in out
+
+def test_a_dropped_alias_is_a_line_of_its_own(cli, capsys):
+    """A wording removed before round 2 because the paper does not contain it is a finding."""
+    cli.report_result(_result(rounds={"extract": {
+        "source": "extracted", "calls": 3, "extractions": 3, "assays": 1, "minority": 0,
+        "aliases_dropped": {"flow cytometry": ["FACS"]}}}))
+
+    out = capsys.readouterr().out
+    assert "DROPPED ALIAS  flow cytometry: 'FACS' does not appear in the source text" in out
+
+
+def test_a_review_line_says_what_round_three_did_with_each_field(cli, capsys):
+    """The verdicts are pre-correction; a doubt the blind re-read settled must not read like a
+    value that was replaced and never re-judged, and the identity is never correctable."""
+    cli.report_result(_result(
+        verification={"results": [{
+            "assay_id": "FACS", "record_verdict": "REVIEW", "assay_identity_verdict": "NOT_SUPPORTED",
+            "field_verifications": [
+                {"field_name": "name_in_paper", "verdict": "NOT_SUPPORTED", "reason": "a product"},
+                {"field_name": "sample_type", "verdict": "NOT_SUPPORTED", "reason": "unstated"},
+                {"field_name": "aliases[1]", "verdict": "NOT_SUPPORTED", "reason": "a readout"}]}]},
+        corrections={"results": [{"assay_id": "FACS", "corrections": [
+            {"field": "sample_type", "action": "REPLACED", "previous": "PBMC",
+             "blind_answer": "whole blood"},
+            {"field": "aliases", "action": "REAFFIRMED"}]}]}))
+
+    out = capsys.readouterr().out
+    assert "name_in_paper: NOT_SUPPORTED — a product  → round 3: not correctable" in out
+    assert "sample_type: NOT_SUPPORTED — unstated  → round 3: REPLACED" in out
+    assert "aliases[1]: NOT_SUPPORTED — a readout  → round 3: REAFFIRMED" in out

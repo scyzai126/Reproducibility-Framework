@@ -1,18 +1,18 @@
 """Independently verify an extracted assay registry against the paper it came from.
 
-The input is the `assays.json` an extraction step produced (normally
-scripts/run_assay_extract.py) plus the sentence-numbered text of the same paper. The output is a
+The input is the registry round 1 produced (three extraction calls voted by
+assay_consensus) plus the sentence-numbered text of the same paper. The output is a
 per-field verdict — SUPPORTED / NOT_SUPPORTED / CONTRADICTED — and a record-level
 ACCEPT / REVIEW / REJECT for each assay.
 
-**This verifies; it never corrects.** A wrong `platform` is reported as CONTRADICTED and
+**This verifies; it never corrects.** A wrong `sample_type` is reported as CONTRADICTED and
 left alone: supplying the right value is a different job, and doing it here would make the
 verifier an extractor with the extraction still in view. `assays.json` is never rewritten;
 verdicts go to their own file, exactly as app.agent.claim_validator does for claims.
 
 Independence is the whole premise, which is why this is an API call and not something the
-extracting model does to its own output. The failure being guarded against — a `platform`
-or `sample_type` inferred from what the technique usually runs on, an assay named only in
+extracting model does to its own output. The failure being guarded against — a `sample_type`
+or `readouts` inferred from what the technique usually runs on, an assay named only in
 the Introduction — is invisible in the registry, because a fabricated field reads exactly
 like an extracted one. A judge that shared the extractor's context would share its reasons.
 
@@ -514,6 +514,33 @@ def alias_checks(entry: dict, source_text: str) -> dict[str, dict]:
     """`aliases[i]` -> check_alias_verbatim, for every alias proposed_fields enumerates."""
     return {field: check_alias_verbatim(value, source_text)
             for field, value in proposed_fields(entry) if field.startswith("aliases[")}
+
+
+def drop_absent_aliases(assays: dict, source_text: str) -> dict[str, list[str]]:
+    """Remove every alias the paper provably does not contain. Mutates; returns key -> dropped.
+
+    Round 1 takes the union of the runs' aliases on the grounds that an absent one is caught by
+    the string check. It was -- but as a NOT_SUPPORTED verdict in round 2, which forced the record
+    to REVIEW and billed one round-3 call to re-ask a question the string check had already
+    settled: in assay_result_v3, 7 of the 28 flagged alias positions were "does not appear
+    anywhere in the source text", each a paid blind re-read to delete a string. Presence is a
+    fact about the document, so it is settled here, before any call, and the judge rules only on
+    whether the wordings that remain name this assay. `too_short` and `no_alias` are not
+    `missing`, so a two-letter acronym the check cannot vouch for is left for the judge.
+
+    Returned rather than only logged: a wording removed from the registry is a finding, and the
+    run reports it under `rounds.extract.aliases_dropped`.
+    """
+    dropped: dict[str, list[str]] = {}
+    for key, entry in assays.items():
+        aliases = entry.get("aliases") if isinstance(entry, dict) else None
+        if not isinstance(aliases, list):
+            continue
+        gone = [a for a in aliases if check_alias_verbatim(a, source_text)["status"] == "missing"]
+        if gone:
+            entry["aliases"] = [a for a in aliases if a not in gone]
+            dropped[key] = gone
+    return dropped
 
 
 def _apply_alias_check(verification: dict, check: dict) -> None:

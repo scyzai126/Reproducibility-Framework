@@ -10,14 +10,15 @@ The rounds the separate scripts run one at a time, chained:
   5. (no prompt — deterministic)     keys by OBI term, folds duplicates  free
 
 Chaining is the whole point: an unverified registry cannot be told apart from a verified one by
-reading it, because a `platform` inferred from what a technique usually runs on looks exactly
+reading it, because a `sample_type` inferred from what a technique usually runs on looks exactly
 like one copied out of Methods.
 
-Round 3 promotes, so `assays.json` ends up holding the corrected registry with the extracted
-one kept beside it as `assays_precorrection.json`. The run then projects that onto
-`assays_benchmark.json` -- name_in_paper, aliases, source, evidence -- **which is the file to
-read**. Every field stays in `assays.json` because each pass in the chain works from them. assays.json is written only once every round is done, so a run that dies part-way
-leaves none rather than one that looks verified.
+`assays.json` ends up holding the corrected, canonical registry with the extracted one kept
+beside it as `assays_precorrection.json`. The run then projects that onto
+`assays_benchmark.json` -- name_in_paper, aliases, generate_claim, source, evidence -- **which is
+the file to read**. Every field stays in `assays.json` because each pass in the chain works from
+them. assays.json is written only once every round is done, so a run that dies part-way leaves
+none rather than one that looks verified.
 
 Round 5 runs last because the OBI term from round 4 is the assay's identity: the registry is
 re-keyed by the term's label, and two entries that mapped to one term are one assay, folded with
@@ -31,7 +32,7 @@ had already refused. Its exact-match steps are free; only names the vocabulary m
 
 The chain itself is app.agent.assay_service.assay_report, which is also what POST /agent/assays
 runs. This script is the CLI in front of it, so a registry built here and one built through the
-endpoint are the same files, and run_assay_verify.py / run_assay_correct.py still read them.
+endpoint are the same files, and run_assay_merge.py reads them.
 
 **Nothing is reused between runs.** Every invocation pays for all five rounds, so re-running
 a finished paper costs what the first run cost. Reuse was removed because it could not be kept
@@ -72,6 +73,7 @@ _REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_REPO_ROOT / "apps" / "api"))
 
 from app.agent import assay_service
+from app.agent.assay_corrector import field_group
 from app.agent.assay_extractor import contract_warnings, paper_names
 from app.agent.assay_service import (
     PaperNotFoundError,
@@ -224,6 +226,11 @@ def report_result(result: dict) -> None:
     # count above, because it is a reason to read the MINORITY lines more carefully.
     for label, error in (result["rounds"].get("extract", {}).get("failed") or {}).items():
         print(f"  WARNING  extraction {label} failed: {error}")
+    # An alias the vote carried that the paper does not contain, removed before round 2 by the
+    # free string check. Printed per wording: a removed alias is a finding, not housekeeping.
+    for key, gone in (result["rounds"].get("extract", {}).get("aliases_dropped") or {}).items():
+        for alias in gone:
+            print(f"  DROPPED ALIAS  {key}: {alias!r} does not appear in the source text")
 
     assays = result["assays"]
     check = result["quote_check"]
@@ -243,6 +250,18 @@ def report_result(result: dict) -> None:
         if quote.get("status") in ("misattributed", "too_short", "missing"):
             print(f"  QUOTE {quote['status'].upper()}  {key}: {quote.get('detail')}")
 
+    # What round 3 did with each flagged field, keyed the way a verdict names it. The verdicts
+    # below are pre-correction, and without this a doubt the blind re-read settled (REAFFIRMED)
+    # read exactly like a value that was replaced and never re-judged.
+    outcomes: dict[tuple[str, str], str] = {}
+    for record in (result.get("corrections") or {}).get("results", []):
+        for change in record.get("corrections") or []:
+            shown = change.get("action") or "?"
+            if change.get("error"):
+                shown = f"ERROR: {change['error']}"
+            elif change.get("note"):
+                shown = f"{shown} ({change['note']})"
+            outcomes[(record.get("assay_id"), change.get("field"))] = shown
     # Verdicts describe the extraction, before round 3 repaired anything and before round 5
     # re-keyed it -- so each names the key its assay is delivered under now.
     keys = (result.get("merges") or {}).get("key_map") or {}
@@ -264,8 +283,13 @@ def report_result(result: dict) -> None:
         # unsupported fields are where the "why" actually lives.
         for field in record.get("field_verifications") or []:
             if field.get("verdict") not in (None, "SUPPORTED"):
+                group = field_group(field.get("field_name") or "")
+                # The identity is never correctable; a flagged field round 3 ran on says what
+                # it did; one it never reached (round 3 skipped) says nothing.
+                outcome = outcomes.get((assay_id, group)) if group else "not correctable"
                 print(f"           {field.get('field_name')}: {field.get('verdict')}"
-                      f" — {field.get('reason') or 'no reason given'}")
+                      f" — {field.get('reason') or 'no reason given'}"
+                      + (f"  → round 3: {outcome}" if outcome else ""))
     for key, record in (result.get("dropped") or {}).items():
         print(f"  DROPPED  {key}: {record.get('reason') or 'rejected'}")
     # An entry fewer than a majority of the extraction calls found. Not delivered, but printed:

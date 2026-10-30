@@ -1,7 +1,7 @@
 """Keep every model reply a pipeline run paid for, so a bad run can be read instead of re-bought.
 
-The assay chain spends 1 + N + F + O calls on a paper and, until this module, kept none of the
-replies: each round parsed its answer, wrote what it derived, and dropped the text. Every defect
+The assay chain spends EXTRACTIONS + N + F + O calls on a paper and, until this module, kept
+none of the replies: each round parsed its answer, wrote what it derived, and dropped the text. Every defect
 found in the two reviews of the chain had to be reconstructed from those derived files, and
 whether a given alias objection or OBI pick was the model's or the parser's could not be told
 without paying for the run again.

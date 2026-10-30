@@ -28,7 +28,7 @@ sys.path.insert(0, str(_SCRIPTS.parent / "apps" / "api"))
 sys.path.insert(0, str(_SCRIPTS))
 
 from app.agent.claim_assay_linker import finding_sentences, link_claims, load_registry  # noqa: E402
-from run_assay_verify import locate_xml, paper_text  # noqa: E402
+from app.agent.assay_service import locate_paper_xml, paper_source_text, split_stem  # noqa: E402
 
 
 def _report(links: dict) -> None:
@@ -66,10 +66,11 @@ def main() -> None:
     registry = load_registry(args.assay_dir)
     claims = json.loads(args.claims.read_text(encoding="utf-8"))
 
-    xml_path = args.xml or locate_xml(args.assay_dir)
+    split = split_stem(args.assay_dir.resolve().name)
+    xml_path = args.xml or (locate_paper_xml(*split) if split else None)
     finding_text = None
     if xml_path and xml_path.exists():
-        finding_text = finding_sentences(paper_text(xml_path)[1])
+        finding_text = finding_sentences(paper_source_text(xml_path)[1])
     else:
         print(f"WARNING  no paper XML for {args.assay_dir.name}; "
               f"generate_claim_doubtful is not checked")

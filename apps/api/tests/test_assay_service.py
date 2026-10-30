@@ -328,7 +328,7 @@ async def test_the_benchmark_registry_is_rewritten_on_every_run(paper):
 async def test_the_precorrection_snapshot_describes_the_run_that_wrote_it(paper):
     """Not whichever run happened to be first.
 
-    promote_registry writes the snapshot only when absent, which was correct while a finished
+    The old promote step wrote the snapshot only when absent, which was correct while a finished
     paper was served from cache -- the first extraction was the only unrepaired version there
     would ever be. With every run re-extracting, that guard alone would pin the file forever.
     """
@@ -616,6 +616,21 @@ async def test_source_and_ids_are_re_derived_after_an_evidence_repair(paper_with
     assert result["quote_check"]["source_mismatch"] == 0
     stored = json.loads((paper_with_results / "assays_corrected.json").read_text())
     assert stored["flow cytometry"]["source"] == "results"
+
+
+@pytest.mark.asyncio
+async def test_contract_warnings_describe_the_delivered_registry(paper_with_results):
+    """The extracted quote could not be located, the repair fixed it and round 5 re-keyed the
+    entry. The returned warnings used to be round 1's list: a gap that no longer existed, under
+    a key that no longer existed, and the web UI rendered it as the run's findings."""
+    paraphrased = json.dumps({"flow cytometry": {
+        **_ENTRY, "evidence": {**_ENTRY["evidence"], "quote": "Cells were run on an LSRII."}}})
+    repair = json.dumps({"value": "Monocyte frequencies rose after vaccination.", "reason": "."})
+
+    result = await assay_report("111", "SDY1", _Client(paraphrased, _verification_body(), repair))
+
+    assert list(result["assays"]) == ["flow cytometry assay"]
+    assert result["contract_warnings"] == []
 
 
 # ── the stored read makes the same concessions the run does ──────────────────
@@ -927,10 +942,38 @@ async def test_two_runs_quoting_one_sentence_under_different_names_vote_together
     [entry] = result["assays"].values()
     assert entry["name_in_paper"] == ["ELISA"]
     pre = json.loads((paper / "assays_precorrection.json").read_text())
-    # The vote delivered one entry carrying run 2's wording as an alias...
-    assert pre["ELISA"]["aliases"] == ["enzyme immunoassay"]
     assert pre["ELISA"]["evidence"]["sentence_ids"] == ["S1"]
     assert pre["ELISA"]["source"] == "methods"
-    # ...and round 2's string check then removed it, since the paper never writes it. The vote
-    # aligns entries; it does not get to invent wordings past the verifier.
+    # The vote carried run 2's wording as an alias, and the free string check removed it before
+    # round 2, since the paper never writes it -- reported, not silently gone. The vote aligns
+    # entries; it does not get to invent wordings past the string check.
+    assert result["rounds"]["extract"]["aliases_dropped"] == {"ELISA": ["enzyme immunoassay"]}
+    assert pre["ELISA"]["aliases"] == []
     assert entry["aliases"] == []
+
+
+# ── aliases the paper does not contain are dropped before round 2 ─────────────
+
+@pytest.mark.asyncio
+async def test_an_alias_absent_from_the_paper_is_dropped_before_verification(paper, monkeypatch):
+    """The vote unions aliases across runs. One the paper does not contain used to reach round
+    2 as NOT_SUPPORTED, force REVIEW, and buy a round-3 call to delete it; now the free string
+    check removes it first and the run reports what it removed."""
+    monkeypatch.setattr(assay_service, "EXTRACTIONS", 1)
+    body = json.dumps({"flow cytometry": {**_ENTRY, "aliases": ["LSRII", "FACS"]}})
+
+    result = await assay_report("111", "SDY1", _Client(body, _verification_body()))
+
+    assert result["rounds"]["extract"]["aliases_dropped"] == {"flow cytometry": ["FACS"]}
+    snapshot = json.loads((paper / "assays_precorrection.json").read_text())
+    assert snapshot["flow cytometry"]["aliases"] == ["LSRII"]
+
+
+@pytest.mark.asyncio
+async def test_a_run_whose_aliases_are_all_in_the_paper_reports_no_drops(paper, monkeypatch):
+    monkeypatch.setattr(assay_service, "EXTRACTIONS", 1)
+    body = json.dumps({"flow cytometry": {**_ENTRY, "aliases": ["LSRII"]}})
+
+    result = await assay_report("111", "SDY1", _Client(body, _verification_body()))
+
+    assert "aliases_dropped" not in result["rounds"]["extract"]

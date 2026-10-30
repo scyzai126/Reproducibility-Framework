@@ -1,6 +1,7 @@
-"""Extract a paper's assay registry in one LLM call.
+"""Extract a paper's assay registry: one LLM call per extraction, three per paper, voted.
 
-Driven by scripts/run_assay_extract.py when a user asks for a paper's assays.
+Driven by assay_service's round 1 (scripts/run_assay_pipeline.py), which calls this EXTRACTIONS
+times concurrently and votes the replies into one registry (assay_consensus).
 prompts/extract_assays.txt is the authority on the rules -- what counts as an entry, how
 entries are named, when Results may add one, and what each field may say -- written for a
 model that gets one shot at the paper instead of an interactive read.
@@ -14,7 +15,7 @@ claim extraction.
 
 The output is validated on the way out rather than trusted. A model that returns extra fields,
 or an entry with no evidence, has broken the contract every downstream step relies on: the
-ten-field shape is what assay_obi_mapper and query_builder read, and `evidence.quote` is
+seven-field shape is what assay_obi_mapper and query_builder read, and `evidence.quote` is
 what check_quote_verbatim compares character by character. Extra keys are dropped and missing
 ones defaulted, so a partially malformed answer costs its bad fields rather than the paper.
 """

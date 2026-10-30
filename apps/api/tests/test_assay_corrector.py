@@ -19,7 +19,6 @@ from app.agent.assay_corrector import (
     field_group,
     flagged_alias_indices,
     flagged_groups,
-    promote_registry,
     rejected_assays,
     uncorrectable_flags,
 )
@@ -283,35 +282,6 @@ def test_a_review_record_is_repaired_not_dropped():
     kept, dropped = drop_rejected({"ELISA": {}}, _verification_results(result))
 
     assert list(kept) == ["ELISA"] and dropped == {}
-
-
-def test_promote_installs_the_corrected_registry_and_snapshots_the_original(tmp_path):
-    (tmp_path / "assays.json").write_text('{"a": {"platform": "WRONG"}}')
-    (tmp_path / "assays_corrected.json").write_text('{"a": {"platform": null}}')
-
-    result = promote_registry(tmp_path)
-
-    assert result["snapshot_written"] is True
-    assert (tmp_path / "assays.json").read_text() == '{"a": {"platform": null}}'
-    assert (tmp_path / "assays_precorrection.json").read_text() == '{"a": {"platform": "WRONG"}}'
-
-
-def test_re_promoting_does_not_clobber_the_original_snapshot(tmp_path):
-    """The first snapshot is the only unrepaired version there will ever be."""
-    (tmp_path / "assays.json").write_text('{"a": {"platform": "WRONG"}}')
-    (tmp_path / "assays_corrected.json").write_text('{"a": {"platform": null}}')
-    promote_registry(tmp_path)
-    (tmp_path / "assays_corrected.json").write_text('{"a": {"platform": "SECOND"}}')
-
-    result = promote_registry(tmp_path)
-
-    assert result["snapshot_written"] is False
-    assert (tmp_path / "assays_precorrection.json").read_text() == '{"a": {"platform": "WRONG"}}'
-
-
-def test_promoting_with_nothing_corrected_raises(tmp_path):
-    with pytest.raises(FileNotFoundError):
-        promote_registry(tmp_path)
 
 
 # ── the paper sits in a shared prefix, and the calls run at once ──────────────

@@ -1,6 +1,6 @@
 """Round 5: key the registry by its OBI term, and fold entries that share a term.
 
-Extraction is a single whole-paper call keyed by the paper's own wording, so one assay described
+Extraction is a whole-paper call keyed by the paper's own wording, so one assay described
 under two Methods subheadings lands two entries -- SDY1260 carries both `ELISA` (serum
 anti-meningococcal antibodies) and `ELISA kits` (cytokines in culture supernatants). Nothing
 downstream caught it: `clean_registry` is a dict comprehension, and the verifier judges one entry
@@ -43,7 +43,7 @@ records every wording, as a list. An unmapped entry keeps its paper name as its 
 The rule is coarser than the paper's own language: one OBI term covers every ELISA a paper runs,
 so SDY1640's two antigen-specific ELISAs and SDY1669's plate ELISA and SIMoA assay fold together
 too. That is the trade this round exists to make. Nothing is discarded in the process -- each
-folded write-up's specimen, platform, readouts and quote move to `additional_evidence` on the
+folded write-up's specimen, readouts and quote move to `additional_evidence` on the
 surviving entry, so the coarser key never costs a measurement.
 
 An identity the judge did not support (`identity_review`, assay_extractor.REVIEW_FIELD) travels

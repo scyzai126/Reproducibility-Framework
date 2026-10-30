@@ -1,4 +1,4 @@
-"""Extract a paper's assay registry from its PDF, in one LLM call.
+"""Extract a paper's assay registry from its PDF: one LLM call per extraction, voted like the XML route.
 
 The sibling of app.agent.assay_extractor, for the papers PMC will not serve as JATS XML --
 the publisher blocks full-text download, so there is nothing for jats_parser to read. Four
@@ -21,7 +21,7 @@ because its input contract cannot survive the change of source:
     has to ask for that explicitly.
 
 Everything downstream is shared and unmodified. `clean_registry` reduces the answer to the same
-ten fields, rounds 2-5 run exactly as they do for an XML paper, and quote verification still
+seven fields, rounds 2-5 run exactly as they do for an XML paper, and quote verification still
 works: assay_verifier.check_quote_verbatim searches the whole document when the source has no
 sentence markers to cite (and treats any ids an entry invents there as misattributed), and its `_squash` already folds away the ligatures and line-break
 hyphens a PDF text layer carries. What is genuinely lost is check_source_section, which needs
