@@ -1,0 +1,38 @@
+id: http://w3id.org/ontogpt/assay_paper
+name: assay_paper
+title: Assays performed in an immunology paper
+description: >-
+  Every experimental assay a paper reports performing, grounded to OBI (Ontology for Biomedical
+  Investigations). The comparison arm `experiment/ontogpt/` of the claim-reproduce agent.
+license: https://creativecommons.org/publicdomain/zero/1.0/
+prefixes:
+  linkml: https://w3id.org/linkml/
+  assay_paper: http://w3id.org/ontogpt/assay_paper/
+  OBI: http://purl.obolibrary.org/obo/OBI_
+  CHMO: http://purl.obolibrary.org/obo/CHMO_
+default_prefix: assay_paper
+default_range: string
+
+imports:
+  - linkml:types
+  - core
+
+classes:
+  Paper:
+    tree_root: true
+    attributes:
+      assays:
+        multivalued: true
+        range: Assay
+        description: >-
+          semicolon-separated list of every experimental assay the authors performed,
+          each by the name the paper uses for it (for example: flow cytometry; ELISA;
+          RNA sequencing; plaque reduction neutralization test)
+
+  Assay:
+    is_a: NamedEntity
+    id_prefixes:
+      - OBI
+      - CHMO
+    annotations:
+      annotators: sqlite:obo:obi
