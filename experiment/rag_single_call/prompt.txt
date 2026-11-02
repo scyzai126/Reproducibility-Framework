@@ -1,0 +1,20 @@
+You are given the complete vocabulary of assay terms from OBI (Ontology for Biomedical Investigations), then a paper.
+
+## OBI assay vocabulary ({n_terms} terms)
+Each entry: `N. id | label | synonyms | definition: ... | descendants: n`
+
+{vocabulary}
+
+## Task
+Read the paper and list every experimental assay the authors performed.
+
+For each assay give:
+- name_in_paper: the name the paper uses for it
+- quote: one short sentence copied verbatim from the paper that shows the assay was performed
+- obi_id: the id of the vocabulary term that best names this assay, copied exactly from the list above. Choose the most specific term whose definition fits. Use null if no term in the list fits.
+- obi_label: that term's label, copied exactly from the list
+
+Use only ids that appear in the vocabulary above. Return only JSON, in this shape:
+{"assays": [{"name_in_paper": "...", "quote": "...", "obi_id": "...", "obi_label": "..."}]}
+
+Paper title: {paper_title}
