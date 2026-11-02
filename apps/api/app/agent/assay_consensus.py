@@ -22,9 +22,12 @@ out. Three extractions cost two more calls and turn that into a vote.
     the quote that is exact (case and whitespace folded), in its first spelling. For the three
     free-text fields -- `standard_technique_name`, `sample_type`, `readouts` -- an exact majority
     wins first; failing that, two rewordings of one value agree when one contains the other or
-    they share most of their words (token Jaccard >= 0.5), and the shortest value in the
-    agreeing group is delivered -- the core both runs asserted, without the words only one of
-    them added. Only when nothing agrees does the *anchor* member's value stand: the cluster's
+    they share most of their words (token Jaccard >= 0.5), and of the agreeing group the value
+    sharing the most content words with the others is delivered, the shortest among equals --
+    what a majority of runs asserted, without the words only one of them added. (The shortest
+    used to win outright, which delivered "gene expression levels" over two runs that both
+    wrote whole-blood RNA on Illumina BeadChips.) Only when nothing agrees does the *anchor*
+    member's value stand: the cluster's
     members are ordered by content, never by which slot a reply landed in -- first-tier members
     before one attached in the second tier (the dissenter), then the member whose quote the paper
     places in Methods, then the one placed anywhere, then the longest quote. Every fallback reads
@@ -141,22 +144,32 @@ def _vote_text(values: list[object]) -> object:
     """A free-text field's vote: exact majority first, then lenient agreement, then the anchor.
 
     Step 2 scores each value by how many of the others it agrees with and delivers the best;
-    among equals the shortest wins, then member order -- the anchor order consensus set, not
-    run order. The shortest is the right tie-break because
-    an agreeing pair differ only in words one run added, and "say nothing rather than say
-    what's typical" is the extraction's own rule for those.
+    among equals, the one sharing the most content words with the other values, then the
+    shortest, then member order -- the anchor order consensus set, not run order.
+
+    The shared-word count comes before length because the shortest value, delivered alone, is
+    the one that has had the most taken out of it. When all three readings agree the shortest
+    is contained in both others, and whatever the other two also share -- "whole-blood" and
+    "Illumina BeadChips" on SDY1289's gene array, which two runs wrote and the delivered "gene
+    expression levels" did not -- is a majority of runs asserting a detail. Among values that
+    share equally, the shortest still wins: a pair that differ only in words one run added
+    deliver without them, since "say nothing rather than say what's typical" is the
+    extraction's own rule for those. Measured over the stored v3 replies, 66 of 178 delivered
+    clusters settled `readouts` in this tier.
     """
     counts: dict[str, int] = {}
     for value in values:
         counts[_fold(value)] = counts.get(_fold(value), 0) + 1
     if max(counts.values(), default=0) >= 2:
         return _vote(values)
+    tokens = [_tokens(value) for value in values]
     best, best_key = values[0] if values else None, None
     for i, value in enumerate(values):
         score = sum(1 for j, other in enumerate(values) if j != i and _agree(value, other))
         if score == 0:
             continue
-        key = (-score, len(_fold(value)), i)
+        shared = sum(len(tokens[i] & tokens[j]) for j in range(len(values)) if j != i)
+        key = (-score, -shared, len(_fold(value)), i)
         if best_key is None or key < best_key:
             best, best_key = value, key
     return best

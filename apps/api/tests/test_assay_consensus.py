@@ -206,6 +206,29 @@ def test_rewordings_sharing_most_of_their_words_agree():
     assert consensus(runs)[0]["flow"]["readouts"] == long_a  # the shorter of the agreeing pair
 
 
+def test_a_detail_two_runs_wrote_survives_the_lenient_vote():
+    """SDY1289's gene array: all three readings agree leniently, and the shortest used to win,
+    delivering "gene expression levels" although two runs both named whole-blood RNA on Illumina
+    BeadChips. The value sharing the most words with the others carries what a majority wrote."""
+    full_a = "gene expression levels from whole-blood RNA hybridized to Illumina BeadChips"
+    full_b = "whole-blood gene expression levels measured by hybridization to Illumina BeadChips"
+    runs = [{"array": _entry("array", readouts="gene expression levels")},
+            {"array": _entry("array", readouts=full_b)},
+            {"array": _entry("array", readouts=full_a)}]
+
+    assert consensus(runs)[0]["array"]["readouts"] == full_a  # the shorter of the two fullest
+
+
+def test_a_detail_only_one_run_wrote_still_does_not_survive():
+    """SDY1289's IL-1β ELISA: "in culture supernatants" appears in one run only, so the shortest
+    of the agreeing pair is still delivered."""
+    runs = [{"ELISA": _entry("ELISA", readouts="IL-1β concentration in culture supernatants")},
+            {"ELISA": _entry("ELISA", readouts="IL-1β concentration")},
+            {"ELISA": _entry("ELISA", readouts="IL-1β secretion")}]
+
+    assert consensus(runs)[0]["ELISA"]["readouts"] == "IL-1β concentration"
+
+
 def test_an_exact_majority_still_beats_a_lenient_one():
     """Two runs wrote "24 cytokine concentrations"; the third's shorter wording is contained in
     it, but the words two runs actually wrote win over the core."""

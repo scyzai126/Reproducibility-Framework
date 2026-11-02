@@ -1,0 +1,42 @@
+You are a biomedical data curator deciding whether two assay records extracted from ONE paper
+describe the SAME measurement or TWO DIFFERENT measurements. Both records were mapped to the same
+OBI term, "{obi_label}", and agree on the technique, so the term alone cannot tell them apart.
+
+## Record A
+Name in paper: {anchor_name}
+Standard technique name: {anchor_technique}
+Sample type: {anchor_sample}
+Readouts: {anchor_readouts}
+Evidence quote: "{anchor_quote}"
+
+## Record B
+Name in paper: {member_name}
+Standard technique name: {member_technique}
+Sample type: {member_sample}
+Readouts: {member_readouts}
+Evidence quote: "{member_quote}"
+
+## The convention
+One entry is one measurement: a technique, applied to a specimen, reading out an analyte. The
+curated benchmark lists two rows on one OBI term whenever the analyte or the specimen differs:
+an ELISA for anti-cholera-toxin IgG and an ELISA for anti-diphtheria IgG are two rows; an IFN-γ
+ELISPOT and an IgG ELISPOT are two rows; an immunophenotyping panel and an intracellular
+cytokine panel on the same flow cytometer are two rows; a serum ELISA and a supernatant ELISA
+are two rows.
+
+Two records are the SAME measurement only when they describe one technique, one specimen and
+one analyte, and differ in wording or level of detail alone — "gene expression in PBMCs" against
+"gene and exon-level RNA expression in PBMCs", or "neutralizing titres against wild-type or
+variant SARS-CoV-2 by viral foci" against "neutralization of wild-type or variant SARS-CoV-2
+measured by viral foci". A record whose readouts name a different analyte, a different marker
+set, a different functional response, or a different specimen is DIFFERENT, however similar the
+rest of the record reads.
+
+When in doubt, answer DIFFERENT: an entry kept apart is visible for review, a measurement folded
+away is not.
+
+## Reply
+Reply with exactly one line, nothing else:
+SAME: <one sentence saying what single measurement both records describe>
+or
+DIFFERENT: <one sentence naming the analyte, marker set, response or specimen that differs>
