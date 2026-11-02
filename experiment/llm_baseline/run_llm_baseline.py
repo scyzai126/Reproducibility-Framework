@@ -42,9 +42,7 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
-import re
 import shutil
-import subprocess
 import sys
 from collections import Counter
 from pathlib import Path
@@ -54,12 +52,15 @@ REPO_ROOT = HERE.parents[1]
 for p in (REPO_ROOT / "apps" / "api", REPO_ROOT / "scripts"):
     sys.path.insert(0, str(p))
 
-from compare_assay_benchmark import normalize  # noqa: E402
-from prune_obi_domain import read_terms  # noqa: E402
+sys.path.insert(0, str(REPO_ROOT / "experiment" / "common"))
+from arms import (  # noqa: E402
+    AGENT, ObiIds, arm_column, bench_rows, paper_input, registries, run_names, score_runs,
+    summary_table, to_registry)
+from arms import loose as _loose, read as _read, write as _write  # noqa: E402
 
 SOURCE_DIR = REPO_ROOT / "data" / "31paper_assays" / "assay_result_v3"
 BENCHMARK_DIR = REPO_ROOT / "data" / "benchmark_assay" / "benchmark_assay_v5"
-AGENT_REPORT = SOURCE_DIR / "comparison" / "benchmark_v5_vs_agent.json"
+
 OBO_PATH = REPO_ROOT / "data" / "OBI" / "obi.obo"
 PROMPT_PATH = HERE / "prompt.txt"
 RUNS_DIR = HERE / "runs"
@@ -67,97 +68,15 @@ COMPARISON_DIR = HERE / "comparison"
 #: The label-resolved reading: same replies, the term found by the model's label rather than its id.
 LABEL_RUNS_DIR = HERE / "runs_label"
 LABEL_COMPARISON_DIR = COMPARISON_DIR / "label"
-COMPARATOR = REPO_ROOT / "scripts" / "compare_assay_benchmark_v2.py"
 
-AGENT = "agent"
+
 CONCURRENCY = 4
-ID_STATUSES = ("valid", "label_mismatch", "obsolete", "nonexistent", "none")
+
 #: Statuses whose OBI term the ontology accepts -- the comparator's OBI_OK_STATUSES.
 _OK = {"MATCH", "MATCH_GRANULARITY"}
-_ID = re.compile(r"^\s*([A-Za-z]+)[:_](\d+)\s*$")
-_SENTENCE_MARKER = re.compile(r"\[S\d+\]\s?")
-
-
-def _read(path: Path) -> dict:
-    return json.loads(path.read_text(encoding="utf-8"))
-
-
-def _write(path: Path, data) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-
-
-def registries(source: Path = SOURCE_DIR, only: str | None = None) -> list[Path]:
-    dirs = sorted(d for d in source.iterdir() if d.is_dir() and (d / "assays_benchmark.json").exists())
-    if only:
-        dirs = [d for d in dirs if re.search(rf"_{re.escape(only)}(_pdf)?$", d.name, re.IGNORECASE)]
-    return dirs
-
-
-# ── checking the model's ids ──────────────────────────────────────────────────
-
-def _loose(label: str) -> str:
-    """normalize(), minus a trailing "assay": "flow cytometry" names `flow cytometry assay`."""
-    return re.sub(r"\s+assay$", "", normalize(label))
-
-
-class ObiIds:
-    """Every [Term] in obi.obo: its name, synonyms and whether it is obsolete."""
-
-    def __init__(self, obo_path: Path = OBO_PATH):
-        self.name: dict[str, str] = {}
-        self.forms: dict[str, set[str]] = {}
-        for term in read_terms(obo_path):
-            self.name[term["id"]] = term["name"]
-            self.forms[term["id"]] = {_loose(term["name"])} | {_loose(s) for s in term["synonyms"]}
-        # read_terms does not keep `is_obsolete`, so the stanzas are scanned for it here.
-        self.obsolete: set[str] = set()
-        for stanza in obo_path.read_text(encoding="utf-8").split("\n[")[1:]:
-            if "\nis_obsolete: true" in stanza and (m := re.search(r"^id: (\S+)", stanza, re.M)):
-                self.obsolete.add(m.group(1))
-        # Label -> id over live terms, names before synonyms so a synonym never shadows a name.
-        self.by_label: dict[str, str] = {}
-        live = [t for t in self.name if t not in self.obsolete and not self.name[t].startswith("obsolete")]
-        for t in live:
-            self.by_label.setdefault(_loose(self.name[t]), t)
-        for t in live:
-            for form in self.forms[t]:
-                self.by_label.setdefault(form, t)
-
-    @staticmethod
-    def canonical(obi_id: object) -> str | None:
-        """`OBI_0000661` / ` obi:0000661 ` -> `OBI:0000661`; None for anything that is not an id."""
-        m = _ID.match(str(obi_id or ""))
-        return f"{m.group(1).upper()}:{m.group(2)}" if m else None
-
-    def status(self, obi_id: str | None, label: str | None) -> str:
-        if not obi_id:
-            return "none"
-        if obi_id not in self.name:
-            return "nonexistent"
-        if obi_id in self.obsolete or self.name[obi_id].startswith("obsolete"):
-            return "obsolete"
-        if label and _loose(label) not in self.forms[obi_id]:
-            return "label_mismatch"
-        return "valid"
 
 
 # ── the call ─────────────────────────────────────────────────────────────────
-
-def paper_input(registry: Path) -> dict:
-    """What round 1 reads for this registry: the XML parse, or the PDF for a `_pdf` registry."""
-    from app.agent.assay_service import (
-        locate_paper_pdf, locate_paper_xml, paper_source, paper_source_text, split_stem)
-
-    pmid, sdy = split_stem(registry.name)
-    if registry.name.endswith("_pdf"):
-        path = locate_paper_pdf(pmid, sdy)
-        title, haystack = paper_source("pdf", path)
-        return {"kind": "pdf", "path": path, "title": title, "text": None, "haystack": haystack}
-    path = locate_paper_xml(pmid, sdy)
-    title, numbered = paper_source_text(path)
-    return {"kind": "xml", "path": path, "title": title,
-            "text": _SENTENCE_MARKER.sub("", numbered), "haystack": numbered}
 
 
 def build_messages(paper: dict) -> list[dict]:
@@ -187,39 +106,6 @@ def parse_reply(raw: str) -> list[dict] | None:
     if not isinstance(parsed, list):
         return None
     return [a for a in parsed if isinstance(a, dict)]
-
-
-def to_registry(assays: list[dict], ids: ObiIds) -> tuple[dict, dict]:
-    """(assays_benchmark.json, assays_OBI.json) for one parsed reply."""
-    bench: dict = {}
-    obi: dict = {}
-    for a in assays:
-        name = str(a.get("name_in_paper") or "").strip()
-        claimed_id = a.get("obi_id")
-        claimed_label = str(a.get("obi_label") or "").strip() or None
-        obi_id = ids.canonical(claimed_id)
-        status = ids.status(obi_id, claimed_label)
-        kept_id = obi_id if status in ("valid", "label_mismatch") else None
-        base = (ids.name[kept_id] if kept_id else None) or claimed_label or name or "unnamed assay"
-        key, n = base, 1
-        while key in bench:
-            n += 1
-            key = f"{base} ({n})"
-        bench[key] = {
-            "name_in_paper": [name] if name else [],
-            "aliases": [],
-            "generate_claim": None,
-            "evidence": {"section": "", "quote": str(a.get("quote") or "").strip()},
-        }
-        obi[key] = {
-            "obi_id": kept_id,
-            "obi_label": ids.name[kept_id] if kept_id else None,
-            "id_status": status,
-            "claimed_id": claimed_id,
-            "claimed_label": claimed_label,
-            "name_in_paper": bench[key]["name_in_paper"],
-        }
-    return bench, obi
 
 
 def relabel(obi: dict, ids: ObiIds) -> dict:
@@ -307,92 +193,6 @@ def run_calls(runs: int, dry_run: bool, only: str | None = None, force: bool = F
         await asyncio.gather(*(one(k, d) for k, d in todo))
 
     asyncio.run(main())
-
-
-# ── scoring ──────────────────────────────────────────────────────────────────
-
-def run_names(runs_dir: Path = RUNS_DIR) -> list[str]:
-    return sorted((d.name for d in runs_dir.iterdir() if d.is_dir() and re.fullmatch(r"r\d+", d.name)),
-                  key=lambda n: int(n[1:])) if runs_dir.exists() else []
-
-
-def run_score(runs_dir: Path = RUNS_DIR, comparison_dir: Path = COMPARISON_DIR) -> None:
-    comparison_dir.mkdir(parents=True, exist_ok=True)
-    for run in run_names(runs_dir):
-        subprocess.run([sys.executable, str(COMPARATOR), "--registry-dir", str(runs_dir / run),
-                        "--benchmark-dir", str(BENCHMARK_DIR), "--out-stem", run],
-                       check=True, cwd=REPO_ROOT)
-        for suffix in (".json", ".html"):
-            shutil.copyfile(runs_dir / run / "comparison" / f"{run}{suffix}",
-                            comparison_dir / f"{run}{suffix}")
-    shutil.copyfile(AGENT_REPORT, comparison_dir / f"{AGENT}.json")
-
-
-# ── report ───────────────────────────────────────────────────────────────────
-
-def bench_rows(report: dict) -> dict[tuple[str, str], dict]:
-    """{(registry name, curator key): row} for every curated row. Not the study: SDY1364 and
-    SDY1276 each have two papers."""
-    return {(Path(paper["registry_dir"]).name, row["benchmark"]["key"]): row
-            for paper in report["papers"] for row in paper["rows"] if row.get("benchmark")}
-
-
-def id_counts(run_dir: Path) -> Counter:
-    counts: Counter = Counter()
-    for path in run_dir.glob("*/assays_OBI.json"):
-        counts.update(e.get("id_status", "none") for e in _read(path).values())
-    return counts
-
-
-def calls_spent(run_dir: Path, agent: bool) -> int:
-    """One per raw.json for a baseline run; every reply in assays_raw.json for the agent."""
-    if not agent:
-        return sum(1 for _ in run_dir.glob("*/raw.json"))
-    return sum(len(v) for p in run_dir.glob("*/assays_raw.json")
-               for v in _read(p).values() if isinstance(v, dict))
-
-
-def arm_column(report: dict, run_dir: Path, agent: bool) -> dict:
-    t = report["totals"]
-    s = t["status_counts"]
-    col = {
-        "curated rows": t["benchmark_total"], "entries": t["ours_total"], "matched": t["matched"],
-        "MISSED": t["missed"], "EXTRA": t["extra"],
-        "exact (same OBI term as curator)": t["exact"],
-        "OBI ok (same or parent/child)": t["obi_ok"],
-        "obi_exact_rate": t["obi_exact_rate"], "obi_recall": t["obi_recall"],
-        "wrong term (CONFLICT)": s.get("MATCH_OBI_CONFLICT", 0),
-        "no usable term (UNMAPPED)": s.get("MATCH_OBI_UNMAPPED", 0),
-        "calls": calls_spent(run_dir, agent),
-    }
-    if not agent:
-        ids = id_counts(run_dir)
-        col.update({f"ids: {k}": ids.get(k, 0) for k in ID_STATUSES})
-    return col
-
-
-def _fmt(v) -> str:
-    return f"{v:.1%}" if isinstance(v, float) else str(v)
-
-
-def summary_table(cols: dict[str, dict]) -> str:
-    runs = [n for n in cols if n != AGENT]
-    metrics = list(dict.fromkeys(m for c in cols.values() for m in c))
-    head = ["metric", *cols, "baseline mean (min-max)"] if runs else ["metric", *cols]
-    lines = ["| " + " | ".join(head) + " |", "|" + "---|" * len(head)]
-    for m in metrics:
-        cells = [_fmt(cols[n][m]) if m in cols[n] else "—" for n in cols]
-        vals = [cols[n][m] for n in runs if m in cols[n]]
-        if runs:
-            if vals:
-                mean = sum(vals) / len(vals)
-                pct = isinstance(vals[0], float)
-                cells.append(f"{mean:.1%} ({min(vals):.1%}-{max(vals):.1%})" if pct
-                             else f"{mean:.1f} ({min(vals)}-{max(vals)})")
-            else:
-                cells.append("—")
-        lines.append(f"| {m} | " + " | ".join(cells) + " |")
-    return "\n".join(lines)
 
 
 def majority(statuses: list[str]) -> str:
@@ -512,7 +312,7 @@ def main() -> None:
     elif args.cmd == "relabel":
         run_relabel()
     elif args.cmd == "score":
-        run_score(*dirs)
+        score_runs(*dirs)
     else:
         print(run_report(*dirs))
 
