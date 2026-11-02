@@ -24,9 +24,18 @@ another). Three things differ from the shared algorithm:
 Matching tiers and statuses are the ones in `compare_assay_benchmark.py`, imported, not copied.
 No LLM call.
 
+`--strict` turns off the two leniencies above that flatter the agent, for a number that can stand
+beside other methods' (every baseline arm is scored in both modes):
+
+* no leftover fold: a curated row that found no partner is MISSED, whatever term it carries, and
+  the denominator is the raw row count the curators wrote;
+* a pair the ontology alone made (same term or parent/child, with no shared name, alias or quote)
+  ranks below every pair the names made, so it is taken only when nothing better claims either
+  side. The pairs taken that way are counted as `term_only_pairs` in both modes.
+
 Usage:
     python3 scripts/compare_assay_benchmark_v2.py [--only SDY1289] [--benchmark-dir DIR]
-                                                  [--registry-dir DIR] [--out-stem NAME]
+                                                  [--registry-dir DIR] [--out-stem NAME] [--strict]
 
 Reads  : data/benchmark_assay/benchmark_assay_v5/*.json
          data/31paper_assays/assay_result_v1/<pmid>_<SDY>/{assays_benchmark,assays_OBI}.json
@@ -283,6 +292,39 @@ _EXTRA_TIER_REASON = {
     "evidence": "paired by a shared evidence sentence",
 }
 
+#: Signals that come from what the two sides called the assay. The quote-based ones are not:
+#: a Methods sentence often names several assays, so one side's quote naming the other side's
+#: assay, or a sentence both quoted, says the assays were described together, not that they are
+#: one.
+_NAME_SIGNALS = {"same name", "name containment", "short name"}
+_TERM_TIERS = ("obi_exact", "obi_ancestry")
+
+
+def is_term_only(hit: tuple[str, str | None, list[str]]) -> bool:
+    """A pair the ontology made with nothing in the names or quotes to confirm it."""
+    tier, _, signals = hit
+    return tier in _TERM_TIERS and not (_NAME_SIGNALS & set(signals))
+
+
+def pair_rank(hit: tuple[str, str | None, list[str]], strict: bool) -> tuple:
+    """Sort key: smaller is taken first.
+
+    Default: a name both sides use outranks a shared term, then the tier, then how many other
+    signals agree. Strict adds one step: a term-only pair ranks below every pair that has a name
+    signal, whatever its tier, so a curated row cannot be handed to the wrong agent entry on the
+    same term while the entry it names is still free. A pair with no name signal and no shared
+    term (a shared sentence alone) ranks below the term-only pair, since one Methods sentence
+    often names several assays.
+    """
+    tier, _, signals = hit
+    if not strict or _NAME_SIGNALS & set(signals):
+        demote = 0
+    elif tier in _TERM_TIERS:
+        demote = 1
+    else:
+        demote = 2  # a shared sentence alone: the weakest evidence there is
+    return ("same name" not in signals, demote, PAIR_TIERS.index(tier), -len(signals))
+
 
 def _words(text: str) -> list[str]:
     return normalize(text or "").split()
@@ -353,14 +395,16 @@ def pair_score(bench: dict, bench_id: str | None, ours: dict, obi: ObiGraph) -> 
     return None
 
 
-def compare_paper(bench: dict, registry: Path, obi: ObiGraph) -> dict:
+def compare_paper(bench: dict, registry: Path, obi: ObiGraph, strict: bool = False) -> dict:
     """Score one paper, pairing each benchmark row with at most one agent entry.
 
-    Every pair is scored, then pairs are taken strongest first -- by tier, then by how many other
-    signals agree -- and each side is used once. The shared algorithm let every benchmark row
-    claim every agent entry on its best tier, so one entry could be counted under two rows while
-    its real partner showed as EXTRA. An agent entry left over on the same OBI term as an
-    already-paired row is that row's SPLIT; anything else left over is EXTRA.
+    Every pair is scored, then pairs are taken strongest first -- by `pair_rank` -- and each side
+    is used once. The shared algorithm let every benchmark row claim every agent entry on its
+    best tier, so one entry could be counted under two rows while its real partner showed as
+    EXTRA. An agent entry left over on the same OBI term as an already-paired row is that row's
+    SPLIT; anything else left over is EXTRA.
+
+    `strict` skips the leftover fold and demotes term-only pairs (module docstring).
     """
     ours = json.loads((registry / "assays_benchmark.json").read_text(encoding="utf-8"))
     ours_obi = json.loads((registry / "assays_OBI.json").read_text(encoding="utf-8"))
@@ -377,24 +421,24 @@ def compare_paper(bench: dict, registry: Path, obi: ObiGraph) -> dict:
                 # A name both sides use outranks a shared term: the curator's "CFSE labeling" is
                 # filed under `flow cytometry assay`, and would otherwise take the agent's flow
                 # cytometry entry on the term before reaching the agent's own "CFSE labeling".
-                scored.append(("same name" not in hit[2], PAIR_TIERS.index(hit[0]), -len(hit[2]),
-                               bi, oi, hit))
-    scored.sort(key=lambda t: t[:5])
+                scored.append((pair_rank(hit, strict), bi, oi, hit))
+    scored.sort(key=lambda t: t[:3])
 
     assigned: dict[str, list[tuple[str, tuple]]] = {}
     used: set[str] = set()
-    for _, _, _, bi, oi, hit in scored:
+    for _, bi, oi, hit in scored:
         bench_key, our_key = bench_keys[bi], our_keys[oi]
         if bench_key in assigned or our_key in used:
             continue
         assigned[bench_key] = [(our_key, hit)]
         used.add(our_key)
-    for _, _, _, bi, oi, hit in scored:
+    for _, bi, oi, hit in scored:
         bench_key, our_key = bench_keys[bi], our_keys[oi]
         if our_key in used or bench_key not in assigned or hit[0] not in _SPLIT_TIERS:
             continue
         assigned[bench_key].append((our_key, hit))
         used.add(our_key)
+    term_only = sum(is_term_only(pairs[0][1]) for pairs in assigned.values())
 
     # A benchmark row left without a partner, on the same curated term as a row that was paired,
     # is one more panel of that assay -- SDY1289's four flow cytometry panels against the agent's
@@ -404,7 +448,7 @@ def compare_paper(bench: dict, registry: Path, obi: ObiGraph) -> dict:
     folded: dict[str, list[str]] = {}
     for bench_key in bench_keys:
         bench_id = bench[bench_key]["obi_id"]
-        if bench_key in assigned or not bench_id:
+        if strict or bench_key in assigned or not bench_id:
             continue
         host = next((k for k in bench_keys if k in assigned and bench[k]["obi_id"] == bench_id), None)
         if host:
@@ -440,6 +484,8 @@ def compare_paper(bench: dict, registry: Path, obi: ObiGraph) -> dict:
         status, reason = status_for(tier, detail, bench_id, matches[:1], obi)
         if tier in _EXTRA_TIER_REASON:
             reason = f"{_EXTRA_TIER_REASON[tier]}; {reason}"
+        if is_term_only(pairs[0][1]):
+            reason += "; term-only pair: no shared name, alias or quote confirms it"
         also = [k for k, _ in pairs[1:]]
         if also:
             reason += f"; {len(also)} more agent entr{'y' if len(also) == 1 else 'ies'} on this term: " \
@@ -467,6 +513,8 @@ def compare_paper(bench: dict, registry: Path, obi: ObiGraph) -> dict:
             "extra": sum(r["status"] == "EXTRA" for r in rows),
             # Rows paired one-to-one that have further agent entries on the same term.
             "split": sum(bool(r.get("also_on_term")) for r in rows),
+            # Pairs the ontology alone made (same term or parent/child, no name or quote signal).
+            "term_only_pairs": term_only,
             "recall": round(matched / len(bench), 4) if bench else None,
         },
         "merged_groups": [v["merged_from"] for v in bench.values() if len(v["merged_from"]) > 1],
@@ -570,6 +618,8 @@ def overall_totals(papers: list[dict]) -> dict:
     # SPLIT is an annotation now, not a status: the column counts rows that carry one.
     totals["status_counts"]["SPLIT"] = sum(bool(r.get("also_on_term")) for p in papers for r in p["rows"])
     totals["split"] = totals["status_counts"]["SPLIT"]
+    # A report written before the counter existed reads as 0.
+    totals["term_only_pairs"] = sum(p["metrics"].get("term_only_pairs", 0) for p in papers)
     totals["recall"] = ratio(totals["matched"], totals["benchmark_total"])
     totals["precision"] = ratio(totals["matched"], totals["ours_total"])
     totals["f1"] = ratio(2 * totals["precision"] * totals["recall"],
@@ -587,6 +637,7 @@ def _obi_recall(m: dict) -> float:
 
 def render_html(report: dict) -> str:
     t = report["totals"]
+    strict = report.get("mode") == "strict"
     summary_rows = []
     sections = []
     for p in report["papers"]:
@@ -665,11 +716,17 @@ def render_html(report: dict) -> str:
         'a shared name or quote carries a different or missing term, so CONFLICT and UNMAPPED '
         f'count toward recall and not here &mdash; that gap is the {gap} '
         f'{"row" if gap == 1 else "rows"} between the two tiles.</span></p>'
-        f'<p class="sub">Both denominators are {t["benchmark_total"]}, not the '
-        f'{t["benchmark_raw"]} rows the curators wrote: rows sharing an OBI id within one paper '
-        'merge into a single row before matching when the agent delivered one entry on that '
-        'term.</p>'
-        '</div>'
+        + (f'<p class="sub">Strict mode: both denominators are the {t["benchmark_raw"]} rows the '
+           'curators wrote. A curated row left without a partner is MISSED even when another row on '
+           f'the same term was paired, and the {t.get("term_only_pairs", 0)} pairs the ontology '
+           'alone made were taken only after every pair the names made.</p>'
+           if strict else
+           f'<p class="sub">Both denominators are {t["benchmark_total"]}, not the '
+           f'{t["benchmark_raw"]} rows the curators wrote: a curated row left without a partner '
+           'folds into a paired row on the same OBI id within the paper. '
+           f'{t.get("term_only_pairs", 0)} pairs were made by the ontology alone, with no shared '
+           'name, alias or quote.</p>')
+        + '</div>'
     )
     total_row = (
         f'<tr><td>Total</td><td>{t["papers"]} papers</td>'
@@ -733,9 +790,10 @@ blockquote{{margin:4px 0 8px;padding:4px 8px;border-left:3px solid var(--line);c
 .q b{{font-size:12px}}
 .hidden{{display:none}}
 </style></head><body><main>
-<h1>Assay benchmark {e(label)} vs. agent</h1>
+<h1>Assay benchmark {e(label)} vs. agent{" — strict" if strict else ""}</h1>
 <p class="sub">Benchmark: <code>{e(report["benchmark_dir"])}</code> · Agent: <code>{e(report["registry_dir"])}</code> ·
-benchmark entries that share an OBI id within a paper are merged into one row before matching.</p>
+{"strict mode: no leftover fold, term-only pairs taken last" if strict else
+ "a curated row left unpaired folds into a paired row on the same OBI id within the paper"}.</p>
 <div class="kpis">
 <div class="kpi"><b>{t["papers"]}</b><span>papers scored</span></div>
 <div class="kpi"><b>{t["benchmark_total"]}</b><span>benchmark assays (raw {t["benchmark_raw"]})</span></div>
@@ -797,11 +855,16 @@ def main() -> None:
                         help="Score the registries under this folder instead of the default "
                              f"({REGISTRY_DIR.relative_to(REPO_ROOT)}); the report then goes to "
                              "<registry-dir>/comparison/")
+    parser.add_argument("--strict", action="store_true",
+                        help="No leftover fold and term-only pairs taken last (module docstring); "
+                             "the report stem gets a `_strict` suffix unless --out-stem is given")
     args = parser.parse_args()
     if args.registry_dir is not None:
         use_registry_dir(args.registry_dir)
     benchmark_dir = args.benchmark_dir.resolve()
     out_stem = args.out_stem
+    if args.strict and out_stem == OUT_STEM:
+        out_stem = f"{OUT_STEM}_strict"
 
     obi = ObiGraph()
     pairs, skipped = discover_pairs(args.only, benchmark_dir)
@@ -811,7 +874,7 @@ def main() -> None:
         if raw is None:
             skipped.append(f"{pair['benchmark'].name}: unparseable JSON ({error})")
             continue
-        result = compare_paper(prepare_benchmark(raw, obi), pair["registry"], obi)
+        result = compare_paper(prepare_benchmark(raw, obi), pair["registry"], obi, strict=args.strict)
         papers.append({
             "study": pair["study"],
             "pmid": pair["pmid"],
@@ -831,6 +894,7 @@ def main() -> None:
         **overall_totals(papers),
     }
     report = {
+        "mode": "strict" if args.strict else "default",
         "benchmark_dir": str(benchmark_dir.relative_to(REPO_ROOT)),
         "registry_dir": str(REGISTRY_DIR.relative_to(REPO_ROOT)),
         "totals": totals,
@@ -841,7 +905,8 @@ def main() -> None:
     (OUT_DIR / f"{out_stem}.json").write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     (OUT_DIR / f"{out_stem}.html").write_text(render_html(report), encoding="utf-8")
 
-    print(f"scored {len(papers)}/{len(list(benchmark_dir.glob('*.json')))} benchmark files")
+    print(f"scored {len(papers)}/{len(list(benchmark_dir.glob('*.json')))} benchmark files"
+          f" [{report['mode']}]")
     for s in skipped:
         print(f"  SKIPPED  {s}")
     for p in papers:
@@ -851,8 +916,9 @@ def main() -> None:
             print(f"  MERGED   {p['study']}: {' + '.join(g)}")
     print(f"benchmark {totals['benchmark_total']} (raw {totals['benchmark_raw']}) | agent {totals['ours_total']} | "
           f"matched {totals['matched']} (exact {totals['exact']}) | missed {totals['missed']} | "
-          f"extra {totals['extra']} | split {totals['split']} | recall {totals['recall']:.1%} | "
-          f"precision {totals['precision']:.1%} | obi exact {totals['obi_exact_rate']:.1%}")
+          f"extra {totals['extra']} | split {totals['split']} | term-only {totals['term_only_pairs']} | "
+          f"recall {totals['recall']:.1%} | precision {totals['precision']:.1%} | "
+          f"obi exact {totals['obi_exact_rate']:.1%}")
     for p in papers:
         m = p["metrics"]
         print(f"  {p['study']:<8} {p['pmid']}  bench {m['benchmark_total']:>2} agent {m['ours_total']:>2} "

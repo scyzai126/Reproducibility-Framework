@@ -448,3 +448,86 @@ def test_html_spells_out_how_both_recalls_are_computed(mod):
     # OBI recall: MATCH + MATCH GRANULARITY only, and the gap to recall named.
     assert "<code>(1 + 1) / 4</code>" in page and "<code>2 / 4</code>" in page
     assert "that gap is the 1 row " in page  # singular, not "1 rows"
+
+
+# ── strict mode ───────────────────────────────────────────────────────────────
+
+def test_strict_mode_never_folds_a_leftover(mod, array_obi, tmp_path):
+    """The four flow panels again: strict scores them as the four rows the curator wrote."""
+    bench = {name: _entry(name, "OBI:0000916", f"{name} quote")
+             for name in ("flow cytometry", "ICS panel", "Ki67 panel", "Th1/Th2 panel")}
+    ours = {"flow cytometry assay": _ours("flow cytometry", "OBI:0000916", "flow cytometry assay")}
+
+    lenient = _compare(mod, array_obi, tmp_path, bench, ours)
+    registry = tmp_path / "registry"
+    strict = mod.compare_paper(mod.prepare_benchmark(bench, array_obi), registry, array_obi, strict=True)
+
+    assert lenient["metrics"]["benchmark_total"] == 1 and lenient["metrics"]["missed"] == 0
+    assert strict["metrics"]["benchmark_total"] == 4 and strict["metrics"]["missed"] == 3
+    assert sorted(r["status"] for r in strict["rows"]) == ["MATCH", "MISSED", "MISSED", "MISSED"]
+    assert strict["merged_groups"] == []
+
+
+def test_strict_mode_takes_a_term_only_pair_after_every_pair_the_names_made(mod, array_obi, tmp_path):
+    """Two curated rows on `flow cytometry assay`. The agent's flow entry shares no name with
+    either; its ICS entry, on a term OBI does not know, contains the curator's "ICS panel".
+    Default hands the ICS row to the flow entry on the shared term first and folds the real flow
+    row into it, leaving the ICS entry EXTRA. Strict takes the containment pair first."""
+    bench = {"ICS panel": _entry("ICS panel", "OBI:0000916", "ICS panel quote"),
+             "flow cytometry": _entry("flow cytometry", "OBI:0000916", "flow quote")}
+    ours = {"flow cytometry assay": _ours("FACS", "OBI:0000916", "flow cytometry assay"),
+            "ICS staining": _ours("ICS panel staining", "OBI:0009999", "ICS staining")}
+
+    lenient = _compare(mod, array_obi, tmp_path, bench, ours)
+    registry = tmp_path / "registry"
+    strict = mod.compare_paper(mod.prepare_benchmark(bench, array_obi), registry, array_obi, strict=True)
+
+    # Default: the term-only pair is taken first, and the real flow row then folds into it as a
+    # leftover on the same term, so the mistake is invisible.
+    assert _pairs(lenient) == {"ICS panel": ("MATCH", ["flow cytometry assay"]),
+                               None: ("EXTRA", ["ICS staining"])}
+    assert lenient["merged_groups"] == [["ICS panel", "flow cytometry"]]
+    assert _pairs(strict) == {"ICS panel": ("MATCH_OBI_CONFLICT", ["ICS staining"]),
+                              "flow cytometry": ("MATCH", ["flow cytometry assay"])}
+    # The pair the ontology alone made is counted, and the row says so.
+    assert lenient["metrics"]["term_only_pairs"] == strict["metrics"]["term_only_pairs"] == 1
+    flow_row = next(r for r in strict["rows"] if r["benchmark"] and r["benchmark"]["key"] == "flow cytometry")
+    assert "term-only pair" in flow_row["reason"]
+
+
+def test_a_shared_sentence_alone_does_not_outrank_a_term_only_pair_in_strict_mode(mod, array_obi, tmp_path):
+    """A Methods sentence names several assays, so a shared sentence is not a name signal: the
+    curated flow row still goes to the agent's flow entry on the term, not to the array entry
+    quoted from the same sentence."""
+    sentence = "PBMCs were analysed by flow cytometry and gene expression was measured on arrays in parallel."
+    bench = {"flow cytometry": _entry("flow cytometry", "OBI:0000916", sentence)}
+    ours = {"flow cytometry assay": _ours("FACS", "OBI:0000916", "flow cytometry assay", quote="elsewhere"),
+            "transcription profiling by array assay": _ours(
+                "expression arrays", "OBI:0001463", "transcription profiling by array assay", quote=sentence)}
+
+    registry = tmp_path / "registry"
+    _compare(mod, array_obi, tmp_path, bench, ours)
+    strict = mod.compare_paper(mod.prepare_benchmark(bench, array_obi), registry, array_obi, strict=True)
+
+    assert _pairs(strict)["flow cytometry"] == ("MATCH", ["flow cytometry assay"])
+
+
+def test_overall_totals_sum_term_only_pairs_and_tolerate_old_reports(mod):
+    old = _paper(["MATCH"], 1, 1, 1, 1, 0, 0)
+    new = _paper(["MATCH", "MATCH"], 2, 2, 2, 2, 0, 0)
+    new["metrics"]["term_only_pairs"] = 2
+
+    assert mod.overall_totals([old, new])["term_only_pairs"] == 2
+
+
+def test_html_names_the_scoring_mode(mod):
+    papers = [_paper(["MATCH", "MISSED"], 2, 1, 1, 1, 1, 0)]
+    totals = {"papers": 1, "skipped": [], "registries_without_benchmark": [], **mod.overall_totals(papers)}
+
+    lenient = mod.render_html({"mode": "default", "benchmark_dir": "b", "registry_dir": "r",
+                               "papers": papers, "totals": totals})
+    strict = mod.render_html({"mode": "strict", "benchmark_dir": "b", "registry_dir": "r",
+                              "papers": papers, "totals": totals})
+
+    assert "— strict" not in lenient and "folds into a paired row" in lenient
+    assert "— strict" in strict and "Strict mode: both denominators are the 2 rows" in strict
