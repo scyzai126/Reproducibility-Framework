@@ -1,4 +1,5 @@
 {
+  "mode": "default",
   "benchmark_dir": "data/benchmark_assay/benchmark_assay_v5",
   "registry_dir": "data/31paper_assays/assay_result_v3",
   "totals": {
@@ -25,6 +26,7 @@
       "EXTRA": 4
     },
     "split": 15,
+    "term_only_pairs": 6,
     "recall": 0.9936305732484076,
     "precision": 0.8813559322033898,
     "f1": 0.934131736526946,
@@ -48,6 +50,7 @@
         "missed": 0,
         "extra": 0,
         "split": 2,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -432,6 +435,7 @@
         "missed": 0,
         "extra": 0,
         "split": 1,
+        "term_only_pairs": 2,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -594,7 +598,7 @@
           "status": "MATCH",
           "tier": "obi_exact",
           "signals": [],
-          "reason": "same OBI term; 1 more agent entry on this term: `serum neutralization of viral infectivity assay (2)`",
+          "reason": "same OBI term; term-only pair: no shared name, alias or quote confirms it; 1 more agent entry on this term: `serum neutralization of viral infectivity assay (2)`",
           "benchmark": {
             "key": "Assay for yellow fever virus (YFV) neutralizing antibodies",
             "obi_id": "OBI:0000872",
@@ -717,7 +721,7 @@
             "quote names the other side",
             "shared evidence sentence"
           ],
-          "reason": "our term OBI:0000854 western blot assay is more specific than the benchmark's OBI:0001978 immunoblot assay",
+          "reason": "our term OBI:0000854 western blot assay is more specific than the benchmark's OBI:0001978 immunoblot assay; term-only pair: no shared name, alias or quote confirms it",
           "benchmark": {
             "key": "immunoblot assay",
             "obi_id": "OBI:0001978",
@@ -875,6 +879,7 @@
         "missed": 0,
         "extra": 0,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -1068,6 +1073,7 @@
         "missed": 0,
         "extra": 0,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -1323,6 +1329,7 @@
         "missed": 0,
         "extra": 0,
         "split": 1,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -1752,6 +1759,7 @@
         "missed": 0,
         "extra": 0,
         "split": 1,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -2226,6 +2234,7 @@
         "missed": 0,
         "extra": 0,
         "split": 1,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -2485,6 +2494,7 @@
         "missed": 0,
         "extra": 0,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -2681,6 +2691,7 @@
         "missed": 0,
         "extra": 0,
         "split": 1,
+        "term_only_pairs": 1,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -2691,7 +2702,7 @@
           "signals": [
             "quote names the other side"
           ],
-          "reason": "same OBI term",
+          "reason": "same OBI term; term-only pair: no shared name, alias or quote confirms it",
           "benchmark": {
             "key": "microarray analysis",
             "obi_id": "OBI:0001463",
@@ -3018,6 +3029,7 @@
         "missed": 0,
         "extra": 0,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -3343,6 +3355,7 @@
         "missed": 0,
         "extra": 1,
         "split": 1,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -3690,6 +3703,7 @@
         "missed": 0,
         "extra": 0,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -4003,6 +4017,7 @@
         "missed": 0,
         "extra": 0,
         "split": 1,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -4207,6 +4222,7 @@
         "missed": 0,
         "extra": 0,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -4462,6 +4478,7 @@
         "missed": 0,
         "extra": 0,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -4826,6 +4843,7 @@
         "missed": 0,
         "extra": 0,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -5002,6 +5020,7 @@
         "missed": 0,
         "extra": 1,
         "split": 1,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -5220,6 +5239,7 @@
         "missed": 0,
         "extra": 0,
         "split": 1,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -5453,6 +5473,7 @@
         "missed": 0,
         "extra": 0,
         "split": 1,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -5847,6 +5868,7 @@
         "missed": 0,
         "extra": 0,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -6105,6 +6127,7 @@
         "missed": 0,
         "extra": 0,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -6348,6 +6371,7 @@
         "missed": 0,
         "extra": 0,
         "split": 0,
+        "term_only_pairs": 1,
         "recall": 1.0
       },
       "merged_groups": [
@@ -6720,7 +6744,7 @@
           "signals": [
             "shared evidence sentence"
           ],
-          "reason": "our term OBI:0002692 polymerase chain reaction assay is broader than the benchmark's OBI:0000893 real time polymerase chain reaction assay",
+          "reason": "our term OBI:0002692 polymerase chain reaction assay is broader than the benchmark's OBI:0000893 real time polymerase chain reaction assay; term-only pair: no shared name, alias or quote confirms it",
           "benchmark": {
             "key": "PCR quantitation of bacterial 16S ribosomal RNA (rRNA) gene product",
             "obi_id": "OBI:0000893",
@@ -6843,6 +6867,7 @@
         "missed": 0,
         "extra": 0,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -7020,6 +7045,7 @@
         "missed": 0,
         "extra": 0,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -7396,6 +7422,7 @@
         "missed": 0,
         "extra": 0,
         "split": 0,
+        "term_only_pairs": 1,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -7461,7 +7488,7 @@
             "quote names the other side",
             "shared evidence sentence"
           ],
-          "reason": "same OBI term",
+          "reason": "same OBI term; term-only pair: no shared name, alias or quote confirms it",
           "benchmark": {
             "key": "ELISA",
             "obi_id": "OBI:0000661",
@@ -7622,6 +7649,7 @@
         "missed": 0,
         "extra": 0,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -7844,6 +7872,7 @@
         "missed": 0,
         "extra": 0,
         "split": 1,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -8339,6 +8368,7 @@
         "missed": 1,
         "extra": 0,
         "split": 1,
+        "term_only_pairs": 0,
         "recall": 0.9
       },
       "merged_groups": [],
@@ -8925,6 +8955,7 @@
         "missed": 0,
         "extra": 0,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -9130,6 +9161,7 @@
         "missed": 0,
         "extra": 0,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -9376,6 +9408,7 @@
         "missed": 0,
         "extra": 2,
         "split": 1,
+        "term_only_pairs": 1,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -9690,7 +9723,7 @@
             "quote names the other side",
             "shared evidence sentence"
           ],
-          "reason": "same OBI term; 1 more agent entry on this term: `cytometric bead array assay (2)`",
+          "reason": "same OBI term; term-only pair: no shared name, alias or quote confirms it; 1 more agent entry on this term: `cytometric bead array assay (2)`",
           "benchmark": {
             "key": "cytokine bead array assay",
             "obi_id": "OBI:0000920",
