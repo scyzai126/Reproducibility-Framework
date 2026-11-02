@@ -49,6 +49,13 @@ out. Three extractions cost two more calls and turn that into a vote.
     so a Methods heading several entries legitimately share stays an alias of each.
 
 With one registry it is the identity: the single extraction, untouched.
+
+`consensus_with_support` returns the same two plus, per delivered key, the runs that held the
+entry ({"runs": [...], "of": N}, the shape of a minority record). A delivered entry two of
+three calls found is as much a finding as one only one found, and used to be the one vote
+outcome nothing reported: measured over the stored v3 replies, 5 of 178 delivered entries were
+2-of-3 (3 of them ACCEPTed by the verifier, which judges fields, not whether a call listed the
+assay at all). The service prints them as `VOTE` lines; the deliverable's fields do not change.
 """
 
 from __future__ import annotations
@@ -325,10 +332,18 @@ def cluster_for_vote(runs: list[tuple[str, dict]]
 
 def consensus(registries: list[dict]) -> tuple[dict, dict]:
     """(registry, minority) from N extractions of one paper. One registry comes back untouched."""
+    registry, minority, _ = consensus_with_support(registries)
+    return registry, minority
+
+
+def consensus_with_support(registries: list[dict]) -> tuple[dict, dict, dict]:
+    """(registry, minority, support): `consensus` plus, for every delivered key, which runs
+    held the entry -- {"runs": [labels], "of": N}. With one registry every entry is 1 of 1."""
     if not registries:
-        return {}, {}
+        return {}, {}, {}
     if len(registries) == 1:
-        return dict(registries[0]), {}
+        registry = dict(registries[0])
+        return registry, {}, {key: {"runs": ["run1"], "of": 1} for key in registry}
     runs = [(f"run{i + 1}", registry) for i, registry in enumerate(registries)]
     labels = [label for label, _ in runs]
     by_label = dict(runs)
@@ -338,7 +353,8 @@ def consensus(registries: list[dict]) -> tuple[dict, dict]:
     minority: dict = {}
     taken: set[str] = set()
     clusters, attached = cluster_for_vote(runs)
-    delivered: list[tuple[list[dict], frozenset[int], str]] = []
+    support: dict = {}
+    delivered: list[tuple[list[dict], frozenset[int], str, list[str]]] = []
     for cluster in clusters:
         present = [label for label in labels if cluster.get(label)]
         # Anchor order, not run order: first-tier members before an attached one, then by content
@@ -353,14 +369,16 @@ def consensus(registries: list[dict]) -> tuple[dict, dict]:
                 "entry": members[0], "runs": present, "of": len(runs)}
             continue
         guarded = frozenset(i for i, node in enumerate(nodes) if node in attached)
-        delivered.append((members, guarded, first_key))
+        delivered.append((members, guarded, first_key, present))
     # Every delivered cluster's own wordings -- those of its first-tier members -- are known
     # before any entry is built, so a second-tier member cannot hand a sibling's wording to it.
     own = [frozenset(normalize_assay_name(w) for i, m in enumerate(members) if i not in guarded
                      for w in _wordings(m))
-           for members, guarded, _ in delivered]
-    for i, (members, guarded, first_key) in enumerate(delivered):
+           for members, guarded, _, _ in delivered]
+    for i, (members, guarded, first_key, present) in enumerate(delivered):
         reserved = frozenset(w for j, forms in enumerate(own) if j != i for w in forms if w)
         entry = _merge(members, guarded, reserved)
-        registry[_unique(str(entry["name_in_paper"]) or first_key, taken)] = entry
-    return registry, minority
+        key = _unique(str(entry["name_in_paper"]) or first_key, taken)
+        registry[key] = entry
+        support[key] = {"runs": present, "of": len(runs)}
+    return registry, minority, support

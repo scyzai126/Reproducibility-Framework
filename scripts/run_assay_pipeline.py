@@ -307,6 +307,15 @@ def report_result(result: dict) -> None:
         quote = ((record.get("entry") or {}).get("evidence") or {}).get("quote") or ""
         print(f"  MINORITY  {key}: found by {len(record.get('runs') or [])} of "
               f"{record.get('of')} extractions; not delivered — {quote[:120]}")
+    # An entry delivered on a bare majority: one extraction call never listed it. Printed for
+    # the same reason a MINORITY line is -- the vote's margin is otherwise invisible, and the
+    # verifier judges the entry's fields, never whether every call found the assay. Named by
+    # the key it is delivered under now, like the verdict lines.
+    for key, record in (result["rounds"].get("extract", {}).get("partial") or {}).items():
+        now = keys.get(key)
+        where = f" → {now}" if now and now != key else ""
+        print(f"  VOTE  {key}{where}: found by {len(record.get('runs') or [])} of "
+              f"{record.get('of')} extractions; delivered")
     # Every fold round 5 made: an entry that is no longer a key of its own because another
     # write-up of the same OBI term absorbed it. Printed rather than counted, because the OBI term
     # is coarser than the paper's wording and a fold is exactly where that coarseness shows.

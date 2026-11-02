@@ -138,6 +138,25 @@ def test_a_judged_fold_and_a_judged_refusal_each_print_the_verdict(cli, capsys):
     assert "REVIEW  not folded  ICS kept apart from flow cytometry assay" in out
     assert "JUDGED  DIFFERENT: two marker sets" in out
 
+def test_a_bare_majority_entry_is_a_vote_line_under_its_delivered_key(cli, capsys):
+    """Delivered by two of three calls: printed like a MINORITY line, since the verifier judges
+    fields and never whether every call listed the assay; named by its round-5 key."""
+    cli.report_result(_result(
+        rounds={"extract": {"source": "extracted", "calls": 3, "extractions": 3, "assays": 1,
+                            "minority": 0, "partial": {"FACS": {"runs": ["run1", "run3"], "of": 3}}}},
+        merges={"results": [], "key_map": {"FACS": "flow cytometry assay"}}))
+
+    out = capsys.readouterr().out
+    assert "VOTE  FACS → flow cytometry assay: found by 2 of 3 extractions; delivered" in out
+
+
+def test_an_entry_every_call_found_prints_no_vote_line(cli, capsys):
+    cli.report_result(_result(rounds={"extract": {
+        "source": "extracted", "calls": 3, "extractions": 3, "assays": 1, "minority": 0}}))
+
+    assert "VOTE" not in capsys.readouterr().out
+
+
 def test_a_dropped_alias_is_a_line_of_its_own(cli, capsys):
     """A wording removed before round 2 because the paper does not contain it is a finding."""
     cli.report_result(_result(rounds={"extract": {

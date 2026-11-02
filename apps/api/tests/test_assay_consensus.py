@@ -1,6 +1,6 @@
 """Round 1 by majority: entries and fields a majority of extractions agree on, nothing else."""
 
-from app.agent.assay_consensus import consensus, same_entry
+from app.agent.assay_consensus import consensus, consensus_with_support, same_entry
 from app.agent.assay_extractor import ENTRY_FIELDS
 
 
@@ -51,6 +51,26 @@ def test_an_entry_in_two_of_three_runs_is_delivered():
 
     assert list(registry) == ["ELISA", "flow cytometry for DC activation"]
     assert minority == {}
+
+
+def test_support_says_which_runs_held_each_delivered_entry():
+    """A bare-majority entry is delivered like any other; `support` is the only place the
+    margin survives, keyed by the delivered key, in the shape of a minority record."""
+    runs = [{"ELISA": ELISA, "flow cytometry for DC activation": DC_PANEL},
+            {"ELISA": ELISA, "flow cytometry for DC activation": DC_PANEL},
+            {"ELISA": ELISA}]
+
+    registry, minority, support = consensus_with_support(runs)
+
+    assert (registry, minority) == consensus(runs)
+    assert support == {"ELISA": {"runs": ["run1", "run2", "run3"], "of": 3},
+                       "flow cytometry for DC activation": {"runs": ["run1", "run2"], "of": 3}}
+
+
+def test_support_of_one_registry_is_one_of_one():
+    registry = {"ELISA": ELISA}
+
+    assert consensus_with_support([registry]) == (registry, {}, {"ELISA": {"runs": ["run1"], "of": 1}})
 
 
 def test_fields_take_the_value_two_runs_agree_on_in_its_first_spelling():

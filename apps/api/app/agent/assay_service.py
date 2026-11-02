@@ -38,7 +38,7 @@ from pathlib import Path
 from openai import AsyncOpenAI
 
 from app.agent import assay_trace
-from app.agent.assay_consensus import consensus
+from app.agent.assay_consensus import consensus_with_support
 from app.agent.assay_corrector import (
     build_report as build_correction_report,
     correct_registry,
@@ -962,7 +962,7 @@ async def _run_rounds(pubmed_id, study_accession, client, verify, correct, model
     if kind == "xml":
         for registry in runs:
             derive_evidence_fields(registry, source_text)
-    assays, minority = consensus(runs)
+    assays, minority, support = consensus_with_support(runs)
 
     # `source` and `evidence.sentence_ids` are not asked of the model; they are worked out here
     # from the voted quote, once more, before the registry is written or judged. Free, and
@@ -1002,6 +1002,13 @@ async def _run_rounds(pubmed_id, study_accession, client, verify, correct, model
     if aliases_dropped:
         # Wordings the vote carried that the paper does not contain, removed before verification.
         rounds["extract"]["aliases_dropped"] = aliases_dropped
+    # Delivered, but not by every extraction call: a majority is enough to deliver, and which
+    # entries only just cleared it is a finding of the same kind as a MINORITY line. Recorded
+    # per key so the CLI can print it; the deliverable's fields do not change.
+    partial = {key: record for key, record in support.items()
+               if len(record["runs"]) < record["of"]}
+    if partial:
+        rounds["extract"]["partial"] = partial
     # Says why an empty or thin extraction may be: with no Methods section (a short report whose
     # methods sit in a supplement) round 1 had only the main text to read. XML only -- a PDF's
     # text layer carries no section tags to tell.
