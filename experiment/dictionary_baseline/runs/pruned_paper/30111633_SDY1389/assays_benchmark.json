@@ -1,4 +1,19 @@
 {
+  "in live organism assay": {
+    "name_in_paper": [
+      "in vivo"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": null,
+    "evidence": {
+      "section": "abstract",
+      "quote": "Translating studies on T cell function and modulation from mouse models to humans requires extrapolating in vivo results on mouse T cell responses in lymphoid organs (spleen and lymph nodes) to human peripheral blood T cells.",
+      "sentence_ids": [
+        "S1"
+      ]
+    }
+  },
   "blood assay": {
     "name_in_paper": [
       "blood",
@@ -124,7 +139,8 @@
   "protein assay": {
     "name_in_paper": [
       "protein",
-      "Protein"
+      "Protein",
+      "proteins"
     ],
     "aliases": [],
     "generate_claim": null,
@@ -134,6 +150,53 @@
       "quote": "Analysis of protein expression confirmed increased CXCR4 and LEF-1 expression and decreased expression of Perforin and T-bet in human LN compared to BM CD8 + memory T cells ( Fig.",
       "sentence_ids": [
         "S63"
+      ]
+    }
+  },
+  "growth factor assay": {
+    "name_in_paper": [
+      "growth factors",
+      "growth factor"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": "results",
+    "evidence": {
+      "section": "results",
+      "quote": "Potential upstream regulators of LN memory cells were associated with cell survival and growth factors (ie.",
+      "sentence_ids": [
+        "S73"
+      ]
+    }
+  },
+  "cytokine assay": {
+    "name_in_paper": [
+      "cytokines",
+      "cytokine"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": "results",
+    "evidence": {
+      "section": "results",
+      "quote": "Key genes shared between mouse and human subsets include those encoding transcriptional regulators (ID3, TCF7, BCL6), homing molecules (CXCR5, CCR7), cytokines, effector molecules (GZMB), and cell cycle regulators (CDCA3, CDC8) ( Fig.",
+      "sentence_ids": [
+        "S85"
+      ]
+    }
+  },
+  "immune response assay": {
+    "name_in_paper": [
+      "immune responses"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": "results",
+    "evidence": {
+      "section": "results",
+      "quote": "Human LN memory CD8 + T cells therefore exhibit an organ-specific transcriptional profile similar to a T cell subset that maintains and restores immune responses to persistent pathogens in mice.",
+      "sentence_ids": [
+        "S87"
       ]
     }
   },
@@ -152,6 +215,21 @@
       ]
     }
   },
+  "cell count assay": {
+    "name_in_paper": [
+      "cell counts"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": "results",
+    "evidence": {
+      "section": "results",
+      "quote": "After CD3/CD28 stimulation, LN CD8 + TEM cell counts were between 98–106 fold higher than BM.",
+      "sentence_ids": [
+        "S116"
+      ]
+    }
+  },
   "microarray assay": {
     "name_in_paper": [
       "microarray"
@@ -164,36 +242,6 @@
       "quote": "( 12 , 13 ) From the published studies we ranked the top 500 differentially expressed genes from microarray or the significantly differentially expressed genes from RNAseq (FDR ≤ 0.05, |Fold change| ≥ 1).",
       "sentence_ids": [
         "S149"
-      ]
-    }
-  },
-  "cytokine assay": {
-    "name_in_paper": [
-      "cytokine"
-    ],
-    "aliases": [],
-    "generate_claim": null,
-    "source": "results",
-    "evidence": {
-      "section": "results",
-      "quote": "Upstream Regulators Molecule Type Direction in LN Z-score Ifnar group Inhibited −3.27 IFN alpha/beta group Inhibited −2.30 IFNA2 cytokine Inhibited −2.74 IFNB1 cytokine Inhibited −2.65 STAT1 transcription regulator Inhibited −2.67 STAT3 transcription-regulator Activated 1.48 FOXO1 transcription regulator Activated 0.72 NOTCH1 transcription regulator Activated 3.16 Vegf group Activated 3.47 HGF growth factor Activated 3.11 EGFR kinase Activated 3.48",
-      "sentence_ids": [
-        "S174"
-      ]
-    }
-  },
-  "growth factor assay": {
-    "name_in_paper": [
-      "growth factor"
-    ],
-    "aliases": [],
-    "generate_claim": null,
-    "source": "results",
-    "evidence": {
-      "section": "results",
-      "quote": "Upstream Regulators Molecule Type Direction in LN Z-score Ifnar group Inhibited −3.27 IFN alpha/beta group Inhibited −2.30 IFNA2 cytokine Inhibited −2.74 IFNB1 cytokine Inhibited −2.65 STAT1 transcription regulator Inhibited −2.67 STAT3 transcription-regulator Activated 1.48 FOXO1 transcription regulator Activated 0.72 NOTCH1 transcription regulator Activated 3.16 Vegf group Activated 3.47 HGF growth factor Activated 3.11 EGFR kinase Activated 3.48",
-      "sentence_ids": [
-        "S174"
       ]
     }
   }

@@ -1,7 +1,24 @@
 {
+  "immune response assay": {
+    "name_in_paper": [
+      "immune responses",
+      "immune response"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": null,
+    "evidence": {
+      "section": "abstract",
+      "quote": "Here we serially analysed immune responses in 113 patients with moderate or severe COVID-19.",
+      "sentence_ids": [
+        "S3"
+      ]
+    }
+  },
   "cytokine assay": {
     "name_in_paper": [
       "cytokine",
+      "cytokines",
       "Cytokine"
     ],
     "aliases": [],
@@ -15,8 +32,26 @@
       ]
     }
   },
+  "eosinophil assay": {
+    "name_in_paper": [
+      "eosinophils",
+      "Eosinophils",
+      "eosinophil"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": null,
+    "evidence": {
+      "section": "abstract",
+      "quote": "Moreover, severe COVID-19 was accompanied by an increase in multiple type 2 (anti-helminths) effectors, including interleukin-5 (IL-5), IL-13, immunoglobulin E and eosinophils.",
+      "sentence_ids": [
+        "S8"
+      ]
+    }
+  },
   "growth factor assay": {
     "name_in_paper": [
+      "growth factors",
       "growth factor"
     ],
     "aliases": [],
@@ -24,24 +59,9 @@
     "source": null,
     "evidence": {
       "section": "abstract",
-      "quote": "The immune profiles of patients who recovered from moderate COVID-19 were enriched in tissue reparative growth factor signature A, whereas the profiles of those with who developed severe disease had elevated levels of all four signatures.",
+      "quote": "Unsupervised clustering analysis identified four immune signatures, representing growth factors (A), type-2/3 cytokines (B), mixed type-1/2/3 cytokines (C), and chemokines (D) that correlated with three distinct disease trajectories.",
       "sentence_ids": [
-        "S10"
-      ]
-    }
-  },
-  "immune response assay": {
-    "name_in_paper": [
-      "immune response"
-    ],
-    "aliases": [],
-    "generate_claim": null,
-    "source": null,
-    "evidence": {
-      "section": "abstract",
-      "quote": "Thus, we have identified a maladapted immune response profile associated with severe COVID-19 and poor clinical outcome, as well as early immune signatures that correlate with divergent disease trajectories.",
-      "sentence_ids": [
-        "S11"
+        "S9"
       ]
     }
   },
@@ -135,8 +155,25 @@
       ]
     }
   },
+  "neutrophil assay": {
+    "name_in_paper": [
+      "neutrophils",
+      "neutrophil"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": "results",
+    "evidence": {
+      "section": "results",
+      "quote": "Granulocytes such as neutrophils and eosinophils are normally excluded from the PBMC fraction following density gradient separation.",
+      "sentence_ids": [
+        "S28"
+      ]
+    }
+  },
   "monocyte assay": {
     "name_in_paper": [
+      "monocytes",
       "monocyte"
     ],
     "aliases": [],
@@ -144,9 +181,40 @@
     "source": "results",
     "evidence": {
       "section": "results",
-      "quote": "In addition, several chemokines responsible for monocyte recruit- ment correlated significantly with viral load only in patients with severe disease .",
+      "quote": "In patients with COVID-19, increases in monocytes, low-density neutrophils and eosinophils correlated with the severity of disease ( Fig.",
       "sentence_ids": [
-        "S95"
+        "S30"
+      ]
+    }
+  },
+  "protein assay": {
+    "name_in_paper": [
+      "proteins",
+      "protein"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": "results",
+    "evidence": {
+      "section": "results",
+      "quote": "Temporal analyses of PBMC and soluble proteins in plasma, either by linear regression or grouped intervals, supported distinct courses in disease.",
+      "sentence_ids": [
+        "S57"
+      ]
+    }
+  },
+  "lymphocyte assay": {
+    "name_in_paper": [
+      "lymphocytes"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": "results",
+    "evidence": {
+      "section": "results",
+      "quote": "These were characterized by 4 distinct immune signatures: Signature A contained several stromal growth factors including EGF, PDGF, VEGF that are mediators of wound healing and tissue repair 20 , as well as IL-7, a critical growth factor for lymphocytes.",
+      "sentence_ids": [
+        "S101"
       ]
     }
   },
@@ -165,21 +233,6 @@
       ]
     }
   },
-  "eosinophil assay": {
-    "name_in_paper": [
-      "eosinophil"
-    ],
-    "aliases": [],
-    "generate_claim": null,
-    "source": "results",
-    "evidence": {
-      "section": "results",
-      "quote": "These include type 1 immunity markers, including IL-12, chemokines linked to monocyte recruitment and IFNγ; type 2 responses, such as TSLP, chemokines linked to eosinophil recruitment, IL-4, IL-5 and IL-13; and type-3 responses, including IL-23, IL-17A and IL-22.",
-      "sentence_ids": [
-        "S140"
-      ]
-    }
-  },
   "C-reactive protein assay": {
     "name_in_paper": [
       "C-reactive protein"
@@ -195,21 +248,6 @@
       ]
     }
   },
-  "protein assay": {
-    "name_in_paper": [
-      "protein"
-    ],
-    "aliases": [],
-    "generate_claim": null,
-    "source": "methods",
-    "evidence": {
-      "section": "methods",
-      "quote": "50 μL of 5X Stimulation Cocktail (plus protein transport 442 inhibitor) (eBioscience) was added for an additional 4 hours of incubation at 37°C.",
-      "sentence_ids": [
-        "S194"
-      ]
-    }
-  },
   "cell count assay": {
     "name_in_paper": [
       "cell count"
@@ -222,21 +260,6 @@
       "quote": "d, Medication and age adjustments for IL-6 and T cell count.",
       "sentence_ids": [
         "S218"
-      ]
-    }
-  },
-  "neutrophil assay": {
-    "name_in_paper": [
-      "neutrophil"
-    ],
-    "aliases": [],
-    "generate_claim": null,
-    "source": "methods",
-    "evidence": {
-      "section": "methods",
-      "quote": "Eoso, eosinophil; ncMono, non-classical monocyte; neut, neutrophil; cMono, classical monocyte; intMono, intermediate monocyte; DC2 and DC1, type 2 and 1 dendritic cells, respectively; pDC, plasmacytoid dendritic cell; T-CD8 and T-CD4, CD8+ and CD4+ T cells, respectively; NKT, natural killer T cell; NK, natural killer cell.",
-      "sentence_ids": [
-        "S287"
       ]
     }
   }

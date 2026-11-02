@@ -15,10 +15,12 @@
       ]
     }
   },
-  "binding assay": {
+  "protein assay": {
     "name_in_paper": [
-      "Binding",
-      "binding"
+      "Proteins",
+      "protein",
+      "proteins",
+      "Protein"
     ],
     "aliases": [],
     "generate_claim": null,
@@ -31,10 +33,10 @@
       ]
     }
   },
-  "protein assay": {
+  "binding assay": {
     "name_in_paper": [
-      "protein",
-      "Protein"
+      "Binding",
+      "binding"
     ],
     "aliases": [],
     "generate_claim": null,
@@ -96,7 +98,8 @@
   },
   "enzyme-linked immunosorbent assay": {
     "name_in_paper": [
-      "ELISA"
+      "ELISA",
+      "ELISAs"
     ],
     "aliases": [],
     "generate_claim": null,
@@ -127,6 +130,7 @@
   "flow cytometry assay": {
     "name_in_paper": [
       "FACS",
+      "flow cytometry assays",
       "flow cytometry",
       "Flow Cytometry",
       "Flow cytometry"
@@ -144,7 +148,9 @@
   },
   "cytokine assay": {
     "name_in_paper": [
+      "cytokines",
       "cytokine",
+      "Cytokines",
       "Cytokine"
     ],
     "aliases": [],
@@ -152,9 +158,9 @@
     "source": "methods",
     "evidence": {
       "section": "methods",
-      "quote": "For the intracellular cytokine staining, PBMC were cultured in the presence of SARS-CoV-2 specific MPs [1 μg/ml] for 9 hours.",
+      "quote": "Supernatants were harvested at 24 hours post-stimulation for multiplex detection of cytokines.",
       "sentence_ids": [
-        "S332"
+        "S328"
       ]
     }
   },
@@ -170,6 +176,37 @@
       "quote": "Cytokines in cell culture supernatants of the same samples used for AIM were quantified using a human Th cytokine panel (13-plex) kit (LEGENDplex, Biolegend) according to the manufacturer’s instruction.",
       "sentence_ids": [
         "S339"
+      ]
+    }
+  },
+  "analyte assay": {
+    "name_in_paper": [
+      "analytes"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": "methods",
+    "evidence": {
+      "section": "methods",
+      "quote": "Analysis was performed using the LEGENDplex analysis software v8.0, which distinguishes between the 13 different analytes on basis of bead size and internal dye.",
+      "sentence_ids": [
+        "S343"
+      ]
+    }
+  },
+  "monocyte assay": {
+    "name_in_paper": [
+      "monocytes",
+      "Monocytes"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": "methods",
+    "evidence": {
+      "section": "methods",
+      "quote": "Frequency of (D) CD3 + total T cells, (E) CD4 + T cells (CD4 + CD3 + ), (F) CD8 + T cells (CD8 + CD3 + ), (G) CD19 + B cells (CD19 + CD3 – ), (H) CD3 – CD19 – cells, and (I) CD14 + CD16 – monocytes (CD3 – CD19 – CD56 – ) from the PBMCs of unexposed donors (Neg, n = 13) or convalescing COVID-19 patients (COVID, n = 14).",
+      "sentence_ids": [
+        "S369"
       ]
     }
   }

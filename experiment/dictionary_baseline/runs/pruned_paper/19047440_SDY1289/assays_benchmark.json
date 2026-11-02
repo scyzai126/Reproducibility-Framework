@@ -17,7 +17,8 @@
   },
   "immune response assay": {
     "name_in_paper": [
-      "immune response"
+      "immune response",
+      "immune responses"
     ],
     "aliases": [],
     "generate_claim": null,
@@ -34,6 +35,22 @@
     "name_in_paper": [
       "blood",
       "Blood"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": "results",
+    "evidence": {
+      "section": "results",
+      "quote": "RNA samples obtained from whole blood of 15 YF17D-vaccinated individuals (from the Montreal cohort) on the day of vaccination (day 0) and at several time points after vaccination (day 3, 7, 10, 14, 28, and 60) were amplified and hybridized onto Illumina chips and analyzed.",
+      "sentence_ids": [
+        "S7"
+      ]
+    }
+  },
+  "ChIP assay": {
+    "name_in_paper": [
+      "chips",
+      "chip"
     ],
     "aliases": [],
     "generate_claim": null,
@@ -63,6 +80,7 @@
   },
   "protein assay": {
     "name_in_paper": [
+      "proteins",
       "protein"
     ],
     "aliases": [],
@@ -78,7 +96,8 @@
   },
   "cytokine assay": {
     "name_in_paper": [
-      "cytokine"
+      "cytokine",
+      "cytokines"
     ],
     "aliases": [],
     "generate_claim": null,
@@ -121,6 +140,36 @@
       ]
     }
   },
+  "monocyte assay": {
+    "name_in_paper": [
+      "monocytes"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": "results",
+    "evidence": {
+      "section": "results",
+      "quote": "The Ki67 + NK cell population (CD3 − CD8 Dim ; 1.6-fold; P = 0.0474) and non–T cell PBMCs containing monocytes and B cells (CD3 − CD4 − CD8 − ; 1.9-fold; P = 0.009) also increased in frequency within the first 7 d and reached insignificant levels thereafter.",
+      "sentence_ids": [
+        "S56"
+      ]
+    }
+  },
+  "carboxyfluorescein succinimidyl ester staining assay": {
+    "name_in_paper": [
+      "CFSE"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": "results",
+    "evidence": {
+      "section": "results",
+      "quote": "S6 a, available at http://www.jem.org/cgi/content/full/jem.20082292/DC1 ), and their proliferation was measured by CFSE labeling.",
+      "sentence_ids": [
+        "S60"
+      ]
+    }
+  },
   "cytometry assay": {
     "name_in_paper": [
       "cytometry"
@@ -151,18 +200,18 @@
       ]
     }
   },
-  "ChIP assay": {
+  "in live organism assay": {
     "name_in_paper": [
-      "chip"
+      "in vivo"
     ],
     "aliases": [],
     "generate_claim": null,
-    "source": "methods",
+    "source": "results",
     "evidence": {
-      "section": "methods",
-      "quote": "Samples failing chip visual inspection and control examination were removed.",
+      "section": "results",
+      "quote": "These data demonstrate that the same central nodes of transcription are activated in in vivo vaccination with YF17D and in an in vitro system of primary immune response to the virus.",
       "sentence_ids": [
-        "S126"
+        "S112"
       ]
     }
   },
@@ -193,6 +242,21 @@
       "quote": "After 24 and 48 h, supernatants were collected and analyzed using an IL-1β ELISA kit (BD).",
       "sentence_ids": [
         "S154"
+      ]
+    }
+  },
+  "lymphocyte assay": {
+    "name_in_paper": [
+      "lymphocytes"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": "methods",
+    "evidence": {
+      "section": "methods",
+      "quote": "Frozen stocks of autologous PBMCs were used as a source of lymphocytes.",
+      "sentence_ids": [
+        "S176"
       ]
     }
   }

@@ -15,10 +15,10 @@
       ]
     }
   },
-  "cytometry assay": {
+  "cytometry time of flight assay": {
     "name_in_paper": [
-      "cytometry",
-      "Cytometry"
+      "mass cytometry",
+      "CyTOF"
     ],
     "aliases": [],
     "generate_claim": null,
@@ -34,6 +34,8 @@
   "cytokine assay": {
     "name_in_paper": [
       "cytokine",
+      "cytokines",
+      "Cytokines",
       "Cytokine"
     ],
     "aliases": [],
@@ -50,7 +52,9 @@
   "monocyte assay": {
     "name_in_paper": [
       "monocyte",
-      "Monocyte"
+      "monocytes",
+      "Monocyte",
+      "Monocytes"
     ],
     "aliases": [],
     "generate_claim": null,
@@ -65,7 +69,8 @@
   },
   "protein assay": {
     "name_in_paper": [
-      "protein"
+      "protein",
+      "proteins"
     ],
     "aliases": [],
     "generate_claim": null,
@@ -93,18 +98,19 @@
       ]
     }
   },
-  "cytometry time of flight assay": {
+  "immune response assay": {
     "name_in_paper": [
-      "CyTOF"
+      "immune responses",
+      "immune response"
     ],
     "aliases": [],
     "generate_claim": null,
     "source": "results",
     "evidence": {
       "section": "results",
-      "quote": "We used CyTOF to quantify 37 immune cell surface markers and the CHIKV envelope protein E2 in each of our samples.",
+      "quote": "Finally, the resulting signatures and clusters were combined into a multiscale interaction network capturing the global landscape of immune responses to CHIKV.",
       "sentence_ids": [
-        "S26"
+        "S25"
       ]
     }
   },
@@ -123,6 +129,21 @@
       ]
     }
   },
+  "basophil assay": {
+    "name_in_paper": [
+      "basophils"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": "results",
+    "evidence": {
+      "section": "results",
+      "quote": "Other sub‐communities associating with the convalescent phase at FDR < 0.05 included mDCs, CD1c DCs, B cells, T cells, and basophils (Fig 3 G).",
+      "sentence_ids": [
+        "S61"
+      ]
+    }
+  },
   "enzyme-linked immunosorbent assay": {
     "name_in_paper": [
       "ELISA"
@@ -138,9 +159,42 @@
       ]
     }
   },
+  "cytometric bead array assay": {
+    "name_in_paper": [
+      "Luminex"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": "results",
+    "evidence": {
+      "section": "results",
+      "quote": "To profile the effect of CHIKV on circulatory markers for inflammation and immune signaling, we used a multiplex ELISA‐based assay (Luminex) to measure serum concentrations of 40 cytokines, chemokines, and growth factors in all 84 samples.",
+      "sentence_ids": [
+        "S75"
+      ]
+    }
+  },
+  "growth factor assay": {
+    "name_in_paper": [
+      "growth factors",
+      "growth factor",
+      "Growth factors"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": "results",
+    "evidence": {
+      "section": "results",
+      "quote": "To profile the effect of CHIKV on circulatory markers for inflammation and immune signaling, we used a multiplex ELISA‐based assay (Luminex) to measure serum concentrations of 40 cytokines, chemokines, and growth factors in all 84 samples.",
+      "sentence_ids": [
+        "S75"
+      ]
+    }
+  },
   "analyte assay": {
     "name_in_paper": [
-      "analyte"
+      "analyte",
+      "analytes"
     ],
     "aliases": [],
     "generate_claim": null,
@@ -153,18 +207,18 @@
       ]
     }
   },
-  "growth factor assay": {
+  "cytometry assay": {
     "name_in_paper": [
-      "growth factor"
+      "Cytometry"
     ],
     "aliases": [],
     "generate_claim": null,
-    "source": "results",
+    "source": "methods",
     "evidence": {
-      "section": "results",
-      "quote": "convalescent shifts in cytokine and growth factor concentrations tended to correlate with each other rather than with any of the shifts in CyTOF‐identified subpopulation frequencies ( Appendix Fig S13 ).",
+      "section": "methods",
+      "quote": "Cytometry time‐of‐flight uses metal‐labeled reagents and inductively coupled plasma mass spectrometry to overcome the limits of fluorescence spectral overlap in flow cytometry, allowing measurement of up to 50 analytes at single‐cell resolution.",
       "sentence_ids": [
-        "S83"
+        "S166"
       ]
     }
   },
@@ -228,18 +282,18 @@
       ]
     }
   },
-  "immune response assay": {
+  "neutrophil assay": {
     "name_in_paper": [
-      "immune response"
+      "neutrophils"
     ],
     "aliases": [],
     "generate_claim": null,
     "source": "methods",
     "evidence": {
       "section": "methods",
-      "quote": "A multiscale interaction network of gene modules and cell sub‐communities for the human immune response to CHIKV",
+      "quote": "Due to the relatively small sample size, we only considered the abundance of six main types of blood cells estimated by the average expression of cell markers (as described above): B cells, T cells, NK cells, monocytes, neutrophils, and dendritic cells.",
       "sentence_ids": [
-        "S354"
+        "S246"
       ]
     }
   },

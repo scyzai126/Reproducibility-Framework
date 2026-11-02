@@ -1,4 +1,20 @@
 {
+  "immune response assay": {
+    "name_in_paper": [
+      "immune responses",
+      "immune response"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": null,
+    "evidence": {
+      "section": "abstract",
+      "quote": "Systems immunology approaches were employed to investigate innate and adaptive immune responses to influenza and pneumococcal vaccines.",
+      "sentence_ids": [
+        "S1"
+      ]
+    }
+  },
   "blood assay": {
     "name_in_paper": [
       "blood",
@@ -17,7 +33,8 @@
   },
   "cytokine assay": {
     "name_in_paper": [
-      "cytokine"
+      "cytokine",
+      "cytokines"
     ],
     "aliases": [],
     "generate_claim": null,
@@ -63,7 +80,9 @@
   },
   "protein assay": {
     "name_in_paper": [
-      "protein"
+      "protein",
+      "Proteins",
+      "proteins"
     ],
     "aliases": [],
     "generate_claim": null,
@@ -91,18 +110,34 @@
       ]
     }
   },
-  "immune response assay": {
+  "monocyte assay": {
     "name_in_paper": [
-      "immune response"
+      "monocytes"
     ],
     "aliases": [],
     "generate_claim": null,
     "source": "results",
     "evidence": {
       "section": "results",
-      "quote": "These module-based results demonstrate how each vaccine elicits a distinct innate immune response.",
+      "quote": "The fourth increased module, M4.14, was associated with myeloid lineage and monocytes and includes, among others, genes coding for CD97, CD1D, interleukin-6 (IL-6), LY86, and CSF1R.",
       "sentence_ids": [
-        "S56"
+        "S48"
+      ]
+    }
+  },
+  "in live organism assay": {
+    "name_in_paper": [
+      "in vivo",
+      "In Vivo"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": "results",
+    "evidence": {
+      "section": "results",
+      "quote": "The concordance between in vivo and in vitro signatures is shown by using circular plots ( Figure 4 ; http://www.interactivefigures.com/dm3/vaccine-paper/figure-4.gsp ).",
+      "sentence_ids": [
+        "S61"
       ]
     }
   },
@@ -118,6 +153,23 @@
       "quote": "The pneumococcal vaccine signature overlapped with in vitro signature induced by heat-inactivated bacteria, LPS, flagellin, PAM3, R837, zymosan, CpG, IFN-γ, IL-18.",
       "sentence_ids": [
         "S65"
+      ]
+    }
+  },
+  "neutrophil assay": {
+    "name_in_paper": [
+      "neutrophils",
+      "Neutrophils",
+      "Neutrophil"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": "results",
+    "evidence": {
+      "section": "results",
+      "quote": "To this end, we isolated neutrophils, monocytes, and CD4 + and CD8 + T cells from the blood of study subjects before and 24 hr after the administration of the influenza vaccine (n = 6) in a third sequential cohort of healthy subjects (48 samples in total).",
+      "sentence_ids": [
+        "S75"
       ]
     }
   },
@@ -151,9 +203,24 @@
       ]
     }
   },
-  "neutrophil assay": {
+  "ChIP assay": {
     "name_in_paper": [
-      "Neutrophil"
+      "chips"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": "methods",
+    "evidence": {
+      "section": "methods",
+      "quote": "After background subtraction, the average normalization recommended by the BeadStudio 2.0 software (Illumina, San Diego, CA) was used to rescale the difference in overall intensity to the median average intensity for all samples across multiple arrays and chips.",
+      "sentence_ids": [
+        "S122"
+      ]
+    }
+  },
+  "lymphocyte assay": {
+    "name_in_paper": [
+      "lymphocytes"
     ],
     "aliases": [],
     "generate_claim": null,
@@ -178,6 +245,36 @@
       "quote": "Stimulation conditions included PAM3, Zymosan, Poly IC, E-LPS, Flagellin, R837, CpG Type A, heat-killed Legionella pneumophila (HKLP), heat-killed Acholeplasma laidlawii (HKAL), and heat-killed Staphylococcus aureus (HKSA) (all from Invivogen); IL-18, TNF-α, IFN-α2b, IFN-β, IFN-γ (all from Peprotech); heat-killed Escherichia coli (in house preparation), live influenza A virus and live respiratory syncytial virus (RSV).",
       "sentence_ids": [
         "S132"
+      ]
+    }
+  },
+  "single-value binding of antibody with reporter to antigen assay": {
+    "name_in_paper": [
+      "immunoassays"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": "methods",
+    "evidence": {
+      "section": "methods",
+      "quote": "Antibody response to 14 pneumococcal polysaccharides was measured by using commercial immunoassays.",
+      "sentence_ids": [
+        "S138"
+      ]
+    }
+  },
+  "cytometric bead array assay": {
+    "name_in_paper": [
+      "Luminex"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": "methods",
+    "evidence": {
+      "section": "methods",
+      "quote": "Luminex Technology, Millipore) according to the manufacturer’s instructions and run on Bio-Plex 200 and Bio-Plex 100 readers (Bio-Rad Laboratories).",
+      "sentence_ids": [
+        "S140"
       ]
     }
   }

@@ -11,29 +11,33 @@ ontology" arm, with no model on either side. Four variants: the agent's 701 prun
 
 | | agent | pruned, paper | pruned, methods | full, paper | full, methods |
 |---|---|---|---|---|---|
-| entries | 177 | 410 | 286 | 418 | 290 |
-| matched of 158 | 156 | 135 | 114 | 135 | 114 |
-| MISSED | 2 | 23 | 44 | 23 | 44 |
-| EXTRA | 4 | 274 | 172 | 282 | 176 |
-| exact OBI term | 140 | 69 | 52 | 69 | 52 |
-| OBI ok (same or parent/child) | 145 | 95 | 75 | 95 | 75 |
-| wrong term (CONFLICT) | 5 | 38 | 37 | 38 | 37 |
-| recall | 98.7% | 85.4% | 72.2% | 85.4% | 72.2% |
-| precision | 88.1% | 32.9% | 39.9% | 32.3% | 39.3% |
-| F1 | 0.931 | 0.475 | 0.514 | 0.469 | 0.509 |
+| entries | 177 | 484 | 349 | 494 | 354 |
+| matched of 158 | 156 | 141 | 124 | 141 | 124 |
+| MISSED | 2 | 17 | 34 | 17 | 34 |
+| EXTRA | 4 | 341 | 224 | 351 | 229 |
+| exact OBI term | 140 | 79 | 63 | 79 | 63 |
+| OBI ok (same or parent/child) | 145 | 108 | 91 | 108 | 91 |
+| wrong term (CONFLICT) | 5 | 31 | 31 | 31 | 31 |
+| recall | 98.7% | 89.2% | 78.5% | 89.2% | 78.5% |
+| precision | 88.1% | 29.1% | 35.5% | 28.5% | 35.0% |
+| F1 | 0.931 | 0.439 | 0.489 | 0.433 | 0.484 |
 
 Default-scorer numbers are in `comparison/summary.md`; they differ by a row or two.
 
-**Reading.** The dictionary finds most curated assays by name (recall 85% over the whole paper)
-but names the wrong term for half of them (69 exact of 135 matched) and delivers 2.7 entries for
+**Reading.** The dictionary finds most curated assays by name (recall 89% over the whole paper)
+but names the wrong term for 44% of them (79 exact of 141 matched) and delivers 3.4 entries for
 every one it should: `protein assay`, `immune response assay`, `blood assay`, `cytokine assay`
-and `binding assay` are matched in 13-27 papers each, because their labels are everyday words.
-Restricting to Methods halves the EXTRA count and drops 21 curated assays with it. The full
-vocabulary adds 8 entries and no match: the 1,093 terms the agent's prune removes name nothing
-the papers say.
+and `monocyte assay` are matched in 19-29 papers each, because their labels are everyday words
+(83 distinct EXTRA terms in all). Restricting to Methods removes a third of the EXTRA entries and
+17 curated assays with them. The full vocabulary adds 10 entries and no match: the 1,093 terms
+the agent's prune removes name nothing the papers say.
 
-Where it loses a curated row it is the paper's wording: Luminex, PRNT, CBA, SIMOA, "Taqman" --
-names no OBI label or synonym carries, which the agent's retrieval and pick resolve.
+The 31 wrong terms are mostly one pattern: `microarray assay` where the curator wrote
+`transcription profiling by array assay` (15 papers), and `real time polymerase chain reaction
+assay` where the curator's term is the RT-PCR child (5). The 17 misses are the paper's own
+wordings, which no OBI label or synonym carries and which the agent's retrieval and pick resolve:
+CBA, RT-qPCR, SBA, plaque assay, tetramer staining, ADCC, "flow cytometric analyses",
+"Single-molecule array", "virus_isolation".
 
 ## Rules (so the arm is neither a strawman nor a cheat)
 

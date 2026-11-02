@@ -1,6 +1,6 @@
 # Plan: comparison arms for the assay-extraction agent (paper write-up)
 
-*2026-11-02. Status: approved scope, not started.*
+*2026-11-02. Status: free arms done; paid arms awaiting go-ahead; NCBO awaiting an API key. Write-up: `docs/assay_agent_vs_baselines.md`.*
 
 ## Context
 
@@ -15,12 +15,12 @@ an honest scorer.
 
 | id | arm | cost | status |
 |---|---|---|---|
-| S | fix the scorer, then rescore every arm with it | free | **first** |
-| A1 | NCBO BioPortal Annotator (OBI) | free, needs a BioPortal API key | new |
-| B1 | lexical dictionary match over OBI labels + synonyms | free | new |
-| C3 | agent without round-5 fold (scoring only) | free | new |
-| B3 | RAG single call: bare prompt + the 701-term vocabulary | ~31 calls × 3 runs | new, paid |
-| A2 | OntoGPT / SPIRES with the same model, grounded to OBI | ~31 calls | new, paid |
+| S | fix the scorer, then rescore every arm with it | free | done: `--strict`, `docs/assay_scorer_strict_mode.md` |
+| A1 | NCBO BioPortal Annotator (OBI) | free, needs a BioPortal API key | code + tests done; needs `BIOPORTAL_API_KEY` |
+| B1 | lexical dictionary match over OBI labels + synonyms | free | done: `experiment/dictionary_baseline/` |
+| C3 | agent without round-5 fold (scoring only) | free | done: `experiment/no_fold/` (v3 folded 0; old rule scored) |
+| B3 | RAG single call: bare prompt + the 701-term vocabulary | 93 calls | code done; dry run 93 calls; awaiting go-ahead |
+| A2 | OntoGPT / SPIRES with the same model, grounded to OBI | 31 calls | installed + smoke-tested; awaiting go-ahead |
 | — | bare LLM ×3 | done | `experiment/llm_baseline/llm_baseline_vs_agent.md` |
 | — | round-4 ablations (full list, vocab, top-K, re-pick) | done | `docs/obi_fulllist_llm_vs_embedding.md`, `docs/obi_vocab_full_vs_pruned_v3.md`, `experiment/obi_topk/README.md` |
 

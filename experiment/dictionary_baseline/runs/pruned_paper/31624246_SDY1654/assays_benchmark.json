@@ -1,4 +1,20 @@
 {
+  "cytokine assay": {
+    "name_in_paper": [
+      "cytokines",
+      "Cytokine"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": null,
+    "evidence": {
+      "section": "abstract",
+      "quote": "Human T cells coordinate adaptive immunity in diverse anatomic compartments through production of cytokines and effector molecules, but it is unclear how tissue site influences T cell persistence and function.",
+      "sentence_ids": [
+        "S1"
+      ]
+    }
+  },
   "single-cell RNA sequencing assay": {
     "name_in_paper": [
       "single cell RNA-sequencing",
@@ -90,18 +106,34 @@
       ]
     }
   },
-  "cytokine assay": {
+  "lymphocyte assay": {
     "name_in_paper": [
-      "Cytokine"
+      "lymphocytes",
+      "Lymphocyte"
     ],
     "aliases": [],
     "generate_claim": null,
     "source": "results",
     "evidence": {
       "section": "results",
-      "quote": "e Diffusion maps of CD8 + T cells from ( c ), with cells colored by their average expression of the top genes from scHPF expression modules (CD8 Cytotoxic and CD8 Cytokine).",
+      "quote": "4a ) included a Treg module defined by canonical genes ( FOXP3 , CTLA4 , IRF4 , TNFRSF4 (OX40) 39 ); a putative resting CD4 + Naive/Central memory (NV/CM) module enriched in CD4 + T cells and defined by genes associated with lymphoid homing, egress and quiescence ( SELL , KLF2 , LEF1 , respectively); and a CD4 + /CD8 + Resting module, distinguished by expression of IL7R , a receptor required for T cell survival 40 , 41 , and AQP3 , which encodes a water channel protein of unclear function in lymphocytes 42 .",
       "sentence_ids": [
-        "S134"
+        "S119"
+      ]
+    }
+  },
+  "in live organism assay": {
+    "name_in_paper": [
+      "in vivo"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": "results",
+    "evidence": {
+      "section": "results",
+      "quote": "4 were consistent in with those seen in vivo in mouse infection models 15 .",
+      "sentence_ids": [
+        "S159"
       ]
     }
   },
@@ -136,21 +168,6 @@
       ]
     }
   },
-  "lymphocyte assay": {
-    "name_in_paper": [
-      "Lymphocyte"
-    ],
-    "aliases": [],
-    "generate_claim": null,
-    "source": "methods",
-    "evidence": {
-      "section": "methods",
-      "quote": "For BM and peripheral blood, we isolated mononuclear cells by density gradient centrifugation using Lymphocyte Separation Medium (Corning).",
-      "sentence_ids": [
-        "S256"
-      ]
-    }
-  },
   "ChIP assay": {
     "name_in_paper": [
       "Chip"
@@ -163,6 +180,36 @@
       "quote": "Single-cell suspensions were loaded onto a Chromium Single Cell Chip (10x Genomics) according to the manufacturer’s instructions for co-encapsulation with barcoded Gel Beads at a target capture rate of ~5000 individual cells per sample.",
       "sentence_ids": [
         "S260"
+      ]
+    }
+  },
+  "cell count assay": {
+    "name_in_paper": [
+      "Cell counts"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": "methods",
+    "evidence": {
+      "section": "methods",
+      "quote": "Cell counts and transcript detection rates are summarized in Supplementary Table 2 .",
+      "sentence_ids": [
+        "S265"
+      ]
+    }
+  },
+  "neutrophil assay": {
+    "name_in_paper": [
+      "neutrophils"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": "methods",
+    "evidence": {
+      "section": "methods",
+      "quote": "As expected, genes on the final blacklist included markers of epithelial cells, dendritic cells, mast cells, B cells, neutrophils, and red blood cells.",
+      "sentence_ids": [
+        "S296"
       ]
     }
   },

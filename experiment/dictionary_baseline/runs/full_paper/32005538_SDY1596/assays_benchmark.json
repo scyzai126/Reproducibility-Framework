@@ -2,6 +2,7 @@
   "cytokine assay": {
     "name_in_paper": [
       "cytokine",
+      "cytokines",
       "Cytokine"
     ],
     "aliases": [],
@@ -18,7 +19,8 @@
   "blood assay": {
     "name_in_paper": [
       "blood",
-      "Blood"
+      "Blood",
+      "blood assays"
     ],
     "aliases": [],
     "generate_claim": null,
@@ -28,6 +30,22 @@
       "quote": "We compared BCG-Denmark (DEN), -Japan (JPN), -India (IND), -Bulgaria (BUL) and -USA in vitro with respect to a) viability as measured by colony-forming units (CFU), mycobacterial membrane integrity, and RNA content, and b) cytokine/chemokine production in newborn cord and adult peripheral blood.",
       "sentence_ids": [
         "S3"
+      ]
+    }
+  },
+  "immune response assay": {
+    "name_in_paper": [
+      "immune responses",
+      "immune response"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": null,
+    "evidence": {
+      "section": "abstract",
+      "quote": "BCG-induced cytokine production correlated with CFU, suggesting that mycobacterial viability may contribute to BCG-induced immune responses.",
+      "sentence_ids": [
+        "S8"
       ]
     }
   },
@@ -91,6 +109,36 @@
       ]
     }
   },
+  "cytometric bead array assay": {
+    "name_in_paper": [
+      "Luminex"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": "methods",
+    "evidence": {
+      "section": "methods",
+      "quote": "Assays employed a Luminex 200 Bioanalyzer (Luminex Corp, TX, USA) set to acquire at least 50 events per cytokine.",
+      "sentence_ids": [
+        "S38"
+      ]
+    }
+  },
+  "in live organism assay": {
+    "name_in_paper": [
+      "in vivo"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": "results",
+    "evidence": {
+      "section": "results",
+      "quote": "As bacterial RNA contributes to sensing of viable bacteria by the innate immune system in vivo [ 27 ], we also compared BCG vaccine formulations with respect to RNA content.",
+      "sentence_ids": [
+        "S54"
+      ]
+    }
+  },
   "chloride assay": {
     "name_in_paper": [
       "chloride"
@@ -103,21 +151,6 @@
       "quote": "Given the differences in composition of the media compared ( Supplemental Table 1 ), we assessed whether presence of glycerol or malachite green in e7H9, or absence of certain minerals (e.g., calcium chloride, zinc sulfate and copper sulfate) in 7H11 may have a growth-favoring effect for certain strains.",
       "sentence_ids": [
         "S63"
-      ]
-    }
-  },
-  "immune response assay": {
-    "name_in_paper": [
-      "immune response"
-    ],
-    "aliases": [],
-    "generate_claim": null,
-    "source": "results",
-    "evidence": {
-      "section": "results",
-      "quote": "5 ), suggesting that the number of viable organisms is the key trigger of the BCG-induced immune response.",
-      "sentence_ids": [
-        "S90"
       ]
     }
   }

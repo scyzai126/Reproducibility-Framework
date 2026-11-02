@@ -1,4 +1,21 @@
 {
+  "protein assay": {
+    "name_in_paper": [
+      "proteins",
+      "protein",
+      "Protein"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": null,
+    "evidence": {
+      "section": "abstract",
+      "quote": "These genes encode OX40 and CCR4 proteins as well as other molecules associated with cell signaling on the cell surface ( NT5E , MXRA8 , and PTPRK ).",
+      "sentence_ids": [
+        "S6"
+      ]
+    }
+  },
   "immune response assay": {
     "name_in_paper": [
       "immune response"
@@ -75,9 +92,11 @@
       ]
     }
   },
-  "platelet assay": {
+  "platelet count assay": {
     "name_in_paper": [
-      "platelet"
+      "platelet counts",
+      "platelet count",
+      "Platelet count"
     ],
     "aliases": [],
     "generate_claim": null,
@@ -121,6 +140,21 @@
       ]
     }
   },
+  "monocyte assay": {
+    "name_in_paper": [
+      "monocytes"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": "methods",
+    "evidence": {
+      "section": "methods",
+      "quote": "To note that in this study, B cells, monocytes, and NK cells were removed by flowcytometry using CD19, CD14, and CD56 antibodies, and only CD3 + T cells were analyzed.",
+      "sentence_ids": [
+        "S38"
+      ]
+    }
+  },
   "sequencing assay": {
     "name_in_paper": [
       "sequencing"
@@ -133,38 +167,6 @@
       "quote": "From this step, 1 ng cDNA was used to prepare a standard Nextera XT sequencing library (Nextera XT DNA library preparation kit and index kit (set B and C, respectively), Illumina, San Diego, CA, USA).",
       "sentence_ids": [
         "S43"
-      ]
-    }
-  },
-  "protein assay": {
-    "name_in_paper": [
-      "protein",
-      "Protein"
-    ],
-    "aliases": [],
-    "generate_claim": null,
-    "source": "methods",
-    "evidence": {
-      "section": "methods",
-      "quote": "Information of DE genes and protein products was extracted from UniProt Consortium [ 26 ].",
-      "sentence_ids": [
-        "S60"
-      ]
-    }
-  },
-  "platelet count assay": {
-    "name_in_paper": [
-      "platelet count",
-      "Platelet count"
-    ],
-    "aliases": [],
-    "generate_claim": null,
-    "source": "results",
-    "evidence": {
-      "section": "results",
-      "quote": "To further evaluate the association between the proportion of CD4 + CD8 + DP cells and plasma leakage, we conducted a multivariate logistic regression analysis accounting for other confounding factors, including demographic features (e.g., age, gender), previous DENV infection, as well as hematological and biochemical parameters (e.g., platelet count, hematocrit, AST, and ALT).",
-      "sentence_ids": [
-        "S77"
       ]
     }
   },

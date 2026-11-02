@@ -30,10 +30,12 @@
       ]
     }
   },
-  "cytometry assay": {
+  "cytokine assay": {
     "name_in_paper": [
-      "cytometry",
-      "Cytometry"
+      "cytokines",
+      "Cytokines",
+      "cytokine",
+      "Cytokine"
     ],
     "aliases": [],
     "generate_claim": null,
@@ -43,6 +45,37 @@
       "quote": "All selected cases had an acute‐phase sample collected on days 1–2 of illness and a convalescent sample collected on days 15–17 post‐illness for serum, whole blood in PAXgene solution, and PBMCs; these were subject to transcriptomic analysis via RNA‐seq, CHIKV viral titer assays, multiplex ELISA for cytokines, and mass cytometry for cellular phenotyping as illustrated in Fig 1 .",
       "sentence_ids": [
         "S159"
+      ]
+    }
+  },
+  "cytometry time of flight assay": {
+    "name_in_paper": [
+      "mass cytometry",
+      "CyTOF"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": "methods",
+    "evidence": {
+      "section": "methods",
+      "quote": "All selected cases had an acute‐phase sample collected on days 1–2 of illness and a convalescent sample collected on days 15–17 post‐illness for serum, whole blood in PAXgene solution, and PBMCs; these were subject to transcriptomic analysis via RNA‐seq, CHIKV viral titer assays, multiplex ELISA for cytokines, and mass cytometry for cellular phenotyping as illustrated in Fig 1 .",
+      "sentence_ids": [
+        "S159"
+      ]
+    }
+  },
+  "cytometry assay": {
+    "name_in_paper": [
+      "Cytometry"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": "methods",
+    "evidence": {
+      "section": "methods",
+      "quote": "Cytometry time‐of‐flight uses metal‐labeled reagents and inductively coupled plasma mass spectrometry to overcome the limits of fluorescence spectral overlap in flow cytometry, allowing measurement of up to 50 analytes at single‐cell resolution.",
+      "sentence_ids": [
+        "S166"
       ]
     }
   },
@@ -76,24 +109,58 @@
       ]
     }
   },
-  "cytometry time of flight assay": {
+  "analyte assay": {
     "name_in_paper": [
-      "CyTOF"
+      "analytes",
+      "analyte"
     ],
     "aliases": [],
     "generate_claim": null,
     "source": "methods",
     "evidence": {
       "section": "methods",
-      "quote": "The pooled patient samples were then stained with a validated 37‐marker CyTOF antibody panel ( Table EV8 ) for 30 min on ice and then fixed, permeabilized, and incubated with Ir nucleic acid intercalator (Fluidigm).",
+      "quote": "Cytometry time‐of‐flight uses metal‐labeled reagents and inductively coupled plasma mass spectrometry to overcome the limits of fluorescence spectral overlap in flow cytometry, allowing measurement of up to 50 analytes at single‐cell resolution.",
       "sentence_ids": [
-        "S169"
+        "S166"
+      ]
+    }
+  },
+  "monocyte assay": {
+    "name_in_paper": [
+      "monocytes",
+      "Monocytes",
+      "monocyte"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": "methods",
+    "evidence": {
+      "section": "methods",
+      "quote": "Traditional hierarchical gating was applied to a subset of samples to identify 8 major immune compartments: T cells, B cells, NK cells, NKT cells, monocytes, mDCs, pDCs, and basophils.",
+      "sentence_ids": [
+        "S182"
+      ]
+    }
+  },
+  "basophil assay": {
+    "name_in_paper": [
+      "basophils"
+    ],
+    "aliases": [],
+    "generate_claim": null,
+    "source": "methods",
+    "evidence": {
+      "section": "methods",
+      "quote": "Traditional hierarchical gating was applied to a subset of samples to identify 8 major immune compartments: T cells, B cells, NK cells, NKT cells, monocytes, mDCs, pDCs, and basophils.",
+      "sentence_ids": [
+        "S182"
       ]
     }
   },
   "protein assay": {
     "name_in_paper": [
-      "protein"
+      "protein",
+      "proteins"
     ],
     "aliases": [],
     "generate_claim": null,
@@ -106,19 +173,18 @@
       ]
     }
   },
-  "cytokine assay": {
+  "cytometric bead array assay": {
     "name_in_paper": [
-      "cytokine",
-      "Cytokine"
+      "Luminex"
     ],
     "aliases": [],
     "generate_claim": null,
     "source": "methods",
     "evidence": {
       "section": "methods",
-      "quote": "Each sample was run in duplicate in a 96‐well microtiter plate using 25 μl serum from each patient from acute and convalescent timepoints using the multiplex cytokine panels (Multiplex High Sensitivity Human Cytokine Panel, Millipore Corp.).",
+      "quote": "Cytokines and chemokines were measured using a multiplex ELISA‐based assay (Luminex).",
       "sentence_ids": [
-        "S194"
+        "S192"
       ]
     }
   },
@@ -167,33 +233,33 @@
       ]
     }
   },
-  "analyte assay": {
+  "neutrophil assay": {
     "name_in_paper": [
-      "analyte"
+      "neutrophils"
     ],
     "aliases": [],
     "generate_claim": null,
     "source": "methods",
     "evidence": {
       "section": "methods",
-      "quote": "Luminex analyte concentration and CyTOF cell population frequency data were log‐transformed prior to analysis.",
+      "quote": "Due to the relatively small sample size, we only considered the abundance of six main types of blood cells estimated by the average expression of cell markers (as described above): B cells, T cells, NK cells, monocytes, neutrophils, and dendritic cells.",
       "sentence_ids": [
-        "S265"
+        "S246"
       ]
     }
   },
-  "monocyte assay": {
+  "growth factor assay": {
     "name_in_paper": [
-      "monocyte"
+      "Growth factors"
     ],
     "aliases": [],
     "generate_claim": null,
     "source": "methods",
     "evidence": {
       "section": "methods",
-      "quote": "Monocytes, dendritic cells, and B cells express CHIKV proteins during acute CHIKV infection, but only specific monocyte sub‐communities undergo expansion",
+      "quote": "Growth factors are shown in Appendix Fig S12 .",
       "sentence_ids": [
-        "S293"
+        "S331"
       ]
     }
   },

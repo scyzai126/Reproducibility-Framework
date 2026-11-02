@@ -17,8 +17,10 @@ Four variants, all free:
                      and is matched whole; the README says which)
 
 Matching rules, so the arm is not a strawman and not a cheat:
-  * forms: the label, each synonym, and the label without its trailing "assay" ("flow cytometry"
-    names `flow cytometry assay`), each as whole words, case-insensitive;
+  * forms: the label and each synonym, each also without a trailing "assay" ("flow cytometry"
+    names `flow cytometry assay`, "ELISPOT" its synonym "ELISPOT assay"), as whole words,
+    case-insensitive, a plain plural of the last word allowed ("ELISAs"); an adjective form
+    ("flow cytometric") is not matched;
   * a form of 3 characters is an acronym and must match in its own case; a form shorter than
     that, or a single all-lowercase word of 4 letters or fewer, is dropped (README lists them);
   * overlapping matches: the longest span wins, so "real-time PCR" is one term, not two;
@@ -65,12 +67,13 @@ SHORT_WORD = 4
 # ── the dictionary ───────────────────────────────────────────────────────────
 
 def forms_of(term: dict) -> list[str]:
-    """The strings that name one term: label, synonyms, and the label minus a trailing "assay"."""
-    label = term["label"].strip()
-    forms = [label, *(s.strip() for s in term.get("synonyms") or [])]
-    bare = re.sub(r"\s+assay$", "", label, flags=re.I)
-    if bare != label:
-        forms.append(bare)
+    """The strings that name one term: label and synonyms, each also without a trailing
+    "assay" ("flow cytometry" names `flow cytometry assay`; "ELISPOT" its synonym "ELISPOT assay")."""
+    forms = []
+    for f in [term["label"], *(term.get("synonyms") or [])]:
+        f = str(f).strip()
+        bare = re.sub(r"\s+assay$", "", f, flags=re.I)
+        forms += [f, bare] if bare != f else [f]
     return [f for f in dict.fromkeys(forms) if f]
 
 
@@ -92,9 +95,10 @@ def build_dictionary(index: list[dict]) -> list[tuple[str, re.Pattern, str]]:
             if not keep_form(form):
                 continue
             flags = 0 if len(form) == ACRONYM_LEN and form.isupper() else re.I
-            # Whole words; a hyphen or a slash inside the form matches itself or a space.
+            # Whole words; a hyphen or a slash inside the form matches itself or a space; a
+            # plain plural of the last word ("ELISAs", "assays") matches too.
             body = r"[\s\-/]+".join(re.escape(w) for w in re.split(r"[\s\-/]+", form))
-            out.append((form, re.compile(rf"(?<![\w-]){body}(?![\w-])", flags), term["id"]))
+            out.append((form, re.compile(rf"(?<![\w-]){body}(?:e?s)?(?![\w-])", flags), term["id"]))
     out.sort(key=lambda t: -len(t[0]))
     return out
 

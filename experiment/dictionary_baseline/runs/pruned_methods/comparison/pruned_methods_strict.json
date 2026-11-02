@@ -10,28 +10,28 @@
     ],
     "benchmark_raw": 158,
     "benchmark_total": 158,
-    "ours_total": 286,
-    "matched": 114,
-    "exact": 52,
-    "obi_ok": 75,
-    "missed": 44,
-    "extra": 172,
+    "ours_total": 349,
+    "matched": 124,
+    "exact": 63,
+    "obi_ok": 91,
+    "missed": 34,
+    "extra": 224,
     "status_counts": {
-      "MATCH": 52,
-      "MATCH_GRANULARITY": 23,
-      "MATCH_OBI_CONFLICT": 37,
+      "MATCH": 63,
+      "MATCH_GRANULARITY": 28,
+      "MATCH_OBI_CONFLICT": 31,
       "MATCH_OBI_UNMAPPED": 2,
-      "SPLIT": 0,
-      "MISSED": 44,
-      "EXTRA": 172
+      "SPLIT": 1,
+      "MISSED": 34,
+      "EXTRA": 224
     },
-    "split": 0,
-    "term_only_pairs": 10,
-    "recall": 0.7215189873417721,
-    "precision": 0.3986013986013986,
-    "f1": 0.5135135135135135,
-    "obi_exact_rate": 0.45614035087719296,
-    "obi_recall": 0.47468354430379744
+    "split": 1,
+    "term_only_pairs": 13,
+    "recall": 0.7848101265822784,
+    "precision": 0.3553008595988539,
+    "f1": 0.48915187376725844,
+    "obi_exact_rate": 0.5080645161290323,
+    "obi_recall": 0.5759493670886076
   },
   "papers": [
     {
@@ -43,15 +43,15 @@
       "benchmark_raw_total": 6,
       "metrics": {
         "benchmark_total": 6,
-        "ours_total": 11,
-        "matched": 3,
-        "exact": 2,
-        "obi_ok": 2,
-        "missed": 3,
-        "extra": 8,
+        "ours_total": 14,
+        "matched": 5,
+        "exact": 3,
+        "obi_ok": 4,
+        "missed": 1,
+        "extra": 9,
         "split": 0,
         "term_only_pairs": 0,
-        "recall": 0.5
+        "recall": 0.8333
       },
       "merged_groups": [],
       "rows": [
@@ -104,10 +104,14 @@
           "also_on_term": []
         },
         {
-          "status": "MISSED",
-          "tier": null,
-          "signals": [],
-          "reason": "no agent entry matches this benchmark assay",
+          "status": "MATCH_GRANULARITY",
+          "tier": "obi_ancestry",
+          "signals": [
+            "same name",
+            "name containment",
+            "quote names the other side"
+          ],
+          "reason": "our term OBI:0000920 cytometric bead array assay is broader than the benchmark's OBI:0003116 antibody detection by cytometric bead array assay",
           "benchmark": {
             "key": "Luminex",
             "obi_id": "OBI:0003116",
@@ -126,7 +130,27 @@
               }
             ]
           },
-          "ours": []
+          "ours": [
+            {
+              "key": "cytometric bead array assay",
+              "name_in_paper": [
+                "Luminex"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0000920",
+              "obi_label": "cytometric bead array assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "Fluorescent microspheres (Luminex Corp, Austin, TX) were covalently conjugated to DT (List Biologicals, Campbell, CA) and used to capture and quantify DT specific IgG in sera based on previous method with minor modifications 53 .",
+                "sentence_ids": [
+                  "S289"
+                ]
+              },
+              "generate_claim": null
+            }
+          ],
+          "also_on_term": []
         },
         {
           "status": "MATCH",
@@ -182,10 +206,15 @@
           "also_on_term": []
         },
         {
-          "status": "MISSED",
-          "tier": null,
-          "signals": [],
-          "reason": "no agent entry matches this benchmark assay",
+          "status": "MATCH",
+          "tier": "obi_exact",
+          "signals": [
+            "same name",
+            "name containment",
+            "quote names the other side",
+            "shared evidence sentence"
+          ],
+          "reason": "same OBI term",
           "benchmark": {
             "key": "ELISpot",
             "obi_id": "OBI:0600031",
@@ -204,7 +233,27 @@
               }
             ]
           },
-          "ours": []
+          "ours": [
+            {
+              "key": "enzyme-linked immunospot assay",
+              "name_in_paper": [
+                "ELISpot"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0600031",
+              "obi_label": "enzyme-linked immunospot assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "Antigen specific and total IgG, IgM, and IgA secreting cells were quantified by ELISpot.",
+                "sentence_ids": [
+                  "S305"
+                ]
+              },
+              "generate_claim": null
+            }
+          ],
+          "also_on_term": []
         },
         {
           "status": "MISSED",
@@ -458,6 +507,35 @@
           "benchmark": null,
           "ours": [
             {
+              "key": "monocyte assay",
+              "name_in_paper": [
+                "monocytes",
+                "Monocytes",
+                "monocyte"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0003025",
+              "obi_label": "monocyte assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "BDCA1 + blood myeloid DCs (mDC) and CD14 + monocytes were isolated with magnetic beads according to manufacturer’s instructions (Miltenyi Biotec, Auburn, CA, catalog numbers 130-090-506, 130-050-201).",
+                "sentence_ids": [
+                  "S343"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
               "key": "bacterial lipopolysaccharide detection in plasma assay",
               "name_in_paper": [
                 "LPS"
@@ -485,13 +563,13 @@
           "benchmark": null,
           "ours": [
             {
-              "key": "monocyte assay",
+              "key": "cytokine assay",
               "name_in_paper": [
-                "monocyte"
+                "cytokines"
               ],
               "aliases": [],
-              "obi_id": "OBI:0003025",
-              "obi_label": "monocyte assay",
+              "obi_id": "OBI:0002766",
+              "obi_label": "cytokine assay",
               "source": "methods",
               "evidence": {
                 "section": "methods",
@@ -515,12 +593,12 @@
       "benchmark_raw_total": 8,
       "metrics": {
         "benchmark_total": 8,
-        "ours_total": 13,
+        "ours_total": 15,
         "matched": 5,
         "exact": 3,
         "obi_ok": 4,
         "missed": 3,
-        "extra": 8,
+        "extra": 10,
         "split": 0,
         "term_only_pairs": 2,
         "recall": 0.625
@@ -850,6 +928,7 @@
             {
               "key": "cytokine assay",
               "name_in_paper": [
+                "cytokines",
                 "cytokine"
               ],
               "aliases": [],
@@ -858,9 +937,37 @@
               "source": "methods",
               "evidence": {
                 "section": "methods",
-                "quote": "Plasma samples from CPTs were stored at −80 °C before cytokine analysis.",
+                "quote": "Blood samples for multiplex analysis of cytokines, innate immune cell and microarray analysis were collected in citrate-buffered cell preparation tubes (CPTs; Vacutainer; BD) at days 0, 1, 3, 7 and 21 after vaccination.",
                 "sentence_ids": [
-                  "S164"
+                  "S160"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "monocyte assay",
+              "name_in_paper": [
+                "Monocytes",
+                "monocytes"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0003025",
+              "obi_label": "monocyte assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "Monocytes were gated as HLA-DR + CD14 + with the addition of CD16 to delineate the subpopulation of inflammatory monocytes.",
+                "sentence_ids": [
+                  "S171"
                 ]
               },
               "generate_claim": null
@@ -943,6 +1050,33 @@
                 "quote": "Signals were visualized using SuperSignal West Pico chemiluminescent substrate (Pierce).",
                 "sentence_ids": [
                   "S217"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "immune response assay",
+              "name_in_paper": [
+                "immune responses"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0000743",
+              "obi_label": "immune response assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "Genomic signatures of innate immune responses to YF-17D.",
+                "sentence_ids": [
+                  "S221"
                 ]
               },
               "generate_claim": null
@@ -1068,12 +1202,12 @@
       "benchmark_raw_total": 3,
       "metrics": {
         "benchmark_total": 3,
-        "ours_total": 6,
+        "ours_total": 10,
         "matched": 3,
         "exact": 1,
         "obi_ok": 2,
         "missed": 0,
-        "extra": 3,
+        "extra": 7,
         "split": 0,
         "term_only_pairs": 1,
         "recall": 1.0
@@ -1119,6 +1253,7 @@
               "key": "microarray assay",
               "name_in_paper": [
                 "Microarray",
+                "microarrays",
                 "microarray"
               ],
               "aliases": [],
@@ -1252,7 +1387,8 @@
               "key": "immune response assay",
               "name_in_paper": [
                 "Immune Response",
-                "immune response"
+                "immune response",
+                "immune responses"
               ],
               "aliases": [],
               "obi_id": "OBI:0000743",
@@ -1275,9 +1411,35 @@
           "benchmark": null,
           "ours": [
             {
+              "key": "in live organism assay",
+              "name_in_paper": [
+                "in vivo"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0000966",
+              "obi_label": "in live organism assay",
+              "source": null,
+              "evidence": {
+                "section": "",
+                "quote": "However, great interindividual\nvariability exists in vaccine responses, the cellular events that take place in vivo after vaccination are poorly\nunderstood, and appropriate biomarkers for vaccine responsiveness have not been developed.",
+                "sentence_ids": []
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
               "key": "protein assay",
               "name_in_paper": [
-                "protein"
+                "protein",
+                "proteins"
               ],
               "aliases": [],
               "obi_id": "OBI:2100023",
@@ -1286,6 +1448,56 @@
               "evidence": {
                 "section": "",
                 "quote": "The late vaccine response\nshowed a transcriptional pattern suggestive of increased protein biosynthesis and cellular proliferation.",
+                "sentence_ids": []
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "cytokine assay",
+              "name_in_paper": [
+                "cytokines"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0002766",
+              "obi_label": "cytokine assay",
+              "source": null,
+              "evidence": {
+                "section": "",
+                "quote": "Associations were most signiﬁcant for the in-\nterferon response pathway (GO:0005062, GO:0034341, and\nGO:0034340) when compared with other cytokines.",
+                "sentence_ids": []
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "macrophage assay",
+              "name_in_paper": [
+                "macrophages"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0003027",
+              "obi_label": "macrophage assay",
+              "source": null,
+              "evidence": {
+                "section": "",
+                "quote": "These genes are also\nknown to be activated in innate cells (ie, macrophages and\ndendritic cells) during viral infections [26].",
                 "sentence_ids": []
               },
               "generate_claim": null
@@ -1311,6 +1523,31 @@
               "evidence": {
                 "section": "",
                 "quote": "Mortality associated\nwith inﬂuenza and respiratory syncytial virus in the United States.",
+                "sentence_ids": []
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "96-well neutralization assay",
+              "name_in_paper": [
+                "Microneutralization"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0000865",
+              "obi_label": "96-well neutralization assay",
+              "source": null,
+              "evidence": {
+                "section": "",
+                "quote": "Microneutralization test for\ninﬂuenza A and B and parainﬂuenza 1 and 2 viruses that uses con-\ntinuous cell lines and fresh serum enhancement.",
                 "sentence_ids": []
               },
               "generate_claim": null
@@ -1377,6 +1614,7 @@
             {
               "key": "microarray assay",
               "name_in_paper": [
+                "microarrays",
                 "microarray"
               ],
               "aliases": [],
@@ -1385,9 +1623,9 @@
               "source": "methods",
               "evidence": {
                 "section": "methods",
-                "quote": "Once data generation for the validation cohort was completed, the expression microarray signal intensity data from all individuals and all time points in that cohort were processed in a single batch.",
+                "quote": "Genotyping was performed on Illumina HumanOmniExpress microarrays (Illumina, Inc., San Diego, CA) following the manufacturer’s instructions.",
                 "sentence_ids": [
-                  "S156"
+                  "S130"
                 ]
               },
               "generate_claim": null
@@ -1605,12 +1843,12 @@
       "benchmark_raw_total": 7,
       "metrics": {
         "benchmark_total": 7,
-        "ours_total": 18,
+        "ours_total": 22,
         "matched": 5,
-        "exact": 2,
-        "obi_ok": 4,
+        "exact": 3,
+        "obi_ok": 5,
         "missed": 2,
-        "extra": 13,
+        "extra": 17,
         "split": 0,
         "term_only_pairs": 1,
         "recall": 0.7143
@@ -1622,9 +1860,9 @@
           "tier": "obi_exact",
           "signals": [
             "same name",
+            "name containment",
             "short name",
-            "quote names the other side",
-            "shared evidence sentence"
+            "quote names the other side"
           ],
           "reason": "same OBI term",
           "benchmark": {
@@ -1655,6 +1893,7 @@
             {
               "key": "cytometry time of flight assay",
               "name_in_paper": [
+                "mass cytometry",
                 "CyTOF"
               ],
               "aliases": [],
@@ -1663,9 +1902,9 @@
               "source": "methods",
               "evidence": {
                 "section": "methods",
-                "quote": "The pooled patient samples were then stained with a validated 37‐marker CyTOF antibody panel ( Table EV8 ) for 30 min on ice and then fixed, permeabilized, and incubated with Ir nucleic acid intercalator (Fluidigm).",
+                "quote": "All selected cases had an acute‐phase sample collected on days 1–2 of illness and a convalescent sample collected on days 15–17 post‐illness for serum, whole blood in PAXgene solution, and PBMCs; these were subject to transcriptomic analysis via RNA‐seq, CHIKV viral titer assays, multiplex ELISA for cytokines, and mass cytometry for cellular phenotyping as illustrated in Fig 1 .",
                 "sentence_ids": [
-                  "S169"
+                  "S159"
                 ]
               },
               "generate_claim": null
@@ -1674,14 +1913,15 @@
           "also_on_term": []
         },
         {
-          "status": "MATCH_OBI_CONFLICT",
-          "tier": "name_containment",
+          "status": "MATCH",
+          "tier": "obi_exact",
           "signals": [
+            "same name",
             "name containment",
             "quote names the other side",
             "shared evidence sentence"
           ],
-          "reason": "benchmark maps this assay to OBI:0000920 cytometric bead array assay; we mapped it to OBI:0002766 cytokine assay",
+          "reason": "same OBI term",
           "benchmark": {
             "key": "multiplex ELISA-based assay (Luminex)",
             "obi_id": "OBI:0000920",
@@ -1707,20 +1947,19 @@
           },
           "ours": [
             {
-              "key": "cytokine assay",
+              "key": "cytometric bead array assay",
               "name_in_paper": [
-                "cytokine",
-                "Cytokine"
+                "Luminex"
               ],
               "aliases": [],
-              "obi_id": "OBI:0002766",
-              "obi_label": "cytokine assay",
+              "obi_id": "OBI:0000920",
+              "obi_label": "cytometric bead array assay",
               "source": "methods",
               "evidence": {
                 "section": "methods",
-                "quote": "Each sample was run in duplicate in a 96‐well microtiter plate using 25 μl serum from each patient from acute and convalescent timepoints using the multiplex cytokine panels (Multiplex High Sensitivity Human Cytokine Panel, Millipore Corp.).",
+                "quote": "Cytokines and chemokines were measured using a multiplex ELISA‐based assay (Luminex).",
                 "sentence_ids": [
-                  "S194"
+                  "S192"
                 ]
               },
               "generate_claim": null
@@ -1895,6 +2134,7 @@
             {
               "key": "analyte assay",
               "name_in_paper": [
+                "analytes",
                 "analyte"
               ],
               "aliases": [],
@@ -1903,9 +2143,9 @@
               "source": "methods",
               "evidence": {
                 "section": "methods",
-                "quote": "Luminex analyte concentration and CyTOF cell population frequency data were log‐transformed prior to analysis.",
+                "quote": "Cytometry time‐of‐flight uses metal‐labeled reagents and inductively coupled plasma mass spectrometry to overcome the limits of fluorescence spectral overlap in flow cytometry, allowing measurement of up to 50 analytes at single‐cell resolution.",
                 "sentence_ids": [
-                  "S265"
+                  "S166"
                 ]
               },
               "generate_claim": null
@@ -1977,9 +2217,38 @@
           "benchmark": null,
           "ours": [
             {
+              "key": "cytokine assay",
+              "name_in_paper": [
+                "cytokines",
+                "Cytokines",
+                "cytokine",
+                "Cytokine"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0002766",
+              "obi_label": "cytokine assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "All selected cases had an acute‐phase sample collected on days 1–2 of illness and a convalescent sample collected on days 15–17 post‐illness for serum, whole blood in PAXgene solution, and PBMCs; these were subject to transcriptomic analysis via RNA‐seq, CHIKV viral titer assays, multiplex ELISA for cytokines, and mass cytometry for cellular phenotyping as illustrated in Fig 1 .",
+                "sentence_ids": [
+                  "S159"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
               "key": "cytometry assay",
               "name_in_paper": [
-                "cytometry",
                 "Cytometry"
               ],
               "aliases": [],
@@ -1988,9 +2257,9 @@
               "source": "methods",
               "evidence": {
                 "section": "methods",
-                "quote": "All selected cases had an acute‐phase sample collected on days 1–2 of illness and a convalescent sample collected on days 15–17 post‐illness for serum, whole blood in PAXgene solution, and PBMCs; these were subject to transcriptomic analysis via RNA‐seq, CHIKV viral titer assays, multiplex ELISA for cytokines, and mass cytometry for cellular phenotyping as illustrated in Fig 1 .",
+                "quote": "Cytometry time‐of‐flight uses metal‐labeled reagents and inductively coupled plasma mass spectrometry to overcome the limits of fluorescence spectral overlap in flow cytometry, allowing measurement of up to 50 analytes at single‐cell resolution.",
                 "sentence_ids": [
-                  "S159"
+                  "S166"
                 ]
               },
               "generate_claim": null
@@ -2059,9 +2328,66 @@
           "benchmark": null,
           "ours": [
             {
+              "key": "monocyte assay",
+              "name_in_paper": [
+                "monocytes",
+                "Monocytes",
+                "monocyte"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0003025",
+              "obi_label": "monocyte assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "Traditional hierarchical gating was applied to a subset of samples to identify 8 major immune compartments: T cells, B cells, NK cells, NKT cells, monocytes, mDCs, pDCs, and basophils.",
+                "sentence_ids": [
+                  "S182"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "basophil assay",
+              "name_in_paper": [
+                "basophils"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0003021",
+              "obi_label": "basophil assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "Traditional hierarchical gating was applied to a subset of samples to identify 8 major immune compartments: T cells, B cells, NK cells, NKT cells, monocytes, mDCs, pDCs, and basophils.",
+                "sentence_ids": [
+                  "S182"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
               "key": "protein assay",
               "name_in_paper": [
-                "protein"
+                "protein",
+                "proteins"
               ],
               "aliases": [],
               "obi_id": "OBI:2100023",
@@ -2140,19 +2466,46 @@
           "benchmark": null,
           "ours": [
             {
-              "key": "monocyte assay",
+              "key": "neutrophil assay",
               "name_in_paper": [
-                "monocyte"
+                "neutrophils"
               ],
               "aliases": [],
-              "obi_id": "OBI:0003025",
-              "obi_label": "monocyte assay",
+              "obi_id": "OBI:0003022",
+              "obi_label": "neutrophil assay",
               "source": "methods",
               "evidence": {
                 "section": "methods",
-                "quote": "Monocytes, dendritic cells, and B cells express CHIKV proteins during acute CHIKV infection, but only specific monocyte sub‐communities undergo expansion",
+                "quote": "Due to the relatively small sample size, we only considered the abundance of six main types of blood cells estimated by the average expression of cell markers (as described above): B cells, T cells, NK cells, monocytes, neutrophils, and dendritic cells.",
                 "sentence_ids": [
-                  "S293"
+                  "S246"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "growth factor assay",
+              "name_in_paper": [
+                "Growth factors"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0003851",
+              "obi_label": "growth factor assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "Growth factors are shown in Appendix Fig S12 .",
+                "sentence_ids": [
+                  "S331"
                 ]
               },
               "generate_claim": null
@@ -2306,15 +2659,15 @@
       "benchmark_raw_total": 7,
       "metrics": {
         "benchmark_total": 7,
-        "ours_total": 8,
-        "matched": 5,
+        "ours_total": 11,
+        "matched": 6,
         "exact": 3,
-        "obi_ok": 3,
-        "missed": 2,
-        "extra": 3,
+        "obi_ok": 4,
+        "missed": 1,
+        "extra": 5,
         "split": 0,
         "term_only_pairs": 0,
-        "recall": 0.7143
+        "recall": 0.8571
       },
       "merged_groups": [],
       "rows": [
@@ -2548,10 +2901,14 @@
           "also_on_term": []
         },
         {
-          "status": "MISSED",
-          "tier": null,
-          "signals": [],
-          "reason": "no agent entry matches this benchmark assay",
+          "status": "MATCH_GRANULARITY",
+          "tier": "obi_ancestry",
+          "signals": [
+            "same name",
+            "short name",
+            "shared evidence sentence"
+          ],
+          "reason": "our term OBI:0002106 carboxyfluorescein succinimidyl ester staining assay is broader than the benchmark's OBI:0003582 cell proliferation assay using carboxyfluorescein succinimidyl ester staining",
           "benchmark": {
             "key": "CFSE labeling",
             "obi_id": "OBI:0003582",
@@ -2576,7 +2933,27 @@
               }
             ]
           },
-          "ours": []
+          "ours": [
+            {
+              "key": "carboxyfluorescein succinimidyl ester staining assay",
+              "name_in_paper": [
+                "CFSE"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0002106",
+              "obi_label": "carboxyfluorescein succinimidyl ester staining assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "PBMCs from vaccinated volunteers were labeled with CFSE (Invitrogen), as previously described ( 64 ).",
+                "sentence_ids": [
+                  "S155"
+                ]
+              },
+              "generate_claim": null
+            }
+          ],
+          "also_on_term": []
         },
         {
           "status": "MISSED",
@@ -2743,6 +3120,60 @@
               "generate_claim": null
             }
           ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "monocyte assay",
+              "name_in_paper": [
+                "monocytes"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0003025",
+              "obi_label": "monocyte assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "Immature DCs were generated by culturing monocytes for 6 d in the presence of 100 ng/ml GM-CSF (R&D Systems) and 25 ng/ml IL-4 (R&D Systems).",
+                "sentence_ids": [
+                  "S152"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "lymphocyte assay",
+              "name_in_paper": [
+                "lymphocytes"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0003024",
+              "obi_label": "lymphocyte assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "Frozen stocks of autologous PBMCs were used as a source of lymphocytes.",
+                "sentence_ids": [
+                  "S176"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
         }
       ]
     },
@@ -2755,13 +3186,13 @@
       "benchmark_raw_total": 4,
       "metrics": {
         "benchmark_total": 4,
-        "ours_total": 17,
+        "ours_total": 19,
         "matched": 3,
         "exact": 0,
         "obi_ok": 2,
         "missed": 1,
-        "extra": 14,
-        "split": 0,
+        "extra": 15,
+        "split": 1,
         "term_only_pairs": 0,
         "recall": 0.75
       },
@@ -2769,8 +3200,9 @@
       "rows": [
         {
           "status": "MATCH_OBI_CONFLICT",
-          "tier": "name_containment",
+          "tier": "name",
           "signals": [
+            "same name",
             "name containment",
             "quote names the other side"
           ],
@@ -2804,6 +3236,8 @@
               "key": "microarray assay",
               "name_in_paper": [
                 "microarray",
+                "microarrays",
+                "Microarrays",
                 "Microarray"
               ],
               "aliases": [],
@@ -2855,7 +3289,7 @@
             "name containment",
             "quote names the other side"
           ],
-          "reason": "our term OBI:0000443 analyte assay is broader than the benchmark's OBI:0000920 cytometric bead array assay",
+          "reason": "our term OBI:0000443 analyte assay is broader than the benchmark's OBI:0000920 cytometric bead array assay; 1 more agent entry on this term: `cytometric bead array assay`",
           "benchmark": {
             "key": "Multiplex Cytokine Analysis",
             "obi_id": "OBI:0000920",
@@ -2884,7 +3318,8 @@
             {
               "key": "analyte assay",
               "name_in_paper": [
-                "analyte"
+                "analyte",
+                "analytes"
               ],
               "aliases": [],
               "obi_id": "OBI:0000443",
@@ -2896,9 +3331,27 @@
                 "sentence_ids": []
               },
               "generate_claim": null
+            },
+            {
+              "key": "cytometric bead array assay",
+              "name_in_paper": [
+                "Luminex"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0000920",
+              "obi_label": "cytometric bead array assay",
+              "source": null,
+              "evidence": {
+                "section": "",
+                "quote": "Serum cytokine analysis was performed using the\nLincoplex High Sensitivity kit (Millipore Cat# HSCYTO-60SPMX13) and regular\nsensitivity kits (Millipore Cat# MPXHCYTO60KPMX42, MPXHCYP2:00 PMX23,\nand MPXHCYP3-PMX9), according to the manufacturer’s instructions (Linco/\nMillipore), and samples were analyzed on a Luminex 200 (Luminex).",
+                "sentence_ids": []
+              },
+              "generate_claim": null
             }
           ],
-          "also_on_term": []
+          "also_on_term": [
+            "cytometric bead array assay"
+          ]
         },
         {
           "status": "MATCH_GRANULARITY",
@@ -2957,6 +3410,36 @@
           "benchmark": null,
           "ours": [
             {
+              "key": "immune response assay",
+              "name_in_paper": [
+                "immune responses",
+                "immune response",
+                "Immune Response",
+                "immune\nresponse",
+                "Immune Responses",
+                "immune\nresponses"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0000743",
+              "obi_label": "immune response assay",
+              "source": null,
+              "evidence": {
+                "section": "",
+                "quote": "Juliana McElrathb,c,f,2,3\naSeattle Biomedical Research Institute, Seattle, WA 98109; bVaccine and Infectious Disease Division and cHIV Vaccine Trials Network, Fred Hutchinson Cancer\nResearch Center, Seattle, WA 98109; and dDepartment of Laboratory Medicine, eDepartment of Immunology, and fDepartment of Medicine, University of\nWashington, Seattle, WA 98195\nEdited* by RaﬁAhmed, Emory University, Atlanta, GA, and approved October 16, 2012 (received for review June 5, 2012)\nTo better understand how innate immune responses to vaccination\ncan lead to lasting protective immunity, we used a systems ap-\nproach to deﬁne immune signatures in humans over 1 wk following\nMRKAd5/HIV vaccination that predicted subsequent HIV-speciﬁc T-\ncell responses.",
+                "sentence_ids": []
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
               "key": "blood assay",
               "name_in_paper": [
                 "blood",
@@ -2986,6 +3469,7 @@
               "key": "cytokine assay",
               "name_in_paper": [
                 "cytokine",
+                "cytokines",
                 "Cytokine"
               ],
               "aliases": [],
@@ -3009,19 +3493,18 @@
           "benchmark": null,
           "ours": [
             {
-              "key": "immune response assay",
+              "key": "lymphocyte assay",
               "name_in_paper": [
-                "immune response",
-                "Immune Response",
-                "immune\nresponse"
+                "lymphocytes",
+                "lymphocyte"
               ],
               "aliases": [],
-              "obi_id": "OBI:0000743",
-              "obi_label": "immune response assay",
+              "obi_id": "OBI:0003024",
+              "obi_label": "lymphocyte assay",
               "source": null,
               "evidence": {
                 "section": "",
-                "quote": "When applied iteratively, the ﬁndings may permit selection\nof HIV vaccine candidates eliciting innate immune response proﬁles\nmore likely to drive HIV protective immunity.",
+                "quote": "These alterations were corrobo-\nrated by marked serum inﬂammatory cytokine elevations and\negress of circulating lymphocytes.",
                 "sentence_ids": []
               },
               "generate_claim": null
@@ -3039,7 +3522,8 @@
               "key": "protein assay",
               "name_in_paper": [
                 "protein",
-                "Protein"
+                "Protein",
+                "proteins"
               ],
               "aliases": [],
               "obi_id": "OBI:2100023",
@@ -3062,17 +3546,19 @@
           "benchmark": null,
           "ours": [
             {
-              "key": "lymphocyte assay",
+              "key": "monocyte assay",
               "name_in_paper": [
-                "lymphocyte"
+                "monocytes",
+                "monocyte",
+                "Monocyte"
               ],
               "aliases": [],
-              "obi_id": "OBI:0003024",
-              "obi_label": "lymphocyte assay",
+              "obi_id": "OBI:0003025",
+              "obi_label": "monocyte assay",
               "source": null,
               "evidence": {
                 "section": "",
-                "quote": "Rapid lymphocyte trafﬁcking in response to\nMRKAd5/HIV is consistent with similar observations made in\nprevious studies with an adenoviral-vectored vaccine (24).",
+                "quote": "Thirty-two percent of the genes we detected\nas up-regulated at 24 h were identiﬁed as preferentially expressed\nin monocytes in that study, whereas 28% of the down-regulated\ngenes we detected were preferentially expressed in lymphocytes\n(Dataset S1, tab 1).",
                 "sentence_ids": []
               },
               "generate_claim": null
@@ -3087,18 +3573,20 @@
           "benchmark": null,
           "ours": [
             {
-              "key": "monocyte assay",
+              "key": "in live organism assay",
               "name_in_paper": [
-                "monocyte",
-                "Monocyte"
+                "In Vivo",
+                "in vivo",
+                "In vivo",
+                "in\nvivo"
               ],
               "aliases": [],
-              "obi_id": "OBI:0003025",
-              "obi_label": "monocyte assay",
+              "obi_id": "OBI:0000966",
+              "obi_label": "in live organism assay",
               "source": null,
               "evidence": {
                 "section": "",
-                "quote": "1D and Dataset S1, tab 6), detecting robust\nchanges in serum levels of IP-10, I-TAC, monocyte chemo-\nattractant protein-1 (MCP-1), and MCP-2, as well as immuno-\nregulatory IL-10 and IL-1Ra.",
+                "quote": "The In Vivo Innate Immune Response to MRKAd5/HIV Is Recapitulated\nin Vitro and Engages a Coordinately Regulated Interacting Network\nInvolving Unique Gene Isoforms.",
                 "sentence_ids": []
               },
               "generate_claim": null
@@ -3317,12 +3805,12 @@
       "benchmark_raw_total": 3,
       "metrics": {
         "benchmark_total": 3,
-        "ours_total": 9,
+        "ours_total": 12,
         "matched": 3,
         "exact": 0,
         "obi_ok": 0,
         "missed": 0,
-        "extra": 6,
+        "extra": 9,
         "split": 0,
         "term_only_pairs": 0,
         "recall": 1.0
@@ -3372,7 +3860,9 @@
             {
               "key": "microarray assay",
               "name_in_paper": [
+                "microarrays",
                 "microarray",
+                "Microarrays",
                 "Microarray"
               ],
               "aliases": [],
@@ -3381,7 +3871,7 @@
               "source": null,
               "evidence": {
                 "section": "",
-                "quote": "RMA is a method of normal-\nization of microarray data that leverages gene expression as-\nsessments made on Affymetrix gene chips.",
+                "quote": "Prediction analysis of microarrays identiﬁed genes corresponding with protection.",
                 "sentence_ids": []
               },
               "generate_claim": null
@@ -3525,7 +4015,8 @@
             {
               "key": "protein assay",
               "name_in_paper": [
-                "protein"
+                "protein",
+                "proteins"
               ],
               "aliases": [],
               "obi_id": "OBI:2100023",
@@ -3548,9 +4039,61 @@
           "benchmark": null,
           "ours": [
             {
+              "key": "enzyme-linked immunospot assay",
+              "name_in_paper": [
+                "enzyme-linked immunospots"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0600031",
+              "obi_label": "enzyme-linked immunospot assay",
+              "source": null,
+              "evidence": {
+                "section": "",
+                "quote": "CSP-speciﬁc CD4+ T\ncells associated with interleukin (IL)–2, interferon (IFN)–g,\ntumor necrosis factor (TNF)–a, and CD40L; anti-CSP im-\nmunoglobulin (Ig) G levels; and ex vivo CSP-speciﬁc IFN-g\nenzyme-linked immunospots are observed in persons protected\nfrom malaria after challenge with infected mosquitoes [7, 12].",
+                "sentence_ids": []
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "immune response assay",
+              "name_in_paper": [
+                "immune responses"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0000743",
+              "obi_label": "immune response assay",
+              "source": null,
+              "evidence": {
+                "section": "",
+                "quote": "At the host ge-\nnomic level, assessment of the divergent responses to vacci-\nnation with adjuvanted RTS,S has the potential to elucidate the\nfundamental features of immune responses to vaccination that\nresult in protection and that might be exploited to inform\ndevelopment of a more protective malaria vaccine.",
+                "sentence_ids": []
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
               "key": "ChIP assay",
               "name_in_paper": [
-                "chip"
+                "chip",
+                "Chips",
+                "chips"
               ],
               "aliases": [],
               "obi_id": "OBI:0001954",
@@ -3640,6 +4183,31 @@
               "generate_claim": null
             }
           ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "lymphocyte assay",
+              "name_in_paper": [
+                "lymphocytes"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0003024",
+              "obi_label": "lymphocyte assay",
+              "source": null,
+              "evidence": {
+                "section": "",
+                "quote": "Microarray analysis iden-\ntiﬁes a set of CXCR3 and CCR2 ligand chemokines as early IFNb-\nresponsive genes in peripheral blood lymphocytes I vitro: an impli-\ncation for IFNb-related adverse effects in multiple sclerosis.",
+                "sentence_ids": []
+              },
+              "generate_claim": null
+            }
+          ]
         }
       ]
     },
@@ -3652,12 +4220,12 @@
       "benchmark_raw_total": 5,
       "metrics": {
         "benchmark_total": 5,
-        "ours_total": 7,
+        "ours_total": 8,
         "matched": 3,
         "exact": 0,
         "obi_ok": 1,
         "missed": 2,
-        "extra": 4,
+        "extra": 5,
         "split": 0,
         "term_only_pairs": 1,
         "recall": 0.6
@@ -3953,6 +4521,7 @@
             {
               "key": "protein assay",
               "name_in_paper": [
+                "proteins",
                 "protein"
               ],
               "aliases": [],
@@ -3961,9 +4530,9 @@
               "source": "methods",
               "evidence": {
                 "section": "methods",
-                "quote": "For analysis of T cell function, 1 million PBMCs were stimulated with Env peptide pools, nonstructural protein (NS1) peptide pools (a kind gift from Dr.",
+                "quote": "For staining of intracellular proteins, cells were fixed and permeabilized with Fix/Perm (eBioscience, USA) for 30 min at 4°C in the dark.",
                 "sentence_ids": [
-                  "S41"
+                  "S34"
                 ]
               },
               "generate_claim": null
@@ -3996,6 +4565,33 @@
               "generate_claim": null
             }
           ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "immune response assay",
+              "name_in_paper": [
+                "immune responses"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0000743",
+              "obi_label": "immune response assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "To identify co-regulated genes associated with the different immune responses, the weighted gene co-expression network analysis (WGCNA) R package ( 34 ) was used.",
+                "sentence_ids": [
+                  "S79"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
         }
       ]
     },
@@ -4008,15 +4604,15 @@
       "benchmark_raw_total": 5,
       "metrics": {
         "benchmark_total": 5,
-        "ours_total": 5,
-        "matched": 1,
-        "exact": 0,
-        "obi_ok": 0,
-        "missed": 4,
+        "ours_total": 6,
+        "matched": 2,
+        "exact": 1,
+        "obi_ok": 1,
+        "missed": 3,
         "extra": 4,
         "split": 0,
         "term_only_pairs": 0,
-        "recall": 0.2
+        "recall": 0.4
       },
       "merged_groups": [],
       "rows": [
@@ -4053,10 +4649,14 @@
           "ours": []
         },
         {
-          "status": "MISSED",
-          "tier": null,
-          "signals": [],
-          "reason": "no agent entry matches this benchmark assay",
+          "status": "MATCH",
+          "tier": "obi_exact",
+          "signals": [
+            "same name",
+            "name containment",
+            "quote names the other side"
+          ],
+          "reason": "same OBI term",
           "benchmark": {
             "key": "B-cell enzyme-linked immunospot assay",
             "obi_id": "OBI:0600031",
@@ -4084,7 +4684,27 @@
               }
             ]
           },
-          "ours": []
+          "ours": [
+            {
+              "key": "enzyme-linked immunospot assay",
+              "name_in_paper": [
+                "ELISpot"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0600031",
+              "obi_label": "enzyme-linked immunospot assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "Memory B cells were assessed using cultured ELISpot performed on blood samples collected at days 0, 28 and 56.",
+                "sentence_ids": [
+                  "S64"
+                ]
+              },
+              "generate_claim": null
+            }
+          ],
+          "also_on_term": []
         },
         {
           "status": "MISSED",
@@ -4156,6 +4776,7 @@
               "key": "microarray assay",
               "name_in_paper": [
                 "microarray",
+                "microarrays",
                 "Microarray"
               ],
               "aliases": [],
@@ -4325,12 +4946,12 @@
       "benchmark_raw_total": 5,
       "metrics": {
         "benchmark_total": 5,
-        "ours_total": 8,
+        "ours_total": 10,
         "matched": 5,
         "exact": 1,
         "obi_ok": 2,
         "missed": 0,
-        "extra": 3,
+        "extra": 5,
         "split": 0,
         "term_only_pairs": 0,
         "recall": 1.0
@@ -4375,7 +4996,8 @@
             {
               "key": "microarray assay",
               "name_in_paper": [
-                "microarray"
+                "microarray",
+                "microarrays"
               ],
               "aliases": [],
               "obi_id": "OBI:0001985",
@@ -4451,7 +5073,8 @@
           "tier": "name_containment",
           "signals": [
             "name containment",
-            "quote names the other side"
+            "quote names the other side",
+            "shared evidence sentence"
           ],
           "reason": "benchmark maps this assay to OBI:0000920 cytometric bead array assay; we mapped it to OBI:0002766 cytokine assay",
           "benchmark": {
@@ -4480,6 +5103,7 @@
             {
               "key": "cytokine assay",
               "name_in_paper": [
+                "cytokines",
                 "cytokine"
               ],
               "aliases": [],
@@ -4488,9 +5112,9 @@
               "source": "methods",
               "evidence": {
                 "section": "methods",
-                "quote": "Logistic regression was used to assess the association between individual cytokine markers and the response to the HBV vaccine and a multivariate model combining the best markers was built on the EM131 training set using a forward selection approach, as described above.",
+                "quote": "A panel of 45 cytokines/chemokines was measured on the 174 pre-vaccination (V2) samples of the EM131 cohort.",
                 "sentence_ids": [
-                  "S232"
+                  "S229"
                 ]
               },
               "generate_claim": null
@@ -4612,6 +5236,33 @@
           "benchmark": null,
           "ours": [
             {
+              "key": "HBV surface antigen assay",
+              "name_in_paper": [
+                "HBsAg"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0002157",
+              "obi_label": "HBV surface antigen assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "All participants were vaccinated with two doses of Twinrix (HBsAg and HAV virus—Glaxo Smith-Kline), and single doses of generic Tetanus-Diphtheria booster (Tetanus and Diphtheria—Sanofi Pasteur) and Dukoral (recombinant Cholera toxin B subunit and whole killed Vibrios—Sanofi Pasteur) according to the respective product labels.",
+                "sentence_ids": [
+                  "S117"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
               "key": "binding assay",
               "name_in_paper": [
                 "binding"
@@ -4641,7 +5292,8 @@
             {
               "key": "ChIP assay",
               "name_in_paper": [
-                "chip"
+                "chip",
+                "chips"
               ],
               "aliases": [],
               "obi_id": "OBI:0001954",
@@ -4679,6 +5331,33 @@
                 "quote": "Clinical characteristics including age, gender, height, weight, body mass index and pre-vaccination cytomegalovirus antibody titres were tested as predictors of HBV vaccine response using univariate and multivariate logistic regression analysis.",
                 "sentence_ids": [
                   "S209"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "protein assay",
+              "name_in_paper": [
+                "proteins"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:2100023",
+              "obi_label": "protein assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "Samples were assayed to determine the concentration of inflammatory proteins according to multianalyte profiling protocols established by Rules-Based Medicine (RBM) (Austin, TX).",
+                "sentence_ids": [
+                  "S230"
                 ]
               },
               "generate_claim": null
@@ -4743,6 +5422,7 @@
             {
               "key": "microarray assay",
               "name_in_paper": [
+                "microarrays",
                 "microarray"
               ],
               "aliases": [],
@@ -4751,9 +5431,9 @@
               "source": "methods",
               "evidence": {
                 "section": "methods",
-                "quote": "Gene Expression omnibus, microarray data: GSE40719 .",
+                "quote": "To see whether any genes could predict the immune response to vaccination, we used a nearest shrunken centroid method in the R package prediction analysis for microarrays (pamR).",
                 "sentence_ids": [
-                  "S160"
+                  "S142"
                 ]
               },
               "generate_claim": null
@@ -4767,7 +5447,8 @@
           "signals": [
             "same name",
             "name containment",
-            "quote names the other side"
+            "quote names the other side",
+            "shared evidence sentence"
           ],
           "reason": "same OBI term",
           "benchmark": {
@@ -4801,7 +5482,9 @@
             {
               "key": "enzyme-linked immunospot assay",
               "name_in_paper": [
-                "ELISpot assay"
+                "ELISpots",
+                "ELISpot assay",
+                "ELISpot"
               ],
               "aliases": [],
               "obi_id": "OBI:0600031",
@@ -4809,9 +5492,9 @@
               "source": "methods",
               "evidence": {
                 "section": "methods",
-                "quote": "The mice were culled 7 days later and ammonium chloride lysis buffer (ACK)-treated splenocytes used in an IFN-γ ELISpot assay.",
+                "quote": "IFN-γ ELISpots were performed ex-vivo at screening and weeks 1,2,4,12, and 24 post-vaccination as previously described [ 29 ].",
                 "sentence_ids": [
-                  "S126"
+                  "S93"
                 ]
               },
               "generate_claim": null
@@ -4969,6 +5652,7 @@
             {
               "key": "western blot assay",
               "name_in_paper": [
+                "western blots",
                 "Western blot"
               ],
               "aliases": [],
@@ -4977,9 +5661,9 @@
               "source": "methods",
               "evidence": {
                 "section": "methods",
-                "quote": "Western blot showing HMGB1 is released into the supernatant of MVA85A stimulated but not unstimulated cells.",
+                "quote": "Unfortunately a good loading control for western blots using cell supernatants has not been published and is not routinely used [ 40 , 56 ].",
                 "sentence_ids": [
-                  "S198"
+                  "S121"
                 ]
               },
               "generate_claim": null
@@ -5190,12 +5874,12 @@
       "benchmark_raw_total": 3,
       "metrics": {
         "benchmark_total": 3,
-        "ours_total": 9,
+        "ours_total": 11,
         "matched": 3,
         "exact": 3,
         "obi_ok": 3,
         "missed": 0,
-        "extra": 6,
+        "extra": 8,
         "split": 0,
         "term_only_pairs": 0,
         "recall": 1.0
@@ -5206,6 +5890,7 @@
           "status": "MATCH",
           "tier": "obi_exact",
           "signals": [
+            "same name",
             "name containment",
             "quote names the other side"
           ],
@@ -5237,7 +5922,9 @@
             {
               "key": "enzyme-linked immunospot assay",
               "name_in_paper": [
-                "ELISpot assay"
+                "ELISpot",
+                "ELISpot assay",
+                "ELISpot assays"
               ],
               "aliases": [],
               "obi_id": "OBI:0600031",
@@ -5245,9 +5932,9 @@
               "source": "methods",
               "evidence": {
                 "section": "methods",
-                "quote": "The secondary endpoint was the immunogenicity of MVA85A measured by the ex vivo interferon-gamma (IFNγ) ELISpot assay performed on fresh peripheral blood mononuclear cells (PBMC) stimulated with pools of mycobacterial peptides.",
+                "quote": "tb was excluded by means of a negative ex vivo ELISpot response to ESAT-6 and CFP-10 peptides.",
                 "sentence_ids": [
-                  "S27"
+                  "S17"
                 ]
               },
               "generate_claim": null
@@ -5501,6 +6188,33 @@
           "benchmark": null,
           "ours": [
             {
+              "key": "lymphocyte assay",
+              "name_in_paper": [
+                "Lymphocytes"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0003024",
+              "obi_label": "lymphocyte assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "Lymphocytes were gated on a forward scatter height (FSC-H) versus side scatter area plot, followed by exclusion of duplets on a FSC-H versus forward scatter area plot.",
+                "sentence_ids": [
+                  "S53"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
               "key": "cytokine assay",
               "name_in_paper": [
                 "cytokine"
@@ -5519,6 +6233,33 @@
               "generate_claim": null
             }
           ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "immune response assay",
+              "name_in_paper": [
+                "immune responses"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0000743",
+              "obi_label": "immune response assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "The Mann Whitney U -test was used to compare AEs and immune responses between groups.",
+                "sentence_ids": [
+                  "S67"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
         }
       ]
     },
@@ -5531,12 +6272,12 @@
       "benchmark_raw_total": 4,
       "metrics": {
         "benchmark_total": 4,
-        "ours_total": 6,
+        "ours_total": 8,
         "matched": 2,
         "exact": 0,
         "obi_ok": 1,
         "missed": 2,
-        "extra": 4,
+        "extra": 6,
         "split": 0,
         "term_only_pairs": 0,
         "recall": 0.5
@@ -5742,6 +6483,60 @@
                 "quote": "PBMCs from days 0, 1, 3, 7, and 14 were obtained after Ficoll-Hypaque density gradient centrifugation of whole blood.",
                 "sentence_ids": [
                   "S104"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "monocyte assay",
+              "name_in_paper": [
+                "monocytes"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0003025",
+              "obi_label": "monocyte assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "For analysis of monocytes and distinction of DCs, samples were stained with CD56 (HCD56, catalog number 318316), CD3 (UCHT1, catalog number 300424), C19-Alexa 700 (HIB19, catalog number 302226), CD16-allophycocyanin (APC)-Cy7 (3G8, catalog number 302018), CD14-BV711 (M5E2, catalog number 301838), CD303 peridinin-chlorophyll proteins (PerCP)/Cy5.5 (201A, catalog number 354210), CD11c-APC (3.9, catalog number 301614), human leukocyte antigen (HLA)-antigen D-related (DR)-BV785 (L243, catalog number 307642), CD83-BV421 (HB15e, catalog number 305324), CD86-phycoerythrin (PE) Dazzle (IT2.2, catalog number 305434), CD40-PE (5C3, catalog number 334308), CD1c-fluorescein isothiocyanate (FITC) (L161, catalog number 331518), CD141-PE/Cy7 (M80, catalog number 344110), and CCR7-BV605 (G043H7, catalog number 353224).",
+                "sentence_ids": [
+                  "S107"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "protein assay",
+              "name_in_paper": [
+                "proteins"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:2100023",
+              "obi_label": "protein assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "For analysis of monocytes and distinction of DCs, samples were stained with CD56 (HCD56, catalog number 318316), CD3 (UCHT1, catalog number 300424), C19-Alexa 700 (HIB19, catalog number 302226), CD16-allophycocyanin (APC)-Cy7 (3G8, catalog number 302018), CD14-BV711 (M5E2, catalog number 301838), CD303 peridinin-chlorophyll proteins (PerCP)/Cy5.5 (201A, catalog number 354210), CD11c-APC (3.9, catalog number 301614), human leukocyte antigen (HLA)-antigen D-related (DR)-BV785 (L243, catalog number 307642), CD83-BV421 (HB15e, catalog number 305324), CD86-phycoerythrin (PE) Dazzle (IT2.2, catalog number 305434), CD40-PE (5C3, catalog number 334308), CD1c-fluorescein isothiocyanate (FITC) (L161, catalog number 331518), CD141-PE/Cy7 (M80, catalog number 344110), and CCR7-BV605 (G043H7, catalog number 353224).",
+                "sentence_ids": [
+                  "S107"
                 ]
               },
               "generate_claim": null
@@ -6199,12 +6994,12 @@
       "benchmark_raw_total": 3,
       "metrics": {
         "benchmark_total": 3,
-        "ours_total": 7,
+        "ours_total": 8,
         "matched": 3,
         "exact": 2,
         "obi_ok": 3,
         "missed": 0,
-        "extra": 4,
+        "extra": 5,
         "split": 0,
         "term_only_pairs": 0,
         "recall": 1.0
@@ -6372,6 +7167,34 @@
           "benchmark": null,
           "ours": [
             {
+              "key": "protein assay",
+              "name_in_paper": [
+                "proteins",
+                "protein"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:2100023",
+              "obi_label": "protein assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "All participants received the high‐dose trivalent influenza vaccine used in that season (Fluzone High‐Dose) containing hemagglutinin (HA) proteins from A/Michigan/45/2015 X‐275 (H1N1), A/Singapore/INFIMH‐16‐0019/2016 IVR‐186 (H3N2), and B/Maryland/15/2016 BX‐69A (a B/Colorado/6/2017‐like virus, B Victoria lineage) at a dose of 60 μg for each HA.",
+                "sentence_ids": [
+                  "S101"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
               "key": "blood assay",
               "name_in_paper": [
                 "Blood",
@@ -6403,6 +7226,7 @@
               "key": "platelet assay",
               "name_in_paper": [
                 "platelet",
+                "platelets",
                 "Platelet"
               ],
               "aliases": [],
@@ -6414,33 +7238,6 @@
                 "quote": "Number 364606, BD Biosciences) for platelet isolation.",
                 "sentence_ids": [
                   "S105"
-                ]
-              },
-              "generate_claim": null
-            }
-          ]
-        },
-        {
-          "status": "EXTRA",
-          "tier": null,
-          "signals": [],
-          "reason": "agent found it in the paper; the benchmark does not list it",
-          "benchmark": null,
-          "ours": [
-            {
-              "key": "protein assay",
-              "name_in_paper": [
-                "protein"
-              ],
-              "aliases": [],
-              "obi_id": "OBI:2100023",
-              "obi_label": "protein assay",
-              "source": "methods",
-              "evidence": {
-                "section": "methods",
-                "quote": "The data was pre‐processed to only include protein‐coding genes and exclude genes on the X and Y chromosome.",
-                "sentence_ids": [
-                  "S151"
                 ]
               },
               "generate_claim": null
@@ -6473,6 +7270,33 @@
               "generate_claim": null
             }
           ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "antibodies from lymphocyte secretions assay",
+              "name_in_paper": [
+                "ALS"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0003296",
+              "obi_label": "antibodies from lymphocyte secretions assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "The decomposition was performed using CP‐OPT with a non‐negative lower bound in the Tensor Toolbox package (Tensor Toolbox for MATLAB, 2021 ) in MatlabR2020a, which is a gradient‐based optimization method that has been shown to be more accurate than CP‐ALS (alternating least squares) and more efficient than CP‐NLS (nonlinear alternating least squares) (Acar et al., 2011 ).",
+                "sentence_ids": [
+                  "S177"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
         }
       ]
     },
@@ -6485,23 +7309,28 @@
       "benchmark_raw_total": 3,
       "metrics": {
         "benchmark_total": 3,
-        "ours_total": 6,
-        "matched": 2,
-        "exact": 1,
-        "obi_ok": 1,
-        "missed": 1,
+        "ours_total": 7,
+        "matched": 3,
+        "exact": 2,
+        "obi_ok": 2,
+        "missed": 0,
         "extra": 4,
         "split": 0,
         "term_only_pairs": 0,
-        "recall": 0.6667
+        "recall": 1.0
       },
       "merged_groups": [],
       "rows": [
         {
-          "status": "MISSED",
-          "tier": null,
-          "signals": [],
-          "reason": "no agent entry matches this benchmark assay",
+          "status": "MATCH",
+          "tier": "obi_exact",
+          "signals": [
+            "same name",
+            "name containment",
+            "quote names the other side",
+            "shared evidence sentence"
+          ],
+          "reason": "same OBI term",
           "benchmark": {
             "key": "Luminex",
             "obi_id": "OBI:0000920",
@@ -6522,7 +7351,27 @@
               }
             ]
           },
-          "ours": []
+          "ours": [
+            {
+              "key": "cytometric bead array assay",
+              "name_in_paper": [
+                "Luminex"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0000920",
+              "obi_label": "cytometric bead array assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "Assays employed a Luminex 200 Bioanalyzer (Luminex Corp, TX, USA) set to acquire at least 50 events per cytokine.",
+                "sentence_ids": [
+                  "S38"
+                ]
+              },
+              "generate_claim": null
+            }
+          ],
+          "also_on_term": []
         },
         {
           "status": "MATCH",
@@ -6634,7 +7483,8 @@
               "key": "blood assay",
               "name_in_paper": [
                 "blood",
-                "Blood"
+                "Blood",
+                "blood assays"
               ],
               "aliases": [],
               "obi_id": "OBI:0003040",
@@ -6689,7 +7539,8 @@
               "key": "cytokine assay",
               "name_in_paper": [
                 "cytokine",
-                "Cytokine"
+                "Cytokine",
+                "cytokines"
               ],
               "aliases": [],
               "obi_id": "OBI:0002766",
@@ -6744,12 +7595,12 @@
       "benchmark_raw_total": 3,
       "metrics": {
         "benchmark_total": 3,
-        "ours_total": 5,
+        "ours_total": 7,
         "matched": 2,
         "exact": 1,
         "obi_ok": 2,
         "missed": 1,
-        "extra": 3,
+        "extra": 5,
         "split": 0,
         "term_only_pairs": 0,
         "recall": 0.6667
@@ -6906,13 +7757,15 @@
           "benchmark": null,
           "ours": [
             {
-              "key": "blood assay",
+              "key": "lymphocyte assay",
               "name_in_paper": [
-                "blood"
+                "Lymphocytes",
+                "lymphocyte",
+                "lymphocytes"
               ],
               "aliases": [],
-              "obi_id": "OBI:0003040",
-              "obi_label": "blood assay",
+              "obi_id": "OBI:0003024",
+              "obi_label": "lymphocyte assay",
               "source": "methods",
               "evidence": {
                 "section": "methods",
@@ -6933,13 +7786,13 @@
           "benchmark": null,
           "ours": [
             {
-              "key": "lymphocyte assay",
+              "key": "blood assay",
               "name_in_paper": [
-                "lymphocyte"
+                "blood"
               ],
               "aliases": [],
-              "obi_id": "OBI:0003024",
-              "obi_label": "lymphocyte assay",
+              "obi_id": "OBI:0003040",
+              "obi_label": "blood assay",
               "source": "methods",
               "evidence": {
                 "section": "methods",
@@ -6978,6 +7831,60 @@
               "generate_claim": null
             }
           ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "cytokine assay",
+              "name_in_paper": [
+                "cytokines"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0002766",
+              "obi_label": "cytokine assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "(C) IFN-γ secretion following culture of sorted NK cells from indicated sites with cytokines (see STAR Methods ) shown as representative histograms (left, D388), and boxplots showing frequency of IFN-γ + NK cells for each site compiled from 4–7 donors (right).",
+                "sentence_ids": [
+                  "S183"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "protein assay",
+              "name_in_paper": [
+                "Proteins"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:2100023",
+              "obi_label": "protein assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "REAGENT or RESOURCE SOURCE IDENTIFIER Conventional flow cytometry Anti-Human CD45 AF700 BioLegend RRID: AB_493761 Anti-Human CD45 BV510 BioLegend RRID: AB_2561940 Anti-Human CD14 BUV737 BD-Biosciences RRID: AB_2744285 Anti-Human CD19 BUV737 BD-Biosciences Cat# 564304 Anti-Human CD3 BV650 BioLegend RRID: AB_2563352 Anti-Human CD56 PE-Cy7 BioLegend RRID: AB_2563927 Anti-Human CD56 APC-Vio770 Miltenyi Biotec Cat# 130–100-690 Anti-Human CD16 BV605 BioLegend RRID: AB_2562990 Anti-Human CD57 PE Dazzle BioLegend RRID: AB_2564063 Anti-Human CD159c NKG2C PE R&D System Cat# FAB138P-100 Anti-Human FcεR1γ FITC Millipore RRID: AB_11203492 Anti-Human GzmB AF700 BD-Biosciences RRID: AB_1645453 Anti-Human Ifng BB700 BD-Biosciences RRID: AB_2744484 Anti-Human CD107a BUV395 BD-Biosciences RRID: AB_2739073 Anti-Human CD69 BV711 BioLegend RRID: AB_2566466 Anti-Human CD103 BUV395 BD-Biosciences RRID: AB_2738759 Anti-Human CXCR6 BV510 BD-Biosciences RRID: AB_2741610 Anti-Human CD49a BV786 BD-Biosciences RRID: AB_2740720 Anti-Human Tbet BV421 BioLegend RRID: AB_10896427 Anti-Human TCF1 PE Cell Signaling Technologies RRID: AB_2798483 Anti-Human CD127 BV421 BioLegend RRID: AB_10960140 Anti-Human RORγt AF647 BD-Biosciences RRID: AB_2738324 High-dimensional flow cytometry Anti-Human CD160 AF488 BD Bioscience RRID: AB_11153688 Anti-Human CD27 BB660 BD Bioscience Clone:M-T271 Anti-Human CD28 BB700 BD Bioscience Clone:CD28.2 Anti-Human CD161 BB790 BD Bioscience Clone:DX12 Anti-Human CD159c NKG2C PE R&D System Cat# FAB138P-100 Anti-Human CD56 PE-CF594 BD Bioscience RRID: AB_2738983 Anti-Human CD85J PE-Cy5 BD Bioscience RRID: AB_394021 Anti-Human CD159a NKG2A PE-Vio770 Miltenyi RRID: AB_2726172 Anti-Human CD158b KIRsDL2/3 APC Miltenyi RRID: AB_871609 Anti-Human CD158b KIR2DL1/DS1,3,5 APC BioLegend RRID: AB_2565577 Anti-Human CD158e KIR3DL1 APC BD Bioscience Clone:DX9 Anti-Human CD45 AF700 BioLegend RRID: AB_2566374 Anti-Human CD3 APC-H7 BD Bioscience RRID: AB_1645476 Anti-Human TCRγδ BV421 BD Bioscience RRID: AB_2737655 Anti-Human CD294 BV480 BD Bioscience RRID: AB_2743703 Anti-Human TCRVd2 BV605 BD Bioscience RRID: AB_2741719 Anti-Human CD137 (4–1BB) BV650 BD Bioscience RRID: AB_2738586 Anti-Human CD314 NKG2D BV711 BD Bioscience RRID: AB_2738377 Anti-Human CD127 BV750 BD Bioscience Clone:HIL-7R-M21 Anti-Human CD336 NKp44 BV786 BD Bioscience RRID: AB_2742134 Anti-Human CD8 BUV395 BD Bioscience RRID: AB_2722501 Anti-Human CD14 BUV496 BD Bioscience Clone:M5E2 Anti-Human CD19 BUV496 BD Bioscience RRID: AB_2744311 Anti-Human CD337 NKp30 BUV563 BD Bioscience Clone:P30–15 Anti-Human CD57 BUV615 BD Bioscience Clone:NK1 Anti-Human CD335 NKp46 BUV661 BD Bioscience Clone:9E2/Nkp46 Anti-Human CD279 PD-1 BUV737 BD Bioscience RRID: AB_2739167 Anti-Human CD16 BUV805 BD Bioscience Clone:3G8 Cell sorting Anti-Human CD45 BV510 BioLegend RRID: AB_2561940 Anti-Human CD14 APC BioLegend RRID: AB_830681 Anti-Human CD19 APC Tonbo Cat#20–0199-T100 Anti-Human CD3 FITC BioLegend RRID: AB_571907 Anti-Human CD56 PE-Cy7 BioLegend RRID: AB_2563927 Chemicals, Peptides, and Recombinant Proteins Recombinant Human IL-12 PeproTech Cat#200–12 Recombinant Human IL-15 PeproTech Cat#200–15 Recombinant Human IL-18 MBL International Corp.",
+                "sentence_ids": [
+                  "S228"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
         }
       ]
     },
@@ -6990,14 +7897,14 @@
       "benchmark_raw_total": 6,
       "metrics": {
         "benchmark_total": 6,
-        "ours_total": 11,
+        "ours_total": 13,
         "matched": 6,
         "exact": 2,
-        "obi_ok": 2,
+        "obi_ok": 3,
         "missed": 0,
-        "extra": 5,
+        "extra": 7,
         "split": 0,
-        "term_only_pairs": 0,
+        "term_only_pairs": 1,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -7060,8 +7967,7 @@
           "tier": "name_containment",
           "signals": [
             "name containment",
-            "quote names the other side",
-            "shared evidence sentence"
+            "quote names the other side"
           ],
           "reason": "benchmark maps this assay to OBI:0000916 flow cytometry assay; we mapped it to OBI:0002766 cytokine assay",
           "benchmark": {
@@ -7091,7 +7997,9 @@
             {
               "key": "cytokine assay",
               "name_in_paper": [
+                "cytokines",
                 "cytokine",
+                "Cytokines",
                 "Cytokine"
               ],
               "aliases": [],
@@ -7100,9 +8008,9 @@
               "source": "methods",
               "evidence": {
                 "section": "methods",
-                "quote": "For the intracellular cytokine staining, PBMC were cultured in the presence of SARS-CoV-2 specific MPs [1 μg/ml] for 9 hours.",
+                "quote": "Supernatants were harvested at 24 hours post-stimulation for multiplex detection of cytokines.",
                 "sentence_ids": [
-                  "S332"
+                  "S328"
                 ]
               },
               "generate_claim": null
@@ -7150,6 +8058,7 @@
               "key": "flow cytometry assay",
               "name_in_paper": [
                 "FACS",
+                "flow cytometry assays",
                 "flow cytometry",
                 "Flow Cytometry",
                 "Flow cytometry"
@@ -7211,7 +8120,8 @@
             {
               "key": "enzyme-linked immunosorbent assay",
               "name_in_paper": [
-                "ELISA"
+                "ELISA",
+                "ELISAs"
               ],
               "aliases": [],
               "obi_id": "OBI:0000661",
@@ -7281,13 +8191,10 @@
           "also_on_term": []
         },
         {
-          "status": "MATCH_OBI_CONFLICT",
-          "tier": "evidence",
-          "signals": [
-            "quote names the other side",
-            "shared evidence sentence"
-          ],
-          "reason": "paired by a shared evidence sentence; benchmark maps this assay to OBI:0003799 analyte detection by flow based bead assay; we mapped it to OBI:0003587 cell culture assay",
+          "status": "MATCH_GRANULARITY",
+          "tier": "obi_ancestry",
+          "signals": [],
+          "reason": "our term OBI:0000443 analyte assay is broader than the benchmark's OBI:0003799 analyte detection by flow based bead assay; term-only pair: no shared name, alias or quote confirms it",
           "benchmark": {
             "key": "cytokine bead assay",
             "obi_id": "OBI:0003799",
@@ -7310,19 +8217,19 @@
           },
           "ours": [
             {
-              "key": "cell culture assay",
+              "key": "analyte assay",
               "name_in_paper": [
-                "cell culture"
+                "analytes"
               ],
               "aliases": [],
-              "obi_id": "OBI:0003587",
-              "obi_label": "cell culture assay",
+              "obi_id": "OBI:0000443",
+              "obi_label": "analyte assay",
               "source": "methods",
               "evidence": {
                 "section": "methods",
-                "quote": "Cytokines in cell culture supernatants of the same samples used for AIM were quantified using a human Th cytokine panel (13-plex) kit (LEGENDplex, Biolegend) according to the manufacturer’s instruction.",
+                "quote": "Analysis was performed using the LEGENDplex analysis software v8.0, which distinguishes between the 13 different analytes on basis of bead size and internal dye.",
                 "sentence_ids": [
-                  "S339"
+                  "S343"
                 ]
               },
               "generate_claim": null
@@ -7338,14 +8245,16 @@
           "benchmark": null,
           "ours": [
             {
-              "key": "binding assay",
+              "key": "protein assay",
               "name_in_paper": [
-                "Binding",
-                "binding"
+                "Proteins",
+                "protein",
+                "proteins",
+                "Protein"
               ],
               "aliases": [],
-              "obi_id": "OBI:0001146",
-              "obi_label": "binding assay",
+              "obi_id": "OBI:2100023",
+              "obi_label": "protein assay",
               "source": "methods",
               "evidence": {
                 "section": "methods",
@@ -7366,14 +8275,14 @@
           "benchmark": null,
           "ours": [
             {
-              "key": "protein assay",
+              "key": "binding assay",
               "name_in_paper": [
-                "protein",
-                "Protein"
+                "Binding",
+                "binding"
               ],
               "aliases": [],
-              "obi_id": "OBI:2100023",
-              "obi_label": "protein assay",
+              "obi_id": "OBI:0001146",
+              "obi_label": "binding assay",
               "source": "methods",
               "evidence": {
                 "section": "methods",
@@ -7468,6 +8377,61 @@
               "generate_claim": null
             }
           ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "cell culture assay",
+              "name_in_paper": [
+                "cell culture"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0003587",
+              "obi_label": "cell culture assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "Cytokines in cell culture supernatants of the same samples used for AIM were quantified using a human Th cytokine panel (13-plex) kit (LEGENDplex, Biolegend) according to the manufacturer’s instruction.",
+                "sentence_ids": [
+                  "S339"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "monocyte assay",
+              "name_in_paper": [
+                "monocytes",
+                "Monocytes"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0003025",
+              "obi_label": "monocyte assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "Frequency of (D) CD3 + total T cells, (E) CD4 + T cells (CD4 + CD3 + ), (F) CD8 + T cells (CD8 + CD3 + ), (G) CD19 + B cells (CD19 + CD3 – ), (H) CD3 – CD19 – cells, and (I) CD14 + CD16 – monocytes (CD3 – CD19 – CD56 – ) from the PBMCs of unexposed donors (Neg, n = 13) or convalescing COVID-19 patients (COVID, n = 14).",
+                "sentence_ids": [
+                  "S369"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
         }
       ]
     },
@@ -7480,12 +8444,12 @@
       "benchmark_raw_total": 4,
       "metrics": {
         "benchmark_total": 4,
-        "ours_total": 13,
+        "ours_total": 15,
         "matched": 4,
         "exact": 3,
         "obi_ok": 3,
         "missed": 0,
-        "extra": 9,
+        "extra": 11,
         "split": 0,
         "term_only_pairs": 0,
         "recall": 1.0
@@ -7860,6 +8824,60 @@
           "benchmark": null,
           "ours": [
             {
+              "key": "cell count assay",
+              "name_in_paper": [
+                "Cell counts"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0003897",
+              "obi_label": "cell count assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "Cell counts and transcript detection rates are summarized in Supplementary Table 2 .",
+                "sentence_ids": [
+                  "S265"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "neutrophil assay",
+              "name_in_paper": [
+                "neutrophils"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0003022",
+              "obi_label": "neutrophil assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "As expected, genes on the final blacklist included markers of epithelial cells, dendritic cells, mast cells, B cells, neutrophils, and red blood cells.",
+                "sentence_ids": [
+                  "S296"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
               "key": "protein assay",
               "name_in_paper": [
                 "protein"
@@ -7971,12 +8989,12 @@
       "benchmark_raw_total": 4,
       "metrics": {
         "benchmark_total": 4,
-        "ours_total": 11,
+        "ours_total": 13,
         "matched": 4,
         "exact": 1,
         "obi_ok": 1,
         "missed": 0,
-        "extra": 7,
+        "extra": 9,
         "split": 0,
         "term_only_pairs": 0,
         "recall": 1.0
@@ -8070,6 +9088,7 @@
             {
               "key": "cytokine assay",
               "name_in_paper": [
+                "cytokines",
                 "Cytokine",
                 "cytokine"
               ],
@@ -8311,6 +9330,89 @@
           "benchmark": null,
           "ours": [
             {
+              "key": "monocyte assay",
+              "name_in_paper": [
+                "monocytes",
+                "monocyte"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0003025",
+              "obi_label": "monocyte assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "(c) Phenotyping to TCR-activated T cells, cytokine-secreting T cells, and HLA-DR expression within monocytes and neutrophils.",
+                "sentence_ids": [
+                  "S221"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "neutrophil assay",
+              "name_in_paper": [
+                "neutrophils",
+                "neutrophil"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0003022",
+              "obi_label": "neutrophil assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "(c) Phenotyping to TCR-activated T cells, cytokine-secreting T cells, and HLA-DR expression within monocytes and neutrophils.",
+                "sentence_ids": [
+                  "S221"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "lymphocyte assay",
+              "name_in_paper": [
+                "lymphocytes"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0003024",
+              "obi_label": "lymphocyte assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "a, Leukocyte gating strategy to identify lymphocytes, granulocytes, monocytes, pDCs, and cDCs in Figs.",
+                "sentence_ids": [
+                  "S273"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
               "key": "eosinophil assay",
               "name_in_paper": [
                 "eosinophil"
@@ -8338,46 +9440,19 @@
           "benchmark": null,
           "ours": [
             {
-              "key": "monocyte assay",
+              "key": "immune response assay",
               "name_in_paper": [
-                "monocyte"
+                "immune responses"
               ],
               "aliases": [],
-              "obi_id": "OBI:0003025",
-              "obi_label": "monocyte assay",
+              "obi_id": "OBI:0000743",
+              "obi_label": "immune response assay",
               "source": "methods",
               "evidence": {
                 "section": "methods",
-                "quote": "Eoso, eosinophil; ncMono, non-classical monocyte; neut, neutrophil; cMono, classical monocyte; intMono, intermediate monocyte; DC2 and DC1, type 2 and 1 dendritic cells, respectively; pDC, plasmacytoid dendritic cell; T-CD8 and T-CD4, CD8+ and CD4+ T cells, respectively; NKT, natural killer T cell; NK, natural killer cell.",
+                "quote": "d–f, Cellular and cytokine measurements representative of type 1 (d) , type 2 (e) and type 3 (f) immune responses reported over time in intervals of days (left) and continuously as linear regressions (right).",
                 "sentence_ids": [
-                  "S287"
-                ]
-              },
-              "generate_claim": null
-            }
-          ]
-        },
-        {
-          "status": "EXTRA",
-          "tier": null,
-          "signals": [],
-          "reason": "agent found it in the paper; the benchmark does not list it",
-          "benchmark": null,
-          "ours": [
-            {
-              "key": "neutrophil assay",
-              "name_in_paper": [
-                "neutrophil"
-              ],
-              "aliases": [],
-              "obi_id": "OBI:0003022",
-              "obi_label": "neutrophil assay",
-              "source": "methods",
-              "evidence": {
-                "section": "methods",
-                "quote": "Eoso, eosinophil; ncMono, non-classical monocyte; neut, neutrophil; cMono, classical monocyte; intMono, intermediate monocyte; DC2 and DC1, type 2 and 1 dendritic cells, respectively; pDC, plasmacytoid dendritic cell; T-CD8 and T-CD4, CD8+ and CD4+ T cells, respectively; NKT, natural killer T cell; NK, natural killer cell.",
-                "sentence_ids": [
-                  "S287"
+                  "S301"
                 ]
               },
               "generate_claim": null
@@ -8996,6 +10071,34 @@
           "benchmark": null,
           "ours": [
             {
+              "key": "monocyte assay",
+              "name_in_paper": [
+                "monocytes",
+                "monocyte"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0003025",
+              "obi_label": "monocyte assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "(2020) , MDSC DEGs with a log fold change >0.25 relative to monocytes were used.",
+                "sentence_ids": [
+                  "S354"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
               "key": "microarray assay",
               "name_in_paper": [
                 "microarray"
@@ -9023,35 +10126,9 @@
           "benchmark": null,
           "ours": [
             {
-              "key": "monocyte assay",
-              "name_in_paper": [
-                "monocyte"
-              ],
-              "aliases": [],
-              "obi_id": "OBI:0003025",
-              "obi_label": "monocyte assay",
-              "source": "methods",
-              "evidence": {
-                "section": "methods",
-                "quote": "For bulk transcriptomic or microarray datasets, including human monocyte precursor subsets ( Kawamura et al., 2017 ), LPS-stimulated PD-L1 + neutrophils ( de Kleijn et al., 2013 ) and neutrophils from ARDS-complicated sepsis ( Juss et al., 2016 ), the top 97th percentile of DEGs relative to control samples/patients were used for scoring.",
-                "sentence_ids": [
-                  "S356"
-                ]
-              },
-              "generate_claim": null
-            }
-          ]
-        },
-        {
-          "status": "EXTRA",
-          "tier": null,
-          "signals": [],
-          "reason": "agent found it in the paper; the benchmark does not list it",
-          "benchmark": null,
-          "ours": [
-            {
               "key": "neutrophil assay",
               "name_in_paper": [
+                "neutrophils",
                 "neutrophil"
               ],
               "aliases": [],
@@ -9060,9 +10137,9 @@
               "source": "methods",
               "evidence": {
                 "section": "methods",
-                "quote": "RNA velocity analysis was performed on the full dataset with the package scVelo to visualize RNA velocity field vectors and streams as well as to calculate the latent time of each developing neutrophil.",
+                "quote": "For bulk transcriptomic or microarray datasets, including human monocyte precursor subsets ( Kawamura et al., 2017 ), LPS-stimulated PD-L1 + neutrophils ( de Kleijn et al., 2013 ) and neutrophils from ARDS-complicated sepsis ( Juss et al., 2016 ), the top 97th percentile of DEGs relative to control samples/patients were used for scoring.",
                 "sentence_ids": [
-                  "S361"
+                  "S356"
                 ]
               },
               "generate_claim": null
@@ -9161,15 +10238,15 @@
       "benchmark_raw_total": 6,
       "metrics": {
         "benchmark_total": 6,
-        "ours_total": 7,
-        "matched": 5,
-        "exact": 2,
-        "obi_ok": 3,
-        "missed": 1,
-        "extra": 2,
+        "ours_total": 13,
+        "matched": 6,
+        "exact": 4,
+        "obi_ok": 5,
+        "missed": 0,
+        "extra": 7,
         "split": 0,
         "term_only_pairs": 1,
-        "recall": 0.8333
+        "recall": 1.0
       },
       "merged_groups": [],
       "rows": [
@@ -9397,10 +10474,14 @@
           "also_on_term": []
         },
         {
-          "status": "MISSED",
-          "tier": null,
-          "signals": [],
-          "reason": "no agent entry matches this benchmark assay",
+          "status": "MATCH",
+          "tier": "obi_exact",
+          "signals": [
+            "name containment",
+            "quote names the other side",
+            "shared evidence sentence"
+          ],
+          "reason": "same OBI term",
           "benchmark": {
             "key": "Commercial immunoassays (pneumococcal polysaccharide antibody)",
             "obi_id": "OBI:0002773",
@@ -9425,17 +10506,37 @@
               }
             ]
           },
-          "ours": []
+          "ours": [
+            {
+              "key": "single-value binding of antibody with reporter to antigen assay",
+              "name_in_paper": [
+                "immunoassays"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0002773",
+              "obi_label": "single-value binding of antibody with reporter to antigen assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "Antibody response to 14 pneumococcal polysaccharides was measured by using commercial immunoassays.",
+                "sentence_ids": [
+                  "S138"
+                ]
+              },
+              "generate_claim": null
+            }
+          ],
+          "also_on_term": []
         },
         {
-          "status": "MATCH_OBI_CONFLICT",
-          "tier": "name_containment",
+          "status": "MATCH",
+          "tier": "obi_exact",
           "signals": [
             "name containment",
             "quote names the other side",
             "shared evidence sentence"
           ],
-          "reason": "benchmark maps this assay to OBI:0000920 cytometric bead array assay; we mapped it to OBI:0002766 cytokine assay",
+          "reason": "same OBI term",
           "benchmark": {
             "key": "Multiplex Cytokine Analysis",
             "obi_id": "OBI:0000920",
@@ -9463,19 +10564,19 @@
           },
           "ours": [
             {
-              "key": "cytokine assay",
+              "key": "cytometric bead array assay",
               "name_in_paper": [
-                "cytokine"
+                "Luminex"
               ],
               "aliases": [],
-              "obi_id": "OBI:0002766",
-              "obi_label": "cytokine assay",
+              "obi_id": "OBI:0000920",
+              "obi_label": "cytometric bead array assay",
               "source": "methods",
               "evidence": {
                 "section": "methods",
-                "quote": "Sera were analyzed for cytokine production by using the Multiplex 42-human cytokine and chemokine panel of antibodies conjugated beads and biotin pairs (Cf.",
+                "quote": "Luminex Technology, Millipore) according to the manufacturer’s instructions and run on Bio-Plex 200 and Bio-Plex 100 readers (Bio-Rad Laboratories).",
                 "sentence_ids": [
-                  "S139"
+                  "S140"
                 ]
               },
               "generate_claim": null
@@ -9491,13 +10592,123 @@
           "benchmark": null,
           "ours": [
             {
+              "key": "cytokine assay",
+              "name_in_paper": [
+                "cytokines",
+                "cytokine"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0002766",
+              "obi_label": "cytokine assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "Blood was collected in Tempus blood RNA tubes (Life Technologies) for microarray and acid citrate dextrose tubes (ACD, BD Vacutainer) for whole-blood flow cytometry, CBC, and serum analysis of neutralizing antibodies ( Figure S1 ) and cytokines ( Figure S4 ).",
+                "sentence_ids": [
+                  "S115"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "ChIP assay",
+              "name_in_paper": [
+                "chips"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0001954",
+              "obi_label": "ChIP assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "After background subtraction, the average normalization recommended by the BeadStudio 2.0 software (Illumina, San Diego, CA) was used to rescale the difference in overall intensity to the median average intensity for all samples across multiple arrays and chips.",
+                "sentence_ids": [
+                  "S122"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
               "key": "neutrophil assay",
               "name_in_paper": [
+                "Neutrophils",
                 "Neutrophil"
               ],
               "aliases": [],
               "obi_id": "OBI:0003022",
               "obi_label": "neutrophil assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "Neutrophils were first separated from mononuclear cells by Ficoll gradient centrifugation, followed by hypotonic lysis of red blood cells in KHCO3 and NH4Cl and finally purified by negative selection by using the EasySep Human Neutrophil Enrichment Kit (Stemcell); monocytes (CD14 + ) and T lymphocytes positive for the CD4 and CD8 antigen were sequentially isolated from PBMC by using Dynabeads (Invitrogen) according to the manufacturer’s instructions.",
+                "sentence_ids": [
+                  "S130"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "monocyte assay",
+              "name_in_paper": [
+                "monocytes"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0003025",
+              "obi_label": "monocyte assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "Neutrophils were first separated from mononuclear cells by Ficoll gradient centrifugation, followed by hypotonic lysis of red blood cells in KHCO3 and NH4Cl and finally purified by negative selection by using the EasySep Human Neutrophil Enrichment Kit (Stemcell); monocytes (CD14 + ) and T lymphocytes positive for the CD4 and CD8 antigen were sequentially isolated from PBMC by using Dynabeads (Invitrogen) according to the manufacturer’s instructions.",
+                "sentence_ids": [
+                  "S130"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "lymphocyte assay",
+              "name_in_paper": [
+                "lymphocytes"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0003024",
+              "obi_label": "lymphocyte assay",
               "source": "methods",
               "evidence": {
                 "section": "methods",
@@ -9536,6 +10747,34 @@
               "generate_claim": null
             }
           ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "in live organism assay",
+              "name_in_paper": [
+                "in vivo",
+                "In Vivo"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0000966",
+              "obi_label": "in live organism assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "The in vivo vaccine response data sets were processed as described above.",
+                "sentence_ids": [
+                  "S154"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
         }
       ]
     },
@@ -9548,15 +10787,15 @@
       "benchmark_raw_total": 4,
       "metrics": {
         "benchmark_total": 4,
-        "ours_total": 4,
-        "matched": 1,
-        "exact": 0,
-        "obi_ok": 1,
-        "missed": 3,
+        "ours_total": 5,
+        "matched": 2,
+        "exact": 1,
+        "obi_ok": 2,
+        "missed": 2,
         "extra": 3,
         "split": 0,
-        "term_only_pairs": 0,
-        "recall": 0.25
+        "term_only_pairs": 1,
+        "recall": 0.5
       },
       "merged_groups": [],
       "rows": [
@@ -9612,10 +10851,13 @@
           "also_on_term": []
         },
         {
-          "status": "MISSED",
-          "tier": null,
-          "signals": [],
-          "reason": "no agent entry matches this benchmark assay",
+          "status": "MATCH",
+          "tier": "obi_exact",
+          "signals": [
+            "quote names the other side",
+            "shared evidence sentence"
+          ],
+          "reason": "same OBI term; term-only pair: no shared name, alias or quote confirms it",
           "benchmark": {
             "key": "ELISA",
             "obi_id": "OBI:0000661",
@@ -9634,7 +10876,27 @@
               }
             ]
           },
-          "ours": []
+          "ours": [
+            {
+              "key": "enzyme-linked immunosorbent assay",
+              "name_in_paper": [
+                "ELISAs"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0000661",
+              "obi_label": "enzyme-linked immunosorbent assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "The serology was performed by DENV-specific IgG ELISAs and flow cytometry-based neutralization assays, as previously described [ 26 ].",
+                "sentence_ids": [
+                  "S19"
+                ]
+              },
+              "generate_claim": null
+            }
+          ],
+          "also_on_term": []
         },
         {
           "status": "MISSED",
@@ -9780,12 +11042,12 @@
       "benchmark_raw_total": 4,
       "metrics": {
         "benchmark_total": 4,
-        "ours_total": 9,
+        "ours_total": 10,
         "matched": 4,
         "exact": 3,
         "obi_ok": 4,
         "missed": 0,
-        "extra": 5,
+        "extra": 6,
         "split": 0,
         "term_only_pairs": 1,
         "recall": 1.0
@@ -10020,13 +11282,13 @@
           "benchmark": null,
           "ours": [
             {
-              "key": "platelet assay",
+              "key": "platelet count assay",
               "name_in_paper": [
-                "platelet"
+                "platelet counts"
               ],
               "aliases": [],
-              "obi_id": "OBI:0003028",
-              "obi_label": "platelet assay",
+              "obi_id": "OBI:2100012",
+              "obi_label": "platelet count assay",
               "source": "methods",
               "evidence": {
                 "section": "methods",
@@ -10060,6 +11322,33 @@
                 "quote": "No difference in hematocrit, a marker of hemoconcentration, was seen in the acute febrile phase of DENV infection (42.3% (IQR: 39.5–46.1%) in the D+L group vs.",
                 "sentence_ids": [
                   "S30"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "monocyte assay",
+              "name_in_paper": [
+                "monocytes"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0003025",
+              "obi_label": "monocyte assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "To note that in this study, B cells, monocytes, and NK cells were removed by flowcytometry using CD19, CD14, and CD56 antibodies, and only CD3 + T cells were analyzed.",
+                "sentence_ids": [
+                  "S38"
                 ]
               },
               "generate_claim": null
@@ -10131,12 +11420,12 @@
       "benchmark_raw_total": 8,
       "metrics": {
         "benchmark_total": 8,
-        "ours_total": 12,
+        "ours_total": 15,
         "matched": 6,
-        "exact": 3,
-        "obi_ok": 4,
+        "exact": 4,
+        "obi_ok": 5,
         "missed": 2,
-        "extra": 6,
+        "extra": 9,
         "split": 0,
         "term_only_pairs": 0,
         "recall": 0.75
@@ -10252,13 +11541,15 @@
           "also_on_term": []
         },
         {
-          "status": "MATCH_OBI_CONFLICT",
-          "tier": "name_containment",
+          "status": "MATCH",
+          "tier": "obi_exact",
           "signals": [
+            "same name",
             "name containment",
-            "quote names the other side"
+            "quote names the other side",
+            "shared evidence sentence"
           ],
-          "reason": "benchmark maps this assay to OBI:0000920 cytometric bead array assay; we mapped it to OBI:0002766 cytokine assay",
+          "reason": "same OBI term",
           "benchmark": {
             "key": "Luminex system",
             "obi_id": "OBI:0000920",
@@ -10285,19 +11576,19 @@
           },
           "ours": [
             {
-              "key": "cytokine assay",
+              "key": "cytometric bead array assay",
               "name_in_paper": [
-                "cytokine"
+                "Luminex"
               ],
               "aliases": [],
-              "obi_id": "OBI:0002766",
-              "obi_label": "cytokine assay",
+              "obi_id": "OBI:0000920",
+              "obi_label": "cytometric bead array assay",
               "source": "methods",
               "evidence": {
                 "section": "methods",
-                "quote": "One outlier for cytokine data was removed from the analysis.",
+                "quote": "Cytokines were measured using a Luminex system (Luminex Corp).",
                 "sentence_ids": [
-                  "S89"
+                  "S143"
                 ]
               },
               "generate_claim": null
@@ -10545,6 +11836,34 @@
           "benchmark": null,
           "ours": [
             {
+              "key": "cytokine assay",
+              "name_in_paper": [
+                "cytokine",
+                "Cytokines"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0002766",
+              "obi_label": "cytokine assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "One outlier for cytokine data was removed from the analysis.",
+                "sentence_ids": [
+                  "S89"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
               "key": "insulin assay",
               "name_in_paper": [
                 "insulin"
@@ -10698,6 +12017,60 @@
               "generate_claim": null
             }
           ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "protein assay",
+              "name_in_paper": [
+                "proteins"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:2100023",
+              "obi_label": "protein assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "Phosphorylation of STAT1, 3, and 5 proteins in B cells, CD4(+) or CD4(+) CD3(+) T cells or monocytes was analyzed by deconvolution of stimuli-specific gating.",
+                "sentence_ids": [
+                  "S133"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "monocyte assay",
+              "name_in_paper": [
+                "monocytes"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0003025",
+              "obi_label": "monocyte assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "Phosphorylation of STAT1, 3, and 5 proteins in B cells, CD4(+) or CD4(+) CD3(+) T cells or monocytes was analyzed by deconvolution of stimuli-specific gating.",
+                "sentence_ids": [
+                  "S133"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
         }
       ]
     },
@@ -10710,15 +12083,15 @@
       "benchmark_raw_total": 10,
       "metrics": {
         "benchmark_total": 10,
-        "ours_total": 21,
-        "matched": 8,
+        "ours_total": 24,
+        "matched": 9,
         "exact": 5,
-        "obi_ok": 7,
-        "missed": 2,
-        "extra": 13,
+        "obi_ok": 8,
+        "missed": 1,
+        "extra": 15,
         "split": 0,
-        "term_only_pairs": 1,
-        "recall": 0.8
+        "term_only_pairs": 2,
+        "recall": 0.9
       },
       "merged_groups": [],
       "rows": [
@@ -10880,10 +12253,12 @@
           "also_on_term": []
         },
         {
-          "status": "MISSED",
-          "tier": null,
-          "signals": [],
-          "reason": "no agent entry matches this benchmark assay",
+          "status": "MATCH_GRANULARITY",
+          "tier": "obi_ancestry",
+          "signals": [
+            "quote names the other side"
+          ],
+          "reason": "our term OBI:0000920 cytometric bead array assay is broader than the benchmark's OBI:0003116 antibody detection by cytometric bead array assay; term-only pair: no shared name, alias or quote confirms it",
           "benchmark": {
             "key": "Bead-based antigen arrays",
             "obi_id": "OBI:0003116",
@@ -10904,13 +12279,34 @@
               }
             ]
           },
-          "ours": []
+          "ours": [
+            {
+              "key": "cytometric bead array assay",
+              "name_in_paper": [
+                "Luminex"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0000920",
+              "obi_label": "cytometric bead array assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "Antigens were coupled to carboxylated magnetic beads (MagPlex-C, Luminex) such that each antigen was linked to beads with unique barcodes, as previously described 16 , 36 , 37 .",
+                "sentence_ids": [
+                  "S186"
+                ]
+              },
+              "generate_claim": null
+            }
+          ],
+          "also_on_term": []
         },
         {
           "status": "MATCH",
           "tier": "obi_exact",
           "signals": [
             "same name",
+            "name containment",
             "short name"
           ],
           "reason": "same OBI term",
@@ -10941,7 +12337,8 @@
             {
               "key": "cytometry time of flight assay",
               "name_in_paper": [
-                "CyTOF"
+                "CyTOF",
+                "Mass cytometry"
               ],
               "aliases": [],
               "obi_id": "OBI:0002115",
@@ -11214,7 +12611,8 @@
             {
               "key": "protein assay",
               "name_in_paper": [
-                "protein"
+                "protein",
+                "proteins"
               ],
               "aliases": [],
               "obi_id": "OBI:2100023",
@@ -11253,6 +12651,33 @@
                 "quote": "Ninety-six-well high binding plates were coated with 100 ng of spike protein diluted at a concentration of 2 μg ml −1 in PBS.",
                 "sentence_ids": [
                   "S127"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "enzyme-linked immunospot assay",
+              "name_in_paper": [
+                "ELISPOT"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0600031",
+              "obi_label": "enzyme-linked immunospot assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "Following fixation, plates were washed twice with PBS and foci were visualized on a fluorescence ELISPOT reader (CTL ImmunoSpot S6 Universal Analyzer) and enumerated using Viridot 33 .",
+                "sentence_ids": [
+                  "S141"
                 ]
               },
               "generate_claim": null
@@ -11324,7 +12749,9 @@
               "key": "cytokine assay",
               "name_in_paper": [
                 "cytokine",
-                "Cytokine"
+                "Cytokine",
+                "cytokines",
+                "Cytokines"
               ],
               "aliases": [],
               "obi_id": "OBI:0002766",
@@ -11335,6 +12762,33 @@
                 "quote": "Antigen-specific T cell responses were measured using the intracellular cytokine staining assay as previously described 35 .",
                 "sentence_ids": [
                   "S166"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "growth factor assay",
+              "name_in_paper": [
+                "growth factors"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0003851",
+              "obi_label": "growth factor assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "The ‘COVID-19 Cytokine Array’ comprised 58 proteins including cytokines, chemokines, growth factors, acute phase proteins and cell surface proteins (Supplementary Table 3).",
+                "sentence_ids": [
+                  "S185"
                 ]
               },
               "generate_claim": null
@@ -11432,7 +12886,9 @@
             {
               "key": "monocyte assay",
               "name_in_paper": [
+                "Monocytes",
                 "Monocyte",
+                "monocytes",
                 "monocyte"
               ],
               "aliases": [],
@@ -11485,19 +12941,19 @@
           "benchmark": null,
           "ours": [
             {
-              "key": "cytometry assay",
+              "key": "immune response assay",
               "name_in_paper": [
-                "cytometry"
+                "immune responses"
               ],
               "aliases": [],
-              "obi_id": "OBI:0001977",
-              "obi_label": "cytometry assay",
+              "obi_id": "OBI:0000743",
+              "obi_label": "immune response assay",
               "source": "methods",
               "evidence": {
                 "section": "methods",
-                "quote": "d , Mass cytometry plots showing CD14 and CD16 expression of Lin − HLA-DR + population.",
+                "quote": "Innate immune responses to BNT162b2 vaccination.",
                 "sentence_ids": [
-                  "S385"
+                  "S381"
                 ]
               },
               "generate_claim": null
@@ -11569,12 +13025,12 @@
       "benchmark_raw_total": 3,
       "metrics": {
         "benchmark_total": 3,
-        "ours_total": 12,
+        "ours_total": 15,
         "matched": 3,
         "exact": 3,
         "obi_ok": 3,
         "missed": 0,
-        "extra": 9,
+        "extra": 12,
         "split": 0,
         "term_only_pairs": 0,
         "recall": 1.0
@@ -11774,7 +13230,8 @@
               "key": "cytokine assay",
               "name_in_paper": [
                 "Cytokine",
-                "cytokine"
+                "cytokine",
+                "cytokines"
               ],
               "aliases": [],
               "obi_id": "OBI:0002766",
@@ -11799,11 +13256,64 @@
             {
               "key": "monocyte assay",
               "name_in_paper": [
-                "monocyte"
+                "Monocytes",
+                "monocyte",
+                "monocytes"
               ],
               "aliases": [],
               "obi_id": "OBI:0003025",
               "obi_label": "monocyte assay",
+              "source": null,
+              "evidence": {
+                "section": "",
+                "quote": "M A J O R A R T I C L E\nProlonged Proinﬂammatory Cytokine\nProduction in Monocytes Modulated by\nInterleukin 10 After Inﬂuenza Vaccination in\nOlder Adults\nSubhasis Mohanty,1 Samit R.",
+                "sentence_ids": []
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "in live organism assay",
+              "name_in_paper": [
+                "in vivo"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0000966",
+              "obi_label": "in live organism assay",
+              "source": null,
+              "evidence": {
+                "section": "",
+                "quote": "Shaw1\n1Section of Infectious Diseases, Department of Internal Medicine, and Departments of 2Pathology, 3Laboratory Medicine, 4Neurology, 5Immunobiology,\n6Internal Medicine, Yale School of Medicine, and 7Interdepartmental Program in Computational Biology and Bioinformatics, Yale University, New Haven,\nConnecticut; and 8Center for Vaccine Development, Saint Louis University, Missouri\nWe evaluated in vivo innate immune responses in monocyte populations from 67 young (aged 21–30 years) and\nolder (aged ≥65 years) adults before and after inﬂuenza vaccination.",
+                "sentence_ids": []
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "immune response assay",
+              "name_in_paper": [
+                "immune responses",
+                "immune response"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0000743",
+              "obi_label": "immune response assay",
               "source": null,
               "evidence": {
                 "section": "",
@@ -11850,7 +13360,8 @@
             {
               "key": "protein assay",
               "name_in_paper": [
-                "protein"
+                "protein",
+                "proteins"
               ],
               "aliases": [],
               "obi_id": "OBI:2100023",
@@ -11859,31 +13370,6 @@
               "evidence": {
                 "section": "",
                 "quote": "Pixel intensities of speciﬁc protein bands and corresponding\nβ-actin bands were estimated using ImageJ software (version\n1.46r).",
-                "sentence_ids": []
-              },
-              "generate_claim": null
-            }
-          ]
-        },
-        {
-          "status": "EXTRA",
-          "tier": null,
-          "signals": [],
-          "reason": "agent found it in the paper; the benchmark does not list it",
-          "benchmark": null,
-          "ours": [
-            {
-              "key": "immune response assay",
-              "name_in_paper": [
-                "immune response"
-              ],
-              "aliases": [],
-              "obi_id": "OBI:0000743",
-              "obi_label": "immune response assay",
-              "source": null,
-              "evidence": {
-                "section": "",
-                "quote": "These ﬁndings highlight age-asso-\nciated differences in the in vivo innate immune response to in-\nﬂuenza vaccine.",
                 "sentence_ids": []
               },
               "generate_claim": null
@@ -11989,6 +13475,56 @@
               "generate_claim": null
             }
           ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "neutrophil assay",
+              "name_in_paper": [
+                "neutrophils"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0003022",
+              "obi_label": "neutrophil assay",
+              "source": null,
+              "evidence": {
+                "section": "",
+                "quote": "Enhanced Th1 activity and de-\nvelopment of chronic enterocolitis in mice devoid of Stat3 in macro-\nphages and neutrophils.",
+                "sentence_ids": []
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "macrophage assay",
+              "name_in_paper": [
+                "macrophages"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0003027",
+              "obi_label": "macrophage assay",
+              "source": null,
+              "evidence": {
+                "section": "",
+                "quote": "Signal transducer and\nactivator of transcription 3 is the dominant mediator of the anti-inﬂam-\nmatory effects of IL-10 in human macrophages.",
+                "sentence_ids": []
+              },
+              "generate_claim": null
+            }
+          ]
         }
       ]
     },
@@ -12001,15 +13537,15 @@
       "benchmark_raw_total": 4,
       "metrics": {
         "benchmark_total": 4,
-        "ours_total": 2,
-        "matched": 2,
-        "exact": 0,
-        "obi_ok": 1,
-        "missed": 2,
+        "ours_total": 3,
+        "matched": 3,
+        "exact": 1,
+        "obi_ok": 2,
+        "missed": 1,
         "extra": 0,
         "split": 0,
         "term_only_pairs": 1,
-        "recall": 0.5
+        "recall": 0.75
       },
       "merged_groups": [],
       "rows": [
@@ -12150,10 +13686,15 @@
           "also_on_term": []
         },
         {
-          "status": "MISSED",
-          "tier": null,
-          "signals": [],
-          "reason": "no agent entry matches this benchmark assay",
+          "status": "MATCH",
+          "tier": "obi_exact",
+          "signals": [
+            "same name",
+            "name containment",
+            "quote names the other side",
+            "shared evidence sentence"
+          ],
+          "reason": "same OBI term",
           "benchmark": {
             "key": "ELISpot assays",
             "obi_id": "OBI:0600031",
@@ -12175,7 +13716,28 @@
               }
             ]
           },
-          "ours": []
+          "ours": [
+            {
+              "key": "enzyme-linked immunospot assay",
+              "name_in_paper": [
+                "ELISpot assays",
+                "ELISpot"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0600031",
+              "obi_label": "enzyme-linked immunospot assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "Total and influenza-specific IgG/A frequencies of antibody-secreting cells were measured by ELISpot assays modified for frozen samples ( Ho et al., 2011 ).",
+                "sentence_ids": [
+                  "S134"
+                ]
+              },
+              "generate_claim": null
+            }
+          ],
+          "also_on_term": []
         }
       ]
     },
@@ -12188,15 +13750,15 @@
       "benchmark_raw_total": 9,
       "metrics": {
         "benchmark_total": 9,
-        "ours_total": 12,
-        "matched": 7,
-        "exact": 3,
-        "obi_ok": 4,
-        "missed": 2,
-        "extra": 5,
+        "ours_total": 18,
+        "matched": 8,
+        "exact": 5,
+        "obi_ok": 7,
+        "missed": 1,
+        "extra": 10,
         "split": 0,
         "term_only_pairs": 0,
-        "recall": 0.7778
+        "recall": 0.8889
       },
       "merged_groups": [],
       "rows": [
@@ -12260,10 +13822,15 @@
           "also_on_term": []
         },
         {
-          "status": "MISSED",
-          "tier": null,
-          "signals": [],
-          "reason": "no agent entry matches this benchmark assay",
+          "status": "MATCH",
+          "tier": "obi_exact",
+          "signals": [
+            "same name",
+            "name containment",
+            "quote names the other side",
+            "shared evidence sentence"
+          ],
+          "reason": "same OBI term",
           "benchmark": {
             "key": "Zostavax-specific IFN-γ, IL-4 and IL-21 ELISPOT",
             "obi_id": "OBI:0600031",
@@ -12292,7 +13859,27 @@
               }
             ]
           },
-          "ours": []
+          "ours": [
+            {
+              "key": "enzyme-linked immunospot assay",
+              "name_in_paper": [
+                "ELISPOT"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0600031",
+              "obi_label": "enzyme-linked immunospot assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "Developed plates were dried, scanned and analyzed using an automated ELISPOT counter (Cellular Technologies, Ltd).",
+                "sentence_ids": [
+                  "S214"
+                ]
+              },
+              "generate_claim": null
+            }
+          ],
+          "also_on_term": []
         },
         {
           "status": "MISSED",
@@ -12386,12 +13973,14 @@
           "also_on_term": []
         },
         {
-          "status": "MATCH_OBI_CONFLICT",
-          "tier": "short_name",
+          "status": "MATCH_GRANULARITY",
+          "tier": "obi_ancestry",
           "signals": [
-            "short name"
+            "name containment",
+            "short name",
+            "quote names the other side"
           ],
-          "reason": "paired by a short name; benchmark maps this assay to OBI:0000893 real time polymerase chain reaction assay; we mapped it to OBI:0003040 blood assay",
+          "reason": "our term OBI:0002692 polymerase chain reaction assay is broader than the benchmark's OBI:0000893 real time polymerase chain reaction assay",
           "benchmark": {
             "key": "Viral DNA detection",
             "obi_id": "OBI:0000893",
@@ -12422,20 +14011,19 @@
           },
           "ours": [
             {
-              "key": "blood assay",
+              "key": "polymerase chain reaction assay",
               "name_in_paper": [
-                "blood",
-                "Blood"
+                "polymerase chain reactions"
               ],
               "aliases": [],
-              "obi_id": "OBI:0003040",
-              "obi_label": "blood assay",
+              "obi_id": "OBI:0002692",
+              "obi_label": "polymerase chain reaction assay",
               "source": "methods",
               "evidence": {
                 "section": "methods",
-                "quote": "The subjects’ blood samples were collected at baseline prior to vaccination and at days 1, 3, 7, 14, 28, 90 and 180 post-vaccination ( Figure 1A ).",
+                "quote": "VZV DNA in the whole blood was measured by polymerase chain reactions (PCR).",
                 "sentence_ids": [
-                  "S12"
+                  "S15"
                 ]
               },
               "generate_claim": null
@@ -12444,14 +14032,13 @@
           "also_on_term": []
         },
         {
-          "status": "MATCH_OBI_CONFLICT",
-          "tier": "name_containment",
+          "status": "MATCH",
+          "tier": "obi_exact",
           "signals": [
             "name containment",
-            "quote names the other side",
-            "shared evidence sentence"
+            "quote names the other side"
           ],
-          "reason": "benchmark maps this assay to OBI:0000920 cytometric bead array assay; we mapped it to OBI:0002766 cytokine assay",
+          "reason": "same OBI term",
           "benchmark": {
             "key": "cytokine bead array assay",
             "obi_id": "OBI:0000920",
@@ -12477,20 +14064,20 @@
           },
           "ours": [
             {
-              "key": "cytokine assay",
+              "key": "cytometric bead array assay",
               "name_in_paper": [
-                "cytokine",
-                "Cytokine"
+                "Luminex",
+                "Luminex assays"
               ],
               "aliases": [],
-              "obi_id": "OBI:0002766",
-              "obi_label": "cytokine assay",
+              "obi_id": "OBI:0000920",
+              "obi_label": "cytometric bead array assay",
               "source": "methods",
               "evidence": {
                 "section": "methods",
-                "quote": "Plasma samples from CPTs were stored at −80°C prior to cytokine analysis.",
+                "quote": "Cytokines were assayed by a 27-plex Luminex platform.",
                 "sentence_ids": [
-                  "S248"
+                  "S14"
                 ]
               },
               "generate_claim": null
@@ -12677,9 +14264,39 @@
           "benchmark": null,
           "ours": [
             {
+              "key": "blood assay",
+              "name_in_paper": [
+                "blood",
+                "blood assays",
+                "Blood"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0003040",
+              "obi_label": "blood assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "The subjects’ blood samples were collected at baseline prior to vaccination and at days 1, 3, 7, 14, 28, 90 and 180 post-vaccination ( Figure 1A ).",
+                "sentence_ids": [
+                  "S12"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
               "key": "monocyte assay",
               "name_in_paper": [
-                "monocyte"
+                "monocyte",
+                "monocytes"
               ],
               "aliases": [],
               "obi_id": "OBI:0003025",
@@ -12690,6 +14307,67 @@
                 "quote": "Throughout the course of study, we measured VZV specific antibody titers, antigen-specific B and T cell populations, and various cell populations involved in innate immunity, including dendritic cells and monocyte subsets.",
                 "sentence_ids": [
                   "S13"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "cytokine assay",
+              "name_in_paper": [
+                "Cytokines",
+                "cytokine",
+                "cytokines",
+                "Cytokine"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0002766",
+              "obi_label": "cytokine assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "Cytokines were assayed by a 27-plex Luminex platform.",
+                "sentence_ids": [
+                  "S14"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "metabolite profiling assay",
+              "name_in_paper": [
+                "metabolomics",
+                "Metabolomics",
+                "metabolites",
+                "metabolite",
+                "Metabolite"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0000366",
+              "obi_label": "metabolite profiling assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "Transcriptomics of PBMCs and high-resolution metabolomics of plasma were obtained at early time points.",
+                "sentence_ids": [
+                  "S16"
                 ]
               },
               "generate_claim": null
@@ -12760,7 +14438,8 @@
             {
               "key": "protein assay",
               "name_in_paper": [
-                "protein"
+                "protein",
+                "Proteins"
               ],
               "aliases": [],
               "obi_id": "OBI:2100023",
@@ -12771,6 +14450,60 @@
                 "quote": "Maxisorp plates (Nalgene-Nunc) were coated with either 0.5 μg/well VZV cell lysate (Meridian Life Sciences) or VZV glycoprotein-only protein (Merck) diluted in PBS and incubated overnight at 4°C.",
                 "sentence_ids": [
                   "S222"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "neutrophil assay",
+              "name_in_paper": [
+                "Neutrophils"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0003022",
+              "obi_label": "neutrophil assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "Innate cells, examples from top to bottom: day1 CD16 + Neutrophils, D1 BDCA-1 + mDC1, day1 CD11c + Myeloid cells, day1 Lin-HLA-DR+ total DCs, day3 CD56 + NK cells.",
+                "sentence_ids": [
+                  "S291"
+                ]
+              },
+              "generate_claim": null
+            }
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "cell count assay",
+              "name_in_paper": [
+                "cell counts"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0003897",
+              "obi_label": "cell count assay",
+              "source": "methods",
+              "evidence": {
+                "section": "methods",
+                "quote": "Specific T cells, antigen specific CD4 + T cell counts for day 7 vs.",
+                "sentence_ids": [
+                  "S294"
                 ]
               },
               "generate_claim": null

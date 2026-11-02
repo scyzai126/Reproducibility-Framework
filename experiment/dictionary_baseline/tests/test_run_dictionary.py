@@ -9,7 +9,7 @@ import pytest
 HERE = Path(__file__).resolve().parent
 
 INDEX = [
-    {"id": "OBI:0000916", "label": "flow cytometry assay", "synonyms": ["FACS"]},
+    {"id": "OBI:0000916", "label": "flow cytometry assay", "synonyms": ["FACS", "FACS assay"]},
     {"id": "OBI:0000415", "label": "polymerase chain reaction assay", "synonyms": ["PCR"]},
     {"id": "OBI:0000893", "label": "real time polymerase chain reaction assay", "synonyms": ["real-time PCR", "qPCR"]},
     {"id": "OBI:0000070", "label": "assay", "synonyms": []},
@@ -32,7 +32,7 @@ def dictionary(mod):
 
 
 def test_forms_include_the_label_without_its_trailing_assay(mod):
-    assert mod.forms_of(INDEX[0]) == ["flow cytometry assay", "FACS", "flow cytometry"]
+    assert mod.forms_of(INDEX[0]) == ["flow cytometry assay", "flow cytometry", "FACS", "FACS assay"]
 
 
 def test_the_root_short_forms_and_short_lowercase_words_are_dropped(mod):
@@ -52,6 +52,11 @@ def test_forms_match_whole_words_and_a_hyphen_or_space_inside(mod, dictionary):
     assert mod.match_sentence("Samples were PCR-amplified.", dictionary) == []  # PCR- is not a whole word
     assert [f["term"] for f in mod.match_sentence("real time PCR was used.", dictionary)] == ["OBI:0000893"]
     assert [f["term"] for f in mod.match_sentence("A PCR step followed.", dictionary)] == ["OBI:0000415"]
+
+
+def test_a_plain_plural_matches_but_an_adjective_form_does_not(mod, dictionary):
+    assert [f["text"] for f in mod.match_sentence("Three qPCRs were run.", dictionary)] == ["qPCRs"]
+    assert mod.match_sentence("flow cytometric analysis", dictionary) == []
 
 
 def test_an_acronym_matches_in_its_own_case_only(mod, dictionary):

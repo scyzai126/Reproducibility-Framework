@@ -7,20 +7,20 @@ Agent: `data/31paper_assays/assay_result_v3`. Dictionary variants: `<vocab>_<sco
 | metric | agent | full_methods | full_paper | pruned_methods | pruned_paper |
 |---|---|---|---|---|---|
 | curated rows | 157 | 157 | 156 | 157 | 156 |
-| entries | 177 | 290 | 418 | 286 | 410 |
-| matched | 156 | 113 | 134 | 113 | 134 |
-| MISSED | 1 | 44 | 22 | 44 | 22 |
-| EXTRA | 4 | 177 | 283 | 173 | 275 |
-| exact (same OBI term as curator) | 140 | 52 | 69 | 52 | 69 |
-| OBI ok (same or parent/child) | 145 | 75 | 95 | 75 | 95 |
-| obi_exact_rate | 89.7% | 46.0% | 51.5% | 46.0% | 51.5% |
-| obi_recall | 92.4% | 47.8% | 60.9% | 47.8% | 60.9% |
-| wrong term (CONFLICT) | 5 | 36 | 37 | 36 | 37 |
+| entries | 177 | 354 | 494 | 349 | 484 |
+| matched | 156 | 124 | 141 | 124 | 141 |
+| MISSED | 1 | 33 | 15 | 33 | 15 |
+| EXTRA | 4 | 230 | 352 | 225 | 342 |
+| exact (same OBI term as curator) | 140 | 64 | 80 | 64 | 80 |
+| OBI ok (same or parent/child) | 145 | 91 | 108 | 91 | 108 |
+| obi_exact_rate | 89.7% | 51.6% | 56.7% | 51.6% | 56.7% |
+| obi_recall | 92.4% | 58.0% | 69.2% | 58.0% | 69.2% |
+| wrong term (CONFLICT) | 5 | 31 | 31 | 31 | 31 |
 | no usable term (UNMAPPED) | 6 | 2 | 2 | 2 | 2 |
-| recall | 99.4% | 72.0% | 85.9% | 72.0% | 85.9% |
-| precision | 88.1% | 39.0% | 32.1% | 39.5% | 32.7% |
-| F1 | 93.4% | 50.6% | 46.7% | 51.0% | 47.3% |
-| term-only pairs | 6 | 10 | 12 | 10 | 12 |
+| recall | 99.4% | 79.0% | 90.4% | 79.0% | 90.4% |
+| precision | 88.1% | 35.0% | 28.5% | 35.5% | 29.1% |
+| F1 | 93.4% | 48.5% | 43.4% | 49.0% | 44.1% |
+| term-only pairs | 6 | 14 | 15 | 14 | 15 |
 | calls | 512 | 0 | 0 | 0 | 0 |
 
 ## Scorer mode: strict
@@ -28,99 +28,99 @@ Agent: `data/31paper_assays/assay_result_v3`. Dictionary variants: `<vocab>_<sco
 | metric | agent | full_methods | full_paper | pruned_methods | pruned_paper |
 |---|---|---|---|---|---|
 | curated rows | 158 | 158 | 158 | 158 | 158 |
-| entries | 177 | 290 | 418 | 286 | 410 |
-| matched | 156 | 114 | 135 | 114 | 135 |
-| MISSED | 2 | 44 | 23 | 44 | 23 |
-| EXTRA | 4 | 176 | 282 | 172 | 274 |
-| exact (same OBI term as curator) | 140 | 52 | 69 | 52 | 69 |
-| OBI ok (same or parent/child) | 145 | 75 | 95 | 75 | 95 |
-| obi_exact_rate | 89.7% | 45.6% | 51.1% | 45.6% | 51.1% |
-| obi_recall | 91.8% | 47.5% | 60.1% | 47.5% | 60.1% |
-| wrong term (CONFLICT) | 5 | 37 | 38 | 37 | 38 |
+| entries | 177 | 354 | 494 | 349 | 484 |
+| matched | 156 | 124 | 141 | 124 | 141 |
+| MISSED | 2 | 34 | 17 | 34 | 17 |
+| EXTRA | 4 | 229 | 351 | 224 | 341 |
+| exact (same OBI term as curator) | 140 | 63 | 79 | 63 | 79 |
+| OBI ok (same or parent/child) | 145 | 91 | 108 | 91 | 108 |
+| obi_exact_rate | 89.7% | 50.8% | 56.0% | 50.8% | 56.0% |
+| obi_recall | 91.8% | 57.6% | 68.4% | 57.6% | 68.4% |
+| wrong term (CONFLICT) | 5 | 31 | 31 | 31 | 31 |
 | no usable term (UNMAPPED) | 6 | 2 | 2 | 2 | 2 |
-| recall | 98.7% | 72.2% | 85.4% | 72.2% | 85.4% |
-| precision | 88.1% | 39.3% | 32.3% | 39.9% | 32.9% |
-| F1 | 93.1% | 50.9% | 46.9% | 51.4% | 47.5% |
-| term-only pairs | 6 | 10 | 12 | 10 | 12 |
+| recall | 98.7% | 78.5% | 89.2% | 78.5% | 89.2% |
+| precision | 88.1% | 35.0% | 28.5% | 35.5% | 29.1% |
+| F1 | 93.1% | 48.4% | 43.3% | 48.9% | 43.9% |
+| term-only pairs | 6 | 13 | 14 | 13 | 14 |
 | calls | 512 | 0 | 0 | 0 | 0 |
 
 ## Most frequent EXTRA terms: full_methods (default mode)
 
 | OBI label | papers |
 |---|---|
-| blood assay | 18 |
-| protein assay | 18 |
-| immune response assay | 9 |
-| cytokine assay | 9 |
-| monocyte assay | 8 |
-| ChIP assay | 8 |
+| protein assay | 22 |
+| blood assay | 19 |
+| immune response assay | 15 |
+| monocyte assay | 15 |
+| cytokine assay | 15 |
+| lymphocyte assay | 11 |
+| ChIP assay | 9 |
+| neutrophil assay | 8 |
 | binding assay | 7 |
-| lymphocyte assay | 6 |
 | sequencing assay | 6 |
 | respiratory assay | 5 |
 | albumin assay | 4 |
 | fluorogenic PCR assay | 4 |
-| neutrophil assay | 4 |
-| cell differentiation assay | 3 |
-| cell death assay | 3 |
+| in live organism assay | 4 |
+| growth factor assay | 4 |
 
 ## Most frequent EXTRA terms: full_paper (default mode)
 
 | OBI label | papers |
 |---|---|
-| protein assay | 27 |
-| immune response assay | 22 |
-| blood assay | 20 |
-| cytokine assay | 14 |
+| protein assay | 29 |
+| immune response assay | 27 |
+| blood assay | 21 |
+| cytokine assay | 20 |
+| monocyte assay | 19 |
 | binding assay | 13 |
-| monocyte assay | 11 |
+| lymphocyte assay | 13 |
+| in live organism assay | 11 |
+| neutrophil assay | 10 |
+| ChIP assay | 9 |
 | cell differentiation assay | 8 |
-| ChIP assay | 8 |
-| growth factor assay | 7 |
+| growth factor assay | 8 |
+| macrophage assay | 8 |
 | respiratory assay | 7 |
-| lymphocyte assay | 7 |
 | sequencing assay | 7 |
-| neutrophil assay | 6 |
-| cell death assay | 6 |
-| macrophage assay | 5 |
 
 ## Most frequent EXTRA terms: pruned_methods (default mode)
 
 | OBI label | papers |
 |---|---|
-| blood assay | 18 |
-| protein assay | 18 |
-| immune response assay | 9 |
-| cytokine assay | 9 |
-| monocyte assay | 8 |
-| ChIP assay | 8 |
+| protein assay | 22 |
+| blood assay | 19 |
+| immune response assay | 15 |
+| monocyte assay | 15 |
+| cytokine assay | 15 |
+| lymphocyte assay | 11 |
+| ChIP assay | 9 |
+| neutrophil assay | 8 |
 | binding assay | 7 |
-| lymphocyte assay | 6 |
 | sequencing assay | 6 |
 | respiratory assay | 5 |
 | albumin assay | 4 |
 | fluorogenic PCR assay | 4 |
-| neutrophil assay | 4 |
-| cell differentiation assay | 3 |
-| cell death assay | 3 |
+| in live organism assay | 4 |
+| growth factor assay | 4 |
 
 ## Most frequent EXTRA terms: pruned_paper (default mode)
 
 | OBI label | papers |
 |---|---|
-| protein assay | 27 |
-| immune response assay | 22 |
-| blood assay | 20 |
-| cytokine assay | 14 |
+| protein assay | 29 |
+| immune response assay | 27 |
+| blood assay | 21 |
+| cytokine assay | 20 |
+| monocyte assay | 19 |
 | binding assay | 13 |
-| monocyte assay | 11 |
+| lymphocyte assay | 13 |
+| in live organism assay | 11 |
+| neutrophil assay | 10 |
+| ChIP assay | 9 |
 | cell differentiation assay | 8 |
-| ChIP assay | 8 |
-| growth factor assay | 7 |
+| growth factor assay | 8 |
+| macrophage assay | 8 |
 | respiratory assay | 7 |
-| lymphocyte assay | 7 |
 | sequencing assay | 7 |
-| neutrophil assay | 6 |
-| cell death assay | 6 |
-| macrophage assay | 5 |
 
