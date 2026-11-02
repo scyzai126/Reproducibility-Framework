@@ -39,6 +39,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import ssl
 import sys
 import time
 import urllib.parse
@@ -105,8 +106,17 @@ def annotate(text: str, key: str) -> list[dict]:
     """One POST to the Annotator; the parsed JSON list of annotated classes."""
     data = urllib.parse.urlencode({**PARAMS, "apikey": key, "text": text}).encode()
     req = urllib.request.Request(ANNOTATOR_URL, data=data, headers={"Accept": "application/json"})
-    with urllib.request.urlopen(req, timeout=120) as resp:
+    with urllib.request.urlopen(req, timeout=120, context=_ssl_context()) as resp:
         return json.loads(resp.read().decode("utf-8"))
+
+
+def _ssl_context() -> ssl.SSLContext:
+    """certifi's CA bundle when installed: the framework Python this repo runs on ships none."""
+    try:
+        import certifi
+        return ssl.create_default_context(cafile=certifi.where())
+    except ImportError:
+        return ssl.create_default_context()
 
 
 def fetch(scopes: list[str], only: str | None = None, force: bool = False, raw_dir: Path = RAW_DIR) -> None:
@@ -118,7 +128,9 @@ def fetch(scopes: list[str], only: str | None = None, force: bool = False, raw_d
             if out.exists() and not force:
                 continue
             text, laid, applied = scoped_text(paper, scope)
-            reply = annotate(text, key)
+            # a paper whose headings carry no Methods section (SDY1669) has nothing to send;
+            # the Annotator rejects an empty text, and the dictionary arm writes 0 entries there
+            reply = annotate(text, key) if text.strip() else []
             write(out, {"registry": d.name, "kind": paper["kind"], "scope": scope, "scope_applied": applied,
                         "chars": len(text), "sentences": laid, "params": PARAMS, "reply": reply})
             print(f"   {scope:7} {d.name:28} {len(text):6} chars -> {len(reply)} classes")

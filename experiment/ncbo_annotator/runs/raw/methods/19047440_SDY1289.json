@@ -1,0 +1,3798 @@
+{
+  "registry": "19047440_SDY1289",
+  "kind": "xml",
+  "scope": "methods",
+  "scope_applied": "methods",
+  "chars": 15333,
+  "sentences": [
+    {
+      "id": 113,
+      "text": "The volunteer recruitment and vaccination protocols for this study were approved by the research ethics committees of the Centre Hospitalier de l'Université de Montréal (Montreal cohort; 20 volunteers), the Faculty of Biology and Medicine of the University of Lausanne (Lausanne cohort; 13 volunteers), and Emory University (Emory Cohort; 10 volunteers).",
+      "section": "methods",
+      "start": 0,
+      "end": 354
+    },
+    {
+      "id": 114,
+      "text": "Each recruited subject received a single 0.5-ml subcutaneous injection of the Sanofi-Pasteur 17D-204 live-attenuated YF virus vaccine YF-VAX (Montreal and Emory cohorts) or Stamaril (Lausanne cohort).",
+      "section": "methods",
+      "start": 355,
+      "end": 555
+    },
+    {
+      "id": 115,
+      "text": "For the Montreal cohort, 50 ml of blood were drawn from each volunteer in sodium-heparinized Vacutainer tubes (BD) on the day of vaccination (day 0) and 3, 7, 10, 14, 28, 60, 90, 180, and 365 d thereafter.",
+      "section": "methods",
+      "start": 556,
+      "end": 761
+    },
+    {
+      "id": 116,
+      "text": "PBMCs were isolated from these samples using standard Ficoll-Paque Plus (GE Healthcare) density gradient centrifugation and cryopreserved in bovine serum + 10% DMSO in liquid nitrogen.",
+      "section": "methods",
+      "start": 762,
+      "end": 946
+    },
+    {
+      "id": 117,
+      "text": "At each time point, an additional 10 ml of blood was collected from each volunteer in PaxGene tubes (QIAGEN), for whole-blood RNA isolation.",
+      "section": "methods",
+      "start": 947,
+      "end": 1087
+    },
+    {
+      "id": 118,
+      "text": "For the Lausanne cohort, whole blood was collected in PaxGene tubes at days 0, 3, and 7 after vaccination.",
+      "section": "methods",
+      "start": 1088,
+      "end": 1194
+    },
+    {
+      "id": 119,
+      "text": "YF17D-specific seroconversion and viremia were determined as described in Tables S2 and S5, respectively.",
+      "section": "methods",
+      "start": 1195,
+      "end": 1300
+    },
+    {
+      "id": 120,
+      "text": "Whole-blood total RNA was purified from PaxGene tubes using RNA extraction kits (QIAGEN).",
+      "section": "methods",
+      "start": 1301,
+      "end": 1390
+    },
+    {
+      "id": 121,
+      "text": "Quantification was performed using a spectrophotometer (NanoDrop Technologies) and RNA quality was assessed using the Experion automated electrophoresis system (Bio-Rad Laboratories).",
+      "section": "methods",
+      "start": 1391,
+      "end": 1574
+    },
+    {
+      "id": 122,
+      "text": "Total RNA was then amplified and labeled using the Illumina TotalPrep RNA Amplification kit, which is based on the Eberwine amplification protocol ( 58 ).",
+      "section": "methods",
+      "start": 1575,
+      "end": 1729
+    },
+    {
+      "id": 123,
+      "text": "This protocol involves a first cDNA synthesis step followed by in vitro transcription for cRNA synthesis.",
+      "section": "methods",
+      "start": 1730,
+      "end": 1835
+    },
+    {
+      "id": 124,
+      "text": "The biotinylated cRNA was hybridized onto Illumina Human RefSeq-8 BeadChips v2 (Montreal and Lausanne samples) or v3 (VaxDesign samples) at 58°C for 20 h and quantified using Illumina BeadStation 500GX scanner and Illumina BeadStudio v3 software.",
+      "section": "methods",
+      "start": 1836,
+      "end": 2082
+    },
+    {
+      "id": 125,
+      "text": "Illumina probe data were exported from BeadStudio as raw data and screened for quality.",
+      "section": "methods",
+      "start": 2083,
+      "end": 2170
+    },
+    {
+      "id": 126,
+      "text": "Samples failing chip visual inspection and control examination were removed.",
+      "section": "methods",
+      "start": 2171,
+      "end": 2247
+    },
+    {
+      "id": 127,
+      "text": "Gene expression data were analyzed using Bioconductor ( 59 ), an open-source software library for the analyses of genomic database on R, which is a language and environment for statistical computing and graphics ( www.r-project.org ).",
+      "section": "methods",
+      "start": 2248,
+      "end": 2482
+    },
+    {
+      "id": 128,
+      "text": "The R software package was used to first filter out probes with intensities below background in all samples, and then to minimum replace (a surrogate replacement policy) values below background using the mean background value of the built-in Illumina probe controls as an alternative to background subtraction (which may introduce negative values) to reduce “overinflated” expression ratios determined in subsequent steps, and finally quantile normalize the probe intensities.",
+      "section": "methods",
+      "start": 2483,
+      "end": 2959
+    },
+    {
+      "id": 129,
+      "text": "The resulting matrix showing probes as rows and samples as columns was log 2 transformed and used as input for linear modeling using BioConductor Linear models for microarray analysis (LIMMA [ 60 ]).",
+      "section": "methods",
+      "start": 2960,
+      "end": 3159
+    },
+    {
+      "id": 130,
+      "text": "The LIMMA package ( 61 ) was used to identify differentially expressed genes (pFDR <0.05; fold change greater than −1.3 or >1.3) at days 3, 7, 10, 14, 28, and 60, compared with day 0 for the Montreal samples, at days 3 and 7 compared with day 0 for the Lausanne samples, and at days 3 and 7 compared with the respective control for the VaxDesign samples.",
+      "section": "methods",
+      "start": 3160,
+      "end": 3514
+    },
+    {
+      "id": 131,
+      "text": "Our microarray data are available through the National Center for Biotechnology Information Gene Expression Omnibus (GEO) under series accession no.",
+      "section": "methods",
+      "start": 3515,
+      "end": 3663
+    },
+    {
+      "id": 132,
+      "text": "GSE13699 .",
+      "section": "methods",
+      "start": 3664,
+      "end": 3674
+    },
+    {
+      "id": 133,
+      "text": "Changes in gene expression observed by microarray analyses were verified by qPCR.",
+      "section": "methods",
+      "start": 3675,
+      "end": 3756
+    },
+    {
+      "id": 134,
+      "text": "The expression of 43 genes, which were chosen according to our microarray results and to biomedical literature, was analyzed on samples obtained at day 0 and 7 after vaccination from the Montreal and Lausanne cohorts.",
+      "section": "methods",
+      "start": 3757,
+      "end": 3974
+    },
+    {
+      "id": 135,
+      "text": "To further validate our microarray data, we also performed qPCR analysis on RNA samples (day 0 and 7) from 10 YF17D-vaccinated volunteers enrolled in another vaccination trial conducted by the Emory Vaccine Center in Atlanta, GA (a gift from B.",
+      "section": "methods",
+      "start": 3975,
+      "end": 4219
+    },
+    {
+      "id": 136,
+      "text": "Pulendran).",
+      "section": "methods",
+      "start": 4220,
+      "end": 4231
+    },
+    {
+      "id": 137,
+      "text": "qPCR analysis was performed at the genomics platform of the Institute for Research in Immunology and Cancer (Montreal), as previously described ( 62 ).",
+      "section": "methods",
+      "start": 4232,
+      "end": 4383
+    },
+    {
+      "id": 138,
+      "text": "Transcription factors were identified using ICA and gene set enrichment as described in Teschendorff et al.",
+      "section": "methods",
+      "start": 4384,
+      "end": 4491
+    },
+    {
+      "id": 139,
+      "text": "( 63 ).",
+      "section": "methods",
+      "start": 4492,
+      "end": 4499
+    },
+    {
+      "id": 140,
+      "text": "ICA was performed on the expression profiles of the whole-blood and ex vivo model gene arrays (Montreal, Lausanne, and VaxDesign) on each day individually, as well as on the whole datasets from each study.",
+      "section": "methods",
+      "start": 4500,
+      "end": 4705
+    },
+    {
+      "id": 141,
+      "text": "The CRAN package fastICA (v1.1-9) was used to carry out the ICA.",
+      "section": "methods",
+      "start": 4706,
+      "end": 4770
+    },
+    {
+      "id": 142,
+      "text": "Genes in each component were chosen for enrichment by selecting genes with loads below the 2.fifth percentile or above the 97.fifth percentile.",
+      "section": "methods",
+      "start": 4771,
+      "end": 4914
+    },
+    {
+      "id": 143,
+      "text": "Gene set enrichment was done on the C2 “curated gene sets” and C3 “motif gene sets” collections of MsigDB.",
+      "section": "methods",
+      "start": 4915,
+      "end": 5021
+    },
+    {
+      "id": 144,
+      "text": "The resulting P values were Benjamini-Hochberg adjusted to keep the false discovery rates within each component <5%.",
+      "section": "methods",
+      "start": 5022,
+      "end": 5138
+    },
+    {
+      "id": 145,
+      "text": "Results annotated with unknown transcription factors that were discarded.",
+      "section": "methods",
+      "start": 5139,
+      "end": 5212
+    },
+    {
+      "id": 146,
+      "text": "Additionally, at least one gene in the gene sets used for enrichment had to be differentially expressed (see Gene array analysis of whole blood and VaxDesign samples) on at least one of the available time points up to day 14.",
+      "section": "methods",
+      "start": 5213,
+      "end": 5438
+    },
+    {
+      "id": 147,
+      "text": "Stocks of live YF17D virus were prepared in our laboratory by infecting Vero cell monolayers grown in DME medium (Sigma-Aldrich) supplemented with 10% X-Vivo 15 medium (Lonza), with YF17D, and harvesting the culture supernatants when severe histopathology could be observed (6–7 d).",
+      "section": "methods",
+      "start": 5439,
+      "end": 5721
+    },
+    {
+      "id": 148,
+      "text": "The virus particles were concentrated using Centricon Plus-20 columns (100 kD cutoff; Millipore).",
+      "section": "methods",
+      "start": 5722,
+      "end": 5819
+    },
+    {
+      "id": 149,
+      "text": "Viral stocks were titrated on Vero cells by lysis plaque assay.",
+      "section": "methods",
+      "start": 5820,
+      "end": 5883
+    },
+    {
+      "id": 150,
+      "text": "The virus was either heat-inactivated by incubation at 65°C for 1 h, or UV-inactivated at a dose of 0.72 J/cm 2 in a Stratalinker 1800 (Stratagene).",
+      "section": "methods",
+      "start": 5884,
+      "end": 6032
+    },
+    {
+      "id": 151,
+      "text": "Inactivated YF17D was tested by plaque assay to ensure total inactivation.",
+      "section": "methods",
+      "start": 6033,
+      "end": 6107
+    },
+    {
+      "id": 152,
+      "text": "Immature DCs were generated by culturing monocytes for 6 d in the presence of 100 ng/ml GM-CSF (R&D Systems) and 25 ng/ml IL-4 (R&D Systems).",
+      "section": "methods",
+      "start": 6108,
+      "end": 6249
+    },
+    {
+      "id": 153,
+      "text": "The cells were then incubated with live, UV-inactivated or heat-inactivated YF17D, at a multiplicity of infection of 10.",
+      "section": "methods",
+      "start": 6250,
+      "end": 6370
+    },
+    {
+      "id": 154,
+      "text": "After 24 and 48 h, supernatants were collected and analyzed using an IL-1β ELISA kit (BD).",
+      "section": "methods",
+      "start": 6371,
+      "end": 6461
+    },
+    {
+      "id": 155,
+      "text": "PBMCs from vaccinated volunteers were labeled with CFSE (Invitrogen), as previously described ( 64 ).",
+      "section": "methods",
+      "start": 6462,
+      "end": 6563
+    },
+    {
+      "id": 156,
+      "text": "2 million cells were incubated in polypropylene snap-cap tubes (Falcon) in the presence of YF17D-derived peptide pools (Fig.",
+      "section": "methods",
+      "start": 6564,
+      "end": 6688
+    },
+    {
+      "id": 157,
+      "text": "S6 a) at a final concentration of 2 μg/ml/peptide, SEB (50 ng/ml; Toxin Technology) or nothing (nonstimulated; NS).",
+      "section": "methods",
+      "start": 6689,
+      "end": 6804
+    },
+    {
+      "id": 158,
+      "text": "After 24 h of incubation at 37°C/5% CO 2 , 120 μl of supernatant was withdrawn from each tube and frozen at −80°C for subsequent cytokine analysis.",
+      "section": "methods",
+      "start": 6805,
+      "end": 6952
+    },
+    {
+      "id": 159,
+      "text": "The same volume of fresh medium was replaced in each tube, and 5 d later (6 d total incubation), the cells were harvested and stained with anti-CD3, -CD4, and -CD8 antibodies (BD).",
+      "section": "methods",
+      "start": 6953,
+      "end": 7133
+    },
+    {
+      "id": 160,
+      "text": "The cells were collected on a BD LSRII flow cytometer and the results were analyzed using the BD FACSDiva software.",
+      "section": "methods",
+      "start": 7134,
+      "end": 7249
+    },
+    {
+      "id": 161,
+      "text": "The BD Th1/Th2 CBA array (BD) was used to measure levels of IL-2, IL-4, IL-5, IL-10, IFN-γ, and TNF in PBMCs supernatants, as suggested by the manufacturer.",
+      "section": "methods",
+      "start": 7250,
+      "end": 7406
+    },
+    {
+      "id": 162,
+      "text": "To assess the cytokine production ability of YF17D-specific helper T cells, 2 million PBMCs from vaccinated subjects (day 14 and 28) were stimulated for 6 h with YF17D-derived peptide pools, in the presence of Brefeldin A (Sigma-Aldrich), and then stained with anti-CD8 and -CD4 antibodies.",
+      "section": "methods",
+      "start": 7407,
+      "end": 7697
+    },
+    {
+      "id": 163,
+      "text": "They were then permeabilized and stained with anti-CD154, IL-2, and IFN-γ (BD).",
+      "section": "methods",
+      "start": 7698,
+      "end": 7777
+    },
+    {
+      "id": 164,
+      "text": "To determine the T helper phenotype of long-term, vaccine-specific CD4 + T cells, 2 million PBMCs were stimulated for 6 d with YF17D peptide pools, and subsequently restimulated with the same pools for 12 h, in the presence of Brefeldin A.",
+      "section": "methods",
+      "start": 7778,
+      "end": 8017
+    },
+    {
+      "id": 165,
+      "text": "Non-restimulated cells were used as controls.",
+      "section": "methods",
+      "start": 8018,
+      "end": 8063
+    },
+    {
+      "id": 166,
+      "text": "The cells were then stained with anti-CD3, -CD4, -CD8, -CD45RA, -CCR7, -CCR4, -CXCR3, and -CCR6 antibodies (BD).",
+      "section": "methods",
+      "start": 8064,
+      "end": 8176
+    },
+    {
+      "id": 167,
+      "text": "After permeabilization, they were stained for intracellular CD154 and fixed.",
+      "section": "methods",
+      "start": 8177,
+      "end": 8253
+    },
+    {
+      "id": 168,
+      "text": "PBMCs used in the assays were acquired from normal healthy donors enrolled in a VaxDesign Corporation apheresis study program (protocol CRRI 0906009).",
+      "section": "methods",
+      "start": 8254,
+      "end": 8404
+    },
+    {
+      "id": 169,
+      "text": "Blood collections were performed at Florida's Blood Centers (Orlando, FL) using standard techniques.",
+      "section": "methods",
+      "start": 8405,
+      "end": 8505
+    },
+    {
+      "id": 170,
+      "text": "The enriched leukocytes were isolated and cryopreserved.",
+      "section": "methods",
+      "start": 8506,
+      "end": 8562
+    },
+    {
+      "id": 171,
+      "text": "Human DCs were prepared as described above.",
+      "section": "methods",
+      "start": 8563,
+      "end": 8606
+    },
+    {
+      "id": 172,
+      "text": "After 5 d of culture with IL-4 and GM-CSF, the DCs were infected with a 1:100 dilution of the live-attenuated YF-VAX vaccine.",
+      "section": "methods",
+      "start": 8607,
+      "end": 8732
+    },
+    {
+      "id": 173,
+      "text": "After 24 h, 5% human AB serum was added to the media to quench the infection.",
+      "section": "methods",
+      "start": 8733,
+      "end": 8810
+    },
+    {
+      "id": 174,
+      "text": "Alternatively, some of the DCs were pulsed with a 1:100 dilution of YF-VAX (YF) that had been UV-inactivated.",
+      "section": "methods",
+      "start": 8811,
+      "end": 8920
+    },
+    {
+      "id": 175,
+      "text": "On the sixth day, all DCs were matured with an overnight treatment of 25 ng/ml TNF-α (R&D Systems).",
+      "section": "methods",
+      "start": 8921,
+      "end": 9020
+    },
+    {
+      "id": 176,
+      "text": "Frozen stocks of autologous PBMCs were used as a source of lymphocytes.",
+      "section": "methods",
+      "start": 9021,
+      "end": 9092
+    },
+    {
+      "id": 177,
+      "text": "Purified CD4 + T cells were co-cultured with untreated or YF17D-pulsed DCs at a ratio of 60:1 for 14 d; thereafter, the activated lymphocytes were harvested and evaluated for effector activity using autologous DCs as APCs.",
+      "section": "methods",
+      "start": 9093,
+      "end": 9315
+    },
+    {
+      "id": 178,
+      "text": "The T cells and APCs were co-cultured for 7 h, stained with CD4 antibody, permeabilized, and labeled intracellularly with anti–IFN-γ, –IL-5, –IL-13, and -CD154 antibodies.",
+      "section": "methods",
+      "start": 9316,
+      "end": 9487
+    },
+    {
+      "id": 179,
+      "text": "At the time the lymphocytes were harvested from DC/T cell co-cultures, the supernatants were also collected and stored frozen until analyzed for cytokine production using the Beadlyte human 22-plex Multi-cytokine Detection System (Millipore) on a Bio-Plex reader (Bio-Rad Laboratories).",
+      "section": "methods",
+      "start": 9488,
+      "end": 9774
+    },
+    {
+      "id": 180,
+      "text": "Vaccination with YF17D induces early gene modulation.",
+      "section": "methods",
+      "start": 9775,
+      "end": 9828
+    },
+    {
+      "id": 181,
+      "text": "Global view of gene modulation in total blood cells after YF17D vaccination, as analyzed by gene array on the Montreal cohort ( n = 9–15, depending on the time point).",
+      "section": "methods",
+      "start": 9829,
+      "end": 9996
+    },
+    {
+      "id": 182,
+      "text": "Heat map representation (a) and PCA (b) using the significantly modulated genes, in at least one comparison versus day 0.",
+      "section": "methods",
+      "start": 9997,
+      "end": 10118
+    },
+    {
+      "id": 183,
+      "text": "Transcriptional network of differentially expressed genes after YF17D vaccination, as inferred by gene set enrichment.",
+      "section": "methods",
+      "start": 10119,
+      "end": 10237
+    },
+    {
+      "id": 184,
+      "text": "Network representation of inferred transcription factors ( 11 ) and predicted target genes that are significantly modulated.",
+      "section": "methods",
+      "start": 10238,
+      "end": 10362
+    },
+    {
+      "id": 185,
+      "text": "Node colors indicate fold change of gene expression between day 0 and 7 in n = 11 volunteers.",
+      "section": "methods",
+      "start": 10363,
+      "end": 10456
+    },
+    {
+      "id": 186,
+      "text": "Rectangular nodes indicate transcription factors identified by gene enrichment; the different shapes indicate genes in the different functional categories of Fig.",
+      "section": "methods",
+      "start": 10457,
+      "end": 10619
+    },
+    {
+      "id": 187,
+      "text": "3 (a–e) .",
+      "section": "methods",
+      "start": 10620,
+      "end": 10629
+    },
+    {
+      "id": 188,
+      "text": "Genes that were subsequently evaluated by RT-PCR are identified by an asterisk.",
+      "section": "methods",
+      "start": 10630,
+      "end": 10709
+    },
+    {
+      "id": 189,
+      "text": "IRF1, IRF8, and genes targeted by IRF1 or IRF8, but no other transcription factors in the figure were removed to increase readability (see Fig.",
+      "section": "methods",
+      "start": 10710,
+      "end": 10853
+    },
+    {
+      "id": 190,
+      "text": "S1 for a complete map).",
+      "section": "methods",
+      "start": 10854,
+      "end": 10877
+    },
+    {
+      "id": 191,
+      "text": "Fig.",
+      "section": "methods",
+      "start": 10878,
+      "end": 10882
+    },
+    {
+      "id": 192,
+      "text": "S1 is available at http://www.jem.org/cgi/content/full/jem.20082292/DC1 .",
+      "section": "methods",
+      "start": 10883,
+      "end": 10956
+    },
+    {
+      "id": 193,
+      "text": "YF17D vaccination stimulates multiple arms of the innate and adaptive immunity.",
+      "section": "methods",
+      "start": 10957,
+      "end": 11036
+    },
+    {
+      "id": 194,
+      "text": "(a–e) Heat map representation of significantly modulated genes, P values listed with each gene indicate the largest (least significant) P value among the significant fold changes.",
+      "section": "methods",
+      "start": 11037,
+      "end": 11216
+    },
+    {
+      "id": 195,
+      "text": "n = 9–15, depending on the time point.",
+      "section": "methods",
+      "start": 11217,
+      "end": 11255
+    },
+    {
+      "id": 196,
+      "text": "The listed genes fall under different functional categories: IFN-induced and TLR-associated genes (a); complement-associated genes (b); macrophage-associated genes (c); NK cell–associated genes (d); and B cell–associated genes (e).",
+      "section": "methods",
+      "start": 11256,
+      "end": 11487
+    },
+    {
+      "id": 197,
+      "text": "Supplemental document 2 includes a justification for the attribution of each gene into its respective group.",
+      "section": "methods",
+      "start": 11488,
+      "end": 11596
+    },
+    {
+      "id": 198,
+      "text": "Supplemental document 2 is available at http://www.jem.org/cgi/content/full/jem.20082292/DC1 .",
+      "section": "methods",
+      "start": 11597,
+      "end": 11691
+    },
+    {
+      "id": 199,
+      "text": "Heat map of fold change gene expression between day 0 and 7, as measured by qPCR.",
+      "section": "methods",
+      "start": 11692,
+      "end": 11773
+    },
+    {
+      "id": 200,
+      "text": "For a complete heat map of all measured fold changes see Fig.",
+      "section": "methods",
+      "start": 11774,
+      "end": 11835
+    },
+    {
+      "id": 201,
+      "text": "S3.",
+      "section": "methods",
+      "start": 11836,
+      "end": 11839
+    },
+    {
+      "id": 202,
+      "text": "Fig.",
+      "section": "methods",
+      "start": 11840,
+      "end": 11844
+    },
+    {
+      "id": 203,
+      "text": "S3 is available at http://www.jem.org/cgi/content/full/jem.20082292/DC1 .",
+      "section": "methods",
+      "start": 11845,
+      "end": 11918
+    },
+    {
+      "id": 204,
+      "text": "YF17D induces expression of genes associated with IL-1β and activates the inflammasome.",
+      "section": "methods",
+      "start": 11919,
+      "end": 12006
+    },
+    {
+      "id": 205,
+      "text": "(a) Heat maps showing the up-regulation of genes encoding inflammasome components and the modulation of other, IL-1β–associated genes.",
+      "section": "methods",
+      "start": 12007,
+      "end": 12141
+    },
+    {
+      "id": 206,
+      "text": "For IL-1R2 and -1RN only probes targeting all transcripts were considered.",
+      "section": "methods",
+      "start": 12142,
+      "end": 12216
+    },
+    {
+      "id": 207,
+      "text": "(b) IL-1β production by monocyte-derived DCs incubated with live (YF), UV-inactivated (UV), or heat-inactivated (HI) YF17D, as determined by ELISA.",
+      "section": "methods",
+      "start": 12217,
+      "end": 12364
+    },
+    {
+      "id": 208,
+      "text": "NI, noninfected cells.",
+      "section": "methods",
+      "start": 12365,
+      "end": 12387
+    },
+    {
+      "id": 209,
+      "text": "This represents the results from one representative of three separate experiments.",
+      "section": "methods",
+      "start": 12388,
+      "end": 12470
+    },
+    {
+      "id": 210,
+      "text": "The results for the two other experiments are shown in Fig.",
+      "section": "methods",
+      "start": 12471,
+      "end": 12530
+    },
+    {
+      "id": 211,
+      "text": "S4.",
+      "section": "methods",
+      "start": 12531,
+      "end": 12534
+    },
+    {
+      "id": 212,
+      "text": "Fig.",
+      "section": "methods",
+      "start": 12535,
+      "end": 12539
+    },
+    {
+      "id": 213,
+      "text": "S4 is available at http://www.jem.org/cgi/content/full/jem.20082292/DC1 .",
+      "section": "methods",
+      "start": 12540,
+      "end": 12613
+    },
+    {
+      "id": 214,
+      "text": "YF17D induces a mixed Th1/Th2 response.",
+      "section": "methods",
+      "start": 12614,
+      "end": 12653
+    },
+    {
+      "id": 215,
+      "text": "(a) Day 60 PBMCs were stimulated with the 22 peptide pools and assayed by CFSE labeling for their proliferative response.",
+      "section": "methods",
+      "start": 12654,
+      "end": 12775
+    },
+    {
+      "id": 216,
+      "text": "Bar graphs show data for six selected volunteers, and the dataset for all the volunteers can be found in Fig.",
+      "section": "methods",
+      "start": 12776,
+      "end": 12885
+    },
+    {
+      "id": 217,
+      "text": "S6 (c and d).",
+      "section": "methods",
+      "start": 12886,
+      "end": 12899
+    },
+    {
+      "id": 218,
+      "text": "At 24 h of culture, supernatants were analyzed by CBA to determine the Th1/Th2 cytokine secretion profile in response to each pool.",
+      "section": "methods",
+      "start": 12900,
+      "end": 13031
+    },
+    {
+      "id": 219,
+      "text": "The heat maps represent the data for the same six volunteers.",
+      "section": "methods",
+      "start": 13032,
+      "end": 13093
+    },
+    {
+      "id": 220,
+      "text": "The Th1/Th2 profiles determined this way for all the volunteers and pools are shown in Fig.",
+      "section": "methods",
+      "start": 13094,
+      "end": 13185
+    },
+    {
+      "id": 221,
+      "text": "S6 e.",
+      "section": "methods",
+      "start": 13186,
+      "end": 13191
+    },
+    {
+      "id": 222,
+      "text": "Fig.",
+      "section": "methods",
+      "start": 13192,
+      "end": 13196
+    },
+    {
+      "id": 223,
+      "text": "S6 is available at http://www.jem.org/cgi/content/full/jem.20082292/DC1 .",
+      "section": "methods",
+      "start": 13197,
+      "end": 13270
+    },
+    {
+      "id": 224,
+      "text": "YF17D vaccination induces specific CD4+ T cells of mixed T helper phenotype.",
+      "section": "methods",
+      "start": 13271,
+      "end": 13347
+    },
+    {
+      "id": 225,
+      "text": "(a) PBMCs from YF17D-vaccinated volunteers (day 28 after vaccination) were stimulated with a group of three immunostimulatory YF17D-derived peptides pools, and then stained with antibodies against CD4 (surface) and CD154, IL-2, and IFN-g (intracellular).",
+      "section": "methods",
+      "start": 13348,
+      "end": 13602
+    },
+    {
+      "id": 226,
+      "text": "The numbers indicate the percentages of cells within the parent population.",
+      "section": "methods",
+      "start": 13603,
+      "end": 13678
+    },
+    {
+      "id": 227,
+      "text": "(b) FACS analysis of PBMCs from day 365 after vaccination.",
+      "section": "methods",
+      "start": 13679,
+      "end": 13737
+    },
+    {
+      "id": 228,
+      "text": "Cells from four volunteers were stimulated (S) for with immunostimulatory YF17D peptide pools, and then restimulated (RS) or not with the same peptide pools before staining.",
+      "section": "methods",
+      "start": 13738,
+      "end": 13911
+    },
+    {
+      "id": 229,
+      "text": "The data were analyzed according to the gating strategy shown in Fig.",
+      "section": "methods",
+      "start": 13912,
+      "end": 13981
+    },
+    {
+      "id": 230,
+      "text": "S7, and are expressed as the percentage of central memory CD4+ T cells (CD45RA2CCR7+) that express the marker for recent activation CD154, and that are either Th1 or Th2 in the RS samples, over background (S).",
+      "section": "methods",
+      "start": 13982,
+      "end": 14191
+    },
+    {
+      "id": 231,
+      "text": "Fig.",
+      "section": "methods",
+      "start": 14192,
+      "end": 14196
+    },
+    {
+      "id": 232,
+      "text": "S7 is available at http://www.jem.org/cgi/content/full/jem.20082292/DC1 .",
+      "section": "methods",
+      "start": 14197,
+      "end": 14270
+    },
+    {
+      "id": 233,
+      "text": "YF17D elicits robust and diverse primary T helper cell responses in DC/T cell co-cultures.",
+      "section": "methods",
+      "start": 14271,
+      "end": 14361
+    },
+    {
+      "id": 234,
+      "text": "(a and b) Purified T helper cells were mixed with DCs that had been incubated with live or UV-inactivated YF17D.",
+      "section": "methods",
+      "start": 14362,
+      "end": 14474
+    },
+    {
+      "id": 235,
+      "text": "After 14 d, the cells were harvested and evaluated by flow cytometry for cytokine and CD154 expression after a short restimulation with autologous DCs targets that had been left untouched, pulsed with killed YF17D, or infected with live YF17D.",
+      "section": "methods",
+      "start": 14475,
+      "end": 14718
+    },
+    {
+      "id": 236,
+      "text": "All data plots show live CD4 + -gated events.",
+      "section": "methods",
+      "start": 14719,
+      "end": 14764
+    },
+    {
+      "id": 237,
+      "text": "These are representative data of experiments done on cells from at least 10 volunteers.",
+      "section": "methods",
+      "start": 14765,
+      "end": 14852
+    },
+    {
+      "id": 238,
+      "text": "(c) Alternatively, the culture supernatants were harvested and evaluated by a multiplex cytokine analysis.",
+      "section": "methods",
+      "start": 14853,
+      "end": 14959
+    },
+    {
+      "id": 239,
+      "text": "Data representative of experiments done on cells from two volunteers.",
+      "section": "methods",
+      "start": 14960,
+      "end": 15029
+    },
+    {
+      "id": 240,
+      "text": "Consensus transcriptional network of genes differentially expressed on day 7 as compared with day 0.",
+      "section": "methods",
+      "start": 15030,
+      "end": 15130
+    },
+    {
+      "id": 241,
+      "text": "Network representation of inferred transcription factors and predicted target genes that are consistently modulated in at least two out of three datasets, with the third dataset not being contradictory.",
+      "section": "methods",
+      "start": 15131,
+      "end": 15333
+    }
+  ],
+  "params": {
+    "ontologies": "OBI",
+    "longest_only": "true",
+    "exclude_synonyms": "false",
+    "whole_word_only": "true",
+    "expand_mappings": "false",
+    "exclude_numbers": "true"
+  },
+  "reply": [
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/VO_0000002",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FVO_0000002",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FVO_0000002/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FVO_0000002/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FVO_0000002/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FVO_0000002/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FVO_0000002/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FVO_0000002/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FVO_0000002/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FVO_0000002/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FVO_0000002",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 31,
+          "to": 41,
+          "matchType": "PREF",
+          "text": "VACCINATION"
+        },
+        {
+          "from": 686,
+          "to": 696,
+          "matchType": "PREF",
+          "text": "VACCINATION"
+        },
+        {
+          "from": 1183,
+          "to": 1193,
+          "matchType": "PREF",
+          "text": "VACCINATION"
+        },
+        {
+          "from": 3924,
+          "to": 3934,
+          "matchType": "PREF",
+          "text": "VACCINATION"
+        },
+        {
+          "from": 4134,
+          "to": 4144,
+          "matchType": "PREF",
+          "text": "VACCINATION"
+        },
+        {
+          "from": 9776,
+          "to": 9786,
+          "matchType": "PREF",
+          "text": "VACCINATION"
+        },
+        {
+          "from": 9894,
+          "to": 9904,
+          "matchType": "PREF",
+          "text": "VACCINATION"
+        },
+        {
+          "from": 10190,
+          "to": 10200,
+          "matchType": "PREF",
+          "text": "VACCINATION"
+        },
+        {
+          "from": 10964,
+          "to": 10974,
+          "matchType": "PREF",
+          "text": "VACCINATION"
+        },
+        {
+          "from": 13278,
+          "to": 13288,
+          "matchType": "PREF",
+          "text": "VACCINATION"
+        },
+        {
+          "from": 13406,
+          "to": 13416,
+          "matchType": "PREF",
+          "text": "VACCINATION"
+        },
+        {
+          "from": 13726,
+          "to": 13736,
+          "matchType": "PREF",
+          "text": "VACCINATION"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/OBI_0000066",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000066",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000066/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000066/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000066/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000066/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000066/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000066/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000066/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000066/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000066",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 62,
+          "to": 66,
+          "matchType": "SYN",
+          "text": "STUDY"
+        },
+        {
+          "from": 4700,
+          "to": 4704,
+          "matchType": "SYN",
+          "text": "STUDY"
+        },
+        {
+          "from": 8367,
+          "to": 8371,
+          "matchType": "SYN",
+          "text": "STUDY"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/OBI_0000073",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000073",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000073/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000073/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000073/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000073/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000073/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000073/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000073/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000073/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000073",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 62,
+          "to": 66,
+          "matchType": "SYN",
+          "text": "STUDY"
+        },
+        {
+          "from": 4700,
+          "to": 4704,
+          "matchType": "SYN",
+          "text": "STUDY"
+        },
+        {
+          "from": 8367,
+          "to": 8371,
+          "matchType": "SYN",
+          "text": "STUDY"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/OBI_0000954",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000954",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000954/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000954/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000954/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000954/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000954/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000954/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000954/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000954/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000954",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 404,
+          "to": 425,
+          "matchType": "PREF",
+          "text": "SUBCUTANEOUS INJECTION"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/VO_0000001",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FVO_0000001",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FVO_0000001/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FVO_0000001/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FVO_0000001/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FVO_0000001/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FVO_0000001/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FVO_0000001/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FVO_0000001/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FVO_0000001/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FVO_0000001",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 482,
+          "to": 488,
+          "matchType": "PREF",
+          "text": "VACCINE"
+        },
+        {
+          "from": 4175,
+          "to": 4181,
+          "matchType": "PREF",
+          "text": "VACCINE"
+        },
+        {
+          "from": 7829,
+          "to": 7835,
+          "matchType": "PREF",
+          "text": "VACCINE"
+        },
+        {
+          "from": 8725,
+          "to": 8731,
+          "matchType": "PREF",
+          "text": "VACCINE"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/UBERON_0000178",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FUBERON_0000178",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FUBERON_0000178/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FUBERON_0000178/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FUBERON_0000178/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FUBERON_0000178/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FUBERON_0000178/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FUBERON_0000178/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FUBERON_0000178/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FUBERON_0000178/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FUBERON_0000178",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 591,
+          "to": 595,
+          "matchType": "PREF",
+          "text": "BLOOD"
+        },
+        {
+          "from": 991,
+          "to": 995,
+          "matchType": "PREF",
+          "text": "BLOOD"
+        },
+        {
+          "from": 1068,
+          "to": 1072,
+          "matchType": "PREF",
+          "text": "BLOOD"
+        },
+        {
+          "from": 1120,
+          "to": 1124,
+          "matchType": "PREF",
+          "text": "BLOOD"
+        },
+        {
+          "from": 1308,
+          "to": 1312,
+          "matchType": "PREF",
+          "text": "BLOOD"
+        },
+        {
+          "from": 4559,
+          "to": 4563,
+          "matchType": "PREF",
+          "text": "BLOOD"
+        },
+        {
+          "from": 5352,
+          "to": 5356,
+          "matchType": "PREF",
+          "text": "BLOOD"
+        },
+        {
+          "from": 8406,
+          "to": 8410,
+          "matchType": "PREF",
+          "text": "BLOOD"
+        },
+        {
+          "from": 8452,
+          "to": 8456,
+          "matchType": "PREF",
+          "text": "BLOOD"
+        },
+        {
+          "from": 9870,
+          "to": 9874,
+          "matchType": "PREF",
+          "text": "BLOOD"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/OBI_0302886",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0302886",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0302886/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0302886/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0302886/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0302886/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0302886/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0302886/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0302886/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0302886/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0302886",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 868,
+          "to": 881,
+          "matchType": "PREF",
+          "text": "CENTRIFUGATION"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/OBI_0001508",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0001508",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0001508/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0001508/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0001508/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0001508/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0001508/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0001508/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0001508/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0001508/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0001508",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 956,
+          "to": 965,
+          "matchType": "SYN",
+          "text": "TIME POINT"
+        },
+        {
+          "from": 9985,
+          "to": 9994,
+          "matchType": "SYN",
+          "text": "TIME POINT"
+        },
+        {
+          "from": 11245,
+          "to": 11254,
+          "matchType": "SYN",
+          "text": "TIME POINT"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/OBI_0666666",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0666666",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0666666/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0666666/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0666666/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0666666/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0666666/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0666666/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0666666/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0666666/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0666666",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 1362,
+          "to": 1375,
+          "matchType": "PREF",
+          "text": "RNA EXTRACTION"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/OBI_0400115",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0400115",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0400115/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0400115/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0400115/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0400115/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0400115/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0400115/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0400115/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0400115/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0400115",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 1429,
+          "to": 1445,
+          "matchType": "PREF",
+          "text": "SPECTROPHOTOMETER"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/PATO_0000001",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000001",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000001/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000001/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000001/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000001/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000001/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000001/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000001/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000001/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000001",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 1479,
+          "to": 1485,
+          "matchType": "PREF",
+          "text": "QUALITY"
+        },
+        {
+          "from": 2163,
+          "to": 2169,
+          "matchType": "PREF",
+          "text": "QUALITY"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/OBI_0001053",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0001053",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0001053/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0001053/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0001053/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0001053/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0001053/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0001053/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0001053/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0001053/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0001053",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 1529,
+          "to": 1550,
+          "matchType": "PREF",
+          "text": "ELECTROPHORESIS SYSTEM"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/OBI_0000272",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000272",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000272/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000272/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000272/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000272/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000272/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000272/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000272/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000272/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000272",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 1714,
+          "to": 1721,
+          "matchType": "PREF",
+          "text": "PROTOCOL"
+        },
+        {
+          "from": 1736,
+          "to": 1743,
+          "matchType": "PREF",
+          "text": "PROTOCOL"
+        },
+        {
+          "from": 8382,
+          "to": 8389,
+          "matchType": "PREF",
+          "text": "PROTOCOL"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/OBI_0600040",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0600040",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0600040/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0600040/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0600040/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0600040/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0600040/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0600040/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0600040/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0600040/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0600040",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 1767,
+          "to": 1775,
+          "matchType": "PREF",
+          "text": "SYNTHESIS"
+        },
+        {
+          "from": 1826,
+          "to": 1834,
+          "matchType": "PREF",
+          "text": "SYNTHESIS"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/NCBITaxon_9606",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FNCBITaxon_9606",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FNCBITaxon_9606/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FNCBITaxon_9606/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FNCBITaxon_9606/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FNCBITaxon_9606/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FNCBITaxon_9606/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FNCBITaxon_9606/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FNCBITaxon_9606/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FNCBITaxon_9606/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FNCBITaxon_9606",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 1888,
+          "to": 1892,
+          "matchType": "SYN",
+          "text": "HUMAN"
+        },
+        {
+          "from": 8564,
+          "to": 8568,
+          "matchType": "SYN",
+          "text": "HUMAN"
+        },
+        {
+          "from": 8749,
+          "to": 8753,
+          "matchType": "SYN",
+          "text": "HUMAN"
+        },
+        {
+          "from": 9673,
+          "to": 9677,
+          "matchType": "SYN",
+          "text": "HUMAN"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/IAO_0000010",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIAO_0000010",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIAO_0000010/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIAO_0000010/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIAO_0000010/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIAO_0000010/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIAO_0000010/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIAO_0000010/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIAO_0000010/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIAO_0000010/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIAO_0000010",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 2074,
+          "to": 2081,
+          "matchType": "PREF",
+          "text": "SOFTWARE"
+        },
+        {
+          "from": 2326,
+          "to": 2333,
+          "matchType": "PREF",
+          "text": "SOFTWARE"
+        },
+        {
+          "from": 2490,
+          "to": 2497,
+          "matchType": "PREF",
+          "text": "SOFTWARE"
+        },
+        {
+          "from": 7241,
+          "to": 7248,
+          "matchType": "PREF",
+          "text": "SOFTWARE"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/OBI_00001975",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_00001975",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_00001975/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_00001975/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_00001975/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_00001975/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_00001975/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_00001975/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_00001975/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_00001975/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_00001975",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 2188,
+          "to": 2191,
+          "matchType": "SYN",
+          "text": "CHIP"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/GO_0010467",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FGO_0010467",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FGO_0010467/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FGO_0010467/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FGO_0010467/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FGO_0010467/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FGO_0010467/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FGO_0010467/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FGO_0010467/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FGO_0010467/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FGO_0010467",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 2249,
+          "to": 2263,
+          "matchType": "PREF",
+          "text": "GENE EXPRESSION"
+        },
+        {
+          "from": 3608,
+          "to": 3622,
+          "matchType": "PREF",
+          "text": "GENE EXPRESSION"
+        },
+        {
+          "from": 3687,
+          "to": 3701,
+          "matchType": "PREF",
+          "text": "GENE EXPRESSION"
+        },
+        {
+          "from": 10400,
+          "to": 10414,
+          "matchType": "PREF",
+          "text": "GENE EXPRESSION"
+        },
+        {
+          "from": 11717,
+          "to": 11731,
+          "matchType": "PREF",
+          "text": "GENE EXPRESSION"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/OBI_0400147",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0400147",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0400147/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0400147/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0400147/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0400147/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0400147/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0400147/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0400147/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0400147/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0400147",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 3125,
+          "to": 3134,
+          "matchType": "PREF",
+          "text": "MICROARRAY"
+        },
+        {
+          "from": 3520,
+          "to": 3529,
+          "matchType": "PREF",
+          "text": "MICROARRAY"
+        },
+        {
+          "from": 3715,
+          "to": 3724,
+          "matchType": "PREF",
+          "text": "MICROARRAY"
+        },
+        {
+          "from": 3821,
+          "to": 3830,
+          "matchType": "PREF",
+          "text": "MICROARRAY"
+        },
+        {
+          "from": 4000,
+          "to": 4009,
+          "matchType": "PREF",
+          "text": "MICROARRAY"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/OBI_0000893",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000893",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000893/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000893/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000893/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000893/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000893/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000893/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000893/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000893/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000893",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 3752,
+          "to": 3755,
+          "matchType": "SYN",
+          "text": "QPCR"
+        },
+        {
+          "from": 4035,
+          "to": 4038,
+          "matchType": "SYN",
+          "text": "QPCR"
+        },
+        {
+          "from": 4233,
+          "to": 4236,
+          "matchType": "SYN",
+          "text": "QPCR"
+        },
+        {
+          "from": 11769,
+          "to": 11772,
+          "matchType": "SYN",
+          "text": "QPCR"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/OBI_1110053",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_1110053",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_1110053/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_1110053/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_1110053/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_1110053/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_1110053/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_1110053/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_1110053/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_1110053/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_1110053",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 4334,
+          "to": 4339,
+          "matchType": "PREF",
+          "text": "CANCER"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/OBI_0302714",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0302714",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0302714/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0302714/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0302714/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0302714/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0302714/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0302714/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0302714/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0302714/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0302714",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 4442,
+          "to": 4444,
+          "matchType": "SYN",
+          "text": "SET"
+        },
+        {
+          "from": 4921,
+          "to": 4923,
+          "matchType": "SYN",
+          "text": "SET"
+        },
+        {
+          "from": 10223,
+          "to": 10225,
+          "matchType": "SYN",
+          "text": "SET"
+        },
+        {
+          "from": 11591,
+          "to": 11595,
+          "matchType": "SYN",
+          "text": "GROUP"
+        },
+        {
+          "from": 13442,
+          "to": 13446,
+          "matchType": "SYN",
+          "text": "GROUP"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/PATO_0000165",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000165",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000165/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000165/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000165/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000165/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000165/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000165/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000165/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000165/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000165",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 5414,
+          "to": 5417,
+          "matchType": "PREF",
+          "text": "TIME"
+        },
+        {
+          "from": 9496,
+          "to": 9499,
+          "matchType": "PREF",
+          "text": "TIME"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/OBI_0003250",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0003250",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0003250/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0003250/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0003250/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0003250/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0003250/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0003250/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0003250/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0003250/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0003250",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 5488,
+          "to": 5497,
+          "matchType": "SYN",
+          "text": "LABORATORY"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/CL_0000000",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000000",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000000/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000000/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000000/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000000/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000000/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000000/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000000/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000000/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000000",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 5517,
+          "to": 5520,
+          "matchType": "PREF",
+          "text": "CELL"
+        },
+        {
+          "from": 14322,
+          "to": 14325,
+          "matchType": "PREF",
+          "text": "CELL"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/OBI_0600020",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0600020",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0600020/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0600020/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0600020/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0600020/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0600020/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0600020/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0600020/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0600020/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0600020",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 5681,
+          "to": 5694,
+          "matchType": "SYN",
+          "text": "HISTOPATHOLOGY"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/OBI_0000070",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000070",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000070/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000070/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000070/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000070/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000070/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000070/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000070/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000070/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000070",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 5878,
+          "to": 5882,
+          "matchType": "PREF",
+          "text": "ASSAY"
+        },
+        {
+          "from": 6073,
+          "to": 6077,
+          "matchType": "PREF",
+          "text": "ASSAY"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/OBI_0000984",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000984",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000984/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000984/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000984/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000984/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000984/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000984/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000984/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000984/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000984",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 5977,
+          "to": 5980,
+          "matchType": "PREF",
+          "text": "DOSE"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/IDO_0000586",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIDO_0000586",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIDO_0000586/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIDO_0000586/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIDO_0000586/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIDO_0000586/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIDO_0000586/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIDO_0000586/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIDO_0000586/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIDO_0000586/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIDO_0000586",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 6355,
+          "to": 6363,
+          "matchType": "PREF",
+          "text": "INFECTION"
+        },
+        {
+          "from": 8801,
+          "to": 8809,
+          "matchType": "PREF",
+          "text": "INFECTION"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/OBI_0000661",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000661",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000661/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000661/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000661/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000661/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000661/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000661/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000661/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000661/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000661",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 6447,
+          "to": 6451,
+          "matchType": "SYN",
+          "text": "ELISA"
+        },
+        {
+          "from": 12359,
+          "to": 12363,
+          "matchType": "SYN",
+          "text": "ELISA"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/CHEBI_16670",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCHEBI_16670",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCHEBI_16670/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCHEBI_16670/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCHEBI_16670/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCHEBI_16670/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCHEBI_16670/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCHEBI_16670/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCHEBI_16670/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCHEBI_16670/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCHEBI_16670",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 6670,
+          "to": 6676,
+          "matchType": "PREF",
+          "text": "PEPTIDE"
+        },
+        {
+          "from": 6732,
+          "to": 6738,
+          "matchType": "PREF",
+          "text": "PEPTIDE"
+        },
+        {
+          "from": 7584,
+          "to": 7590,
+          "matchType": "PREF",
+          "text": "PEPTIDE"
+        },
+        {
+          "from": 7912,
+          "to": 7918,
+          "matchType": "PREF",
+          "text": "PEPTIDE"
+        },
+        {
+          "from": 12700,
+          "to": 12706,
+          "matchType": "PREF",
+          "text": "PEPTIDE"
+        },
+        {
+          "from": 13819,
+          "to": 13825,
+          "matchType": "PREF",
+          "text": "PEPTIDE"
+        },
+        {
+          "from": 13882,
+          "to": 13888,
+          "matchType": "PREF",
+          "text": "PEPTIDE"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/PATO_0000033",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000033",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000033/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000033/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000033/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000033/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000033/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000033/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000033/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000033/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000033",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 6707,
+          "to": 6722,
+          "matchType": "PREF",
+          "text": "CONCENTRATION OF"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/PATO_0001985",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0001985",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0001985/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0001985/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0001985/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0001985/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0001985/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0001985/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0001985/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0001985/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0001985",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 6904,
+          "to": 6909,
+          "matchType": "PREF",
+          "text": "FROZEN"
+        },
+        {
+          "from": 9022,
+          "to": 9027,
+          "matchType": "PREF",
+          "text": "FROZEN"
+        },
+        {
+          "from": 9608,
+          "to": 9613,
+          "matchType": "PREF",
+          "text": "FROZEN"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/PATO_0000918",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000918",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000918/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000918/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000918/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000918/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000918/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000918/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000918/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000918/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000918",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 6963,
+          "to": 6968,
+          "matchType": "PREF",
+          "text": "VOLUME"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/OBI_1110132",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_1110132",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_1110132/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_1110132/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_1110132/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_1110132/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_1110132/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_1110132/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_1110132/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_1110132/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_1110132",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 7114,
+          "to": 7116,
+          "matchType": "SYN",
+          "text": "CD8"
+        },
+        {
+          "from": 7674,
+          "to": 7676,
+          "matchType": "SYN",
+          "text": "CD8"
+        },
+        {
+          "from": 8115,
+          "to": 8117,
+          "matchType": "SYN",
+          "text": "CD8"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/OBI_0400044",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0400044",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0400044/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0400044/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0400044/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0400044/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0400044/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0400044/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0400044/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0400044/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0400044",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 7174,
+          "to": 7187,
+          "matchType": "PREF",
+          "text": "FLOW CYTOMETER"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/OBI_0000835",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000835",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000835/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000835/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000835/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000835/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000835/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000835/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000835/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000835/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000835",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 7394,
+          "to": 7405,
+          "matchType": "PREF",
+          "text": "MANUFACTURER"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/GO_0001816",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FGO_0001816",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FGO_0001816/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FGO_0001816/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FGO_0001816/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FGO_0001816/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FGO_0001816/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FGO_0001816/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FGO_0001816/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FGO_0001816/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FGO_0001816",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 7422,
+          "to": 7440,
+          "matchType": "PREF",
+          "text": "CYTOKINE PRODUCTION"
+        },
+        {
+          "from": 9634,
+          "to": 9652,
+          "matchType": "PREF",
+          "text": "CYTOKINE PRODUCTION"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/UPHENO_0001001",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FUPHENO_0001001",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FUPHENO_0001001/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FUPHENO_0001001/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FUPHENO_0001001/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FUPHENO_0001001/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FUPHENO_0001001/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FUPHENO_0001001/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FUPHENO_0001001/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FUPHENO_0001001/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FUPHENO_0001001",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 7805,
+          "to": 7813,
+          "matchType": "PREF",
+          "text": "PHENOTYPE"
+        },
+        {
+          "from": 13338,
+          "to": 13346,
+          "matchType": "PREF",
+          "text": "PHENOTYPE"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/OGMS_0000090",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOGMS_0000090",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOGMS_0000090/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOGMS_0000090/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOGMS_0000090/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOGMS_0000090/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOGMS_0000090/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOGMS_0000090/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOGMS_0000090/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOGMS_0000090/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOGMS_0000090",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 8979,
+          "to": 8987,
+          "matchType": "PREF",
+          "text": "TREATMENT"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/GO_0042571",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FGO_0042571",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FGO_0042571/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FGO_0042571/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FGO_0042571/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FGO_0042571/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FGO_0042571/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FGO_0042571/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FGO_0042571/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FGO_0042571/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FGO_0042571",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 9381,
+          "to": 9388,
+          "matchType": "SYN",
+          "text": "ANTIBODY"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/CL_0000084",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000084",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000084/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000084/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000084/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000084/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000084/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000084/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000084/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000084/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000084",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 9540,
+          "to": 9545,
+          "matchType": "PREF",
+          "text": "T CELL"
+        },
+        {
+          "from": 14343,
+          "to": 14348,
+          "matchType": "PREF",
+          "text": "T CELL"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/OBI_0000552",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000552",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000552/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000552/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000552/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000552/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000552/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000552/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000552/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000552/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000552",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 10673,
+          "to": 10678,
+          "matchType": "SYN",
+          "text": "RT-PCR"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/IAO_0000308",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIAO_0000308",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIAO_0000308/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIAO_0000308/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIAO_0000308/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIAO_0000308/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIAO_0000308/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIAO_0000308/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIAO_0000308/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIAO_0000308/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIAO_0000308",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 10801,
+          "to": 10806,
+          "matchType": "PREF",
+          "text": "FIGURE"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/OBI_0002719",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0002719",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0002719/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0002719/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0002719/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0002719/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0002719/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0002719/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0002719/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0002719/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0002719",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 10996,
+          "to": 10999,
+          "matchType": "SYN",
+          "text": "ARMS"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/CL_0000235",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000235",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000235/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000235/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000235/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000235/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000235/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000235/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000235/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000235/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000235",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 11393,
+          "to": 11402,
+          "matchType": "PREF",
+          "text": "MACROPHAGE"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/IAO_0000310",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIAO_0000310",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIAO_0000310/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIAO_0000310/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIAO_0000310/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIAO_0000310/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIAO_0000310/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIAO_0000310/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIAO_0000310/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIAO_0000310/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FIAO_0000310",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 11502,
+          "to": 11509,
+          "matchType": "PREF",
+          "text": "DOCUMENT"
+        },
+        {
+          "from": 11611,
+          "to": 11618,
+          "matchType": "PREF",
+          "text": "DOCUMENT"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/CL_0000576",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000576",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000576/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000576/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000576/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000576/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000576/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000576/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000576/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000576/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FCL_0000576",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 12242,
+          "to": 12249,
+          "matchType": "PREF",
+          "text": "MONOCYTE"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/OBI_0600038",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0600038",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0600038/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0600038/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0600038/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0600038/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0600038/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0600038/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0600038/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0600038/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0600038",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 12734,
+          "to": 12741,
+          "matchType": "SYN",
+          "text": "LABELING"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/OBI_0000181",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000181",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000181/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000181/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000181/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000181/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000181/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000181/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000181/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000181/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000181",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 13668,
+          "to": 13677,
+          "matchType": "PREF",
+          "text": "POPULATION"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/OBI_0000916",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000916",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000916/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000916/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000916/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000916/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000916/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000916/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000916/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000916/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000916",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 13684,
+          "to": 13687,
+          "matchType": "SYN",
+          "text": "FACS"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/OBI_0302887",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0302887",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0302887/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0302887/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0302887/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0302887/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0302887/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0302887/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0302887/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0302887/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0302887",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 13903,
+          "to": 13910,
+          "matchType": "PREF",
+          "text": "STAINING"
+        }
+      ],
+      "mappings": []
+    },
+    {
+      "annotatedClass": {
+        "@id": "http://purl.obolibrary.org/obo/OBI_0200077",
+        "@type": "http://www.w3.org/2002/07/owl#Class",
+        "links": {
+          "self": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0200077",
+          "ontology": "https://data.bioontology.org/ontologies/OBI",
+          "children": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0200077/children",
+          "parents": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0200077/parents",
+          "descendants": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0200077/descendants",
+          "ancestors": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0200077/ancestors",
+          "instances": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0200077/instances",
+          "tree": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0200077/tree",
+          "notes": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0200077/notes",
+          "mappings": "https://data.bioontology.org/ontologies/OBI/classes/http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0200077/mappings",
+          "ui": "http://bioportal.bioontology.org/ontologies/OBI?p=classes&conceptid=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0200077",
+          "@context": {
+            "self": "http://www.w3.org/2002/07/owl#Class",
+            "ontology": "http://data.bioontology.org/metadata/Ontology",
+            "children": "http://www.w3.org/2002/07/owl#Class",
+            "parents": "http://www.w3.org/2002/07/owl#Class",
+            "descendants": "http://www.w3.org/2002/07/owl#Class",
+            "ancestors": "http://www.w3.org/2002/07/owl#Class",
+            "instances": "http://data.bioontology.org/metadata/Instance",
+            "tree": "http://www.w3.org/2002/07/owl#Class",
+            "notes": "http://data.bioontology.org/metadata/Note",
+            "mappings": "http://data.bioontology.org/metadata/Mapping",
+            "ui": "http://www.w3.org/2002/07/owl#Class"
+          }
+        },
+        "@context": {
+          "@vocab": "http://data.bioontology.org/metadata/",
+          "@language": "en"
+        }
+      },
+      "hierarchy": [],
+      "annotations": [
+        {
+          "from": 13953,
+          "to": 13958,
+          "matchType": "PREF",
+          "text": "GATING"
+        }
+      ],
+      "mappings": []
+    }
+  ]
+}

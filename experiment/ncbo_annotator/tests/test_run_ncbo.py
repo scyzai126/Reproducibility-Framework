@@ -63,3 +63,31 @@ def test_entries_keep_vocabulary_classes_with_every_wording_and_first_sentence(m
     assert e["obi_id"] == "OBI:0000916" and e["names"] == ["FACS", "FLOW CYTOMETRY"]
     assert e["quote"] == "FACS showed activation." and e["section"] == "abstract"
     assert e["sentence_ids"] == [1] and e["hits"] == 2 and e["match_types"] == ["SYN", "PREF"]
+
+
+def test_fetch_sends_nothing_for_an_empty_scope_and_caches_an_empty_reply(mod, tmp_path, monkeypatch):
+    """SDY1669's headings carry no Methods section: the Annotator rejects an empty text (400),
+    so the fetch writes an empty reply instead of asking, as the dictionary arm writes 0 entries."""
+    paper = {"kind": "xml", "haystack": "## Abstract  [abstract]\n[S1] FACS showed activation.\n"}
+    sent = []
+    monkeypatch.setattr(mod, "api_key", lambda: "k")
+    monkeypatch.setattr(mod, "registries", lambda only=None: [tmp_path / "1_SDY1669"])
+    monkeypatch.setattr(mod, "paper_input", lambda d: paper)
+    monkeypatch.setattr(mod, "annotate", lambda text, key: sent.append(text) or [{"annotatedClass": {"@id": "x"}}])
+    monkeypatch.setattr(mod, "PAUSE_SECONDS", 0)
+    mod.fetch(["methods", "paper"], raw_dir=tmp_path / "raw")
+    assert len(sent) == 1 and "FACS" in sent[0]  # only the whole-paper scope was sent
+    methods = mod.read(tmp_path / "raw" / "methods" / "1_SDY1669.json")
+    assert methods["reply"] == [] and methods["chars"] == 0
+    assert mod.read(tmp_path / "raw" / "paper" / "1_SDY1669.json")["reply"] != []
+
+
+def test_run_names_skips_the_raw_reply_folder(mod, tmp_path):
+    for name in ("raw", "pruned_paper", "r2", "r1"):
+        (tmp_path / name).mkdir()
+    assert mod.run_names(tmp_path) == ["r1", "r2", "pruned_paper"]
+
+
+def test_ssl_context_is_a_default_context(mod):
+    import ssl
+    assert isinstance(mod._ssl_context(), ssl.SSLContext)

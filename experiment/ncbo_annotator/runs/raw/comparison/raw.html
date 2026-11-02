@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Assay Benchmark Review</title>
+<style>
+:root{--bg:#fbfaf8;--fg:#1f2328;--muted:#6b7280;--card:#fff;--line:#e5e2dc;--code:#f3f1ec;
+--match:#1a7f37;--gran:#0969da;--conflict:#bc4c00;--unmapped:#8250df;--split:#9a6700;--missed:#cf222e;--extra:#57606a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#16181c;--fg:#e6e6e6;--muted:#9aa0a6;--card:#1e2126;--line:#2e3238;--code:#262a30;
+--match:#3fb950;--gran:#58a6ff;--conflict:#f0883e;--unmapped:#bc8cff;--split:#d29922;--missed:#ff7b72;--extra:#8b949e}}
+:root[data-theme="dark"]{--bg:#16181c;--fg:#e6e6e6;--muted:#9aa0a6;--card:#1e2126;--line:#2e3238;--code:#262a30;
+--match:#3fb950;--gran:#58a6ff;--conflict:#f0883e;--unmapped:#bc8cff;--split:#d29922;--missed:#ff7b72;--extra:#8b949e}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+main{max-width:1500px;margin:0 auto;padding:24px 16px 80px}
+h1{font-size:22px;margin:0 0 4px} h2{font-size:18px;margin:0 0 4px}
+.pmid,.sub,.meta,.files{color:var(--muted);font-size:12px} .meta{font-size:13px}
+code{background:var(--code);padding:0 4px;border-radius:4px;font-size:12px}
+.kpis{display:flex;flex-wrap:wrap;gap:12px;margin:16px 0}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 14px;min-width:120px}
+.kpi b{display:block;font-size:22px} .kpi span{color:var(--muted);font-size:12px}
+.rates{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin:0 0 16px}
+.rates p{margin:6px 0;font-size:13px;line-height:1.5}
+.rates code{background:var(--code);padding:1px 5px;border-radius:4px}
+.rates .sub{color:var(--muted)}
+.toolbar{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:10px 0;display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center}
+.toolbar label{display:inline-flex;gap:4px;align-items:center;cursor:pointer}
+.toolbar label .sub{display:none}
+.toolbar input[type=search]{padding:6px 10px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--fg);min-width:220px}
+.toolbar button{padding:6px 10px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--fg);cursor:pointer}
+.wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;background:var(--card);border:1px solid var(--line);border-radius:8px}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{font-size:12px;color:var(--muted);font-weight:600;background:var(--code)}
+td.n{text-align:right;font-variant-numeric:tabular-nums}
+.summary tbody tr{cursor:pointer} .summary tbody tr:hover{background:var(--code)}
+.summary tfoot td{font-weight:700;border-top:2px solid var(--line);background:var(--code)}
+.paper{margin-top:36px;scroll-margin-top:60px}
+.cmp td:nth-child(1){width:120px} .cmp td:nth-child(2),.cmp td:nth-child(3){width:26%} .cmp td:nth-child(4){width:18%}
+.badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 7px;border-radius:10px;color:#fff;white-space:nowrap}
+.match{background:var(--match)}.gran{background:var(--gran)}.conflict{background:var(--conflict)}.unmapped{background:var(--unmapped)}
+.split{background:var(--split)}.missed{background:var(--missed)}.extra{background:var(--extra)}
+.match-c{color:var(--match)}.gran-c{color:var(--gran)}.conflict-c{color:var(--conflict)}.unmapped-c{color:var(--unmapped)}
+.split-c{color:var(--split)}.missed-c{color:var(--missed)}.extra-c{color:var(--extra)}
+tr[data-status=MISSED]{box-shadow:inset 3px 0 var(--missed)} tr[data-status=EXTRA]{box-shadow:inset 3px 0 var(--extra)}
+tr[data-status=MATCH_OBI_CONFLICT]{box-shadow:inset 3px 0 var(--conflict)}
+.key{font-weight:600} .obi{font-size:12px} .noobi{font-size:12px;color:var(--missed);font-style:italic}
+.ours-one+.ours-one{margin-top:8px;padding-top:8px;border-top:1px dashed var(--line)}
+.tag{display:inline-block;font-size:11px;padding:1px 6px;border-radius:4px;border:1px solid var(--line);margin-right:4px;background:var(--code)}
+.tag.warn,.note.warn{color:var(--conflict)}
+.merged{margin-top:4px} .chip{display:inline-block;font-size:11px;background:var(--code);border-radius:4px;padding:1px 6px;margin:2px 3px 0 0}
+.dash{color:var(--muted)} .reason{font-size:13px}
+details summary{cursor:pointer;color:var(--gran);font-size:12px}
+blockquote{margin:4px 0 8px;padding:4px 8px;border-left:3px solid var(--line);color:var(--muted);font-size:12px;max-height:180px;overflow:auto}
+.q b{font-size:12px}
+.hidden{display:none}
+</style></head><body><main>
+<h1>Assay benchmark benchmark_assay_v5 vs. agent</h1>
+<p class="sub">Benchmark: <code>data/benchmark_assay/benchmark_assay_v5</code> · Agent: <code>experiment/ncbo_annotator/runs/raw</code> ·
+a curated row left unpaired folds into a paired row on the same OBI id within the paper.</p>
+<div class="kpis">
+<div class="kpi"><b>0</b><span>papers scored</span></div>
+<div class="kpi"><b>0</b><span>benchmark assays (raw 0)</span></div>
+<div class="kpi"><b>0</b><span>agent assays</span></div>
+<div class="kpi"><b>0</b><span>matched (exact OBI 0)</span></div>
+<div class="kpi"><b>0</b><span>missed</span></div>
+<div class="kpi"><b>0</b><span>extra</span></div>
+<div class="kpi" title="matched / benchmark assays — every matched tier counts; only MISSED lowers it"><b>0.0%</b><span>recall</span></div>
+<div class="kpi" title="(MATCH + MATCH GRANULARITY) / benchmark assays — only a pairing the ontology made"><b>0.0%</b><span>OBI recall (same or parent/child term)</span></div>
+</div>
+<div class="rates"><p><b>recall</b> = matched &divide; benchmark assays = <code>0 / 0</code> = <b>0.0%</b><br><span class="sub">A benchmark row counts as matched once the scorer pairs it with an agent entry on any tier, whether or not the two agree on a term: MATCH (0) + MATCH GRANULARITY (0) + MATCH OBI CONFLICT (0) + MATCH OBI UNMAPPED (0) = 0. Only MISSED, a row no tier could pair, lowers it.</span></p><p><b>OBI recall</b> = ontology-paired &divide; benchmark assays = <code>(0 + 0) / 0</code> = <code>0 / 0</code> = <b>0.0%</b><br><span class="sub">Only a pairing the ontology itself made counts: the same term (MATCH), or one term a parent or child of the other (MATCH GRANULARITY). A row paired by a shared name or quote carries a different or missing term, so CONFLICT and UNMAPPED count toward recall and not here &mdash; that gap is the 0 rows between the two tiles.</span></p><p class="sub">Both denominators are 0, not the 0 rows the curators wrote: a curated row left without a partner folds into a paired row on the same OBI id within the paper. 0 pairs were made by the ontology alone, with no shared name, alias or quote.</p></div>
+<details><summary>Status legend &amp; notes</summary>
+<ul><li><span class="badge match">MATCH</span> Same OBI term on both sides</li><li><span class="badge gran">MATCH GRANULARITY</span> Same assay; one OBI term is a parent/child of the other</li><li><span class="badge conflict">MATCH OBI CONFLICT</span> Paired by name, but the two sides chose different OBI terms</li><li><span class="badge unmapped">MATCH OBI UNMAPPED</span> Paired by name, but one side has no OBI term</li><li><span class="badge split">SPLIT</span> Paired one-to-one, and more agent entries sit on the same term (an annotation on a MATCH row)</li><li><span class="badge missed">MISSED</span> In the benchmark, not found by the agent</li><li><span class="badge extra">EXTRA</span> Found by the agent, not in the benchmark</li></ul>
+<p>Agent registries with no benchmark_assay_v5 benchmark (not scored): methods, paper</p>
+<p>Skipped benchmark files:</p><ul><li>SDY1260_Assay_Hailong.json: expected one registry for SDY1260, found []</li><li>SDY1264_Assay_Hailong.json: expected one registry for SDY1264, found []</li><li>SDY1276_1_assays_AS_v2.json: expected one registry for SDY1276, found []</li><li>SDY1276_2_assays_AS_v2.json: expected one registry for SDY1276, found []</li><li>SDY1288_assays_AS_v2.json: expected one registry for SDY1288, found []</li><li>SDY1289_assays_AS_v2.json: expected one registry for SDY1289, found []</li><li>SDY1291_assays_AS_v2.json: expected one registry for SDY1291, found []</li><li>SDY1293_assays_AS_v2.json: expected one registry for SDY1293, found []</li><li>SDY1294_assays_AS_v2.json: expected one registry for SDY1294, found []</li><li>SDY1325_assay_AS_v2.json: expected one registry for SDY1325, found []</li><li>SDY1328_assays_AS_v2.json: expected one registry for SDY1328, found []</li><li>SDY1364_2_assays_AS_v2.json: expected one registry for SDY1364, found []</li><li>SDY1364_Assay_Hailong.json: expected one registry for SDY1364, found []</li><li>SDY1373_assays_AS_v2.json: expected one registry for SDY1373, found []</li><li>SDY1389_assays_AS_v2.json: expected one registry for SDY1389, found []</li><li>SDY1393_Assay_Hailong.json: expected one registry for SDY1393, found []</li><li>SDY1596_Assay_Hailong.json: expected one registry for SDY1596, found []</li><li>SDY1630_assaysAS_v2.json: expected one registry for SDY1630, found []</li><li>SDY1640_assays_AS_v2.json: expected one registry for SDY1640, found []</li><li>SDY1654_assays_AS_v2.json: expected one registry for SDY1654, found []</li><li>SDY1655_assays_AS_v2.json: expected one registry for SDY1655, found []</li><li>SDY1669_assays_AS_v2.json: expected one registry for SDY1669, found []</li><li>SDY1708_Assay_Hailong.json: expected one registry for SDY1708, found []</li><li>SDY180_assays_AS_v2_edit.json: expected one registry for SDY180, found []</li><li>SDY1991_Assay_Hailong.json: expected one registry for SDY1991, found []</li><li>SDY1995_Assay_Hailong.json: expected one registry for SDY1995, found []</li><li>SDY212_assays_AS_v2.json: expected one registry for SDY212, found []</li><li>SDY2189_assays_AS_v2.json: expected one registry for SDY2189, found []</li><li>SDY404_assays_AS_v2.json: expected one registry for SDY404, found []</li><li>SDY80_assays_AS_v2.json: expected one registry for SDY80, found []</li><li>SDY984_assays_AS_v2.json: expected one registry for SDY984, found []</li></ul>
+<p>The benchmark is a recall reference, not an exhaustive list, so EXTRA rows are candidates for curator review rather than errors.</p>
+</details>
+<h2 style="margin-top:20px">Per paper</h2>
+<div class="wrap"><table class="summary"><thead><tr><th>Study</th><th>PMID</th><th>Bench</th><th>Agent</th>
+<th class="match-c">MATCH</th><th class="gran-c">GRANULARITY</th><th class="conflict-c">OBI CONFLICT</th><th class="unmapped-c">OBI UNMAPPED</th><th class="split-c">SPLIT</th><th class="missed-c">MISSED</th><th class="extra-c">EXTRA</th>
+<th>Recall</th><th title="same or parent/child OBI term">OBI recall</th><th>Notes</th></tr></thead><tbody></tbody>
+<tfoot><tr><td>Total</td><td>0 papers</td><td class="n">0</td><td class="n">0</td><td class="n match-c"></td><td class="n gran-c"></td><td class="n conflict-c"></td><td class="n unmapped-c"></td><td class="n split-c"></td><td class="n missed-c"></td><td class="n extra-c"></td><td class="n">0%</td><td class="n">0%</td><td></td></tr></tfoot></table></div>
+<div class="toolbar"><label><input type="checkbox" class="flt" value="MATCH" ><span class="badge match">MATCH</span> <span class="sub">Same OBI term on both sides</span></label><label><input type="checkbox" class="flt" value="MATCH_GRANULARITY" checked><span class="badge gran">MATCH GRANULARITY</span> <span class="sub">Same assay; one OBI term is a parent/child of the other</span></label><label><input type="checkbox" class="flt" value="MATCH_OBI_CONFLICT" checked><span class="badge conflict">MATCH OBI CONFLICT</span> <span class="sub">Paired by name, but the two sides chose different OBI terms</span></label><label><input type="checkbox" class="flt" value="MATCH_OBI_UNMAPPED" checked><span class="badge unmapped">MATCH OBI UNMAPPED</span> <span class="sub">Paired by name, but one side has no OBI term</span></label><label><input type="checkbox" class="flt" value="SPLIT" checked><span class="badge split">SPLIT</span> <span class="sub">Paired one-to-one, and more agent entries sit on the same term (an annotation on a MATCH row)</span></label><label><input type="checkbox" class="flt" value="MISSED" checked><span class="badge missed">MISSED</span> <span class="sub">In the benchmark, not found by the agent</span></label><label><input type="checkbox" class="flt" value="EXTRA" checked><span class="badge extra">EXTRA</span> <span class="sub">Found by the agent, not in the benchmark</span></label>
+<input type="search" id="q" placeholder="Search assay, OBI, quote…">
+<button id="exp">Expand evidence</button><button id="theme">Theme</button>
+<span class="sub" id="cnt"></span></div>
+
+</main>
+<script>
+const rows=[...document.querySelectorAll('tr.row')];
+function apply(){
+  const on=new Set([...document.querySelectorAll('.flt:checked')].map(x=>x.value));
+  const q=document.getElementById('q').value.trim().toLowerCase();
+  let n=0;
+  rows.forEach(r=>{const ok=on.has(r.dataset.status)&&(!q||r.textContent.toLowerCase().includes(q));r.classList.toggle('hidden',!ok);if(ok)n++;});
+  document.querySelectorAll('section.paper').forEach(s=>s.classList.toggle('hidden',!s.querySelector('tr.row:not(.hidden)')));
+  document.getElementById('cnt').textContent=n+' rows shown';
+}
+document.querySelectorAll('.flt').forEach(x=>x.addEventListener('change',apply));
+document.getElementById('q').addEventListener('input',apply);
+let open=false;
+document.getElementById('exp').onclick=e=>{open=!open;document.querySelectorAll('.cmp details').forEach(d=>d.open=open);e.target.textContent=open?'Collapse evidence':'Expand evidence';};
+document.getElementById('theme').onclick=()=>{const r=document.documentElement;const dark=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;r.dataset.theme=dark?'light':'dark';};
+apply();
+</script></body></html>

@@ -249,7 +249,7 @@ def run_names(runs_dir: Path) -> list[str]:
     """Every run folder under `runs/`: `r1`, `r2` ... numerically, then any named variant."""
     if not runs_dir.exists():
         return []
-    names = [d.name for d in runs_dir.iterdir() if d.is_dir()]
+    names = [d.name for d in runs_dir.iterdir() if d.is_dir() and d.name != "raw"]  # raw replies, not a run
     numbered = sorted((n for n in names if re.fullmatch(r"r\d+", n)), key=lambda n: int(n[1:]))
     return numbered + sorted(n for n in names if not re.fullmatch(r"r\d+", n))
 
