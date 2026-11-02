@@ -1,10 +1,13 @@
 {
+  "mode": "default",
   "benchmark_dir": "data/benchmark_assay/benchmark_assay_v5",
   "registry_dir": "experiment/llm_baseline/runs/r3",
   "totals": {
     "papers": 31,
     "skipped": [],
-    "registries_without_benchmark": [],
+    "registries_without_benchmark": [
+      "comparison"
+    ],
     "benchmark_raw": 158,
     "benchmark_total": 158,
     "ours_total": 252,
@@ -23,6 +26,7 @@
       "EXTRA": 97
     },
     "split": 0,
+    "term_only_pairs": 2,
     "recall": 0.9810126582278481,
     "precision": 0.6150793650793651,
     "f1": 0.7560975609756098,
@@ -46,6 +50,7 @@
         "missed": 0,
         "extra": 3,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -446,6 +451,7 @@
         "missed": 0,
         "extra": 5,
         "split": 0,
+        "term_only_pairs": 1,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -454,7 +460,7 @@
           "status": "MATCH",
           "tier": "obi_exact",
           "signals": [],
-          "reason": "same OBI term",
+          "reason": "same OBI term; term-only pair: no shared name, alias or quote confirms it",
           "benchmark": {
             "key": "microarray",
             "obi_id": "OBI:0001463",
@@ -988,6 +994,7 @@
         "missed": 0,
         "extra": 0,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -1172,6 +1179,7 @@
         "missed": 0,
         "extra": 3,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -1502,6 +1510,7 @@
         "missed": 0,
         "extra": 0,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -1901,6 +1910,7 @@
         "missed": 0,
         "extra": 2,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -2374,6 +2384,7 @@
         "missed": 0,
         "extra": 11,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -2876,6 +2887,7 @@
         "missed": 0,
         "extra": 5,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -3187,6 +3199,7 @@
         "missed": 1,
         "extra": 2,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 0.8
       },
       "merged_groups": [],
@@ -3519,6 +3532,7 @@
         "missed": 0,
         "extra": 2,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -3875,6 +3889,7 @@
         "missed": 0,
         "extra": 3,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -4251,6 +4266,7 @@
         "missed": 0,
         "extra": 3,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -4629,6 +4645,7 @@
         "missed": 0,
         "extra": 4,
         "split": 0,
+        "term_only_pairs": 1,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -4637,7 +4654,7 @@
           "status": "MATCH_GRANULARITY",
           "tier": "obi_ancestry",
           "signals": [],
-          "reason": "our term OBI:0001977 cytometry assay is broader than the benchmark's OBI:0600031 enzyme-linked immunospot assay",
+          "reason": "our term OBI:0001977 cytometry assay is broader than the benchmark's OBI:0600031 enzyme-linked immunospot assay; term-only pair: no shared name, alias or quote confirms it",
           "benchmark": {
             "key": "ELISpot",
             "obi_id": "OBI:0600031",
@@ -4910,6 +4927,7 @@
         "missed": 0,
         "extra": 0,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -5157,6 +5175,7 @@
         "missed": 0,
         "extra": 2,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -5564,6 +5583,7 @@
         "missed": 0,
         "extra": 1,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -5766,6 +5786,7 @@
         "missed": 0,
         "extra": 2,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -5987,6 +6008,7 @@
         "missed": 0,
         "extra": 5,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -6307,6 +6329,7 @@
         "missed": 0,
         "extra": 4,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -6765,6 +6788,7 @@
         "missed": 0,
         "extra": 3,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -7093,6 +7117,7 @@
         "missed": 0,
         "extra": 1,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -7358,6 +7383,7 @@
         "missed": 0,
         "extra": 6,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -8040,6 +8066,7 @@
         "missed": 0,
         "extra": 2,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -8258,6 +8285,7 @@
         "missed": 0,
         "extra": 2,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -8673,6 +8701,7 @@
         "missed": 0,
         "extra": 9,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -9136,6 +9165,7 @@
         "missed": 0,
         "extra": 3,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -9434,6 +9464,7 @@
         "missed": 1,
         "extra": 2,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 0.875
       },
       "merged_groups": [],
@@ -9928,6 +9959,7 @@
         "missed": 1,
         "extra": 5,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 0.9
       },
       "merged_groups": [],
@@ -10598,6 +10630,7 @@
         "missed": 0,
         "extra": 1,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -10823,6 +10856,7 @@
         "missed": 0,
         "extra": 0,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -11062,6 +11096,7 @@
         "missed": 0,
         "extra": 6,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],

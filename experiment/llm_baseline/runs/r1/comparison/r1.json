@@ -1,10 +1,13 @@
 {
+  "mode": "default",
   "benchmark_dir": "data/benchmark_assay/benchmark_assay_v5",
   "registry_dir": "experiment/llm_baseline/runs/r1",
   "totals": {
     "papers": 31,
     "skipped": [],
-    "registries_without_benchmark": [],
+    "registries_without_benchmark": [
+      "comparison"
+    ],
     "benchmark_raw": 158,
     "benchmark_total": 157,
     "ours_total": 244,
@@ -23,6 +26,7 @@
       "EXTRA": 91
     },
     "split": 1,
+    "term_only_pairs": 2,
     "recall": 0.9681528662420382,
     "precision": 0.6229508196721312,
     "f1": 0.7581047381546135,
@@ -46,6 +50,7 @@
         "missed": 0,
         "extra": 2,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -422,6 +427,7 @@
         "missed": 1,
         "extra": 3,
         "split": 1,
+        "term_only_pairs": 0,
         "recall": 0.875
       },
       "merged_groups": [],
@@ -909,6 +915,7 @@
         "missed": 0,
         "extra": 2,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -1144,6 +1151,7 @@
         "missed": 0,
         "extra": 4,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -1501,6 +1509,7 @@
         "missed": 0,
         "extra": 2,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -1954,6 +1963,7 @@
         "missed": 0,
         "extra": 3,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -2454,6 +2464,7 @@
         "missed": 0,
         "extra": 13,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -3006,6 +3017,7 @@
         "missed": 0,
         "extra": 6,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -3342,6 +3354,7 @@
         "missed": 0,
         "extra": 1,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -3670,6 +3683,7 @@
         "missed": 0,
         "extra": 2,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -4028,6 +4042,7 @@
         "missed": 0,
         "extra": 3,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -4402,6 +4417,7 @@
         "missed": 0,
         "extra": 3,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -4780,6 +4796,7 @@
         "missed": 0,
         "extra": 3,
         "split": 0,
+        "term_only_pairs": 1,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -4788,7 +4805,7 @@
           "status": "MATCH_GRANULARITY",
           "tier": "obi_ancestry",
           "signals": [],
-          "reason": "our term OBI:0001977 cytometry assay is broader than the benchmark's OBI:0600031 enzyme-linked immunospot assay",
+          "reason": "our term OBI:0001977 cytometry assay is broader than the benchmark's OBI:0600031 enzyme-linked immunospot assay; term-only pair: no shared name, alias or quote confirms it",
           "benchmark": {
             "key": "ELISpot",
             "obi_id": "OBI:0600031",
@@ -5034,6 +5051,7 @@
         "missed": 0,
         "extra": 0,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -5281,6 +5299,7 @@
         "missed": 0,
         "extra": 2,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -5688,6 +5707,7 @@
         "missed": 0,
         "extra": 1,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -5890,6 +5910,7 @@
         "missed": 0,
         "extra": 2,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -6111,6 +6132,7 @@
         "missed": 1,
         "extra": 6,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 0.6667
       },
       "merged_groups": [],
@@ -6436,6 +6458,7 @@
         "missed": 0,
         "extra": 3,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [
@@ -6834,6 +6857,7 @@
         "missed": 0,
         "extra": 1,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -7107,6 +7131,7 @@
         "missed": 0,
         "extra": 2,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -7399,6 +7424,7 @@
         "missed": 0,
         "extra": 2,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -7967,6 +7993,7 @@
         "missed": 0,
         "extra": 2,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -8195,6 +8222,7 @@
         "missed": 0,
         "extra": 2,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -8609,6 +8637,7 @@
         "missed": 0,
         "extra": 7,
         "split": 0,
+        "term_only_pairs": 1,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -8667,7 +8696,7 @@
           "status": "MATCH_GRANULARITY",
           "tier": "obi_ancestry",
           "signals": [],
-          "reason": "our term OBI:1110154 ELISA measuring epitope specific interleukin-5 production by T cells is more specific than the benchmark's OBI:0000661 enzyme-linked immunosorbent assay",
+          "reason": "our term OBI:1110154 ELISA measuring epitope specific interleukin-5 production by T cells is more specific than the benchmark's OBI:0000661 enzyme-linked immunosorbent assay; term-only pair: no shared name, alias or quote confirms it",
           "benchmark": {
             "key": "ELISA",
             "obi_id": "OBI:0000661",
@@ -9015,6 +9044,7 @@
         "missed": 0,
         "extra": 3,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -9315,6 +9345,7 @@
         "missed": 2,
         "extra": 4,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 0.75
       },
       "merged_groups": [],
@@ -9840,6 +9871,7 @@
         "missed": 0,
         "extra": 4,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -10511,6 +10543,7 @@
         "missed": 0,
         "extra": 0,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -10710,6 +10743,7 @@
         "missed": 0,
         "extra": 0,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 1.0
       },
       "merged_groups": [],
@@ -10949,6 +10983,7 @@
         "missed": 1,
         "extra": 3,
         "split": 0,
+        "term_only_pairs": 0,
         "recall": 0.8889
       },
       "merged_groups": [],
