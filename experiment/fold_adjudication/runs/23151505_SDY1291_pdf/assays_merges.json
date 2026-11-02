@@ -1,0 +1,29 @@
+{
+  "summary": {
+    "groups_merged": 0,
+    "entries_folded": 0,
+    "folds_blocked": 1
+  },
+  "results": [],
+  "blocked": [
+    {
+      "member": "transcription profiling by array assay (2)",
+      "kept_apart_from": "transcription profiling by array assay",
+      "anchor": "transcription profiling by array assay",
+      "obi_id": "OBI:0001463",
+      "obi_label": "transcription profiling by array assay",
+      "reason": "readouts differs: 'gene and exon-level RNA expression in peripheral blood mononuclear cells' vs 'gene expression in peripheral blood mononuclear cells'",
+      "judged": {
+        "verdict": "DIFFERENT",
+        "reason": "both use PBMC transcription profiling by array, but they are different measurements because they were performed on different microarray platforms in different study arms (Affymetrix Human Exon ST 1.0 for in vivo/one in vitro study vs Agilent SurePrint G3 Human GE for the comparative in vitro study)."
+      }
+    }
+  ],
+  "key_map": {
+    "Affymetrix Exon Arrays": "transcription profiling by array assay",
+    "Agilent 3′ Arrays": "transcription profiling by array assay (2)",
+    "Quantitative Real-Time PCR": "real time reverse-transcription polymerase chain reaction assay",
+    "Multiplex Cytokine Analysis": "cytometric bead array assay",
+    "Enumeration and Phenotyping of Fresh Blood Cell Populations": "flow cytometry assay"
+  }
+}

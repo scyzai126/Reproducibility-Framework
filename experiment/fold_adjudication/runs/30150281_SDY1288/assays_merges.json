@@ -1,0 +1,44 @@
+{
+  "summary": {
+    "groups_merged": 0,
+    "entries_folded": 0,
+    "folds_blocked": 2
+  },
+  "results": [],
+  "blocked": [
+    {
+      "member": "real time reverse-transcription polymerase chain reaction assay (2)",
+      "kept_apart_from": "real time reverse-transcription polymerase chain reaction assay",
+      "anchor": "real time reverse-transcription polymerase chain reaction assay",
+      "obi_id": "OBI:0000911",
+      "obi_label": "real time reverse-transcription polymerase chain reaction assay",
+      "reason": "sample_type differs: 'acute-phase samples' vs 'patient serum'",
+      "judged": {
+        "verdict": "DIFFERENT",
+        "reason": "Record A is a diagnostic RT-PCR detecting CHIKV in acute-phase samples, whereas Record B is a quantitative RT-PCR measuring CHIKV copy number in patient serum."
+      }
+    },
+    {
+      "member": "enzyme-linked immunosorbent assay (2)",
+      "kept_apart_from": "enzyme-linked immunosorbent assay",
+      "anchor": "enzyme-linked immunosorbent assay",
+      "obi_id": "OBI:0000661",
+      "obi_label": "enzyme-linked immunosorbent assay",
+      "reason": "readouts differs: 'IgM seroconversion' vs 'anti-CHIKV antibody titer increase'",
+      "judged": {
+        "verdict": "DIFFERENT",
+        "reason": "they measure different antibody responses in the same paired sera—Record A detects anti-CHIKV IgM seroconversion, whereas Record B measures a >4-fold increase in total anti-CHIKV antibody titer by inhibition ELISA."
+      }
+    }
+  ],
+  "key_map": {
+    "real-time RT–PCR": "real time reverse-transcription polymerase chain reaction assay",
+    "virus isolation": "infectious agent detection assay",
+    "IgM capture ELISA": "enzyme-linked immunosorbent assay",
+    "Inhibition ELISA": "enzyme-linked immunosorbent assay (2)",
+    "mass cytometry for cellular phenotyping": "cytometry time of flight assay",
+    "multiplex ELISA": "cytometric bead array assay",
+    "CHIKV viral titer assays": "real time reverse-transcription polymerase chain reaction assay (2)",
+    "RNA-seq": "bulk RNA-seq assay"
+  }
+}

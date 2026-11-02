@@ -7,6 +7,7 @@ from app.agent.assay_fold_judge import (
     judgeable,
     judged_pairs,
     parse_judge_reply,
+    reconcile_report,
 )
 
 ELISA_TERM = {"obi_id": "OBI:0000661", "obi_label": "enzyme-linked immunosorbent assay"}
@@ -129,3 +130,40 @@ def test_the_prompt_shows_both_records_and_the_shared_term():
     assert "anti-CTB IgG titres by optical density" in prompt
     assert "anti-diphtheria IgG concentrations" in prompt
     assert "{" not in prompt  # every placeholder filled
+
+
+def test_the_report_carries_the_verdicts_back_onto_round_fives_own_records():
+    """Round 5 records a refusal by the paper's wordings; the judge re-finds the pair by the
+    canonical keys. The verdict lands on round 5's record, a SAME fold is written by the
+    wordings it folded, and the key_map points every folded wording at the survivor."""
+    keys = {"GM1-ELISA": "enzyme-linked immunosorbent assay",
+            "commercial kit": "enzyme-linked immunosorbent assay (2)",
+            "ICS": "flow cytometry assay (2)", "FACS": "flow cytometry assay",
+            "flow": "flow cytometry assay"}
+    blocked = [
+        {"member": "commercial kit", "kept_apart_from": "enzyme-linked immunosorbent assay",
+         "anchor": "GM1-ELISA", "obi_id": "OBI:0000661", "reason": "readouts differs: 'a' vs 'b'"},
+        {"member": "ICS", "kept_apart_from": "flow cytometry assay", "anchor": "FACS",
+         "obi_id": "OBI:0000916", "reason": "readouts differs: 'c' vs 'd'"},
+    ]
+    judged_folds = [{"key": "enzyme-linked immunosorbent assay", "obi_id": "OBI:0000661",
+                     "obi_label": "enzyme-linked immunosorbent assay",
+                     "members": ["enzyme-linked immunosorbent assay",
+                                 "enzyme-linked immunosorbent assay (2)"],
+                     "folded": ["enzyme-linked immunosorbent assay (2)"],
+                     "judged": {"verdict": "SAME", "reason": "one ELISA"}}]
+    judged_blocked = [{"member": "flow cytometry assay (2)", "anchor": "flow cytometry assay",
+                       "kept_apart_from": "flow cytometry assay", "obi_id": "OBI:0000916",
+                       "reason": "readouts differs: 'c' vs 'd'",
+                       "judged": {"verdict": "DIFFERENT", "reason": "two marker sets"}}]
+
+    out_keys, folds, out_blocked = reconcile_report(keys, blocked, judged_folds, judged_blocked)
+
+    assert out_keys["commercial kit"] == "enzyme-linked immunosorbent assay"
+    assert out_keys["GM1-ELISA"] == "enzyme-linked immunosorbent assay"
+    assert out_keys["ICS"] == "flow cytometry assay (2)"  # untouched
+    assert folds == [{**judged_folds[0], "members": ["GM1-ELISA", "commercial kit"],
+                      "folded": ["commercial kit"]}]
+    assert out_blocked == [{**blocked[1],
+                            "judged": {"verdict": "DIFFERENT", "reason": "two marker sets"}}]
+    assert keys["commercial kit"] == "enzyme-linked immunosorbent assay (2)"  # input untouched

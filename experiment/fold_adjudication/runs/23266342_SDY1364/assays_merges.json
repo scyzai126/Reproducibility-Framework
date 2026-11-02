@@ -1,0 +1,28 @@
+{
+  "summary": {
+    "groups_merged": 0,
+    "entries_folded": 0,
+    "folds_blocked": 1
+  },
+  "results": [],
+  "blocked": [
+    {
+      "member": "flow cytometry assay (2)",
+      "kept_apart_from": "flow cytometry assay",
+      "anchor": "flow cytometry assay",
+      "obi_id": "OBI:0000916",
+      "obi_label": "flow cytometry assay",
+      "reason": "readouts differs: 'CD4+ and CD8+ T-cell intracellular IFNγ, IL2 and TNFα after stimulation; acquired on a flow cytometer' vs 'surface expression of CCR4, CCR6, CCR7 and CXCR3 on CD4+ T cells'",
+      "judged": {
+        "verdict": "DIFFERENT",
+        "reason": "Record A measures intracellular cytokine responses (IFNγ, IL2, TNFα in CD4+/CD8+ T cells after stimulation) in frozen PBMCs, whereas Record B measures surface chemokine receptor expression (CCR4, CCR6, CCR7, CXCR3 on CD4+ T cells) in PBMCs."
+      }
+    }
+  ],
+  "key_map": {
+    "ex vivo IFNγ ELISpot assay": "enzyme-linked immunospot assay",
+    "Surface and intracellular cytokine staining": "flow cytometry assay",
+    "IgG enzyme linked immunosorbent assay (ELISA)": "enzyme-linked immunosorbent assay",
+    "chemokine receptor surface staining": "flow cytometry assay (2)"
+  }
+}

@@ -186,7 +186,7 @@ def test_the_estimate_costs_nothing_and_sizes_what_it_can(extracted, client, no_
     body = response.json()
     # The web run's data step is priced beside the assay rounds; this paper names no accession.
     assert {r["name"]: r["calls"] for r in body["rounds"]} == {
-        "extract": 1, "verify": 1, "correct": 0, "obi": 0, "canonicalize": 0,
+        "extract": 1, "verify": 1, "correct": 0, "obi": 0, "canonicalize": 0, "judge": 0,
         "data_availability": 0}
     assert body["total_calls_known"] is True
     assert no_spending.calls == 0

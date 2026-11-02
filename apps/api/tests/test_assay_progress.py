@@ -94,7 +94,9 @@ async def test_every_round_announces_itself_before_it_spends_and_again_when_it_i
             opened.append((event["round"], event["state"]))
     closed = [e["round"] for e in events if e["state"] == "done"]
     assert opened == [(name, "running") for name in
-                      ("extract", "verify", "correct", "obi", "canonicalize")]
+                      ("extract", "verify", "correct", "obi", "canonicalize")] + [
+        # Round 6 has nothing to ask about when round 5 refused no fold, and says so.
+        ("judge", "skipped")]
     assert closed == ["extract", "verify", "correct", "obi", "canonicalize"]
 
 

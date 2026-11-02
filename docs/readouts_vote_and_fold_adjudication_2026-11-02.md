@@ -63,7 +63,7 @@ that still matched the canonicalized registries into `assays.json` and recountin
 Tests: `test_a_detail_two_runs_wrote_survives_the_lenient_vote`,
 `test_a_detail_only_one_run_wrote_still_does_not_survive` in `test_assay_consensus.py`.
 
-## Part 2 — adjudicating blocked folds (built, not yet run for money)
+## Part 2 — adjudicating blocked folds (run, scored, wired in as round 6)
 
 `apps/api/app/agent/assay_fold_judge.py` with `apps/api/app/prompts/judge_fold.txt`.
 `adjudicate(assays, obi, judge)` re-finds the blocked folds on a canonicalized registry and asks
@@ -83,17 +83,58 @@ record. Every reply lands under `judge` in `assays_raw.json`. Tests in
 The 2 skipped differ on the technique (SDY1264's CPE vs PRNT, SDY984's Luminex vs CBA). The
 paid run writes to `experiment/fold_adjudication/runs/`, never in place.
 
-**Decision rule for wiring it into round 5**: run the 20 calls, score `runs/` with
-`scripts/compare_assay_benchmark_v2.py --registry-dir`, and read every verdict. The step goes
-into `assay_service.py` (after `canonicalize_registry`, before `build_merge_report`, with a
-`judge` row in `estimate_run`) only if the benchmark does not lose and no pair the benchmark
-keeps apart (SDY1328, SDY212, SDY1630's ICS and CD107a, SDY1640) comes back `SAME`. Otherwise
-the 22 `REVIEW  not folded` lines are the final state and the module stays as the record of
-what was tried.
+### The paid run (20 calls, `experiment/fold_adjudication/run_2026-11-02.txt`)
+
+| verdict | pairs |
+|---|---|
+| SAME | 1 — SDY2189: FRNT "(2)" onto the FRNT entry; the benchmark lists one FRNT row |
+| DIFFERENT | 19 |
+
+Every pair the benchmark keeps apart came back DIFFERENT with the right reason: SDY1328 "anti-
+Cholera toxin B subunit IgG whereas Record B measures anti-Diphtheria IgG"; SDY212
+"immunophenotyping whereas Record B measures cytokine-induced STAT1/3/5 phosphorylation";
+SDY1630's three NK pairs (profiling, IFN-γ production, CD107a degranulation); SDY1640, SDY1655,
+SDY1294, SDY1364 (immunophenotyping against ICS); SDY984 (cytokine against IgG ELISPOT); SDY1260
+(serum isotypes against supernatant cytokines). SDY1291's two array write-ups came back
+DIFFERENT too — "Affymetrix Human Exon ST for the in vivo study vs Agilent SurePrint for the
+in vitro study" — where the benchmark writes one Affymetrix row; two platforms are two
+measurements by the extraction's own rule, so this stays a REVIEW line rather than a fold.
+
+Scored with `scripts/compare_assay_benchmark_v2.py` (baseline rerun the same day as
+`assay_result_v3/comparison/benchmark_v5_vs_v3_baseline_2026-11-02`, judged copies as
+`experiment/fold_adjudication/runs/comparison/benchmark_v5_vs_judged_2026-11-02`):
+
+| | agent entries | matched (exact) | missed | extra | split | precision | recall |
+|---|---|---|---|---|---|---|---|
+| v3 as stored | 177 | 156 (140) | 1 | 4 | 15 | 88.1% | 99.4% |
+| after the judge | 176 | 156 (140) | 1 | 4 | 14 | 88.6% | 99.4% |
+
+One split removed, nothing lost. The decision rule held, so the step is wired in.
+
+### Round 6 in the pipeline
+
+- `assay_service._run_rounds`: after round 5 writes its report, round 6 (`rounds["judge"]`)
+  runs `adjudicate` on the canonical registry when any blocked fold is judgeable, else reports
+  `skipped` with 0 calls. A failed call leaves round 5's report standing (`source: failed`).
+  `reconcile_report` carries each verdict back onto round 5's own blocked record (by the
+  paper's wording, found through `key_map`), writes a SAME fold by the wordings it folded, and
+  points every folded wording at the survivor in `key_map`.
+- `estimate_run` adds a round-6 row: one call per refused pair on the last run's registry,
+  `basis: last_run`, `None` when nothing is stored. `run_assay_pipeline.py --dry-run` prints it
+  with the pairs it would ask about.
+- `run_assay_pipeline.py` prints `JUDGED  SAME: <reason>` under a judged `MERGED` line and
+  `JUDGED  DIFFERENT: <reason>` under a judged `REVIEW  not folded` line.
+- `run_assay_merge.py --judge` runs round 6 on a stored registry (`--judge --dry-run` counts).
+- Tests: `test_assay_fold_judge.py` (module, with `reconcile_report`), four round-6 tests in
+  `test_assay_service.py` (SAME folds, DIFFERENT keeps the record with its reason, nothing
+  refused never calls, a failed call leaves round 5 standing), the round-6 estimate row in
+  `test_assay_estimate.py`, the printer in `test_run_assay_pipeline.py`. Chain tests stub the
+  judge to DIFFERENT (`stub_judge`, autouse) so none reaches the network.
 
 ## Not done, on purpose
 
 - `readouts` is not removed from `_IDENTITY_FIELDS`; no lenient string match is added to round 5.
-- No paper was re-run through rounds 1–4; the paid adjudication waits for a go-ahead.
+- No paper was re-run through rounds 1–4. The v3 registries on disk are unchanged: the judged
+  copies live under `experiment/fold_adjudication/runs/`.
 - The pre-existing 10 test failures in `test_experiment_resolver`, `test_file_reader`,
   `test_input_routing` and `test_query_builder` are unrelated and unchanged (1318 passed).

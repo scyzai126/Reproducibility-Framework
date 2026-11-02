@@ -47,6 +47,18 @@ def stub_obi(monkeypatch):
     return _fake
 
 
+@pytest.fixture(autouse=True)
+def stub_judge(monkeypatch):
+    """Round 6 answers DIFFERENT from a stub, never from the network: a chain test that
+    happens to keep two entries apart would otherwise pay for a verdict it is not about.
+    Round 6's own behaviour is covered by the judge tests below and test_assay_fold_judge.py."""
+    def _different(*_args, **_kwargs):
+        return {"verdict": "DIFFERENT", "reason": "stubbed"}
+
+    monkeypatch.setattr(assay_service, "judge_fold", _different)
+    return _different
+
+
 @pytest.fixture
 def paper(tmp_path, monkeypatch):
     """A one-paper repo: XML on disk under all three roots redirected into tmp_path.
@@ -146,7 +158,7 @@ async def test_a_cold_paper_runs_all_five_rounds(paper):
     assert client.calls == 2
     assert result["meta"]["llm_calls"] == 2
     assert [r["source"] for r in result["rounds"].values()] == [
-        "extracted", "verified", "corrected", "mapped", "canonical"]
+        "extracted", "verified", "corrected", "mapped", "canonical", "skipped"]
     for name in ("assays.json", "assays_verification.json", "assays_corrections.json"):
         assert (paper / name).exists(), name
 
@@ -163,7 +175,7 @@ async def test_a_second_request_for_the_same_paper_pays_again(paper):
     assert second.calls == first.calls == 2
     assert result["meta"]["llm_calls"] == 2
     assert [r["source"] for r in result["rounds"].values()] == [
-        "extracted", "verified", "corrected", "mapped", "canonical"]
+        "extracted", "verified", "corrected", "mapped", "canonical", "skipped"]
 
 
 @pytest.mark.asyncio
@@ -261,7 +273,7 @@ def test_the_route_returns_the_corrected_registry(paper):
     # Keyed by the OBI term round 5 canonicalized it to, not by the paper's wording.
     assert list(body["assays"]) == ["flow cytometry assay"]
     assert [r["source"] for r in body["rounds"].values()] == [
-        "extracted", "verified", "corrected", "mapped", "canonical"]
+        "extracted", "verified", "corrected", "mapped", "canonical", "skipped"]
 
 
 def test_the_route_returns_the_obi_terms_corrections_and_merges_it_computed(paper):
@@ -384,6 +396,88 @@ async def test_two_entries_on_one_obi_term_leave_one_entry_keyed_by_that_term(pa
     assert benchmark["flow cytometry assay"]["additional_evidence"][0]["name_in_paper"] == "ELISA kits"
     assert json.loads((paper / "assays_merges.json").read_text())["summary"] == {
         "groups_merged": 1, "entries_folded": 1, "folds_blocked": 0}
+
+
+# ── round 6: a fold round 5 refused is asked about once ──────────────────────
+
+def _two_readouts_body() -> str:
+    """Two write-ups on one term whose readouts differ: round 5 keeps them apart."""
+    return json.dumps({
+        "GM1-ELISA": {**_ENTRY, "name_in_paper": "GM1-ELISA", "readouts": "anti-CTB IgG"},
+        "ELISA kits": {**_ENTRY, "name_in_paper": "ELISA kits", "readouts": "anti-diphtheria IgG"},
+    })
+
+
+@pytest.mark.asyncio
+async def test_a_refused_fold_is_judged_once_and_a_same_verdict_folds_it(paper, monkeypatch):
+    asked = []
+
+    def _same(anchor_key, anchor, member_key, member, obi_label, model=None):
+        asked.append((anchor_key, member_key, obi_label))
+        return {"verdict": "SAME", "reason": "one anti-toxin ELISA described twice"}
+    monkeypatch.setattr(assay_service, "judge_fold", _same)
+
+    result = await assay_report("111", "SDY1", _Client(_two_readouts_body(), _verification_body()))
+
+    assert asked == [("flow cytometry assay", "flow cytometry assay (2)", "flow cytometry assay")]
+    assert result["rounds"]["canonicalize"]["calls"] == 0
+    assert result["rounds"]["judge"] == {"source": "judged", "calls": 1, "pairs": 1,
+                                         "same": 1, "different": 0}
+    assert list(json.loads((paper / "assays.json").read_text())) == ["flow cytometry assay"]
+    assert list(json.loads((paper / "assays_OBI.json").read_text())) == ["flow cytometry assay"]
+    merges = json.loads((paper / "assays_merges.json").read_text())
+    assert merges["summary"] == {"groups_merged": 1, "entries_folded": 1, "folds_blocked": 0}
+    # Written by the paper's wordings, like a fold round 5 makes, with the verdict beside it.
+    assert merges["results"][0]["folded"] == ["ELISA kits"]
+    assert merges["results"][0]["judged"]["verdict"] == "SAME"
+    # The key_map still joins the folded wording to the key it is delivered under.
+    assert merges["key_map"] == {"GM1-ELISA": "flow cytometry assay",
+                                 "ELISA kits": "flow cytometry assay"}
+
+
+@pytest.mark.asyncio
+async def test_a_different_verdict_keeps_the_review_line_with_the_reason(paper, monkeypatch):
+    monkeypatch.setattr(assay_service, "judge_fold",
+                        lambda *a, **k: {"verdict": "DIFFERENT", "reason": "two antigens"})
+
+    result = await assay_report("111", "SDY1", _Client(_two_readouts_body(), _verification_body()))
+
+    assert result["rounds"]["judge"] == {"source": "judged", "calls": 1, "pairs": 1,
+                                         "same": 0, "different": 1}
+    assert list(json.loads((paper / "assays.json").read_text())) == [
+        "flow cytometry assay", "flow cytometry assay (2)"]
+    blocked = json.loads((paper / "assays_merges.json").read_text())["blocked"]
+    assert len(blocked) == 1
+    assert blocked[0]["member"] == "ELISA kits"  # round 5's own record, by the paper's wording
+    assert blocked[0]["reason"].startswith("readouts differs")
+    assert blocked[0]["judged"] == {"verdict": "DIFFERENT", "reason": "two antigens"}
+
+
+@pytest.mark.asyncio
+async def test_a_run_with_nothing_refused_never_calls_the_judge(paper, monkeypatch):
+    def _boom(*_a, **_k):
+        raise AssertionError("judge called")
+    monkeypatch.setattr(assay_service, "judge_fold", _boom)
+
+    result = await assay_report("111", "SDY1", _Client(_two_assays_body(), _verification_body()))
+
+    assert result["rounds"]["judge"] == {"source": "skipped", "calls": 0, "pairs": 0}
+
+
+@pytest.mark.asyncio
+async def test_a_failed_judge_call_leaves_round_five_standing(paper, monkeypatch):
+    def _down(*_a, **_k):
+        raise RuntimeError("network down")
+    monkeypatch.setattr(assay_service, "judge_fold", _down)
+
+    result = await assay_report("111", "SDY1", _Client(_two_readouts_body(), _verification_body()))
+
+    assert result["rounds"]["judge"]["source"] == "failed"
+    assert "network down" in result["rounds"]["judge"]["error"]
+    assert list(json.loads((paper / "assays.json").read_text())) == [
+        "flow cytometry assay", "flow cytometry assay (2)"]
+    blocked = json.loads((paper / "assays_merges.json").read_text())["blocked"]
+    assert len(blocked) == 1 and "judged" not in blocked[0]
 
 
 @pytest.mark.asyncio
@@ -883,7 +977,10 @@ async def test_a_broad_mapping_is_delivered_apart_and_reported(paper, monkeypatc
     assert stored["blocked"] == [{
         "member": "flow cytometry for DC activation", "kept_apart_from": "flow cytometry assay",
         "anchor": "flow cytometry", "obi_id": "OBI:0000916", "obi_label": "flow cytometry assay",
-        "reason": "readouts differs: 'cell frequencies' vs 'CD80 and CD86 on DCs'"}]
+        "reason": "readouts differs: 'cell frequencies' vs 'CD80 and CD86 on DCs'",
+        # Round 6 asked about the pair and the stub kept it apart; the verdict rides on round
+        # 5's own record so the REVIEW line can say why.
+        "judged": {"verdict": "DIFFERENT", "reason": "stubbed"}}]
     assert stored["key_map"]["flow cytometry for DC activation"] == "flow cytometry assay (2)"
 
 
@@ -908,8 +1005,9 @@ async def test_a_broad_mapping_stays_apart_and_round_five_is_free(paper, monkeyp
     assert list(result["assays"]) == ["flow cytometry assay", "flow cytometry assay (2)"]
     canon = result["rounds"]["canonicalize"]
     assert canon["calls"] == 0 and canon["folds_blocked"] == 1 and "repicked" not in canon
-    # 3 extractions + 2 verifications + round 4 billed at 2 per "embedding_llm" entry; round 5 free
-    assert result["meta"]["llm_calls"] == 3 + 2 + 4
+    # 3 extractions + 2 verifications + round 4 billed at 2 per "embedding_llm" entry; round 5
+    # free; round 6 asks once about the pair round 5 kept apart (stub_judge answers DIFFERENT)
+    assert result["meta"]["llm_calls"] == 3 + 2 + 4 + 1
     obi = json.loads((paper / "assays_OBI.json").read_text())
     assert obi["flow cytometry assay (2)"]["obi_granularity"] == "BROAD"
 

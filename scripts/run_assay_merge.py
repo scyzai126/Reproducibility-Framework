@@ -18,13 +18,17 @@ vocabulary does not carry verbatim. It is the recovery path when a pipeline run'
 failed, and it maps `assays_corrected.json` when there is one (the registry round 4 reads),
 else `assays.json`. `--map --dry-run` prints the call count without calling anything.
 
+`--judge` runs round 6 after the fold -- **paid, one call per fold round 5 refused on readouts
+or sample type**: SAME folds the pair, anything else keeps it apart with the model's reason on
+the REVIEW line. `--judge --dry-run` lists the pairs and the call count without calling.
+
 `assays_merges.json` is always written, with a `key_map` from every key the extractor used to
 the key it is delivered under -- composed with the stored one, so canonicalizing twice still
 maps the original wordings. Earlier fold records are kept when this pass folds nothing new.
 
 Usage:
-    python3 scripts/run_assay_merge.py <registry_dir> [--dry-run] [--map]
-    python3 scripts/run_assay_merge.py --all [--dry-run] [--map]
+    python3 scripts/run_assay_merge.py <registry_dir> [--dry-run] [--map] [--judge]
+    python3 scripts/run_assay_merge.py --all [--dry-run] [--map] [--judge]
 
 Example:
     python3 scripts/run_assay_merge.py data/31paper_assays/assay_result_v1/24336226_SDY1260 --dry-run
@@ -42,6 +46,7 @@ _REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_REPO_ROOT / "apps" / "api"))
 
 from app.agent.assay_extractor import trim_registry
+from app.agent.assay_fold_judge import adjudicate, judgeable, reconcile_report
 from app.agent.assay_merger import (
     blocked_folds,
     build_merge_report,
@@ -67,7 +72,7 @@ def _load(registry_dir: Path, remap: bool = False) -> tuple[dict, dict | None]:
     return registry, _read(registry_dir / "assays_OBI.json")
 
 
-def dry_run(registry_dir: Path, remap: bool = False) -> int:
+def dry_run(registry_dir: Path, remap: bool = False, judge: bool = False) -> int:
     """Print what canonicalizing would change. Returns the number of entries that would fold."""
     assays, obi = _load(registry_dir, remap)
     if remap:
@@ -83,14 +88,19 @@ def dry_run(registry_dir: Path, remap: bool = False) -> int:
     print(f"{registry_dir.name}: {len(assays)} entry(ies) → {len(groups)}, keyed by OBI term")
     for group in folds:
         print(f"    {group['key']}   <=  {', '.join(group['members'])}")
-    for record in blocked_folds(groups):
+    blocked = blocked_folds(groups)
+    for record in blocked:
         print(f"    REVIEW  not folded  {record['member']} kept apart from "
               f"{record['kept_apart_from']} ({record.get('obi_id') or 'no term'}): "
               f"{record['reason']}")
+    if judge:
+        asked = [r for r in blocked if judgeable(r)]
+        print(f"    --judge would cost {len(asked)} call(s): one per fold refused on readouts "
+              f"or sample type")
     return len(assays) - len(groups)
 
 
-def canonicalize_one(registry_dir: Path, remap: bool = False) -> None:
+def canonicalize_one(registry_dir: Path, remap: bool = False, judge: bool = False) -> None:
     """Canonicalize this registry and rewrite the files that are keyed together."""
     assays, obi = _load(registry_dir, remap)
     stored = _read(registry_dir / "assays_merges.json") or {}
@@ -125,14 +135,32 @@ def canonicalize_one(registry_dir: Path, remap: bool = False) -> None:
     # folds a pass refused.
     report = build_merge_report(list(stored.get("results") or []) + folds, keys,
                                 list(stored.get("blocked") or []) + blocked)
+    if judge and any(judgeable(r) for r in blocked):
+        # Round 6, paid: the replies join the raw file like round 4's do.
+        from app.agent import assay_trace
+        trace = assay_trace.start()
+        try:
+            merged, obi_out, judged_folds, judged_blocked = adjudicate(merged, obi_out)
+        finally:
+            assay_trace.stop()
+        trace.write(registry_dir / assay_trace.RAW_FILE)
+        keys, judged_folds, blocked = reconcile_report(keys, blocked, judged_folds, judged_blocked)
+        folds = folds + judged_folds
+        report = build_merge_report(list(stored.get("results") or []) + folds, keys,
+                                    list(stored.get("blocked") or []) + blocked)
     print(f"{registry_dir.name}: {len(assays)} → {len(merged)} entry(ies)")
     for record in folds:
         print(f"  MERGED  {', '.join(record['folded'])} → {record['key']} "
               f"({record.get('obi_id') or 'no term'})")
+        if record.get("judged"):
+            print(f"      JUDGED  SAME: {record['judged'].get('reason')}")
     for record in blocked:
         print(f"  REVIEW  not folded  {record['member']} kept apart from "
               f"{record['kept_apart_from']} ({record.get('obi_id') or 'no term'}): "
               f"{record['reason']}")
+        if record.get("judged"):
+            print(f"      JUDGED  {record['judged'].get('verdict')}: "
+                  f"{record['judged'].get('reason')}")
 
     # Only these four: the pipeline's other files describe rounds this script did not re-run,
     # and rewriting them from a registry they were not derived from would misreport those rounds.
@@ -153,6 +181,9 @@ def main() -> None:
                         help="Print what would change; write nothing")
     parser.add_argument("--map", action="store_true",
                         help="Run the OBI round first (paid: 2-3 calls per vocabulary miss)")
+    parser.add_argument("--judge", action="store_true",
+                        help="Run round 6 after the fold (paid: 1 call per fold refused on "
+                             "readouts or sample type)")
     args = parser.parse_args()
 
     if args.all:
@@ -164,13 +195,13 @@ def main() -> None:
         raise SystemExit("pass a registry directory or --all")
 
     if args.dry_run:
-        total = sum(dry_run(target, args.map) for target in targets)
+        total = sum(dry_run(target, args.map, args.judge) for target in targets)
         print(f"\n{len(targets)} registry(ies), {total} entry(ies) would fold."
               "\n--dry-run: nothing written.")
         return
 
     for target in targets:
-        canonicalize_one(target, args.map)
+        canonicalize_one(target, args.map, args.judge)
 
 
 if __name__ == "__main__":

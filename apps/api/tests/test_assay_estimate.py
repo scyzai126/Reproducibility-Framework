@@ -87,7 +87,7 @@ def test_a_paper_never_run_sizes_only_the_rounds_that_are_free_to_size(paper, vo
 
     calls = {r["name"]: r["calls"] for r in estimate["rounds"]}
     assert calls == {"extract": 1, "verify": None, "correct": None, "obi": None,
-                     "canonicalize": 0}
+                     "canonicalize": 0, "judge": None}
     assert estimate["total_calls_known"] is False
     assert estimate["total_calls"] is None
     # There is no "~" to explain on a paper whose rounds were never sized from anything.
@@ -258,6 +258,26 @@ def test_the_estimate_names_the_entries_that_would_fold_onto_one_term(paper, voc
     assert (canon["entries"], canon["groups"]) == (2, 1)
     assert canon["folds"][0]["members"] == ["ELISA", "ELISA kits"]
     assert canon["calls"] == 0 and canon["exact"] is True and "repicks" not in canon
+
+
+def test_the_estimate_prices_round_six_at_one_call_per_refused_fold(paper, vocabulary):
+    """Two ELISAs on one term kept apart on readouts: one call to ask whether they are one
+    measurement. A pair kept apart on the technique is never asked, so it is not billed."""
+    _store(paper,
+           {"ELISA": {**_ENTRY, "readouts": "anti-CTB IgG"},
+            "ELISA kits": {**_ENTRY, "name_in_paper": "ELISA kits", "readouts": "anti-diphtheria IgG"},
+            "Luminex": {**_ENTRY, "name_in_paper": "Luminex", "standard_technique_name": "luminex"},
+            "CBA": {**_ENTRY, "name_in_paper": "CBA", "standard_technique_name": "cytometric bead array"}},
+           obi={"ELISA": {"obi_id": "OBI:0000661", "obi_label": "ELISA"},
+                "ELISA kits": {"obi_id": "OBI:0000661", "obi_label": "ELISA"},
+                "Luminex": {"obi_id": "OBI:0000920", "obi_label": "cytometric bead array assay"},
+                "CBA": {"obi_id": "OBI:0000920", "obi_label": "cytometric bead array assay"}})
+
+    rounds = {r["name"]: r for r in estimate_run("111", "SDY1")["rounds"]}
+
+    assert rounds["canonicalize"]["calls"] == 0
+    assert rounds["judge"]["calls"] == 1 and rounds["judge"]["exact"] is False
+    assert rounds["judge"]["pairs"] == [{"member": "ELISA kits", "anchor": "ELISA"}]
 
 
 def test_the_estimate_prices_a_broad_mapping_at_nothing(paper, vocabulary):

@@ -199,6 +199,15 @@ def _dry_run(pmid: str, sdy: str) -> None:
     else:
         print("  round 5 canon:   will run, free                       0 calls")
 
+    judge = by_name["judge"]
+    if judge["calls"] is not None:
+        print(f"  round 6 judge:   will run                            ~{judge['calls']} calls"
+              f"   (1 per fold round 5 refused on readouts or sample type)")
+        for pair in judge["pairs"]:
+            print(f"      asks whether {pair['member']} is {pair['anchor']}")
+    else:
+        print("  round 6 judge:   will run, 1 call per refused fold   ? calls")
+
     if estimate["caveat"]:
         print("\n  ~ because rounds 2-4 are sized from the previous run's output, which this "
               "run\n    re-extracts rather than reuses. The shape rarely moves; it is not "
@@ -216,7 +225,7 @@ def report_result(result: dict) -> None:
     """
     print(f"{result['paper_source']} [{result.get('paper_source_kind', 'xml')}]: "
           f"{result['paper_title']!r}")
-    for name in ("extract", "verify", "correct", "obi", "canonicalize"):
+    for name in ("extract", "verify", "correct", "obi", "canonicalize", "judge"):
         row = result["rounds"].get(name, {})
         extra = {k: v for k, v in row.items() if k not in ("source", "calls")}
         print(f"  {name:8} {row.get('source', '?'):10} {row.get('calls', 0)} call(s)"
@@ -304,12 +313,19 @@ def report_result(result: dict) -> None:
     for record in (result.get("merges") or {}).get("results", []):
         print(f"  MERGED  {', '.join(record['folded'])} → {record['key']} "
               f"({record.get('obi_id') or 'no term'})")
+        # A fold round 5 refused and round 6 made on the model's say-so: printed with the
+        # reason, because this is the one fold no rule stands behind.
+        if record.get("judged"):
+            print(f"      JUDGED  SAME: {record['judged'].get('reason')}")
     # Two entries on one OBI term that round 5 kept apart because their technique, sample type
     # or readouts differ. Printed as REVIEW: a reader decides whether they are one assay.
     for record in (result.get("merges") or {}).get("blocked", []):
         print(f"  REVIEW  not folded  {record['member']} kept apart from "
               f"{record['kept_apart_from']} ({record.get('obi_id') or 'no term'}): "
               f"{record['reason']}")
+        if record.get("judged"):
+            print(f"      JUDGED  {record['judged'].get('verdict')}: "
+                  f"{record['judged'].get('reason')}")
     # A repair that was asked for, paid for, and then failed. It used to surface only as a count
     # inside the round's actions JSON, which is how 12 discarded alias corrections crossed a
     # 30-paper run unnoticed: the entry keeps exactly the field the verifier objected to.

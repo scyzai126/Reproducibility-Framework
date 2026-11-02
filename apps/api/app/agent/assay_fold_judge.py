@@ -153,3 +153,39 @@ def adjudicate(assays: dict, obi: dict | None, judge: Judge = judge_fold
                       "obi_label": record.get("obi_label"), "members": [anchor_key, member_key],
                       "folded": [member_key], "judged": verdict})
     return merged, obi_out, folds, blocked
+
+
+def reconcile_report(keys: dict[str, str], blocked: list[dict], judged_folds: list[dict],
+                     judged_blocked: list[dict]) -> tuple[dict[str, str], list[dict], list[dict]]:
+    """Round 5's report, carried through the judge's verdicts. Returns (keys, folds, blocked).
+
+    Round 5 records a blocked fold by the extractor's wordings (`member` "commercially available
+    kit", `anchor` "GM1-ELISA"), and `adjudicate` re-finds the same pair on the canonical
+    registry, where the member is "enzyme-linked immunosorbent assay (2)". A reader wants the
+    wording, so each verdict is attached to round 5's own record, found through `key_map`. A
+    SAME verdict's fold is written by the wordings it folded, and every wording that mapped to
+    the folded key now maps to the survivor -- the key_map is the only join from the earlier
+    files to the registry, and a stale entry there would point at a key that no longer exists.
+    """
+    keys = dict(keys)
+    by_canonical: dict[str, dict] = {}
+    for record in blocked:
+        by_canonical.setdefault(keys.get(record["member"], record["member"]), record)
+
+    folds: list[dict] = []
+    for fold in judged_folds:
+        member_key = fold["folded"][0]
+        wordings = [k for k, v in keys.items() if v == member_key] or [member_key]
+        anchor_wordings = [k for k, v in keys.items() if v == fold["key"]] or [fold["key"]]
+        for wording in wordings:
+            keys[wording] = fold["key"]
+        folds.append({**fold, "members": anchor_wordings + wordings, "folded": wordings})
+
+    out: list[dict] = []
+    for record in judged_blocked:
+        original = by_canonical.get(record["member"])
+        merged = dict(original) if original is not None else dict(record)
+        if "judged" in record:
+            merged["judged"] = record["judged"]
+        out.append(merged)
+    return keys, folds, out

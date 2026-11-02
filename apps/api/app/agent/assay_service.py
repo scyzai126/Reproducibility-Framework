@@ -56,6 +56,7 @@ from app.agent.assay_extractor import (
     trim_registry,
 )
 from app.agent.assay_extractor_pdf import extract_assays_from_pdf
+from app.agent.assay_fold_judge import adjudicate, judge_fold, judgeable, reconcile_report
 from app.agent.assay_merger import (
     blocked_folds,
     build_merge_report,
@@ -606,11 +607,20 @@ def estimate_run(pubmed_id: str, study_accession: str) -> dict:
         rounds.append({"round": 5, "name": "canonicalize", "calls": 0, "exact": True,
                        "basis": "deterministic", "entries": len(mapped_input),
                        "groups": len(groups), "folds": folds})
+        # Round 6 asks once about each fold round 5 refused on readouts or sample type; a pair
+        # that differs on the technique is never sent. Sized from the last run's registry like
+        # rounds 2-4, since a re-extraction can change which pairs collide.
+        asked = [r for r in blocked_folds(groups) if judgeable(r)]
+        rounds.append({"round": 6, "name": "judge", "calls": len(asked), "exact": False,
+                       "basis": "last_run",
+                       "pairs": [{"member": r["member"], "anchor": r["anchor"]} for r in asked]})
     else:
         # Free whether or not it can be sized, so the call count is 0 rather than None: "we
         # cannot tell you what this costs" would be a lie about a round that costs nothing.
         rounds.append({"round": 5, "name": "canonicalize", "calls": 0, "exact": True,
                        "basis": "deterministic", "entries": None, "groups": None, "folds": []})
+        rounds.append({"round": 6, "name": "judge", "calls": None, "exact": False,
+                       "basis": "unknown", "pairs": []})
 
     known = all(r["calls"] is not None for r in rounds)
     return {
@@ -1141,6 +1151,51 @@ async def _run_rounds(pubmed_id, study_accession, client, verify, correct, model
               **merges["summary"])
         merges_path.write_text(
             json.dumps(merges, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+
+    # ── Round 6: judge the folds round 5 refused ──────────────────────────────
+    # Round 5 keeps two entries on one term apart when their readouts or sample type differ,
+    # comparing readouts by exact string because it is a sentence the model wrote. Over the
+    # 31-paper corpus that refused 22 folds; no string rule moves them (the vote's lenient
+    # match releases 1 of 14), and dropping the readouts leg would fold pairs the benchmark
+    # lists as two rows. So the pairs are asked about, one call each: SAME folds the member
+    # through merge_entries, anything else stays apart with the model's reason on the REVIEW
+    # line. Measured 2026-11-02: 20 asked, 1 SAME (SDY2189's FRNT, one row in the benchmark),
+    # 19 DIFFERENT, precision 88.1% -> 88.6%, recall unchanged. A pair that differs on the
+    # technique is never sent. See docs/readouts_vote_and_fold_adjudication_2026-11-02.md.
+    if merges is None or not any(judgeable(r) for r in merges["blocked"]):
+        rounds["judge"] = {"source": "skipped", "calls": 0, "pairs": 0}
+        _emit(round="judge", state="skipped", calls=0)
+    else:
+        pairs = sum(1 for r in merges["blocked"] if judgeable(r))
+        _emit(round="judge", state="running", total=pairs)
+        spent_judge = 0
+
+        def _judge(*args):
+            nonlocal spent_judge
+            spent_judge += 1
+            return judge_fold(*args, model=model)
+        try:
+            assays, obi, judged_folds, judged_blocked = adjudicate(assays, obi, _judge)
+        except Exception as exc:
+            # A failed call must not lose the registry: round 5's result stands, apart.
+            logger.exception("fold judge failed; round 5's report stands")
+            trace.write(raw_path)
+            calls += spent_judge
+            rounds["judge"] = {"source": "failed", "calls": spent_judge, "pairs": pairs,
+                               "error": f"{type(exc).__name__}: {exc}"}
+            _emit(round="judge", state="failed", calls=spent_judge)
+        else:
+            trace.write(raw_path)
+            calls += spent_judge
+            keys, judged_folds, blocked = reconcile_report(
+                merges["key_map"], merges["blocked"], judged_folds, judged_blocked)
+            merges = build_merge_report(merges["results"] + judged_folds, keys, blocked)
+            rounds["judge"] = {"source": "judged", "calls": spent_judge, "pairs": pairs,
+                               "same": len(judged_folds), "different": pairs - len(judged_folds)}
+            _emit(round="judge", state="done", calls=spent_judge, pairs=pairs,
+                  same=len(judged_folds))
+            merges_path.write_text(
+                json.dumps(merges, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
     # ── Promote ───────────────────────────────────────────────────────────────
     # Only now, with every round done, is assays.json written -- the corrected, canonical

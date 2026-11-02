@@ -119,6 +119,25 @@ def test_a_blocked_fold_is_a_review_line(cli, capsys):
     assert ("REVIEW  not folded  ICS kept apart from flow cytometry assay (OBI:0000916): "
             "mapping is BROAD") in out
 
+
+def test_a_judged_fold_and_a_judged_refusal_each_print_the_verdict(cli, capsys):
+    """Round 6 folds on the model's say-so and keeps apart with its reason: both are printed
+    under the line they belong to, since neither is a fold a rule stands behind."""
+    cli.report_result(_result(merges={
+        "key_map": {},
+        "results": [{"key": "serum neutralization of viral infectivity assay",
+                     "obi_id": "OBI:0000872", "folded": ["FRNT"],
+                     "judged": {"verdict": "SAME", "reason": "one focus reduction test"}}],
+        "blocked": [{"member": "ICS", "kept_apart_from": "flow cytometry assay",
+                     "obi_id": "OBI:0000916", "reason": "readouts differs: 'a' vs 'b'",
+                     "judged": {"verdict": "DIFFERENT", "reason": "two marker sets"}}]}))
+
+    out = capsys.readouterr().out
+    assert "MERGED  FRNT → serum neutralization of viral infectivity assay (OBI:0000872)" in out
+    assert "JUDGED  SAME: one focus reduction test" in out
+    assert "REVIEW  not folded  ICS kept apart from flow cytometry assay" in out
+    assert "JUDGED  DIFFERENT: two marker sets" in out
+
 def test_a_dropped_alias_is_a_line_of_its_own(cli, capsys):
     """A wording removed before round 2 because the paper does not contain it is a finding."""
     cli.report_result(_result(rounds={"extract": {
