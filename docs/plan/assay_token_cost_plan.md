@@ -156,3 +156,40 @@ relevant sections, cheaper model for verify/correct, and a dollar figure in `--d
 - 2026-11-04: A and B implemented on `feature/assay-token-usage-cache`; unit tests added
   (trace, verifier, corrector, extractor, service, CLI printer). The paid single-paper
   measurement (verification step 3) has not been run yet; its numbers go here when it has.
+- 2026-11-04: **measured on SDY1669 (pmid 32788292)**, re-run into `assay_result_v4/` with the
+  usage recording and cache warming in place. Scored strict against benchmark v5:
+
+  | | v3 | v4 |
+  |---|---|---|
+  | curated rows / agent entries | 9 / 8 | 9 / 8 |
+  | matched (obi exact) | 8 (7) | 8 (8) |
+  | missed | 1 (`Flow cytometry analysis of PBMCs`) | 1 (same row) |
+  | extra | 0 | 0 |
+  | recall / precision | 88.9% / 100% | 88.9% / 100% |
+
+  The one change is the PCR entry: v3 mapped it to `polymerase chain reaction assay`
+  (MATCH_GRANULARITY), v4 to `real time polymerase chain reaction assay`, the curated term.
+  One `MINORITY` (SIMoA ELISA, 1 of 3 extractions), three `REVIEW` lines (2 fields REPLACED in
+  round 3, 1 identity NOT_SUPPORTED on the PCR entry, not correctable).
+
+  Usage (`assays_raw.json`, 21 chat calls; the 15 embedding calls of round 4 are not recorded):
+
+  | round | calls | prompt | cached | completion | reasoning |
+  |---|---|---|---|---|---|
+  | extract | 3 | 42,981 | 28,160 | 4,923 | 0 |
+  | verify | 8 | 91,573 | 77,056 | 5,368 | 0 |
+  | correct | 2 | 17,965 | 7,936 | 201 | 0 |
+  | obi | 8 | 29,254 | 0 | 41 | 0 |
+  | total | 21 | 181,773 | 113,152 | 10,533 | 0 |
+
+  - **$0.36** at gpt-5.4 list price; the same tokens uncached would be $0.61, so the cache
+    took 41% off. The char-based estimate for this paper had been $0.85 (it overcounted).
+  - **Cache warming works**: extract run1 cached 0, run2/run3 cached 14,080 of 14,327; verify
+    call 1 cached 0, calls 2-8 cached 11,008 of ~11,450; correct call 2 cached 7,936 of 8,958.
+  - **Reasoning tokens: 0** on every call. gpt-5.4 through chat completions at temperature 0
+    reports none here, so option C (`reasoning_effort`) has nothing to cut.
+  - **Round 4 caches nothing** (0 of 29,254): `prompts/resolver_obi_assay.txt` opens with the
+    assay-specific fields (lines 5-9) before the shared rules, so no two calls share a prefix.
+    Moving the variable block after the rules would cache ~2.4k of each call's ~3.6k tokens --
+    about $0.06 of this paper's $0.36, the largest remaining lever. Not done; needs a check
+    that the pick is unchanged.

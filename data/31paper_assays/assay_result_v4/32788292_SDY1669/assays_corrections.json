@@ -1,0 +1,92 @@
+{
+  "summary": {
+    "assays": 8,
+    "fields_re_extracted": 2,
+    "actions": {
+      "REPLACED": 2
+    },
+    "reported_not_corrected": 1
+  },
+  "results": [
+    {
+      "assay_id": "mass cytometry",
+      "assay_name": "mass cytometry",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "intracellular staining assay",
+      "assay_name": "intracellular staining assay",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Olink multiplex inflammation panel",
+      "assay_name": "Olink multiplex inflammation panel",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "enzyme-linked immunosorbent assay (ELISA)",
+      "assay_name": "enzyme-linked immunosorbent assay (ELISA)",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "readouts",
+          "action": "REPLACED",
+          "previous": "concentrations of TNFSF14, EN-RAGE, OSM, and IFN-α",
+          "blind_answer": "plasma concentrations of TNFSF14, EN-RAGE, and oncostatin M (OSM)"
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "cellular indexing of transcriptomes and epitopes by sequencing (CITE-seq)",
+      "assay_name": "cellular indexing of transcriptomes and epitopes by sequencing (CITE-seq)",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "bulk RNA sequencing (RNA-seq) analysis",
+      "assay_name": "bulk RNA sequencing (RNA-seq) analysis",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "PCR quantitation of bacterial 16 S ribosomal RNA (rRNA) gene product",
+      "assay_name": "PCR quantitation of bacterial 16 S ribosomal RNA (rRNA) gene product",
+      "record_verdict": "REVIEW",
+      "corrections": [],
+      "reported_not_corrected": [
+        {
+          "field_name": "name_in_paper",
+          "verdict": "NOT_SUPPORTED",
+          "reason": "The text describes this as a measurement/readout phrase rather than a clear assay name or methods heading for a performed technique."
+        }
+      ]
+    },
+    {
+      "assay_id": "TLR4-based reporter assay",
+      "assay_name": "TLR4-based reporter assay",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "evidence",
+          "action": "REPLACED",
+          "previous": "Notably, the plasma of severe and ICU patients had significantly higher levels of bacterial DNA, as measured by PCR quantitation of bacterial 16 S ribosomal RNA (rRNA) gene product, and of LPS, as measured by a TLR4-based reporter assay ( Fig. 6, A and B ).",
+          "blind_answer": {
+            "quote": "Therefore, to determine whether a similar mechanism could be at play in patients with severe COVID-19, we measured bacterial DNA and lipopolysaccharide (LPS) in the plasma. Notably, the plasma of severe and ICU patients had significantly higher levels of bacterial DNA, as measured by PCR quantitation of bacterial 16 S ribosomal RNA (rRNA) gene product, and of LPS, as measured by a TLR4-based reporter assay ( Fig. 6, A and B ).",
+            "sentence_ids": []
+          },
+          "note": "sentence_ids set to where the quote was found: quote is verbatim but cites no sentence ids; it is in S167, S168, S169"
+        }
+      ],
+      "reported_not_corrected": []
+    }
+  ]
+}
