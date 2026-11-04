@@ -467,7 +467,8 @@ def _llm_pick(
     # The numbered lines are retrieval's output and are gone once the pick is parsed; with the
     # reply beside them a wrong term can be read as a retrieval miss or a picker miss.
     assay_trace.record("obi", registry_key or assay_name, reply=reply,
-                       candidates=[_candidate_line(i + 1, c) for i, c in enumerate(candidates)])
+                       candidates=[_candidate_line(i + 1, c) for i, c in enumerate(candidates)],
+                       **assay_trace.usage_kw(resp))
     idx, granularity = parse_pick_reply(reply, len(candidates))
     if idx is None:
         return None
@@ -686,7 +687,7 @@ def _fulllist_pick(
     reply = (resp.choices[0].message.content or "").strip().lower()
     # The candidates are the vocabulary, the same for every entry, so only their count is kept.
     assay_trace.record("obi_fulllist", registry_key or assay_name, reply=reply,
-                       n_candidates=len(candidates))
+                       n_candidates=len(candidates), **assay_trace.usage_kw(resp))
     idx, granularity = parse_pick_reply(reply, len(candidates))
     if idx is None:
         return None

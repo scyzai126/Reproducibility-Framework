@@ -20,6 +20,7 @@ what check_quote_verbatim compares character by character. Extra keys are droppe
 ones defaulted, so a partially malformed answer costs its bad fields rather than the paper.
 """
 
+import hashlib
 import json
 import re
 import logging
@@ -364,6 +365,19 @@ def build_prompt(source_text: str, paper_title: str) -> str:
     )
 
 
+def paper_cache_key(source_text: str) -> str:
+    """The `prompt_cache_key` every full-paper call on one paper sends.
+
+    OpenAI's prefix cache is automatic, but routed: requests sharing a key land on the same
+    cache, so the N verify calls that all open with the same template and paper find the prefix
+    the first one wrote. The key names the paper, not the round -- routing is all it does; the
+    prefix itself decides the hit. A hash of the text rather than the pubmed id because the
+    rounds are handed the text and not the id, and a re-fetched paper with different text is
+    a different prefix anyway.
+    """
+    return "assay-" + hashlib.sha1(source_text.encode("utf-8")).hexdigest()[:16]
+
+
 async def extract_assays(
     source_text: str,
     paper_title: str,
@@ -388,9 +402,11 @@ async def extract_assays(
         messages=[{"role": "user", "content": build_prompt(source_text, paper_title)}],
         temperature=0,
         seed=EXTRACTION_SEED,
+        prompt_cache_key=paper_cache_key(source_text),
     )
     raw = _strip_fences((resp.choices[0].message.content or "").strip())
-    assay_trace.record("extract", run_label, reply=raw, source_kind="xml")
+    assay_trace.record("extract", run_label, reply=raw, source_kind="xml",
+                       **assay_trace.usage_kw(resp))
     if not raw:
         raise AssayExtractionError("model returned an empty response")
 

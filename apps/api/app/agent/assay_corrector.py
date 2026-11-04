@@ -46,6 +46,7 @@ from app.agent.assay_verifier import (
     name_field,
 )
 from app.agent import assay_trace
+from app.agent.assay_extractor import paper_cache_key
 from app.agent.claim_parser import _load_prompt, _strip_fences
 from app.config import settings
 
@@ -305,9 +306,11 @@ async def correct_field(
             messages=[{"role": "user",
                        "content": build_prompt(entry, group, source_text, paper_title)}],
             temperature=0,
+            prompt_cache_key=paper_cache_key(source_text),
         )
         raw = _strip_fences((resp.choices[0].message.content or "").strip())
-        assay_trace.record("correct", assay_key, field=group, reply=raw)
+        assay_trace.record("correct", assay_key, field=group, reply=raw,
+                           **assay_trace.usage_kw(resp))
         parsed = json.loads(raw) if raw else None
     except Exception as exc:  # noqa: BLE001 - one bad field must not cost the whole paper
         logger.warning("blind re-extraction of %s failed - %s", group, exc)
@@ -383,7 +386,14 @@ async def correct_registry(
             return await correct_field(entries[key], group, source_text, paper_title,
                                        client, model, assay_key=key)
 
-    answers = dict(zip(plan, await asyncio.gather(*(_ask(k, g) for k, g in plan))))
+    # First call alone, the rest together: every prompt opens with the same template and full
+    # paper, which OpenAI serves from its prefix cache only once one call with that prefix has
+    # completed (assay_verifier.verify_registry has the reasoning).
+    replies: list[tuple[object, str | None]] = []
+    if plan:
+        replies.append(await _ask(*plan[0]))
+        replies.extend(await asyncio.gather(*(_ask(k, g) for k, g in plan[1:])))
+    answers = dict(zip(plan, replies))
 
     # Applied in registry order, one assay at a time, so the written entry and the printed
     # log are deterministic no matter how the calls above interleaved.

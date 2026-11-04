@@ -587,8 +587,10 @@ async def test_verify_prompt_leaves_no_placeholder_unrendered():
 
 @pytest.mark.asyncio
 async def test_results_keep_registry_order_when_calls_finish_out_of_order():
-    """The first call finishes last; the results must not follow completion order."""
-    client = _RecordingClient(_VERDICT_BODY, delays=[0.03, 0.0, 0.0])
+    """The first concurrent call finishes last; the results must not follow completion order.
+
+    The very first call runs alone (cache warming), so the stagger is on the second."""
+    client = _RecordingClient(_VERDICT_BODY, delays=[0.0, 0.03, 0.0])
     names = ("flow cytometry", "ELISA", "microarray")
     results = await verify_registry(_registry(*names), SOURCE, "Paper", client)
 
@@ -875,3 +877,77 @@ def test_the_review_mark_is_never_a_proposed_field():
              "identity_review": {"verdict": NOT_SUPPORTED, "reason": "a heading"}}
 
     assert [f for f, _ in proposed_fields(entry)] == ["name_in_paper"]
+
+
+# ── usage and cache warming ───────────────────────────────────────────────────
+
+class _UsageClient:
+    """Returns a canned body with a usage block, and keeps every kwargs it was called with."""
+
+    def __init__(self, body: str):
+        self.kwargs: list[dict] = []
+        outer = self
+
+        class _Completions:
+            async def create(self, **kwargs):
+                outer.kwargs.append(kwargs)
+                message = type("M", (), {"content": body})()
+                details = type("D", (), {"cached_tokens": 300})()
+                usage = type("U", (), {"prompt_tokens": 1200, "completion_tokens": 40,
+                                       "prompt_tokens_details": details})()
+                return type("R", (), {"choices": [type("C", (), {"message": message})()],
+                                      "usage": usage})()
+
+        self.chat = type("Chat", (), {"completions": _Completions()})()
+
+
+@pytest.mark.asyncio
+async def test_the_verify_call_records_its_usage_and_sends_the_papers_cache_key():
+    from app.agent import assay_trace
+    from app.agent.assay_extractor import paper_cache_key
+    client = _UsageClient(_VERDICT_BODY)
+    trace = assay_trace.start()
+    try:
+        await verify_assay("flow cytometry", ENTRY, SOURCE, "Paper", client)
+    finally:
+        assay_trace.stop()
+
+    assert trace.as_json()["verify"]["flow cytometry"]["usage"] == {
+        "prompt": 1200, "cached": 300, "completion": 40, "reasoning": 0}
+    assert client.kwargs[0]["prompt_cache_key"] == paper_cache_key(SOURCE)
+
+
+class _OrderingClient:
+    """Logs call starts and ends, so a test can see which calls overlapped which."""
+
+    def __init__(self, body: str, first_delay: float):
+        self.events: list[str] = []
+        outer = self
+
+        class _Completions:
+            async def create(self, **_kwargs):
+                n = sum(1 for e in outer.events if e.startswith("start")) + 1
+                outer.events.append(f"start{n}")
+                await asyncio.sleep(first_delay if n == 1 else 0.0)
+                outer.events.append(f"end{n}")
+                message = type("M", (), {"content": body})()
+                return type("R", (), {"choices": [type("C", (), {"message": message})()]})()
+
+        self.chat = type("Chat", (), {"completions": _Completions()})()
+
+
+@pytest.mark.asyncio
+async def test_the_first_verify_call_completes_before_any_other_starts():
+    """Cache warming: the prefix is cached only once one call carrying it has finished."""
+    client = _OrderingClient(_VERDICT_BODY, first_delay=0.02)
+    names = ("flow cytometry", "ELISA", "microarray")
+
+    results = await verify_registry(_registry(*names), SOURCE, "Paper", client)
+
+    assert client.events[:2] == ["start1", "end1"]
+    assert [r["assay_id"] for r in results] == list(names)
+
+
+@pytest.mark.asyncio
+async def test_an_empty_registry_verifies_nothing():
+    assert await verify_registry({}, SOURCE, "Paper", _RecordingClient(_VERDICT_BODY)) == []

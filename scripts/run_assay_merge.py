@@ -100,6 +100,17 @@ def dry_run(registry_dir: Path, remap: bool = False, judge: bool = False) -> int
     return len(assays) - len(groups)
 
 
+def _print_usage(grouped: dict) -> None:
+    """What the paid round just run was billed for, in the full pipeline's format."""
+    from app.agent import assay_trace
+    from app.config import settings
+    summary = assay_trace.usage_summary(grouped)
+    if summary["by_round"]:
+        print("  usage:")
+        for line in assay_trace.format_usage(summary, settings.OPENAI_MODEL):
+            print(f"    {line}")
+
+
 def canonicalize_one(registry_dir: Path, remap: bool = False, judge: bool = False) -> None:
     """Canonicalize this registry and rewrite the files that are keyed together."""
     assays, obi = _load(registry_dir, remap)
@@ -116,6 +127,7 @@ def canonicalize_one(registry_dir: Path, remap: bool = False, judge: bool = Fals
         finally:
             assay_trace.stop()
         trace.write(registry_dir / assay_trace.RAW_FILE)
+        _print_usage(trace.as_json())
         # A fresh mapping of the pre-canonical registry: nothing earlier to compose with.
         stored = {}
         for key, entry in obi.items():
@@ -144,6 +156,7 @@ def canonicalize_one(registry_dir: Path, remap: bool = False, judge: bool = Fals
         finally:
             assay_trace.stop()
         trace.write(registry_dir / assay_trace.RAW_FILE)
+        _print_usage(trace.as_json())
         keys, judged_folds, blocked = reconcile_report(keys, blocked, judged_folds, judged_blocked)
         folds = folds + judged_folds
         report = build_merge_report(list(stored.get("results") or []) + folds, keys,

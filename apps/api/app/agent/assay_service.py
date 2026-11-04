@@ -933,17 +933,22 @@ async def _run_rounds(pubmed_id, study_accession, client, verify, correct, model
     n_extract = max(1, int(extractions))
     _emit(round="extract", state="running", total=n_extract)
     labels = [f"run{i + 1}" for i in range(n_extract)]
-    # Concurrent: the calls are independent, so N of them take about as long as one. Each reply
+    # The calls are independent, so N of them take about as long as one -- but the first goes
+    # alone: all N send the identical prompt, and OpenAI serves a repeated prefix from its cache
+    # at a tenth of the price only once one request with that prefix has completed. Each reply
     # is kept in the trace under its own label; the registry is their majority.
     if kind == "pdf":
         pdf_bytes = paper_path.read_bytes()
-        attempts = [_extraction_attempt(label, extract_assays_from_pdf(
-            pdf_bytes, paper_path.name, title, client, model, run_label=label))
-            for label in labels]
+
+        def _attempt(label: str):
+            return _extraction_attempt(label, extract_assays_from_pdf(
+                pdf_bytes, paper_path.name, title, client, model, run_label=label))
     else:
-        attempts = [_extraction_attempt(label, extract_assays(
-            source_text, title, client, model, run_label=label)) for label in labels]
-    outcomes = await asyncio.gather(*attempts)
+        def _attempt(label: str):
+            return _extraction_attempt(label, extract_assays(
+                source_text, title, client, model, run_label=label))
+    outcomes = [await _attempt(labels[0])]
+    outcomes.extend(await asyncio.gather(*(_attempt(label) for label in labels[1:])))
     failed = {label: error for label, registry, error in outcomes if registry is None}
     # The same majority consensus() demands of an entry: below it the vote has nothing to
     # stand on, and with one call there is no vote at all. A failed run otherwise stays in its
@@ -1228,6 +1233,8 @@ async def _run_rounds(pubmed_id, study_accession, client, verify, correct, model
         "paper_title": title,
         "paper_source": paper_path.name,
         "paper_source_kind": kind,
+        # What the run was billed for, per round, summed from the trace's per-call usage.
+        "usage": assay_trace.usage_summary(trace.as_json()),
         "assays": assays,
         "obi": obi,
         "quote_check": quote_report(assays, source_text),

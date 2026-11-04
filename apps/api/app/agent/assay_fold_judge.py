@@ -105,7 +105,8 @@ def judge_fold(anchor_key: str, anchor: dict, member_key: str, member: dict, obi
         temperature=0,
     )
     reply = (resp.choices[0].message.content or "").strip()
-    assay_trace.record("judge", f"{member_key} vs {anchor_key}", reply=reply)
+    assay_trace.record("judge", f"{member_key} vs {anchor_key}", reply=reply,
+                       **assay_trace.usage_kw(resp))
     verdict, reason = parse_judge_reply(reply)
     if verdict is None:
         logger.warning("fold judge reply not understood, kept apart: %r", reply[:120])

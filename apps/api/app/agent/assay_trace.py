@@ -107,3 +107,136 @@ def record(round_: str, key: str = "", **fields: object) -> None:
     trace = _ACTIVE.get()
     if trace is not None:
         trace.add(round_, key, **fields)
+
+
+# ── token usage ───────────────────────────────────────────────────────────────
+#
+# Each record may carry a `usage` dict beside its reply: what the call was billed for, read
+# off the response. Until it was recorded, the chain's cost was known only in calls -- a
+# char-count estimate over the v3 corpus put a paper at $0.36-$1.47, but could not see the two
+# numbers that decide the real bill: how much of each prompt OpenAI served from its prefix
+# cache (a tenth of the input price) and how many reasoning tokens the model billed as output
+# (six times the input price) without ever showing them. The summary is derived from the
+# records rather than stored, so a run that adds a round later (run_assay_merge.py --map) needs
+# no merge logic and any assays_raw.json on disk can be summed by a reader.
+
+#: The fields kept per call, in the order a reader expects them. `cached` is the part of
+#: `prompt` served from the prefix cache (already counted in `prompt`, billed at a discount);
+#: `reasoning` is the part of `completion` the model spent thinking (already counted in
+#: `completion`, never shown). A fake client with no `usage` attribute records nothing.
+USAGE_FIELDS = ("prompt", "cached", "completion", "reasoning")
+
+#: OpenAI list price, standard tier, USD per million tokens, as published 2026-11-04. Only an
+#: estimate at print time: the API does not return a price, and the table goes stale the day
+#: the price changes. A model missing here gets tokens printed and no dollar figure.
+LIST_PRICE_USD_PER_MTOK: dict[str, dict[str, float]] = {
+    "gpt-5.4": {"input": 2.50, "cached": 0.25, "output": 15.00},
+}
+LIST_PRICE_DATE = "2026-11-04"
+
+
+def usage_fields(resp: object) -> dict[str, int]:
+    """The tokens one response was billed for, or {} when the response carries no usage.
+
+    Read with getattr defaults throughout: the SDK's usage object omits the `*_details` blocks
+    on some models, and every test fake omits `usage` altogether. An absent block counts as 0,
+    not as a failure -- a call that cannot be sized must still be recorded with its reply.
+    """
+    usage = getattr(resp, "usage", None)
+    if usage is None:
+        return {}
+    prompt_details = getattr(usage, "prompt_tokens_details", None)
+    completion_details = getattr(usage, "completion_tokens_details", None)
+    return {
+        "prompt": int(getattr(usage, "prompt_tokens", 0) or 0),
+        "cached": int(getattr(prompt_details, "cached_tokens", 0) or 0),
+        "completion": int(getattr(usage, "completion_tokens", 0) or 0),
+        "reasoning": int(getattr(completion_details, "reasoning_tokens", 0) or 0),
+    }
+
+
+def _payloads(grouped: dict) -> list[tuple[str, dict]]:
+    """Every (round, payload) in a grouped trace, whatever its nesting.
+
+    `extract` without a key is one payload; `verify` and `obi` nest one per assay; `correct`
+    nests assay → field. A payload is told from a nesting level by having a `reply` or an
+    `error` -- the two things every record carries one of.
+    """
+    found: list[tuple[str, dict]] = []
+
+    def _walk(round_: str, node: object) -> None:
+        if not isinstance(node, dict):
+            return
+        if "reply" in node or "error" in node:
+            found.append((round_, node))
+            return
+        for child in node.values():
+            _walk(round_, child)
+
+    for round_, node in grouped.items():
+        _walk(round_, node)
+    return found
+
+
+def usage_summary(grouped: dict) -> dict:
+    """Per-round and total token counts over a grouped trace (`Trace.as_json()` or the file).
+
+    `calls` counts every record, with or without `usage`, so a failed call and a call made
+    through a fake client are still in the count; the token columns sum only what was recorded.
+    """
+    empty = lambda: {"calls": 0, **{f: 0 for f in USAGE_FIELDS}}  # noqa: E731
+    by_round: dict[str, dict[str, int]] = {}
+    total = empty()
+    for round_, payload in _payloads(grouped):
+        bucket = by_round.setdefault(round_, empty())
+        bucket["calls"] += 1
+        total["calls"] += 1
+        usage = payload.get("usage")
+        if not isinstance(usage, dict):
+            continue
+        for f in USAGE_FIELDS:
+            n = int(usage.get(f, 0) or 0)
+            bucket[f] += n
+            total[f] += n
+    return {"by_round": by_round, "total": total}
+
+
+def estimate_usd(totals: dict, model: str) -> float | None:
+    """What `totals` (a `usage_summary` bucket) cost at `model`'s list price, or None.
+
+    Uncached prompt tokens at the input price, cached ones at the cached price, every completion
+    token -- reasoning included, since the API counts it there -- at the output price.
+    """
+    price = LIST_PRICE_USD_PER_MTOK.get(model)
+    if price is None:
+        return None
+    prompt = int(totals.get("prompt", 0) or 0)
+    cached = min(int(totals.get("cached", 0) or 0), prompt)
+    completion = int(totals.get("completion", 0) or 0)
+    return ((prompt - cached) * price["input"] + cached * price["cached"]
+            + completion * price["output"]) / 1_000_000
+
+
+def format_usage(summary: dict, model: str) -> list[str]:
+    """The lines a run prints for its usage: one per round, then the total with a price."""
+    def _line(label: str, b: dict) -> str:
+        return (f"{label:8} {b['calls']:3} call(s)  {b['prompt']:>9,} prompt "
+                f"({b['cached']:,} cached)  {b['completion']:>7,} completion "
+                f"({b['reasoning']:,} reasoning)")
+    lines = [_line(r, b) for r, b in summary["by_round"].items()]
+    total = summary["total"]
+    usd = estimate_usd(total, model)
+    tail = (f"  ≈ ${usd:.2f} at {model} list price ({LIST_PRICE_DATE})"
+            if usd is not None else "")
+    lines.append(_line("total", total) + tail)
+    return lines
+
+
+def usage_kw(resp: object) -> dict:
+    """`{"usage": ...}` for a response that carries usage, else {} -- for `record(**usage_kw(resp))`.
+
+    The key is left out rather than set to {} so a record from a fake client, or from an
+    SDK that returned no usage, reads exactly as it did before usage was recorded.
+    """
+    fields = usage_fields(resp)
+    return {"usage": fields} if fields else {}

@@ -43,7 +43,7 @@ from collections.abc import Callable
 from openai import AsyncOpenAI
 
 from app.agent import assay_trace
-from app.agent.assay_extractor import REVIEW_FIELD
+from app.agent.assay_extractor import REVIEW_FIELD, paper_cache_key
 from app.agent.claim_parser import _load_prompt, _strip_fences
 from app.agent.jats_parser import sentence_sections
 from app.config import settings
@@ -757,9 +757,10 @@ async def verify_assay(
             model=model,
             messages=[{"role": "user", "content": prompt}],
             temperature=0,
+            prompt_cache_key=paper_cache_key(source_text),
         )
         raw = _strip_fences((resp.choices[0].message.content or "").strip())
-        assay_trace.record("verify", assay_key, reply=raw)
+        assay_trace.record("verify", assay_key, reply=raw, **assay_trace.usage_kw(resp))
         parsed = json.loads(raw) if raw else None
     except Exception as exc:  # noqa: BLE001 - any failure becomes a per-assay error report
         logger.warning("%s: verification call failed - %s", assay_key, exc)
@@ -806,6 +807,12 @@ async def verify_registry(
     wrong, which is why the whole result is handed over.
 
     verify_assay never raises, so no call can cancel its siblings.
+
+    The first call goes alone and the rest follow once it has returned. Every prompt here opens
+    with the same template, title and full paper, and OpenAI serves a repeated prefix from its
+    cache at a tenth of the input price -- but only once a request carrying that prefix has
+    completed. Fired all at once, the first eight arrive before any cache entry exists and
+    every one of them pays full price. The wait costs one call's latency per round.
     """
     keys = list(assays)
     if limit is not None:
@@ -827,7 +834,11 @@ async def verify_registry(
         return result
 
     print(f"Verifying {len(keys)} assay(s), up to {max(1, max_concurrency)} at a time...")
-    return list(await asyncio.gather(*(_verify_one(key) for key in keys)))
+    if not keys:
+        return []
+    first = await _verify_one(keys[0])
+    rest = await asyncio.gather(*(_verify_one(key) for key in keys[1:]))
+    return [first, *rest]
 
 
 def build_summary(results: list[dict]) -> dict:

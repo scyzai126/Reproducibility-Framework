@@ -28,6 +28,7 @@ hyphens a PDF text layer carries. What is genuinely lost is check_source_section
 ids to locate an entry and reports "unknown" without them.
 """
 
+import hashlib
 import logging
 
 from openai import AsyncOpenAI
@@ -93,10 +94,14 @@ async def extract_assays_from_pdf(
         ],
         temperature=0,
         seed=EXTRACTION_SEED,
+        # Keyed on the bytes: the prefix here is the system prompt plus the file part, and the
+        # file is what the three extraction calls share.
+        prompt_cache_key="assay-pdf-" + hashlib.sha1(pdf_bytes).hexdigest()[:16],
     )
 
     raw = _strip_fences((resp.choices[0].message.content or "").strip())
-    assay_trace.record("extract", run_label, reply=raw, source_kind="pdf")
+    assay_trace.record("extract", run_label, reply=raw, source_kind="pdf",
+                       **assay_trace.usage_kw(resp))
     if not raw:
         raise AssayExtractionError("model returned an empty response")
 

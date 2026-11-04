@@ -72,7 +72,7 @@ from pathlib import Path
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_REPO_ROOT / "apps" / "api"))
 
-from app.agent import assay_service
+from app.agent import assay_service, assay_trace
 from app.agent.assay_corrector import field_group
 from app.agent.assay_extractor import contract_warnings, paper_names
 from app.agent.assay_service import (
@@ -82,6 +82,7 @@ from app.agent.assay_service import (
     split_stem,
 )
 from app.agent.claim_parser import _get_client
+from app.config import settings
 
 
 def split_registry_dir(path: Path) -> tuple[str, str]:
@@ -215,6 +216,20 @@ def _dry_run(pmid: str, sdy: str) -> None:
     print("\n--dry-run: nothing called.")
 
 
+def print_usage(summary: dict | None, model: str = settings.OPENAI_MODEL) -> None:
+    """The tokens a run was billed for, per round and in total, with a list-price estimate.
+
+    Summed from the per-call `usage` the trace records (assay_trace.usage_summary); the dollar
+    figure is the model's list price in assay_trace.LIST_PRICE_USD_PER_MTOK and is left off
+    for a model not in that table. A result from before usage was recorded prints nothing.
+    """
+    if not summary or not summary.get("by_round"):
+        return
+    print("  usage:")
+    for line in assay_trace.format_usage(summary, model):
+        print(f"    {line}")
+
+
 def report_result(result: dict) -> None:
     """Print one paper's run in full: rounds, checks, every reason not to trust an entry.
 
@@ -230,6 +245,7 @@ def report_result(result: dict) -> None:
         extra = {k: v for k, v in row.items() if k not in ("source", "calls")}
         print(f"  {name:8} {row.get('source', '?'):10} {row.get('calls', 0)} call(s)"
               + (f"  {json.dumps(extra)}" if extra else ""))
+    print_usage(result.get("usage"))
     # An extraction call that answered with nothing usable. The vote went on without it, so the
     # majority was taken over fewer replies than were paid for -- printed, not folded into the
     # count above, because it is a reason to read the MINORITY lines more carefully.

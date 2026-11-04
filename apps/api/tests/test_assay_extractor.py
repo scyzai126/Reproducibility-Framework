@@ -434,6 +434,42 @@ async def test_each_extraction_call_is_seeded_and_labelled(monkeypatch):
     assert list(trace.as_json()["extract"]) == ["run2"]
 
 
+@pytest.mark.asyncio
+async def test_each_extraction_call_records_usage_and_keys_the_cache_by_paper():
+    from app.agent import assay_trace
+    from app.agent.assay_extractor import extract_assays, paper_cache_key
+
+    class _Client:
+        def __init__(self):
+            self.kwargs = None
+            outer = self
+
+            class _Completions:
+                async def create(self, **kwargs):
+                    outer.kwargs = kwargs
+                    message = type("M", (), {"content": json.dumps({"ELISA": _raw()})})()
+                    reasoning = type("D", (), {"reasoning_tokens": 90})()
+                    usage = type("U", (), {"prompt_tokens": 8000, "completion_tokens": 500,
+                                           "completion_tokens_details": reasoning})()
+                    return type("R", (), {"choices": [type("C", (), {"message": message})()],
+                                          "usage": usage})()
+
+            self.chat = type("Chat", (), {"completions": _Completions()})()
+
+    source = "## Methods  [methods]\n[S1] By ELISA."
+    client = _Client()
+    trace = assay_trace.start()
+    try:
+        await extract_assays(source, "A Paper", client, run_label="run1")
+    finally:
+        assay_trace.stop()
+
+    assert trace.as_json()["extract"]["run1"]["usage"] == {
+        "prompt": 8000, "cached": 0, "completion": 500, "reasoning": 90}
+    assert client.kwargs["prompt_cache_key"] == paper_cache_key(source)
+    assert paper_cache_key(source) != paper_cache_key(source + " [S2] And more.")
+
+
 def test_a_suffixed_canonical_key_is_not_warned_about():
     """Round 5 keeps two entries on one OBI term apart as `<label>` and `<label> (2)`; the
     suffix is the registry's, and the second key still answers to the label it maps to."""

@@ -1075,3 +1075,43 @@ async def test_a_run_whose_aliases_are_all_in_the_paper_reports_no_drops(paper, 
     result = await assay_report("111", "SDY1", _Client(body, _verification_body()))
 
     assert "aliases_dropped" not in result["rounds"]["extract"]
+
+
+@pytest.mark.asyncio
+async def test_the_result_carries_the_runs_usage_summary(paper):
+    """Summed from the trace: a fake client records no tokens, so the summary is calls only."""
+    result = await assay_report("111", "SDY1", _Client(_extraction_body(), _verification_body()))
+
+    usage = result["usage"]
+    assert usage["total"]["calls"] == result["meta"]["llm_calls"] == 2
+    assert usage["by_round"]["extract"]["calls"] == 1
+    assert usage["by_round"]["verify"]["calls"] == 1
+    assert usage["total"]["prompt"] == usage["total"]["completion"] == 0
+
+
+@pytest.mark.asyncio
+async def test_the_first_extraction_call_completes_before_the_others_start(paper):
+    """Cache warming: the three extraction prompts are identical, and the prefix is cached
+    only once one call carrying it has finished."""
+    import asyncio
+    events: list[str] = []
+    bodies = [_extraction_body(), _extraction_body(), _extraction_body(), _verification_body()]
+
+    class _Ordering:
+        def __init__(self):
+            self.calls = 0
+            self.chat = type("c", (), {"completions": self})()
+
+        async def create(self, **_):
+            self.calls += 1
+            n = self.calls
+            events.append(f"start{n}")
+            await asyncio.sleep(0.02 if n == 1 else 0.0)
+            events.append(f"end{n}")
+            message = type("m", (), {"content": bodies[min(n - 1, len(bodies) - 1)]})()
+            return type("r", (), {"choices": [type("c", (), {"message": message})()]})()
+
+    result = await assay_report("111", "SDY1", _Ordering(), extractions=3)
+
+    assert events[:2] == ["start1", "end1"]
+    assert result["rounds"]["extract"]["calls"] == 3

@@ -346,10 +346,12 @@ _BLIND_BODY = json.dumps({"value": "whole blood", "sentence_ids": ["S1"], "reaso
 
 @pytest.mark.asyncio
 async def test_corrected_registry_keeps_registry_order_when_calls_finish_out_of_order():
-    """The first call finishes last; neither the registry nor the records may follow that."""
+    """The first concurrent call finishes last; neither the registry nor the records may
+    follow that. The very first call runs alone (cache warming), so the stagger is on the
+    second."""
     keys = ("flow cytometry", "ELISA", "microarray")
     assays = {key: _entry(name_in_paper=key) for key in keys}
-    client = _RecordingClient(_BLIND_BODY, delays=[0.03, 0.0, 0.0])
+    client = _RecordingClient(_BLIND_BODY, delays=[0.0, 0.03, 0.0])
 
     corrected, records = await correct_registry(
         assays, _flagged(*keys), _SOURCE, "Paper", client)
@@ -556,3 +558,32 @@ def test_a_bare_string_alias_answer_is_one_alias_not_its_letters():
 
     assert entry["aliases"] == ["FACS analysis"]
     assert record["dropped"] == ["Flow cytometry"]
+
+
+@pytest.mark.asyncio
+async def test_the_first_correction_call_completes_before_any_other_starts():
+    """Cache warming: every call opens with the same paper, and the prefix is cached only
+    once one call carrying it has finished."""
+    keys = ("flow cytometry", "ELISA", "microarray")
+    assays = {key: _entry(name_in_paper=key) for key in keys}
+    events: list[str] = []
+
+    class _Client:
+        def __init__(self):
+            outer = self
+            self.chat = type("Chat", (), {"completions": self})()
+
+        async def create(self, **_kwargs):
+            n = sum(1 for e in events if e.startswith("start")) + 1
+            events.append(f"start{n}")
+            await asyncio.sleep(0.02 if n == 1 else 0.0)
+            events.append(f"end{n}")
+            message = type("M", (), {"content": _BLIND_BODY})()
+            return type("R", (), {"choices": [type("C", (), {"message": message})()]})()
+
+    corrected, records = await correct_registry(
+        assays, _flagged(*keys), _SOURCE, "Paper", _Client())
+
+    assert events[:2] == ["start1", "end1"]
+    assert len([e for e in events if e.startswith("start")]) == 3
+    assert list(corrected) == list(keys)

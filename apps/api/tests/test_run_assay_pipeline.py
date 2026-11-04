@@ -186,3 +186,32 @@ def test_a_review_line_says_what_round_three_did_with_each_field(cli, capsys):
     assert "name_in_paper: NOT_SUPPORTED — a product  → round 3: not correctable" in out
     assert "sample_type: NOT_SUPPORTED — unstated  → round 3: REPLACED" in out
     assert "aliases[1]: NOT_SUPPORTED — a readout  → round 3: REAFFIRMED" in out
+
+
+def test_the_usage_lines_are_printed_with_a_price_for_a_known_model(cli, capsys):
+    summary = {"by_round": {"extract": {"calls": 3, "prompt": 30_000, "cached": 18_000,
+                                        "completion": 3_000, "reasoning": 600}},
+               "total": {"calls": 3, "prompt": 30_000, "cached": 18_000,
+                         "completion": 3_000, "reasoning": 600}}
+    cli.report_result(_result(usage=summary))
+    out = capsys.readouterr().out
+
+    assert "usage:" in out
+    assert "extract    3 call(s)" in out and "30,000 prompt (18,000 cached)" in out
+    assert "3,000 completion (600 reasoning)" in out
+    assert "total " in out and "$" in out
+
+
+def test_the_price_is_left_off_for_a_model_not_in_the_table(cli, capsys):
+    summary = {"by_round": {"verify": {"calls": 1, "prompt": 10, "cached": 0,
+                                       "completion": 1, "reasoning": 0}},
+               "total": {"calls": 1, "prompt": 10, "cached": 0, "completion": 1, "reasoning": 0}}
+    cli.print_usage(summary, model="not-a-priced-model")
+    out = capsys.readouterr().out
+
+    assert "verify" in out and "$" not in out
+
+
+def test_a_result_without_usage_prints_no_usage_block(cli, capsys):
+    cli.report_result(_result())
+    assert "usage:" not in capsys.readouterr().out
