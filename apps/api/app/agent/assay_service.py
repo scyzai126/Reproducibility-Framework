@@ -37,7 +37,7 @@ from pathlib import Path
 
 from openai import AsyncOpenAI
 
-from app.agent import assay_trace
+from app.agent import assay_ledger, assay_trace
 from app.agent.assay_consensus import consensus_with_support
 from app.agent.assay_corrector import (
     build_report as build_correction_report,
@@ -885,11 +885,16 @@ async def assay_report(
     # that dies part-way keeps the rounds it paid for. Stopped in the finally below.
     trace = assay_trace.start()
     try:
-        return await _run_rounds(pubmed_id, study_accession, client, verify, correct, model,
-                                 _emit, kind, paper_path, title, source_text, out_dir, trace,
-                                 extractions if extractions is not None else EXTRACTIONS)
+        result = await _run_rounds(pubmed_id, study_accession, client, verify, correct, model,
+                                   _emit, kind, paper_path, title, source_text, out_dir, trace,
+                                   extractions if extractions is not None else EXTRACTIONS)
     finally:
         assay_trace.stop()
+    # One row in the corpus-wide ledger (data/assay_usage_ledger.csv): tokens and the price,
+    # so a month's spend is a sum over rows rather than over registry folders. Written only
+    # once the run is complete, after the trace, and never a reason for the run to fail.
+    assay_ledger.record_run(pubmed_id, study_accession, out_dir, trace.as_json(), model)
+    return result
 
 
 async def _extraction_attempt(label: str, call) -> tuple[str, dict | None, str | None]:

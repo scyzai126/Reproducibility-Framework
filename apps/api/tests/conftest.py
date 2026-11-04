@@ -17,6 +17,14 @@ def _isolated_assay_cache(tmp_path, monkeypatch):
 
 
 @pytest.fixture(autouse=True)
+def _isolated_usage_ledger(tmp_path, monkeypatch):
+    """No test appends to the real data/assay_usage_ledger.csv."""
+    from app.agent import assay_ledger
+
+    monkeypatch.setattr(assay_ledger, "LEDGER_PATH", tmp_path / "assay_usage_ledger.csv")
+
+
+@pytest.fixture(autouse=True)
 def _no_fulllist_pick(monkeypatch):
     """Every "none" from a stubbed step-2 picker would otherwise reach the real full-list
     fallback, and the suite's stub key 401s. Its own tests call the real function, imported

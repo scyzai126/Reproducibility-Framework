@@ -100,15 +100,19 @@ def dry_run(registry_dir: Path, remap: bool = False, judge: bool = False) -> int
     return len(assays) - len(groups)
 
 
-def _print_usage(grouped: dict) -> None:
-    """What the paid round just run was billed for, in the full pipeline's format."""
-    from app.agent import assay_trace
+def _print_usage(grouped: dict, registry_dir: Path) -> None:
+    """What the paid round just run was billed for, in the full pipeline's format -- and one
+    row in the corpus-wide ledger, since a mapping or judging pass costs like any run."""
+    from app.agent import assay_ledger, assay_trace
     from app.config import settings
     summary = assay_trace.usage_summary(grouped)
     if summary["by_round"]:
         print("  usage:")
         for line in assay_trace.format_usage(summary, settings.OPENAI_MODEL):
             print(f"    {line}")
+    name = registry_dir.name.removesuffix("_pdf")
+    pmid, _, sdy = name.partition("_")
+    assay_ledger.record_run(pmid, sdy, registry_dir, grouped, settings.OPENAI_MODEL)
 
 
 def canonicalize_one(registry_dir: Path, remap: bool = False, judge: bool = False) -> None:
@@ -127,7 +131,7 @@ def canonicalize_one(registry_dir: Path, remap: bool = False, judge: bool = Fals
         finally:
             assay_trace.stop()
         trace.write(registry_dir / assay_trace.RAW_FILE)
-        _print_usage(trace.as_json())
+        _print_usage(trace.as_json(), registry_dir)
         # A fresh mapping of the pre-canonical registry: nothing earlier to compose with.
         stored = {}
         for key, entry in obi.items():
@@ -156,7 +160,7 @@ def canonicalize_one(registry_dir: Path, remap: bool = False, judge: bool = Fals
         finally:
             assay_trace.stop()
         trace.write(registry_dir / assay_trace.RAW_FILE)
-        _print_usage(trace.as_json())
+        _print_usage(trace.as_json(), registry_dir)
         keys, judged_folds, blocked = reconcile_report(keys, blocked, judged_folds, judged_blocked)
         folds = folds + judged_folds
         report = build_merge_report(list(stored.get("results") or []) + folds, keys,

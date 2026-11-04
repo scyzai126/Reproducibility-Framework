@@ -227,3 +227,11 @@ relevant sections, cheaper model for verify/correct, and a dollar figure in `--d
 
   Two papers in: accuracy unchanged by the change (as designed), real cost $0.36-$0.40 per
   paper against the $0.59 median char estimate, and the cache is the whole difference.
+- 2026-11-04: **corpus-wide usage ledger** added for the ImmPort-scale run: every paid run
+  appends one row to `data/assay_usage_ledger.csv` (date, pmid, study, registry dir, rounds,
+  model, calls, prompt/cached/completion/reasoning tokens, USD at the run's list price, price
+  date). `assay_service.assay_report` writes it after the trace; `run_assay_merge.py` writes it
+  for `--map` / `--judge`. `scripts/assay_usage_report.py` prints a month-by-month table,
+  `--month YYYY-MM` lists that month's runs, `--backfill DIR` adds registries that ran before
+  the ledger existed (the two v4 papers were added this way). Module `assay_ledger.py`, tests
+  in `test_assay_ledger.py`.
