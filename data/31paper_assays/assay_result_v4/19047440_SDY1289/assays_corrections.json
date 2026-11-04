@@ -1,0 +1,95 @@
+{
+  "summary": {
+    "assays": 9,
+    "fields_re_extracted": 2,
+    "actions": {
+      "REPLACED": 2
+    },
+    "reported_not_corrected": 1
+  },
+  "results": [
+    {
+      "assay_id": "gene array analysis",
+      "assay_name": "gene array analysis",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "qPCR validation",
+      "assay_name": "qPCR validation",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "sample_type",
+          "action": "REPLACED",
+          "previous": "RNA samples from whole blood",
+          "blind_answer": "RNA samples"
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "IL-1β ELISA",
+      "assay_name": "IL-1β ELISA",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "CFSE labeling",
+      "assay_name": "CFSE labeling",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "BD Th1/Th2 CBA array",
+      "assay_name": "BD Th1/Th2 CBA array",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "readouts",
+          "action": "REPLACED",
+          "previous": "levels of IL-2, IL-4, IL-5, IL-10, IFN-γ, and TNF; beads read on a flow cytometer",
+          "blind_answer": "Levels of the cytokines IL-2, IL-4, IL-5, IL-10, IFN-γ, and TNF in PBMC supernatants"
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Flow cytometric analysis of IFN-γ/IL-2–producing activated CD4 T cells",
+      "assay_name": "Flow cytometric analysis of IFN-γ/IL-2–producing activated CD4 T cells",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "FACS analysis of PBMCs",
+      "assay_name": "FACS analysis of PBMCs",
+      "record_verdict": "REVIEW",
+      "corrections": [],
+      "reported_not_corrected": [
+        {
+          "field_name": "name_in_paper",
+          "verdict": "NOT_SUPPORTED",
+          "reason": "The source describes flow cytometric analysis of IFN-γ/IL-2–producing activated CD4 T cells and mentions FACS analysis in a figure caption, but does not name the assay as \"FACS analysis of PBMCs.\""
+        }
+      ]
+    },
+    {
+      "assay_id": "CD4 + T cell stimulation assay",
+      "assay_name": "CD4 + T cell stimulation assay",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Multiplex cytokine analysis",
+      "assay_name": "Multiplex cytokine analysis",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    }
+  ]
+}

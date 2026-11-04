@@ -193,3 +193,37 @@ relevant sections, cheaper model for verify/correct, and a dollar figure in `--d
     Moving the variable block after the rules would cache ~2.4k of each call's ~3.6k tokens --
     about $0.06 of this paper's $0.36, the largest remaining lever. Not done; needs a check
     that the pick is unchanged.
+- 2026-11-04: **measured on SDY1289 (pmid 19047440)**, same procedure, into `assay_result_v4/`.
+  Scored strict against benchmark v5:
+
+  | | v3 | v4 |
+  |---|---|---|
+  | curated rows / agent entries | 7 / 9 | 7 / 9 |
+  | matched (obi exact) | 7 (6) | 7 (6) |
+  | missed / extra / split | 0 / 0 / 1 | 0 / 0 / 1 |
+  | recall / precision | 100% / 77.8% | 100% / 77.8% |
+
+  Row for row identical to v3: the qPCR row is still MATCH_OBI_CONFLICT (agent maps to the
+  RT-qPCR term, curators to qPCR), and the three flow cytometry entries still sit on one
+  curated `flow cytometry` row (`split`). Lines printed: 2 `MINORITY` (lysis plaque assay;
+  long-term CD4 Th phenotype flow), 1 `VOTE` (FACS analysis of PBMCs, 2 of 3), 3 `REVIEW`
+  (2 fields REPLACED in round 3; FACS identity NOT_SUPPORTED, not correctable), 2 `REVIEW
+  not folded` with `JUDGED  DIFFERENT` on both.
+
+  Usage (25 chat calls; round 4's 18 embedding calls not recorded):
+
+  | round | calls | prompt | cached | completion | reasoning |
+  |---|---|---|---|---|---|
+  | extract | 3 | 44,202 | 28,160 | 5,194 | 0 |
+  | verify | 9 | 106,969 | 88,064 | 6,180 | 0 |
+  | correct | 2 | 18,918 | 8,960 | 153 | 0 |
+  | obi | 9 | 31,839 | 0 | 47 | 0 |
+  | judge | 2 | 1,367 | 0 | 147 | 0 |
+  | total | 25 | 203,295 | 125,184 | 11,721 | 0 |
+
+  **$0.40** at list price against $0.68 uncached (41% off, same as SDY1669). Cache hits as
+  before: extract run2/run3 14,080 of 14,734; verify calls 2-9 11,008 of ~11,900; correct
+  call 2 8,960 of 9,464. Reasoning 0 again. Rounds 4 and 6 cache nothing.
+
+  Two papers in: accuracy unchanged by the change (as designed), real cost $0.36-$0.40 per
+  paper against the $0.59 median char estimate, and the cache is the whole difference.

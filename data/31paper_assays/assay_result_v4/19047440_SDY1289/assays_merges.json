@@ -1,0 +1,45 @@
+{
+  "summary": {
+    "groups_merged": 0,
+    "entries_folded": 0,
+    "folds_blocked": 2
+  },
+  "results": [],
+  "blocked": [
+    {
+      "member": "FACS analysis of PBMCs",
+      "kept_apart_from": "flow cytometry assay",
+      "anchor": "Flow cytometric analysis of IFN-γ/IL-2–producing activated CD4 T cells",
+      "obi_id": "OBI:0000916",
+      "obi_label": "flow cytometry assay",
+      "reason": "readouts differs: 'frequencies of activated CD4 T cells expressing CD154, IL-2, and IFN-γ after peptide stimulation' vs 'percentages of central memory CD4 T cells expressing CD154 and Th1 or Th2 surface-marker phenotypes after stimulation/restimulation'",
+      "judged": {
+        "verdict": "DIFFERENT",
+        "reason": "Record A measures intracellular cytokine-producing activated CD4 T-cell responses (CD154, IL-2, IFN-γ) after peptide stimulation, whereas Record B measures memory/Th-phenotype surface-marker subsets of CD4 T cells (CD45RA, CCR7, CCR4, CXCR3, CCR6, CD154)."
+      }
+    },
+    {
+      "member": "CD4 + T cell stimulation assay",
+      "kept_apart_from": "flow cytometry assay",
+      "anchor": "Flow cytometric analysis of IFN-γ/IL-2–producing activated CD4 T cells",
+      "obi_id": "OBI:0000916",
+      "obi_label": "flow cytometry assay",
+      "reason": "sample_type differs: 'peripheral blood mononuclear cells' vs 'autologous CD4 positive T cells co-cultured with dendritic cells'",
+      "judged": {
+        "verdict": "DIFFERENT",
+        "reason": "the specimens differ (PBMCs after peptide stimulation versus purified autologous CD4+ T cells co-cultured with dendritic cells) and the intracellular marker/readout panels differ (IFN-γ/IL-2/CD154 versus IFN-γ/IL-5/IL-13/CD154)."
+      }
+    }
+  ],
+  "key_map": {
+    "gene array analysis": "transcription profiling by array assay",
+    "qPCR validation": "real time reverse-transcription polymerase chain reaction assay",
+    "IL-1β ELISA": "enzyme-linked immunosorbent assay",
+    "CFSE labeling": "cell proliferation assay using carboxyfluorescein succinimidyl ester staining",
+    "BD Th1/Th2 CBA array": "analyte detection by flow based bead assay",
+    "Flow cytometric analysis of IFN-γ/IL-2–producing activated CD4 T cells": "flow cytometry assay",
+    "FACS analysis of PBMCs": "flow cytometry assay (2)",
+    "CD4 + T cell stimulation assay": "flow cytometry assay (3)",
+    "Multiplex cytokine analysis": "cytometric bead array assay"
+  }
+}
