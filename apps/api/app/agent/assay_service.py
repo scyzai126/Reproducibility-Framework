@@ -885,16 +885,18 @@ async def assay_report(
     # that dies part-way keeps the rounds it paid for. Stopped in the finally below.
     trace = assay_trace.start()
     try:
-        result = await _run_rounds(pubmed_id, study_accession, client, verify, correct, model,
-                                   _emit, kind, paper_path, title, source_text, out_dir, trace,
-                                   extractions if extractions is not None else EXTRACTIONS)
+        return await _run_rounds(pubmed_id, study_accession, client, verify, correct, model,
+                                 _emit, kind, paper_path, title, source_text, out_dir, trace,
+                                 extractions if extractions is not None else EXTRACTIONS)
     finally:
         assay_trace.stop()
-    # One row in the corpus-wide ledger (data/assay_usage_ledger.csv): tokens and the price,
-    # so a month's spend is a sum over rows rather than over registry folders. Written only
-    # once the run is complete, after the trace, and never a reason for the run to fail.
-    assay_ledger.record_run(pubmed_id, study_accession, out_dir, trace.as_json(), model)
-    return result
+        # One row in the corpus-wide ledger (data/assay_usage_ledger.csv): tokens and the
+        # price, so a month's spend is a sum over rows rather than over registry folders. In
+        # the finally, not after it: a run that raises AssayExtractionError has still paid for
+        # the extraction calls that answered, and a ledger that skips those rows cannot be
+        # reconciled against the bill over a corpus. record_run never raises, and writes
+        # nothing when the trace holds no usage.
+        assay_ledger.record_run(pubmed_id, study_accession, out_dir, trace.as_json(), model)
 
 
 async def _extraction_attempt(label: str, call) -> tuple[str, dict | None, str | None]:
@@ -1219,13 +1221,25 @@ async def _run_rounds(pubmed_id, study_accession, client, verify, correct, model
     # registry -- and the OBI mapping and the deliverable beside it, keyed the same way. Nothing
     # else writes it: the step-wise scripts that promoted a corrected registry on their own,
     # skipping rounds 4 and 5, were removed 2026-10-30.
-    if obi is not None:
-        obi_path.write_text(json.dumps(obi, indent=2, ensure_ascii=False) + "\n",
-                            encoding="utf-8")
     registry_path.write_text(json.dumps(assays, indent=2, ensure_ascii=False) + "\n",
                              encoding="utf-8")
-    benchmark_path.write_text(
-        json.dumps(trim_registry(assays), indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    # The deliverable is written only when round 4 ran. Without a mapping, rounds 5 and 6 were
+    # skipped and the registry is still keyed by the extractor's wording -- a file written
+    # then would read as finished (run_assay_batch.py takes its presence as "this paper is
+    # done" and never revisits it) while being keyed by a different rule from every neighbour,
+    # with nothing inside it to say so. Rounds 1-3 are on disk in assays.json and
+    # assays_corrected.json; `run_assay_merge.py --map` finishes the chain without re-paying.
+    delivered = obi is not None
+    if delivered:
+        obi_path.write_text(json.dumps(obi, indent=2, ensure_ascii=False) + "\n",
+                            encoding="utf-8")
+        benchmark_path.write_text(
+            json.dumps(trim_registry(assays), indent=2, ensure_ascii=False) + "\n",
+            encoding="utf-8")
+    else:
+        logger.warning("%s: OBI mapping did not run, so %s is not written; the registry is "
+                       "keyed by the paper's wording. Finish with run_assay_merge.py --map",
+                       _display_path(out_dir), benchmark_path.name)
     # On the registry as delivered -- corrected, re-keyed, with the mapping that says which key
     # is an OBI label -- the same call the CLI makes. Taken after round 1, as it used to be, the
     # list named pre-correction gaps under keys round 5 had since replaced, and the web UI
@@ -1260,8 +1274,8 @@ async def _run_rounds(pubmed_id, study_accession, client, verify, correct, model
         "meta": {
             "llm_calls": calls,
             "registry_path": _display_path(registry_path),
-            "benchmark_path": _display_path(benchmark_path),
-            "obi_path": _display_path(obi_path) if obi is not None else None,
+            "benchmark_path": _display_path(benchmark_path) if delivered else None,
+            "obi_path": _display_path(obi_path) if delivered else None,
             "raw_path": _display_path(raw_path),
             "note": "assays.json holds the corrected registry; the extracted one is kept as "
                     "assays_precorrection.json; assays_benchmark.json is the reading view; "

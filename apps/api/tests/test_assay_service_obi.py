@@ -208,6 +208,11 @@ async def test_a_mapping_failure_does_not_throw_away_a_paid_run(paper, monkeypat
 
     Raising here would lose 1+N+F calls to an ontology lookup, and every input round 4 needs
     is persisted -- so scripts/run_assay_merge.py --map can finish the job without re-paying.
+
+    The deliverable is the one file withheld. Without round 4 the registry is keyed by the
+    extractor's wording, and run_assay_batch.py takes assays_benchmark.json's presence as
+    "this paper finished": written here, one transient error marked the paper done for every
+    later resume, with a key rule unlike its neighbours' and nothing in the file to say so.
     """
     def _boom(*_args, **_kwargs):
         raise RuntimeError("no embeddings")
@@ -222,8 +227,11 @@ async def test_a_mapping_failure_does_not_throw_away_a_paid_run(paper, monkeypat
     assert result["obi"] is None
     assert result["meta"]["obi_path"] is None
     assert not (paper / "assays_OBI.json").exists()
-    for name in ("assays.json", "assays_verification.json", "assays_benchmark.json"):
+    for name in ("assays.json", "assays_corrected.json", "assays_verification.json"):
         assert (paper / name).exists(), f"{name} was lost to an OBI failure"
+    assert not (paper / "assays_benchmark.json").exists(), \
+        "a deliverable keyed by the paper's wording would pass for a finished one"
+    assert result["meta"]["benchmark_path"] is None
 
 
 @pytest.mark.asyncio

@@ -48,21 +48,30 @@ def corpus(tmp_path, runner, monkeypatch):
     return xml_dir, registry_root
 
 
-def _fake_report(runner, registry_root, calls, *, fails=()):
-    """An assay_report that writes the seven files a real one would, and records the paper."""
+def _fake_report(runner, registry_root, calls, *, fails=(), undelivered=()):
+    """An assay_report that writes the seven files a real one would, and records the paper.
+
+    A pmid in `undelivered` gets what a run whose OBI round failed gets: rounds 1-3 on disk,
+    no assays_OBI.json, no assays_benchmark.json, and a result whose benchmark_path is None.
+    """
     async def _run(pmid, sdy, client, verify=True, correct=True):
         calls.append(pmid)
         if pmid in fails:
             raise RuntimeError("boom")
         out_dir = registry_root / f"{pmid}_{sdy}"
         out_dir.mkdir(parents=True, exist_ok=True)
-        for name in ("assays.json", "assays_benchmark.json", "assays_verification.json",
-                     "assays_corrections.json", "assays_corrected.json",
-                     "assays_precorrection.json"):
+        for name in ("assays.json", "assays_verification.json", "assays_corrections.json",
+                     "assays_corrected.json", "assays_precorrection.json"):
             (out_dir / name).write_text("{}\n", encoding="utf-8")
+        if pmid in undelivered:
+            return {"meta": {"llm_calls": 3, "benchmark_path": None},
+                    "rounds": {"obi": {"source": "failed", "calls": 0}}}
+        (out_dir / "assays_benchmark.json").write_text("{}\n", encoding="utf-8")
         (out_dir / "assays_OBI.json").write_text(
             json.dumps({"flow cytometry": {"obi_id": f"OBI:{pmid}"}}) + "\n", encoding="utf-8")
-        return {"meta": {"llm_calls": 3}, "rounds": {}}
+        return {"meta": {"llm_calls": 3,
+                         "benchmark_path": str(out_dir / "assays_benchmark.json")},
+                "rounds": {}}
     return _run
 
 
@@ -168,6 +177,30 @@ async def test_a_failing_paper_does_not_stop_the_queue(corpus, runner, monkeypat
     assert sorted(seen) == ["111", "222"], "the second paper was skipped after the first failed"
     assert not (registry_root / "111_SDY1" / "assays_benchmark.json").exists()
     assert (registry_root / "222_SDY2" / "assays_benchmark.json").exists()
+
+
+@pytest.mark.asyncio
+async def test_a_paper_without_its_deliverable_is_not_done(corpus, runner, monkeypatch, capsys):
+    """A run whose OBI round failed returns normally but withholds assays_benchmark.json. It is
+    listed with the failures, not the finished papers, and the next resume runs it again --
+    counted done, it would have been skipped on every resume with no file to say why."""
+    xml_dir, registry_root = corpus
+    seen = []
+    monkeypatch.setattr(runner, "assay_report",
+                        _fake_report(runner, registry_root, seen, undelivered=("111",)))
+
+    await runner.main(xml_dir, [], force=False, dry=False)
+    out = capsys.readouterr().out
+
+    assert (registry_root / "111_SDY1" / "assays.json").exists()
+    assert not (registry_root / "111_SDY1" / "assays_benchmark.json").exists()
+    assert "1 done, 0 skipped, 1 failed" in out
+    assert "NOT DELIVERED  111" in out
+    assert "FAILED  111: OBI mapping did not run" in out
+
+    monkeypatch.setattr(runner, "assay_report", _fake_report(runner, registry_root, seen))
+    await runner.main(xml_dir, [], force=False, dry=False)
+    assert seen == ["111", "222", "111"], "the undelivered paper was not picked up on resume"
 
 
 # ── the dry run spends nothing ────────────────────────────────────────────────

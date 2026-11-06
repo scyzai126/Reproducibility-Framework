@@ -297,7 +297,7 @@ def _load_embeddings() -> tuple[list[dict], np.ndarray]:
 def _embed_query(text: str) -> np.ndarray:
     """One embedding call per distinct query string per process. The vector for a string never
     changes, and round 5's re-pick retrieves on the same queries round 4 just did."""
-    client = OpenAI(api_key=settings.OPENAI_API_KEY)
+    client = OpenAI(api_key=settings.OPENAI_API_KEY, max_retries=settings.OPENAI_MAX_RETRIES)
     resp = client.embeddings.create(model=EMBED_MODEL, input=[text])
     vec = np.array(resp.data[0].embedding, dtype=np.float64)
     norm = np.linalg.norm(vec)
@@ -457,7 +457,7 @@ def _llm_pick(
     prompt = build_pick_prompt(assay_name, candidates, sample_type, readouts, aliases,
                                standard_technique_name)
 
-    client = OpenAI(api_key=settings.OPENAI_API_KEY)
+    client = OpenAI(api_key=settings.OPENAI_API_KEY, max_retries=settings.OPENAI_MAX_RETRIES)
     resp = client.chat.completions.create(
         model=model,
         messages=[{"role": "user", "content": prompt}],
@@ -681,7 +681,7 @@ def _fulllist_pick(
         return None
     prompt = build_fulllist_prompt(assay_name, candidates, sample_type, readouts, aliases,
                                    standard_technique_name)
-    client = OpenAI(api_key=settings.OPENAI_API_KEY)
+    client = OpenAI(api_key=settings.OPENAI_API_KEY, max_retries=settings.OPENAI_MAX_RETRIES)
     resp = client.chat.completions.create(
         model=model, messages=[{"role": "user", "content": prompt}], temperature=0)
     reply = (resp.choices[0].message.content or "").strip().lower()

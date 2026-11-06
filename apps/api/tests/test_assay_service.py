@@ -943,6 +943,28 @@ async def test_two_failed_extraction_calls_abort_the_paper(paper, monkeypatch):
 
 
 @pytest.mark.asyncio
+async def test_a_run_that_aborts_after_paying_still_reaches_the_usage_ledger(paper, monkeypatch):
+    """The three extraction calls were billed before the majority rule raised. Recorded after
+    the try/finally, the ledger skipped every aborted run, and over a corpus the sum of its
+    rows could not be reconciled against the bill."""
+    monkeypatch.setattr(assay_service, "EXTRACTIONS", 3)
+    recorded = []
+    monkeypatch.setattr(assay_service.assay_ledger, "record_run",
+                        lambda *args, **kwargs: recorded.append(args))
+    client = _ExtractionClient(["not json", _dc_panel_body(True), "also not json"],
+                               _verification_body())
+
+    with pytest.raises(AssayExtractionError):
+        await assay_report("111", "SDY1", client)
+
+    assert len(recorded) == 1, "the aborted run was not recorded"
+    pubmed_id, study, out_dir, grouped, _model = recorded[0]
+    assert (pubmed_id, study) == ("111", "SDY1") and out_dir == paper
+    assert set(grouped.get("extract", {})) == {"run1", "run2", "run3"}, \
+        "the ledger was handed a trace without the calls the run paid for"
+
+
+@pytest.mark.asyncio
 async def test_a_single_extraction_that_fails_still_raises(paper, monkeypatch):
     monkeypatch.setattr(assay_service, "EXTRACTIONS", 1)
 

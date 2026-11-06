@@ -62,7 +62,8 @@ _openai_client: AsyncOpenAI | None = None
 def _get_client() -> AsyncOpenAI:
     global _openai_client
     if _openai_client is None:
-        _openai_client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+        _openai_client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY,
+                                     max_retries=settings.OPENAI_MAX_RETRIES)
     return _openai_client
 
 

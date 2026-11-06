@@ -380,10 +380,16 @@ def report_result(result: dict) -> None:
 
     _print_fields(assays, result.get("obi"))
     meta = result["meta"]
-    print(f"\n{meta['llm_calls']} call(s) spent."
-          f"\n  {meta['benchmark_path']}  <- the deliverable: name_in_paper, aliases, "
-          "source, evidence"
-          f"\n  {meta['registry_path']}  the full registry the pipeline works from")
+    print(f"\n{meta['llm_calls']} call(s) spent.")
+    if meta.get("benchmark_path"):
+        print(f"  {meta['benchmark_path']}  <- the deliverable: name_in_paper, aliases, "
+              "source, evidence")
+    else:
+        # Not written on purpose: without round 4 the registry is keyed by the paper's wording,
+        # and a deliverable in that shape would pass for a finished one.
+        print("  NOT DELIVERED  assays_benchmark.json not written: OBI mapping did not run. "
+              "Finish with scripts/run_assay_merge.py --map <registry_dir>")
+    print(f"  {meta['registry_path']}  the full registry the pipeline works from")
     if meta.get("obi_path"):
         print(f"  {meta['obi_path']}  the same registry with OBI terms attached")
     if meta.get("raw_path"):

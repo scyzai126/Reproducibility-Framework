@@ -19,8 +19,11 @@ from thirty papers is unreadable when something goes wrong.
 
 **Resumable by default.** A paper whose assays_benchmark.json already exists is skipped, so an
 interruption at paper 28 does not cost the first 27 again -- the pipeline writes that file last,
-so its presence means the paper finished. Pass --force to re-run regardless -- which is what you
-want after editing a prompt, since the pipeline itself never reuses anything.
+and only when every round ran, so its presence means the paper finished: a run whose OBI round
+failed writes no deliverable, is listed under the failures as NOT DELIVERED, and is run again on
+resume (or finished without re-paying by run_assay_merge.py --map). Pass --force to re-run
+regardless -- which is what you want after editing a prompt, since the pipeline itself never
+reuses anything.
 
 `--result-version NAME` writes every paper under `data/31paper_assays/NAME/` instead of the
 configured result folder (each paper's folder is created there first), the way the single-paper
@@ -132,7 +135,8 @@ async def run_one(pmid: str, sdy: str, client) -> dict:
     """One paper, end to end, reported in full."""
     result = await assay_report(pmid, sdy, client, verify=True, correct=True)
     report_result(result)
-    print(f"  -> {_display_path(done_path(pmid, sdy))}")
+    if result["meta"].get("benchmark_path"):
+        print(f"  -> {_display_path(done_path(pmid, sdy))}")
     return result
 
 
@@ -174,8 +178,17 @@ async def main(xml_dir: Path, only: list[str], force: bool, dry: bool,
             failed.append((pmid, f"{type(exc).__name__}: {exc}"))
             print(f"  FAILED  {pmid}: {type(exc).__name__}: {exc}")
             continue
-        done.append(pmid)
         calls += result["meta"]["llm_calls"]
+        if not result["meta"].get("benchmark_path"):
+            # The chain returned but round 4 did not run, so the pipeline withheld the
+            # deliverable: rounds 1-3 are on disk and the paper is not done. Listed with the
+            # failures so the summary says which papers a resume will pick up again, rather
+            # than counting it done and losing it among the skips next time.
+            failed.append((pmid, "OBI mapping did not run; no assays_benchmark.json written. "
+                                 "Rounds 1-3 are on disk: run_assay_merge.py --map, or resume"))
+            print(f"  NOT DELIVERED  {pmid}: OBI mapping did not run; will run again on resume")
+            continue
+        done.append(pmid)
 
     print(f"\n{'=' * 78}\n{len(done)} done, {len(skipped)} skipped, {len(failed)} failed; "
           f"{calls} call(s) spent this run")
