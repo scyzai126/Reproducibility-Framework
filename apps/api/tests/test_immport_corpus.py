@@ -11,12 +11,18 @@ import pytest
 from app.agent import immport_corpus
 from app.agent.immport_corpus import (
     PAPER_COLUMNS,
+    benchmark_xml,
+    existing_xml,
     group_papers,
+    is_permanent,
     paper_rows,
+    parse_idconv,
     primary_sdy,
+    read_papers,
     sdy_key,
     summary,
     write_csv,
+    xml_name,
 )
 
 
@@ -106,3 +112,59 @@ def test_write_csv_keeps_the_old_file_when_writing_fails(tmp_path, monkeypatch):
 
 def test_default_lists_live_on_the_external_drive():
     assert immport_corpus.PAPERS_DIR == immport_corpus.Path("/Volumes/Extreme SSD/HIPC papers")
+
+
+# ── step 2: reading the list back, naming files, finding what is on disk ─────
+
+def test_read_papers_splits_the_studies(tmp_path):
+    path = tmp_path / "papers_all.csv"
+    write_csv(path, paper_rows({"111": ["SDY1119", "SDY80"]}), PAPER_COLUMNS)
+    rows = read_papers(path)
+    assert rows[0]["studies"] == ["SDY80", "SDY1119"]
+    assert rows[0]["primary_sdy"] == "SDY80"
+    assert read_papers(tmp_path / "absent.csv") == []
+
+
+def test_xml_name_is_sdy_first_and_validated():
+    assert xml_name("SDY80", "111") == "SDY80_111.xml"
+    with pytest.raises(ValueError):
+        xml_name("ABC", "111")
+    with pytest.raises(ValueError):
+        xml_name("SDY80", "PMC111")
+
+
+def test_existing_xml_reads_both_stem_orders_and_ignores_appledouble(tmp_path):
+    (tmp_path / "SDY80_111.xml").write_text("x")
+    (tmp_path / "222_SDY2.xml").write_text("x")
+    (tmp_path / "._SDY80_111.xml").write_text("x")  # ExFAT metadata twin
+    (tmp_path / "notes.xml").write_text("x")  # no second half
+    found = existing_xml(tmp_path)
+    assert set(found) == {"111", "222"}
+    assert found["111"].name == "SDY80_111.xml"
+    assert existing_xml(tmp_path / "missing") == {}
+
+
+def test_parse_idconv_handles_int_pmids_and_error_records():
+    payload = {"records": [
+        {"pmid": 111, "pmcid": "PMC1"},
+        {"pmid": "222", "status": "error", "errmsg": "invalid article id"},
+        {"pmid": "333"},  # in PubMed, no PMC record
+        {"pmcid": "PMC9"},  # no pmid at all: nothing to key it by
+    ]}
+    assert parse_idconv(payload) == {"111": "PMC1", "222": None, "333": None}
+    assert parse_idconv({}) == {}
+
+
+def test_benchmark_xml_tries_every_study_and_both_orders(tmp_path):
+    (tmp_path / "SDY1119_111.xml").write_text("x")
+    (tmp_path / "222_SDY5.xml").write_text("x")
+    assert benchmark_xml("111", ["SDY80", "SDY1119"], tmp_path).name == "SDY1119_111.xml"
+    assert benchmark_xml("222", ["SDY5"], tmp_path).name == "222_SDY5.xml"
+    assert benchmark_xml("333", ["SDY80"], tmp_path) is None
+
+
+def test_permanent_reasons_are_not_transport_failures():
+    assert is_permanent(immport_corpus.NO_PMC_REASON)
+    assert is_permanent("PubMed Central has only the abstract, not the full text")
+    assert not is_permanent("request failed: connection reset")
+    assert not is_permanent("not attempted")

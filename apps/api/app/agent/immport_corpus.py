@@ -25,6 +25,8 @@ from pathlib import Path
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.agent import assay_service
+from app.agent.jats_fetcher import validate_identifiers
 from app.agent.paper_resolver import normalize_row_pmid
 
 #: Where the corpus lists live: an external drive, so the script refuses to run when it is not
@@ -33,9 +35,34 @@ PAPERS_DIR = Path("/Volumes/Extreme SSD/HIPC papers")
 
 PAPERS_ALL_NAME = "papers_all.csv"
 PAPERS_UNUSABLE_NAME = "papers_unusable.csv"
+#: Step 2 splits papers_all into these two: every PMID lands in exactly one of them.
+PAPERS_XML_NAME = "papers_xml.csv"
+PAPERS_NO_XML_NAME = "papers_no_xml.csv"
+#: One folder for every full text, named the way the assay pipeline reads them.
+XML_DIR_NAME = "xml"
 
 PAPER_COLUMNS = ("pmid", "study_accessions", "primary_sdy", "n_studies")
 UNUSABLE_COLUMNS = ("study_accession", "raw_value", "reason")
+XML_COLUMNS = ("pmid", "study_accessions", "primary_sdy", "pmcid", "file", "bytes")
+NO_XML_COLUMNS = ("pmid", "study_accessions", "primary_sdy", "pmcid", "reason")
+
+#: NCBI's ID converter takes up to 200 ids in one request; ncbi_utils.pmid_to_pmc_url asks one
+#: at a time with a process-local cache, which is the right shape for a UI and the wrong one
+#: for 1,300 papers.
+IDCONV_URL = "https://www.ncbi.nlm.nih.gov/pmc/utils/idconv/v1.0/"
+IDCONV_BATCH = 200
+
+#: Outcome a paper gets when the ID converter has no PMC record for it.
+NO_PMC_REASON = "no open-access PubMed Central record"
+#: Outcomes that are a fact about the paper, not about the network: a resumed run does not ask
+#: again unless told to. A transport failure ("request failed: ...") is never in this set.
+PERMANENT_REASON_PREFIXES = (
+    NO_PMC_REASON,
+    "PubMed Central does not carry it as open access",
+    "the publisher does not allow",
+    "PubMed Central has only the abstract",
+    "PubMed Central returned no article",
+)
 
 #: Studies are listed inside one CSV cell; `;` because a study accession never contains one and
 #: a spreadsheet leaves it alone, where `,` would split the cell.
@@ -94,6 +121,89 @@ def paper_rows(grouped: dict[str, list[str]]) -> list[dict]:
             "n_studies": len(studies),
         })
     return rows
+
+
+def read_csv(path: Path) -> list[dict]:
+    """Every row of a list this module wrote; an absent file is an empty list."""
+    if not path.exists():
+        return []
+    with path.open(newline="", encoding="utf-8") as handle:
+        return list(csv.DictReader(handle))
+
+
+def read_papers(path: Path) -> list[dict]:
+    """`papers_all.csv` rows, each with `studies` split back into a list."""
+    rows = read_csv(path)
+    for row in rows:
+        row["studies"] = [s for s in row.get("study_accessions", "").split(STUDY_SEP) if s]
+    return rows
+
+
+def xml_name(primary_sdy: str, pmid: str) -> str:
+    """`<SDY>_<pmid>.xml`, the one name assay_service.locate_paper_xml tries first.
+
+    validate_identifiers first: a stem whose halves cannot be told apart by the SDY prefix reads
+    back inverted, and the paper is unfindable under the ids it was fetched with.
+    """
+    pmid, sdy = validate_identifiers(pmid, primary_sdy)
+    return f"{sdy}_{pmid}.xml"
+
+
+def existing_xml(xml_dir: Path) -> dict[str, Path]:
+    """`{pmid: path}` for every paper already in the folder.
+
+    The ExFAT drive grows a `._<name>` AppleDouble twin beside every file macOS writes; those
+    are not papers and are skipped by name.
+    """
+    found: dict[str, Path] = {}
+    if not xml_dir.is_dir():
+        return found
+    for path in sorted(xml_dir.glob("*.xml")):
+        if path.name.startswith("._"):
+            continue
+        split = assay_service.split_stem(path.stem)
+        if split is not None:
+            found[split[0]] = path
+    return found
+
+
+def parse_idconv(payload: dict) -> dict[str, str | None]:
+    """`{pmid: pmcid or None}` from one ID-converter reply.
+
+    The converter echoes the pmid as an int on some records and as a string on others, and
+    reports an unknown id as a record with `status: "error"` rather than leaving it out.
+    """
+    out: dict[str, str | None] = {}
+    for record in payload.get("records", []) or []:
+        pmid = record.get("pmid")
+        if pmid is None:
+            continue
+        pmid = str(pmid).strip()
+        pmcid = record.get("pmcid")
+        bad = record.get("status") == "error" or "errmsg" in record
+        out[pmid] = str(pmcid) if pmcid and not bad else None
+    return out
+
+
+def benchmark_xml(pmid: str, studies: list[str], xml_root: Path | None = None) -> Path | None:
+    """The paper's XML already in the curated corpus, under any of its studies.
+
+    The benchmark filed a paper under whichever study the curators were working on, which need
+    not be its primary one; so every study is tried. A copy of this file, not a refetch, keeps
+    the sentence numbering that the paper's existing registry cites.
+    """
+    root = xml_root if xml_root is not None else assay_service.XML_ROOT
+    for sdy in studies:
+        for stem in (f"{sdy}_{pmid}", f"{pmid}_{sdy}"):
+            path = root / f"{stem}.xml"
+            if path.exists():
+                return path
+    return None
+
+
+def is_permanent(reason: str) -> bool:
+    """True for a reason that will not change by asking NCBI again."""
+    return any(reason.startswith(prefix) for prefix in PERMANENT_REASON_PREFIXES)
 
 
 def write_csv(path: Path, rows: list[dict], columns: tuple[str, ...]) -> None:
