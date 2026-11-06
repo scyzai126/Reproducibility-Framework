@@ -41,6 +41,25 @@ PAPERS_NO_XML_NAME = "papers_no_xml.csv"
 #: One folder for every full text, named the way the assay pipeline reads them.
 XML_DIR_NAME = "xml"
 
+#: Where the assay registries go: one `<pmid>_<SDY>/` per paper, beside a logs/ folder and the
+#: per-paper run record.
+RESULT_DIR = Path("/Volumes/Extreme SSD/HIPC result")
+RESULT_LOG_DIR_NAME = "logs"
+RUNS_NAME = "assay_runs.csv"
+RUN_COLUMNS = ("pmid", "primary_sdy", "study_accessions", "status", "registry_dir", "calls",
+               "usd", "seconds", "flags", "error", "finished_at")
+
+#: What one paper costs when the ledger has nothing to say yet (measured $0.36-0.40 on two
+#: papers, 2026-11-04) and how long it takes run alone.
+DEFAULT_USD_PER_PAPER = 0.40
+DEFAULT_SECONDS_PER_PAPER = 180
+
+#: The line prefixes report_result prints that CLAUDE.md says must be reported, not summarised.
+#: Longest first, so `OBI FAILED` is not read as nothing and `DROPPED ALIAS` counts as DROPPED.
+REPORT_PREFIXES = ("CORRECT REFUSED", "CORRECT FAILED", "OBI FAILED", "WARNING", "REVIEW",
+                   "JUDGED", "REJECT", "DROPPED", "MINORITY", "VOTE", "MERGED", "UNMAPPED",
+                   "ERROR")
+
 PAPER_COLUMNS = ("pmid", "study_accessions", "primary_sdy", "n_studies")
 UNUSABLE_COLUMNS = ("study_accession", "raw_value", "reason")
 XML_COLUMNS = ("pmid", "study_accessions", "primary_sdy", "pmcid", "file", "bytes")
@@ -199,6 +218,96 @@ def benchmark_xml(pmid: str, studies: list[str], xml_root: Path | None = None) -
             if path.exists():
                 return path
     return None
+
+
+def read_xml_papers(papers_dir: Path) -> list[dict]:
+    """`papers_xml.csv` rows -- the papers the assay run can read -- with `studies` split."""
+    rows = read_csv(papers_dir / PAPERS_XML_NAME)
+    for row in rows:
+        row["studies"] = [s for s in row.get("study_accessions", "").split(STUDY_SEP) if s]
+    return rows
+
+
+def done_marker(result_dir: Path, pmid: str, sdy: str) -> Path:
+    """The file whose presence means the paper finished: the pipeline writes it last."""
+    return result_dir / f"{pmid}_{sdy}" / "assays_benchmark.json"
+
+
+def benchmark_registry(pmid: str, studies: list[str], version_root: Path) -> Path | None:
+    """A finished, XML-based registry for this paper in a benchmark version folder, under any
+    of its studies. `_pdf` folders are passed over: a registry built from a PDF carries no
+    sentence ids, and the corpus is XML."""
+    for sdy in studies:
+        folder = version_root / f"{pmid}_{sdy}"
+        if (folder / "assays_benchmark.json").exists():
+            return folder
+    return None
+
+
+def count_report_lines(text: str) -> dict[str, int]:
+    """How many lines of a captured report_result carry each REPORT_PREFIXES prefix."""
+    counts: dict[str, int] = {}
+    for line in text.splitlines():
+        stripped = line.lstrip()
+        for prefix in REPORT_PREFIXES:
+            if stripped.startswith(prefix):
+                counts[prefix] = counts.get(prefix, 0) + 1
+                break
+    return counts
+
+
+def format_flags(counts: dict[str, int]) -> str:
+    """`REVIEW=2;VOTE=1` -- one CSV cell, in REPORT_PREFIXES order; empty when clean."""
+    return STUDY_SEP.join(f"{p}={counts[p]}" for p in REPORT_PREFIXES if counts.get(p))
+
+
+def _under(row_dir: str, root: Path) -> bool:
+    try:
+        return Path(row_dir).resolve().is_relative_to(root.resolve())
+    except (OSError, ValueError):
+        return False
+
+
+def cost_per_paper(ledger_rows: list[dict], under: Path | None = None) -> dict:
+    """`{median, max, n}` dollars per paper from the ledger.
+
+    Rows under `under` (the corpus result folder) first, because benchmark papers are a biased
+    sample; every priced row when there are none there; the dated default with n=0 when the
+    ledger is empty, so a projection never silently rests on nothing.
+    """
+    priced = [r for r in ledger_rows if r.get("usd") is not None]
+    chosen = [r for r in priced if under is not None and _under(r.get("registry_dir", ""), under)]
+    if not chosen:
+        chosen = priced
+    if not chosen:
+        return {"median": DEFAULT_USD_PER_PAPER, "max": DEFAULT_USD_PER_PAPER, "n": 0}
+    values = sorted(r["usd"] for r in chosen)
+    mid = len(values) // 2
+    median = values[mid] if len(values) % 2 else (values[mid - 1] + values[mid]) / 2
+    return {"median": median, "max": values[-1], "n": len(values)}
+
+
+def seconds_per_paper(run_rows: list[dict]) -> float:
+    """Median wall-clock of finished papers, or the default when none has run."""
+    values = sorted(float(r["seconds"]) for r in run_rows
+                    if r.get("status") == "done" and r.get("seconds"))
+    if not values:
+        return float(DEFAULT_SECONDS_PER_PAPER)
+    mid = len(values) // 2
+    return values[mid] if len(values) % 2 else (values[mid - 1] + values[mid]) / 2
+
+
+def summarize_runs(run_rows: list[dict]) -> dict:
+    """Counts by status plus the flag totals, for `status` and the tranche summary."""
+    by_status: dict[str, int] = {}
+    flags: dict[str, int] = {}
+    for row in run_rows:
+        by_status[row.get("status", "")] = by_status.get(row.get("status", ""), 0) + 1
+        for item in (row.get("flags") or "").split(STUDY_SEP):
+            if "=" in item:
+                name, _, n = item.partition("=")
+                flags[name] = flags.get(name, 0) + int(n or 0)
+    return {"by_status": by_status, "flags": flags}
 
 
 def is_permanent(reason: str) -> bool:

@@ -163,6 +163,71 @@ def test_benchmark_xml_tries_every_study_and_both_orders(tmp_path):
     assert benchmark_xml("333", ["SDY80"], tmp_path) is None
 
 
+# ── step 3: the assay run's bookkeeping ──────────────────────────────────────
+
+def test_benchmark_registry_tries_every_study_and_needs_the_marker(tmp_path):
+    (tmp_path / "111_SDY1119").mkdir()
+    (tmp_path / "111_SDY1119" / "assays_benchmark.json").write_text("{}")
+    (tmp_path / "222_SDY2_pdf").mkdir()  # a PDF registry: never reused for an XML corpus
+    (tmp_path / "222_SDY2_pdf" / "assays_benchmark.json").write_text("{}")
+    (tmp_path / "333_SDY3").mkdir()  # unfinished: no marker
+    assert immport_corpus.benchmark_registry("111", ["SDY80", "SDY1119"], tmp_path).name \
+        == "111_SDY1119"
+    assert immport_corpus.benchmark_registry("222", ["SDY2"], tmp_path) is None
+    assert immport_corpus.benchmark_registry("333", ["SDY3"], tmp_path) is None
+
+
+def test_done_marker_is_the_benchmark_file(tmp_path):
+    assert immport_corpus.done_marker(tmp_path, "111", "SDY1") \
+        == tmp_path / "111_SDY1" / "assays_benchmark.json"
+
+
+def test_count_report_lines_uses_the_longest_prefix():
+    text = "\n".join([
+        "SDY1_111.xml [xml]: 'T'",
+        "  WARNING  extraction 2 failed: boom",
+        "  DROPPED ALIAS  ELISA: 'EIA' does not appear",
+        "  REVIEW  not folded: flow cytometry (2)",
+        "    JUDGED  DIFFERENT: readouts differ",
+        "  OBI FAILED  ELISpot: timeout",
+        "  VOTE  2 of 3: qPCR",
+        "  MERGED  ELISA <- EIA",
+        "  UNMAPPED  PRNT",
+        "  nothing here",
+    ])
+    assert immport_corpus.count_report_lines(text) == {
+        "WARNING": 1, "DROPPED": 1, "REVIEW": 1, "JUDGED": 1, "OBI FAILED": 1, "VOTE": 1,
+        "MERGED": 1, "UNMAPPED": 1,
+    }
+    assert immport_corpus.format_flags({"VOTE": 1, "WARNING": 2}) == "WARNING=2;VOTE=1"
+    assert immport_corpus.format_flags({}) == ""
+
+
+def test_cost_per_paper_prefers_corpus_rows_then_any_then_default(tmp_path):
+    corpus = tmp_path / "result"
+    rows = [{"usd": 0.30, "registry_dir": str(corpus / "1_SDY1")},
+            {"usd": 0.50, "registry_dir": str(corpus / "2_SDY2")},
+            {"usd": 0.40, "registry_dir": str(corpus / "3_SDY3")},
+            {"usd": 9.00, "registry_dir": "data/31paper_assays/x"},
+            {"usd": None, "registry_dir": str(corpus / "4_SDY4")}]
+    assert immport_corpus.cost_per_paper(rows, under=corpus) == {"median": 0.40, "max": 0.50, "n": 3}
+    assert immport_corpus.cost_per_paper(rows[3:], under=corpus) == {"median": 9.0, "max": 9.0, "n": 1}
+    assert immport_corpus.cost_per_paper([], under=corpus) == {"median": 0.40, "max": 0.40, "n": 0}
+
+
+def test_seconds_and_summary_over_run_rows():
+    rows = [{"status": "done", "seconds": "100", "flags": "REVIEW=2;VOTE=1"},
+            {"status": "done", "seconds": "300", "flags": ""},
+            {"status": "failed", "seconds": "5", "flags": ""},
+            {"status": "reused", "seconds": "", "flags": "VOTE=1"}]
+    assert immport_corpus.seconds_per_paper(rows) == 200
+    assert immport_corpus.seconds_per_paper([]) == immport_corpus.DEFAULT_SECONDS_PER_PAPER
+    assert immport_corpus.summarize_runs(rows) == {
+        "by_status": {"done": 2, "failed": 1, "reused": 1},
+        "flags": {"REVIEW": 2, "VOTE": 2},
+    }
+
+
 def test_permanent_reasons_are_not_transport_failures():
     assert is_permanent(immport_corpus.NO_PMC_REASON)
     assert is_permanent("PubMed Central has only the abstract, not the full text")
