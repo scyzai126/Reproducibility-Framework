@@ -105,12 +105,36 @@ for task in asyncio.as_completed([one(p) for p in queue]):
 
 ## Status (2026-11-06)
 
-- Runner built, tested (31 tests) and committed (77d7e5a). CLAUDE.md paragraph added.
-- Pilot `run --limit 30 --parallel 4` started and stopped by the user after 27 reused + 5 run papers. Measured on those 5: 3–22 calls, $0.03–$0.30, 2–54 s each — far below the benchmark's $0.40 / 180 s, because older ImmPort papers carry few assays and one was a review with no Methods (0 assays, 3 calls). Four papers ran concurrently without interleaved output or shared-file trouble.
+- Runner built, tested (31 tests) and committed (77d7e5a). CLAUDE.md paragraph added. Pointer-only-Methods fix committed (a349ae6).
 - **Output files decision (user, 2026-11-06): keep all five rounds and all ten files.** The files cost no tokens; the only cuttable round (OBI, ~20%) stays. No code change.
-- Next: resume the same command; it skips the 32 finished papers and re-runs the ones that were in flight. After the 30-paper pilot completes, report the tranche summary verbatim and the refreshed cost/time projection, then run tranches of `--limit 200 --parallel 4` with a go-ahead each.
+- Pilot complete: 35 papers run + 27 reused from the curated v3 set.
 
-## Follow-up: a pointer-only Methods section must trigger structure 3 (2026-11-06)
+| | |
+|---|---|
+| assay entries | 149 |
+| OBI-mapped | 134 (90%) |
+| zero-assay papers | 2, both reviews (correct) |
+| calls / cost | 738 / $7.23 |
+| median s/paper at P=4 | 37 (max 102) |
+
+  Flag totals: REVIEW 61, MINORITY 19, UNMAPPED 15, DROPPED 14, JUDGED 9, VOTE 8, REJECT 6, CORRECT REFUSED 3.
+
+## Pilot quality review (2026-11-06) — verdict: good enough to run the corpus
+
+**Correct.** Entry lists track the Methods sub-headings closely on bench-science papers (21220454: 13 entries over 13 assay subsections; 19931408: 14, with three thymidine-incorporation measurements correctly kept apart by round 6 on specimen and readout). Alias folding works: 17156490 returns one bead-assay entry whose `aliases` hold both the Beadlyte kit and the BD CBA naming, so its two MINORITY lines were absorbed, not lost. Evidence quotes are present and verifiable on every entry inspected. DROPPED/REJECT correctly removed readouts and endpoints posing as assays (urinary cotinine, plaque-forming units, fasting plasma glucose). The corrector's quote guard rejected 3 replacement quotes absent from the document.
+
+**Known weakness, accepted by the user (keep, flag only — no prompt change).** Clinical-trial, cohort-design and survey papers have no bench assays, and the extractor fills their registries with procedures instead: height/weight measurement (19459814), blood/nasal/dust/air collection and the Edinburgh Postnatal Depression Scale (20571137), `survey` (21158924). These are most of the 15 UNMAPPED entries and are therefore separable downstream by the absent OBI term, with no re-run. Two already carry `identity_review` NOT_SUPPORTED.
+
+**Known precision error, deferred by the user.** 19459814 holds the same protocol biopsies twice, as `histopathology assay` and `histological assay`, because round 5 only compares entries that already share an OBI term. Measure its frequency over the full corpus before designing a cross-term fold.
+
+## Next: the remaining ~1,038 papers
+
+1. `run --dry-run` (free) — report pending count, `n × median $` (median now rests on 35 corpus rows, $0.13–0.15, far under the $0.40 benchmark figure), hours at P=4.
+2. Go-ahead, then tranches of `run --limit 200 --parallel 4`, dry-run + go-ahead before each. Projection: ~$137 and ~2.5 h total at the pilot's 37 s/paper.
+3. After each tranche: report the summary's FAILED and FLAGGED lines verbatim, then `status`.
+4. After the corpus: count cross-term duplicate pairs and UNMAPPED procedure entries over all 1,100 papers; decide the fold fix and any prompt exclusion then, on real frequencies.
+
+## Done: a pointer-only Methods section triggers structure 3 (2026-11-06, commit a349ae6)
 
 **Why the three zero-assay papers came back empty.** The extraction prompt (`apps/api/app/prompts/extract_assays.txt`) does read Results, but under two different rules:
 - Structure 1/2 (a `[methods]` section exists): the inventory is built from Methods only; Results, `[other]` and captions can add an entry only when a sentence states the technique was performed on this study's samples. A result sentence or a caption that reports a result admits nothing.
