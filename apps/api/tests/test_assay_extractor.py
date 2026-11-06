@@ -8,8 +8,11 @@ from app.agent.assay_extractor import (
     AssayExtractionError,
     ENTRY_FIELDS,
     TRIMMED_FIELDS,
+    MIN_METHODS_CHARS,
     NO_METHODS_NOTE,
     build_prompt,
+    has_methods_section,
+    methods_chars,
     clean_entry,
     clean_registry,
     contract_warnings,
@@ -294,11 +297,30 @@ def test_a_paper_with_no_methods_section_is_told_structure_3_applies():
     assert NO_METHODS_NOTE + "## Abstract" in prompt
 
 
+_REAL_METHODS = ("## Methods  [methods]\n"
+                 + " ".join(f"[S{i}] Cells were stained and acquired on a cytometer." for i in range(1, 9)))
+
+
 def test_a_paper_with_a_methods_section_gets_the_prompt_unchanged():
-    source = "## Methods  [methods]\n[S1] Cells were analyzed."
+    source = _REAL_METHODS + "\n\n## Results  [results]\n[S9] Counts rose."
 
     assert NO_METHODS_NOTE not in build_prompt(source, "A Paper")
     assert source in build_prompt(source, "A Paper")
+
+
+def test_a_pointer_only_methods_section_is_told_structure_3_applies():
+    """20495560 (Nature Immunology): the Methods section PMC serves is one sentence pointing at
+    the online version. Read as a Methods section, it put the paper on the Methods-first path
+    with an empty inventory, and the strict Results rule admitted nothing, 3 votes of 3."""
+    source = ("## Abstract  [abstract]\n[S1] a\n\n## RESULTS  [results]\n[S2] We stained cells.\n\n"
+              "## METHODS  [methods]\n[S3] Methods and any associated references are available "
+              "in the online version of the paper.\n\n--- Figures ---\n[Figure 1]\n  Caption: "
+              + "x" * 1000)
+
+    assert not has_methods_section(source)
+    assert NO_METHODS_NOTE + "## Abstract" in build_prompt(source, "A Paper")
+    assert has_methods_section(_REAL_METHODS)
+    assert methods_chars(source) < MIN_METHODS_CHARS  # the caption block does not count
 
 
 # ── an answer wrapped in an envelope is never mistaken for "no assays" ─────────

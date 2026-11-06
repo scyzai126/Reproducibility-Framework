@@ -17,8 +17,16 @@ from app.agent.assay_service import (
 )
 from app.main import app
 
+#: The Methods section carries a second paragraph of plain prose so it clears
+#: assay_extractor.MIN_METHODS_CHARS: below that a Methods section is read as a pointer to
+#: methods kept elsewhere, and the paper takes the no-Methods path.
 _XML = """<article><front><article-meta><article-title>A Paper</article-title></article-meta>
-</front><body><sec><title>Methods</title><p>Cells were analyzed on an LSRII.</p></sec></body></article>"""
+</front><body><sec><title>Methods</title><p>Cells were analyzed on an LSRII.</p>
+<p>Peripheral blood was drawn into heparinized tubes and processed within four hours of
+collection. Mononuclear cells were isolated by density gradient centrifugation, washed twice in
+buffered saline, counted, and cryopreserved in freezing medium until the day of staining. On the
+day of analysis the cells were thawed, rested for one hour, and stained with the antibody panel
+described in the supplementary table before acquisition.</p></sec></body></article>"""
 
 _ENTRY = {
     "name_in_paper": "flow cytometry", "aliases": [], "sample_type": None,

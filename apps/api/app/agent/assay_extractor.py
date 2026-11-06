@@ -350,9 +350,36 @@ NO_METHODS_NOTE = (
 )
 
 
+#: Fewer characters of prose under `[methods]` headings than this is a pointer, not a Methods
+#: section: Nature-family papers carry a one-sentence "Methods and any associated references
+#: are available in the online version" and keep the real Methods in a supplement PMC does not
+#: serve. Treating that as a Methods section put 20495560 (Nature Immunology) on the
+#: Methods-first path with an empty inventory, and the strict Results rule then admitted
+#: nothing, 3 votes of 3. Across the 1,100-paper ImmPort corpus 1,018 Methods sections are
+#: well above this and 1 is below it; the 81 with no `[methods]` heading at all are unaffected.
+MIN_METHODS_CHARS = 300
+
+
+def methods_chars(source_text: str) -> int:
+    """How much prose sits under `[methods]`-tagged headings, before the figure block."""
+    total = 0
+    in_methods = False
+    for line in source_text.split("\n--- Figures ---", 1)[0].splitlines():
+        if line.startswith("## "):
+            in_methods = "[methods]" in line
+        elif in_methods:
+            total += len(line.strip())
+    return total
+
+
 def has_methods_section(source_text: str) -> bool:
-    """Whether any heading of the tagged source text is a Methods section. Free."""
-    return "[methods]" in source_text
+    """Whether the tagged source text has a Methods section worth building an inventory from.
+
+    A `[methods]` heading alone is not enough: the section has to carry at least
+    MIN_METHODS_CHARS of prose, or it is a pointer to methods kept elsewhere and the paper is
+    read as structure 3. Free.
+    """
+    return "[methods]" in source_text and methods_chars(source_text) >= MIN_METHODS_CHARS
 
 
 def build_prompt(source_text: str, paper_title: str) -> str:

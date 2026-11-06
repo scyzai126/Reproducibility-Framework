@@ -110,5 +110,18 @@ for task in asyncio.as_completed([one(p) for p in queue]):
 - **Output files decision (user, 2026-11-06): keep all five rounds and all ten files.** The files cost no tokens; the only cuttable round (OBI, ~20%) stays. No code change.
 - Next: resume the same command; it skips the 32 finished papers and re-runs the ones that were in flight. After the 30-paper pilot completes, report the tranche summary verbatim and the refreshed cost/time projection, then run tranches of `--limit 200 --parallel 4` with a go-ahead each.
 
+## Follow-up: a pointer-only Methods section must trigger structure 3 (2026-11-06)
+
+**Why the three zero-assay papers came back empty.** The extraction prompt (`apps/api/app/prompts/extract_assays.txt`) does read Results, but under two different rules:
+- Structure 1/2 (a `[methods]` section exists): the inventory is built from Methods only; Results, `[other]` and captions can add an entry only when a sentence states the technique was performed on this study's samples. A result sentence or a caption that reports a result admits nothing.
+- Structure 3 (no `[methods]` section): the inventory is built from abstract, main text and captions; "performed here" replaces "described in Methods". Code decides which applies: `assay_extractor.has_methods_section` (line 353) checks only whether the tag `[methods]` occurs, and `build_prompt` prepends `NO_METHODS_NOTE` when it does not.
+
+19541535 and 20667703 are reviews: structure 3 applied, every assay mention is cited work, so `{}` is correct. 20495560 (Nature Immunology) has a Methods section that is one sentence ("Methods ... are available in the online version"), so `has_methods_section` returned True, structure 1 applied with an empty Methods inventory, and the strict Results rule admitted nothing, 3 votes of 3. Corpus scan: 1,018 of 1,100 XMLs have substantive Methods, 81 have none (structure 3 applies correctly), 1 is pointer-only.
+
+**Change (small, in the shared extractor):**
+- `apps/api/app/agent/assay_extractor.py`: `has_methods_section(source_text)` returns True only when the text under `[methods]`-tagged headings (prose before the `--- Figures ---` banner) totals at least `MIN_METHODS_CHARS = 300`; a pointer-only section counts as absent. `build_prompt` and `assay_service` (`no_methods` flag, line 1027) need no change since both call it.
+- `apps/api/tests/test_assay_extractor.py`: a source whose only `[methods]` section is a 90-character pointer gets `NO_METHODS_NOTE`; a real Methods section still does not.
+- Re-run 20495560 alone (`run --only 20495560 --force`, ~3 calls, ~$0.05) and compare against the captions' assays (intracellular cytokine staining, serum IgE/IgG ELISA, etc.). Report the result; if still `{}`, the paper joins the PDF list.
+
 ## Out of scope
 - PDF route for the 213 papers in `papers_no_xml.csv`; OpenAI Batch API; multi-process sharding (only if one process's event loop proves to be the bottleneck, which at 32 concurrent HTTP calls it will not); retries on the OBI mapper's own sync clients; linking registries to ImmPort experiment rows; exposing corpus papers in the web UI.
