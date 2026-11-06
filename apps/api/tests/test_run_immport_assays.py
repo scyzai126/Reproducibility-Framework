@@ -184,6 +184,31 @@ def test_done_papers_are_skipped_unless_forced_and_limit_takes_the_first(drive, 
     assert seen == ["111"]
 
 
+def test_a_paper_with_no_assays_is_finished_without_a_marker(drive, runner, monkeypatch, capsys):
+    """Round 1 finding nothing writes no assays_benchmark.json; the run record says done."""
+    papers, result, _ = drive
+
+    async def _nothing_found(pmid, sdy, client, verify=True, correct=True):
+        out_dir = assay_service.registry_dir(pmid, sdy)
+        out_dir.mkdir(parents=True, exist_ok=True)
+        (out_dir / "assays.json").write_text("{}\n")  # no benchmark file
+        return {"paper_source": f"{sdy}_{pmid}.xml", "paper_source_kind": "xml",
+                "paper_title": "T", "rounds": {}, "assays": {}, "meta": {"llm_calls": 3}}
+
+    monkeypatch.setattr(runner, "assay_report", _nothing_found)
+    monkeypatch.setattr(runner, "report_result", _fake_report_result)
+    assert _main(runner, papers, result, "--only", "111") == 0
+    assert _runs(result)["111"]["status"] == "done"
+
+    seen = []
+    monkeypatch.setattr(runner, "assay_report", _fake_report(seen))
+    assert _main(runner, papers, result) == 0
+    assert "111" not in seen  # recorded done: not re-run
+    assert sorted(seen) == ["222", "333"]
+    runner.main(["status", "--papers-dir", str(papers), "--result-dir", str(result)])
+    assert "finished        : 3" in capsys.readouterr().out
+
+
 def test_a_benchmark_registry_is_copied_not_run(drive, runner, monkeypatch, capsys):
     papers, result, _ = drive
     bench = runner.CORPUS_ROOT / "assay_result_v3" / "333_SDY30"  # filed under the other study

@@ -109,15 +109,25 @@ class Runs:
         return row
 
 
+def is_finished(result_dir: Path, paper: dict, runs: "Runs") -> bool:
+    """Done on disk, or recorded done: a paper the extractor found no assays in gets no
+    assays_benchmark.json (the chain stops after round 1), so the run record is the only
+    place that says it finished. Without this it would be re-run on every tranche."""
+    if immport_corpus.done_marker(result_dir, paper["pmid"], paper["primary_sdy"]).exists():
+        return True
+    row = runs.rows.get(paper["pmid"])
+    return bool(row) and row.get("status") in ("done", "reused")
+
+
 def queue_papers(papers: list[dict], result_dir: Path, only: list[str], force: bool,
-                 reuse_version: str | None) -> tuple[list[dict], list[tuple[dict, Path]], int]:
+                 reuse_version: str | None, runs: "Runs") -> tuple[list[dict], list[tuple[dict, Path]], int]:
     """`(to_run, to_copy, skipped)` in papers_xml.csv order."""
     to_run, to_copy, skipped = [], [], 0
     for paper in papers:
         pmid, sdy = paper["pmid"], paper["primary_sdy"]
         if only and pmid not in only:
             continue
-        if immport_corpus.done_marker(result_dir, pmid, sdy).exists() and not force:
+        if is_finished(result_dir, paper, runs) and not force:
             skipped += 1
             continue
         source = (immport_corpus.benchmark_registry(pmid, paper["studies"],
@@ -175,7 +185,8 @@ async def run(args: argparse.Namespace) -> int:
     point_pipeline_at(papers_dir, result_dir)
     runs = Runs(result_dir)
     reuse = None if args.no_reuse_benchmark else args.reuse_benchmark
-    to_run, to_copy, skipped = queue_papers(papers, result_dir, args.only, args.force, reuse)
+    to_run, to_copy, skipped = queue_papers(papers, result_dir, args.only, args.force, reuse,
+                                            runs)
     if args.limit > 0:
         to_run = to_run[:args.limit]
     print(f"{len(papers)} papers with XML in {papers_dir}; results in {result_dir}\n")
@@ -301,8 +312,7 @@ def status(args: argparse.Namespace) -> int:
     runs = Runs(args.result_dir)
     rows = list(runs.rows.values())
     pmids = {p["pmid"] for p in papers}
-    on_disk = {p["pmid"] for p in papers
-               if immport_corpus.done_marker(args.result_dir, p["pmid"], p["primary_sdy"]).exists()}
+    on_disk = {p["pmid"] for p in papers if is_finished(args.result_dir, p, runs)}
     summary = immport_corpus.summarize_runs(rows)
     failed = [r for r in rows if r["status"] == "failed" and r["pmid"] not in on_disk]
     ledger = ledger_rows_under(args.result_dir)

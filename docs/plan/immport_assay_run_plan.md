@@ -103,5 +103,12 @@ for task in asyncio.as_completed([one(p) for p in queue]):
 4. `run --dry-run` again (projection now rests on 22 rows). **Go-ahead** per tranche of `--limit 200`; `status` after each.
 5. Commit on `feature/immport-assay-corpus`; copy this plan to `docs/plan/immport_assay_run_plan.md`.
 
+## Status (2026-11-06)
+
+- Runner built, tested (31 tests) and committed (77d7e5a). CLAUDE.md paragraph added.
+- Pilot `run --limit 30 --parallel 4` started and stopped by the user after 27 reused + 5 run papers. Measured on those 5: 3–22 calls, $0.03–$0.30, 2–54 s each — far below the benchmark's $0.40 / 180 s, because older ImmPort papers carry few assays and one was a review with no Methods (0 assays, 3 calls). Four papers ran concurrently without interleaved output or shared-file trouble.
+- **Output files decision (user, 2026-11-06): keep all five rounds and all ten files.** The files cost no tokens; the only cuttable round (OBI, ~20%) stays. No code change.
+- Next: resume the same command; it skips the 32 finished papers and re-runs the ones that were in flight. After the 30-paper pilot completes, report the tranche summary verbatim and the refreshed cost/time projection, then run tranches of `--limit 200 --parallel 4` with a go-ahead each.
+
 ## Out of scope
 - PDF route for the 213 papers in `papers_no_xml.csv`; OpenAI Batch API; multi-process sharding (only if one process's event loop proves to be the bottleneck, which at 32 concurrent HTTP calls it will not); retries on the OBI mapper's own sync clients; linking registries to ImmPort experiment rows; exposing corpus papers in the web UI.
