@@ -127,12 +127,32 @@ for task in asyncio.as_completed([one(p) for p in queue]):
 
 **Known precision error, deferred by the user.** 19459814 holds the same protocol biopsies twice, as `histopathology assay` and `histological assay`, because round 5 only compares entries that already share an OBI term. Measure its frequency over the full corpus before designing a cross-term fold.
 
-## Next: the remaining ~1,038 papers
+## Tranche 2 review (2026-11-06, 30 papers, PMIDs 21300100–22468229) — verdict: quality holds, keep going
+
+30 done, 0 failed, 0 empty, 137 entries, 129 OBI-mapped (94%), 637 calls, $6.45, 40 s/paper median at P=4. Corpus total 65/1,100.
+
+**Confirmed good.** Entry lists match the Methods sub-headings on paper after paper: 21368772 captured all four HLA typing platforms the paper actually used (SSP-PCR, RSCA, SSO hybridization, sequencing-based typing); 21350488 produced 16 entries over a 13-subsection nanoparticle/vaccine Methods, including the physical-characterization assays; 22468229, 21743478, 21538345 and 22457834 each track their headings one-for-one. 21342450 correctly returned a single entry, matching its single assay subsection. Round 6 adjudicated 12 refused folds and every verdict I read was right on the merits (specimen or analyte genuinely differs).
+
+**No repeat of the pilot's cross-term duplicate.** A scan of all same-paper entry pairs sitting on different OBI terms found no second case of one measurement split across two terms. The pilot's transplant-biopsy case stays a single observation.
+
+**New failure mode, the opposite grain error (1 case).** 22198680 has two distinct Luminex measurements in Methods — `T Cell Assay` (naive CD4 cells, toxic shock toxin stimulation) and `NK Cell Assay` (purified NK cells, IL-12/IL-15 stimulation) — and the run collapsed them into one `cytometric bead array assay` entry, whose `identity_review` is NOT_SUPPORTED. Under the one-entry-per-measurement rule this should be two. Count its frequency over the corpus alongside the over-split case.
+
+**Cross-paper term fragmentation (affects downstream aggregation, not correctness).** Over the 65 finished papers, immunofluorescence / immunostaining / microscopy assays have landed on seven different terms: CHMO:0000087, CHMO:0000089, OBI:0001501, OBI:0001632, OBI:0001986, OBI:0002119, OBI:0002174. Each individual mapping is defensible; the set is not groupable without a post-hoc roll-up. Decide after the corpus whether to add a parent roll-up at report time.
+
+**Cross-paper inconsistency on one study.** SDY91's two papers treat the same clinical chemistry differently: 21953143 REJECTs and DROPs C-reactive protein as an analyte, while 22279570 keeps it as `C-reactive protein assay` (OBI:2100047, identity NOT_SUPPORTED). Both leave the Westergren sedimentation rate unmapped. Symptom of the already-accepted clinical-measurement weakness.
+
+**Checked and cleared.** `OBI:9999994 chromium release assay` is a deliberate local addition in `data/OBI/obi.obo` (the only custom id), not a mapping bug. 22447351 is a narrative review; its single entry is drawn from a figure caption reporting the authors' own cohort data, which is defensible. 22460071's two PCR entries are different specimens and purposes, correctly kept apart.
+
+**Real recall losses.** Two MINORITY drops in 21350488 (hemagglutination activity, plaque assay used to confirm virus inactivation) and one in 22457834 (sandwich ELISA for serum immunoglobulin isotypes) look like genuine assays lost to the 2-of-3 vote.
+
+**8 unmapped:** recombinant factor C assay, urine pregnancy test, lymphocyte migration assays, BCA assay, SDS-PAGE, dynamic light scattering, Westergren sedimentation rate (twice).
+
+## Next: the remaining ~1,035 papers
 
 1. `run --dry-run` (free) — report pending count, `n × median $` (median now rests on 35 corpus rows, $0.13–0.15, far under the $0.40 benchmark figure), hours at P=4.
 2. Go-ahead, then tranches of `run --limit 200 --parallel 4`, dry-run + go-ahead before each. Projection: ~$137 and ~2.5 h total at the pilot's 37 s/paper.
 3. After each tranche: report the summary's FAILED and FLAGGED lines verbatim, then `status`.
-4. After the corpus: count cross-term duplicate pairs and UNMAPPED procedure entries over all 1,100 papers; decide the fold fix and any prompt exclusion then, on real frequencies.
+4. After the corpus, measure all four deferred findings over 1,100 papers before changing anything: cross-term duplicate pairs (over-split), collapsed multi-measurement entries carrying a NOT_SUPPORTED identity review (under-split), UNMAPPED clinical/procedure entries, and the spread of terms within the immunostaining and microscopy family. Each fix costs calls per paper, so none is worth designing on 1–2 observations.
 
 ## Done: a pointer-only Methods section triggers structure 3 (2026-11-06, commit a349ae6)
 
