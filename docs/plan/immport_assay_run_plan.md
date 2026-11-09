@@ -147,10 +147,31 @@ for task in asyncio.as_completed([one(p) for p in queue]):
 
 **8 unmapped:** recombinant factor C assay, urine pregnancy test, lymphocyte migration assays, BCA assay, SDS-PAGE, dynamic light scattering, Westergren sedimentation rate (twice).
 
-## Next: the remaining ~1,035 papers
+## Health check before tranche 4 (2026-11-09, at 192/1,100 finished) — no blockers
 
-1. `run --dry-run` (free) — report pending count, `n × median $` (median now rests on 35 corpus rows, $0.13–0.15, far under the $0.40 benchmark figure), hours at P=4.
-2. Go-ahead, then tranches of `run --limit 200 --parallel 4`, dry-run + go-ahead before each. Projection: ~$137 and ~2.5 h total at the pilot's 37 s/paper.
+Operational state is clean. 165 run + 27 reused, 0 failed, 0 `ERROR`/`OBI FAILED`/`RateLimitError`/timeout/traceback lines in any of the 165 logs. `assay_runs.csv` holds 192 rows and 192 unique PMIDs, so no double-counting. The only six result folders lacking `assays_benchmark.json` are exactly the six zero-assay papers (19541535, 20667703, 25039865, 25293374, 25403681, 25779381), all recorded `done`, so none will be re-run. No interrupted leftovers. No pending paper's result folder already exists.
+
+| | |
+|---|---|
+| SSD free | 1.8 TB (result dir 4.1 GB, ~21 MB/paper, ~23 GB projected) |
+| pending XML size | median 0.13 MB, p90 0.22 MB, max 0.45 MB |
+| cost/paper median by tranche | $0.153, $0.21, $0.165 |
+| worst single paper | $0.74 |
+
+Per-paper timeout (1800 s) has huge headroom against a 34–42 s median; P=4 has never produced a rate-limit retry. Pending papers are newer (PMID 26M→38M, i.e. 2015–2024) and may carry more assays each, so the ~$149 remaining estimate could drift up modestly; `--max-usd` is the backstop.
+
+**Quality issues, all previously catalogued and deferred, with frequencies now measured over 165 papers:**
+- Clinical measurements named by analyte are the dominant flag source. They either get REJECTed and DROPPED or survive with no OBI term, so they stay separable downstream. Accepted: keep, flag only.
+- Fold refusals total 58: 30 on `readouts`, 17 on `sample_type`, 11 on `standard_technique_name`. The judge round rules on the first two (47 `JUDGED` lines, every verdict reviewed was correct on the merits) and by design never on technique, so the 11 technique-only refusals get no adjudication. About 3 of those 11 are wording-only on the same measurement (`immunofluorescence microscopy` vs `fluorescence microscopy`, `immunohistochemistry` vs `immunofluorescence`), i.e. roughly 2% of papers carry a duplicate entry from this cause. The rest (imaging flow cytometry vs flow cytometry, RIA vs IRMA, multiplex vs ELISA) are correctly kept apart.
+- Questionnaire handling is inconsistent across papers: one donor well-being study returned nothing while two other questionnaire studies returned instruments as assays.
+- Vote losses: 57 MINORITY entries not delivered; a minority of those look like genuine assays.
+
+Nothing here changes what the next tranche should do.
+
+## Next: the remaining 908 papers
+
+1. `run --dry-run` (free) — report pending count, `n × median $` (median now rests on 170 corpus rows at $0.16), hours at P=4.
+2. Go-ahead, then tranches of `run --limit 100 --parallel 4 --max-usd <2× estimate>`, dry-run + go-ahead before each. Remaining projection: ~$149 and ~2.6 h at the measured 36 s/paper.
 3. After each tranche: report the summary's FAILED and FLAGGED lines verbatim, then `status`.
 4. After the corpus, measure all four deferred findings over 1,100 papers before changing anything: cross-term duplicate pairs (over-split), collapsed multi-measurement entries carrying a NOT_SUPPORTED identity review (under-split), UNMAPPED clinical/procedure entries, and the spread of terms within the immunostaining and microscopy family. Each fix costs calls per paper, so none is worth designing on 1–2 observations.
 
