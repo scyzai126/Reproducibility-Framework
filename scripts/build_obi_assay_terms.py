@@ -7,7 +7,7 @@ This is stage 0 of `scripts/prune_obi_domain.py` and nothing more: every `is_a` 
 `OBI:0000070 assay` (root excluded), in `obi.obo` order, with **no** compositional or domain
 prune. It exists so an experiment can run the mapper over the unpruned vocabulary.
 
-The entries have exactly the fields of `obi_assay_pruned_index.json`, built by the same two helpers
+The entries have exactly the fields of `obi_assay_noncompositional_index.json`, built by the same two helpers
 (`assay_branch` and `annotate`), so either file can be handed to `run_obi_map.py --terms`:
 
     id, label, synonyms, is_a, definition, n_descendants

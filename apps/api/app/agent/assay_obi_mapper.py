@@ -70,26 +70,41 @@ logger = logging.getLogger(__name__)
 
 _REPO_ROOT = Path(__file__).resolve().parents[4]
 _OBI_DIR = _REPO_ROOT / "data" / "OBI"
-# Pruned vocabulary + matching vectors — see data/OBI/README.md for how they are built.
-_OBI_TERMS_PATH = _OBI_DIR / "obi_assay_pruned_index.json"
-_EMBEDDINGS_PATH = _OBI_DIR / "obi_assay_pruned_embeddings.json"
+# Live vocabulary + matching vectors — see data/OBI/README.md for how they are built.
+# The noncompositional (stage-1) list, 1249 terms: compositional labels gone, every domain kept.
+# It replaced the 701-term pruned list on 2026-11-10 together with TOP_K 20 -> 30; the two are a
+# package and neither helps alone — see the 2x2 in experiment/obi_topk_1249/FINDINGS.md.
+_OBI_TERMS_PATH = _OBI_DIR / "obi_assay_noncompositional_index.json"
+_EMBEDDINGS_PATH = _OBI_DIR / "obi_assay_noncompositional_embeddings.json"
 #: Source of the `is_a` edges. The index carries no parent links, only `n_descendants`, which
 #: counts the full ontology and so calls ELISA (53) a parent though the index holds none of them.
 _OBO_PATH = _OBI_DIR / "obi.obo"
 _PROMPTS_DIR = _REPO_ROOT / "apps" / "api" / "app" / "prompts"
 
 #: Not settings.OPENAI_MODEL: this one names an *embedding* model, and the vectors in
-#: obi_assay_pruned_embeddings.json were built with it. Changing it silently invalidates every one
-#: of them -- a query embedded by a different model is not comparable to that matrix.
+#: obi_assay_noncompositional_embeddings.json were built with it. Changing it silently invalidates
+#: every one of them -- a query embedded by a different model is not comparable to that matrix.
 EMBED_MODEL = "text-embedding-3-small"
-#: Candidates the picker sees. 20, not 10, since 2026-10-02: over 150 benchmark rows the
-#: curator's term is among the merged candidates 87% of the time at 10 and 91% at 20, and the
-#: rows 11-20 recovers are real misses (transcription profiling by array assay, bulk RNA-seq).
-TOP_K = 20
+#: Candidates the picker sees. 30 since 2026-11-10, and only because the vocabulary widened with
+#: it: the two interact with opposite signs, so neither change helps on its own. Measured on the
+#: 31-paper benchmark, exact out of 157 curated rows (experiment/obi_topk_1249/FINDINGS.md):
+#:
+#:              K=20   K=30
+#:     701       141    139      <- widening alone COSTS 2: the extra slots hand the picker
+#:     1249      140    142         broader and sibling terms (real time RT-PCR -> real time
+#:                                  PCR, microscopy -> parasite detection, SNP array -> array)
+#:
+#: At K=30 the 1249 list beats the 701 one by 3, outside the +/-2 run-to-run noise, and recovers
+#: exactly those three. Raising TOP_K without swapping the vocabulary is a regression.
+#: Before that: 20, not 10, since 2026-10-02 — over 150 benchmark rows the curator's term was
+#: among the merged candidates 87% of the time at 10 and 91% at 20.
+TOP_K = 30
 #: Slots in the merged list reserved for the paper-wording query; the technique query fills
 #: the rest. The technique name scores high against short generic labels, and a plain merge by
 #: score let those push the paper wording's specific candidates out.
-PRIMARY_SLOTS = 14
+#: Scales with TOP_K — 14 of 20 became 21 of 30 on 2026-11-10. Holding it at 14 while K grew
+#: would change the primary/technique balance too, a third variable the experiment never tested.
+PRIMARY_SLOTS = 21
 
 
 # ── Vocabulary pruning ────────────────────────────────────────────────────────

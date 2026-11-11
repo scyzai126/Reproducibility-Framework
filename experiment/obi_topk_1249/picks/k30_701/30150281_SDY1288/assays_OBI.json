@@ -1,0 +1,194 @@
+{
+  "real time reverse-transcription polymerase chain reaction assay": {
+    "name_in_paper": [
+      "real-time RT–PCR"
+    ],
+    "standard_technique_name": "real time reverse-transcription polymerase chain reaction",
+    "aliases": [],
+    "sample_type": "acute-phase samples",
+    "readouts": "detection of CHIKV",
+    "generate_claim": false,
+    "source": "methods",
+    "evidence": {
+      "section": "Study participants",
+      "sentence_ids": [
+        "S155"
+      ],
+      "quote": "Chikungunya cases were laboratory-confirmed by detection of CHIKV using real-time RT–PCR (Waggoner et al, 2016), in some cases followed by virus isolation, in acute-phase samples."
+    },
+    "obi_id": "OBI:0000911",
+    "obi_label": "real time reverse-transcription polymerase chain reaction assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.7627,
+    "obi_granularity": "EXACT"
+  },
+  "infectious agent detection assay": {
+    "name_in_paper": [
+      "virus isolation"
+    ],
+    "standard_technique_name": "virus isolation",
+    "aliases": [],
+    "sample_type": "acute-phase samples",
+    "readouts": "isolation of CHIKV",
+    "generate_claim": false,
+    "source": "methods",
+    "evidence": {
+      "section": "Study participants",
+      "sentence_ids": [
+        "S155"
+      ],
+      "quote": "Chikungunya cases were laboratory-confirmed by detection of CHIKV using real-time RT–PCR (Waggoner et al, 2016), in some cases followed by virus isolation, in acute-phase samples."
+    },
+    "obi_id": "OBI:0001187",
+    "obi_label": "infectious agent detection assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.3903,
+    "obi_granularity": "BROAD"
+  },
+  "enzyme-linked immunosorbent assay": {
+    "name_in_paper": [
+      "IgM capture ELISA"
+    ],
+    "standard_technique_name": "enzyme-linked immunosorbent assay",
+    "aliases": [],
+    "sample_type": "paired acute and convalescent sera",
+    "readouts": "IgM seroconversion",
+    "generate_claim": false,
+    "source": "methods",
+    "evidence": {
+      "section": "Study participants",
+      "sentence_ids": [
+        "S156"
+      ],
+      "quote": "In addition, seroconversion by IgM capture ELISA and/or a >4-fold increase in antibody titer by Inhibition ELISA in paired acute and convalescent sera were evaluated (Galo et al , 2017 )."
+    },
+    "obi_id": "OBI:0000661",
+    "obi_label": "enzyme-linked immunosorbent assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.7588,
+    "obi_granularity": "EXACT"
+  },
+  "enzyme-linked immunosorbent assay (2)": {
+    "name_in_paper": [
+      "Inhibition ELISA"
+    ],
+    "standard_technique_name": "enzyme-linked immunosorbent assay",
+    "aliases": [],
+    "sample_type": "paired acute and convalescent sera",
+    "readouts": "anti-CHIKV antibody titer increase",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Study participants",
+      "sentence_ids": [
+        "S156"
+      ],
+      "quote": "In addition, seroconversion by IgM capture ELISA and/or a >4-fold increase in antibody titer by Inhibition ELISA in paired acute and convalescent sera were evaluated (Galo et al , 2017 )."
+    },
+    "obi_id": "OBI:0000661",
+    "obi_label": "enzyme-linked immunosorbent assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.7588,
+    "obi_granularity": "EXACT"
+  },
+  "cytometry time of flight assay": {
+    "name_in_paper": [
+      "mass cytometry for cellular phenotyping"
+    ],
+    "standard_technique_name": "mass cytometry",
+    "aliases": [
+      "CyTOF",
+      "mass cytometry"
+    ],
+    "sample_type": "peripheral blood mononuclear cells",
+    "readouts": "single-cell protein marker expression, cell population frequencies, and CHIKV envelope protein E2 expression",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Study participants",
+      "sentence_ids": [
+        "S159"
+      ],
+      "quote": "All selected cases had an acute-phase sample collected on days 1–2 of illness and a convalescent sample collected on days 15–17 post-illness for serum, whole blood in PAXgene solution, and PBMCs; these were subject to transcriptomic analysis via RNA-seq, CHIKV viral titer assays, multiplex ELISA for cytokines, and mass cytometry for cellular phenotyping as illustrated in Fig 1 ."
+    },
+    "obi_id": "OBI:0002115",
+    "obi_label": "cytometry time of flight assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.7147,
+    "obi_granularity": "EXACT"
+  },
+  "cytometric bead array assay": {
+    "name_in_paper": [
+      "multiplex ELISA"
+    ],
+    "standard_technique_name": "enzyme-linked immunosorbent assay",
+    "aliases": [
+      "multiplex ELISA-based assay",
+      "Luminex"
+    ],
+    "sample_type": "serum",
+    "readouts": "concentrations of 40 cytokines and chemokines; mean fluorescence data",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Multiplex ELISA",
+      "sentence_ids": [
+        "S192"
+      ],
+      "quote": "Cytokines and chemokines were measured using a multiplex ELISA‐based assay (Luminex)."
+    },
+    "obi_id": "OBI:0000920",
+    "obi_label": "cytometric bead array assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.6286,
+    "obi_granularity": "EXACT"
+  },
+  "real time reverse-transcription polymerase chain reaction assay (2)": {
+    "name_in_paper": [
+      "CHIKV viral titer assays"
+    ],
+    "standard_technique_name": "real time reverse-transcription polymerase chain reaction",
+    "aliases": [
+      "viral titer assays"
+    ],
+    "sample_type": "patient serum",
+    "readouts": "CHIKV copies",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Viral titer assays",
+      "sentence_ids": [
+        "S200"
+      ],
+      "quote": "Primers for the E1 gene were designed to quantify CHIKV copies in each patient and were used at 300 nM final concentration."
+    },
+    "obi_id": "OBI:0000911",
+    "obi_label": "real time reverse-transcription polymerase chain reaction assay",
+    "resource": "embedding_llm_normalized",
+    "obi_confidence": 0.7627,
+    "obi_granularity": "EXACT"
+  },
+  "bulk RNA-seq assay": {
+    "name_in_paper": [
+      "RNA-seq"
+    ],
+    "standard_technique_name": "bulk RNA sequencing",
+    "aliases": [],
+    "sample_type": "whole blood in PAXgene solution",
+    "readouts": "whole-blood transcript abundances and gene expression",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Study participants",
+      "sentence_ids": [
+        "S159"
+      ],
+      "quote": "All selected cases had an acute-phase sample collected on days 1–2 of illness and a convalescent sample collected on days 15–17 post-illness for serum, whole blood in PAXgene solution, and PBMCs; these were subject to transcriptomic analysis via RNA-seq, CHIKV viral titer assays, multiplex ELISA for cytokines, and mass cytometry for cellular phenotyping as illustrated in Fig 1 ."
+    },
+    "obi_id": "OBI:0003090",
+    "obi_label": "bulk RNA-seq assay",
+    "resource": "exact_original_llm",
+    "obi_confidence": 0.6904,
+    "obi_granularity": "EXACT"
+  }
+}

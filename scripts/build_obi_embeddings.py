@@ -1,7 +1,7 @@
 """Build and cache embeddings for an OBI assay vocabulary.
 
-Reads  : data/OBI/obi_assay_pruned_index.json        (--terms)
-Writes : data/OBI/obi_assay_pruned_embeddings.json   (--out)
+Reads  : data/OBI/obi_assay_noncompositional_index.json        (--terms)
+Writes : data/OBI/obi_assay_noncompositional_embeddings.json   (--out)
 Reuses : vectors from --reuse files (default: the output itself) whenever a row's
          (id, embed_input) is unchanged, so a rerun is free and a nested vocabulary is
          derived from a larger one's file with no API call at all: the three lists in
@@ -39,8 +39,9 @@ from openai import OpenAI
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 OBI_DIR = REPO_ROOT / "data" / "OBI"
-OBI_TERMS_PATH = OBI_DIR / "obi_assay_pruned_index.json"
-OUTPUT_PATH = OBI_DIR / "obi_assay_pruned_embeddings.json"
+# The live vocabulary since 2026-11-10 — a bare run must rebuild the vectors the mapper serves.
+OBI_TERMS_PATH = OBI_DIR / "obi_assay_noncompositional_index.json"
+OUTPUT_PATH = OBI_DIR / "obi_assay_noncompositional_embeddings.json"
 
 EMBED_MODEL = "text-embedding-3-small"
 BATCH_SIZE = 100  # texts per API call

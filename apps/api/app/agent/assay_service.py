@@ -401,7 +401,7 @@ def obi_query_calls(key: str, entry: dict) -> int:
 def obi_calls(obi: dict) -> int:
     """What the OBI round spent, counted back from the resources it returned.
 
-    An over-count in two cases: when obi_assay_pruned_embeddings.json is absent,
+    An over-count in two cases: when obi_assay_noncompositional_embeddings.json is absent,
     _embedding_llm_match bails before calling anything and every miss still reads
     "unresolved"; and an entry whose lookup raised ("error") is billed as though every call it
     would have made went through. Over-reporting a bill is the safer direction to be wrong in.

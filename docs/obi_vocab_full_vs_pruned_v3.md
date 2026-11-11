@@ -1,5 +1,18 @@
 # OBI vocabulary size and mapping accuracy: 1794 vs 1249 vs 701
 
+> **Superseded 2026-11-10 — the recommendation at the foot of this page no longer holds.**
+> Every arm here fixes `TOP_K = 20`. Widening the candidate list turns the result around: the
+> vocabulary and K interact with opposite signs, and at K=30 the **1249** list beats the 701 by
+> 3 exact, outside the noise band, while widening K on the 701 *costs* 2. The 1249 + K=30 pair
+> became the live configuration on 2026-11-10 and the 701 was retired. Separately, over 892
+> corpus papers the domain prune was found to be doing real damage — it had cut four
+> conformation-capture terms out from under Hi-C, so two papers reporting promoter capture Hi-C
+> mapped to 5C-seq. New evidence: `experiment/obi_topk_1249/FINDINGS.md`.
+>
+> The body below is left exactly as written: it is the faithful record of the 2026-10-27 run,
+> and its finding that the **compositional** prune carries the score still stands — that prune
+> is still applied.
+
 *2026-10-27. 31 papers, 177 assay entries (`data/31paper_assays/assay_result_v3/`), scored
 against benchmark v5. Each arm re-ran round 4 (embedding top-20 + one LLM pick) with a
 different candidate pool and nothing else changed. Data: `experiment/obi_vocab_v3/`.*
@@ -36,13 +49,27 @@ measuring epitope specific IP-10 production by T cells`, `measuring glucose conc
 blood serum assay`. The rule is one regex, `\b(measuring|detecting)\b`, on the label. Why:
 these are near-duplicates of a family term (ELISPOT, CBA, flow cytometry) and they outnumber
 it (43 of the 45 ELISPOT-shaped labels are compositional), so in a top-20 retrieval they bury
-the term the curators actually use. The A/B below measures the cost of leaving them in:
+the term the curators actually use. Example: SDY1669's "TLR4-based reporter assay" (readout:
+plasma LPS) is curated to `OBI:0003793 bacterial lipopolysaccharide detection in plasma assay`.
+In the 701 list it ranked #18 and was picked. In the 1794 list, 12 of the 20 candidates were
+compositional, mostly *"cell culture analyte detection bioassay measuring epitope specific
+IL-4 / TNF / IFN-γ … production by T cells"*; they sit close to "reporter assay" in embedding
+space and pushed #18 off the list, so the picker fell back to #6, `reporter cell line analyte
+detection bioassay`, marked BROAD. Second example: an ICS that reads IFN-γ, TNF and IL-4 at
+once. Each IEDB child names one cytokine, so no child describes the assay; the lack of a more
+specific term is the vocabulary's, not the picker being cautious. Since a typical vaccine
+paper's ICS is multi-cytokine, the flow cytometry family (the one with the most compositional
+children) will almost always stop at the family term. The A/B below measures the cost of leaving them in:
 10 exact. One label is pinned back, `OBI:1110179 MHC tetramer/multimer assay measuring
 binding of a T cell epitope:MHC:TCR complex`, because OBI names it as the replacement for the
 retired tetramer staining term and the family has no plain term left.
 
-**Step 2: drop whole domains that never appear in an immunology paper (1249 → 701).** Nine
-groups, each defined by `is_a` subtree roots so it survives an OBI release bump:
+**Step 2: drop out-of-scope domains (1249 → 701).** These are domains unlikely to be the answer
+to "which assay did this immunology study run" that still sit close enough in embedding space to
+act as decoys. The criterion is a judgement per domain, not a check that each term never appears
+in a paper: tiers A and C are biomedical and clinical papers do report them, and they go because
+they are not the study's assay. Nine groups, each defined by `is_a` subtree roots so it survives
+an OBI release bump:
 
 | tier | domain | example dropped | terms |
 |---|---|---|---|
@@ -64,9 +91,9 @@ paper does cite (`C-reactive protein assay`, `neutrophil count assay`), so only 
 instrument- and panel-qualified labels go, and each one's plain sibling stays. Two families
 are whitelisted back because the tier would leave them with nothing: the IgG / IgM / IgA /
 IgE quantitation terms (OBI has no bare `IgG assay`), and `OBI:0000912 X-ray crystallography`.
-The A/B below measures this step at 1 exact (SDY1293), which is what "never appears in an
-immunology paper" predicts: rarely decisive, never harmful, and it removed no term any paper
-in the corpus was curated to.
+The only empirical check on the choice is this corpus: the step removed no term any of the 31
+papers was curated to, and the A/B below measures it at 1 exact (SDY1293). Rarely decisive,
+never harmful here.
 
 ## Results
 

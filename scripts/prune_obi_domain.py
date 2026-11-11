@@ -1,12 +1,21 @@
 #!/usr/bin/env python3
 """Derive the live OBI assay vocabulary from the full assay branch.
 
-Builds `obi_assay_pruned_index.json` from `obi.obo` in three stages, and also writes the
-stage-1 result, `obi_assay_noncompositional_index.json` (1249 terms: compositional labels gone, every
-domain still in), for experiments that want to attribute an effect to one prune at a time:
+Builds `obi_assay_noncompositional_index.json` from `obi.obo` -- **the live vocabulary since
+2026-11-10**, 1249 terms: compositional labels gone, every domain still in. Stage 2 then runs on
+top of it and writes `obi_assay_pruned_index.json` (701), the vocabulary that served until that
+date; it is gitignored now and kept for the vocabulary A/B and as the record of which OBI domains
+act as retrieval decoys.
 
-    5218  --[ assay branch ]-->  1794  --[ measuring/detecting compositional filter ]-->  1249
-          --[ tier A-I subtrees ]-->  701
+    5218  --[ assay branch ]-->  1794  --[ measuring/detecting compositional filter ]-->  1249  LIVE
+          --[ tier A-I subtrees ]-->  701  retired
+
+Why the live list is stage 1: the domain prune was measured out together with TOP_K 20 -> 30. The
+two interact with opposite signs -- widening K costs 2 exact on the 701 and gains 2 on the 1249 --
+and at K=30 the 1249 wins by 3, outside the noise band. Separately, over 892 corpus papers stage 2
+was doing real damage: it cut four conformation-capture terms out from under Hi-C, leaving only
+the 5C ones, so two papers reporting promoter capture Hi-C mapped to 5C-seq. Evidence:
+`experiment/obi_topk_1249/FINDINGS.md`.
 
 **Stage 0** keeps the `is_a` descendants of `OBI:0000070 assay`, each with its `is_a` parent ids.
 Each kept term then gets its `definition` and `n_descendants` from `obi.obo` (see `annotate`).
@@ -29,7 +38,7 @@ goes and why; `--show-dropped` reprints the terms themselves on demand. Because 
 derived from `obi.obo` and the roots below, it is reproducible and verified as such by
 `apps/api/tests/test_assay_obi_mapper.py::test_index_is_reproducible_from_the_full_source`.
 
-Idempotent — rebuilding from source always lands on the same 701 (and 1249) terms in the same order.
+Idempotent — rebuilding from source always lands on the same 1249 (and 701) terms in the same order.
 
     ./.venv/bin/python scripts/prune_obi_domain.py [--dry-run] [--show-dropped]
 """

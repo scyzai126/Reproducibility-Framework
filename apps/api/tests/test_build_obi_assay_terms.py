@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
-INDEX_PATH = REPO_ROOT / "data" / "OBI" / "obi_assay_pruned_index.json"
+INDEX_PATH = REPO_ROOT / "data" / "OBI" / "obi_assay_noncompositional_index.json"
 
 
 @pytest.fixture(scope="module")

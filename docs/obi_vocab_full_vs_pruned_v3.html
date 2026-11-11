@@ -1,0 +1,206 @@
+<title>OBI Vocabulary 1794 vs 701</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: single reading column (~68ch) for a lab report; wide tables scroll in their own box. */
+:root {
+  --bg: #f7f8fa;
+  --surface: #ffffff;
+  --fg: #1b2230;
+  --muted: #5a6475;
+  --rule: #dde2ea;
+  --accent: #1f6f78;
+  --accent-soft: #e2f0f1;
+  --full: #b4553a;
+  --nonc: #8a7a3a;
+  --code-bg: #eef1f5;
+  --display: "Newsreader", Georgia, "Times New Roman", serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12161d; --surface: #1a1f28; --fg: #e3e7ee; --muted: #9aa4b4; --rule: #2c3442;
+    --accent: #5fb7bf; --accent-soft: #1d3236; --full: #e08a6e; --nonc: #c9b86e; --code-bg: #232a35;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12161d; --surface: #1a1f28; --fg: #e3e7ee; --muted: #9aa4b4; --rule: #2c3442;
+  --accent: #5fb7bf; --accent-soft: #1d3236; --full: #e08a6e; --nonc: #c9b86e; --code-bg: #232a35;
+  color-scheme: dark;
+}
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--body); font-size: 16px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 48px 72px;
+}
+main { max-width: 46rem; margin: 0 auto; display: flex; flex-direction: column; gap: 1.1rem; }
+h1, h2, h3 { font-family: var(--display); font-weight: 600; text-wrap: balance; line-height: 1.2; margin: 0; }
+h1 { font-size: clamp(1.9rem, 4.5vw, 2.6rem); }
+h2 { font-size: 1.6rem; margin-top: 2rem; padding-top: 1.2rem; border-top: 1px solid var(--rule); }
+h3 { font-size: 1.2rem; margin-top: 0.8rem; }
+p, ul { margin: 0; }
+ul { padding-left: 1.2rem; display: flex; flex-direction: column; gap: 0.6rem; }
+.eyebrow { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.meta { color: var(--muted); font-size: 0.92rem; }
+code { font-family: var(--mono); font-size: 0.86em; background: var(--code-bg); padding: 0.08em 0.35em; border-radius: 3px; overflow-wrap: anywhere; }
+strong { font-weight: 600; }
+.lede { font-size: 1.08rem; }
+
+.headline { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.75rem; margin-top: 0.5rem; }
+.arm { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 0.9rem 1rem; display: flex; flex-direction: column; gap: 0.15rem; }
+.arm .n { font-family: var(--display); font-size: 2.1rem; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.arm .lab { font-family: var(--mono); font-size: 0.8rem; color: var(--muted); }
+.arm.pruned { border-color: var(--accent); background: var(--accent-soft); }
+.arm.pruned .n { color: var(--accent); }
+@media (max-width: 520px) { .headline { grid-template-columns: 1fr; } }
+
+.funnel { display: flex; flex-direction: column; gap: 0.45rem; background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 1rem; }
+.frow { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr) 3.6rem; gap: 0.6rem; align-items: center; font-size: 0.86rem; }
+.frow .bar { height: 14px; background: var(--rule); border-radius: 2px; position: relative; }
+.frow .bar span { position: absolute; inset: 0 auto 0 0; background: var(--muted); border-radius: 2px; }
+.frow.live .bar span { background: var(--accent); }
+.frow .v { font-family: var(--mono); text-align: right; font-variant-numeric: tabular-nums; }
+.frow .k { color: var(--muted); }
+@media (max-width: 480px) { .frow { grid-template-columns: 6.5rem minmax(0, 1fr) 3.2rem; } }
+
+.tbl { overflow-x: auto; border: 1px solid var(--rule); border-radius: 6px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+th, td { text-align: left; padding: 0.55rem 0.75rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+th { font-weight: 600; font-size: 0.8rem; color: var(--muted); letter-spacing: 0.03em; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.best { color: var(--accent); font-weight: 600; }
+td.tier { font-family: var(--mono); font-weight: 500; }
+
+.example { background: var(--surface); border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 0 6px 6px 0; padding: 0.85rem 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+.example .tag { font-family: var(--mono); font-size: 0.76rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--accent); }
+
+.rec { background: var(--accent-soft); border-radius: 6px; padding: 1rem 1.1rem; }
+footer { margin-top: 2rem; color: var(--muted); font-size: 0.85rem; }
+</style>
+
+<main>
+  <div class="eyebrow">Assay agent · OBI mapping experiment · 2026-10-27</div>
+  <h1>OBI vocabulary size and mapping accuracy: 1794 vs 1249 vs 701</h1>
+  <p class="meta">31 papers, 177 assay entries, scored against benchmark v5. Each arm re-ran round 4 (embedding top-20 + one LLM pick) with a different candidate pool and nothing else changed. Data: <code>experiment/obi_vocab_v3/</code>.</p>
+
+  <div class="headline" aria-label="Exact matches per vocabulary">
+    <div class="arm pruned"><span class="n">141</span><span class="lab">pruned · 701 terms</span><span class="meta">exact, live pool</span></div>
+    <div class="arm"><span class="n">140</span><span class="lab">noncompositional · 1249</span><span class="meta">exact</span></div>
+    <div class="arm"><span class="n">130</span><span class="lab">full · 1794</span><span class="meta">exact</span></div>
+  </div>
+
+  <p class="lede">The three vocabularies nest. <code>full</code> is the whole OBI assay branch. <code>noncompositional</code> removes the 545 IEDB-style labels (<em>"ELISPOT assay measuring epitope specific IFN-γ production by T cells"</em>). <code>pruned</code>, the live pool, also removes 548 out-of-scope domain terms (hospital analyzer panels, entomology, electrophysiology, metrology, …).</p>
+
+  <h2>How the 701 were chosen</h2>
+  <p><code>data/OBI/obi.obo</code> (OBI release 2026-05-08) holds 5218 terms. Three steps take it to 701, each reproducible from the OBO alone (<code>scripts/prune_obi_domain.py</code>; the first step is also <code>scripts/build_obi_assay_terms.py</code>).</p>
+
+  <div class="funnel" role="img" aria-label="Term counts: 5218 OBI, 1794 assay branch, 1249 after compositional prune, 701 after domain prune">
+    <div class="frow"><span class="k">all of OBI</span><div class="bar"><span style="width:100%"></span></div><span class="v">5218</span></div>
+    <div class="frow"><span class="k">0 · assay branch</span><div class="bar"><span style="width:34.38%"></span></div><span class="v">1794</span></div>
+    <div class="frow"><span class="k">1 · no compositional</span><div class="bar"><span style="width:23.94%"></span></div><span class="v">1249</span></div>
+    <div class="frow live"><span class="k">2 · no out-of-scope</span><div class="bar"><span style="width:13.43%"></span></div><span class="v">701</span></div>
+  </div>
+
+  <div class="tbl"><table>
+    <thead><tr><th>step</th><th>keeps</th><th class="num">removes</th><th class="num">result</th></tr></thead>
+    <tbody>
+      <tr><td>0. assay branch</td><td>every <code>is_a</code> descendant of <code>OBI:0000070 assay</code></td><td class="num">3423</td><td class="num">1794</td></tr>
+      <tr><td>1. compositional labels</td><td>labels without <em>measuring</em> / <em>detecting</em></td><td class="num">545</td><td class="num">1249</td></tr>
+      <tr><td>2. out-of-scope domains</td><td>everything outside nine subtrees and the clinical-panel band</td><td class="num">548</td><td class="num">701</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Step 0: keep only assays (5218 → 1794)</h3>
+  <p>OBI imports terms from about thirty other ontologies and defines many non-assay classes of its own. Dropped here: <code>planning</code>, <code>study design</code>, <code>data transformation</code>, <code>specimen</code> (OBI process and material classes); <code>insulin</code>, <code>water</code> (CHEBI chemicals); <code>uterine cervix</code>, <code>pituitary gland</code> (UBERON anatomy); <code>primary cultured cell</code> (CL); <code>chromatin</code> (GO). None of these can be the answer to "which assay did the paper run", so none should be a candidate. Four CHMO microscopy and chromatography terms stay because OBI files them under <code>assay</code>.</p>
+
+  <h3>Step 1: drop the compositional labels (1794 → 1249)</h3>
+  <p>The IEDB contributed hundreds of terms that bake an analyte and a cell type into the assay name: <code>ELISPOT assay measuring epitope specific interferon-gamma production by T cells</code>, <code>cytometric bead array assay measuring epitope specific IP-10 production by T cells</code>, <code>measuring glucose concentration in blood serum assay</code>. The rule is one regex, <code>\b(measuring|detecting)\b</code>, on the label.</p>
+  <p>Why: these are near-duplicates of a family term (ELISPOT, CBA, flow cytometry) and they outnumber it (43 of the 45 ELISPOT-shaped labels are compositional), so in a top-20 retrieval they bury the term the curators actually use.</p>
+
+  <div class="example">
+    <span class="tag">Example · SDY1669</span>
+    <p>"TLR4-based reporter assay" (readout: plasma LPS) is curated to <code>OBI:0003793 bacterial lipopolysaccharide detection in plasma assay</code>. In the 701 list it ranked #18 and was picked. In the 1794 list, 12 of the 20 candidates were compositional, mostly <em>"cell culture analyte detection bioassay measuring epitope specific IL-4 / TNF / IFN-γ … production by T cells"</em>. They sit close to "reporter assay" in embedding space and pushed #18 off the list, so the picker fell back to #6, <code>reporter cell line analyte detection bioassay</code>, marked BROAD.</p>
+  </div>
+  <div class="example">
+    <span class="tag">Example · multi-cytokine ICS</span>
+    <p>An ICS that reads IFN-γ, TNF and IL-4 at once. Each IEDB child names one cytokine, so no child describes the assay; the lack of a more specific term is the vocabulary's, not the picker being cautious. Since a typical vaccine paper's ICS is multi-cytokine, the flow cytometry family (the one with the most compositional children) will almost always stop at the family term.</p>
+  </div>
+
+  <p>The A/B below measures the cost of leaving them in: 10 exact. One label is pinned back, <code>OBI:1110179 MHC tetramer/multimer assay measuring binding of a T cell epitope:MHC:TCR complex</code>, because OBI names it as the replacement for the retired tetramer staining term and the family has no plain term left.</p>
+
+  <h3>Step 2: drop out-of-scope domains (1249 → 701)</h3>
+  <p>These are domains unlikely to be the answer to "which assay did this immunology study run" that still sit close enough in embedding space to act as decoys. The criterion is a judgement per domain, not a check that each term never appears in a paper: tiers A and C are biomedical and clinical papers do report them, and they go because they are not the study's assay. Nine groups, each defined by <code>is_a</code> subtree roots so it survives an OBI release bump:</p>
+
+  <div class="tbl"><table>
+    <thead><tr><th>tier</th><th>domain</th><th>example dropped</th><th class="num">terms</th></tr></thead>
+    <tbody>
+      <tr><td class="tier">A</td><td>hospital analyzer panels (<code>OBI:21xxxxx</code>, filtered by label)</td><td><code>panel5 venous blood sodium assay</code>, <code>CBC with manual differential venous blood neutrophil count assay</code></td><td class="num">333</td></tr>
+      <tr><td class="tier">B</td><td>insecticide resistance</td><td><code>insecticide resistance bioassay</code></td><td class="num">26</td></tr>
+      <tr><td class="tier">C</td><td>clinical examination</td><td><code>coma severity assay</code>, <code>physical examination of an organism</code></td><td class="num">51</td></tr>
+      <tr><td class="tier">D</td><td>electrophysiology</td><td><code>patch clamp assay</code></td><td class="num">28</td></tr>
+      <tr><td class="tier">E</td><td>nucleic-acid structure probing</td><td><code>DEPC structure mapping assay</code>, <code>footprinting assay</code></td><td class="num">61</td></tr>
+      <tr><td class="tier">F</td><td>3D structure determination</td><td><code>NMR 3D molecular structure determination assay</code></td><td class="num">22</td></tr>
+      <tr><td class="tier">G</td><td>vector biology</td><td><code>mosquito membrane feeding assay</code></td><td class="num">4</td></tr>
+      <tr><td class="tier">H</td><td>physical metrology</td><td><code>temperature measurement assay</code>, <code>color detection assay</code></td><td class="num">17</td></tr>
+      <tr><td class="tier">I</td><td>surveys and trial designs</td><td><code>handedness assay</code>, <code>Bernoulli trial</code></td><td class="num">6</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Tiers overlap through multiple inheritance, so the column sums past 548. Why: these terms are semantic near-neighbours of ones we want and the mapper has no similarity threshold to keep them out, so a decoy that reaches the top 20 reaches the LLM.</p>
+  <p>Tier A is the only one filtered by label rather than wholesale: the clinical band also holds plain analyte readouts a paper does cite (<code>C-reactive protein assay</code>, <code>neutrophil count assay</code>), so only the instrument- and panel-qualified labels go, and each one's plain sibling stays. Two families are whitelisted back because the tier would leave them with nothing: the IgG / IgM / IgA / IgE quantitation terms (OBI has no bare <code>IgG assay</code>), and <code>OBI:0000912 X-ray crystallography</code>.</p>
+  <p>The only empirical check on the choice is this corpus: the step removed no term any of the 31 papers was curated to, and the A/B below measures it at 1 exact (SDY1293). Rarely decisive, never harmful here.</p>
+
+  <h2>Results</h2>
+  <div class="tbl"><table>
+    <thead><tr><th></th><th class="num"><code>pruned</code> (701)</th><th class="num"><code>noncompositional</code> (1249)</th><th class="num"><code>full</code> (1794)</th></tr></thead>
+    <tbody>
+      <tr><td>entries matched to a curated row</td><td class="num">156</td><td class="num">156</td><td class="num">156</td></tr>
+      <tr><td>exact: same OBI term as the curator</td><td class="num best">141</td><td class="num">140</td><td class="num">130</td></tr>
+      <tr><td>OBI recall: same term or parent/child</td><td class="num best">92.4%</td><td class="num">91.7%</td><td class="num">88.5%</td></tr>
+      <tr><td>wrong term (CONFLICT)</td><td class="num">5</td><td class="num">6</td><td class="num">10</td></tr>
+      <tr><td>picker answered <code>none</code></td><td class="num">2</td><td class="num">2</td><td class="num">3</td></tr>
+      <tr><td>LLM calls</td><td class="num">495</td><td class="num">495</td><td class="num">510</td></tr>
+    </tbody>
+  </table></div>
+  <p class="meta">Run-to-run noise is 1 exact (a second 701 run differs on 2 of 177 entries).</p>
+  <ul>
+    <li><strong>1794 vs 701:</strong> the full vocabulary gets 11 fewer entries exactly right. 15 entries chose a different term; 12 went the pruned arm's way, 1 the full arm's.</li>
+    <li><strong>1249 vs 701:</strong> 1 fewer exact. Only 1 entry differs.</li>
+    <li><strong>So:</strong> removing the compositional labels accounts for 10 of the 11; removing the domain terms for the last 1.</li>
+  </ul>
+
+  <h2>Why 701 beats 1794</h2>
+  <p>In the full arm, 38% of all candidates shown to the picker were compositional labels; in the pruned arm 0.4%. That causes two failures.</p>
+
+  <h3>1. A compositional child outranks the family term (7 entries)</h3>
+  <p>The right term is on the list, but the picker takes the construct that names the paper's cytokine or analyte.</p>
+  <ul>
+    <li>SDY1364, "IFN-γ ELISpot": pruned picked <code>OBI:0600031 enzyme-linked immunospot assay</code> (#1). The full list had 18 compositional ELISPOTs; the picker took <code>OBI:1110059 ELISPOT assay measuring epitope specific interferon-gamma production by T cells</code>. Curator: <code>OBI:0600031</code>.</li>
+    <li>SDY2189, "Anti-spike binding ELISA": <code>OBI:0000661 ELISA</code> was #1 in both arms; with 13 compositional ELISAs below it, the full arm chose #5, <code>ELISA measuring binding of a B cell epitope:antibody complex</code>.</li>
+  </ul>
+
+  <h3>2. The right term is pushed off the top 20 (6 entries)</h3>
+  <p>Retrieval is 20 slots with no threshold. The curator's term was reachable in the pruned list and absent from the full one.</p>
+  <ul>
+    <li>SDY1669, "TLR4-based reporter assay": <code>OBI:0003793 bacterial lipopolysaccharide detection in plasma assay</code> was #18 in the pruned list and was picked. In the full list 12 compositional reporter constructs displaced it; the picker settled for <code>reporter cell line analyte detection bioassay</code>.</li>
+    <li>SDY1289 and SDY1640, cytokine bead arrays: <code>OBI:0003799 analyte detection by flow based bead assay</code> was #4 in the pruned list. In the full list 17 of 20 candidates were <em>"cytometric bead array assay measuring epitope specific …"</em>; it fell off, and the picker took the plain <code>OBI:0000920 cytometric bead array assay</code>.</li>
+  </ul>
+
+  <p><strong>The one entry the full arm got right</strong> is the same mechanism in reverse: SDY1630's NK IFN-γ assay is curated to the compositional <code>OBI:1110207 assay detecting IFN-gamma production</code>, which the pruned pool does not contain, so pruned could only answer <code>flow cytometry assay</code>. One row; the same construct cost the full arm SDY1991.</p>
+  <p>The full arm also spends 15 more calls: a term that is a leaf in the pruned index has children in the full one (ELISA has 53), so an exact name hit is sent to the picker instead of answered.</p>
+
+  <h2>Why 701 beats 1249</h2>
+  <p>One entry, SDY1293, "malaria thick blood smears". In the pruned list <code>OBI:0002119 microscopy assay</code> was #8 and was picked. In the 1249 list eight <code>OBI:21xxxxx</code> clinical-panel terms took slots (<code>manual differential bodily fluid macrophage count assay</code> at #1, three <code>CBC with manual differential venous blood …</code> terms further down); <code>microscopy assay</code> was not shown and the picker took <code>blood microbiology assay</code>. The domain prune removes exactly those panel terms.</p>
+
+  <h2>Recommendation</h2>
+  <div class="rec"><p>Keep the 701-term <code>obi_assay_pruned_index.json</code> and keep both prunes. The compositional prune carries the score; the domain prune is cheap and fixes the one case the clinical band can reach. A similarity threshold would not help: the full arm's wrong picks scored as high as its right ones.</p></div>
+
+  <footer>Source: <code>docs/obi_vocab_full_vs_pruned_v3.md</code></footer>
+</main>

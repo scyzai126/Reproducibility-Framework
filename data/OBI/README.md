@@ -1,23 +1,42 @@
 # OBI assay vocabularies
 
 The assay vocabulary and vectors used by `apps/api/app/agent/assay_obi_mapper.py`.
-**`obi_assay_pruned_index.json` is the live vocabulary the mapper searches.** It is a *derived* file:
-`scripts/prune_obi_domain.py` takes the assay branch of `obi.obo`, applies two prunes, and adds
-each term's `definition` and `n_descendants` — one command, from `obi.obo` alone.
+**`obi_assay_noncompositional_index.json` (1249 terms) is the live vocabulary the mapper searches,
+since 2026-11-10.** Both it and the 701-term pruned index are *derived* files:
+`scripts/prune_obi_domain.py` takes the assay branch of `obi.obo`, applies the two prunes in turn
+and writes the result of each, adding every term's `definition` and `n_descendants` — one command,
+from `obi.obo` alone.
+
+**Why the live list is stage 1 and not stage 2.** The domain prune was measured out on
+2026-11-10, paired with `TOP_K` 20 → 30. The two interact with opposite signs, so neither change
+helps on its own — exact out of 157 curated rows on the 31-paper benchmark:
+
+| exact | K=20 | K=30 |
+|---|---|---|
+| **701** | 141 | 139 |
+| **1249** | 140 | **142** |
+
+Widening K alone *costs* 2 on the pruned list: the extra slots hand the picker broader and sibling
+terms. At K=30 the 1249 list beats the 701 one by 3, outside the ±2 run-to-run noise, and recovers
+exactly those. Separately, over 892 corpus papers the domain prune was doing measured damage —
+it had cut four conformation-capture terms out from under Hi-C, leaving only the 5C ones, so two
+papers reporting promoter capture Hi-C were mapped to 5C-seq; `cell migration assay` and SAXS lost
+their terms outright. Full record: `experiment/obi_topk_1249/FINDINGS.md`.
 
 | file | terms | size | role |
 |---|---|---|---|
-| `obi_assay_pruned_index.json` | 701 | 212 KB | **Live vocabulary.** Exact matching + the candidate pool for semantic search. Derived — do not hand-edit. |
-| `obi_assay_pruned_embeddings.json` | 701 | 28 MB | **Live vectors.** `text-embedding-3-small`, 1536-dim, one row per index term, in index order — see *The vectors*. |
-| `obi_assay_noncompositional_embeddings.json` | 1249 | 51 MB | Vectors for the stage-1 list, derived from the full file by id with no API call. Experiment only. **Gitignored** — see *Rebuilding*. |
+| `obi_assay_noncompositional_index.json` | 1249 | 0.4 MB | **Live vocabulary.** Stage 1: the assay branch with the measuring/detecting compositional labels removed and every domain still in. Exact matching + the candidate pool for semantic search. Derived — do not hand-edit. |
+| `obi_assay_noncompositional_embeddings.json` | 1249 | 51 MB | **Live vectors.** `text-embedding-3-small`, 1536-dim, one row per index term, in index order — see *The vectors*. Cut from the full file by id, no API call. |
+| `obi_assay_pruned_index.json` | 701 | 242 KB | **Retired** — the vocabulary that served until 2026-11-10. Stage 2: the 1249 with the tier A–I domains dropped. Still written by the prune script and kept locally for the vocabulary A/B, but **Gitignored** — see *Rebuilding*. Derived — do not hand-edit. |
+| `obi_assay_pruned_embeddings.json` | 701 | 27 MB | Vectors for the retired 701, same provenance as the live ones. **Gitignored.** |
 | `obi_assay_full_embeddings.json` | 1794 | 73 MB | Vectors for the full assay branch — one paid embedding run; the other two files are subsets of it, vector for vector. Experiment only. **Gitignored** — see *Rebuilding*. |
-| `obi_assay_noncompositional_index.json` | 1249 | 0.4 MB | **Stage 1 only.** The assay branch with the measuring/detecting compositional labels removed and every domain still in — the 701 index before its domain prune. Same six fields; written by `scripts/prune_obi_domain.py` alongside the pruned index, for experiments that attribute an effect to one prune at a time. Not on the serving path. Derived — do not hand-edit. **Gitignored** — see *Rebuilding*. |
 | `obi_assay_full_index.json` | 1794 | 0.7 MB | **Unpruned assay branch.** Every `is_a` descendant of `assay`, in exactly the index's format (same six fields, same helpers), so `experiment/obi_vocab_v3/run_vocab_comparison.py` can run the mapper over it as an arm. Not on the serving path. Derived by `scripts/build_obi_assay_terms.py` — do not hand-edit. **Gitignored** — see *Rebuilding*. |
 | `obi.obo` | 5218 | 1.5 MB | Upstream OBI release 2026-05-08. The only source: the index and the 1794-term assay branch are both derived from it. Off the serving path, but required to rebuild. |
 | `README.md` | — | — | This file: the record of what each prune removes and why. |
 
 ```
 obi.obo  5218  ──[ assay branch ]──▶  1794  ──[ measuring/detecting filter ]──▶  1249  ──[ tier A-I subtrees ]──▶  701
+                                                                                 ▲ LIVE                     retired, gitignored
 ```
 
 The assay branch is every `is_a` descendant of `OBI:0000070 assay`, in `obi.obo` order. Each index
@@ -122,10 +141,11 @@ selected.
 
 ## The vectors
 
-`obi_assay_pruned_embeddings.json` holds exactly the index's 701 terms, in index order. Since
-2026-10-02 each row is embedded from **`label | synonyms | definition`** (`embed_input`); before
-that it was `label | synonyms` over the unpruned 1262 terms. Adding the definition changes
-retrieval, so benchmark results from before that date are not directly comparable.
+`obi_assay_noncompositional_embeddings.json` holds exactly the live index's 1249 terms, in index
+order. Since 2026-10-02 each row is embedded from **`label | synonyms | definition`**
+(`embed_input`); before that it was `label | synonyms` over the unpruned 1262 terms. Adding the
+definition changes retrieval, so benchmark results from before that date are not directly
+comparable. The retired 701 vectors follow the same recipe.
 
 Each row also keeps `text` = `label | synonyms` without the definition, because the mapper
 splits `text` on `|` to show the pick LLM a candidate's synonyms.
@@ -140,8 +160,9 @@ The mapper still reconciles vectors with the index **by id** in `_top_k_candidat
 ## Rebuilding
 
 One command. It reads `obi.obo`, takes the assay branch, applies both prunes, adds `definition`
-and `n_descendants`, and rewrites `obi_assay_pruned_index.json` and `obi_assay_noncompositional_index.json`. Idempotent — rebuilding always lands on the same terms in the same
-order, so a rerun is a no-op.
+and `n_descendants`, and rewrites `obi_assay_noncompositional_index.json` (the live vocabulary)
+and `obi_assay_pruned_index.json` (the retired one). Idempotent — rebuilding always lands on the
+same terms in the same order, so a rerun is a no-op.
 
 ```bash
 ./.venv/bin/python scripts/prune_obi_domain.py                  # rebuild the index
@@ -158,31 +179,35 @@ Entries are copied through untouched and in source order. **Order is load-bearin
 synonym collision.
 
 `apps/api/tests/test_assay_obi_mapper.py::test_index_is_reproducible_from_the_full_source`
-re-derives the index and asserts it equals the committed file exactly — that check is what makes
-it safe not to commit the removed lists.
+re-derives the **live** index and asserts it equals the committed file exactly — that check is
+what makes it safe not to commit the removed lists. Stage 2 keeps its own guard,
+`test_domain_prune_drops_clinical_panel_terms`, which checks the 701 from the in-memory rebuild
+rather than from disk, so it still runs where the file is absent.
 
 ```bash
 # After any index change: re-embed changed rows, drop removed ones (a no-op otherwise).
+# Defaults target the LIVE 1249 pair.
 ./.venv/bin/python scripts/build_obi_embeddings.py
 ```
 
-The four experiment files (full 1794 and noncompositional 1249, index and vectors) are
-gitignored. A fresh clone rebuilds them in three commands and one paid embedding run; the
-two smaller vector files are then cut from the full one by id, free:
+Only the **live 1249 pair** is committed, so a fresh clone serves without rebuilding anything.
+The **full 1794** pair and the **retired 701** pair are gitignored and needed only to run the
+vocabulary A/B — one paid embedding run over the full list, after which the smaller vector files
+are cut from it by id, free:
 
 ```bash
 ./.venv/bin/python scripts/build_obi_assay_terms.py             # obi_assay_full_index.json
-./.venv/bin/python scripts/prune_obi_domain.py                  # ...noncompositional_index.json too
+./.venv/bin/python scripts/prune_obi_domain.py                  # both indexes, live + retired
 ./.venv/bin/python scripts/build_obi_embeddings.py \
     --terms data/OBI/obi_assay_full_index.json \
     --out data/OBI/obi_assay_full_embeddings.json               # the one paid run
 ./.venv/bin/python scripts/build_obi_embeddings.py \
-    --terms data/OBI/obi_assay_noncompositional_index.json \
-    --out data/OBI/obi_assay_noncompositional_embeddings.json \
+    --terms data/OBI/obi_assay_pruned_index.json \
+    --out data/OBI/obi_assay_pruned_embeddings.json \
     --reuse data/OBI/obi_assay_full_embeddings.json             # 0 to embed
 ```
 
-The tests that compare the three lists skip when these files are absent.
+The tests that compare the three lists skip when the full index is absent.
 
 ## Notes
 

@@ -303,7 +303,7 @@ def test_filter_still_guards_an_unpruned_vocabulary(tmp_path):
     import json
     from pathlib import Path
 
-    from app.agent.assay_obi_mapper import _OBI_DIR, _term_ids
+    from app.agent.assay_obi_mapper import _OBI_TERMS_PATH, _term_ids
 
     script = Path(__file__).resolve().parents[3] / "scripts" / "prune_obi_domain.py"
     spec = importlib.util.spec_from_file_location("prune_obi_domain", script)
@@ -319,11 +319,10 @@ def test_filter_still_guards_an_unpruned_vocabulary(tmp_path):
     assert "OBI:1110059" not in ids  # filtered out of the raw list, not merely absent from it
     assert "OBI:0600031" in ids
 
-    # The live index is a *subset* of the label-filtered full list, not an equal-sized twin: on
-    # top of the compositional filter it is also domain-pruned (scripts/prune_obi_domain.py),
-    # which no label regex can express. Subset is the property worth guarding — a domain prune
-    # only ever removes.
-    live = _term_ids(_OBI_DIR / "obi_assay_pruned_index.json")
+    # The live index is the label-filtered assay branch, so it is a subset here by construction.
+    # Subset, not equality, is still the property worth guarding: it holds whether or not a
+    # further prune is layered on top, and a prune only ever removes.
+    live = _term_ids(_OBI_TERMS_PATH)
     assert set(live) <= set(ids)
 
 
@@ -693,12 +692,16 @@ _IMMUNOLOGY_CORE = (
 
 
 def test_index_is_reproducible_from_the_full_source():
-    """The committed index must be exactly what re-running the prune produces.
+    """The committed LIVE index must be exactly what re-running the prune produces.
 
-    Neither set of removed terms is committed, so this is what keeps the vocabulary honest: the
-    index is a *derived* file, and `obi.obo` + the roots in scripts/prune_obi_domain.py are its
-    source. If they ever disagree, someone hand-edited the index or changed the roots without
-    rebuilding, and the difference is otherwise invisible.
+    Removed terms are not committed, so this is what keeps the vocabulary honest: the index is a
+    *derived* file, and `obi.obo` + scripts/prune_obi_domain.py are its source. If they ever
+    disagree, someone hand-edited the index or changed the filter without rebuilding, and the
+    difference is otherwise invisible.
+
+    It guards the 1249-term stage-1 list since 2026-11-10 — the vocabulary the mapper serves.
+    The 701 it used to guard is no longer committed; `test_domain_prune_drops_clinical_panel_terms`
+    covers stage 2 from the in-memory rebuild instead.
     """
     import importlib.util
     import json
@@ -712,9 +715,10 @@ def test_index_is_reproducible_from_the_full_source():
     prune = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(prune)
 
-    _, _, rebuilt, _ = prune.build_index(prune.OBO_PATH)
+    _, rebuilt, _, _ = prune.build_index(prune.OBO_PATH)
 
-    committed = json.loads((_OBI_DIR / "obi_assay_pruned_index.json").read_text(encoding="utf-8"))
+    committed = json.loads(
+        (_OBI_DIR / "obi_assay_noncompositional_index.json").read_text(encoding="utf-8"))
 
     # Order matters, not just membership: _build_lookup uses setdefault, so index order decides
     # which term wins a synonym collision.
@@ -735,14 +739,15 @@ def test_stage1_index_is_reproducible_and_the_three_lists_nest():
     prune = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(prune)
 
-    for name in ("obi_assay_full_index.json", "obi_assay_noncompositional_index.json"):
-        if not (_OBI_DIR / name).exists():
-            pytest.skip(f"{name} is gitignored; rebuild per data/OBI/README.md")
+    if not (_OBI_DIR / "obi_assay_full_index.json").exists():
+        pytest.skip("obi_assay_full_index.json is gitignored; rebuild per data/OBI/README.md")
 
-    _, rebuilt_generic, _, _ = prune.build_index(prune.OBO_PATH)
+    # `pruned` comes from the rebuild, not from disk: the 701 was retired on 2026-11-10 and is
+    # gitignored, so reading it would make the nesting check vanish wherever it is absent.
+    _, rebuilt_generic, pruned, _ = prune.build_index(prune.OBO_PATH)
     load = lambda name: json.loads((_OBI_DIR / name).read_text(encoding="utf-8"))
-    full, generic, pruned = (load(n) for n in (
-        "obi_assay_full_index.json", "obi_assay_noncompositional_index.json", "obi_assay_pruned_index.json"))
+    full, generic = (load(n) for n in (
+        "obi_assay_full_index.json", "obi_assay_noncompositional_index.json"))
 
     assert rebuilt_generic == generic
     assert len(full) > len(generic) > len(pruned)
@@ -767,7 +772,8 @@ def test_index_entries_carry_their_is_a_parents():
 
     from app.agent.assay_obi_mapper import _OBI_DIR
 
-    index = json.loads((_OBI_DIR / "obi_assay_pruned_index.json").read_text(encoding="utf-8"))
+    index = json.loads(
+        (_OBI_DIR / "obi_assay_noncompositional_index.json").read_text(encoding="utf-8"))
     by_id = {t["id"]: t for t in index}
 
     assert all(isinstance(t["is_a"], list) and t["is_a"] for t in index)
@@ -790,10 +796,22 @@ def test_domain_prune_keeps_the_immunology_core():
 
 
 def test_domain_prune_drops_clinical_panel_terms():
-    from app.agent.assay_obi_mapper import _OBI_TERMS_PATH, _term_ids
+    """Stage 2 still runs and still behaves — it just no longer produces a committed file.
 
-    _term_ids.cache_clear()
-    ids = _term_ids(_OBI_TERMS_PATH)
+    The 701 is checked from the in-memory rebuild, not from disk: it was retired as the live
+    vocabulary on 2026-11-10 and is gitignored, so a test that read the file would silently skip
+    wherever it is absent. `build_index()` returns it as `kept`.
+    """
+    import importlib.util
+    from pathlib import Path
+
+    script = Path(__file__).resolve().parents[3] / "scripts" / "prune_obi_domain.py"
+    spec = importlib.util.spec_from_file_location("prune_obi_domain", script)
+    prune = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(prune)
+
+    _, _, kept, _ = prune.build_index(prune.OBO_PATH)
+    ids = {t["id"] for t in kept}
 
     # Hospital analyzer/panel constructs — decoys that outrank plain family terms in search
     assert "OBI:2100318" not in ids  # GEM4000 ANLCOOX arterial blood glucose assay
@@ -808,6 +826,33 @@ def test_domain_prune_drops_clinical_panel_terms():
     # crystallography term, leaving ImmPort's "X-Ray Crystallography" nothing to map to.
     assert "OBI:0000912" in ids  # X-ray crystallography 3D molecular structure determination
     assert "OBI:0001595" not in ids  # ... but its MHC:ligand-complex sibling still goes
+
+
+def test_live_vocabulary_is_the_stage1_list_with_the_domains_kept():
+    """Since 2026-11-10 the mapper serves the 1249-term stage-1 list, not the 701-term pruned one.
+
+    Paired with TOP_K 30 — neither change helps alone, they interact with opposite signs
+    (experiment/obi_topk_1249/FINDINGS.md). The domain terms are back on purpose: the prune had
+    cut four conformation-capture terms out from under Hi-C, so two corpus papers reporting
+    promoter capture Hi-C were mapped to 5C-seq instead.
+    """
+    from app.agent.assay_obi_mapper import _OBI_TERMS_PATH, PRIMARY_SLOTS, TOP_K, _term_ids
+
+    assert _OBI_TERMS_PATH.name == "obi_assay_noncompositional_index.json"
+    assert (TOP_K, PRIMARY_SLOTS) == (30, 21)
+
+    ids = _term_ids(_OBI_TERMS_PATH)
+    assert len(ids) == 1249
+
+    # Compositional labels are still gone — that prune carries the score and stays.
+    assert "OBI:1110059" not in ids  # ELISPOT ... measuring epitope specific IFN-gamma
+    assert "OBI:1110207" not in ids  # assay detecting IFN-gamma production
+    assert "OBI:1110179" in ids  # ... except the pinned MHC tetramer term
+
+    # The domain terms the old prune removed are deliberately back.
+    assert "OBI:0002597" in ids  # chromosome conformation capture sequencing assay (Hi-C)
+    assert "OBI:0003820" in ids  # cell migration assay
+    assert "OBI:2100318" in ids  # ... including the clinical-panel decoys that cost precision
 
 
 def test_index_entries_keep_their_synonyms():

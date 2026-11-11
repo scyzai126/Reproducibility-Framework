@@ -37,10 +37,14 @@ data/JAT_XML_vaccine1000/
 # Office lock files
 ~$*
 
-# OBI experiment vocabularies: the full assay branch (1794) and its stage-1 cut (1249), with
-# their vectors (73MB + 51MB). Rebuildable — see data/OBI/README.md "Rebuilding"; only the
-# pruned 701-term index and vectors the mapper serves from are committed.
+# OBI vocabularies that are NOT served. The noncompositional 1249-term index and vectors are the
+# live pair since 2026-11-10 and are committed, so a fresh clone serves without rebuilding.
+# These are derived and rebuildable — see data/OBI/README.md "Rebuilding":
+#   full 1794      — the unpruned assay branch, an A/B arm only.
+#   pruned 701     — the vocabulary that served until 2026-11-10, retired. Still written by
+#                    scripts/prune_obi_domain.py stage 2, kept locally for the vocabulary A/B
+#                    and as the record of which OBI domains act as retrieval decoys.
 data/OBI/obi_assay_full_index.json
 data/OBI/obi_assay_full_embeddings.json
-data/OBI/obi_assay_noncompositional_index.json
-data/OBI/obi_assay_noncompositional_embeddings.json
+data/OBI/obi_assay_pruned_index.json
+data/OBI/obi_assay_pruned_embeddings.json
