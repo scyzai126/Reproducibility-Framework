@@ -281,5 +281,25 @@
         "19. OBI:0001179 | epitope protection from infectious challenge experiment | protection from infectious challenge | definition: An epitope protection experiment in which the ability of the epitope to protect the host from an infection is assessed. | descendants: 14 (similarity: 0.3462)"
       ]
     }
+  },
+  "judge": {
+    "real time reverse-transcription polymerase chain reaction assay (2) vs real time reverse-transcription polymerase chain reaction assay": {
+      "reply": "DIFFERENT: Record A is a diagnostic RT-PCR detecting CHIKV presence in acute-phase samples, whereas Record B is a quantitative RT-PCR measuring CHIKV copy number in patient serum.",
+      "usage": {
+        "prompt": 583,
+        "cached": 0,
+        "completion": 42,
+        "reasoning": 0
+      }
+    },
+    "enzyme-linked immunosorbent assay (2) vs enzyme-linked immunosorbent assay": {
+      "reply": "DIFFERENT: they measure different antibody responses in the same paired sera—IgM seroconversion by IgM capture ELISA versus a >4-fold increase in anti-CHIKV antibody titer by inhibition ELISA.",
+      "usage": {
+        "prompt": 615,
+        "cached": 0,
+        "completion": 49,
+        "reasoning": 0
+      }
+    }
   }
 }

@@ -334,5 +334,25 @@
         "19. OBI:1110179 | MHC tetramer/multimer assay measuring binding of a T cell epitope:MHC:TCR complex | qualitative binding | multimer/tetramer | definition: A MHC tetramer/multimer assay that measures the binding of an epitope:MHC complex binding with a T cell receptor. | descendants: 0 (similarity: 0.498)"
       ]
     }
+  },
+  "judge": {
+    "flow cytometry assay (2) vs flow cytometry assay": {
+      "reply": "DIFFERENT: the specimens differ (PBMCs versus purified CD4+ T cells co-cultured with autologous dendritic cells) and the intracellular marker/readout sets differ (IFN-γ/IL-2/CD154 in activated vaccine-specific CD4 T cells versus IFN-γ/IL-5/IL-13/CD154 in CD4+ T cells).",
+      "usage": {
+        "prompt": 692,
+        "cached": 0,
+        "completion": 82,
+        "reasoning": 0
+      }
+    },
+    "flow cytometry assay (3) vs flow cytometry assay": {
+      "reply": "DIFFERENT: Record A measures intracellular cytokine-producing activated vaccine-specific CD4 T cells (CD154, IL-2, IFN-γ), whereas Record B measures memory-polarized CD154+ Th1/Th2 CD4 T-cell subsets defined by phenotypic markers (CD45RA, CCR7, CCR4, CXCR3, CCR6).",
+      "usage": {
+        "prompt": 667,
+        "cached": 0,
+        "completion": 79,
+        "reasoning": 0
+      }
+    }
   }
 }

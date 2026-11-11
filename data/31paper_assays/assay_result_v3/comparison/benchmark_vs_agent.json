@@ -10,28 +10,28 @@
     ],
     "benchmark_raw": 158,
     "benchmark_total": 157,
-    "ours_total": 177,
+    "ours_total": 176,
     "matched": 156,
-    "exact": 140,
-    "obi_ok": 145,
+    "exact": 144,
+    "obi_ok": 148,
     "missed": 1,
     "extra": 4,
     "status_counts": {
-      "MATCH": 140,
-      "MATCH_GRANULARITY": 5,
-      "MATCH_OBI_CONFLICT": 5,
-      "MATCH_OBI_UNMAPPED": 6,
-      "SPLIT": 15,
+      "MATCH": 144,
+      "MATCH_GRANULARITY": 4,
+      "MATCH_OBI_CONFLICT": 4,
+      "MATCH_OBI_UNMAPPED": 4,
+      "SPLIT": 14,
       "MISSED": 1,
       "EXTRA": 4
     },
-    "split": 15,
+    "split": 14,
     "term_only_pairs": 6,
     "recall": 0.9936305732484076,
-    "precision": 0.8813559322033898,
-    "f1": 0.934131736526946,
-    "obi_exact_rate": 0.8974358974358975,
-    "obi_recall": 0.9235668789808917
+    "precision": 0.8863636363636364,
+    "f1": 0.9369369369369368,
+    "obi_exact_rate": 0.9230769230769231,
+    "obi_recall": 0.9426751592356688
   },
   "papers": [
     {
@@ -430,8 +430,8 @@
         "benchmark_total": 8,
         "ours_total": 9,
         "matched": 8,
-        "exact": 5,
-        "obi_ok": 6,
+        "exact": 6,
+        "obi_ok": 7,
         "missed": 0,
         "extra": 0,
         "split": 1,
@@ -664,14 +664,14 @@
           ]
         },
         {
-          "status": "MATCH_OBI_CONFLICT",
-          "tier": "name",
+          "status": "MATCH",
+          "tier": "obi_exact",
           "signals": [
             "same name",
             "name containment",
             "quote names the other side"
           ],
-          "reason": "benchmark maps this assay to OBI:0000911 real time reverse-transcription polymerase chain reaction assay; we mapped it to OBI:0001170 reverse transcription polymerase chain reaction assay",
+          "reason": "same OBI term",
           "benchmark": {
             "key": "RT-PCR",
             "obi_id": "OBI:0000911",
@@ -692,15 +692,15 @@
           },
           "ours": [
             {
-              "key": "reverse transcription polymerase chain reaction assay",
+              "key": "real time reverse-transcription polymerase chain reaction assay",
               "name_in_paper": [
                 "RT-PCR"
               ],
               "aliases": [
                 "Two-step RT-PCR"
               ],
-              "obi_id": "OBI:0001170",
-              "obi_label": "reverse transcription polymerase chain reaction assay",
+              "obi_id": "OBI:0000911",
+              "obi_label": "real time reverse-transcription polymerase chain reaction assay",
               "source": "methods",
               "evidence": {
                 "section": "RNA isolation and microarray and RT-PCR data generation",
@@ -3350,8 +3350,8 @@
         "benchmark_total": 5,
         "ours_total": 7,
         "matched": 5,
-        "exact": 3,
-        "obi_ok": 3,
+        "exact": 5,
+        "obi_ok": 5,
         "missed": 0,
         "extra": 1,
         "split": 1,
@@ -3475,15 +3475,15 @@
           "also_on_term": []
         },
         {
-          "status": "MATCH_OBI_UNMAPPED",
-          "tier": "name",
+          "status": "MATCH",
+          "tier": "obi_exact",
           "signals": [
             "same name",
             "name containment",
             "quote names the other side",
             "shared evidence sentence"
           ],
-          "reason": "we mapped this assay to no OBI term",
+          "reason": "same OBI term",
           "benchmark": {
             "key": "multiplex ELISA protocol Human Inflammation multianalyte profiling",
             "obi_id": "OBI:0000920",
@@ -3508,13 +3508,13 @@
           },
           "ours": [
             {
-              "key": "multiplex ELISA protocol Human Inflammation multianalyte profiling",
+              "key": "cytometric bead array assay",
               "name_in_paper": [
                 "multiplex ELISA protocol Human Inflammation multianalyte profiling"
               ],
               "aliases": [],
-              "obi_id": null,
-              "obi_label": null,
+              "obi_id": "OBI:0000920",
+              "obi_label": "cytometric bead array assay",
               "source": "methods",
               "evidence": {
                 "section": "Cytokine measurements",
@@ -3529,15 +3529,15 @@
           "also_on_term": []
         },
         {
-          "status": "MATCH_OBI_UNMAPPED",
-          "tier": "name",
+          "status": "MATCH",
+          "tier": "obi_exact",
           "signals": [
             "same name",
             "name containment",
             "quote names the other side",
             "shared evidence sentence"
           ],
-          "reason": "we mapped this assay to no OBI term",
+          "reason": "same OBI term",
           "benchmark": {
             "key": "haematologic markers",
             "obi_id": "OBI:0000630",
@@ -3561,13 +3561,13 @@
           },
           "ours": [
             {
-              "key": "complete blood count",
+              "key": "hematology assay",
               "name_in_paper": [
                 "complete blood count"
               ],
               "aliases": [],
-              "obi_id": null,
-              "obi_label": null,
+              "obi_id": "OBI:0000630",
+              "obi_label": "hematology assay",
               "source": "methods",
               "evidence": {
                 "section": "Haematologic measurements",
@@ -6366,7 +6366,7 @@
         "benchmark_total": 8,
         "ours_total": 8,
         "matched": 8,
-        "exact": 7,
+        "exact": 8,
         "obi_ok": 8,
         "missed": 0,
         "extra": 0,
@@ -6739,12 +6739,12 @@
           "also_on_term": []
         },
         {
-          "status": "MATCH_GRANULARITY",
-          "tier": "obi_ancestry",
+          "status": "MATCH",
+          "tier": "obi_exact",
           "signals": [
             "shared evidence sentence"
           ],
-          "reason": "our term OBI:0002692 polymerase chain reaction assay is broader than the benchmark's OBI:0000893 real time polymerase chain reaction assay; term-only pair: no shared name, alias or quote confirms it",
+          "reason": "same OBI term; term-only pair: no shared name, alias or quote confirms it",
           "benchmark": {
             "key": "PCR quantitation of bacterial 16S ribosomal RNA (rRNA) gene product",
             "obi_id": "OBI:0000893",
@@ -6771,13 +6771,13 @@
           },
           "ours": [
             {
-              "key": "polymerase chain reaction assay",
+              "key": "real time polymerase chain reaction assay",
               "name_in_paper": [
                 "PCR quantitation of bacterial 16 S ribosomal RNA (rRNA) gene product"
               ],
               "aliases": [],
-              "obi_id": "OBI:0002692",
-              "obi_label": "polymerase chain reaction assay",
+              "obi_id": "OBI:0000893",
+              "obi_label": "real time polymerase chain reaction assay",
               "source": "results",
               "evidence": {
                 "section": "Severe COVID-19 infection is associated with the systemic release of bacterial products",
@@ -8361,13 +8361,13 @@
       "benchmark_raw_total": 10,
       "metrics": {
         "benchmark_total": 10,
-        "ours_total": 10,
+        "ours_total": 9,
         "matched": 9,
         "exact": 9,
         "obi_ok": 9,
         "missed": 1,
         "extra": 0,
-        "split": 1,
+        "split": 0,
         "term_only_pairs": 0,
         "recall": 0.9
       },
@@ -8441,7 +8441,7 @@
             "quote names the other side",
             "shared evidence sentence"
           ],
-          "reason": "same OBI term; 1 more agent entry on this term: `serum neutralization of viral infectivity assay (2)`",
+          "reason": "same OBI term",
           "benchmark": {
             "key": "Focus reduction neutralization titre assay",
             "obi_id": "OBI:0000872",
@@ -8467,7 +8467,8 @@
             {
               "key": "serum neutralization of viral infectivity assay",
               "name_in_paper": [
-                "Focus reduction neutralization titre assay"
+                "Focus reduction neutralization titre assay",
+                "FRNT assay against the variants of concern"
               ],
               "aliases": [
                 "FRNT assay"
@@ -8483,31 +8484,9 @@
                 "quote": "Neutralization assays with authentic SARS-CoV-2 virus (infectious clone SARS-CoV-2 derived from 2019-nCoV/USA_WA1/2020 strain) were performed as previously described 31 ."
               },
               "generate_claim": true
-            },
-            {
-              "key": "serum neutralization of viral infectivity assay (2)",
-              "name_in_paper": [
-                "FRNT assay against the variants of concern"
-              ],
-              "aliases": [
-                "FRNT assays"
-              ],
-              "obi_id": "OBI:0000872",
-              "obi_label": "serum neutralization of viral infectivity assay",
-              "source": "methods",
-              "evidence": {
-                "section": "FRNT assay against the variants of concern",
-                "sentence_ids": [
-                  "S152"
-                ],
-                "quote": "FRNT assays were performed as described for the wild-type FRNT assay."
-              },
-              "generate_claim": true
             }
           ],
-          "also_on_term": [
-            "serum neutralization of viral infectivity assay (2)"
-          ]
+          "also_on_term": []
         },
         {
           "status": "MATCH",

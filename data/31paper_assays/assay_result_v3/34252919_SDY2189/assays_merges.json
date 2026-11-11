@@ -1,30 +1,47 @@
 {
   "summary": {
-    "groups_merged": 0,
-    "entries_folded": 0,
+    "groups_merged": 1,
+    "entries_folded": 1,
     "folds_blocked": 1
   },
-  "results": [],
+  "results": [
+    {
+      "key": "serum neutralization of viral infectivity assay",
+      "obi_id": "OBI:0000872",
+      "obi_label": "serum neutralization of viral infectivity assay",
+      "members": [
+        "serum neutralization of viral infectivity assay",
+        "serum neutralization of viral infectivity assay (2)"
+      ],
+      "folded": [
+        "serum neutralization of viral infectivity assay (2)"
+      ],
+      "judged": {
+        "verdict": "SAME",
+        "reason": "both records describe the same serum focus reduction neutralization measurement of SARS-CoV-2 neutralizing antibody titres by reduction of viral foci, with Record B simply specifying testing against variants of concern."
+      }
+    }
+  ],
   "blocked": [
     {
-      "member": "FRNT assay against the variants of concern",
+      "member": "serum neutralization of viral infectivity assay (2)",
       "kept_apart_from": "serum neutralization of viral infectivity assay",
-      "anchor": "Focus reduction neutralization titre assay",
+      "anchor": "serum neutralization of viral infectivity assay",
       "obi_id": "OBI:0000872",
       "obi_label": "serum neutralization of viral infectivity assay",
       "reason": "readouts differs: 'live-virus neutralizing antibody titres based on reduction in viral foci' vs 'neutralization of wild-type or variant SARS-CoV-2 measured by viral foci'"
     }
   ],
   "key_map": {
-    "Anti-spike binding enzyme-linked immunosorbent assay": "enzyme-linked immunosorbent assay",
-    "Focus reduction neutralization titre assay": "serum neutralization of viral infectivity assay",
-    "FRNT assay against the variants of concern": "serum neutralization of viral infectivity assay (2)",
-    "Intracellular cytokine staining assay": "flow cytometry assay",
-    "Bead-based antigen arrays": "antibody detection by cytometric bead array assay",
-    "CyTOF analysis of whole-blood samples": "cytometry time of flight assay",
-    "Plasma protein profiling using multiplex Olink panel": "Olink assay",
-    "Bulk transcriptomics": "bulk RNA-seq assay",
-    "CITE-seq": "cellular indexing of transcriptomes and epitopes by sequencing",
-    "RNA isolation and qPCR": "real time reverse-transcription polymerase chain reaction assay"
+    "enzyme-linked immunosorbent assay": "enzyme-linked immunosorbent assay",
+    "serum neutralization of viral infectivity assay": "serum neutralization of viral infectivity assay",
+    "serum neutralization of viral infectivity assay (2)": "serum neutralization of viral infectivity assay",
+    "flow cytometry assay": "flow cytometry assay",
+    "antibody detection by cytometric bead array assay": "antibody detection by cytometric bead array assay",
+    "cytometry time of flight assay": "cytometry time of flight assay",
+    "Olink assay": "Olink assay",
+    "bulk RNA-seq assay": "bulk RNA-seq assay",
+    "cellular indexing of transcriptomes and epitopes by sequencing": "cellular indexing of transcriptomes and epitopes by sequencing",
+    "real time reverse-transcription polymerase chain reaction assay": "real time reverse-transcription polymerase chain reaction assay"
   }
 }

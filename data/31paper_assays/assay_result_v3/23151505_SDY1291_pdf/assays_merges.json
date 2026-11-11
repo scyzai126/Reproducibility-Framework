@@ -2,24 +2,36 @@
   "summary": {
     "groups_merged": 0,
     "entries_folded": 0,
-    "folds_blocked": 1
+    "folds_blocked": 2
   },
   "results": [],
   "blocked": [
     {
-      "member": "Agilent 3′ Arrays",
+      "member": "transcription profiling by array assay (2)",
       "kept_apart_from": "transcription profiling by array assay",
-      "anchor": "Affymetrix Exon Arrays",
+      "anchor": "transcription profiling by array assay",
       "obi_id": "OBI:0001463",
       "obi_label": "transcription profiling by array assay",
       "reason": "readouts differs: 'gene and exon-level RNA expression in peripheral blood mononuclear cells' vs 'gene expression in peripheral blood mononuclear cells'"
+    },
+    {
+      "member": "transcription profiling by array assay (2)",
+      "kept_apart_from": "transcription profiling by array assay",
+      "anchor": "transcription profiling by array assay",
+      "obi_id": "OBI:0001463",
+      "obi_label": "transcription profiling by array assay",
+      "reason": "readouts differs: 'gene and exon-level RNA expression in peripheral blood mononuclear cells' vs 'gene expression in peripheral blood mononuclear cells'",
+      "judged": {
+        "verdict": "DIFFERENT",
+        "reason": "they use different array platforms in different study contexts, with Record A measuring gene and exon-level RNA expression and Record B measuring gene-level RNA expression in PBMCs."
+      }
     }
   ],
   "key_map": {
-    "Affymetrix Exon Arrays": "transcription profiling by array assay",
-    "Agilent 3′ Arrays": "transcription profiling by array assay (2)",
-    "Quantitative Real-Time PCR": "real time reverse-transcription polymerase chain reaction assay",
-    "Multiplex Cytokine Analysis": "cytometric bead array assay",
-    "Enumeration and Phenotyping of Fresh Blood Cell Populations": "flow cytometry assay"
+    "transcription profiling by array assay": "transcription profiling by array assay",
+    "transcription profiling by array assay (2)": "transcription profiling by array assay (2)",
+    "real time reverse-transcription polymerase chain reaction assay": "real time reverse-transcription polymerase chain reaction assay",
+    "cytometric bead array assay": "cytometric bead array assay",
+    "flow cytometry assay": "flow cytometry assay"
   }
 }

@@ -209,5 +209,25 @@
         "20. OBI:0003196 | estradiol assay | definition: An analyte assay that measures the abundance of estradiol | descendants: 1 (similarity: 0.4352)"
       ]
     }
+  },
+  "judge": {
+    "enzyme-linked immunosorbent assay (2) vs enzyme-linked immunosorbent assay": {
+      "reply": "DIFFERENT: Record A measures anti-meningococcal polysaccharide antibodies (IgG, IgM, IgG1, IgG2) in serum, whereas Record B measures cytokines (IL-6, TNF, IL-12p40) in cell supernatants.",
+      "usage": {
+        "prompt": 625,
+        "cached": 0,
+        "completion": 64,
+        "reasoning": 0
+      }
+    },
+    "flow cytometry assay (2) vs flow cytometry assay": {
+      "reply": "DIFFERENT: Record A measures frequency of blood antibody-secreting cells in whole blood by the marker set CD3− CD20− CD38hi CD27hi CD19+, whereas Record B measures dendritic-cell surface expression of CD80, CD83, HLA-DR, and CD86 in blood myeloid and monocyte-derived dendritic cells.",
+      "usage": {
+        "prompt": 620,
+        "cached": 0,
+        "completion": 77,
+        "reasoning": 0
+      }
+    }
   }
 }

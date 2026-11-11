@@ -58,6 +58,11 @@ from app.agent.assay_merger import (
 from app.agent.assay_service import REGISTRY_ROOT, obi_misses, obi_query_calls
 
 
+#: Folders a registry may hold that carry a full file set of their own — a pre-remap snapshot,
+#: not a registry to process. `obi_701_k20` is the 2026-11-10 vocabulary switch's backup.
+_BACKUP_DIRS = frozenset({"obi_701_k20"})
+
+
 def _read(path: Path) -> dict | None:
     return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
 
@@ -193,7 +198,12 @@ def main() -> None:
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("registry_dir", nargs="?", help="Folder containing assays.json")
     parser.add_argument("--all", action="store_true",
-                        help=f"Every registry under {REGISTRY_ROOT.relative_to(_REPO_ROOT)}")
+                        help=f"Every registry under --root (default: "
+                             f"{REGISTRY_ROOT.relative_to(_REPO_ROOT)})")
+    parser.add_argument("--root", type=Path, default=None,
+                        help="Registry root for --all. Without it --all walks REGISTRY_ROOT and "
+                             "IGNORES any positional path, which is easy to mistake for 'every "
+                             "registry under the folder I named'.")
     parser.add_argument("--dry-run", action="store_true",
                         help="Print what would change; write nothing")
     parser.add_argument("--map", action="store_true",
@@ -204,8 +214,14 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.all:
-        targets = sorted(d for d in REGISTRY_ROOT.iterdir()
-                         if d.is_dir() and (d / "assays.json").exists())
+        root = args.root or (Path(args.registry_dir) if args.registry_dir else REGISTRY_ROOT)
+        if not root.is_dir():
+            raise SystemExit(f"not a directory: {root}")
+        print(f"--all over {root}")
+        # A registry's own backup folder holds a full set of files, so it looks like a registry.
+        targets = sorted(d for d in root.iterdir()
+                         if d.is_dir() and d.name not in _BACKUP_DIRS
+                         and (d / "assays.json").exists())
     elif args.registry_dir:
         targets = [Path(args.registry_dir)]
     else:

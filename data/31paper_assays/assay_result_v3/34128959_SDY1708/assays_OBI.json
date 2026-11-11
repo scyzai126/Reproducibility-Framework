@@ -1,32 +1,76 @@
 {
   "single-cell RNA sequencing assay": {
+    "name_in_paper": [
+      "scRNA-seq by Seq-Well"
+    ],
+    "standard_technique_name": "single-cell RNA sequencing",
+    "aliases": [
+      "Seq-Well",
+      "scRNA-seq"
+    ],
+    "sample_type": "peripheral blood mononuclear cells and red blood cell-lysed whole blood",
+    "readouts": "single-cell transcriptomes; mRNA sequence counts",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "scRNA-seq by Seq-Well",
+      "sentence_ids": [
+        "S304"
+      ],
+      "quote": "The Seq-Well platform for scRNA-seq was used as described previously."
+    },
     "obi_id": "OBI:0002631",
     "obi_label": "single-cell RNA sequencing assay",
     "resource": "embedding_llm",
     "obi_confidence": 0.7636,
-    "obi_granularity": "EXACT",
-    "name_in_paper": [
-      "scRNA-seq by Seq-Well"
-    ]
+    "obi_granularity": "EXACT"
   },
   "cytometry time of flight assay": {
+    "name_in_paper": [
+      "Mass cytometry"
+    ],
+    "standard_technique_name": "mass cytometry",
+    "aliases": [
+      "CyTOF"
+    ],
+    "sample_type": "peripheral blood mononuclear cells and isolated natural killer cells",
+    "readouts": "single-cell protein marker expression profiles",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Mass cytometry",
+      "sentence_ids": [
+        "S387"
+      ],
+      "quote": "Data were collected on a Helios mass cytometer."
+    },
     "obi_id": "OBI:0002115",
     "obi_label": "cytometry time of flight assay",
     "resource": "exact_original_llm",
     "obi_confidence": "high",
-    "obi_granularity": "EXACT",
-    "name_in_paper": [
-      "Mass cytometry"
-    ]
+    "obi_granularity": "EXACT"
   },
   "single-cell ATAC-seq": {
+    "name_in_paper": [
+      "scATAC-seq"
+    ],
+    "standard_technique_name": "single-cell ATAC sequencing",
+    "aliases": [],
+    "sample_type": "peripheral blood mononuclear cells",
+    "readouts": "single-cell chromatin accessibility profiles",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "scATAC-seq",
+      "sentence_ids": [
+        "S404"
+      ],
+      "quote": "scATAC-seq was performed by using the Chromium Next GEM Single Cell ATAC Reagent Kits version 1.1 (10x Genomics; PN-1000175) and following the demonstrated protocol (nuclei isolation for scATAC-seq) provided by 10x Genomics."
+    },
     "obi_id": "OBI:0002764",
     "obi_label": "single-cell ATAC-seq",
     "resource": "exact_original",
     "obi_confidence": "high",
-    "obi_granularity": null,
-    "name_in_paper": [
-      "scATAC-seq"
-    ]
+    "obi_granularity": null
   }
 }

@@ -1,42 +1,98 @@
 {
   "real time reverse-transcription polymerase chain reaction assay": {
+    "name_in_paper": [
+      "RT-qPCR"
+    ],
+    "standard_technique_name": "real time reverse-transcription polymerase chain reaction",
+    "aliases": [
+      "SARS-CoV-2 RT-qPCR analysis",
+      "real-time RT-qPCR",
+      "qPCR"
+    ],
+    "sample_type": "nasopharyngeal samples",
+    "readouts": "SARS-CoV-2 RNA concentration or genome copies",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Viral RNA measurements",
+      "sentence_ids": [
+        "S167"
+      ],
+      "quote": "RNA concentrations were measured from nasopharyngeal samples by RT-qPCR as previously described 23 ."
+    },
     "obi_id": "OBI:0000911",
     "obi_label": "real time reverse-transcription polymerase chain reaction assay",
     "resource": "embedding_llm",
     "obi_confidence": 0.7627,
-    "obi_granularity": "EXACT",
-    "name_in_paper": [
-      "RT-qPCR"
-    ]
+    "obi_granularity": "EXACT"
   },
   "cytometric bead array assay": {
+    "name_in_paper": [
+      "Human Cytokine Array/Chemokine Array 71–403 Plex Panel (HD71)"
+    ],
+    "standard_technique_name": "multiplex bead immunoassay",
+    "aliases": [],
+    "sample_type": "serum",
+    "readouts": "cytokine and chemokine levels",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Cytokine and chemokine measurements",
+      "sentence_ids": [
+        "S177"
+      ],
+      "quote": "Sera were shipped to Eve Technologies (Calgary, Alberta, Canada) on dry ice, and levels of cytokines and chemokines were measured with Human Cytokine Array/Chemokine Array 71–403 Plex Panel (HD71)."
+    },
     "obi_id": "OBI:0000920",
     "obi_label": "cytometric bead array assay",
     "resource": "embedding_llm_normalized",
-    "obi_confidence": 0.5687,
-    "obi_granularity": "EXACT",
-    "name_in_paper": [
-      "Human Cytokine Array/Chemokine Array 71–403 Plex Panel (HD71)"
-    ]
+    "obi_confidence": 0.5686,
+    "obi_granularity": "EXACT"
   },
   "flow cytometry assay": {
+    "name_in_paper": [
+      "Flow cytometry"
+    ],
+    "standard_technique_name": "flow cytometry",
+    "aliases": [],
+    "sample_type": "peripheral blood mononuclear cells",
+    "readouts": "leukocyte subset frequencies and phenotypes",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Flow cytometry",
+      "sentence_ids": [
+        "S199"
+      ],
+      "quote": "Finally, intracellular staining cocktails were directly added to each sample for 1 hour at 4°C."
+    },
     "obi_id": "OBI:0000916",
     "obi_label": "flow cytometry assay",
     "resource": "exact_original_llm",
     "obi_confidence": "high",
-    "obi_granularity": "EXACT",
-    "name_in_paper": [
-      "Flow cytometry"
-    ]
+    "obi_granularity": "EXACT"
   },
   "flow cytometry assay (2)": {
+    "name_in_paper": [
+      "intracellular cytokine staining"
+    ],
+    "standard_technique_name": "flow cytometry",
+    "aliases": [],
+    "sample_type": "peripheral blood mononuclear cells",
+    "readouts": "intracellular cytokine production after stimulation",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Flow cytometry",
+      "sentence_ids": [
+        "S192"
+      ],
+      "quote": "For intracellular cytokine staining following stimulation, cells were resuspended in 200 μL cRPMI (RPMI-1640 supplemented with 10% FBS, 2 mM L-glutamine, 100 U/ml penicillin, and 100 mg/ml streptomycin, 1mM Sodium Pyruvate, and 50uM 2-Mercaptoethanol) and stored at 4°C overnight."
+    },
     "obi_id": "OBI:0000916",
     "obi_label": "flow cytometry assay",
     "resource": "embedding_llm_normalized",
-    "obi_confidence": 0.7859,
-    "obi_granularity": "BROAD",
-    "name_in_paper": [
-      "intracellular cytokine staining"
-    ]
+    "obi_confidence": 0.7858,
+    "obi_granularity": "BROAD"
   }
 }

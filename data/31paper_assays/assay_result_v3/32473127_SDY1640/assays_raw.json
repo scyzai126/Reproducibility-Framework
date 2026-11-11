@@ -266,5 +266,25 @@
         "19. OBI:0003112 | Olink assay | definition: A proximity extension assay that uses quantitative polymerase chain reaction (qPCR) technology to determine the concentration/presence of proteins using a high-multiplex, high-throughput protein biomarker platform. The assay utilizes two distinct oligonucleotide-labeled antibodies (‘probes’) that bi... | descendants: 0 (similarity: 0.4857)"
       ]
     }
+  },
+  "judge": {
+    "enzyme-linked immunosorbent assay (2) vs enzyme-linked immunosorbent assay": {
+      "reply": "DIFFERENT: they measure different analytes and specimens, with Record A assaying SARS-CoV-2 RBD-specific IgG/IgM/IgA in plasma and Record B assaying OC43/NL63 coronavirus RBD-specific antibodies in serum.",
+      "usage": {
+        "prompt": 603,
+        "cached": 0,
+        "completion": 56,
+        "reasoning": 0
+      }
+    },
+    "flow cytometry assay (2) vs flow cytometry assay": {
+      "reply": "DIFFERENT: Record A measures ex vivo PBMC immunophenotypic lineage/marker-defined cell population frequencies, whereas Record B measures peptide-stimulated intracellular cytokine/granzyme responses (IFNγ, granzyme B, TNFα, IL-10) in CD8+ T cells.",
+      "usage": {
+        "prompt": 608,
+        "cached": 0,
+        "completion": 65,
+        "reasoning": 0
+      }
+    }
   }
 }

@@ -210,5 +210,34 @@
         "19. OBI:2100050 | macrophage count assay | definition: A cytometry assay that measures the count of macrophages | descendants: 0 (similarity: 0.4432)"
       ]
     }
+  },
+  "judge": {
+    "flow cytometry assay (2) vs flow cytometry assay": {
+      "reply": "DIFFERENT: Record A describes general cell surface and intracellular marker staining/sorting of NK cells, whereas Record B describes a distinct high-dimensional NK cell subset marker-expression profiling panel.",
+      "usage": {
+        "prompt": 558,
+        "cached": 0,
+        "completion": 39,
+        "reasoning": 0
+      }
+    },
+    "flow cytometry assay (3) vs flow cytometry assay": {
+      "reply": "DIFFERENT: Record A measures NK-cell surface/intracellular marker expression for immunophenotyping, whereas Record B measures the functional response of IFN-γ intracellular production after cytokine stimulation in sorted NK cells.",
+      "usage": {
+        "prompt": 642,
+        "cached": 0,
+        "completion": 47,
+        "reasoning": 0
+      }
+    },
+    "flow cytometry assay (4) vs flow cytometry assay": {
+      "reply": "DIFFERENT: Record A is general NK-cell phenotyping/intracellular marker expression by flow cytometry, whereas Record B measures the distinct functional response of NK-cell degranulation via CD107a after K562 co-culture.",
+      "usage": {
+        "prompt": 624,
+        "cached": 0,
+        "completion": 51,
+        "reasoning": 0
+      }
+    }
   }
 }

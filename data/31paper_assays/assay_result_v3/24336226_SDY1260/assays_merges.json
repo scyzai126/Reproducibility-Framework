@@ -2,35 +2,59 @@
   "summary": {
     "groups_merged": 0,
     "entries_folded": 0,
-    "folds_blocked": 2
+    "folds_blocked": 4
   },
   "results": [],
   "blocked": [
     {
-      "member": "ELISA kits",
+      "member": "enzyme-linked immunosorbent assay (2)",
       "kept_apart_from": "enzyme-linked immunosorbent assay",
-      "anchor": "ELISA",
+      "anchor": "enzyme-linked immunosorbent assay",
       "obi_id": "OBI:0000661",
       "obi_label": "enzyme-linked immunosorbent assay",
       "reason": "sample_type differs: 'serum' vs 'cell supernatants'"
     },
     {
-      "member": "FACS staining",
+      "member": "flow cytometry assay (2)",
       "kept_apart_from": "flow cytometry assay",
-      "anchor": "flow cytometry",
+      "anchor": "flow cytometry assay",
       "obi_id": "OBI:0000916",
       "obi_label": "flow cytometry assay",
       "reason": "sample_type differs: 'whole blood cells' vs 'blood myeloid dendritic cells and monocyte-derived dendritic cells'"
+    },
+    {
+      "member": "enzyme-linked immunosorbent assay (2)",
+      "kept_apart_from": "enzyme-linked immunosorbent assay",
+      "anchor": "enzyme-linked immunosorbent assay",
+      "obi_id": "OBI:0000661",
+      "obi_label": "enzyme-linked immunosorbent assay",
+      "reason": "sample_type differs: 'serum' vs 'cell supernatants'",
+      "judged": {
+        "verdict": "DIFFERENT",
+        "reason": "Record A measures anti-meningococcal polysaccharide antibodies (IgG, IgM, IgG1, IgG2) in serum, whereas Record B measures cytokines (IL-6, TNF, IL-12p40) in cell supernatants."
+      }
+    },
+    {
+      "member": "flow cytometry assay (2)",
+      "kept_apart_from": "flow cytometry assay",
+      "anchor": "flow cytometry assay",
+      "obi_id": "OBI:0000916",
+      "obi_label": "flow cytometry assay",
+      "reason": "sample_type differs: 'whole blood cells' vs 'blood myeloid dendritic cells and monocyte-derived dendritic cells'",
+      "judged": {
+        "verdict": "DIFFERENT",
+        "reason": "Record A measures frequency of blood antibody-secreting cells in whole blood by the marker set CD3− CD20− CD38hi CD27hi CD19+, whereas Record B measures dendritic-cell surface expression of CD80, CD83, HLA-DR, and CD86 in blood myeloid and monocyte-derived dendritic cells."
+      }
     }
   ],
   "key_map": {
-    "DNA microarray": "transcription profiling by array assay",
-    "ELISA": "enzyme-linked immunosorbent assay",
-    "anti-DT IgG capture microsphere assay": "cytometric bead array assay",
-    "serum bactericidal titers (SBA)": "bacterial neutralization assay",
-    "flow cytometry": "flow cytometry assay",
-    "ELISpot": "enzyme-linked immunospot assay",
-    "FACS staining": "flow cytometry assay (2)",
-    "ELISA kits": "enzyme-linked immunosorbent assay (2)"
+    "transcription profiling by array assay": "transcription profiling by array assay",
+    "enzyme-linked immunosorbent assay": "enzyme-linked immunosorbent assay",
+    "cytometric bead array assay": "cytometric bead array assay",
+    "bacterial neutralization assay": "bacterial neutralization assay",
+    "flow cytometry assay": "flow cytometry assay",
+    "enzyme-linked immunospot assay": "enzyme-linked immunospot assay",
+    "flow cytometry assay (2)": "flow cytometry assay (2)",
+    "enzyme-linked immunosorbent assay (2)": "enzyme-linked immunosorbent assay (2)"
   }
 }
