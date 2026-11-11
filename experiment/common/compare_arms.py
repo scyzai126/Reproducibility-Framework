@@ -29,7 +29,10 @@ ARMS: dict[str, tuple[Path, list[str], int | None, bool]] = {
     "bare LLM ×3 (strict ids)": (EXPERIMENT / "llm_baseline" / "comparison", ["r1", "r2", "r3"], None, True),
     "bare LLM ×3 (labels read)": (EXPERIMENT / "llm_baseline" / "comparison" / "label", ["r1", "r2", "r3"], None, True),
     "RAG single call ×3": (EXPERIMENT / "rag_single_call" / "comparison", ["r1", "r2", "r3"], None, True),
-    "OntoGPT": (EXPERIMENT / "ontogpt" / "comparison", ["r1"], None, True),
+    # 31 is stated, not counted: OntoGPT writes `output.json` per paper, not the `raw.json` that
+    # `calls_spent` looks for, so counting read 0 calls for an arm that makes one call per paper
+    # (`experiment/ontogpt/README.md`: "31 extractions, one model call each").
+    "OntoGPT": (EXPERIMENT / "ontogpt" / "comparison", ["r1"], 31, True),
     "NCBO Annotator, pruned/paper": (EXPERIMENT / "ncbo_annotator" / "comparison", ["pruned_paper"], 0, False),
     "NCBO Annotator, pruned/methods": (EXPERIMENT / "ncbo_annotator" / "comparison", ["pruned_methods"], 0, False),
     "dictionary, pruned/paper": (EXPERIMENT / "dictionary_baseline" / "comparison", ["pruned_paper"], 0, False),

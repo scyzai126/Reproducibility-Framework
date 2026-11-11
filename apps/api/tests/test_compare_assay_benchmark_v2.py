@@ -531,3 +531,95 @@ def test_html_names_the_scoring_mode(mod):
 
     assert "— strict" not in lenient and "folds into a paired row" in lenient
     assert "— strict" in strict and "Strict mode: both denominators are the 2 rows" in strict
+
+
+# ── the comparison-arms section ──────────────────────────────────────────────
+
+_ARMS_TABLE = """# Comparison arms vs the assay agent
+
+## Scorer mode: default
+
+| metric | agent | RAG single call ×3 |
+|---|---|---|
+| entries | 999 | 1 |
+| exact (same OBI term as curator) | 999 | 1 |
+
+## Scorer mode: strict
+
+| metric | agent | bare LLM ×3 (strict ids) | bare LLM ×3 (labels read) | RAG single call ×3 | OntoGPT | NCBO Annotator, pruned/paper | NCBO Annotator, pruned/methods | dictionary, pruned/paper | dictionary, pruned/methods | dictionary, full/paper | agent, old same-term fold |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| entries | 176 | 249 | 249 | 227 | 263 | 94 | 79 | 484 | 349 | 494 | 155 |
+| matched | 156 | 154 | 155 | 157 | 155 | 60 | 48 | 141 | 124 | 141 | 151 |
+| exact (same OBI term as curator) | 144 | 13 | 75 | 120 | 22 | 47 | 37 | 79 | 63 | 79 | 136 |
+| F1 | 93.4% | 75.5% | 76.1% | 81.5% | 73.6% | 47.6% | 40.5% | 43.9% | 48.9% | 43.3% | 96.5% |
+| calls | 532 | 31 | 31 | 31 | 31 | 0 | 0 | 0 | 0 | 0 | 512 |
+"""
+
+
+def test_parse_arms_table_reads_the_mode_asked_for(mod):
+    strict = mod.parse_arms_table(_ARMS_TABLE, "strict")
+    default = mod.parse_arms_table(_ARMS_TABLE, "default")
+
+    assert strict["entries"]["agent"] == "176"
+    assert strict["exact (same OBI term as curator)"]["RAG single call ×3"] == "120"
+    # The default section must not bleed into the strict one, or the page shows the wrong mode.
+    assert default["entries"]["agent"] == "999"
+    assert mod.parse_arms_table(_ARMS_TABLE, "nonexistent") == {}
+
+
+def test_baselines_html_renders_the_arms_and_explains_each(mod, tmp_path):
+    path = tmp_path / "arms_table.md"
+    path.write_text(_ARMS_TABLE, encoding="utf-8")
+
+    html = mod.baselines_html({"exact": 144}, path=path, mode="strict")
+
+    assert "Against other tools" in html
+    assert "RAG single call" in html and "OntoGPT" in html and "NCBO Annotator" in html
+    # The explanation of each arm is the point of the section, not decoration.
+    assert "pasted into the context" in html          # what RAG single call is
+    assert "no vocabulary in the prompt" in html.replace("\n", " ")
+    assert ">144<" in html and ">120<" in html
+    # The Methods-only and full-vocabulary variants are deliberately not shown.
+    assert "pruned/methods" not in html and "full/paper" not in html
+    assert "No stale warning expected" or True
+    assert "Rebuild it with" not in html
+
+
+def test_baselines_html_flags_a_stale_arms_table(mod, tmp_path):
+    """The agent column is built from this same report; if it disagrees, it is out of date."""
+    path = tmp_path / "arms_table.md"
+    path.write_text(_ARMS_TABLE, encoding="utf-8")
+
+    html = mod.baselines_html({"exact": 140}, path=path, mode="strict")
+
+    assert "Rebuild it with" in html and "reads 144 exact where this run scored 140" in html
+
+
+def test_baselines_html_is_omitted_when_the_scores_are_absent(mod, tmp_path):
+    assert mod.baselines_html({"exact": 1}, path=tmp_path / "missing.md") == ""
+
+
+def test_baselines_html_follows_the_page_mode(mod, tmp_path):
+    """Arms scored the way the rows above them were: a default page must not show strict."""
+    path = tmp_path / "arms_table.md"
+    path.write_text(_ARMS_TABLE, encoding="utf-8")
+
+    default = mod.baselines_html({"exact": 999}, path=path, mode="default")
+    strict = mod.baselines_html({"exact": 144}, path=path, mode="strict")
+
+    assert "default scorer" in default and ">999<" in default
+    assert "strict scorer" in strict and ">144<" in strict
+    assert "Rebuild it with" not in default and "Rebuild it with" not in strict
+
+
+def test_html_embeds_the_arms_section(mod, tmp_path, monkeypatch):
+    path = tmp_path / "arms_table.md"
+    path.write_text(_ARMS_TABLE, encoding="utf-8")
+    monkeypatch.setattr(mod, "BASELINES_PATH", path)
+    papers = [_paper(["MATCH", "MISSED"], 2, 1, 1, 1, 1, 0)]
+    totals = {"papers": 1, "skipped": [], "registries_without_benchmark": [], **mod.overall_totals(papers)}
+
+    page = mod.render_html({"mode": "strict", "benchmark_dir": "b", "registry_dir": "r",
+                            "papers": papers, "totals": totals})
+
+    assert "Against other tools" in page and "What each arm is" in page

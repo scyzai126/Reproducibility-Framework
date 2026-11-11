@@ -27,14 +27,15 @@ Reported totals: recall 0.953, precision 0.934, F1 0.943, OBI exact rate 0.901.
 >
 > The curator-side findings below are unaffected: the SDY1669 brace defect, the mistyped CFSE
 > id, the SDY1289 qPCR mapping and the three blank OBI ids all still stand against
-> benchmark v5.
+> benchmark v5. One more was added on 2026-11-11 — SDY1669's single flow measurement filed
+> as two rows — which accounts for the second MISSED the strict scorer reports.
 
 ## Summary
 
 | Fault | Rows |
 |---|---|
 | Agent | 14 |
-| Curator, judgement or unfilled OBI id | 5 |
+| Curator, judgement or unfilled OBI id | 6 |
 | Curator file malformed, content correct | 6 |
 | Scorer artifact, neither side wrong | 1 |
 | Neither, the ontology cannot express both | 4 |
@@ -72,7 +73,7 @@ differ in platform, sample or analyte.
 | SDY2189 | MISSED single-molecule array | SIMOA measures plasma IFN-alpha2 in the results and appears in the author contributions. Plain miss. |
 | SDY984 | EXTRA tandem mass spectrometry | MS/MS used only to confirm metabolite identity inside the metabolomics workflow, `generate_claim` false. The curator folded it. Over-split but defensible. |
 
-## Curator at fault (5, plus 1 shared)
+## Curator at fault (6, plus 1 shared)
 
 | Paper | Row | Why |
 |---|---|---|
@@ -82,6 +83,34 @@ differ in platform, sample or analyte.
 | SDY1264 | Immunofluorescence unmapped | Curator blank. OBI has no immunofluorescence assay term; `CHMO:0000087` is imported into this obo release and is the right pick. |
 | SDY1640 | Lateral flow unmapped | Curator blank. `OBI:0002773`, a single-value antibody-binding readout, is sound for a colloidal-gold lateral flow test. |
 | SDY1260 | Luminex granularity (**shared**) | The paper's design table lists "Anti-DT IgG (Luminex)" and "27-plex cytokines (Luminex)" as separate assays. The curator captured only the first; the agent merged both onto the parent term. The curator's `OBI:0003116` is right for the anti-DT IgG assay alone. |
+
+### Added 2026-11-11: SDY1669, one measurement written as two rows
+
+The curator filed `intracellular staining assay` and `Flow cytometry analysis of PBMCs` as two
+rows on `OBI:0000916`. They are **one experiment under two of the paper's own names**: Methods
+describe a single procedure — "stimulation of PBMCs ... using a mixture of synthetic TLR7/8 and
+TLR3 ligands ... and we performed an **intracellular staining assay** to detect cytokine
+responses" — and Fig. 2 is titled "**Flow cytometry analysis** of ex vivo stimulated human
+peripheral blood leukocytes". There is no second flow measurement to pair the extra row with:
+this paper's cell phenotyping is done by **phospho-CyTOF** (22 surface + 12 intracellular
+markers), and the study's own assay list reads Phospho-CyTOF / In vitro stimulation / Olink /
+CITE-seq / Bulk RNA-seq / Bacterial products.
+
+The agent delivers one entry, which is correct — a repeated assay is extracted once, and round
+5's identity triple (`standard_technique_name` + `sample_type` + `readouts`) is what decides it,
+not the OBI term.
+
+**Consequence for the scores.** This is the row the strict scorer reports as the second MISSED
+(`benchmark_vs_agent_strict.html`). Strict mode keeps every curated row, so an over-split row has
+nowhere to go; the default mode folds it into the paired row on the same term and hides it. So of
+the 2 strict MISSED, only **SDY2189's SIMOA** is an agent miss — the other is a benchmark fault.
+Read strict recall 98.7% with that in mind: against the curated rows as written it is right, and
+against the paper the agent missed one assay, not two.
+
+Not a general rule. In the other four papers where the curators wrote two rows on one term the
+rows are genuinely two measurements, and the agent independently delivered two entries for each:
+SDY1640 and SDY1655 (direct ex vivo phenotyping vs ICS after stimulation), SDY1288 (IgM-capture
+vs inhibition ELISA), SDY984 (T cell IFN-γ/IL-4/IL-21 ELISPOT vs B cell IgG ELISPOT).
 
 ## Curator file malformed, content correct (6)
 

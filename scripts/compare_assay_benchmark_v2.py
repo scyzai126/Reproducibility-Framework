@@ -74,6 +74,68 @@ REGISTRY_DIR = REPO_ROOT / "data" / "31paper_assays" / "assay_result_v1"
 OUT_DIR = REPO_ROOT / "data" / "benchmark_assay" / "comparison"
 OUT_STEM = "benchmark_vs_agent"
 
+#: Scores for every comparison arm, rebuilt by `experiment/common/compare_arms.py`. The page
+#: embeds the strict-mode columns so the agent's numbers can be read beside the alternatives
+#: instead of alone. Read, never written: if the file is absent the section is simply omitted.
+BASELINES_PATH = REPO_ROOT / "experiment" / "common" / "comparison" / "arms_table.md"
+#: (column in arms_table.md, name on the page, what the arm is). The arms table also carries the
+#: Methods-only and full-vocabulary variants; the whole-paper variant is the stronger of each
+#: pair, so it is the one shown here.
+BASELINE_ARMS = [
+    ("agent", "agent (this page)",
+     "The pipeline these results come from: six rounds — three extraction calls voted into one "
+     "registry, a verifier, a corrector, the OBI mapping, a fold on measurement identity, and a "
+     "judge for the folds the rules refused. The mapping step retrieves 30 candidate terms by "
+     "embedding and spends one call picking among them, reading their definitions. ~17 model "
+     "calls per paper."),
+    ("bare LLM ×3 (strict ids)", "bare LLM, ids as given",
+     "One call per paper: “list this paper's assays and give each an OBI id”, with no vocabulary "
+     "in the prompt. Scored on the ids the model produced, which it has to recall from memory — "
+     "this is what an ontology id looks like when nothing checks it. Mean of three runs."),
+    ("bare LLM ×3 (labels read)", "bare LLM, labels read",
+     "The same three runs, scored more kindly: the model's *labels* are resolved to OBI ids for "
+     "it, so the arm is judged on whether it named the right assay rather than on recalling the "
+     "number. The gap between this column and the one before it is pure id recall."),
+    ("RAG single call ×3", "RAG single call",
+     "Retrieval-augmented generation in its simplest form: the same one-call prompt, but the "
+     "whole 701-term OBI vocabulary is pasted into the context, so the model picks ids off a list "
+     "instead of recalling them. One call per paper — no vote, no verifier, no fold. This is the "
+     "“just put the ontology in the prompt” baseline, and the closest arm to the agent. "
+     "Mean of three runs."),
+    ("OntoGPT", "OntoGPT",
+     "The published tool (SPIRES, v1.2.0) for exactly this task, run as it ships on the same "
+     "model: the LLM extracts entities, then OAK grounds each string to OBI by lexical lookup. "
+     "One call per paper."),
+    ("NCBO Annotator, pruned/paper", "NCBO Annotator",
+     "BioPortal's concept-recognition web service over OBI — no model at all, pure string "
+     "recognition of OBI labels and synonyms in the text. The established non-LLM tool."),
+    ("dictionary, pruned/paper", "dictionary",
+     "Our own no-model control: OBI labels and synonyms matched against the paper, longest match "
+     "first, plurals and a trailing “assay” handled. It exists to show how much of the score is "
+     "available from string matching alone."),
+    ("agent, old same-term fold", "agent, old fold",
+     "The same agent registries under the superseded fold rule (“same OBI term ⇒ same assay”). "
+     "Not a competitor — it is here to price the current rule, which keeps one entry per "
+     "measurement instead of per technique."),
+]
+#: (row in arms_table.md, name on the page, tooltip). Only the agent column is live on this page;
+#: every number here comes from the arms table.
+BASELINE_ROWS = [
+    ("entries", "entries delivered", "assay entries the arm produced over the 31 papers"),
+    ("matched", "matched of 158", "curated rows the scorer could pair with an entry"),
+    ("MISSED", "missed", "curated rows no entry paired with"),
+    ("EXTRA", "extra", "entries with no curated row — candidates for review, not errors"),
+    ("exact (same OBI term as curator)", "exact OBI term", "same OBI id as the curator"),
+    ("OBI ok (same or parent/child)", "OBI ok", "same id, or one a parent/child of the other"),
+    ("wrong term (CONFLICT)", "wrong term", "paired, but the two terms disagree"),
+    ("no usable term (UNMAPPED)", "no usable term", "paired, but the entry carries no OBI id"),
+    ("recall", "recall", "matched ÷ 158"),
+    ("precision", "precision", "matched ÷ entries delivered"),
+    ("F1", "F1", "harmonic mean of recall and precision"),
+    ("obi_recall", "OBI recall", "OBI ok ÷ 158"),
+    ("calls", "model calls", "over all 31 papers"),
+]
+
 
 def use_registry_dir(path: Path) -> None:
     """Score another result version. Its report goes beside it, under `<path>/comparison/`."""
@@ -635,6 +697,95 @@ def _obi_recall(m: dict) -> float:
     return ok / m["benchmark_total"] if m.get("benchmark_total") else 0.0
 
 
+def parse_arms_table(text: str, mode: str = "strict") -> dict[str, dict[str, str]]:
+    """{row label: {column name: cell}} for one scorer mode's table in `arms_table.md`."""
+    head, _, rest = text.partition(f"## Scorer mode: {mode}")
+    if not _:
+        return {}
+    section = rest.split("## Scorer mode")[0]
+    columns: list[str] = []
+    out: dict[str, dict[str, str]] = {}
+    for line in section.splitlines():
+        if not line.startswith("|") or set(line) <= set("|- "):
+            continue
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if not columns:
+            columns = cells[1:]          # the header row: first cell is "metric"
+        else:
+            out.setdefault(cells[0], dict(zip(columns, cells[1:])))
+    return out
+
+
+def baselines_html(agent_live: dict | None = None, path: Path = BASELINES_PATH,
+                   mode: str = "default") -> str:
+    """The comparison-arms table, with one line on what each arm is. "" if the scores are absent.
+
+    `mode` follows the page's own scorer mode, so the arms are always scored the way the rows
+    above them were. The two modes rank the arms identically and differ by at most 0.3 points of
+    F1 on any of them; what differs is one curated row for the agent (SDY1669, where the curators
+    wrote one flow measurement as two rows — `docs/benchmark_v5_vs_agent_v1_adjudication.md`).
+
+    `agent_live` is the running report's `totals`. The arms table's agent column is built from the
+    same report, so the two normally agree; when they do not, the page says so rather than show a
+    stale column beside fresh per-paper rows.
+    """
+    try:
+        table = parse_arms_table(path.read_text(encoding="utf-8"), mode)
+    except OSError:
+        return ""
+    if not table:
+        return ""
+
+    stale = ""
+    if agent_live is not None:
+        want = str(agent_live.get("exact", ""))
+        got = (table.get("exact (same OBI term as curator)") or {}).get("agent")
+        if got and got != want:
+            stale = ('<p class="note warn">The arms table\'s agent column reads '
+                     f'{e(got)} exact where this run scored {e(want)}. Rebuild it with '
+                     '<code>experiment/common/compare_arms.py</code>.</p>')
+
+    heads = "".join(f'<th{" class=self" if col == "agent" else ""}>{e(name)}</th>'
+                    for col, name, _ in BASELINE_ARMS)
+    # The denominator is the mode's own row count, not a constant: default folds leftovers away.
+    denom = (table.get("curated rows") or {}).get("agent", "158")
+    body = []
+    for key, label, tip in BASELINE_ROWS:
+        row = table.get(key)
+        if not row:
+            continue
+        label, tip = label.replace("158", denom), tip.replace("158", denom)
+        cells = "".join(
+            f'<td class="n{" self" if col == "agent" else ""}">{e(row.get(col, "—"))}</td>'
+            for col, _, _ in BASELINE_ARMS)
+        body.append(f'<tr><th title="{e(tip)}">{e(label)}</th>{cells}</tr>')
+    arms = "".join(f'<dt>{e(name)}</dt><dd>{e(what)}</dd>' for _, name, what in BASELINE_ARMS)
+    try:
+        source = str(path.relative_to(REPO_ROOT))
+    except ValueError:
+        source = str(path)
+    rows_label = "158 curated rows" if mode == "strict" else "157 curated rows (raw 158)"
+    same = ('A curated row left without a partner is MISSED whatever term it carries, and a pair '
+            'the ontology alone made is taken only when nothing better claims either side.'
+            if mode == "strict" else
+            'A curated row left without a partner folds into a paired row on the same OBI term, '
+            'as in the rows above. The two modes rank these arms identically and differ by at '
+            'most 0.3 points of F1 on any of them.')
+    return (
+        '<h2 style="margin-top:28px">Against other tools '
+        f'<span class="sub">{mode} scorer · 31 papers · {rows_label}</span></h2>'
+        '<p class="sub">Every arm writes the same two registry files per paper and is scored by '
+        f'this same code, in the mode this page uses. {same} Source: '
+        f'<code>{e(source)}</code>, rebuilt by '
+        '<code>experiment/common/compare_arms.py</code>; write-up: '
+        '<code>docs/assay_agent_vs_baselines.md</code>.</p>'
+        f'{stale}'
+        f'<div class="wrap"><table class="arms"><thead><tr><th>metric</th>{heads}</tr></thead>'
+        f'<tbody>{"".join(body)}</tbody></table></div>'
+        f'<details class="arms-what"><summary>What each arm is</summary><dl>{arms}</dl></details>'
+    )
+
+
 def render_html(report: dict) -> str:
     t = report["totals"]
     strict = report.get("mode") == "strict"
@@ -728,6 +879,7 @@ def render_html(report: dict) -> str:
            'name, alias or quote.</p>')
         + '</div>'
     )
+    baselines = baselines_html(t, mode="strict" if strict else "default")
     total_row = (
         f'<tr><td>Total</td><td>{t["papers"]} papers</td>'
         f'<td class="n">{t["benchmark_total"]}</td><td class="n">{t["ours_total"]}</td>'
@@ -789,6 +941,14 @@ details summary{{cursor:pointer;color:var(--gran);font-size:12px}}
 blockquote{{margin:4px 0 8px;padding:4px 8px;border-left:3px solid var(--line);color:var(--muted);font-size:12px;max-height:180px;overflow:auto}}
 .q b{{font-size:12px}}
 .hidden{{display:none}}
+.arms th:first-child{{text-align:left;font-weight:600;color:var(--fg);background:var(--card);white-space:nowrap}}
+.arms thead th{{background:var(--code);white-space:nowrap}}
+.arms th.self,.arms td.self{{background:color-mix(in srgb,var(--match) 12%,transparent);font-weight:700}}
+.arms thead th.self{{color:var(--match)}}
+.arms td{{white-space:nowrap}}
+.arms-what{{margin-top:10px}}
+.arms-what dl{{margin:8px 0 0}} .arms-what dt{{font-weight:700;margin-top:10px}}
+.arms-what dd{{margin:2px 0 0;color:var(--muted);max-width:90ch}}
 </style></head><body><main>
 <h1>Assay benchmark {e(label)} vs. agent{" — strict" if strict else ""}</h1>
 <p class="sub">Benchmark: <code>{e(report["benchmark_dir"])}</code> · Agent: <code>{e(report["registry_dir"])}</code> ·
@@ -811,7 +971,8 @@ blockquote{{margin:4px 0 8px;padding:4px 8px;border-left:3px solid var(--line);c
 {f"<p>Skipped benchmark files:</p><ul>{notes}</ul>" if notes else ""}
 <p>The benchmark is a recall reference, not an exhaustive list, so EXTRA rows are candidates for curator review rather than errors.</p>
 </details>
-<h2 style="margin-top:20px">Per paper</h2>
+{baselines}
+<h2 style="margin-top:28px">Per paper</h2>
 <div class="wrap"><table class="summary"><thead><tr><th>Study</th><th>PMID</th><th>Bench</th><th>Agent</th>
 {"".join(f'<th class="{c}-c">{s.replace("MATCH_", "").replace("_", " ")}</th>' for s, (c, _) in STATUS_INFO.items())}
 <th>Recall</th><th title="same or parent/child OBI term">OBI recall</th><th>Notes</th></tr></thead><tbody>{"".join(summary_rows)}</tbody>
