@@ -165,6 +165,20 @@ staining or labelling step — even when the paper calls all of them flow cytome
 panel described only inside another experiment's paragraph is part of that entry. Several
 antibody panels within one experiment are still one entry.
 
+A single-cell library paired with receptor sequencing is several measurements, not one. The
+transcriptome (gene expression) and each receptor repertoire (B cell receptor V(D)J, T cell
+receptor V(D)J) are different analytes, so each is its own entry even when one kit, one capture
+and one sentence produce them: "paired single-cell RNA-seq and BCR sequencing" is two entries,
+and a paper that sequenced both BCR and TCR has one entry for each. The shared sentence is a
+valid quote for every one of them; each entry's `readouts` names its own analyte only, never
+the other modality's. This holds only for a modality the paper states it generated — a kit
+name that could have produced a V(D)J library is not a statement that one was made.
+
+Surface protein read by antibody-derived tags is not split off this way. A technique whose own
+name covers the transcriptome and the surface protein together — CITE-seq, REAP-seq — is one
+entry under that name, with both analytes in its `readouts`; its antibody-tag library
+(TotalSeq, ADT, hashtag) is part of that entry, never an entry of its own.
+
 Everything else is the same measurement run more than once, and never a reason to split: a
 different kit, instrument model or protocol variant, a different purpose, several reagents,
 targets or panels within one experiment, or runs on two cohorts, at two timepoints or in two
@@ -274,6 +288,11 @@ discarded.
   - RNA-seq on RNA extracted from a population — whole blood, PBMC, a sorted subset, tissue —
     with no single-cell capture → `"bulk RNA sequencing"`
   - the same for ATAC-seq, Hi-C and other sequencing assays that have a single-cell form
+  - the same for receptor repertoire sequencing: V(D)J libraries from cells captured one by
+    one → `"single-cell B cell receptor sequencing"` / `"single-cell T cell receptor
+    sequencing"`; from RNA or DNA of a cell population → `"bulk B cell receptor sequencing"` /
+    `"bulk T cell receptor sequencing"`. A paper that ran both forms on the same receptor has
+    two entries, because the technique differs
   - PCR the Methods run on cDNA → reverse transcription; with SYBR Green, TaqMan probes or Ct
     values → real time
   The test is a sentence you could point to. "Libraries were prepared from total RNA isolated
