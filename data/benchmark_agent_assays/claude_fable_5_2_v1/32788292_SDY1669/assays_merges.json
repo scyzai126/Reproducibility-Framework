@@ -1,0 +1,51 @@
+{
+  "summary": {
+    "groups_merged": 0,
+    "entries_folded": 0,
+    "folds_blocked": 3
+  },
+  "results": [],
+  "blocked": [
+    {
+      "member": "flow cytometry",
+      "kept_apart_from": "flow cytometry assay",
+      "anchor": "intracellular staining assay",
+      "obi_id": "OBI:0000916",
+      "obi_label": "flow cytometry assay",
+      "reason": "readouts differs: 'fraction of pDCs, mDCs and monocytes producing IFN-α, TNF-α or IL-6 after stimulation with TLR ligand cocktails; NF-κβ p65 (Ser529) phosphorylation staining; read by flow cytometry' vs 'median fluorescence intensity of HLA-DR expression'",
+      "judged": {
+        "verdict": "DIFFERENT",
+        "reason": "Record A measures intracellular cytokine production (IFN-α, TNF-α, IL-6) and NF-κB p65 phosphorylation in pDCs, mDCs and monocytes after TLR stimulation, whereas Record B measures surface HLA-DR expression (MFI) in PBMCs analyzed in parallel with CITE-seq — a different marker set and functional response."
+      }
+    },
+    {
+      "member": "CITE-seq (protein expression)",
+      "kept_apart_from": "cellular indexing of transcriptomes and epitopes by sequencing",
+      "anchor": "CITE-seq (gene expression)",
+      "obi_id": "OBI:0003788",
+      "obi_label": "cellular indexing of transcriptomes and epitopes by sequencing",
+      "reason": "standard_technique_name differs: 'single-cell RNA sequencing' vs 'cellular indexing of transcriptomes and epitopes by sequencing'"
+    },
+    {
+      "member": "SIMoA",
+      "kept_apart_from": "enzyme-linked immunosorbent assay",
+      "anchor": "ELISA",
+      "obi_id": "OBI:0000661",
+      "obi_label": "enzyme-linked immunosorbent assay",
+      "reason": "standard_technique_name differs: 'enzyme-linked immunosorbent assay' vs 'single molecule array'"
+    }
+  ],
+  "key_map": {
+    "mass cytometry": "cytometry time of flight assay",
+    "intracellular staining assay": "flow cytometry assay",
+    "flow cytometry": "flow cytometry assay (2)",
+    "Olink multiplex inflammation panel": "Olink assay",
+    "CITE-seq (gene expression)": "cellular indexing of transcriptomes and epitopes by sequencing",
+    "CITE-seq (protein expression)": "cellular indexing of transcriptomes and epitopes by sequencing (2)",
+    "bulk RNA sequencing": "bulk RNA-seq assay",
+    "PCR quantitation of bacterial 16 S ribosomal RNA (rRNA) gene product": "real time polymerase chain reaction assay",
+    "TLR4-based reporter assay": "reporter gene assay",
+    "ELISA": "enzyme-linked immunosorbent assay",
+    "SIMoA": "enzyme-linked immunosorbent assay (2)"
+  }
+}

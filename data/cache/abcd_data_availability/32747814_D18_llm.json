@@ -1,0 +1,144 @@
+{
+  "pmid": "D18",
+  "study": "32747814",
+  "title": "Mapping Systemic Lupus Erythematosus heterogeneity at the single-cell level",
+  "source_format": "xml",
+  "llm_called": true,
+  "llm_model": "gpt-5.4",
+  "da_accessions": [
+    "github.com/dnehar/SingleCells_SLE_paper",
+    "phs002048.v1.p1"
+  ],
+  "data_availability_statement": "scRNA-seq data from childhood and adult cohorts reported in this study have been deposited in the dbGAP database under accession number phs002048.v1.p1. The processed data can be viewed using an interactive R Shiny App here: https://scrnaseq-sle.jax.org/\nJupyter notebooks used for the analysis, including processing, clustering, batch effect correction and subclustering are available on GitHub: github.com/dnehar/SingleCells_SLE_paper .",
+  "data_availability_source": "section",
+  "deposited": [
+    {
+      "accession": "github.com/dnehar/SingleCells_SLE_paper",
+      "repository": "GitHub",
+      "url": "https://github.com/dnehar/SingleCells_SLE_paper",
+      "kind": "code",
+      "llm": {
+        "is_accession": true,
+        "repository": "GitHub",
+        "role": "this_study",
+        "in_da_statement": true,
+        "reason": "The Code Availability section says the Jupyter notebooks used for this analysis are available on this GitHub repository."
+      },
+      "decided_by": "llm",
+      "reason": "The Code Availability section says the Jupyter notebooks used for this analysis are available on this GitHub repository.",
+      "found_by": "text",
+      "in_da_section": true,
+      "da_source": "section",
+      "llm_in_da": true,
+      "evidence": [
+        {
+          "section": "Single-cell preprocessing, dimension reduction, graph-based clustering, and cluster annotation",
+          "quote": "The pipeline we used was inspired by the Seurat 55 R package workflow and can be found here: https://github.com/dnehar/SingleCells_SLE_paper .",
+          "context": "The cleaned (after multiplet removal using scrublet 19 ) aggregated matrices were fed into the Python-based Scanpy 54 workflow ( https://scanpy.readthedocs.io/en/stable/ ), which includes preprocessing, visualization, clustering and differential expression testing. The pipeline we used was inspired by the Seurat 55 R package workflow and can be found here: https://github.com/dnehar/SingleCells_SLE_paper .",
+          "in_da": false
+        },
+        {
+          "section": "Subclustering parameters and data cleaning:",
+          "quote": "A script showing the subclustering process can be found here: github.com/dnehar/SingleCells_SLE_paper .",
+          "context": "A script showing the subclustering process can be found here: github.com/dnehar/SingleCells_SLE_paper . Based on the number of cells and to avoid over-clustering, we used different clustering resolutions.",
+          "in_da": false
+        },
+        {
+          "section": "CODE AVAILABILITY.",
+          "quote": "Jupyter notebooks used for the analysis, including processing, clustering, batch effect correction and subclustering are available on GitHub: github.com/dnehar/SingleCells_SLE_paper .",
+          "context": "Jupyter notebooks used for the analysis, including processing, clustering, batch effect correction and subclustering are available on GitHub: github.com/dnehar/SingleCells_SLE_paper .",
+          "in_da": true
+        }
+      ]
+    },
+    {
+      "accession": "phs002048.v1.p1",
+      "repository": "dbGaP",
+      "url": "https://www.ncbi.nlm.nih.gov/projects/gap/cgi-bin/study.cgi?study_id=phs002048.v1.p1",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "dbGaP",
+        "role": "this_study",
+        "in_da_statement": true,
+        "reason": "The Data Availability statement says scRNA-seq data from childhood and adult cohorts reported in this study were deposited in dbGaP under this accession."
+      },
+      "decided_by": "llm",
+      "reason": "The Data Availability statement says scRNA-seq data from childhood and adult cohorts reported in this study were deposited in dbGaP under this accession.",
+      "found_by": "text",
+      "in_da_section": true,
+      "da_source": "section",
+      "llm_in_da": true,
+      "evidence": [
+        {
+          "section": "DATA AVAILABILITY.",
+          "quote": "scRNA-seq data from childhood and adult cohorts reported in this study have been deposited in the dbGAP database under accession number phs002048.v1.p1.",
+          "context": "scRNA-seq data from childhood and adult cohorts reported in this study have been deposited in the dbGAP database under accession number phs002048.v1.p1.",
+          "in_da": true
+        }
+      ]
+    }
+  ],
+  "reused": [
+    {
+      "accession": "github.com/Teichlab/bbknn",
+      "repository": "GitHub",
+      "url": "https://github.com/Teichlab/bbknn",
+      "kind": "code",
+      "llm": {
+        "is_accession": true,
+        "repository": "GitHub",
+        "role": "public_data",
+        "in_da_statement": false,
+        "reason": "The Methods state they applied batch effect correction using BBKNN at this GitHub repository, indicating a third-party tool they used."
+      },
+      "decided_by": "llm",
+      "reason": "The Methods state they applied batch effect correction using BBKNN at this GitHub repository, indicating a third-party tool they used.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "Batch effect correction.",
+          "quote": "To account for technical source of variation, such as 10X runs, we applied a batch effect correction using BBKNN 20 ( github.com/Teichlab/bbknn ).",
+          "context": "To account for technical source of variation, such as 10X runs, we applied a batch effect correction using BBKNN 20 ( github.com/Teichlab/bbknn ).",
+          "in_da": false
+        }
+      ]
+    },
+    {
+      "accession": "github.com/immunogenomics/harmony",
+      "repository": "GitHub",
+      "url": "https://github.com/immunogenomics/harmony",
+      "kind": "code",
+      "llm": {
+        "is_accession": true,
+        "repository": "GitHub",
+        "role": "public_data",
+        "in_da_statement": false,
+        "reason": "The Methods say they tested the Harmony R package at this GitHub repository, so it is external software used in the analysis."
+      },
+      "decided_by": "llm",
+      "reason": "The Methods say they tested the Harmony R package at this GitHub repository, so it is external software used in the analysis.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "Batch effect correction.",
+          "quote": "Additionally, we tested the Harmony 21 R package ( github.com/immunogenomics/harmony ).",
+          "context": "bbknn.bbknn() function was ran using the following parameters: metric=“angular”, approx=True, neighbors_within_batch=5, n_pcs=20, trim=50. Additionally, we tested the Harmony 21 R package ( github.com/immunogenomics/harmony ). We first converted the .h5ad object into Seurat object using a virtual environment with the following module versions scanpy==1.4 anndata==0.6.18 numpy==1.15.4 scipy==1.2.1 pandas==0.22.0 scikit-learn==0.20.2 statsmodels==0.9.0 python-igraph==0.7.1 louvain==0.6.1.",
+          "in_da": false
+        }
+      ]
+    }
+  ],
+  "referenced": [],
+  "registration": [],
+  "unclear": [],
+  "reviews": [],
+  "dropped": [],
+  "warnings": []
+}

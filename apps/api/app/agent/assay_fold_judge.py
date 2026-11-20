@@ -36,6 +36,7 @@ from typing import Callable
 from openai import OpenAI
 
 from app.agent import assay_trace
+from app.agent.anthropic_chat import AnthropicChat, is_claude
 from app.agent.assay_extractor import paper_names
 from app.agent.assay_merger import blocked_folds, canonical_groups, merge_entries
 from app.config import settings
@@ -98,7 +99,8 @@ def judge_fold(anchor_key: str, anchor: dict, member_key: str, member: dict, obi
     with the raw reply as the reason, and is logged: nothing folds on an answer nobody gave.
     """
     prompt = build_judge_prompt(anchor, member, obi_label)
-    client = OpenAI(api_key=settings.OPENAI_API_KEY, max_retries=settings.OPENAI_MAX_RETRIES)
+    client = (AnthropicChat() if is_claude(model) else
+              OpenAI(api_key=settings.OPENAI_API_KEY, max_retries=settings.OPENAI_MAX_RETRIES))
     resp = client.chat.completions.create(
         model=model,
         messages=[{"role": "user", "content": prompt}],

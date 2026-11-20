@@ -22,7 +22,7 @@ An ID the LLM gave no answer for (the call failed, or the answer was refused) is
 **--dry-run makes no network and no API call**: it reports how many LLM calls the real run would
 make and roughly how many input tokens they would send. Run it first.
 
-Writes two files per paper to data/benchmark_assay/data_availability/ (overwritten in place):
+Writes two files per paper to data/benchmark_curator_assay/data_availability/ (overwritten in place):
   <SDY>_<PMID>_llm.json  before validation: every ID, its sentences, DA membership and the LLM's
                          judgement (roles straight from the LLM)
   <SDY>_<PMID>.json      after validation, the final answer: `data_repositories` -- the
@@ -30,7 +30,7 @@ Writes two files per paper to data/benchmark_assay/data_availability/ (overwritt
                          folder and size -- and `unconfirmed`, deposited IDs the repository could
                          not confirm, with the reason. Code, reused and referenced IDs stay in
                          the _llm file.
-and, for more than one paper, a roll-up table at data/benchmark_assay/data_availability/summary.md. Every
+and, for more than one paper, a roll-up table at data/benchmark_curator_assay/data_availability/summary.md. Every
 REVIEW, DROPPED, WARNING and SKIPPED line is printed.
 
 Usage:
@@ -78,7 +78,7 @@ from app.agent.assay_service import REGISTRY_ROOT  # noqa: E402
 ASSAY_DIR = REGISTRY_ROOT
 JATS_DIR = _REPO_ROOT / "data" / "JAT_XML"
 PDF_ROOT = _REPO_ROOT / "data" / "pdf"
-OUT_DIR = _REPO_ROOT / "data" / "benchmark_assay" / "data_availability"
+OUT_DIR = _REPO_ROOT / "data" / "benchmark_curator_assay" / "data_availability"
 
 def _load(path: Path) -> dict:
     paper = load_paper(path)

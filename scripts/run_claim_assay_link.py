@@ -8,7 +8,7 @@ Usage:
     python3 scripts/run_claim_assay_link.py <assay_dir> <claims.json> <out_dir> [--xml <paper.xml>]
 
 Example:
-    python3 scripts/run_claim_assay_link.py data/31paper_assays/19047440_SDY1289 \
+    python3 scripts/run_claim_assay_link.py data/benchmark_agent_assays/19047440_SDY1289 \
         data/claims/new_26_studies/19047440_SDY1289_filtered/claims.json \
         data/claims/new_26_studies/19047440_SDY1289_filtered
 

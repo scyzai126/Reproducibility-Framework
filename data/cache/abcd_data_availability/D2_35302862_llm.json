@@ -1,0 +1,104 @@
+{
+  "pmid": "35302862",
+  "study": "D2",
+  "title": null,
+  "source_format": "pdf",
+  "llm_called": true,
+  "llm_model": "gpt-5.4",
+  "da_accessions": [],
+  "data_availability_statement": "Data and code availability:",
+  "data_availability_source": "inline_label",
+  "deposited": [
+    {
+      "accession": "github.com/jspencerlab/Siu_MZManuscript_2021",
+      "repository": "GitHub",
+      "url": "https://github.com/jspencerlab/Siu_MZManuscript_2021",
+      "kind": "code",
+      "llm": {
+        "is_accession": true,
+        "repository": "GitHub",
+        "role": "this_study",
+        "in_da_statement": true,
+        "reason": "The data availability statement says 'Code is available on Github (https://github.com/jspencerlab/Siu_MZManuscript_2021)'."
+      },
+      "decided_by": "llm",
+      "reason": "The data availability statement says 'Code is available on Github (https://github.com/jspencerlab/Siu_MZManuscript_2021)'.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": true,
+      "evidence": [
+        {
+          "section": "PDF text",
+          "quote": "Code is available on Github (https://github.com/jspencerlab/Siu_MZManuscript_2021).",
+          "context": "Mass cytometry and image mass cytometry data available upon request. Code is available on Github (https://github.com/jspencerlab/Siu_MZManuscript_2021).",
+          "in_da": false
+        }
+      ]
+    }
+  ],
+  "reused": [],
+  "referenced": [
+    {
+      "accession": "github.com/nolanlab/beadnormalization",
+      "repository": "GitHub",
+      "url": "https://github.com/nolanlab/beadnormalization",
+      "kind": "code",
+      "llm": {
+        "is_accession": true,
+        "repository": "GitHub",
+        "role": "reference",
+        "in_da_statement": false,
+        "reason": "It is cited as the Normalizer program 'developed by Nolan’s group' used for preprocessing, not as this study’s deposited data or code."
+      },
+      "decided_by": "llm",
+      "reason": "It is cited as the Normalizer program 'developed by Nolan’s group' used for preprocessing, not as this study’s deposited data or code.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "PDF text",
+          "quote": "Pre-processing and normalisation of mass cytometry data FCS files were normalised using bead standards and the Normalizer program developed by Nolan’s group (v0.3, available online at https://github.com/nolanlab/beadnormalization/releases) (Finck et al., 2013).",
+          "context": "Cells were then washed twice in 1 x PBS, twice in Milli-Q water before being resuspended in Milli-Q water plus EQ beads to a concentration of 0.5 x 106 /ml and run on a Helios mass cytometer. Pre-processing and normalisation of mass cytometry data FCS files were normalised using bead standards and the Normalizer program developed by Nolan’s group (v0.3, available online at https://github.com/nolanlab/beadnormalization/releases) (Finck et al., 2013). The result of the bead normalization is visualized in Fig. S1 A. The mass cytometry data was initially manually gated in Cytobank (https://mrc.cytobank.org/) using the gating strategy shown in Fig. S1 D to identify live CD19+ B cells for downstream analysis.",
+          "in_da": false
+        }
+      ]
+    },
+    {
+      "accession": "mrc.cytobank.org",
+      "repository": "Cytobank",
+      "url": "https://mrc.cytobank.org",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "Cytobank",
+        "role": "reference",
+        "in_da_statement": false,
+        "reason": "The paper says data were 'manually gated in Cytobank' at this URL, which describes the analysis platform rather than a deposited dataset accession."
+      },
+      "decided_by": "llm",
+      "reason": "The paper says data were 'manually gated in Cytobank' at this URL, which describes the analysis platform rather than a deposited dataset accession.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "PDF text",
+          "quote": "The result of the bead normalization is visualized in Fig. S1 A. The mass cytometry data was initially manually gated in Cytobank (https://mrc.cytobank.org/) using the gating strategy shown in Fig. S1 D to identify live CD19+ B cells for downstream analysis.",
+          "context": "Pre-processing and normalisation of mass cytometry data FCS files were normalised using bead standards and the Normalizer program developed by Nolan’s group (v0.3, available online at https://github.com/nolanlab/beadnormalization/releases) (Finck et al., 2013). The result of the bead normalization is visualized in Fig. S1 A. The mass cytometry data was initially manually gated in Cytobank (https://mrc.cytobank.org/) using the gating strategy shown in Fig. S1 D to identify live CD19+ B cells for downstream analysis.",
+          "in_da": false
+        }
+      ]
+    }
+  ],
+  "registration": [],
+  "unclear": [],
+  "reviews": [
+    "github.com/jspencerlab/Siu_MZManuscript_2021: the model reads it as in the DA statement; the pattern search found it outside it"
+  ],
+  "dropped": [],
+  "warnings": []
+}

@@ -1,0 +1,77 @@
+{
+  "pmid": "D1",
+  "study": "37367734",
+  "title": "High-throughput single-cell profiling of B cell responses following inactivated influenza vaccination in young and older adults",
+  "source_format": "xml",
+  "llm_called": true,
+  "llm_model": "gpt-5.4",
+  "da_accessions": [
+    "GSE175524"
+  ],
+  "data_availability_statement": "Single-cell RNA sequencing and V(D)J data have been deposited in NCBI’s Gene Expression Omnibus and are available at the GEO Series accession number GSE175524 . Scripts to reproduce these analyses are available at: https://bitbucket.org/kleinstein/projects/src/master/Wang2023_Aging .",
+  "data_availability_source": "section",
+  "deposited": [
+    {
+      "accession": "GSE175524",
+      "repository": "GEO",
+      "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE175524",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "GEO",
+        "role": "this_study",
+        "in_da_statement": true,
+        "reason": "The Data availability section states that 'Single-cell RNA sequencing and V(D)J data have been deposited ... at the GEO Series accession number GSE175524.'"
+      },
+      "decided_by": "llm",
+      "reason": "The Data availability section states that 'Single-cell RNA sequencing and V(D)J data have been deposited ... at the GEO Series accession number GSE175524.'",
+      "found_by": "text",
+      "in_da_section": true,
+      "da_source": "section",
+      "llm_in_da": true,
+      "evidence": [
+        {
+          "section": "Data availability",
+          "quote": "Single-cell RNA sequencing and V(D)J data have been deposited in NCBI’s Gene Expression Omnibus and are available at the GEO Series accession number GSE175524 .",
+          "context": "Single-cell RNA sequencing and V(D)J data have been deposited in NCBI’s Gene Expression Omnibus and are available at the GEO Series accession number GSE175524 . Scripts to reproduce these analyses are available at: https://bitbucket.org/kleinstein/projects/src/master/Wang2023_Aging .",
+          "in_da": true
+        }
+      ]
+    }
+  ],
+  "reused": [],
+  "referenced": [
+    {
+      "accession": "github.com/KrishnaswamyLab/graphtools",
+      "repository": "GitHub",
+      "url": "https://github.com/KrishnaswamyLab/graphtools",
+      "kind": "code",
+      "llm": {
+        "is_accession": true,
+        "repository": "GitHub",
+        "role": "reference",
+        "in_da_statement": false,
+        "reason": "It is cited in Methods as the third-party python graphtools package used to build a cell-state graph, not as a deposit of this study's data or code."
+      },
+      "decided_by": "llm",
+      "reason": "It is cited in Methods as the third-party python graphtools package used to build a cell-state graph, not as a deposit of this study's data or code.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "Differential abundance of pre-vaccination B cells between age groups",
+          "quote": "We built a cell-state graph from the first 100 PCA dimensions of the gene expression data with 50 nearest neighbors using the python graphtools package ( https://github.com/KrishnaswamyLab/graphtools ).",
+          "context": "We applied MELD v1.0.0 [ 18 ] to the pre-vaccination B cells to identify B cell subpopulations that were different between young and older subjects at pre-vaccination. We built a cell-state graph from the first 100 PCA dimensions of the gene expression data with 50 nearest neighbors using the python graphtools package ( https://github.com/KrishnaswamyLab/graphtools ). We ran MELD on the cell-state graph using young/older labels as input and applied the MELD vertex frequency clustering (VFC) method to the ABC cluster to identify ABC subpopulations that were differentially abundant between age groups.",
+          "in_da": false
+        }
+      ]
+    }
+  ],
+  "registration": [],
+  "unclear": [],
+  "reviews": [],
+  "dropped": [],
+  "warnings": []
+}

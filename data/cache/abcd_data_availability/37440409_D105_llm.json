@@ -1,0 +1,194 @@
+{
+  "pmid": "D105",
+  "study": "37440409",
+  "title": "Tracking B cell responses to the SARS-CoV-2 mRNA-1273 vaccine",
+  "source_format": "xml",
+  "llm_called": true,
+  "llm_model": "gpt-5.4",
+  "da_accessions": [
+    "10.5281/zenodo.7925074"
+  ],
+  "data_availability_statement": "Further information and requests for resources and reagents should be directed to and will be fulfilled by the lead contact, Susan Moir ( smoir@niaid.nih.gov ). This study did not generate new unique reagents. Single-cell RNA-seq data were deposited at GEO and are publicly available as of the date of publication. The accession number is listed in the key resources table . The original code generated in this study is available on https://doi.org/10.5281/zenodo.7925074 . Any additional information required to reanalyze the data reported in this paper is available from the lead contact upon request.",
+  "data_availability_source": "section",
+  "deposited": [
+    {
+      "accession": "10.5281/zenodo.7925074",
+      "repository": "Zenodo",
+      "url": "https://doi.org/10.5281/zenodo.7925074",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "Zenodo",
+        "role": "this_study",
+        "in_da_statement": true,
+        "reason": "The Data and code availability section says the original code generated in this study is available at this DOI."
+      },
+      "decided_by": "llm",
+      "reason": "The Data and code availability section says the original code generated in this study is available at this DOI.",
+      "found_by": "text",
+      "in_da_section": true,
+      "da_source": "section",
+      "llm_in_da": true,
+      "evidence": [
+        {
+          "section": "Data and code availability",
+          "quote": "The original code generated in this study is available on https://doi.org/10.5281/zenodo.7925074 .",
+          "context": "The accession number is listed in the key resources table . The original code generated in this study is available on https://doi.org/10.5281/zenodo.7925074 . Any additional information required to reanalyze the data reported in this paper is available from the lead contact upon request.",
+          "in_da": true
+        },
+        {
+          "section": "Table: untitled",
+          "quote": "Scripts for scRNA seq processing | This paper | https://doi.org/10.5281/zenodo.7925074",
+          "context": "Scripts for scRNA seq processing | This paper | https://doi.org/10.5281/zenodo.7925074",
+          "in_da": false
+        }
+      ]
+    },
+    {
+      "accession": "GSE219098",
+      "repository": "GEO",
+      "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE219098",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "GEO",
+        "role": "this_study",
+        "in_da_statement": true,
+        "reason": "The paper says single-cell RNA-seq data were deposited at GEO and the key resources table lists GEO accession GSE219098 for raw sequencing data from this paper."
+      },
+      "decided_by": "llm",
+      "reason": "The paper says single-cell RNA-seq data were deposited at GEO and the key resources table lists GEO accession GSE219098 for raw sequencing data from this paper.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": true,
+      "evidence": [
+        {
+          "section": "Table: untitled",
+          "quote": "Raw sequencing data files for single-cell RNA sequencing | This paper | GEO accession: GSE219098",
+          "context": "Raw sequencing data files for single-cell RNA sequencing | This paper | GEO accession: GSE219098",
+          "in_da": false
+        }
+      ]
+    }
+  ],
+  "reused": [],
+  "referenced": [
+    {
+      "accession": "github.com/YuLab-SMU/ggtree",
+      "repository": "GitHub",
+      "url": "https://github.com/YuLab-SMU/ggtree",
+      "kind": "code",
+      "llm": {
+        "is_accession": true,
+        "repository": "GitHub",
+        "role": "reference",
+        "in_da_statement": false,
+        "reason": "It appears in the software table as the third-party ggtree package used for analysis, not as data or code deposited by this study."
+      },
+      "decided_by": "llm",
+      "reason": "It appears in the software table as the third-party ggtree package used for analysis, not as data or code deposited by this study.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "Table: untitled",
+          "quote": "Ggtree (Version 3.0.4) | Yu etal., 2017 72 | https://github.com/YuLab-SMU/ggtree",
+          "context": "Ggtree (Version 3.0.4) | Yu etal., 2017 72 | https://github.com/YuLab-SMU/ggtree",
+          "in_da": false
+        }
+      ]
+    },
+    {
+      "accession": "github.com/KlausVigo/phangorn",
+      "repository": "GitHub",
+      "url": "https://github.com/KlausVigo/phangorn",
+      "kind": "code",
+      "llm": {
+        "is_accession": true,
+        "repository": "GitHub",
+        "role": "reference",
+        "in_da_statement": false,
+        "reason": "It appears in the software table as the third-party phangorn package used for analysis, not as data or code deposited by this study."
+      },
+      "decided_by": "llm",
+      "reason": "It appears in the software table as the third-party phangorn package used for analysis, not as data or code deposited by this study.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "Table: untitled",
+          "quote": "Phangorn (Version 2.10.0) | Schliep, 2011 73 | https://github.com/KlausVigo/phangorn",
+          "context": "Phangorn (Version 2.10.0) | Schliep, 2011 73 | https://github.com/KlausVigo/phangorn",
+          "in_da": false
+        }
+      ]
+    },
+    {
+      "accession": "github.com/statgen/demuxlet",
+      "repository": "GitHub",
+      "url": "https://github.com/statgen/demuxlet",
+      "kind": "code",
+      "llm": {
+        "is_accession": true,
+        "repository": "GitHub",
+        "role": "reference",
+        "in_da_statement": false,
+        "reason": "It appears in the software table as the third-party demuxlet tool used for sample demultiplexing, not as data or code deposited by this study."
+      },
+      "decided_by": "llm",
+      "reason": "It appears in the software table as the third-party demuxlet tool used for sample demultiplexing, not as data or code deposited by this study.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "Table: untitled",
+          "quote": "Demuxlet | Kang et al., 2018 74 | https://github.com/statgen/demuxlet",
+          "context": "Demuxlet | Kang et al., 2018 74 | https://github.com/statgen/demuxlet",
+          "in_da": false
+        }
+      ]
+    }
+  ],
+  "registration": [
+    {
+      "accession": "NCT00001281",
+      "repository": "ClinicalTrials.gov",
+      "url": "https://clinicaltrials.gov/study/NCT00001281",
+      "kind": "registration",
+      "llm": {
+        "is_accession": true,
+        "repository": "ClinicalTrials.gov",
+        "role": "registration",
+        "in_da_statement": false,
+        "reason": "It is cited in the Ethics statement as the NIH Clinical Research Center protocol number, indicating trial/clinical protocol registration rather than deposited data."
+      },
+      "decided_by": "regex",
+      "reason": "clinical-trial registration, not a data deposit",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "Ethics statement",
+          "quote": "Phlebotomy was performed at the NIH Clinical Research Center in Bethesda, MD under protocol NCT00001281 .",
+          "context": "Phlebotomy was performed at the NIH Clinical Research Center in Bethesda, MD under protocol NCT00001281 . The protocol was approved by the NIH Institutional Review Board and written informed consent was obtained from all study participants.",
+          "in_da": false
+        }
+      ]
+    }
+  ],
+  "unclear": [],
+  "reviews": [
+    "GSE219098: the model reads it as in the DA statement; the pattern search found it outside it"
+  ],
+  "dropped": [],
+  "warnings": []
+}

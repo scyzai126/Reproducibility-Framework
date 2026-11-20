@@ -1,0 +1,221 @@
+{
+  "summary": {
+    "total": 3,
+    "accept": 3,
+    "review": 0,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {}
+  },
+  "results": [
+    {
+      "assay_id": "scRNA-seq by Seq-Well",
+      "assay_name": "scRNA-seq by Seq-Well",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "scRNA-seq by Seq-Well",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S304"
+          ],
+          "evidence_text": "The Seq-Well platform for scRNA-seq was used",
+          "reason": "The methods explicitly state that Seq-Well scRNA-seq was performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "Seq-Well",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S304"
+          ],
+          "evidence_text": "The Seq-Well platform for scRNA-seq",
+          "reason": "Seq-Well is explicitly used as the platform name for this assay."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "scRNA-seq",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S304"
+          ],
+          "evidence_text": "The Seq-Well platform for scRNA-seq",
+          "reason": "The text explicitly identifies the assay as scRNA-seq."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells and red blood cell-lysed whole blood",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S18",
+            "S305",
+            "S299"
+          ],
+          "evidence_text": "Peripheral blood mononuclear cells (PBMCs) were sampled by all modalities; additionally, we processed red blood cell–lysed whole blood by scRNA-seq to profile granulocytes like neutrophils",
+          "reason": "The source explicitly links both PBMCs and red blood cell-lysed whole blood to scRNA-seq."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "single-cell transcriptomes; mRNA sequence reads with cell barcodes and unique molecular identifiers",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S24",
+            "S317"
+          ],
+          "evidence_text": "we analyzed ∼175,000 single transcriptomes",
+          "reason": "The assay output is explicitly described as single transcriptomes, and the sequencing read structure includes cell barcodes and UMIs."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "The Seq-Well platform for scRNA-seq was used as described previously.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S304"
+          ],
+          "evidence_text": "The Seq-Well platform for scRNA-seq was used as described previously",
+          "reason": "This exact quote appears in the source and states that the assay was performed here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S304, except for trailing punctuation not in the source"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Mass cytometry",
+      "assay_name": "Mass cytometry",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Mass cytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S387"
+          ],
+          "evidence_text": "Data were collected on a Helios mass cytometer.",
+          "reason": "The text explicitly describes mass cytometry data collection in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "CyTOF",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S7"
+          ],
+          "evidence_text": "CyTOF (64 patients, 12 controls; Fig.",
+          "reason": "CyTOF is used in the paper to denote the same mass cytometry modality."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells and isolated natural killer cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S18",
+            "S381"
+          ],
+          "evidence_text": "Peripheral blood mononuclear cells (PBMCs) were sampled by all modalities; additionally, we processed isolated NK cells by CyTOF",
+          "reason": "The text links CyTOF/mass cytometry to PBMCs and isolated NK cells."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "single-cell protein marker expression profiles",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S24",
+            "S398"
+          ],
+          "evidence_text": ">3.2 million single proteomic profiles",
+          "reason": "The assay is described as generating single-cell proteomic profiles, i.e. protein marker expression measurements."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Data were collected on a Helios mass cytometer.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S387"
+          ],
+          "evidence_text": "Data were collected on a Helios mass cytometer.",
+          "reason": "The quote appears verbatim and shows the assay was performed here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S387"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "scATAC-seq",
+      "assay_name": "scATAC-seq",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "scATAC-seq",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S404"
+          ],
+          "evidence_text": "scATAC-seq was performed",
+          "reason": "The text explicitly states that scATAC-seq was performed in this study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S405"
+          ],
+          "evidence_text": "Briefly, cryopreserved PBMCs were thawed",
+          "reason": "The scATAC-seq methods explicitly describe using PBMCs for this assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "single-cell chromatin accessibility profiles",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S24"
+          ],
+          "evidence_text": "∼50,000 single chromatin accessibility profiles",
+          "reason": "The paper explicitly describes this modality as producing single chromatin accessibility profiles."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "scATAC-seq was performed by using the Chromium Next GEM Single Cell ATAC Reagent Kits version 1.1 (10x Genomics; PN-1000175) and following the demonstrated protocol (nuclei isolation for scATAC-seq) provided by 10x Genomics.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S404"
+          ],
+          "evidence_text": "scATAC-seq was performed by using the Chromium Next GEM Single Cell ATAC Reagent Kits version 1.1 (10x Genomics; PN-1000175) and following the demonstrated protocol (nuclei isolation for scATAC-seq) provided by 10x Genomics.",
+          "reason": "The quoted text appears verbatim and directly states that the assay was performed here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S404"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

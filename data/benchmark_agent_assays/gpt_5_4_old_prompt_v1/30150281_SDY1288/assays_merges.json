@@ -1,0 +1,43 @@
+{
+  "summary": {
+    "groups_merged": 0,
+    "entries_folded": 0,
+    "folds_blocked": 2
+  },
+  "results": [],
+  "blocked": [
+    {
+      "member": "viral titer assays",
+      "kept_apart_from": "real time reverse-transcription polymerase chain reaction assay",
+      "anchor": "real-time RT–PCR",
+      "obi_id": "OBI:0000911",
+      "obi_label": "real time reverse-transcription polymerase chain reaction assay",
+      "reason": "sample_type differs: 'acute-phase samples' vs 'patient serum'",
+      "judged": {
+        "verdict": "DIFFERENT",
+        "reason": "Record A is RT-PCR detection of CHIKV in acute-phase samples, whereas Record B is RT-PCR quantification of CHIKV E1 gene copies in patient serum, differing in both readout/analyte and specimen."
+      }
+    },
+    {
+      "member": "Inhibition ELISA",
+      "kept_apart_from": "enzyme-linked immunosorbent assay",
+      "anchor": "IgM capture ELISA",
+      "obi_id": "OBI:0000661",
+      "obi_label": "enzyme-linked immunosorbent assay",
+      "reason": "readouts differs: 'seroconversion' vs 'anti-CHIKV antibody titer increase greater than 4-fold in paired acute and convalescent sera'",
+      "judged": {
+        "verdict": "DIFFERENT",
+        "reason": "one measures IgM seroconversion while the other measures a >4-fold increase in anti-CHIKV antibody titer in paired acute and convalescent sera."
+      }
+    }
+  ],
+  "key_map": {
+    "real-time RT–PCR": "real time reverse-transcription polymerase chain reaction assay",
+    "IgM capture ELISA": "enzyme-linked immunosorbent assay",
+    "Inhibition ELISA": "enzyme-linked immunosorbent assay (2)",
+    "RNA-seq": "bulk RNA-seq assay",
+    "mass cytometry": "cytometry time of flight assay",
+    "multiplex ELISA": "cytometric bead array assay",
+    "viral titer assays": "real time reverse-transcription polymerase chain reaction assay (2)"
+  }
+}

@@ -19,7 +19,7 @@ WHERE e.study_accession IN (29 个 SDY)
 **两列都要取。** `measurement_technique` 是从 102 项受控词表里粗选的一项;
 `experiment.name` 是本次实验的自由文本名,常常保留了受控词丢掉的信息 —— 见下面 `EXPNAME` 一节。
 
-我们侧:`data/31paper_assays/assay_result_v3/<pmid>_<SDY>*/assays_OBI.json`(`obi_id`、`obi_label`)
+我们侧:`data/benchmark_agent_assays/assay_result_v3/<pmid>_<SDY>*/assays_OBI.json`(`obi_id`、`obi_label`)
 与同目录 `assays_benchmark.json`(`name_in_paper`、`aliases`、`standard_technique_name`),
 **按 study 取其下所有论文 entry 的并集** —— 因为 ImmPort 按 study 登记,我们按 paper 抽取。
 

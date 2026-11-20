@@ -2,7 +2,7 @@
 
 Scored report: `data/benchmark_assay/comparison/benchmark_v5_vs_agent_v1.html`
 Benchmark: `data/benchmark_assay/benchmark_assay_v5/`
-Agent registries: `data/31paper_assays/assay_result_v1/`
+Agent registries: `data/benchmark_agent_assays/assay_result_v1/`
 Adjudicated: 2026-10-23. Read-only; nothing in `data/` was changed.
 
 The comparison holds 158 rows over 31 papers. 127 are clean `MATCH`. The other **31 rows** are the
@@ -16,7 +16,7 @@ Reported totals: recall 0.953, precision 0.934, F1 0.943, OBI exact rate 0.901.
 > `assay_result_v1` was written on 2026-10-12 by the pre-vote pipeline. Round 1 had no 3-way
 > consensus vote then; that landed on 2026-10-19 in commit `281e006`. Only 3 of the 31 v1
 > directories were ever re-run under it. The current corpus is
-> `data/31paper_assays/assay_result_v3/`, scored at
+> `data/benchmark_agent_assays/assay_result_v3/`, scored at
 > `assay_result_v3/comparison/benchmark_v5_vs_agent.html`: recall 0.993, precision 0.887,
 > and **1 missed assay in the whole corpus** instead of 7.
 >

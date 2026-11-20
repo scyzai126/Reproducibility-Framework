@@ -1,0 +1,1877 @@
+{
+  "mode": "default",
+  "benchmark_dir": "data/benchmark_assay/benchmark_assay_v5",
+  "registry_dir": "data/benchmark_agent_assays/claude_fable_5_2_v1",
+  "totals": {
+    "papers": 5,
+    "skipped": [
+      "SDY1260_Assay_Hailong.json: expected one registry for SDY1260, found []",
+      "SDY1264_Assay_Hailong.json: expected one registry for SDY1264, found []",
+      "SDY1276_1_assays_AS_v2.json: expected one registry for SDY1276, found []",
+      "SDY1276_2_assays_AS_v2.json: expected one registry for SDY1276, found []",
+      "SDY1288_assays_AS_v2.json: expected one registry for SDY1288, found []",
+      "SDY1289_assays_AS_v2.json: expected one registry for SDY1289, found []",
+      "SDY1291_assays_AS_v2.json: expected one registry for SDY1291, found []",
+      "SDY1293_assays_AS_v2.json: expected one registry for SDY1293, found []",
+      "SDY1294_assays_AS_v2.json: expected one registry for SDY1294, found []",
+      "SDY1325_assay_AS_v2.json: expected one registry for SDY1325, found []",
+      "SDY1364_2_assays_AS_v2.json: expected one registry for SDY1364, found []",
+      "SDY1389_assays_AS_v2.json: expected one registry for SDY1389, found []",
+      "SDY1393_Assay_Hailong.json: expected one registry for SDY1393, found []",
+      "SDY1596_Assay_Hailong.json: expected one registry for SDY1596, found []",
+      "SDY1630_assaysAS_v2.json: expected one registry for SDY1630, found []",
+      "SDY1640_assays_AS_v2.json: expected one registry for SDY1640, found []",
+      "SDY1654_assays_AS_v2.json: expected one registry for SDY1654, found []",
+      "SDY1655_assays_AS_v2.json: expected one registry for SDY1655, found []",
+      "SDY1708_Assay_Hailong.json: expected one registry for SDY1708, found []",
+      "SDY1991_Assay_Hailong.json: expected one registry for SDY1991, found []",
+      "SDY1995_Assay_Hailong.json: expected one registry for SDY1995, found []",
+      "SDY212_assays_AS_v2.json: expected one registry for SDY212, found []",
+      "SDY2189_assays_AS_v2.json: expected one registry for SDY2189, found []",
+      "SDY404_assays_AS_v2.json: expected one registry for SDY404, found []",
+      "SDY80_assays_AS_v2.json: expected one registry for SDY80, found []",
+      "SDY984_assays_AS_v2.json: expected one registry for SDY984, found []"
+    ],
+    "registries_without_benchmark": [
+      "comparison"
+    ],
+    "benchmark_raw": 27,
+    "benchmark_total": 27,
+    "ours_total": 32,
+    "matched": 26,
+    "exact": 22,
+    "obi_ok": 23,
+    "missed": 1,
+    "extra": 2,
+    "status_counts": {
+      "MATCH": 22,
+      "MATCH_GRANULARITY": 1,
+      "MATCH_OBI_CONFLICT": 3,
+      "MATCH_OBI_UNMAPPED": 0,
+      "SPLIT": 3,
+      "MISSED": 1,
+      "EXTRA": 2
+    },
+    "split": 3,
+    "term_only_pairs": 0,
+    "recall": 0.9629629629629629,
+    "precision": 0.8125,
+    "f1": 0.8813559322033898,
+    "obi_exact_rate": 0.8461538461538461,
+    "obi_recall": 0.8518518518518519
+  },
+  "papers": [
+    {
+      "study": "SDY1328",
+      "pmid": "26742691",
+      "benchmark_file": "data/benchmark_assay/benchmark_assay_v5/SDY1328_assays_AS_v2.json",
+      "registry_dir": "data/benchmark_agent_assays/claude_fable_5_2_v1/26742691_SDY1328",
+      "repair": null,
+      "benchmark_raw_total": 5,
+      "metrics": {
+        "benchmark_total": 5,
+        "ours_total": 8,
+        "matched": 5,
+        "exact": 4,
+        "obi_ok": 4,
+        "missed": 0,
+        "extra": 1,
+        "split": 1,
+        "term_only_pairs": 0,
+        "recall": 1.0
+      },
+      "merged_groups": [],
+      "rows": [
+        {
+          "status": "MATCH",
+          "tier": "obi_exact",
+          "signals": [
+            "same name",
+            "name containment",
+            "quote names the other side",
+            "shared evidence sentence"
+          ],
+          "reason": "same OBI term",
+          "benchmark": {
+            "key": "microarray",
+            "obi_id": "OBI:0001463",
+            "obi_label": "transcription profiling by array assay",
+            "name_in_paper": "microarray",
+            "aliases": [
+              "transcriptomic profiling",
+              "transcriptional profiling",
+              "gene expression profiling",
+              "gene-expression signature",
+              "Affymetrix HuRSTA-2a520709",
+              "Illumina Sentrix Human Whole Genome 6 BeadChips",
+              "GEO: GPL15048"
+            ],
+            "merged_from": [
+              "microarray"
+            ],
+            "generate_claim": true,
+            "quotes": [
+              {
+                "section": "Methods",
+                "quote": "RNA was isolated from PAXgene blood samples according to the manufacturer's instructions. Isolated total RNA samples were assayed for quality metrics (Agilent Bioanalyzer) prior to amplification. Three-hundred and thirty-five samples passing quality control were then amplified using the NuGEN amplification protocol and hybridized to Affymetrix HuRSTA-2a520709 chips (Affymetrix, Santa Clara, CA). The chips contain 60,607 probe sets representing 22,580 unique genes (GEO: GPL15048)."
+              }
+            ]
+          },
+          "ours": [
+            {
+              "key": "transcription profiling by array assay",
+              "name_in_paper": [
+                "microarray"
+              ],
+              "aliases": [
+                "microarray experiments",
+                "transcriptional profiling",
+                "microarrays"
+              ],
+              "obi_id": "OBI:0001463",
+              "obi_label": "transcription profiling by array assay",
+              "source": "methods",
+              "evidence": {
+                "section": "Establishing gene-expression signature predictive of HBV vaccine response",
+                "sentence_ids": [
+                  "S186"
+                ],
+                "quote": "Three-hundred and thirty-five samples passing quality control were then amplified using the NuGEN amplification protocol and hybridized to Affymetrix HuRSTA-2a520709 chips (Affymetrix, Santa Clara, CA)."
+              },
+              "generate_claim": true
+            }
+          ],
+          "also_on_term": []
+        },
+        {
+          "status": "MATCH",
+          "tier": "obi_exact",
+          "signals": [
+            "same name",
+            "name containment",
+            "short name",
+            "quote names the other side"
+          ],
+          "reason": "same OBI term",
+          "benchmark": {
+            "key": "polychromatic FCM",
+            "obi_id": "OBI:0000916",
+            "obi_label": "flow cytometry assay",
+            "name_in_paper": "polychromatic FCM",
+            "aliases": [
+              "FCM",
+              "flow cytometry",
+              "polychromatic flow cytometry",
+              "cytometric profiling"
+            ],
+            "merged_from": [
+              "polychromatic FCM"
+            ],
+            "generate_claim": true,
+            "quotes": [
+              {
+                "section": "Methods",
+                "quote": "Phenotypic analysis of T-cell and innate cell subsets was performed by staining whole blood collected in EDTA Vacutainer tubes. Blood for B-cell analysis was collected in Na-Heparin Vacutainer tubes and further processed by density gradient centrifugation through Ficoll to obtain peripheral blood mononuclear cells (PBMC) prior to performing the following steps. Processing and staining steps for cytometry were performed within 8 h of blood draw. Briefly, 50 ml of whole blood was added to TruCount tubes (Becton-Dickinson) for the phenotypic analysis and absolute enumeration of cellular subsets per microliter of blood."
+              }
+            ]
+          },
+          "ours": [
+            {
+              "key": "flow cytometry assay",
+              "name_in_paper": [
+                "Polychromatic FCM"
+              ],
+              "aliases": [
+                "FCM",
+                "flow cytometry",
+                "cytometric profiling",
+                "cytometry"
+              ],
+              "obi_id": "OBI:0000916",
+              "obi_label": "flow cytometry assay",
+              "source": "methods",
+              "evidence": {
+                "section": "Polychromatic FCM",
+                "sentence_ids": [
+                  "S222"
+                ],
+                "quote": "Three FCM panels ( Supplementary Table 5 ) were respectively used to determine frequencies of T cells, B cells and innate immune cells obtained from the 174 pre-vaccination (Visit 2) samples of the study cohort."
+              },
+              "generate_claim": true
+            }
+          ],
+          "also_on_term": []
+        },
+        {
+          "status": "MATCH_OBI_CONFLICT",
+          "tier": "name",
+          "signals": [
+            "same name",
+            "name containment",
+            "quote names the other side",
+            "shared evidence sentence"
+          ],
+          "reason": "benchmark maps this assay to OBI:0000920 cytometric bead array assay; we mapped it to OBI:0002766 cytokine assay",
+          "benchmark": {
+            "key": "multiplex ELISA protocol Human Inflammation multianalyte profiling",
+            "obi_id": "OBI:0000920",
+            "obi_label": "cytometric bead array assay",
+            "name_in_paper": "multiplex ELISA protocol Human Inflammation multianalyte profiling",
+            "aliases": [
+              "cytokine profiling",
+              "cytokine measurements",
+              "cytokines/chemokines",
+              "serum cytokine profiling"
+            ],
+            "merged_from": [
+              "multiplex ELISA protocol Human Inflammation multianalyte profiling"
+            ],
+            "generate_claim": true,
+            "quotes": [
+              {
+                "section": "Methods",
+                "quote": "A panel of 45 cytokines/chemokines was measured on the 174 pre-vaccination (V2) samples of the EM131 cohort. Samples were assayed to determine the concentration of inflammatory proteins according to multianalyte profiling protocols established by Rules-Based Medicine (RBM) (Austin, TX). Serum samples were shipped to RBM for analysis using the multiplex ELISA protocol Human Inflammation multianalyte profiling (Supplementary Table 5b)."
+              }
+            ]
+          },
+          "ours": [
+            {
+              "key": "cytokine assay",
+              "name_in_paper": [
+                "multiplex ELISA"
+              ],
+              "aliases": [
+                "Cytokine measurements",
+                "multianalyte profiling",
+                "cytokine profiling",
+                "Human Inflammation multianalyte profiling"
+              ],
+              "obi_id": "OBI:0002766",
+              "obi_label": "cytokine assay",
+              "source": "methods",
+              "evidence": {
+                "section": "Cytokine measurements",
+                "sentence_ids": [
+                  "S231"
+                ],
+                "quote": "Serum samples were shipped to RBM for analysis using the multiplex ELISA protocol Human Inflammation multianalyte profiling"
+              },
+              "generate_claim": true
+            }
+          ],
+          "also_on_term": []
+        },
+        {
+          "status": "MATCH",
+          "tier": "obi_exact",
+          "signals": [
+            "same name",
+            "name containment",
+            "quote names the other side",
+            "shared evidence sentence"
+          ],
+          "reason": "same OBI term",
+          "benchmark": {
+            "key": "haematologic markers",
+            "obi_id": "OBI:0000630",
+            "obi_label": "hematology assay",
+            "name_in_paper": "haematologic markers",
+            "aliases": [
+              "haematologic measurements",
+              "complete blood count",
+              "haematologic markers"
+            ],
+            "merged_from": [
+              "haematologic markers"
+            ],
+            "generate_claim": true,
+            "quotes": [
+              {
+                "section": "Methods",
+                "quote": "A panel of 3 standard haematologic markers (complete blood count) was measured on the 174 pre-vaccination samples taken 28 days prior to vaccination (V1) of the EM131 cohort. Logistic regression was used to assess the association between individual haematologic markers and the response to HBV vaccine and a multivariate model combining the best markers was built on the EM131 training set and tested on the EM131 test set."
+              }
+            ]
+          },
+          "ours": [
+            {
+              "key": "hematology assay",
+              "name_in_paper": [
+                "complete blood count"
+              ],
+              "aliases": [
+                "Haematologic measurements"
+              ],
+              "obi_id": "OBI:0000630",
+              "obi_label": "hematology assay",
+              "source": "methods",
+              "evidence": {
+                "section": "Haematologic measurements",
+                "sentence_ids": [
+                  "S235"
+                ],
+                "quote": "A panel of 3 standard haematologic markers (complete blood count) was measured on the 174 pre-vaccination samples taken 28 days prior to vaccination (V1) of the EM131 cohort."
+              },
+              "generate_claim": true
+            }
+          ],
+          "also_on_term": []
+        },
+        {
+          "status": "MATCH",
+          "tier": "obi_exact",
+          "signals": [
+            "name containment",
+            "quote names the other side",
+            "shared evidence sentence"
+          ],
+          "reason": "same OBI term; 2 more agent entries on this term: `enzyme-linked immunosorbent assay (2)`, `enzyme-linked immunosorbent assay (3)`",
+          "benchmark": {
+            "key": "GM1-enzyme-linked immunosorbent assay",
+            "obi_id": "OBI:0000661",
+            "obi_label": "enzyme-linked immunosorbent assay",
+            "name_in_paper": "GM1-enzyme-linked immunosorbent assay",
+            "aliases": [
+              "GM1-ELISA",
+              "anti-Cholera toxin B subunit IgG ELISA",
+              "anti-CTB IgG ELISA",
+              "Cholera antibody titre",
+              "anti-Cholera toxin IgG titre",
+              "Cholera toxin Ab titres"
+            ],
+            "merged_from": [
+              "GM1-enzyme-linked immunosorbent assay"
+            ],
+            "generate_claim": true,
+            "quotes": [
+              {
+                "section": "Methods",
+                "quote": "Anti-Cholera toxin B subunit (CTB) IgG were quantified in serum samples according to a GM1-enzyme-linked immunosorbent assay (ELISA) method adapted from Svennerholm et al. GM1 is a membrane ganglioside which is found in cell membranes of the gastro-intestinal tract and that acts as a receptor for CTB."
+              }
+            ]
+          },
+          "ours": [
+            {
+              "key": "enzyme-linked immunosorbent assay",
+              "name_in_paper": [
+                "GM1-enzyme-linked immunosorbent assay (ELISA)"
+              ],
+              "aliases": [
+                "ELISA assay"
+              ],
+              "obi_id": "OBI:0000661",
+              "obi_label": "enzyme-linked immunosorbent assay",
+              "source": "methods",
+              "evidence": {
+                "section": "Antibody titres",
+                "sentence_ids": [
+                  "S122"
+                ],
+                "quote": "Anti-Cholera toxin B subunit (CTB) IgG were quantified in serum samples according to a GM1-enzyme-linked immunosorbent assay (ELISA) method adapted from Svennerholm et al."
+              },
+              "generate_claim": true
+            },
+            {
+              "key": "enzyme-linked immunosorbent assay (2)",
+              "name_in_paper": [
+                "Diphtheria ELISA"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0000661",
+              "obi_label": "enzyme-linked immunosorbent assay",
+              "source": "methods",
+              "evidence": {
+                "section": "Antibody titres",
+                "sentence_ids": [
+                  "S146"
+                ],
+                "quote": "Anti-Diphtheria IgG were quantified in serum samples using a commercially available kit (Sekisui Virotech, catalogue number EC129.00)."
+              },
+              "generate_claim": true
+            },
+            {
+              "key": "enzyme-linked immunosorbent assay (3)",
+              "name_in_paper": [
+                "Tetanus ELISA"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0000661",
+              "obi_label": "enzyme-linked immunosorbent assay",
+              "source": "methods",
+              "evidence": {
+                "section": "Antibody titres",
+                "sentence_ids": [
+                  "S154"
+                ],
+                "quote": "Anti-Tetanus IgG were quantified using a commercially available kit (Sekisui Virotech, catalogue number EC124.00)."
+              },
+              "generate_claim": true
+            }
+          ],
+          "also_on_term": [
+            "enzyme-linked immunosorbent assay (2)",
+            "enzyme-linked immunosorbent assay (3)"
+          ]
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "surface HBV antibody assay",
+              "name_in_paper": [
+                "Anti-hepatitis B surface antigen (anti-HBsAg) total antibodies quantification"
+              ],
+              "aliases": [
+                "determination of anti-HBs levels"
+              ],
+              "obi_id": "OBI:0002148",
+              "obi_label": "surface HBV antibody assay",
+              "source": "methods",
+              "evidence": {
+                "section": "Antibody titres",
+                "sentence_ids": [
+                  "S138"
+                ],
+                "quote": "Anti-hepatitis B surface antigen (anti-HBsAg) total antibodies were quantified in serum samples using the MONOLISA Anti-HBs PLUS kit (Bio-Rad catalogue number 72566)."
+              },
+              "generate_claim": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "study": "SDY1364",
+      "pmid": "23266342",
+      "benchmark_file": "data/benchmark_assay/benchmark_assay_v5/SDY1364_Assay_Hailong.json",
+      "registry_dir": "data/benchmark_agent_assays/claude_fable_5_2_v1/23266342_SDY1364",
+      "repair": null,
+      "benchmark_raw_total": 3,
+      "metrics": {
+        "benchmark_total": 3,
+        "ours_total": 3,
+        "matched": 3,
+        "exact": 3,
+        "obi_ok": 3,
+        "missed": 0,
+        "extra": 0,
+        "split": 0,
+        "term_only_pairs": 0,
+        "recall": 1.0
+      },
+      "merged_groups": [],
+      "rows": [
+        {
+          "status": "MATCH",
+          "tier": "obi_exact",
+          "signals": [
+            "same name",
+            "name containment",
+            "quote names the other side",
+            "shared evidence sentence"
+          ],
+          "reason": "same OBI term",
+          "benchmark": {
+            "key": "ELISpot",
+            "obi_id": "OBI:0600031",
+            "obi_label": "enzyme-linked immunospot assay",
+            "name_in_paper": "ELISpot",
+            "aliases": [
+              "IFNγ ELISpot",
+              "ex vivo ELISpot",
+              "interferon-gamma ELISpot",
+              "ex vivo IFNγ ELISpot"
+            ],
+            "merged_from": [
+              "ELISpot"
+            ],
+            "generate_claim": true,
+            "quotes": [
+              {
+                "type": "text",
+                "section": "Methods",
+                "quote": "IFN ELISpot assays were performed on freshly isolated PBMC from all 24 subjects at screening and at 1, 2, 4, 12 and 24 weeks post-vaccination, using the Human IFN ELISpot(ALP) kit(Mabtech). "
+              }
+            ]
+          },
+          "ours": [
+            {
+              "key": "enzyme-linked immunospot assay",
+              "name_in_paper": [
+                "Ex vivo IFNγ ELISpot assay"
+              ],
+              "aliases": [
+                "IFNγ ELISpot",
+                "ELISpot",
+                "ex vivo interferon-gamma (IFNγ) ELISpot assay",
+                "ex vivo ELISpot"
+              ],
+              "obi_id": "OBI:0600031",
+              "obi_label": "enzyme-linked immunospot assay",
+              "source": "methods",
+              "evidence": {
+                "section": "Ex vivo IFNγ ELISpot assay",
+                "sentence_ids": [
+                  "S31"
+                ],
+                "quote": "IFNγ ELISpot assays were performed on freshly isolated PBMC from all 24 subjects at screening and at 1, 2, 4, 12 and 24 weeks post-vaccination, using the Human IFNγ ELISpot (ALP) kit (Mabtech)."
+              },
+              "generate_claim": true
+            }
+          ],
+          "also_on_term": []
+        },
+        {
+          "status": "MATCH",
+          "tier": "obi_exact",
+          "signals": [
+            "same name",
+            "name containment",
+            "quote names the other side"
+          ],
+          "reason": "same OBI term",
+          "benchmark": {
+            "key": "flow cytometry",
+            "obi_id": "OBI:0000916",
+            "obi_label": "flow cytometry assay",
+            "name_in_paper": "flow cytometry",
+            "aliases": [
+              "Surface and intracellular cytokine staining"
+            ],
+            "merged_from": [
+              "flow cytometry"
+            ],
+            "generate_claim": true,
+            "quotes": [
+              {
+                "type": "text",
+                "section": "Methods",
+                "quote": " Exploratory predefined immunological analyses included multi-parameter flow cytometry as detailed below."
+              }
+            ]
+          },
+          "ours": [
+            {
+              "key": "flow cytometry assay",
+              "name_in_paper": [
+                "Surface and intracellular cytokine staining"
+              ],
+              "aliases": [
+                "multi-parameter flow cytometry"
+              ],
+              "obi_id": "OBI:0000916",
+              "obi_label": "flow cytometry assay",
+              "source": "methods",
+              "evidence": {
+                "section": "Surface and intracellular cytokine staining",
+                "sentence_ids": [
+                  "S51"
+                ],
+                "quote": "Stained cells were immediately acquired using an LSR-II (Becton Dickinson)."
+              },
+              "generate_claim": true
+            }
+          ],
+          "also_on_term": []
+        },
+        {
+          "status": "MATCH",
+          "tier": "obi_exact",
+          "signals": [
+            "same name",
+            "name containment",
+            "short name"
+          ],
+          "reason": "same OBI term",
+          "benchmark": {
+            "key": "ELISA",
+            "obi_id": "OBI:0000661",
+            "obi_label": "enzyme-linked immunosorbent assay",
+            "name_in_paper": "ELISA",
+            "aliases": [
+              "enzyme-linked immunosorbent assay",
+              "IgG enzyme linked immunosorbent assay"
+            ],
+            "merged_from": [
+              "ELISA"
+            ],
+            "generate_claim": true,
+            "quotes": [
+              {
+                "type": "text",
+                "section": "Methods",
+                "quote": "Anti-r85AIgG wasmeasuredinserumsamples collectedat week 0, 2, 4 and 24. ELISA plates (NUNC ImmunoPlates, Fisher) were coated overnight with2 g/ml r85A(Lionex, Germany)inPBS."
+              }
+            ]
+          },
+          "ours": [
+            {
+              "key": "enzyme-linked immunosorbent assay",
+              "name_in_paper": [
+                "IgG enzyme linked immunosorbent assay (ELISA)"
+              ],
+              "aliases": [
+                "ELISA",
+                "IgG enzyme linked immunosorbent assay"
+              ],
+              "obi_id": "OBI:0000661",
+              "obi_label": "enzyme-linked immunosorbent assay",
+              "source": "methods",
+              "evidence": {
+                "section": "IgG enzyme linked immunosorbent assay (ELISA)",
+                "sentence_ids": [
+                  "S56"
+                ],
+                "quote": "Anti-r85A IgG was measured in serum samples collected at week 0, 2, 4 and 24."
+              },
+              "generate_claim": true
+            }
+          ],
+          "also_on_term": []
+        }
+      ]
+    },
+    {
+      "study": "SDY1373",
+      "pmid": "28854372",
+      "benchmark_file": "data/benchmark_assay/benchmark_assay_v5/SDY1373_assays_AS_v2.json",
+      "registry_dir": "data/benchmark_agent_assays/claude_fable_5_2_v1/28854372_SDY1373",
+      "repair": null,
+      "benchmark_raw_total": 4,
+      "metrics": {
+        "benchmark_total": 4,
+        "ours_total": 4,
+        "matched": 4,
+        "exact": 2,
+        "obi_ok": 3,
+        "missed": 0,
+        "extra": 0,
+        "split": 0,
+        "term_only_pairs": 0,
+        "recall": 1.0
+      },
+      "merged_groups": [],
+      "rows": [
+        {
+          "status": "MATCH",
+          "tier": "obi_exact",
+          "signals": [
+            "same name",
+            "name containment",
+            "shared evidence sentence"
+          ],
+          "reason": "same OBI term",
+          "benchmark": {
+            "key": "Flow Cytometry Analysis",
+            "obi_id": "OBI:0000916",
+            "obi_label": "flow cytometry assay",
+            "name_in_paper": "Flow Cytometry Analysis",
+            "aliases": [
+              "flow cytometry",
+              "multicolor flow cytometry",
+              "PBMC flow cytometry",
+              "innate immune cell subset analysis",
+              "immunophenotyping"
+            ],
+            "merged_from": [
+              "Flow Cytometry Analysis"
+            ],
+            "generate_claim": true,
+            "quotes": [
+              {
+                "type": "text",
+                "section": "Experimental Procedures",
+                "quote": "PBMC samples were frozen in liquid nitrogen, thawed, stained, and acquired on an LSR Fortessa flow cytometer. For analysis of monocytes and distinction of DCs, samples were stained with CD56 (HCD56, catalog number 318316), CD3 (UCHT1, catalog number 300424)"
+              }
+            ]
+          },
+          "ours": [
+            {
+              "key": "flow cytometry assay",
+              "name_in_paper": [
+                "Flow Cytometry Analysis"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0000916",
+              "obi_label": "flow cytometry assay",
+              "source": "methods",
+              "evidence": {
+                "section": "Flow Cytometry Analysis",
+                "sentence_ids": [
+                  "S106"
+                ],
+                "quote": "PBMC samples were frozen in liquid nitrogen, thawed, stained, and acquired on an LSR Fortessa flow cytometer."
+              },
+              "generate_claim": true
+            }
+          ],
+          "also_on_term": []
+        },
+        {
+          "status": "MATCH_GRANULARITY",
+          "tier": "obi_ancestry",
+          "signals": [
+            "same name",
+            "name containment",
+            "quote names the other side",
+            "shared evidence sentence"
+          ],
+          "reason": "our term OBI:0000920 cytometric bead array assay is broader than the benchmark's OBI:0003799 analyte detection by flow based bead assay",
+          "benchmark": {
+            "key": "Cytokine and Chemokine Multiplex Analysis",
+            "obi_id": "OBI:0003799",
+            "obi_label": "analyte detection by flow based bead assay",
+            "name_in_paper": "Cytokine and Chemokine Multiplex Analysis",
+            "aliases": [
+              "Luminex assay",
+              "Bio-Plex Luminex-200",
+              "multiplex cytokine assay",
+              "cytokine/chemokine analysis"
+            ],
+            "merged_from": [
+              "Cytokine and Chemokine Multiplex Analysis"
+            ],
+            "generate_claim": true,
+            "quotes": [
+              {
+                "type": "text",
+                "section": "Experimental Procedures",
+                "quote": "The assay was performed with an 11-Bioplex from Bio-Rad consisting of IFN-g, IL-2, IL-6, IL-10, TNF-a, IL-12, MCP-1, MIP-1b, IL-1RA, and IP-10, with addition of IFN-a and TNF-b to make it a 13-plex assay. Samples were read in duplicates according to the manufacturer's protocol on a Bio-Plex Luminex-200 (Bio-Rad) and analyzed using Bio-Plex Manager software."
+              }
+            ]
+          },
+          "ours": [
+            {
+              "key": "cytometric bead array assay",
+              "name_in_paper": [
+                "Cytokine and Chemokine Multiplex Analysis"
+              ],
+              "aliases": [
+                "Luminex assay",
+                "13-plex assay"
+              ],
+              "obi_id": "OBI:0000920",
+              "obi_label": "cytometric bead array assay",
+              "source": "methods",
+              "evidence": {
+                "section": "Cytokine and Chemokine Multiplex Analysis",
+                "sentence_ids": [
+                  "S116"
+                ],
+                "quote": "Samples were read in duplicates according to the manufacturer’s protocol on a Bio-Plex Luminex-200 (Bio-Rad) and analyzed using Bio-Plex Manager software."
+              },
+              "generate_claim": true
+            }
+          ],
+          "also_on_term": []
+        },
+        {
+          "status": "MATCH",
+          "tier": "obi_exact",
+          "signals": [
+            "same name",
+            "short name",
+            "shared evidence sentence"
+          ],
+          "reason": "same OBI term",
+          "benchmark": {
+            "key": "ELISA",
+            "obi_id": "OBI:0000661",
+            "obi_label": "enzyme-linked immunosorbent assay",
+            "name_in_paper": "ELISA",
+            "aliases": [
+              "ELISA",
+              "GP-specific antibody ELISA",
+              "EBOV-GP-binding antibody ELISA",
+              "Kikwit-GP-specific antibody ELISA",
+              "Gueckedou-GP-specific antibody ELISA"
+            ],
+            "merged_from": [
+              "ELISA"
+            ],
+            "generate_claim": true,
+            "quotes": [
+              {
+                "type": "text",
+                "section": "Results",
+                "quote": "GP-specific antibody responses were measured using an ELISA in two centralized laboratories (Marburg, Germany and United States Army Medical Research Institute for Infectious Diseases [USAMRIID], USA) on days 0, 7, 14, 28, 56, 84, and 180. EBOV-GP-binding antibodies were measured using an ELISA against the homologous GP of the Zaire-Kikwit strain (short Kikwit-GP-specific antibodies) by USAMRIID on day 0 and day 28 ... or against inactivated whole virions of the Zaire-Gueckedou strain (short Gueckedou-GP-specific antibodies) in Marburg at all available time points (days 28, 56, 84, and 180)."
+              }
+            ]
+          },
+          "ours": [
+            {
+              "key": "enzyme-linked immunosorbent assay",
+              "name_in_paper": [
+                "ELISA"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0000661",
+              "obi_label": "enzyme-linked immunosorbent assay",
+              "source": "results",
+              "evidence": {
+                "section": "EBOV-GP-Binding Antibody Responses Induced by the Vaccine",
+                "sentence_ids": [
+                  "S42"
+                ],
+                "quote": "GP-specific antibody responses were measured using an ELISA in two centralized laboratories (Marburg, Germany and United States Army Medical Research Institute for Infectious Diseases [USAMRIID], USA) on days 0, 7, 14, 28, 56, 84, and 180."
+              },
+              "generate_claim": true
+            }
+          ],
+          "also_on_term": []
+        },
+        {
+          "status": "MATCH_OBI_CONFLICT",
+          "tier": "name",
+          "signals": [
+            "same name",
+            "name containment",
+            "quote names the other side",
+            "shared evidence sentence"
+          ],
+          "reason": "benchmark maps this assay to OBI:0002571 polyA-selected RNA sequencing assay; we mapped it to OBI:0003090 bulk RNA-seq assay",
+          "benchmark": {
+            "key": "Next-Generation RNA Sequencing",
+            "obi_id": "OBI:0002571",
+            "obi_label": "polyA-selected RNA sequencing assay",
+            "name_in_paper": "Next-Generation RNA Sequencing",
+            "aliases": [
+              "RNA-seq",
+              "next-generation RNA sequencing",
+              "whole-blood RNA sequencing",
+              "whole-blood transcriptomic analysis",
+              "transcriptional profiling",
+              "gene expression analysis",
+              "differential gene expression",
+              "RNA sequencing",
+              "RNA-seq analysis",
+              "bulk RNA-seq",
+              "gene expression signature"
+            ],
+            "merged_from": [
+              "Next-Generation RNA Sequencing"
+            ],
+            "generate_claim": true,
+            "quotes": [
+              {
+                "type": "text",
+                "section": "Experimental Procedures",
+                "quote": "From total RNA, mRNA was extracted using the NEBNext Poly(A) mRNA magnetic isolation module (New England Biolabs), and RNA-seq libraries were generated using the NEBNext Ultra RNA Library Prep Kit for Illumina (NEB) according to the manufacturer's recommendations. [...] Diluted libraries were multiplex-sequenced on the Illumina HiSeq 2500 instrument (single read, 50-bp run)."
+              }
+            ]
+          },
+          "ours": [
+            {
+              "key": "bulk RNA-seq assay",
+              "name_in_paper": [
+                "Next-Generation RNA Sequencing"
+              ],
+              "aliases": [
+                "RNA-seq",
+                "Next-Generation RNA Sequencing of Full Blood",
+                "RNA Extraction and Next-Generation RNA Sequencing"
+              ],
+              "obi_id": "OBI:0003090",
+              "obi_label": "bulk RNA-seq assay",
+              "source": "methods",
+              "evidence": {
+                "section": "RNA Extraction and Next-Generation RNA Sequencing",
+                "sentence_ids": [
+                  "S123"
+                ],
+                "quote": "Diluted libraries were multiplex-sequenced on the Illumina HiSeq 2500 instrument (single read, 50-bp run)."
+              },
+              "generate_claim": true
+            }
+          ],
+          "also_on_term": []
+        }
+      ]
+    },
+    {
+      "study": "SDY1669",
+      "pmid": "32788292",
+      "benchmark_file": "data/benchmark_assay/benchmark_assay_v5/SDY1669_assays_AS_v2.json",
+      "registry_dir": "data/benchmark_agent_assays/claude_fable_5_2_v1/32788292_SDY1669",
+      "repair": null,
+      "benchmark_raw_total": 9,
+      "metrics": {
+        "benchmark_total": 9,
+        "ours_total": 11,
+        "matched": 9,
+        "exact": 8,
+        "obi_ok": 8,
+        "missed": 0,
+        "extra": 0,
+        "split": 2,
+        "term_only_pairs": 0,
+        "recall": 1.0
+      },
+      "merged_groups": [],
+      "rows": [
+        {
+          "status": "MATCH",
+          "tier": "obi_exact",
+          "signals": [
+            "same name",
+            "name containment",
+            "short name",
+            "quote names the other side"
+          ],
+          "reason": "same OBI term",
+          "benchmark": {
+            "key": "phospho-CyTOF",
+            "obi_id": "OBI:0002115",
+            "obi_label": "cytometry time of flight assay",
+            "name_in_paper": "phospho-CyTOF",
+            "aliases": [
+              "mass cytometry",
+              "Phospho-CyTOF",
+              "CyTOF",
+              "phospho-CyTOF panel",
+              "mass cytometry data",
+              "phospho-CyTOF data",
+              "CYTOF"
+            ],
+            "merged_from": [
+              "phospho-CyTOF"
+            ],
+            "generate_claim": true,
+            "quotes": [
+              {
+                "type": "text",
+                "section": "Results",
+                "quote": "To characterize immune cell phenotypes in PBMCs, we used a phospho-CyTOF panel that includes 22 cell surface markers and 12 intracellular markers against an assortment of kinases and phospho-specific epitopes of signaling molecules and H3K27ac—a marker of histone modification that drives epigenetic remodeling (12, 13) (table S1)."
+              }
+            ]
+          },
+          "ours": [
+            {
+              "key": "cytometry time of flight assay",
+              "name_in_paper": [
+                "mass cytometry"
+              ],
+              "aliases": [
+                "phospho-CyTOF",
+                "CyTOF"
+              ],
+              "obi_id": "OBI:0002115",
+              "obi_label": "cytometry time of flight assay",
+              "source": "results",
+              "evidence": {
+                "section": "Analysis of peripheral blood leukocytes from COVID-19 patients by mass cytometry",
+                "sentence_ids": [
+                  "S10"
+                ],
+                "quote": "We used mass cytometry to assess immune responses to SARS-CoV-2 infection in 52 COVID-19 patients"
+              },
+              "generate_claim": true
+            }
+          ],
+          "also_on_term": []
+        },
+        {
+          "status": "MATCH",
+          "tier": "obi_exact",
+          "signals": [
+            "same name",
+            "name containment",
+            "quote names the other side",
+            "shared evidence sentence"
+          ],
+          "reason": "same OBI term",
+          "benchmark": {
+            "key": "intracellular staining assay",
+            "obi_id": "OBI:0000916",
+            "obi_label": "flow cytometry assay",
+            "name_in_paper": "intracellular staining assay",
+            "aliases": [
+              "intracellular staining assay to detect cytokine responses",
+              "In vitro stimulation",
+              "Flow cytometry analysis of ex vivo stimulated human peripheral blood leukocytes",
+              "flow cytometry analysis",
+              "ex vivo stimulation"
+            ],
+            "merged_from": [
+              "intracellular staining assay"
+            ],
+            "generate_claim": true,
+            "quotes": [
+              {
+                "section": "Results",
+                "quote": "we performed ex vivo stimulation of PBMCs from healthy or COVID-19–infected individuals, using a mixture of synthetic TLR7 and TLR 8 (TLR7/8) and TLR3 ligands, which are known to be expressed by viruses, and we performed an intracellular staining assay to detect cytokine responses."
+              }
+            ]
+          },
+          "ours": [
+            {
+              "key": "flow cytometry assay",
+              "name_in_paper": [
+                "intracellular staining assay"
+              ],
+              "aliases": [
+                "Flow cytometry analysis of ex vivo stimulated human peripheral blood leukocytes",
+                "In vitro stimulation",
+                "flow cytometry"
+              ],
+              "obi_id": "OBI:0000916",
+              "obi_label": "flow cytometry assay",
+              "source": "results",
+              "evidence": {
+                "section": "COVID-19 results in functional impairment of blood myeloid cells and pDCs",
+                "sentence_ids": [
+                  "S44"
+                ],
+                "quote": "we performed an intracellular staining assay to detect cytokine responses"
+              },
+              "generate_claim": true
+            }
+          ],
+          "also_on_term": []
+        },
+        {
+          "status": "MATCH",
+          "tier": "obi_exact",
+          "signals": [
+            "same name",
+            "name containment",
+            "quote names the other side"
+          ],
+          "reason": "same OBI term",
+          "benchmark": {
+            "key": "Flow cytometry analysis of PBMCs",
+            "obi_id": "OBI:0000916",
+            "obi_label": "flow cytometry assay",
+            "name_in_paper": "Flow cytometry analysis of PBMCs",
+            "aliases": [
+              "flow cytometry",
+              "Flow: HLA-DR levels (CITE-seq samples)"
+            ],
+            "merged_from": [
+              "Flow cytometry analysis of PBMCs"
+            ],
+            "generate_claim": true,
+            "quotes": [
+              {
+                "section": "Results",
+                "quote": "we observed a reduction in the expression of the proteins CD86 and human leukocyte antigen class DR (HLA-DR) on monocytes and mDCs of COVID-19 patients, which was most pronounced in subjects with severe COVID-19 infection (Fig. 5A and fig. S16A)."
+              }
+            ]
+          },
+          "ours": [
+            {
+              "key": "flow cytometry assay (2)",
+              "name_in_paper": [
+                "flow cytometry"
+              ],
+              "aliases": [
+                "Flow cytometry analysis of PBMCs"
+              ],
+              "obi_id": "OBI:0000916",
+              "obi_label": "flow cytometry assay",
+              "source": "results",
+              "evidence": {
+                "section": "Fig. 5",
+                "sentence_ids": [
+                  "S229"
+                ],
+                "quote": "Flow cytometry analysis of PBMCs analyzed in parallel to the CITE-seq experiment."
+              },
+              "generate_claim": true
+            }
+          ],
+          "also_on_term": []
+        },
+        {
+          "status": "MATCH",
+          "tier": "obi_exact",
+          "signals": [
+            "same name",
+            "name containment",
+            "short name",
+            "quote names the other side",
+            "shared evidence sentence"
+          ],
+          "reason": "same OBI term",
+          "benchmark": {
+            "key": "Olink multiplex inflammation panel",
+            "obi_id": "OBI:0003112",
+            "obi_label": "Olink assay",
+            "name_in_paper": "Olink multiplex inflammation panel",
+            "aliases": [
+              "Olink proteomics",
+              "multiplex analysis by Olink",
+              "Olink",
+              "Olink multiplex inflammation panel",
+              "Olink Proteomics"
+            ],
+            "merged_from": [
+              "Olink multiplex inflammation panel"
+            ],
+            "generate_claim": true,
+            "quotes": [
+              {
+                "type": "text",
+                "section": "Results",
+                "quote": "we evaluated cytokines and chemokines in plasma samples from the Atlanta cohort using the Olink multiplex inflammation panel that measures 92 different cytokines and chemokines."
+              }
+            ]
+          },
+          "ours": [
+            {
+              "key": "Olink assay",
+              "name_in_paper": [
+                "Olink multiplex inflammation panel"
+              ],
+              "aliases": [
+                "Olink",
+                "multiplex Olink analysis",
+                "Olink proteomics",
+                "multiplex analysis by Olink"
+              ],
+              "obi_id": "OBI:0003112",
+              "obi_label": "Olink assay",
+              "source": "results",
+              "evidence": {
+                "section": "Enhanced concentrations of cytokines and inflammatory mediators in plasma from COVID-19 patients",
+                "sentence_ids": [
+                  "S58"
+                ],
+                "quote": "we evaluated cytokines and chemokines in plasma samples from the Atlanta cohort using the Olink multiplex inflammation panel that measures 92 different cytokines and chemokines"
+              },
+              "generate_claim": true
+            }
+          ],
+          "also_on_term": []
+        },
+        {
+          "status": "MATCH",
+          "tier": "obi_exact",
+          "signals": [
+            "same name",
+            "name containment",
+            "short name",
+            "quote names the other side",
+            "shared evidence sentence"
+          ],
+          "reason": "same OBI term; 1 more agent entry on this term: `enzyme-linked immunosorbent assay (2)`",
+          "benchmark": {
+            "key": "enzyme-linked immunosorbent assay (ELISA)",
+            "obi_id": "OBI:0000661",
+            "obi_label": "enzyme-linked immunosorbent assay",
+            "name_in_paper": "enzyme-linked immunosorbent assay (ELISA)",
+            "aliases": [
+              "ELISA",
+              "enzyme-linked immunosorbent assay",
+              "IFN-α ELISA of plasma",
+              "highly sensitive ELISA enabled by single molecule array (SIMoA) technology"
+            ],
+            "merged_from": [
+              "enzyme-linked immunosorbent assay (ELISA)"
+            ],
+            "generate_claim": true,
+            "quotes": [
+              {
+                "type": "text",
+                "section": "Results",
+                "quote": "we used an enzyme-linked immunosorbent assay (ELISA) to independently validate these results. Consistent with the multiplex Olink analysis, we found a significant increase of these inflammatory mediators in the plasma of severe and intensive care unit (ICU) COVID-19 patients."
+              }
+            ]
+          },
+          "ours": [
+            {
+              "key": "enzyme-linked immunosorbent assay",
+              "name_in_paper": [
+                "ELISA"
+              ],
+              "aliases": [
+                "enzyme-linked immunosorbent assay",
+                "enzyme-linked immunosorbent assay (ELISA)"
+              ],
+              "obi_id": "OBI:0000661",
+              "obi_label": "enzyme-linked immunosorbent assay",
+              "source": "results",
+              "evidence": {
+                "section": "Enhanced concentrations of cytokines and inflammatory mediators in plasma from COVID-19 patients",
+                "sentence_ids": [
+                  "S69"
+                ],
+                "quote": "we used an enzyme-linked immunosorbent assay (ELISA) to independently validate these results"
+              },
+              "generate_claim": true
+            },
+            {
+              "key": "enzyme-linked immunosorbent assay (2)",
+              "name_in_paper": [
+                "SIMoA"
+              ],
+              "aliases": [
+                "single molecule array",
+                "SIMoA technology",
+                "highly sensitive ELISA enabled by single molecule array (SIMoA) technology",
+                "ELISA enabled by single molecule array (SIMoA) technology"
+              ],
+              "obi_id": "OBI:0000661",
+              "obi_label": "enzyme-linked immunosorbent assay",
+              "source": "results",
+              "evidence": {
+                "section": "Single-cell transcriptional response to COVID-19 infection",
+                "sentence_ids": [
+                  "S110"
+                ],
+                "quote": "We thus measured the concentration of IFN-α in plasma using a highly sensitive ELISA enabled by single molecule array (SIMoA) technology."
+              },
+              "generate_claim": true
+            }
+          ],
+          "also_on_term": [
+            "enzyme-linked immunosorbent assay (2)"
+          ]
+        },
+        {
+          "status": "MATCH",
+          "tier": "obi_exact",
+          "signals": [
+            "same name",
+            "name containment",
+            "quote names the other side",
+            "shared evidence sentence"
+          ],
+          "reason": "same OBI term; 1 more agent entry on this term: `cellular indexing of transcriptomes and epitopes by sequencing (2)`",
+          "benchmark": {
+            "key": "cellular indexing of transcriptomes and epitopes by sequencing (CITE-seq)",
+            "obi_id": "OBI:0003788",
+            "obi_label": "cellular indexing of transcriptomes and epitopes by sequencing",
+            "name_in_paper": "cellular indexing of transcriptomes and epitopes by sequencing (CITE-seq)",
+            "aliases": [
+              "CITE-seq",
+              "CITE-seq analysis"
+            ],
+            "merged_from": [
+              "cellular indexing of transcriptomes and epitopes by sequencing (CITE-seq)"
+            ],
+            "generate_claim": true,
+            "quotes": [
+              {
+                "type": "text",
+                "section": "Results",
+                "quote": "we used cellular indexing of transcriptomes and epitopes by sequencing (CITE-seq) and profiled the gene and protein expression in PBMC samples of COVID-19–infected individuals. Cryopreserved PBMC samples from a total of 12 age-matched subjects in the Atlanta cohort (five healthy controls and seven COVID-19 patients; Table 2) were enriched for DCs, stained using a cocktail of 36 DNA-labeled antibodies (table S2), and analyzed using droplet-based single-cell gene expression profiling approaches (Fig. 4A)."
+              }
+            ]
+          },
+          "ours": [
+            {
+              "key": "cellular indexing of transcriptomes and epitopes by sequencing",
+              "name_in_paper": [
+                "CITE-seq (gene expression)"
+              ],
+              "aliases": [
+                "CITE-seq",
+                "cellular indexing of transcriptomes and epitopes by sequencing",
+                "Single-cell transcriptomics",
+                "droplet-based single-cell gene expression profiling"
+              ],
+              "obi_id": "OBI:0003788",
+              "obi_label": "cellular indexing of transcriptomes and epitopes by sequencing",
+              "source": "results",
+              "evidence": {
+                "section": "Single-cell transcriptional response to COVID-19 infection",
+                "sentence_ids": [
+                  "S75"
+                ],
+                "quote": "we used cellular indexing of transcriptomes and epitopes by sequencing (CITE-seq) and profiled the gene and protein expression in PBMC samples of COVID-19–infected individuals"
+              },
+              "generate_claim": true
+            },
+            {
+              "key": "cellular indexing of transcriptomes and epitopes by sequencing (2)",
+              "name_in_paper": [
+                "CITE-seq (protein expression)"
+              ],
+              "aliases": [
+                "CITE-seq",
+                "cellular indexing of transcriptomes and epitopes by sequencing"
+              ],
+              "obi_id": "OBI:0003788",
+              "obi_label": "cellular indexing of transcriptomes and epitopes by sequencing",
+              "source": "results",
+              "evidence": {
+                "section": "Single-cell transcriptional response to COVID-19 infection",
+                "sentence_ids": [
+                  "S75"
+                ],
+                "quote": "we used cellular indexing of transcriptomes and epitopes by sequencing (CITE-seq) and profiled the gene and protein expression in PBMC samples of COVID-19–infected individuals"
+              },
+              "generate_claim": null
+            }
+          ],
+          "also_on_term": [
+            "cellular indexing of transcriptomes and epitopes by sequencing (2)"
+          ]
+        },
+        {
+          "status": "MATCH",
+          "tier": "obi_exact",
+          "signals": [
+            "same name",
+            "name containment",
+            "quote names the other side",
+            "shared evidence sentence"
+          ],
+          "reason": "same OBI term",
+          "benchmark": {
+            "key": "bulk RNA sequencing (RNA-seq)",
+            "obi_id": "OBI:0003090",
+            "obi_label": "bulk RNA-seq assay",
+            "name_in_paper": "bulk RNA sequencing (RNA-seq)",
+            "aliases": [
+              "Bulk RNA-seq",
+              "bulk RNA sequencing",
+              "RNA-seq",
+              "bulk RNA-seq",
+              "bulk PBMC transcriptomics",
+              "bulk transcriptomics",
+              "transcriptomics of bulk peripheral blood mononuclear cells"
+            ],
+            "merged_from": [
+              "bulk RNA sequencing (RNA-seq)"
+            ],
+            "generate_claim": true,
+            "quotes": [
+              {
+                "type": "text",
+                "section": "Results",
+                "quote": "To investigate this further and to independently validate the observations in the CITE-seq analysis, we performed bulk RNA sequencing (RNA-seq) analysis of PBMCs in an extended group of subjects (17 COVID-19 patients and 17 healthy controls) from the same cohort."
+              }
+            ]
+          },
+          "ours": [
+            {
+              "key": "bulk RNA-seq assay",
+              "name_in_paper": [
+                "bulk RNA sequencing"
+              ],
+              "aliases": [
+                "RNA-seq",
+                "bulk RNA-seq",
+                "bulk PBMC transcriptomics",
+                "bulk transcriptomics"
+              ],
+              "obi_id": "OBI:0003090",
+              "obi_label": "bulk RNA-seq assay",
+              "source": "results",
+              "evidence": {
+                "section": "Single-cell transcriptional response to COVID-19 infection",
+                "sentence_ids": [
+                  "S116"
+                ],
+                "quote": "we performed bulk RNA sequencing (RNA-seq) analysis of PBMCs in an extended group of subjects (17 COVID-19 patients and 17 healthy controls) from the same cohort"
+              },
+              "generate_claim": true
+            }
+          ],
+          "also_on_term": []
+        },
+        {
+          "status": "MATCH",
+          "tier": "obi_exact",
+          "signals": [
+            "same name",
+            "name containment",
+            "short name",
+            "shared evidence sentence"
+          ],
+          "reason": "same OBI term",
+          "benchmark": {
+            "key": "PCR quantitation of bacterial 16S ribosomal RNA (rRNA) gene product",
+            "obi_id": "OBI:0000893",
+            "obi_label": "real time polymerase chain reaction assay",
+            "name_in_paper": "PCR quantitation of bacterial 16S ribosomal RNA (rRNA) gene product",
+            "aliases": [
+              "qPCR (Bacterial 16S rRNA gene)",
+              "PCR quantitation of bacterial 16S rRNA gene product",
+              "qPCR",
+              "quantitative PCR",
+              "bacterial DNA measurement"
+            ],
+            "merged_from": [
+              "PCR quantitation of bacterial 16S ribosomal RNA (rRNA) gene product"
+            ],
+            "generate_claim": true,
+            "quotes": [
+              {
+                "type": "text",
+                "section": "Results",
+                "quote": "the plasma of severe and ICU patients had significantly higher levels of bacterial DNA, as measured by PCR quantitation of bacterial 16S ribosomal RNA (rRNA) gene product"
+              }
+            ]
+          },
+          "ours": [
+            {
+              "key": "real time polymerase chain reaction assay",
+              "name_in_paper": [
+                "PCR quantitation of bacterial 16 S ribosomal RNA (rRNA) gene product"
+              ],
+              "aliases": [
+                "qPCR",
+                "quantitative PCR"
+              ],
+              "obi_id": "OBI:0000893",
+              "obi_label": "real time polymerase chain reaction assay",
+              "source": "results",
+              "evidence": {
+                "section": "Severe COVID-19 infection is associated with the systemic release of bacterial products",
+                "sentence_ids": [
+                  "S168"
+                ],
+                "quote": "as measured by PCR quantitation of bacterial 16 S ribosomal RNA (rRNA) gene product"
+              },
+              "generate_claim": true
+            }
+          ],
+          "also_on_term": []
+        },
+        {
+          "status": "MATCH_OBI_CONFLICT",
+          "tier": "name",
+          "signals": [
+            "same name",
+            "name containment",
+            "short name",
+            "quote names the other side",
+            "shared evidence sentence"
+          ],
+          "reason": "benchmark maps this assay to OBI:0003793 bacterial lipopolysaccharide detection in plasma assay; we mapped it to OBI:0002082 reporter gene assay",
+          "benchmark": {
+            "key": "TLR4-based reporter assay",
+            "obi_id": "OBI:0003793",
+            "obi_label": "bacterial lipopolysaccharide detection in plasma assay",
+            "name_in_paper": "TLR4-based reporter assay",
+            "aliases": [
+              "LPS in plasma",
+              "bacterial lipopolysaccharide (LPS) measurement",
+              "TLR4-based reporter assay",
+              "LPS"
+            ],
+            "merged_from": [
+              "TLR4-based reporter assay"
+            ],
+            "generate_claim": true,
+            "quotes": [
+              {
+                "type": "text",
+                "section": "Results",
+                "quote": "of LPS, as measured by a TLR4-based reporter assay (Fig. 6, A and B)."
+              }
+            ]
+          },
+          "ours": [
+            {
+              "key": "reporter gene assay",
+              "name_in_paper": [
+                "TLR4-based reporter assay"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:0002082",
+              "obi_label": "reporter gene assay",
+              "source": "results",
+              "evidence": {
+                "section": "Severe COVID-19 infection is associated with the systemic release of bacterial products",
+                "sentence_ids": [
+                  "S168"
+                ],
+                "quote": "and of LPS, as measured by a TLR4-based reporter assay"
+              },
+              "generate_claim": true
+            }
+          ],
+          "also_on_term": []
+        }
+      ]
+    },
+    {
+      "study": "SDY180",
+      "pmid": "23601689",
+      "benchmark_file": "data/benchmark_assay/benchmark_assay_v5/SDY180_assays_AS_v2_edit.json",
+      "registry_dir": "data/benchmark_agent_assays/claude_fable_5_2_v1/23601689_SDY180",
+      "repair": null,
+      "benchmark_raw_total": 6,
+      "metrics": {
+        "benchmark_total": 6,
+        "ours_total": 6,
+        "matched": 5,
+        "exact": 5,
+        "obi_ok": 5,
+        "missed": 1,
+        "extra": 1,
+        "split": 0,
+        "term_only_pairs": 0,
+        "recall": 0.8333
+      },
+      "merged_groups": [],
+      "rows": [
+        {
+          "status": "MATCH",
+          "tier": "obi_exact",
+          "signals": [
+            "same name",
+            "name containment",
+            "quote names the other side",
+            "shared evidence sentence"
+          ],
+          "reason": "same OBI term",
+          "benchmark": {
+            "key": "Microarray Assay",
+            "obi_id": "OBI:0001463",
+            "obi_label": "transcription profiling by array assay",
+            "name_in_paper": "Microarray Assay",
+            "aliases": [
+              "whole-genome transcriptional profiling",
+              "whole-genome arrays",
+              "transcriptional profiles",
+              "blood transcript abundance profiling",
+              "Illumina HT-12 V3 beadchip",
+              "microarray",
+              "modular repertoire analysis",
+              "blood transcriptional profiling",
+              "transcriptional profiling"
+            ],
+            "merged_from": [
+              "Microarray Assay"
+            ],
+            "generate_claim": true,
+            "quotes": [
+              {
+                "type": "text",
+                "section": "Experimental Procedures",
+                "quote": "Total RNA was isolated from the whole-blood lysate (Ovcharenko et al., 2005) followed by depletion of globin messenger RNA (Whitley et al., 2005). All samples passing quality control were then amplified and labeled by using the Illumina TotalPrep-96 RNA amplification kit. Amplified RNA was hybridized to Illumina HT-12 V3 beadchips (48,803 probes) and scanned on an Illumina Beadstation 500."
+              }
+            ]
+          },
+          "ours": [
+            {
+              "key": "transcription profiling by array assay",
+              "name_in_paper": [
+                "microarray"
+              ],
+              "aliases": [
+                "whole-genome transcriptional profiling",
+                "whole-genome arrays",
+                "blood transcriptional profiling"
+              ],
+              "obi_id": "OBI:0001463",
+              "obi_label": "transcription profiling by array assay",
+              "source": "methods",
+              "evidence": {
+                "section": "Microarray Assay",
+                "sentence_ids": [
+                  "S120"
+                ],
+                "quote": "Amplified RNA was hybridized to Illumina HT-12 V3 beadchips (48,803 probes) and scanned on an Illumina Beadstation 500."
+              },
+              "generate_claim": true
+            }
+          ],
+          "also_on_term": []
+        },
+        {
+          "status": "MATCH",
+          "tier": "obi_exact",
+          "signals": [
+            "same name",
+            "name containment",
+            "shared evidence sentence"
+          ],
+          "reason": "same OBI term",
+          "benchmark": {
+            "key": "Flow Cytometry",
+            "obi_id": "OBI:0000916",
+            "obi_label": "flow cytometry assay",
+            "name_in_paper": "Flow Cytometry",
+            "aliases": [
+              "polychromatic flow cytometry",
+              "multi-parameter flow cytometry",
+              "whole-blood flow cytometry",
+              "flow cytometry pseudocolor dot plots",
+              "LSRII flow cytometer"
+            ],
+            "merged_from": [
+              "Flow Cytometry"
+            ],
+            "generate_claim": true,
+            "quotes": [
+              {
+                "type": "text",
+                "section": "Experimental Procedures",
+                "quote": "We incubated 200 uL of whole blood with pretitrated monoclonal antibodies for 15 min at room temperature followed by lysis of red blood cells (BD FACS Lyse). Samples were processed within 2 hr after blood draw and acquired on a BD Special Order LSRII flow cytometer. Analysis was performed by using FlowJo software (version 8.8.6, TreeStar, Inc.)."
+              }
+            ]
+          },
+          "ours": [
+            {
+              "key": "flow cytometry assay",
+              "name_in_paper": [
+                "Flow Cytometry"
+              ],
+              "aliases": [
+                "whole-blood flow cytometry",
+                "polychromatic flow cytometry",
+                "multi-parameter flow cytometry"
+              ],
+              "obi_id": "OBI:0000916",
+              "obi_label": "flow cytometry assay",
+              "source": "methods",
+              "evidence": {
+                "section": "Flow Cytometry",
+                "sentence_ids": [
+                  "S127"
+                ],
+                "quote": "We incubated 200 uL of whole blood with pretitrated monoclonal antibodies for 15 min at room temperature followed by lysis of red blood cells (BD FACS Lyse)."
+              },
+              "generate_claim": true
+            }
+          ],
+          "also_on_term": []
+        },
+        {
+          "status": "MATCH",
+          "tier": "obi_exact",
+          "signals": [
+            "same name",
+            "name containment",
+            "short name",
+            "quote names the other side",
+            "shared evidence sentence"
+          ],
+          "reason": "same OBI term",
+          "benchmark": {
+            "key": "Hemagglutinin Inhibition Assay",
+            "obi_id": "OBI:0000875",
+            "obi_label": "viral hemagglutination inhibition assay",
+            "name_in_paper": "Hemagglutinin Inhibition Assay",
+            "aliases": [
+              "HAI",
+              "HAI titers",
+              "hemagglutination inhibition",
+              "hemagglutinin inhibition and virus-neutralization assays",
+              "neutralizing antibody titers"
+            ],
+            "merged_from": [
+              "Hemagglutinin Inhibition Assay"
+            ],
+            "generate_claim": true,
+            "quotes": [
+              {
+                "type": "text",
+                "section": "Experimental Procedures",
+                "quote": "Briefly, 2-fold serial dilutions of human sera were mixed and preincubated in 96-well plates for 30 min at room temperature with 8 hemagglutinin units of virus (H1N1 A/Brisbane/59/2007 and H3N2 A/Brisbane/10/2007) per well. Turkey red blood cells were used for detection of neutralizing antibodies against H3N2 A/Brisbane/10/2007, whereas chicken red blood cells were used or detection of neutralizing antibodies against H1N1 A/Brisbane/59/2007. Neutralizing antibody titers were determined as the reciprocal value of the highest dilution that displayed no hemagglutinating activity."
+              }
+            ]
+          },
+          "ours": [
+            {
+              "key": "viral hemagglutination inhibition assay",
+              "name_in_paper": [
+                "Hemagglutinin Inhibition"
+              ],
+              "aliases": [
+                "HAI"
+              ],
+              "obi_id": "OBI:0000875",
+              "obi_label": "viral hemagglutination inhibition assay",
+              "source": "methods",
+              "evidence": {
+                "section": "Hemagglutinin Inhibition and Virus-Neutralization Assays for Quantitating Seasonal Influenza Virus Neutralizing Antibodies",
+                "sentence_ids": [
+                  "S136"
+                ],
+                "quote": "Neutralizing antibody titers were determined as the reciprocal value of the highest dilution that displayed no hemagglutinating activity."
+              },
+              "generate_claim": true
+            }
+          ],
+          "also_on_term": []
+        },
+        {
+          "status": "MATCH",
+          "tier": "obi_exact",
+          "signals": [
+            "same name",
+            "name containment",
+            "quote names the other side",
+            "shared evidence sentence"
+          ],
+          "reason": "same OBI term",
+          "benchmark": {
+            "key": "Virus-Neutralization Assay",
+            "obi_id": "OBI:0000872",
+            "obi_label": "serum neutralization of viral infectivity assay",
+            "name_in_paper": "Virus-Neutralization Assay",
+            "aliases": [
+              "VN",
+              "virus neutralization",
+              "influenza neutralizing antibody titers",
+              "neutralizing antibody titers",
+              "D28/baseline fold change in virus neutralization"
+            ],
+            "merged_from": [
+              "Virus-Neutralization Assay"
+            ],
+            "generate_claim": true,
+            "quotes": [
+              {
+                "type": "text",
+                "section": "Experimental Procedures",
+                "quote": "Virus-neutralization assays were performed by using the same virus strains and as reported earlier (Steel et al., 2009)."
+              }
+            ]
+          },
+          "ours": [
+            {
+              "key": "serum neutralization of viral infectivity assay",
+              "name_in_paper": [
+                "Virus-neutralization assays"
+              ],
+              "aliases": [
+                "VN",
+                "virus neutralization"
+              ],
+              "obi_id": "OBI:0000872",
+              "obi_label": "serum neutralization of viral infectivity assay",
+              "source": "methods",
+              "evidence": {
+                "section": "Hemagglutinin Inhibition and Virus-Neutralization Assays for Quantitating Seasonal Influenza Virus Neutralizing Antibodies",
+                "sentence_ids": [
+                  "S137"
+                ],
+                "quote": "Virus-neutralization assays were performed by using the same virus strains and as reported earlier"
+              },
+              "generate_claim": true
+            }
+          ],
+          "also_on_term": []
+        },
+        {
+          "status": "MISSED",
+          "tier": null,
+          "signals": [],
+          "reason": "no agent entry matches this benchmark assay",
+          "benchmark": {
+            "key": "Commercial immunoassays (pneumococcal polysaccharide antibody)",
+            "obi_id": "OBI:0002773",
+            "obi_label": "single-value binding of antibody with reporter to antigen assay",
+            "name_in_paper": "Commercial immunoassays (pneumococcal polysaccharide antibody)",
+            "aliases": [
+              "antibody response to 14 pneumococcal polysaccharides",
+              "pneumococcal serotypes",
+              "serology",
+              "antibody titers",
+              "seroconversion"
+            ],
+            "merged_from": [
+              "Commercial immunoassays (pneumococcal polysaccharide antibody)"
+            ],
+            "generate_claim": true,
+            "quotes": [
+              {
+                "type": "text",
+                "section": "Experimental Procedures",
+                "quote": "Antibody response to 14 pneumococcal polysaccharides was measured by using commercial immunoassays."
+              }
+            ]
+          },
+          "ours": []
+        },
+        {
+          "status": "MATCH",
+          "tier": "obi_exact",
+          "signals": [
+            "same name",
+            "name containment",
+            "quote names the other side",
+            "shared evidence sentence"
+          ],
+          "reason": "same OBI term",
+          "benchmark": {
+            "key": "Multiplex Cytokine Analysis",
+            "obi_id": "OBI:0000920",
+            "obi_label": "cytometric bead array assay",
+            "name_in_paper": "Multiplex Cytokine Analysis",
+            "aliases": [
+              "Luminex Technology",
+              "Multiplex 42-human cytokine and chemokine panel",
+              "Bio-Plex",
+              "serum cytokine levels",
+              "serum levels of the IFN-inducible chemokine CXCL10 (IP-10)",
+              "multiplex serum protein assays"
+            ],
+            "merged_from": [
+              "Multiplex Cytokine Analysis"
+            ],
+            "generate_claim": true,
+            "quotes": [
+              {
+                "type": "text",
+                "section": "Experimental Procedures",
+                "quote": "Sera were analyzed for cytokine production by using the Multiplex 42-human cytokine and chemokine panel of antibodies conjugated beads and biotin pairs (Cf. Luminex Technology, Millipore) according to the manufacturer's instructions and run on Bio-Plex 200 and Bio-Plex 100 readers (Bio-Rad Laboratories)."
+              }
+            ]
+          },
+          "ours": [
+            {
+              "key": "cytometric bead array assay",
+              "name_in_paper": [
+                "Multiplex Cytokine Analysis"
+              ],
+              "aliases": [
+                "Luminex"
+              ],
+              "obi_id": "OBI:0000920",
+              "obi_label": "cytometric bead array assay",
+              "source": "methods",
+              "evidence": {
+                "section": "Multiplex Cytokine Analysis",
+                "sentence_ids": [
+                  "S139"
+                ],
+                "quote": "Sera were analyzed for cytokine production by using the Multiplex 42-human cytokine and chemokine panel of antibodies conjugated beads and biotin pairs"
+              },
+              "generate_claim": true
+            }
+          ],
+          "also_on_term": []
+        },
+        {
+          "status": "EXTRA",
+          "tier": null,
+          "signals": [],
+          "reason": "agent found it in the paper; the benchmark does not list it",
+          "benchmark": null,
+          "ours": [
+            {
+              "key": "bodily fluid cell count assay",
+              "name_in_paper": [
+                "CBC"
+              ],
+              "aliases": [],
+              "obi_id": "OBI:2100345",
+              "obi_label": "bodily fluid cell count assay",
+              "source": "methods",
+              "evidence": {
+                "section": "Study Subjects and Study Design",
+                "sentence_ids": [
+                  "S115"
+                ],
+                "quote": "acid citrate dextrose tubes (ACD, BD Vacutainer) for whole-blood flow cytometry, CBC, and serum analysis of neutralizing antibodies"
+              },
+              "generate_claim": null
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

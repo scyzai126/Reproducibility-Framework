@@ -1,1 +1,0 @@
-CREATE INDEX idx_expsample_2_biosample on expsample_2_biosample(biosample_accession,expsample_accession)

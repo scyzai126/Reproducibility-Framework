@@ -8,7 +8,7 @@ it. No API call.
 Usage:
     python3 scripts/assay_usage_report.py                   # one line per month
     python3 scripts/assay_usage_report.py --month 2026-11   # that month's rows, one per run
-    python3 scripts/assay_usage_report.py --backfill data/31paper_assays/assay_result_v4
+    python3 scripts/assay_usage_report.py --backfill data/benchmark_agent_assays/assay_result_v4
         # add rows for registries whose assays_raw.json carries usage but are not in the
         # ledger yet (runs made before the ledger existed), dated by the raw file's mtime
 """

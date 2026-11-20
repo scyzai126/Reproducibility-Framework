@@ -18,7 +18,7 @@ scored by the same code, in both scorer modes. The strict numbers are the ones t
 
 | arm | what it is | model calls / paper | status |
 |---|---|---|---|
-| agent | `scripts/run_assay_pipeline.py`, rounds 1-6, `data/31paper_assays/assay_result_v3` | ~17 | scored |
+| agent | `scripts/run_assay_pipeline.py`, rounds 1-6, `data/benchmark_agent_assays/assay_result_v3` | ~17 | scored |
 | bare LLM ×3 | one gpt-5.4 call, no vocabulary; ids as given, or its labels read for it | 1 | scored (2026-10-27) |
 | dictionary | OBI labels + synonyms string-matched, longest match first; 701 pruned or 1794 full terms; whole paper or Methods | 0 | scored |
 | agent, old fold | the delivered v3 registries with the superseded same-term fold | — | scored |

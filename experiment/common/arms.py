@@ -8,7 +8,7 @@ LLM call, a dictionary, an annotator. Each arm writes, per paper, the two files
 in both the default and the `--strict` mode (`docs/assay_scorer_strict_mode.md`).
 
 Nothing here calls a model or writes under `data/`. No file under `experiment/` is a way to run a
-paper (CLAUDE.md); the agent's own registries are read from `data/31paper_assays/assay_result_v3/`.
+paper (CLAUDE.md); the agent's own registries are read from `data/benchmark_agent_assays/assay_result_v3/`.
 
 Layout an arm keeps, so the helpers find its files:
 
@@ -34,8 +34,8 @@ for _p in (REPO_ROOT / "apps" / "api", REPO_ROOT / "scripts"):
 from compare_assay_benchmark import normalize  # noqa: E402
 from prune_obi_domain import read_terms  # noqa: E402
 
-SOURCE_DIR = REPO_ROOT / "data" / "31paper_assays" / "assay_result_v3"
-BENCHMARK_DIR = REPO_ROOT / "data" / "benchmark_assay" / "benchmark_assay_v5"
+SOURCE_DIR = REPO_ROOT / "data" / "benchmark_agent_assays" / "assay_result_v3"
+BENCHMARK_DIR = REPO_ROOT / "data" / "benchmark_curator_assay" / "benchmark_assay_v5"
 #: The agent's own scoring, both modes, as `compare_assay_benchmark_v2.py --registry-dir` wrote it.
 AGENT_REPORTS = {"": SOURCE_DIR / "comparison" / "benchmark_vs_agent.json",
                  "_strict": SOURCE_DIR / "comparison" / "benchmark_vs_agent_strict.json"}

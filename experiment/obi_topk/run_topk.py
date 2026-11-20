@@ -38,8 +38,8 @@ REPO_ROOT = HERE.parents[1]
 for p in (REPO_ROOT / "apps" / "api", REPO_ROOT / "scripts", REPO_ROOT / "experiment" / "obi_vocab_v3"):
     sys.path.insert(0, str(p))
 
-SOURCE_DIR = REPO_ROOT / "data" / "31paper_assays" / "assay_result_v3"
-BENCHMARK_DIR = REPO_ROOT / "data" / "benchmark_assay" / "benchmark_assay_v5"
+SOURCE_DIR = REPO_ROOT / "data" / "benchmark_agent_assays" / "assay_result_v3"
+BENCHMARK_DIR = REPO_ROOT / "data" / "benchmark_curator_assay" / "benchmark_assay_v5"
 INDEX = REPO_ROOT / "data" / "OBI" / "obi_assay_pruned_index.json"
 CACHE_PATH = HERE / "query_embeddings.json"
 RECALL_DIR = HERE / "recall"

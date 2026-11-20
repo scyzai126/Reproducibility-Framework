@@ -26,7 +26,7 @@ lines CLAUDE.md says to report, never summarise -- is printed whole by the main 
 paper finishes, under its own banner, and kept in "HIPC result/logs/<pmid>.log".
 
 **Benchmark papers are copied, not re-run.** A paper with a finished XML-based registry under
-data/31paper_assays/<--reuse-benchmark> (assay_result_v3 by default) is copied into the result
+data/benchmark_agent_assays/<--reuse-benchmark> (assay_result_v3 by default) is copied into the result
 folder; the XML on the drive is a copy of the one that registry cites, so its quotes still
 match. --no-reuse-benchmark runs them like any other paper.
 
@@ -75,7 +75,7 @@ def point_pipeline_at(papers_dir: Path, result_dir: Path) -> None:
 
     Both registry roots, not one: registry_dir checks REGISTRY_ROOT (the benchmark version
     folder by default) before CACHE_ROOT, so leaving it alone would send a benchmark paper's
-    run into data/31paper_assays and overwrite the registry there. PDF_ROOT points at a folder
+    run into data/benchmark_agent_assays and overwrite the registry there. PDF_ROOT points at a folder
     that does not exist, which turns the PDF fallback off: this corpus is XML.
     """
     assay_service.XML_ROOT = papers_dir / immport_corpus.XML_DIR_NAME
@@ -362,7 +362,7 @@ def main(argv: list[str] | None = None) -> int:
                            metavar="S", help="a paper still running after S seconds is failed")
             p.add_argument("--reuse-benchmark", default=DEFAULT_BENCHMARK_VERSION,
                            metavar="VERSION",
-                           help="copy finished registries from data/31paper_assays/VERSION")
+                           help="copy finished registries from data/benchmark_agent_assays/VERSION")
             p.add_argument("--no-reuse-benchmark", action="store_true")
         else:
             p.add_argument("--failed", action="store_true", help="list failed papers")

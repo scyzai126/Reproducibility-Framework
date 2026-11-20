@@ -270,7 +270,7 @@ def repick_can_help(mapping: dict[str, Any], terms_path: Path = _OBI_TERMS_PATH)
 
 # ── the experiment ───────────────────────────────────────────────────────────────
 
-SOURCE = _REPO / "data" / "31paper_assays" / "assay_result_v3"
+SOURCE = _REPO / "data" / "benchmark_agent_assays" / "assay_result_v3"
 RUNS = Path(__file__).resolve().parent / "runs"
 
 

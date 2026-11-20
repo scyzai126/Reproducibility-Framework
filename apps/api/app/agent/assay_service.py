@@ -12,7 +12,7 @@ chain is the same code on the same files. Entries from a PDF carry `sentence_ids
 check searches the whole document and neither field can be derived.
 
 **Every request runs all five rounds.** Results are written to disk under
-data/31paper_assays, and the files are the same ones scripts/run_assay_pipeline.py writes
+data/benchmark_agent_assays, and the files are the same ones scripts/run_assay_pipeline.py writes
 and scripts/run_assay_merge.py reads — but a stored one is never served back. A request costs EXTRACTIONS + N + F + O calls every time.
 
 Reuse used to be the default, and it was removed rather than narrowed. Round 1's cache could
@@ -95,7 +95,7 @@ XML_ROOT = _REPO_ROOT / "data" / "JAT_XML"
 #: Searched only when a paper has no JATS XML. Both roots are module-level and re-read at call
 #: time so tests can monkeypatch either.
 PDF_ROOT = _REPO_ROOT / "data" / "pdf"
-#: `data/31paper_assays/<RESULT_VERSION>`: the benchmark papers' registries. The version lives in
+#: `data/benchmark_agent_assays/<RESULT_VERSION>`: the benchmark papers' registries. The version lives in
 #: assay_registry so claim resolution and this chain read the same folder; CORPUS_ROOT is the
 #: unversioned parent, where the ImmPort cache sits.
 REGISTRY_ROOT = CORPUS_ROOT / RESULT_VERSION

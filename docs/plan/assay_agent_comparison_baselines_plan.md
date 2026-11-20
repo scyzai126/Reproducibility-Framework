@@ -61,7 +61,7 @@ Change: add `--strict` to the comparator.
 - `overall_totals` gains the new counters; the HTML gets a mode banner.
 - Tests in `apps/api/tests/test_compare_assay_benchmark_v2.py` (new): one synthetic paper per
   leniency showing the two modes differ exactly there.
-- Rescore `data/31paper_assays/assay_result_v3/` in both modes; also confirm the scored v3 registries
+- Rescore `data/benchmark_agent_assays/assay_result_v3/` in both modes; also confirm the scored v3 registries
   carry no hand-set `manual_review` mapping (the v1 SDY1293 one must not be in v3).
 - Write `docs/assay_scorer_strict_mode.md` with the agent's default-vs-strict numbers.
 

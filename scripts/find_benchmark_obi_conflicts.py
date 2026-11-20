@@ -5,8 +5,8 @@ This reads the benchmark files only -- no registry, no LLM. Two checks:
 1. Same `name_in_paper` (normalized) -> more than one OBI term across the benchmark files.
 2. An id/label pair that disagrees with `data/OBI/obi.obo` (the id names a different term).
 
-Reads  : data/benchmark_assay/*.json, data/OBI/obi.obo
-Writes : data/benchmark_assay/comparison/benchmark_same_name_different_obi.{csv,md}
+Reads  : data/benchmark_curator_assay/*.json, data/OBI/obi.obo
+Writes : data/benchmark_curator_assay/comparison/benchmark_same_name_different_obi.{csv,md}
 """
 
 from __future__ import annotations
@@ -18,8 +18,8 @@ from collections import defaultdict
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-BENCHMARK_DIR = REPO_ROOT / "data" / "benchmark_assay" / "benchmark_assay_v5"
-REGISTRY_DIR = REPO_ROOT / "data" / "31paper_assays" / "assay_result_v1"
+BENCHMARK_DIR = REPO_ROOT / "data" / "benchmark_curator_assay" / "benchmark_assay_v5"
+REGISTRY_DIR = REPO_ROOT / "data" / "benchmark_agent_assays" / "assay_result_v1"
 OBO_PATH = REPO_ROOT / "data" / "OBI" / "obi.obo"
 OUT_DIR = BENCHMARK_DIR.parent / "comparison"
 OUT_STEM = "benchmark_same_name_different_obi"

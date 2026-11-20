@@ -1,6 +1,6 @@
 # NCBO BioPortal Annotator (OBI) vs the assay agent, against benchmark v5
 
-Agent: `data/31paper_assays/assay_result_v3`. Annotator variants: `<vocab>_<scope>`.
+Agent: `data/benchmark_agent_assays/assay_result_v3`. Annotator variants: `<vocab>_<scope>`.
 
 ## Scorer mode: default
 

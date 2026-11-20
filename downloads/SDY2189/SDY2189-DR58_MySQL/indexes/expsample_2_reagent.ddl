@@ -1,1 +1,0 @@
-CREATE INDEX idx_expsample_2_reagent on expsample_2_reagent(reagent_accession,expsample_accession);

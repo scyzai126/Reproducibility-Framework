@@ -37,7 +37,7 @@ _FILTER_FIELDS = {"disease", "disease_stage", "cohort", "assay_method",
                   "tissue_type", "gender", "age", "time_point", "study_design"}
 
 #: Curated results for the benchmark papers. Read-only: nothing the pipeline runs writes here.
-_DISK_CACHE_DIR = Path(__file__).resolve().parents[4] / "data" / "benchmark_claims" / "paper_claims"
+_DISK_CACHE_DIR = Path(__file__).resolve().parents[4] / "data" / "benchmark_agent_claims" / "paper_claims"
 #: Where every other paper's results go after a run, as `<pubmed_id>/{claims,groups}.json`,
 #: so the next request for that paper is served from disk instead of paying for the run again.
 _CLAIMS_CACHE_DIR = Path(__file__).resolve().parents[4] / "data" / "cache" / "claims"

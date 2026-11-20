@@ -15,7 +15,7 @@ obi_confidence -- so the route, its stats and the ImmPort sweep read the table u
 `study` is `<pmid>_<SDY>` with the `_pdf` marker dropped, the spelling
 `assay_immport.study_accession_of` parses.
 
-Each row also carries the curator's matching assay from `data/benchmark_assay/`, paired by
+Each row also carries the curator's matching assay from `data/benchmark_curator_assay/`, paired by
 `compare_assay_benchmark.py` -- the same pairing the benchmark report scores, so the table and the
 report cannot disagree: `benchmark_assay` (the curator's name for it), `benchmark_obi_label` and
 `benchmark_obi_id`, " / "-joined where several curator assays pair with one of ours, null where
@@ -37,7 +37,7 @@ Rerun it after a paper is added or re-run; the table is derived and never hand-e
 Usage:
     python3 scripts/build_assay_table.py [--dry-run]
 
-Reads  : <REGISTRY_ROOT>/*/assays_OBI.json, data/benchmark_assay/*.json (via compare_assay_benchmark.py)
+Reads  : <REGISTRY_ROOT>/*/assays_OBI.json, data/benchmark_curator_assay/*.json (via compare_assay_benchmark.py)
 Writes : <REGISTRY_ROOT>/all_assays_OBI.json
 """
 

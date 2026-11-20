@@ -1,0 +1,104 @@
+{
+  "pmid": "D31",
+  "study": "32859762",
+  "title": "A pathogenic and clonally expanded B cell transcriptome in active multiple sclerosis",
+  "source_format": "xml",
+  "llm_called": true,
+  "llm_model": "gpt-5.4",
+  "da_accessions": [
+    "PRJNA549712",
+    "GSE133028"
+  ],
+  "data_availability_statement": "The datasets generated and/or analyzed during the current study are available in the Gene Expression Omnibus (GEO) repository under BioProject PRJNA549712 (GEO accession no. GSE133028 ). Additionally, gene count data for the bulk RNA-Seq cohort analyzed during this study are included in this article as part of Dataset S5 .",
+  "data_availability_source": "section",
+  "deposited": [
+    {
+      "accession": "github.com/UCSF-Wilson-Lab/SingleCellVDJdecontamination",
+      "repository": "GitHub",
+      "url": "https://github.com/UCSF-Wilson-Lab/SingleCellVDJdecontamination",
+      "kind": "code",
+      "llm": {
+        "is_accession": true,
+        "repository": "GitHub",
+        "role": "this_study",
+        "in_da_statement": false,
+        "reason": "Methods say the custom barcode-hopping filtering code is 'available at https://github.com/UCSF-Wilson-Lab/SingleCellVDJdecontamination'."
+      },
+      "decided_by": "llm",
+      "reason": "Methods say the custom barcode-hopping filtering code is 'available at https://github.com/UCSF-Wilson-Lab/SingleCellVDJdecontamination'.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "Quality control for barcode hopping.",
+          "quote": "If no sample accounted for at least 80% of the overlapping reads, the reads were removed and excluded from further analysis from both samples (code available at https://github.com/UCSF-Wilson-Lab/SingleCellVDJdecontamination ).",
+          "context": "Using a custom pipeline, overlapping reads present in more than one sample that shared the same cell barcode and unique molecular identifier (UMI) were counted and filtered using a single sample read assignment threshold percentage of 80% as previously described ( 18 ). If no sample accounted for at least 80% of the overlapping reads, the reads were removed and excluded from further analysis from both samples (code available at https://github.com/UCSF-Wilson-Lab/SingleCellVDJdecontamination ).",
+          "in_da": false
+        }
+      ]
+    },
+    {
+      "accession": "PRJNA549712",
+      "repository": "BioProject",
+      "url": "https://www.ncbi.nlm.nih.gov/bioproject/PRJNA549712",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "BioProject",
+        "role": "this_study",
+        "in_da_statement": true,
+        "reason": "The Data Availability section states the datasets generated and/or analyzed in this study are available under BioProject PRJNA549712."
+      },
+      "decided_by": "llm",
+      "reason": "The Data Availability section states the datasets generated and/or analyzed in this study are available under BioProject PRJNA549712.",
+      "found_by": "text",
+      "in_da_section": true,
+      "da_source": "section",
+      "llm_in_da": true,
+      "evidence": [
+        {
+          "section": "Data Availability.",
+          "quote": "The datasets generated and/or analyzed during the current study are available in the Gene Expression Omnibus (GEO) repository under BioProject PRJNA549712 (GEO accession no. GSE133028 ).",
+          "context": "The datasets generated and/or analyzed during the current study are available in the Gene Expression Omnibus (GEO) repository under BioProject PRJNA549712 (GEO accession no. GSE133028 ). Additionally, gene count data for the bulk RNA-Seq cohort analyzed during this study are included in this article as part of Dataset S5 .",
+          "in_da": true
+        }
+      ]
+    },
+    {
+      "accession": "GSE133028",
+      "repository": "GEO",
+      "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE133028",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "GEO",
+        "role": "this_study",
+        "in_da_statement": true,
+        "reason": "The Data Availability section states the datasets generated and/or analyzed in this study are available in GEO as accession GSE133028."
+      },
+      "decided_by": "llm",
+      "reason": "The Data Availability section states the datasets generated and/or analyzed in this study are available in GEO as accession GSE133028.",
+      "found_by": "text",
+      "in_da_section": true,
+      "da_source": "section",
+      "llm_in_da": true,
+      "evidence": [
+        {
+          "section": "Data Availability.",
+          "quote": "The datasets generated and/or analyzed during the current study are available in the Gene Expression Omnibus (GEO) repository under BioProject PRJNA549712 (GEO accession no. GSE133028 ).",
+          "context": "The datasets generated and/or analyzed during the current study are available in the Gene Expression Omnibus (GEO) repository under BioProject PRJNA549712 (GEO accession no. GSE133028 ). Additionally, gene count data for the bulk RNA-Seq cohort analyzed during this study are included in this article as part of Dataset S5 .",
+          "in_da": true
+        }
+      ]
+    }
+  ],
+  "reused": [],
+  "referenced": [],
+  "registration": [],
+  "unclear": [],
+  "reviews": [],
+  "dropped": [],
+  "warnings": []
+}

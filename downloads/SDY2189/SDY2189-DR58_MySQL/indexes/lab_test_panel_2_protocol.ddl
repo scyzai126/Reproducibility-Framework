@@ -1,2 +1,0 @@
-CREATE INDEX idx_lab_test_2_protocol on lab_test_panel_2_protocol(protocol_accession,lab_test_panel_accession);
-

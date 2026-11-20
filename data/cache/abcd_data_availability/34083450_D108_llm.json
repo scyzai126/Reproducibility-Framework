@@ -1,0 +1,111 @@
+{
+  "pmid": "D108",
+  "study": "34083450",
+  "title": "Heterogeneity of meningeal B cells reveals a lymphopoietic niche at the CNS borders",
+  "source_format": "xml",
+  "llm_called": true,
+  "llm_model": "gpt-5.4",
+  "da_accessions": [
+    "GSE173144"
+  ],
+  "data_availability_statement": "Data and materials availability: scRNA-seq and scBCR-seq data available from NCBI GEO with accession number GSE173144 . All other data and materials are available in the paper and supplementary materials.",
+  "data_availability_source": "inline_label",
+  "deposited": [
+    {
+      "accession": "GSE173144",
+      "repository": "GEO",
+      "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE173144",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "GEO",
+        "role": "this_study",
+        "in_da_statement": true,
+        "reason": "The data availability statement says \"scRNA-seq and scBCR-seq data available from NCBI GEO with accession number GSE173144.\""
+      },
+      "decided_by": "llm",
+      "reason": "The data availability statement says \"scRNA-seq and scBCR-seq data available from NCBI GEO with accession number GSE173144.\"",
+      "found_by": "text",
+      "in_da_section": true,
+      "da_source": "inline_label",
+      "llm_in_da": true,
+      "evidence": [
+        {
+          "section": "fn-group",
+          "quote": "Data and materials availability: scRNA-seq and scBCR-seq data available from NCBI GEO with accession number GSE173144 .",
+          "context": "Data and materials availability: scRNA-seq and scBCR-seq data available from NCBI GEO with accession number GSE173144 . All other data and materials are available in the paper and supplementary materials.",
+          "in_da": true
+        }
+      ]
+    }
+  ],
+  "reused": [
+    {
+      "accession": "GSE98969",
+      "repository": "GEO",
+      "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE98969",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "GEO",
+        "role": "public_data",
+        "in_da_statement": false,
+        "reason": "The paper says \"We re-clustered these transcriptomic data (GSE98969)\" and calls it a deposited scRNA-seq dataset, indicating reuse of another study's data."
+      },
+      "decided_by": "llm",
+      "reason": "The paper says \"We re-clustered these transcriptomic data (GSE98969)\" and calls it a deposited scRNA-seq dataset, indicating reuse of another study's data.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "Meningeal B cells are phenotypically similar to bone marrow B cells",
+          "quote": "We re-clustered these transcriptomic data ( GSE98969 ) and identified B cells based on the high levels of Ig transcripts ( Fig. 2A ).",
+          "context": "A previous scRNA-seq study on mouse brain immune cells identified two distinct B cell subsets, labeled as “mature” and “immature” ( 7 ). We re-clustered these transcriptomic data ( GSE98969 ) and identified B cells based on the high levels of Ig transcripts ( Fig. 2A ). This population uniformly expressed pan-B cell signature genes ( Cd79b and Cd19 ).",
+          "in_da": false
+        },
+        {
+          "section": "article",
+          "quote": "(A) Uniform manifold approximation and projection (UMAP) of CD45 + brain cells from a deposited scRNA-seq dataset ( GSE98969 ).",
+          "context": "(A) Uniform manifold approximation and projection (UMAP) of CD45 + brain cells from a deposited scRNA-seq dataset ( GSE98969 ). Normalized expression for Ighm, Igkc and Iglc2 was color-coded for transcript counts.",
+          "in_da": false
+        }
+      ]
+    }
+  ],
+  "referenced": [
+    {
+      "accession": "github.com/constantAmateur/SoupX",
+      "repository": "GitHub",
+      "url": "https://github.com/constantAmateur/SoupX",
+      "kind": "code",
+      "llm": {
+        "is_accession": true,
+        "repository": "GitHub",
+        "role": "reference",
+        "in_da_statement": false,
+        "reason": "It is cited as the third-party SoupX software repository used for ambient RNA correction, not as this study's deposited code."
+      },
+      "decided_by": "llm",
+      "reason": "It is cited as the third-party SoupX software repository used for ambient RNA correction, not as this study's deposited code.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "Single-cell RNAseq analysis",
+          "quote": "Contamination by ambient RNA in droplets was normalized using SoupX (v1.4.5) ( https://github.com/constantAmateur/SoupX ).",
+          "context": "Cell Ranger count was used to align samples to the reference genome GRCm38 (2.0.1), quantify reads, and filter reads and barcodes. Contamination by ambient RNA in droplets was normalized using SoupX (v1.4.5) ( https://github.com/constantAmateur/SoupX ). Furthermore, contaminating genes from erythrocytes and platelets (Tubb1, Gp1bb, Gp9, Clu, Nrgn, Ppbp, Pf4, Gng11, Hbb-b1, Hbb-b2, Hba-a1, Hba-a2) were filtered out from the dataset.",
+          "in_da": false
+        }
+      ]
+    }
+  ],
+  "registration": [],
+  "unclear": [],
+  "reviews": [],
+  "dropped": [],
+  "warnings": []
+}

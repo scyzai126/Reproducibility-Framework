@@ -430,7 +430,7 @@ def test_the_dry_run_exits_with_the_scripts_own_wording_for_a_missing_paper(pape
 
 
 def test_result_version_routes_the_run_into_that_folder(paper, pipeline_script, monkeypatch, tmp_path):
-    """--result-version writes under data/31paper_assays/<NAME>/ without touching the configured
+    """--result-version writes under data/benchmark_agent_assays/<NAME>/ without touching the configured
     version: the folder is created so registry_dir keeps the paper there rather than in the cache."""
     corpus = tmp_path / "corpus"
     monkeypatch.setattr(assay_service, "CORPUS_ROOT", corpus)

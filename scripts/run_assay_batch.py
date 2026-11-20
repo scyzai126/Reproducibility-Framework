@@ -25,7 +25,7 @@ resume (or finished without re-paying by run_assay_merge.py --map). Pass --force
 regardless -- which is what you want after editing a prompt, since the pipeline itself never
 reuses anything.
 
-`--result-version NAME` writes every paper under `data/31paper_assays/NAME/` instead of the
+`--result-version NAME` writes every paper under `data/benchmark_agent_assays/NAME/` instead of the
 configured result folder (each paper's folder is created there first), the way the single-paper
 CLI's flag of the same name does -- for a fresh pass of the corpus beside the last one.
 
@@ -209,7 +209,7 @@ if __name__ == "__main__":
     parser.add_argument("--dry-run", action="store_true",
                         help="report the projected call count; makes no API call")
     parser.add_argument("--result-version", metavar="NAME", default="",
-                        help="write under data/31paper_assays/NAME/ instead of the configured "
+                        help="write under data/benchmark_agent_assays/NAME/ instead of the configured "
                              "result folder (e.g. assay_result_v3); folders are created")
     args = parser.parse_args()
     asyncio.run(main(args.xml_dir, args.only, args.force, args.dry_run, args.result_version))

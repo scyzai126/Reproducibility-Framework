@@ -1,0 +1,216 @@
+{
+  "mass cytometry": {
+    "name_in_paper": "mass cytometry",
+    "standard_technique_name": "mass cytometry",
+    "aliases": [
+      "phospho-CyTOF",
+      "CyTOF"
+    ],
+    "sample_type": "peripheral blood mononuclear cells",
+    "readouts": "immune cell subset frequencies; expression of 22 cell surface markers and 12 intracellular markers (kinases, phospho-specific signaling epitopes, H3K27ac), e.g. pS6, IκBα, HLA-DR",
+    "generate_claim": true,
+    "source": "results",
+    "evidence": {
+      "section": "Analysis of peripheral blood leukocytes from COVID-19 patients by mass cytometry",
+      "sentence_ids": [
+        "S10"
+      ],
+      "quote": "We used mass cytometry to assess immune responses to SARS-CoV-2 infection in 52 COVID-19 patients"
+    }
+  },
+  "intracellular staining assay": {
+    "name_in_paper": "intracellular staining assay",
+    "standard_technique_name": "flow cytometry",
+    "aliases": [
+      "Flow cytometry analysis of ex vivo stimulated human peripheral blood leukocytes",
+      "In vitro stimulation",
+      "flow cytometry"
+    ],
+    "sample_type": "peripheral blood mononuclear cells",
+    "readouts": "fraction of pDCs, mDCs and monocytes producing IFN-α, TNF-α or IL-6 after stimulation with TLR ligand cocktails; NF-κβ p65 (Ser529) phosphorylation staining; read by flow cytometry",
+    "generate_claim": true,
+    "source": "results",
+    "evidence": {
+      "section": "COVID-19 results in functional impairment of blood myeloid cells and pDCs",
+      "sentence_ids": [
+        "S44"
+      ],
+      "quote": "we performed an intracellular staining assay to detect cytokine responses"
+    }
+  },
+  "flow cytometry": {
+    "name_in_paper": "flow cytometry",
+    "standard_technique_name": "flow cytometry",
+    "aliases": [
+      "Flow cytometry analysis of PBMCs"
+    ],
+    "sample_type": "peripheral blood mononuclear cells",
+    "readouts": "median fluorescence intensity of HLA-DR expression",
+    "generate_claim": true,
+    "source": "results",
+    "evidence": {
+      "section": "Fig. 5",
+      "sentence_ids": [
+        "S229"
+      ],
+      "quote": "Flow cytometry analysis of PBMCs analyzed in parallel to the CITE-seq experiment."
+    }
+  },
+  "Olink multiplex inflammation panel": {
+    "name_in_paper": "Olink multiplex inflammation panel",
+    "standard_technique_name": "proximity extension assay",
+    "aliases": [
+      "Olink",
+      "multiplex Olink analysis",
+      "Olink proteomics",
+      "multiplex analysis by Olink"
+    ],
+    "sample_type": "plasma",
+    "readouts": "normalized protein expression values for 92 cytokines and chemokines",
+    "generate_claim": true,
+    "source": "results",
+    "evidence": {
+      "section": "Enhanced concentrations of cytokines and inflammatory mediators in plasma from COVID-19 patients",
+      "sentence_ids": [
+        "S58"
+      ],
+      "quote": "we evaluated cytokines and chemokines in plasma samples from the Atlanta cohort using the Olink multiplex inflammation panel that measures 92 different cytokines and chemokines"
+    }
+  },
+  "CITE-seq (gene expression)": {
+    "name_in_paper": "CITE-seq (gene expression)",
+    "standard_technique_name": "single-cell RNA sequencing",
+    "aliases": [
+      "CITE-seq",
+      "cellular indexing of transcriptomes and epitopes by sequencing",
+      "Single-cell transcriptomics",
+      "droplet-based single-cell gene expression profiling"
+    ],
+    "sample_type": "peripheral blood mononuclear cells (cryopreserved, enriched for dendritic cells)",
+    "readouts": "single-cell transcriptomes; gene expression per cell (e.g. interferon-stimulated genes, interferon genes, S100A12, antigen presentation genes)",
+    "generate_claim": true,
+    "source": "results",
+    "evidence": {
+      "section": "Single-cell transcriptional response to COVID-19 infection",
+      "sentence_ids": [
+        "S75"
+      ],
+      "quote": "we used cellular indexing of transcriptomes and epitopes by sequencing (CITE-seq) and profiled the gene and protein expression in PBMC samples of COVID-19–infected individuals"
+    }
+  },
+  "CITE-seq (protein expression)": {
+    "name_in_paper": "CITE-seq (protein expression)",
+    "standard_technique_name": "cellular indexing of transcriptomes and epitopes by sequencing",
+    "aliases": [
+      "CITE-seq",
+      "cellular indexing of transcriptomes and epitopes by sequencing"
+    ],
+    "sample_type": "peripheral blood mononuclear cells (cryopreserved, enriched for dendritic cells)",
+    "readouts": "abundance of 36 DNA-labeled antibodies per cell (surface protein expression)",
+    "generate_claim": null,
+    "source": "results",
+    "evidence": {
+      "section": "Single-cell transcriptional response to COVID-19 infection",
+      "sentence_ids": [
+        "S75"
+      ],
+      "quote": "we used cellular indexing of transcriptomes and epitopes by sequencing (CITE-seq) and profiled the gene and protein expression in PBMC samples of COVID-19–infected individuals"
+    }
+  },
+  "bulk RNA sequencing": {
+    "name_in_paper": "bulk RNA sequencing",
+    "standard_technique_name": "bulk RNA sequencing",
+    "aliases": [
+      "RNA-seq",
+      "bulk RNA-seq",
+      "bulk PBMC transcriptomics",
+      "bulk transcriptomics"
+    ],
+    "sample_type": "peripheral blood mononuclear cells",
+    "readouts": "gene expression levels (interferon-stimulated gene signature, cytokine genes)",
+    "generate_claim": true,
+    "source": "results",
+    "evidence": {
+      "section": "Single-cell transcriptional response to COVID-19 infection",
+      "sentence_ids": [
+        "S116"
+      ],
+      "quote": "we performed bulk RNA sequencing (RNA-seq) analysis of PBMCs in an extended group of subjects (17 COVID-19 patients and 17 healthy controls) from the same cohort"
+    }
+  },
+  "PCR quantitation of bacterial 16 S ribosomal RNA (rRNA) gene product": {
+    "name_in_paper": "PCR quantitation of bacterial 16 S ribosomal RNA (rRNA) gene product",
+    "standard_technique_name": "real time polymerase chain reaction",
+    "aliases": [
+      "qPCR",
+      "quantitative PCR"
+    ],
+    "sample_type": "plasma",
+    "readouts": "bacterial DNA levels (16S rRNA gene)",
+    "generate_claim": true,
+    "source": "results",
+    "evidence": {
+      "section": "Severe COVID-19 infection is associated with the systemic release of bacterial products",
+      "sentence_ids": [
+        "S168"
+      ],
+      "quote": "as measured by PCR quantitation of bacterial 16 S ribosomal RNA (rRNA) gene product"
+    }
+  },
+  "TLR4-based reporter assay": {
+    "name_in_paper": "TLR4-based reporter assay",
+    "standard_technique_name": "reporter gene assay",
+    "aliases": [],
+    "sample_type": "plasma",
+    "readouts": "lipopolysaccharide (LPS) levels",
+    "generate_claim": true,
+    "source": "results",
+    "evidence": {
+      "section": "Severe COVID-19 infection is associated with the systemic release of bacterial products",
+      "sentence_ids": [
+        "S168"
+      ],
+      "quote": "and of LPS, as measured by a TLR4-based reporter assay"
+    }
+  },
+  "ELISA": {
+    "name_in_paper": "ELISA",
+    "standard_technique_name": "enzyme-linked immunosorbent assay",
+    "aliases": [
+      "enzyme-linked immunosorbent assay",
+      "enzyme-linked immunosorbent assay (ELISA)"
+    ],
+    "sample_type": "plasma",
+    "readouts": "concentrations of TNFSF14, EN-RAGE and oncostatin M",
+    "generate_claim": true,
+    "source": "results",
+    "evidence": {
+      "section": "Enhanced concentrations of cytokines and inflammatory mediators in plasma from COVID-19 patients",
+      "sentence_ids": [
+        "S69"
+      ],
+      "quote": "we used an enzyme-linked immunosorbent assay (ELISA) to independently validate these results"
+    }
+  },
+  "SIMoA": {
+    "name_in_paper": "SIMoA",
+    "standard_technique_name": "single molecule array",
+    "aliases": [
+      "single molecule array",
+      "SIMoA technology",
+      "highly sensitive ELISA enabled by single molecule array (SIMoA) technology",
+      "ELISA enabled by single molecule array (SIMoA) technology"
+    ],
+    "sample_type": "plasma",
+    "readouts": "IFN-α concentration (femtograms per milliliter)",
+    "generate_claim": true,
+    "source": "results",
+    "evidence": {
+      "section": "Single-cell transcriptional response to COVID-19 infection",
+      "sentence_ids": [
+        "S110"
+      ],
+      "quote": "We thus measured the concentration of IFN-α in plasma using a highly sensitive ELISA enabled by single molecule array (SIMoA) technology."
+    }
+  }
+}

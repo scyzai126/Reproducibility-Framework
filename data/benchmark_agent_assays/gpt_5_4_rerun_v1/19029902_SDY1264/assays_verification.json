@@ -1,0 +1,628 @@
+{
+  "summary": {
+    "total": 9,
+    "accept": 7,
+    "review": 2,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {
+      "sample_type": {
+        "NOT_SUPPORTED": 1
+      },
+      "aliases[]": {
+        "CONTRADICTED": 1
+      }
+    }
+  },
+  "results": [
+    {
+      "assay_id": "Multiplex analysis",
+      "assay_name": "Multiplex analysis",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Multiplex analysis",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S163"
+          ],
+          "evidence_text": "Multiplex analysis",
+          "reason": "This is the Methods subsection heading for the assay performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "24-plex assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S165"
+          ],
+          "evidence_text": "24-plex assay",
+          "reason": "The text uses this wording for the multiplex cytokine measurement."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "24-plex Luminex assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S8"
+          ],
+          "evidence_text": "24-plex Luminex assay",
+          "reason": "The text explicitly names the assay this way."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "plasma",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S164"
+          ],
+          "evidence_text": "Plasma samples from CPTs were stored at −80 °C before cytokine analysis.",
+          "reason": "This directly states the specimen used for the multiplex cytokine assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "24 cytokine concentrations",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S165",
+            "S167"
+          ],
+          "evidence_text": "Beadlyte Human 22-Plex Multi-Cytokine Detection System with the addition of interferon-α2 and IL-1 receptor-α Beadmates to make a 24-plex assay ... where C d is the cytokine concentration on day d",
+          "reason": "The assay is a 24-plex multi-cytokine assay and the data are cytokine concentrations."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Assays were performed with the Beadlyte Human 22-Plex Multi-Cytokine Detection System with the addition of interferon-α2 and IL-1 receptor-α Beadmates to make a 24-plex assay (Upstate).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S165"
+          ],
+          "evidence_text": "Assays were performed with the Beadlyte Human 22-Plex Multi-Cytokine Detection System with the addition of interferon-α2 and IL-1 receptor-α Beadmates to make a 24-plex assay (Upstate).",
+          "reason": "The quote appears verbatim and states the assay was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S165"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Flow cytometric analysis",
+      "assay_name": "Flow cytometric analysis",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Flow cytometric analysis",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S169"
+          ],
+          "evidence_text": "Flow cytometric analysis.",
+          "reason": "The Methods section explicitly names and describes this assay."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "flow cytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S66",
+            "S235",
+            "S238"
+          ],
+          "evidence_text": "flow cytometry",
+          "reason": "The text uses this wording to refer to the same assay technique."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S170"
+          ],
+          "evidence_text": "PBMCs from all time points for an individual were thawed, stained and acquired in parallel.",
+          "reason": "This sentence explicitly states the specimen used for the flow cytometric analysis."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "percentages of CD86-positive monocytes, myeloid dendritic cells, plasmacytoid dendritic cells, inflammatory monocytes, and percentage of CD38-positive HLA-DR-positive CD8-positive CD3-positive T cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S171",
+            "S172",
+            "S173",
+            "S175"
+          ],
+          "evidence_text": "Monocytes were gated as HLA-DR + CD14 + with the addition of CD16 to delineate the subpopulation of inflammatory monocytes. Myeloid DCs were gated as lineage cocktail HLA-DR + CD11c + , and plasmacytoid DCs were gated as lineage cocktail HLA-DR + CD123 + . CD86 expression was used to indicate the percentage of activated antigen-presenting cells within each population. For T cell activation, after gating on the CD8 + CD3 + T cells, we calculated the percentage of CD38 + HLA-DR + cells.",
+          "reason": "These sentences explicitly describe the measured flow-cytometry readouts."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "PBMCs from all time points for an individual were thawed, stained and acquired in parallel.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S170"
+          ],
+          "evidence_text": "PBMCs from all time points for an individual were thawed, stained and acquired in parallel.",
+          "reason": "The quote appears verbatim and describes the assay being performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S170"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "neutralizing antibodies by CPE",
+      "assay_name": "neutralizing antibodies by CPE",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "neutralizing antibodies by CPE",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S180"
+          ],
+          "evidence_text": "for neutralizing antibodies by CPE",
+          "reason": "The text explicitly describes this CPE-based neutralizing antibody assay as performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "cytopathic effect (CPE)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S179"
+          ],
+          "evidence_text": "cytopathic effect (CPE)",
+          "reason": "This wording names the same assay modality used to measure neutralizing antibodies in trial 1."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "plasma",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S180"
+          ],
+          "evidence_text": "plasma dilutions in triplicate",
+          "reason": "The CPE assay is explicitly performed on plasma dilutions."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "yellow fever virus neutralizing antibody titer defined by the last dilution with an intact Vero cell monolayer and no cytopathic effect",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S179",
+            "S182"
+          ],
+          "evidence_text": "YFV neutralizing antibodies were measured by cytopathic effect (CPE) (trial 1) ... The last dilution that showed an intact monolayer of Vero cells with no CPE was used as the antibody titer.",
+          "reason": "The text explicitly states that the assay measured YFV neutralizing antibody titer using the last dilution without CPE."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "In brief, for neutralizing antibodies by CPE, plasma dilutions in triplicate were incubated with 1,000 plaque-forming units of YFV at 37 °C for 1 h in 96-well flat-bottomed plates.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S180"
+          ],
+          "evidence_text": "In brief, for neutralizing antibodies by CPE, plasma dilutions in triplicate were incubated with 1,000 plaque-forming units of YFV at 37 °C for 1 h in 96-well flat-bottomed plates.",
+          "reason": "The quote appears verbatim and describes the assay procedure performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S180"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "plaque reduction neutralization test",
+      "assay_name": "plaque reduction neutralization test",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "plaque reduction neutralization test",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S179"
+          ],
+          "evidence_text": "by plaque reduction neutralization test (PRNT)",
+          "reason": "The text explicitly states that YFV neutralizing antibodies were measured by plaque reduction neutralization test in trial 2."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "PRNT",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S179",
+            "S183"
+          ],
+          "evidence_text": "plaque reduction neutralization test (PRNT)",
+          "reason": "PRNT is explicitly given as the abbreviation for the same assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "serum",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [
+            "S178",
+            "S183"
+          ],
+          "evidence_text": null,
+          "reason": "The assay section mentions both serum or plasma generally and specifically 'sera' for PRNT, making the proposed single sample type insufficiently established for this assay record."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "yellow fever virus neutralizing antibody titer based on plaque counts",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S179",
+            "S185"
+          ],
+          "evidence_text": "YFV neutralizing antibodies were measured by ... plaque reduction neutralization test (PRNT) ... plaques counted 3–4 d later",
+          "reason": "The text states that PRNT measured YFV neutralizing antibodies and involved counting plaques."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "For the PRNT, various dilutions of the sera were incubated overnight at 4 °C with 200 plaque-forming units of YFV.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S183"
+          ],
+          "evidence_text": "For the PRNT, various dilutions of the sera were incubated overnight at 4 °C with 200 plaque-forming units of YFV.",
+          "reason": "The quote appears verbatim and describes the assay being performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S183"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    },
+    {
+      "assay_id": "microarray",
+      "assay_name": "microarray",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "microarray",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S187",
+            "S191"
+          ],
+          "evidence_text": "RNA isolation and microarray and RT-PCR data generation",
+          "reason": "The Methods heading explicitly identifies microarray as a performed technique in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "transcriptional profiling",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S14"
+          ],
+          "evidence_text": "we performed transcriptional profiling of total peripheral blood mono-nuclear cells (PBMCs)",
+          "reason": "This phrase refers to the same microarray-based measurement performed on study samples."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "total peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S14"
+          ],
+          "evidence_text": "transcriptional profiling of total peripheral blood mono-nuclear cells (PBMCs)",
+          "reason": "The text explicitly states that the microarray profiling was performed on total PBMCs."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "gene expression intensities",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S193"
+          ],
+          "evidence_text": "Affymetrix GCOS software was used to perform image analysis and generate raw intensity data",
+          "reason": "The microarray assay explicitly generated raw intensity data reflecting gene expression measurements."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "After hybridization on Human U133 Plus 2.0 Arrays for 16 h at 45 °C and 60 r.p.m.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S191"
+          ],
+          "evidence_text": "After hybridization on Human U133 Plus 2.0 Arrays for 16 h at 45 °C and 60 r.p.m.",
+          "reason": "The quoted sentence appears verbatim and describes execution of the microarray procedure in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S191"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "RT-PCR",
+      "assay_name": "RT-PCR",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "RT-PCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S197"
+          ],
+          "evidence_text": "Two-step RT-PCR was performed.",
+          "reason": "The text explicitly states that RT-PCR was performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "Two-step RT-PCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S197"
+          ],
+          "evidence_text": "Two-step RT-PCR was performed.",
+          "reason": "This wording refers to the same RT-PCR assay performed here."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "TaqMan Gene Expression Plate Assay",
+          "verdict": "CONTRADICTED",
+          "evidence_sentence_ids": [
+            "S196"
+          ],
+          "evidence_text": "Applied Biosystems constructed a custom TaqMan Gene Expression Plate Assay for 48 genes in their database.",
+          "reason": "This is a product/assay plate used for RT-PCR, not an alias for the RT-PCR technique itself."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "relative gene expression measured by cycling threshold values for selected genes",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S196",
+            "S198"
+          ],
+          "evidence_text": "Applied Biosystems constructed a custom TaqMan Gene Expression Plate Assay for 48 genes in their database. Values obtained by RT-PCR of genes from the custom TaqMan Gene Expression plate (Applied Biosystems) were normalized to the average cycling threshold value",
+          "reason": "The text supports RT-PCR measurement of gene expression using cycling threshold values for selected genes."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Two-step RT-PCR was performed.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S197"
+          ],
+          "evidence_text": "Two-step RT-PCR was performed.",
+          "reason": "The quoted text appears verbatim and shows the assay was performed here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S197"
+      },
+      "conflict_detected": true,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    },
+    {
+      "assay_id": "immunofluorescence",
+      "assay_name": "immunofluorescence",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "immunofluorescence",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S207"
+          ],
+          "evidence_text": "Immunofluorescence, immunoblot analysis and ELISA.",
+          "reason": "The Methods section explicitly names immunofluorescence as a procedure performed."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "Fluorescence microscopy",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S254"
+          ],
+          "evidence_text": "Fluorescence microscopy",
+          "reason": "This wording refers to the same imaging assay used to visualize the immunofluorescence staining."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "baby hamster kidney cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S208"
+          ],
+          "evidence_text": "BHK cells were cultured on cover slips in 24-well plate and stimulated with YF-17D.",
+          "reason": "The immunofluorescence procedure was performed on BHK cells, i.e. baby hamster kidney cells."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "TIAR staining and stress granule formation by fluorescence imaging",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S210",
+            "S254"
+          ],
+          "evidence_text": "Cells were then incubated with anti-TIAR (C-18) (Santa Cruz 1749, 1:50) for 2 h at room temperature.",
+          "reason": "The assay stained TIAR and the figure text states fluorescence microscopy was used to assess stress granule-related TIAR staining."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Immunofluorescence signal was detected using a LSM510 confocal microscope (Zeiss), and images were captured and analyzed using the Zeiss LSM Image Browser.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S213"
+          ],
+          "evidence_text": "Immunofluorescence signal was detected using a LSM510 confocal microscope (Zeiss), and images were captured and analyzed using the Zeiss LSM Image Browser.",
+          "reason": "The quote appears verbatim and describes the assay being performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S213"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "immunoblot analysis",
+      "assay_name": "immunoblot analysis",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "immunoblot analysis",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S207"
+          ],
+          "evidence_text": "Immunofluorescence, immunoblot analysis and ELISA.",
+          "reason": "The Methods section explicitly names immunoblot analysis as a procedure performed in this study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "human total peripheral blood mononuclear cells or baby hamster kidney cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S214"
+          ],
+          "evidence_text": "For immunoblot analysis, human total PBMC or BHK cells were lysed",
+          "reason": "The text explicitly states the samples used for the immunoblot analysis."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "eIF2α phosphorylation and total eIF2α abundance",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S216"
+          ],
+          "evidence_text": "The blot was detected with anti-eIF2α and anti-phospho-eIF2α",
+          "reason": "The antibodies used show the blot measured total eIF2α and phosphorylated eIF2α."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "The blot was detected with anti-eIF2α and anti-phospho-eIF2α (Cell Signaling 9722) and developed with horseradish peroxidase-conjugated secondary antibody (Cell Signaling, 3597).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S216"
+          ],
+          "evidence_text": "The blot was detected with anti-eIF2α and anti-phospho-eIF2α (Cell Signaling 9722) and developed with horseradish peroxidase-conjugated secondary antibody (Cell Signaling, 3597).",
+          "reason": "This exact quote appears verbatim and describes the immunoblot performed here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S216"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "ELISA",
+      "assay_name": "ELISA",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "ELISA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S218"
+          ],
+          "evidence_text": "measured by ELISA",
+          "reason": "The text explicitly states that ELISA was used in this study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "plasma",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S218"
+          ],
+          "evidence_text": "C3a in plasma was measured by ELISA",
+          "reason": "The sentence directly links plasma to the ELISA measurement."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "C3a concentration",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S218"
+          ],
+          "evidence_text": "C3a in plasma was measured by ELISA",
+          "reason": "The ELISA is explicitly described as measuring C3a in plasma."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "C3a in plasma was measured by ELISA (Quidel A015).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S218"
+          ],
+          "evidence_text": "C3a in plasma was measured by ELISA (Quidel A015).",
+          "reason": "The quote appears verbatim and shows the assay was performed here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S218"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

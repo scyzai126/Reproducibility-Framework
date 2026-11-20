@@ -2,7 +2,7 @@
 
 Reviewed the five-round chain as it stands after the BROAD re-pick was removed (commit
 3c1d607): `scripts/run_assay_pipeline.py` → `assay_service._run_rounds`, every module it calls,
-and the hand-offs between rounds. Checked against `data/31paper_assays/assay_result_v3/` by
+and the hand-offs between rounds. Checked against `data/benchmark_agent_assays/assay_result_v3/` by
 re-voting each paper's three stored extraction replies (`assays_raw.json`) rather than by paying
 for a run. The earlier review the same day (`assay_workflow_review_2026-10-30.md`) covered
 scoring and cost; its open items are not repeated here.

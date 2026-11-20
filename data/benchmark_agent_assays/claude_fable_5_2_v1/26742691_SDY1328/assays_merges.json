@@ -1,0 +1,44 @@
+{
+  "summary": {
+    "groups_merged": 0,
+    "entries_folded": 0,
+    "folds_blocked": 2
+  },
+  "results": [],
+  "blocked": [
+    {
+      "member": "Diphtheria ELISA",
+      "kept_apart_from": "enzyme-linked immunosorbent assay",
+      "anchor": "GM1-enzyme-linked immunosorbent assay (ELISA)",
+      "obi_id": "OBI:0000661",
+      "obi_label": "enzyme-linked immunosorbent assay",
+      "reason": "readouts differs: 'anti-Cholera toxin B subunit IgG titre (midpoint of titration curve, normalized to positive control); optical density at 450/620 nm read on a spectrophotometer' vs 'anti-Diphtheria toxin IgG concentrations in IU/ml; optical density at 450/620 nm read on a spectrophotometer'",
+      "judged": {
+        "verdict": "DIFFERENT",
+        "reason": "Record A measures anti-Cholera toxin B subunit IgG (GM1-ELISA, titre) whereas Record B measures anti-Diphtheria toxin IgG (commercial kit, IU/ml) — different analytes despite both being serum ELISAs."
+      }
+    },
+    {
+      "member": "Tetanus ELISA",
+      "kept_apart_from": "enzyme-linked immunosorbent assay",
+      "anchor": "GM1-enzyme-linked immunosorbent assay (ELISA)",
+      "obi_id": "OBI:0000661",
+      "obi_label": "enzyme-linked immunosorbent assay",
+      "reason": "readouts differs: 'anti-Cholera toxin B subunit IgG titre (midpoint of titration curve, normalized to positive control); optical density at 450/620 nm read on a spectrophotometer' vs 'anti-Tetanus toxin IgG concentrations in IU/ml; optical density at 450/620 nm read on a spectrophotometer'",
+      "judged": {
+        "verdict": "DIFFERENT",
+        "reason": "Record A measures anti-Cholera toxin B subunit IgG (GM1-ELISA, titre) whereas Record B measures anti-Tetanus toxin IgG (commercial kit, IU/ml) — different analytes despite both being serum ELISAs."
+      }
+    }
+  ],
+  "key_map": {
+    "GM1-enzyme-linked immunosorbent assay (ELISA)": "enzyme-linked immunosorbent assay",
+    "Diphtheria ELISA": "enzyme-linked immunosorbent assay (2)",
+    "Tetanus ELISA": "enzyme-linked immunosorbent assay (3)",
+    "microarray": "transcription profiling by array assay",
+    "Polychromatic FCM": "flow cytometry assay",
+    "complete blood count": "hematology assay",
+    "Anti-hepatitis B surface antigen (anti-HBsAg) total antibodies quantification": "surface HBV antibody assay",
+    "multiplex ELISA": "cytokine assay"
+  }
+}

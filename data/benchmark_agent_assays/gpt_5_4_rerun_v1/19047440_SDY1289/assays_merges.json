@@ -1,0 +1,45 @@
+{
+  "summary": {
+    "groups_merged": 0,
+    "entries_folded": 0,
+    "folds_blocked": 2
+  },
+  "results": [],
+  "blocked": [
+    {
+      "member": "CD4 + T cell stimulation assay",
+      "kept_apart_from": "flow cytometry assay",
+      "anchor": "Flow cytometric analysis of IFN-γ/IL-2–producing activated CD4 T cells",
+      "obi_id": "OBI:0000916",
+      "obi_label": "flow cytometry assay",
+      "reason": "sample_type differs: 'peripheral blood mononuclear cells' vs 'purified CD4 positive T cells'",
+      "judged": {
+        "verdict": "DIFFERENT",
+        "reason": "Record A measures frequencies of activated cytokine-producing CD4 T cells in PBMCs with an IL-2/IFN-γ/CD154 marker set, whereas Record B measures intracellular IFN-γ, IL-5, IL-13, and CD154 in purified CD4+ T cells, so both the specimen and readout panel differ."
+      }
+    },
+    {
+      "member": "flow cytometry",
+      "kept_apart_from": "flow cytometry assay",
+      "anchor": "Flow cytometric analysis of IFN-γ/IL-2–producing activated CD4 T cells",
+      "obi_id": "OBI:0000916",
+      "obi_label": "flow cytometry assay",
+      "reason": "readouts differs: 'frequencies of activated CD4 T cells expressing CD154, IL-2, and IFN-γ' vs 'frequencies of Ki67-positive proliferating leukocyte subsets'",
+      "judged": {
+        "verdict": "DIFFERENT",
+        "reason": "Record A measures intracellular cytokine-producing activated CD4 T cells (CD154, IL-2, IFN-γ) after peptide stimulation, whereas Record B measures Ki67-positive proliferating leukocyte subsets."
+      }
+    }
+  ],
+  "key_map": {
+    "gene array analysis": "transcription profiling by array assay",
+    "qPCR validation": "real time reverse-transcription polymerase chain reaction assay",
+    "IL-1β ELISA": "enzyme-linked immunosorbent assay",
+    "CFSE labeling": "cell proliferation assay using carboxyfluorescein succinimidyl ester staining",
+    "BD Th1/Th2 CBA array": "analyte detection by flow based bead assay",
+    "Flow cytometric analysis of IFN-γ/IL-2–producing activated CD4 T cells": "flow cytometry assay",
+    "CD4 + T cell stimulation assay": "flow cytometry assay (2)",
+    "Multiplex cytokine analysis": "cytometric bead array assay",
+    "flow cytometry": "flow cytometry assay (3)"
+  }
+}

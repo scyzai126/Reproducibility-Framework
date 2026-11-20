@@ -1,0 +1,46 @@
+{
+  "summary": {
+    "groups_merged": 0,
+    "entries_folded": 0,
+    "folds_blocked": 2
+  },
+  "results": [],
+  "blocked": [
+    {
+      "member": "Phosphorylation of intracellular proteins by phosphoflow analysis",
+      "kept_apart_from": "flow cytometry assay",
+      "anchor": "Leukocyte subset frequency determination",
+      "obi_id": "OBI:0000916",
+      "obi_label": "flow cytometry assay",
+      "reason": "readouts differs: 'leukocyte subset frequencies' vs 'phosphorylation of STAT1, STAT3, and STAT5 proteins in immune cell subsets after cytokine stimulation'",
+      "judged": {
+        "verdict": "DIFFERENT",
+        "reason": "Record A measures leukocyte subset frequencies by surface immunophenotyping marker panels, whereas Record B measures cytokine-stimulated intracellular STAT1/STAT3/STAT5 phosphorylation responses in immune cell subsets."
+      }
+    },
+    {
+      "member": "Phosphorylation of Akt and PLC-γ",
+      "kept_apart_from": "flow cytometry assay",
+      "anchor": "Leukocyte subset frequency determination",
+      "obi_id": "OBI:0000916",
+      "obi_label": "flow cytometry assay",
+      "reason": "readouts differs: 'leukocyte subset frequencies' vs 'phosphorylated Akt and PLC-γ in B cells after B cell receptor cross-linking'",
+      "judged": {
+        "verdict": "DIFFERENT",
+        "reason": "Record A measures leukocyte subset frequencies by immunophenotyping marker panels, whereas Record B measures B-cell signaling responses as phosphorylated Akt and PLC-γ after BCR cross-linking."
+      }
+    }
+  ],
+  "key_map": {
+    "ELISA": "enzyme-linked immunosorbent assay",
+    "Whole blood microarray analysis of gene expression": "transcription profiling by array assay",
+    "Leukocyte subset frequency determination": "flow cytometry assay",
+    "Phosphorylation of intracellular proteins by phosphoflow analysis": "flow cytometry assay (2)",
+    "Phosphorylation of Akt and PLC-γ": "flow cytometry assay (3)",
+    "Hemagglutination inhibition assay": "viral hemagglutination inhibition assay",
+    "Single-nucleotide polymorphism assay": "genotyping by array assay",
+    "Serum cytokine levels determination": "cytometric bead array assay",
+    "Quantification of IAV in infected lung tissue": "viral plaque assay",
+    "Tetramer staining": "MHC tetramer/multimer assay measuring binding of a T cell epitope:MHC:TCR complex"
+  }
+}

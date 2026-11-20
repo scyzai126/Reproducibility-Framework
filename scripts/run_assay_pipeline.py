@@ -60,7 +60,7 @@ Usage:
     python3 scripts/run_assay_pipeline.py --pmid 34252919 --sdy SDY2189 [--dry-run]
 
 Example:
-    python3 scripts/run_assay_pipeline.py data/31paper_assays/assay_result_v1/34252919_SDY2189 --dry-run
+    python3 scripts/run_assay_pipeline.py data/benchmark_agent_assays/assay_result_v1/34252919_SDY2189 --dry-run
 """
 
 import argparse
@@ -81,12 +81,13 @@ from app.agent.assay_service import (
     estimate_run,
     split_stem,
 )
+from app.agent.anthropic_chat import AsyncAnthropicChat, is_claude
 from app.agent.claim_parser import _get_client
 from app.config import settings
 
 
 def split_registry_dir(path: Path) -> tuple[str, str]:
-    """`31paper_assays/34252919_SDY2189` -> ("34252919", "SDY2189").
+    """`benchmark_agent_assays/34252919_SDY2189` -> ("34252919", "SDY2189").
 
     The halves are identified by which one starts with "SDY" rather than by position, so a
     directory named the other way round still resolves instead of silently producing a paper we
@@ -397,7 +398,7 @@ def report_result(result: dict) -> None:
 
 
 def use_result_version(version: str, pmid: str, sdy: str) -> Path:
-    """Route this paper's run into `data/31paper_assays/<version>/` instead of the configured
+    """Route this paper's run into `data/benchmark_agent_assays/<version>/` instead of the configured
     result folder, and return the registry directory it will write.
 
     assay_service.registry_dir only keeps a benchmark paper under REGISTRY_ROOT when its folder
@@ -418,8 +419,10 @@ def use_result_version(version: str, pmid: str, sdy: str) -> Path:
 
 
 async def main(pmid: str, sdy: str) -> None:
+    # A Claude model id in OPENAI_MODEL runs the same chain through the Anthropic adapter.
+    client = AsyncAnthropicChat() if is_claude(settings.OPENAI_MODEL) else _get_client()
     try:
-        result = await assay_report(pmid, sdy, _get_client(), verify=True, correct=True)
+        result = await assay_report(pmid, sdy, client, verify=True, correct=True)
     except PaperNotFoundError as exc:
         raise SystemExit(str(exc))
 
@@ -435,7 +438,7 @@ if __name__ == "__main__":
     parser.add_argument("--dry-run", action="store_true",
                         help="report the projected call count; makes no API call")
     parser.add_argument("--result-version", metavar="NAME", default="",
-                        help="write under data/31paper_assays/NAME/ instead of the configured "
+                        help="write under data/benchmark_agent_assays/NAME/ instead of the configured "
                              "result folder (e.g. assay_result_v3); the folder is created")
     args = parser.parse_args()
 

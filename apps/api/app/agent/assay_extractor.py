@@ -60,7 +60,7 @@ logger = logging.getLogger(__name__)
 #:
 #: `generate_claim` is asked again on purpose, and is the nearest thing to `measurement_role`
 #: above -- so read this before deleting it citing that paragraph. It is here to be compared
-#: against the curated `generate_claim` in data/benchmark_assay/, which is why it rides into the
+#: against the curated `generate_claim` in data/benchmark_curator_assay/, which is why it rides into the
 #: deliverable rather than staying in assays.json. It is deliberately NOT a filter: nothing drops
 #: a `false` entry, because extract_assays.txt rules that an assay the paper performed is an entry
 #: whether or not the paper concluded from it, and that rule is what the recall score rests on.

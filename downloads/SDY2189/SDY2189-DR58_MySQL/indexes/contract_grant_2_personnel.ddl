@@ -1,1 +1,0 @@
-create INDEX idx_contract_2_personnel on contract_grant_2_personnel(personnel_id,contract_grant_id)

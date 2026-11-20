@@ -5,12 +5,12 @@ Written 2026-10-23, following the adjudication in
 the agent for one missing assay in each of four papers.
 
 **Three of the four were already fixed before this investigation started.** The report that showed
-them reads `data/31paper_assays/assay_result_v1/`, written on 2026-10-12 by the pre-vote pipeline:
+them reads `data/benchmark_agent_assays/assay_result_v1/`, written on 2026-10-12 by the pre-vote pipeline:
 round 1 was a single extraction call, with no 3-way consensus vote and no `assays_raw.json` trace.
 The vote landed on 2026-10-19 in commit `281e006`, and only 3 of the 31 v1 directories were ever
 re-run under it, which is why 28 of them have no raw file.
 
-`data/31paper_assays/assay_result_v3/` is the full corpus on the current pipeline and was already
+`data/benchmark_agent_assays/assay_result_v3/` is the full corpus on the current pipeline and was already
 scored at `assay_result_v3/comparison/benchmark_v5_vs_agent.html`.
 
 | | v1, the report that was reviewed | v3, current |

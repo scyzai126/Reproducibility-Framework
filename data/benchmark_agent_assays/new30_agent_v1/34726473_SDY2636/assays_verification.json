@@ -1,0 +1,644 @@
+{
+  "summary": {
+    "total": 9,
+    "accept": 8,
+    "review": 1,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {
+      "aliases[]": {
+        "NOT_SUPPORTED": 1
+      }
+    }
+  },
+  "results": [
+    {
+      "assay_id": "enzyme-linked immunosorbent assay (ELISA)",
+      "assay_name": "enzyme-linked immunosorbent assay (ELISA)",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "enzyme-linked immunosorbent assay (ELISA)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S168",
+            "S169",
+            "S170"
+          ],
+          "evidence_text": "Monoclonal antibodies were screened by binding ELISAS. Indirect binding ELISAs were conducted",
+          "reason": "The methods explicitly describe ELISAs being performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "binding ELISAS",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S169"
+          ],
+          "evidence_text": "binding ELISAS",
+          "reason": "This wording refers to the same ELISA assay performed here."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "Indirect binding ELISAs",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S170"
+          ],
+          "evidence_text": "Indirect binding ELISAs",
+          "reason": "This is the assay wording used for the ELISA procedure in the methods."
+        },
+        {
+          "field_name": "aliases[2]",
+          "proposed_value": "ELISA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S168"
+          ],
+          "evidence_text": "enzyme-linked immunosorbent assay (ELISA)",
+          "reason": "The abbreviation ELISA is explicitly introduced as the assay name."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "antibody binding to coronavirus antigens measured by absorbance at 450 nm; area under the curve from serial dilutions",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S170",
+            "S171",
+            "S174",
+            "S175"
+          ],
+          "evidence_text": "Indirect binding ELISAs were conducted in 384 well ELISA plates (Costar #3700) coated with 2μg/ml antigen... mAbs were incubated for 60 minutes in three-fold serial dilutions beginning at 100 μg/ml... Plates were read at 450nm. Area under the curve (AUC) measurements were determined from binding of serial dilutions.",
+          "reason": "The text states the assay measured binding in serial dilutions with plate reading at 450 nm and AUC derived from that binding."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Indirect binding ELISAs were conducted in 384 well ELISA plates (Costar #3700) coated with 2μg/ml antigen in 0.1M sodium bicarbonate overnight at 4°C, washed and blocked with assay diluent (1X phosphate buffered saline (PBS) containing 4% (w/v) whey protein 15% normal goat serum/0.5% Tween-20/0.05% sodium azide).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S170"
+          ],
+          "evidence_text": "Indirect binding ELISAs were conducted in 384 well ELISA plates (Costar #3700) coated with 2μg/ml antigen in 0.1M sodium bicarbonate overnight at 4°C, washed and blocked with assay diluent (1X phosphate buffered saline (PBS) containing 4% (w/v) whey protein 15% normal goat serum/0.5% Tween-20/0.05% sodium azide).",
+          "reason": "The quote appears verbatim and describes the ELISA procedure performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S170"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "neutralization assay against live viruses",
+      "assay_name": "neutralization assay against live viruses",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "neutralization assay against live viruses",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S176",
+            "S178"
+          ],
+          "evidence_text": "For the 96-well neutralization assay",
+          "reason": "The methods explicitly describe a neutralization assay performed on live viruses."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "Measurement of neutralizing antibodies against live viruses",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S176",
+            "S178"
+          ],
+          "evidence_text": "Measurement of neutralizing antibodies against live viruses",
+          "reason": "This is the methods subsection heading for the same assay."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "96-well neutralization assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S178"
+          ],
+          "evidence_text": "For the 96-well neutralization assay",
+          "reason": "The text uses this wording for the same assay procedure."
+        },
+        {
+          "field_name": "aliases[2]",
+          "proposed_value": "neutralization assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S178"
+          ],
+          "evidence_text": "neutralization assay",
+          "reason": "This wording directly names the same assay in the methods."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "virus neutralization titers based on 50% reduction in relative light units after nanoluciferase live-virus infection of Vero E6 cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S176",
+            "S178",
+            "S184",
+            "S186"
+          ],
+          "evidence_text": "After 24 hours, cells were lysed, and luciferase activity was measured via Nano-Glo Luciferase Assay System (Promega) according to the manufacturer specifications. Luminescence was measured by a Spectramax M3 plate reader (Molecular Devices). Virus neutralization titers were defined as the sample dilution at which a 50% reduction in relative light units was observed relative to the average of the virus control wells.",
+          "reason": "The assay readout is explicitly defined as neutralization titers from a 50% reduction in relative light units after luciferase measurement in infected Vero E6 cells."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "For the 96-well neutralization assay, Vero E6 (C1008) cells were plated at 20,000 cells per well the day prior in clear bottom black walled plates.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S178"
+          ],
+          "evidence_text": "For the 96-well neutralization assay, Vero E6 (C1008) cells were plated at 20,000 cells per well the day prior in clear bottom black walled plates.",
+          "reason": "The quote appears verbatim and describes the assay being performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S178"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Lentivirus pseudovirus neutralization assay (PsVNA)",
+      "assay_name": "Lentivirus pseudovirus neutralization assay (PsVNA)",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Lentivirus pseudovirus neutralization assay (PsVNA)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S187"
+          ],
+          "evidence_text": "The PsVNA using 293-ACE2-TMPRSS2 cell line was described previously",
+          "reason": "The Methods section explicitly describes PsVNA as an assay used here."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "PsVNA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S187"
+          ],
+          "evidence_text": "The PsVNA using 293-ACE2-TMPRSS2 cell line",
+          "reason": "PsVNA is used as the assay name in the Methods text."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "SARS-CoV-2 PsVNA50",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S188"
+          ],
+          "evidence_text": "Antibody preparations were evaluated by SARS-CoV-2 PsVNA50",
+          "reason": "This wording refers to the same pseudovirus neutralization assay read out at 50% neutralization."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "pseudovirus neutralization against SARS-CoV-2 variant spike pseudoviruses",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S188",
+            "S108"
+          ],
+          "evidence_text": "Antibody preparations were evaluated by SARS-CoV-2 PsVNA50 using WA-1 strain, B.1.1.7 ... B.1.617.2 (with spike protein mutations T19R, G142D, E156del, F157del, R158G, L452R, T478K, D614G, P681R, D950N).",
+          "reason": "The text states the assay evaluated neutralization against multiple SARS-CoV-2 variant pseudoviruses."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Antibody preparations were evaluated by SARS-CoV-2 PsVNA50 using WA-1 strain, B.1.1.7 (with spike protein mutations: H69-V70del, Y144del, N501Y, A570D, D614G, P681H, T716I, S982A, and D1118H), B.1.429 (with spike protein mutations S13I, W152C, L452R, D614G), B.1.526 (with spike protein mutations L5F, T95I, D253G, E484K or S477N, D614G, A701V), P.1 (with spike protein mutations L18F, T20N, P26S, D138Y, R190S, K417T, E484K, N501Y, H655Y, T1027I, D614G, V1176F), B.1.351 (with spike protein mutations L18F, D80A, D215G, L242-244del, K417N, E484K, N501Y, D614G, and A701V), B.1.617.1 (with spike protein mutations G142D, E154K, V382L, L452R, E484Q, P681R, Q1071H, D1153Y) and B.1.617.2 (with spike protein mutations T19R, G142D, E156del, F157del, R158G, L452R, T478K, D614G, P681R, D950N).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S188"
+          ],
+          "evidence_text": "Antibody preparations were evaluated by SARS-CoV-2 PsVNA50 using WA-1 strain, B.1.1.7 (with spike protein mutations: H69-V70del, Y144del, N501Y, A570D, D614G, P681H, T716I, S982A, and D1118H), B.1.429 (with spike protein mutations S13I, W152C, L452R, D614G), B.1.526 (with spike protein mutations L5F, T95I, D253G, E484K or S477N, D614G, A701V), P.1 (with spike protein mutations L18F, T20N, P26S, D138Y, R190S, K417T, E484K, N501Y, H655Y, T1027I, D614G, V1176F), B.1.351 (with spike protein mutations L18F, D80A, D215G, L242-244del, K417N, E484K, N501Y, D614G, and A701V), B.1.617.1 (with spike protein mutations G142D, E154K, V382L, L452R, E484Q, P681R, Q1071H, D1153Y) and B.1.617.2 (with spike protein mutations T19R, G142D, E156del, F157del, R158G, L452R, T478K, D614G, P681R, D950N).",
+          "reason": "The quote appears verbatim and shows the assay was performed on antibody preparations in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S188"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Surface plasmon resonance",
+      "assay_name": "Surface plasmon resonance",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Surface plasmon resonance",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S191"
+          ],
+          "evidence_text": "Kinetic measurements of the DH1047 Fab binding to SARS-CoV and RsSHC014 spike proteins were obtained using a Biacore S200 instrument",
+          "reason": "The text explicitly describes SPR kinetic measurements performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "SPR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S57"
+          ],
+          "evidence_text": "We measured binding on and off rates against both SARS-CoV and RsSHC014-CoV spike proteins by SPR.",
+          "reason": "SPR refers to the same surface plasmon resonance assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "binding kinetics and affinity of DH1047 Fab to coronavirus spike proteins, including on-rates and off-rates",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S56",
+            "S57",
+            "S58"
+          ],
+          "evidence_text": "We also defined the binding affinity of DH1047 against epidemic and zoonotic spike proteins. We measured binding on and off rates against both SARS-CoV and RsSHC014-CoV spike proteins by SPR. DH1047 bound to the SARS-CoV and RsSCH014-CoV spike proteins with high affinity, association rates (> 8.60 ×10 4 M −1 s −1 ) and dissociation rates (< 1.0×10 −5 s −1 )",
+          "reason": "The assay is explicitly reported to measure affinity and on/off rates for DH1047 binding to spike proteins."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Kinetic measurements of the DH1047 Fab binding to SARS-CoV and RsSHC014 spike proteins were obtained using a Biacore S200 instrument (Cytiva, formerly GE Healthcare) in HBS-EP+ 1X running buffer.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S191"
+          ],
+          "evidence_text": "Kinetic measurements of the DH1047 Fab binding to SARS-CoV and RsSHC014 spike proteins were obtained using a Biacore S200 instrument (Cytiva, formerly GE Healthcare) in HBS-EP+ 1X running buffer.",
+          "reason": "The quote appears verbatim and directly states the assay was performed here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S191"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Biolayer interferometry (BLI)",
+      "assay_name": "Biolayer interferometry (BLI)",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Biolayer interferometry (BLI)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S199",
+            "S200"
+          ],
+          "evidence_text": "## Biolayer interferometry (BLI) [methods]\n[S200] Binding assays were performed by Biolayer Interferometry in an Octet RED384 instrument (Forte Bio).",
+          "reason": "The methods section explicitly names and describes BLI as a performed assay."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "BLI",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S199",
+            "S200"
+          ],
+          "evidence_text": "## Biolayer interferometry (BLI) [methods]\n[S200] Binding assays were performed by Biolayer Interferometry in an Octet RED384 instrument (Forte Bio).",
+          "reason": "BLI is presented in the heading as the abbreviation for the same assay."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "Biolayer Interferometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S200"
+          ],
+          "evidence_text": "Binding assays were performed by Biolayer Interferometry",
+          "reason": "This wording directly refers to the same assay performed here."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "binding response of DH1047 wild-type or mutant proteins to purified SARS-CoV-2 2P spike ectodomain",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S201",
+            "S202"
+          ],
+          "evidence_text": "Anti-human IgG (AHQ) biosensor tips were dipped into 200 μl of filtered supernatant DH1047 WT or mutant proteins for five min at 1000 rpm followed by 1min in 1X PBS. Next, the tips were dipped into 100 nM of purified SARS-CoV-2 2P spike ectodomain and binding response was measured.",
+          "reason": "The text explicitly states that binding response was measured for DH1047 WT or mutant proteins against purified SARS-CoV-2 2P spike ectodomain."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Binding assays were performed by Biolayer Interferometry in an Octet RED384 instrument (Forte Bio).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S200"
+          ],
+          "evidence_text": "Binding assays were performed by Biolayer Interferometry in an Octet RED384 instrument (Forte Bio).",
+          "reason": "The quote appears verbatim and states that the assay was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S200"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Negative Stain Electron Microscopy (NSEM)",
+      "assay_name": "Negative Stain Electron Microscopy (NSEM)",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Negative Stain Electron Microscopy (NSEM)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S218"
+          ],
+          "evidence_text": "NSEM was performed",
+          "reason": "The text explicitly states that NSEM was performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "NSEM",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S218"
+          ],
+          "evidence_text": "NSEM was performed",
+          "reason": "This wording refers to the same assay performed here."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "Negative Stain Electron Microscopy",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S218"
+          ],
+          "evidence_text": "## Negative Stain Electron Microscopy (NSEM)",
+          "reason": "This is the section heading naming the same assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "electron microscopy images of Fab-spike protein complexes for structural visualization",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S219",
+            "S223"
+          ],
+          "evidence_text": "Fab-spike protein complexes were prepared by mixing Fab and spike to give a 9:1 molar ratio of Fab to spike protein. After air drying grids were imaged with a Philips EM420 electron microscope",
+          "reason": "The assay produced EM images of Fab-spike complexes for structural analysis."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "NSEM was performed as described previously ( 15 ).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S218"
+          ],
+          "evidence_text": "NSEM was performed as described previously ( 15 ).",
+          "reason": "The quote appears verbatim and states the assay was performed here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S218"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Cryo-EM",
+      "assay_name": "Cryo-EM",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Cryo-EM",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S229",
+            "S234"
+          ],
+          "evidence_text": "Purified SARS-CoV-1 spike ectodomain was incubated for approximatively 2 hours with a 6-fold molar equivalent of the DH1047 Fab in a final volume of 10μL. Frozen grids were imaged using a Titan Krios (ThermoFisher) equipped with a K3 detector (Gatan).",
+          "reason": "The Cryo-EM section describes that this study prepared samples and imaged frozen grids for cryo-EM."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "cryo-electron microscopy reconstruction of DH1047 Fab bound to SARS-CoV-1 spike ectodomain",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S229",
+            "S237"
+          ],
+          "evidence_text": "Purified SARS-CoV-1 spike ectodomain was incubated for approximatively 2 hours with a 6-fold molar equivalent of the DH1047 Fab in a final volume of 10μL. Similar to what we had observed for the DH1047 complex with the SARS-CoV-2 spike ectodomain ( 15 ), there was considerable heterogeneity in the RBD region; further classification of particles was performed to better resolve the antibody binding interface, resulting in an asymmetric reconstruction of a population refined to a resolution of 3.4 Å that was used for model fitting.",
+          "reason": "The text supports that cryo-EM produced a reconstruction of the DH1047 Fab complex with SARS-CoV-1 spike ectodomain."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Frozen grids were imaged using a Titan Krios (ThermoFisher) equipped with a K3 detector (Gatan).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S234"
+          ],
+          "evidence_text": "Frozen grids were imaged using a Titan Krios (ThermoFisher) equipped with a K3 detector (Gatan).",
+          "reason": "The quote appears verbatim and describes imaging performed in this study's Cryo-EM procedure."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S234"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "whole-body plethysmography",
+      "assay_name": "whole-body plethysmography",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "whole-body plethysmography",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S69"
+          ],
+          "evidence_text": "pulmonary function, which was measured by whole-body plethysmography (Buxco)",
+          "reason": "The text explicitly states that whole-body plethysmography was used as a measurement in this study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "mice",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S69"
+          ],
+          "evidence_text": "We treated mice with control mAb or DH1047 at 10mg/kg either at 12 hours before or 12 hours post infection with SARS-CoV MA15 and monitored mice for signs of clinical disease, including weight loss and pulmonary function, which was measured by whole-body plethysmography (Buxco)",
+          "reason": "The assay was explicitly performed on mice."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "pulmonary function",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S69"
+          ],
+          "evidence_text": "pulmonary function, which was measured by whole-body plethysmography (Buxco)",
+          "reason": "The text directly links whole-body plethysmography to measurement of pulmonary function."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Mice were weighted daily and monitored for signs of clinical disease, and selected groups were subjected to daily whole-body plethysmography.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S245"
+          ],
+          "evidence_text": "Mice were weighted daily and monitored for signs of clinical disease, and selected groups were subjected to daily whole-body plethysmography.",
+          "reason": "The quoted text appears verbatim and indicates the procedure was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S245"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "lung pathology scoring",
+      "assay_name": "lung pathology scoring",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "lung pathology scoring",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S248"
+          ],
+          "evidence_text": "Lung pathology scoring",
+          "reason": "This is the Methods subsection heading for the scoring procedure performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "Acute lung injury",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "This names one pathology endpoint being quantified rather than the assay itself."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "Diffuse Alveolar Damage (DAD) scoring systems",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S248"
+          ],
+          "evidence_text": "Diffuse Alveolar Damage (DAD) scoring systems",
+          "reason": "The text uses this wording for one of the scoring systems that constitutes the assay."
+        },
+        {
+          "field_name": "aliases[2]",
+          "proposed_value": "Matute-Bello and Diffuse Alveolar Damage (DAD) scoring systems",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S248"
+          ],
+          "evidence_text": "Matute-Bello and Diffuse Alveolar Damage (DAD) scoring systems",
+          "reason": "The text explicitly names the two scoring systems used in this assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "lung tissue",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S252",
+            "S258"
+          ],
+          "evidence_text": "three random fields of lung tissue were chosen and scored",
+          "reason": "The scoring was performed on lung tissue fields."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "histopathology scores for acute lung injury and diffuse alveolar damage from lung tissue fields",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S248",
+            "S252",
+            "S257",
+            "S258",
+            "S259"
+          ],
+          "evidence_text": "Acute lung injury was quantified by two separate lung pathology scoring scales: Matute-Bello and Diffuse Alveolar Damage (DAD) scoring systems.",
+          "reason": "The assay quantified ALI and DAD scores from scored lung tissue fields."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Acute lung injury was quantified by two separate lung pathology scoring scales: Matute-Bello and Diffuse Alveolar Damage (DAD) scoring systems.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S248"
+          ],
+          "evidence_text": "Acute lung injury was quantified by two separate lung pathology scoring scales: Matute-Bello and Diffuse Alveolar Damage (DAD) scoring systems.",
+          "reason": "The quote appears verbatim and describes the scoring performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S248"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

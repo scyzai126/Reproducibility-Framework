@@ -131,6 +131,10 @@ USAGE_FIELDS = ("prompt", "cached", "completion", "reasoning")
 #: the price changes. A model missing here gets tokens printed and no dollar figure.
 LIST_PRICE_USD_PER_MTOK: dict[str, dict[str, float]] = {
     "gpt-5.4": {"input": 2.50, "cached": 0.25, "output": 15.00},
+    # Anthropic list price, 2026-11-03. A cache write bills at 1.25x input and is priced
+    # here as plain input, so the estimate runs slightly low.
+    "claude-opus-5-5": {"input": 4.00, "cached": 0.20, "output": 20.00},
+    "claude-fable-5-2": {"input": 8.00, "cached": 0.20, "output": 40.00},
 }
 LIST_PRICE_DATE = "2026-11-04"
 

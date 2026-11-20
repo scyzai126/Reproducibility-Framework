@@ -89,7 +89,7 @@ def resolver_model(monkeypatch, tmp_path):
 
 @pytest.fixture
 def corpus(tmp_path, monkeypatch):
-    """A two-row corpus file standing in for data/31paper_assays/all_assays_OBI.json."""
+    """A two-row corpus file standing in for data/benchmark_agent_assays/all_assays_OBI.json."""
     path = tmp_path / "all_assays_OBI.json"
     path.write_text(json.dumps([
         {"study": "19029902_SDY1264", "assay": "Neut Ab", "standard_technique_name": "Virus Neutralization",

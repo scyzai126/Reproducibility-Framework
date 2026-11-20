@@ -50,7 +50,7 @@ def drive(tmp_path, monkeypatch, runner):
     decoy.mkdir()
     monkeypatch.setattr(assay_service, "REGISTRY_ROOT", decoy)
     monkeypatch.setattr(assay_service, "CACHE_ROOT", decoy)
-    monkeypatch.setattr(runner, "CORPUS_ROOT", tmp_path / "31paper_assays")
+    monkeypatch.setattr(runner, "CORPUS_ROOT", tmp_path / "benchmark_agent_assays")
     monkeypatch.setattr(runner, "AsyncOpenAI", lambda **kwargs: object())
     return papers, result, decoy
 

@@ -1,1 +1,0 @@
-CREATE INDEX idx_control_sample_2_file_info on control_sample_2_file_info(file_info_id,control_sample_accession);

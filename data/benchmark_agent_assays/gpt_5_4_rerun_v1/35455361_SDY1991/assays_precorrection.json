@@ -1,0 +1,72 @@
+{
+  "DENV-specific IgG ELISAs": {
+    "name_in_paper": "DENV-specific IgG ELISAs",
+    "standard_technique_name": "enzyme-linked immunosorbent assay",
+    "aliases": [],
+    "sample_type": "serum",
+    "readouts": "dengue virus-specific IgG seropositivity",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "2.2. Serology",
+      "sentence_ids": [
+        "S19"
+      ],
+      "quote": "The serology was performed by DENV-specific IgG ELISAs and flow cytometry-based neutralization assays, as previously described [ 26 ]."
+    }
+  },
+  "flow cytometry-based neutralization assays": {
+    "name_in_paper": "flow cytometry-based neutralization assays",
+    "standard_technique_name": "neutralization assay",
+    "aliases": [],
+    "sample_type": "serum",
+    "readouts": "virus neutralization measured by flow cytometry",
+    "generate_claim": null,
+    "source": "methods",
+    "evidence": {
+      "section": "2.2. Serology",
+      "sentence_ids": [
+        "S19"
+      ],
+      "quote": "The serology was performed by DENV-specific IgG ELISAs and flow cytometry-based neutralization assays, as previously described [ 26 ]."
+    }
+  },
+  "IFN-γ Capture Assay": {
+    "name_in_paper": "IFN-γ Capture Assay",
+    "standard_technique_name": "flow cytometry",
+    "aliases": [
+      "cytokine capture assay"
+    ],
+    "sample_type": "peripheral blood mononuclear cells",
+    "readouts": "interferon-gamma-producing and non-producing CD8 T cells after DENV CD8 megapool stimulation",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "2.4. IFN-γ Capture Assay and Cell Sorting for RNA-Seq",
+      "sentence_ids": [
+        "S25"
+      ],
+      "quote": "IFNγ producing cells were labeled using an IFN-γ Secretion Assay–Detection kit (PE) (catalog #130-054-202, Miltenyi Biotec, Bergisch Gladbach, North Rhine-Westphalia, Germany) according to manufacturer’s instructions."
+    }
+  },
+  "Microscaled RNA-Sequencing Assay": {
+    "name_in_paper": "Microscaled RNA-Sequencing Assay",
+    "standard_technique_name": "bulk RNA sequencing",
+    "aliases": [
+      "Microscaled RNA-Seq",
+      "micro-scaled RNA-seq assays",
+      "microscaled RNAseq data"
+    ],
+    "sample_type": "sorted CD8+ IFNγ+ and CD8+ IFNγ− cell populations",
+    "readouts": "whole-transcriptome mRNA expression profiles",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "2.5. Microscaled RNA-Sequencing Assay",
+      "sentence_ids": [
+        "S33"
+      ],
+      "quote": "Microscaled RNA-Seq was performed according to the Smart-Seq2 protocol, as previously reported [ 31 , 32 ]."
+    }
+  }
+}

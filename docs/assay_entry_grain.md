@@ -1,6 +1,6 @@
 # What counts as one assay entry, and why a registry carries `flow cytometry assay (2)`
 
-Written 2026-10-26, against `data/31paper_assays/assay_result_v3/` and
+Written 2026-10-26, against `data/benchmark_agent_assays/assay_result_v3/` and
 `data/benchmark_assay/benchmark_assay_v5/`.
 
 The question: a delivered registry sometimes holds `flow cytometry assay`, `flow cytometry

@@ -63,6 +63,7 @@ import numpy as np
 from openai import OpenAI
 
 from app.agent import assay_trace
+from app.agent.anthropic_chat import AnthropicChat, is_claude
 from app.agent.assay_extractor import paper_names
 from app.config import settings
 
@@ -472,7 +473,8 @@ def _llm_pick(
     prompt = build_pick_prompt(assay_name, candidates, sample_type, readouts, aliases,
                                standard_technique_name)
 
-    client = OpenAI(api_key=settings.OPENAI_API_KEY, max_retries=settings.OPENAI_MAX_RETRIES)
+    client = (AnthropicChat() if is_claude(model) else
+              OpenAI(api_key=settings.OPENAI_API_KEY, max_retries=settings.OPENAI_MAX_RETRIES))
     resp = client.chat.completions.create(
         model=model,
         messages=[{"role": "user", "content": prompt}],
@@ -696,7 +698,8 @@ def _fulllist_pick(
         return None
     prompt = build_fulllist_prompt(assay_name, candidates, sample_type, readouts, aliases,
                                    standard_technique_name)
-    client = OpenAI(api_key=settings.OPENAI_API_KEY, max_retries=settings.OPENAI_MAX_RETRIES)
+    client = (AnthropicChat() if is_claude(model) else
+              OpenAI(api_key=settings.OPENAI_API_KEY, max_retries=settings.OPENAI_MAX_RETRIES))
     resp = client.chat.completions.create(
         model=model, messages=[{"role": "user", "content": prompt}], temperature=0)
     reply = (resp.choices[0].message.content or "").strip().lower()

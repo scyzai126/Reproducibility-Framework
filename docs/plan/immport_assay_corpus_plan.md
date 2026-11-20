@@ -70,7 +70,7 @@ assay_service.PDF_ROOT = immport_corpus.CORPUS_DIR / "no_pdf"   # absent: PDF ro
 assay_service.REGISTRY_ROOT = immport_corpus.REGISTRY_DIR
 assay_service.CACHE_ROOT = immport_corpus.REGISTRY_DIR
 ```
-With both roots equal and no PDF root, `registry_dir(pmid, primary_sdy)` resolves to `REGISTRY_DIR/<pmid>_<primary_sdy>` unconditionally; nothing under `data/31paper_assays` or `data/cache` can be written. `assay_ledger.record_run` (called inside `assay_report`, assay_service.py:896) appends rows with that `registry_dir`, which is how `status` separates corpus spend from benchmark spend.
+With both roots equal and no PDF root, `registry_dir(pmid, primary_sdy)` resolves to `REGISTRY_DIR/<pmid>_<primary_sdy>` unconditionally; nothing under `data/benchmark_agent_assays` or `data/cache` can be written. `assay_ledger.record_run` (called inside `assay_report`, assay_service.py:896) appends rows with that `registry_dir`, which is how `status` separates corpus spend from benchmark spend.
 
 Queue: `fetch_status in (fetched, benchmark_copy)` and `run_status != done` (or `--force`), `--only` filter, manifest order. Reuse pass first: `benchmark_registry` hit → `run_status=reused`, `registry_dir` → that folder, no call. Then `--limit N`.
 

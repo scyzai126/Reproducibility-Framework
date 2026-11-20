@@ -1,0 +1,86 @@
+{
+  "summary": {
+    "assays": 5,
+    "fields_re_extracted": 2,
+    "actions": {
+      "REPLACED": 2
+    },
+    "reported_not_corrected": 1
+  },
+  "results": [
+    {
+      "assay_id": "Flow cytometry analysis and cell sorting",
+      "assay_name": "Flow cytometry analysis and cell sorting",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "flow cytometric analysis",
+            "Flow cytometry",
+            "FACS"
+          ],
+          "blind_answer": [
+            "flow cytometric analysis",
+            "flow cytometry",
+            "cell sorting"
+          ],
+          "dropped": [
+            "FACS"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "High-dimensional parameter flow cytometric analysis of NK cell subsets",
+      "assay_name": "High-dimensional parameter flow cytometric analysis of NK cell subsets",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "In vitro cytokine stimulation and functional assays of NK cells",
+      "assay_name": "In vitro cytokine stimulation and functional assays of NK cells",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "For measuring degranulation by NK cells",
+      "assay_name": "For measuring degranulation by NK cells",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "measuring degranulation by NK cells"
+          ],
+          "blind_answer": [
+            "degranulation",
+            "CD107a expression following activation of NK cells from indicated sites by co-culture with K562 cells for 4 h"
+          ],
+          "dropped": [
+            "measuring degranulation by NK cells"
+          ]
+        }
+      ],
+      "reported_not_corrected": [
+        {
+          "field_name": "name_in_paper",
+          "verdict": "NOT_SUPPORTED",
+          "reason": "This is a purpose clause rather than a technique name, so it does not identify an assay."
+        }
+      ]
+    },
+    {
+      "assay_id": "Whole transcriptome profiling of NK cell subsets",
+      "assay_name": "Whole transcriptome profiling of NK cell subsets",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    }
+  ]
+}

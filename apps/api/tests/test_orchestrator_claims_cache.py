@@ -1,4 +1,4 @@
-"""Claim results are read from benchmark_claims first, then data/cache/claims, and written
+"""Claim results are read from benchmark_agent_claims first, then data/cache/claims, and written
 only to data/cache/claims -- so a paper parsed once from the UI is not paid for again."""
 
 import json

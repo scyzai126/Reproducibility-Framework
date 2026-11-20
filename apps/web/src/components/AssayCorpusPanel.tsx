@@ -11,7 +11,7 @@ import type { AssayImmportResponse, AssayObiResponse, DataAvailabilityResult } f
 /**
  * The corpus-wide assay/OBI table, lifted out of the page unchanged.
  *
- * Reads one stored file (data/31paper_assays/all_assays_OBI.json, one row per assay, built by
+ * Reads one stored file (data/benchmark_agent_assays/all_assays_OBI.json, one row per assay, built by
  * scripts/build_assay_table.py) across every paper. It is the
  * finished picture; the Extract tab is where one paper's registry is built.
  */

@@ -24,7 +24,7 @@ paper (the Extract tab calls that too).
 
 ### 1. Pick the input
 - One paper: `data/JAT_XML/<SDY>_<PMID>.xml` (preferred), or `data/pdf/**/<SDY>_<PMID>.pdf`.
-- The benchmark: `--all`, the 31 papers in `data/31paper_assays/` (XML preferred, PDF fallback).
+- The benchmark: `--all`, the 31 papers in `data/benchmark_agent_assays/` (XML preferred, PDF fallback).
 - A custom list: pass the paths through `xargs`, because zsh does not word-split `$VAR`:
   `xargs python3 scripts/run_data_availability.py < papers.txt`
 
@@ -45,7 +45,7 @@ log.
 - `--no-locate` skips step 5.
 
 ### 4. Outputs
-These go in `data/benchmark_assay/data_availability/` and are overwritten in place.
+These go in `data/benchmark_curator_assay/data_availability/` and are overwritten in place.
 - **`<SDY>_<PMID>_llm.json`**: written before validation. It has every ID with its evidence
   sentences (each flagged `in_da`), `in_da_section`, `da_source`, `llm_in_da`, and the LLM's
   answer, sorted into `deposited` / `reused` / `referenced` / `registration` / `unclear`. It

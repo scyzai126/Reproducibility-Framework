@@ -1,0 +1,120 @@
+{
+  "pmid": "D6",
+  "study": "33658999",
+  "title": "CD52 Is Elevated on B cells of SLE Patients and Regulates B Cell Function",
+  "source_format": "xml",
+  "llm_called": true,
+  "llm_model": "gpt-5.4",
+  "da_accessions": [
+    "GSE163121",
+    "GSE163123",
+    "E-MTAB-9005"
+  ],
+  "data_availability_statement": "The datasets presented in this study can be found in online repositories. The name of the repository and accession numbers can be found here: NCBI, accession: GSE163121 and GSE163123 .",
+  "data_availability_source": "section",
+  "deposited": [
+    {
+      "accession": "GSE163121",
+      "repository": "GEO",
+      "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE163121",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "GEO",
+        "role": "this_study",
+        "in_da_statement": true,
+        "reason": "The Methods say their single-cell RNA-seq 'Data is available at accession GSE163121' and the Data Availability Statement lists it as a dataset presented in this study."
+      },
+      "decided_by": "llm",
+      "reason": "The Methods say their single-cell RNA-seq 'Data is available at accession GSE163121' and the Data Availability Statement lists it as a dataset presented in this study.",
+      "found_by": "text",
+      "in_da_section": true,
+      "da_source": "section",
+      "llm_in_da": true,
+      "evidence": [
+        {
+          "section": "Single Cell RNA-Sequencing",
+          "quote": "Data is available at accession GSE163121 .",
+          "context": "B cell subsets were annotated using canonical B Cell subset genes such as CD27, FCER2, IGHD, IGHG1, TBX21 and ITGAX. Data is available at accession GSE163121 . Publicly available log-normalized gene expression matrices retrieved from Seurat objects were used to correlate expression of CD52 with other detected genes on a single-cell level.",
+          "in_da": false
+        },
+        {
+          "section": "Data Availability Statement",
+          "quote": "The name of the repository and accession numbers can be found here: NCBI, accession: GSE163121 and GSE163123 .",
+          "context": "The datasets presented in this study can be found in online repositories. The name of the repository and accession numbers can be found here: NCBI, accession: GSE163121 and GSE163123 .",
+          "in_da": true
+        }
+      ]
+    },
+    {
+      "accession": "GSE163123",
+      "repository": "GEO",
+      "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE163123",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "GEO",
+        "role": "this_study",
+        "in_da_statement": true,
+        "reason": "The RNA-seq Methods say 'Data is available at accession GSE163123' and the Data Availability Statement lists it among the datasets presented in this study."
+      },
+      "decided_by": "llm",
+      "reason": "The RNA-seq Methods say 'Data is available at accession GSE163123' and the Data Availability Statement lists it among the datasets presented in this study.",
+      "found_by": "text",
+      "in_da_section": true,
+      "da_source": "section",
+      "llm_in_da": true,
+      "evidence": [
+        {
+          "section": "RNA-Seq",
+          "quote": "Data is available at accession GSE163123 .",
+          "context": "An adjusted p value < 0.05 was used as a cutoff. Data is available at accession GSE163123 .",
+          "in_da": false
+        },
+        {
+          "section": "Data Availability Statement",
+          "quote": "The name of the repository and accession numbers can be found here: NCBI, accession: GSE163121 and GSE163123 .",
+          "context": "The datasets presented in this study can be found in online repositories. The name of the repository and accession numbers can be found here: NCBI, accession: GSE163121 and GSE163123 .",
+          "in_da": true
+        }
+      ]
+    }
+  ],
+  "reused": [
+    {
+      "accession": "E-MTAB-9005",
+      "repository": "ArrayExpress",
+      "url": "https://www.ebi.ac.uk/biostudies/arrayexpress/studies/E-MTAB-9005",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "ArrayExpress",
+        "role": "public_data",
+        "in_da_statement": false,
+        "reason": "The paper explicitly calls E-MTAB-9005 'publicly available single-cell RNA-seq data' from human tonsil tissue that they analyzed."
+      },
+      "decided_by": "llm",
+      "reason": "The paper explicitly calls E-MTAB-9005 'publicly available single-cell RNA-seq data' from human tonsil tissue that they analyzed.",
+      "found_by": "text",
+      "in_da_section": true,
+      "da_source": "inline_label",
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "CD52 Gene Expression Correlates With MHC Class II Gene Expression in B Cells and Is Lowest in Affinity Maturing B Cells",
+          "quote": "In addition, we analyzed publicly available single-cell RNA-seq data (accession number: E-MTAB-9005) from human tonsil tissue to examine subset specific analysis of gene expression along the B cell differentiation trajectory ( Figure S6B ).",
+          "context": "In addition, we analyzed publicly available single-cell RNA-seq data (accession number: E-MTAB-9005) from human tonsil tissue to examine subset specific analysis of gene expression along the B cell differentiation trajectory ( Figure S6B ). Naïve B cells expressed relatively high levels of CD52, and expression decreased upon activation.",
+          "in_da": true
+        }
+      ]
+    }
+  ],
+  "referenced": [],
+  "registration": [],
+  "unclear": [],
+  "reviews": [
+    "E-MTAB-9005: the DA statement names it, but the model says public_data; the model reads it as not in the DA statement; the pattern search found it in it"
+  ],
+  "dropped": [],
+  "warnings": []
+}

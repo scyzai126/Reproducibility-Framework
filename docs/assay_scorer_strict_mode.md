@@ -1,7 +1,7 @@
 # Assay scorer: strict mode
 
 *2026-11-02. `scripts/compare_assay_benchmark_v2.py --strict`. Reports:
-`data/31paper_assays/assay_result_v3/comparison/benchmark_vs_agent{,_strict}.{json,html}`.*
+`data/benchmark_agent_assays/assay_result_v3/comparison/benchmark_vs_agent{,_strict}.{json,html}`.*
 
 The comparator had two leniencies that flatter whichever side is scored, noted as Tier 3 of the
 2026-10-19 review and left open until now. Before any baseline arm is set beside the agent, the

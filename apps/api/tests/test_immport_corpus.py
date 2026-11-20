@@ -208,7 +208,7 @@ def test_cost_per_paper_prefers_corpus_rows_then_any_then_default(tmp_path):
     rows = [{"usd": 0.30, "registry_dir": str(corpus / "1_SDY1")},
             {"usd": 0.50, "registry_dir": str(corpus / "2_SDY2")},
             {"usd": 0.40, "registry_dir": str(corpus / "3_SDY3")},
-            {"usd": 9.00, "registry_dir": "data/31paper_assays/x"},
+            {"usd": 9.00, "registry_dir": "data/benchmark_agent_assays/x"},
             {"usd": None, "registry_dir": str(corpus / "4_SDY4")}]
     assert immport_corpus.cost_per_paper(rows, under=corpus) == {"median": 0.40, "max": 0.50, "n": 3}
     assert immport_corpus.cost_per_paper(rows[3:], under=corpus) == {"median": 9.0, "max": 9.0, "n": 1}

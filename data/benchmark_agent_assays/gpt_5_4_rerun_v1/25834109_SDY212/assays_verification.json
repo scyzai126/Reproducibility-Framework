@@ -1,0 +1,678 @@
+{
+  "summary": {
+    "total": 10,
+    "accept": 8,
+    "review": 2,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {
+      "readouts": {
+        "NOT_SUPPORTED": 1
+      },
+      "name_in_paper": {
+        "NOT_SUPPORTED": 1
+      }
+    }
+  },
+  "results": [
+    {
+      "assay_id": "ELISA",
+      "assay_name": "ELISA",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "ELISA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S103"
+          ],
+          "evidence_text": "conducted by ELISA",
+          "reason": "The text explicitly states that ELISA was used in this study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "serum",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S100",
+            "S105"
+          ],
+          "evidence_text": "Serum was separated by centrifugation of clotted blood, and stored at − 80°C before use. Serum samples were thawed at room temperature",
+          "reason": "The ELISA procedure explicitly uses serum samples."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "CMV and EBV IgG seropositivity",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "The text supports CMV and EBV seropositivity determination but only explicitly names a CMV IgG ELISA kit, not EBV IgG."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Determination of CMV and EBV seropositivity was conducted by ELISA using the cytomegalovirus (CMV) IgG ELISA kit (Calbiotech, cat.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S103"
+          ],
+          "evidence_text": "Determination of CMV and EBV seropositivity was conducted by ELISA using the cytomegalovirus (CMV) IgG ELISA kit (Calbiotech, cat.",
+          "reason": "The quoted text appears verbatim and states that ELISA was performed here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S103"
+      },
+      "conflict_detected": true,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    },
+    {
+      "assay_id": "Whole blood microarray analysis of gene expression",
+      "assay_name": "Whole blood microarray analysis of gene expression",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Whole blood microarray analysis of gene expression",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S109",
+            "S112"
+          ],
+          "evidence_text": "Total RNA was extracted from PAXgene blood RNA tubes (PreAnalytiX) using the QIAcube automation RNA extraction procedure according to the manufacturer’s protocol (Qiagene). For each sample, 750 ng of total RNA were hybridized to Beadchips (HumanHT-12v3 Expression Bead Chip, Illumina)",
+          "reason": "The methods section explicitly describes a whole-blood microarray gene expression procedure performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "microarray",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S98",
+            "S101"
+          ],
+          "evidence_text": "Whole blood was used for gene expression analysis (below). Whole blood, PBMC or serum from the first visit (baseline - day 0) was processed and used for determination of gene expression",
+          "reason": "This wording refers to the same gene expression measurement assay described in the microarray methods."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "whole blood",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S98",
+            "S109"
+          ],
+          "evidence_text": "Whole blood was used for gene expression analysis (below). Total RNA was extracted from PAXgene blood RNA tubes",
+          "reason": "The assay's gene expression analysis is explicitly stated to use whole blood."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "genome-wide mRNA expression",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S11",
+            "S112"
+          ],
+          "evidence_text": "and genome-wide mRNA expression ... For each sample, 750 ng of total RNA were hybridized to Beadchips ... that contains 48,771 probes for around 25,000 annotated genes.",
+          "reason": "The text explicitly states that this assay measured genome-wide mRNA expression."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "For each sample, 750 ng of total RNA were hybridized to Beadchips (HumanHT-12v3 Expression Bead Chip, Illumina) that contains 48,771 probes for around 25,000 annotated genes.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S112"
+          ],
+          "evidence_text": "For each sample, 750 ng of total RNA were hybridized to Beadchips (HumanHT-12v3 Expression Bead Chip, Illumina) that contains 48,771 probes for around 25,000 annotated genes.",
+          "reason": "The quote appears verbatim and describes the assay being performed on study samples."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S112"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Leukocyte subset frequency determination",
+      "assay_name": "Leukocyte subset frequency determination",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Leukocyte subset frequency determination",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S115"
+          ],
+          "evidence_text": "Leukocyte subset frequency determination",
+          "reason": "This is the Methods subsection heading for an assay performed in the study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S99",
+            "S116"
+          ],
+          "evidence_text": "Peripheral blood mononuclear cells (PBMC) were obtained by density gradient centrifugation",
+          "reason": "The assay section states PBMC were used for this measurement."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "leukocyte subset frequencies",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S101",
+            "S121"
+          ],
+          "evidence_text": "used for determination of gene expression, leukocyte subset frequency",
+          "reason": "The text explicitly states this assay determined leukocyte subset frequency."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "PBMC were thawed in warm media, washed twice and stained with three separate antihuman antibody cocktails containing: ( 1 ) anti-CD3 AmCyan, CD4 Pacific Blue, CD8 APCH7, CD28 APC; ( 2 ) CD3 AmCyan, CD4 Pacific Blue, CD8 APCH7, CD27 PE, CD45RA PE-Cy5; ( 3 ) CD3 AmCyan, CD19 Alexa Fluor700, CD56 PE, CD33 PE-Cy7, TCR APC, all reagents from BD Biosciences.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S116"
+          ],
+          "evidence_text": "PBMC were thawed in warm media, washed twice and stained with three separate antihuman antibody cocktails containing: ( 1 ) anti-CD3 AmCyan, CD4 Pacific Blue, CD8 APCH7, CD28 APC; ( 2 ) CD3 AmCyan, CD4 Pacific Blue, CD8 APCH7, CD27 PE, CD45RA PE-Cy5; ( 3 ) CD3 AmCyan, CD19 Alexa Fluor700, CD56 PE, CD33 PE-Cy7, TCR APC, all reagents from BD Biosciences.",
+          "reason": "The quote appears verbatim and is part of the assay procedure performed here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S116"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Phosphorylation of intracellular proteins by phosphoflow analysis",
+      "assay_name": "Phosphorylation of intracellular proteins by phosphoflow analysis",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Phosphorylation of intracellular proteins by phosphoflow analysis",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S122"
+          ],
+          "evidence_text": "## Phosphorylation of intracellular proteins by phosphoflow analysis",
+          "reason": "This Methods subsection names a procedure that was performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "phosphoflow analysis",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S122"
+          ],
+          "evidence_text": "phosphoflow analysis",
+          "reason": "This wording refers to the same assay named in the subsection heading."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S99",
+            "S101",
+            "S122",
+            "S136"
+          ],
+          "evidence_text": "Peripheral blood mononuclear cells (PBMC) were obtained by density gradient centrifugation (Ficoll-Paque) and frozen at − 80°C for 24-48 hrs before transferring to LN 2 .",
+          "reason": "The assay methods describe thawed cells and explicitly state PBMC were used for signaling responses to stimulation."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "phosphorylation of STAT1, STAT3, and STAT5 proteins in immune cell subsets after cytokine stimulation",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S123",
+            "S133"
+          ],
+          "evidence_text": "stimulated with IFN-γ, IL-2, IL-6, IL-7, IL-10 or IL-21 at 50 ng/ml or with 10 4 U/ml IFN-α for 15 minutes.",
+          "reason": "The assay measured phosphorylation of STAT1, 3, and 5 in specified immune cell subsets following cytokine stimulation."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Phosphorylation of STAT1, 3, and 5 proteins in B cells, CD4(+) or CD4(+) CD3(+) T cells or monocytes was analyzed by deconvolution of stimuli-specific gating.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S133"
+          ],
+          "evidence_text": "Phosphorylation of STAT1, 3, and 5 proteins in B cells, CD4(+) or CD4(+) CD3(+) T cells or monocytes was analyzed by deconvolution of stimuli-specific gating.",
+          "reason": "The quoted sentence appears verbatim and describes analysis performed in this assay."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S133"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Phosphorylation of Akt and PLC-γ",
+      "assay_name": "Phosphorylation of Akt and PLC-γ",
+      "assay_identity_verdict": "NOT_SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Phosphorylation of Akt and PLC-γ",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "This names a measured quantity/readout rather than a distinct assay technique."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S136"
+          ],
+          "evidence_text": "After resting PBMC samples at 37°C",
+          "reason": "The assay was performed on PBMC samples."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "phosphorylated Akt and PLC-γ in B cells after B cell receptor cross-linking",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S135",
+            "S141"
+          ],
+          "evidence_text": "Phosphorylation of Akt and PLC-γ was assessed in B cells by cross-linking of the B cell receptor... Median fluorescence intensity was recorded and used for the calculation of baseline levels of phosphorylated proteins and fold increase after BCR stimulation.",
+          "reason": "The text states that Akt and PLC-γ phosphorylation in B cells after BCR stimulation was measured."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Phosphorylation of Akt and PLC-γ was assessed in B cells by cross-linking of the B cell receptor.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S135"
+          ],
+          "evidence_text": "Phosphorylation of Akt and PLC-γ was assessed in B cells by cross-linking of the B cell receptor.",
+          "reason": "The quote appears verbatim and describes measurement performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S135"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    },
+    {
+      "assay_id": "Hemagglutination inhibition assay",
+      "assay_name": "Hemagglutination inhibition assay",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Hemagglutination inhibition assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S153"
+          ],
+          "evidence_text": "The HAI assay was performed",
+          "reason": "The text explicitly states that the HAI assay was performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "HAI assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S153"
+          ],
+          "evidence_text": "The HAI assay was performed",
+          "reason": "This wording directly refers to the same assay performed here."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "hemagglutinin-inhibition (HAI) assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S43"
+          ],
+          "evidence_text": "assayed antibody responses using the standard hemagglutinin-inhibition (HAI) assay",
+          "reason": "This wording names the same assay used to measure antibody responses."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "sera",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S153"
+          ],
+          "evidence_text": "performed on sera from day 0 and day 28",
+          "reason": "The methods explicitly state that the assay was performed on sera."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "influenza hemagglutination inhibition titers",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S155"
+          ],
+          "evidence_text": "The HAI titer of a given sample was defined as the reciprocal of the last serum dilution with no HA activity.",
+          "reason": "The assay readout is explicitly defined as the HAI titer."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "The HAI assay was performed on sera from day 0 and day 28 using a standard technique ( 66 ); serially diluted 25-µl aliquots of serum samples in PBS were mixed with 25-µl aliquots of virus matching the vaccine strain composition for that years, corresponding to 4 HA units, in V-bottom 96-well plates (Nunc) and incubated for 30 min at room temperature.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S153"
+          ],
+          "evidence_text": "The HAI assay was performed on sera from day 0 and day 28 using a standard technique ( 66 ); serially diluted 25-µl aliquots of serum samples in PBS were mixed with 25-µl aliquots of virus matching the vaccine strain composition for that years, corresponding to 4 HA units, in V-bottom 96-well plates (Nunc) and incubated for 30 min at room temperature.",
+          "reason": "The quote appears verbatim and explicitly states the assay was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S153"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Single-nucleotide polymorphism assay",
+      "assay_name": "Single-nucleotide polymorphism assay",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Single-nucleotide polymorphism assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S181"
+          ],
+          "evidence_text": "All samples were genotyped using the custom designed ImmunoChip array (Illumina).",
+          "reason": "The Methods section explicitly describes SNP genotyping being performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "single nucleotide polymorphism (SNP) genotyping approach",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S62"
+          ],
+          "evidence_text": "we employed a single nucleotide polymorphism (SNP) genotyping approach (ImmunoChip)",
+          "reason": "This wording refers to the same SNP genotyping assay used in the study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "genomic DNA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S183"
+          ],
+          "evidence_text": "Genotyping arrays were processed using 400ng of genomic DNA",
+          "reason": "The text explicitly states genomic DNA was used for this genotyping assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "single nucleotide polymorphism genotypes",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S184"
+          ],
+          "evidence_text": "Genotype calls were generated",
+          "reason": "The assay output is explicitly described as genotype calls."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "All samples were genotyped using the custom designed ImmunoChip array (Illumina).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S181"
+          ],
+          "evidence_text": "All samples were genotyped using the custom designed ImmunoChip array (Illumina).",
+          "reason": "The quote appears verbatim and directly states the assay was performed here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S181"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Serum cytokine levels determination",
+      "assay_name": "Serum cytokine levels determination",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Serum cytokine levels determination",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S143"
+          ],
+          "evidence_text": "Cytokines were measured using a Luminex system",
+          "reason": "The section describes a cytokine measurement procedure performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "Luminex",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S143"
+          ],
+          "evidence_text": "Luminex system",
+          "reason": "Luminex refers to the multiplex bead-based assay used for this measurement."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "serum",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S145"
+          ],
+          "evidence_text": "serum samples were mixed with antibodylinked polystyrene beads",
+          "reason": "The assay was explicitly performed on serum samples."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "cytokine and chemokine fluorescence intensities from bead-based multiplex measurements",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S143",
+            "S149",
+            "S150",
+            "S151"
+          ],
+          "evidence_text": "The Luminex LabMap200 outputs the fluorescence intensity of each bead measured for a given cytokine in a sample. For each well, we considered the median fluorescence intensity (MFI) of all beads measured for a given cytokine",
+          "reason": "The text states this assay measured cytokines and recorded bead fluorescence intensity as MFI."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Cytokines were measured using a Luminex system (Luminex Corp).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S143"
+          ],
+          "evidence_text": "Cytokines were measured using a Luminex system (Luminex Corp).",
+          "reason": "The quote appears verbatim and shows the assay was performed here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S143"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Quantification of IAV in infected lung tissue",
+      "assay_name": "Quantification of IAV in infected lung tissue",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Quantification of IAV in infected lung tissue",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S176",
+            "S177"
+          ],
+          "evidence_text": "Quantification of IAV in infected lung tissue",
+          "reason": "This is a Methods subsection heading for a procedure performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "plaque assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S177"
+          ],
+          "evidence_text": "plaque assay",
+          "reason": "The text states the lung homogenates were titered by plaque assay, referring to the same measurement procedure."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "lung homogenates",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S177",
+            "S178"
+          ],
+          "evidence_text": "Lung homogenates were titered by plaque assay",
+          "reason": "The assay was explicitly performed on lung homogenates."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "influenza viral titers",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S172",
+            "S177"
+          ],
+          "evidence_text": "For quantification of influenza in infected lungs, snap-frozen lungs were stored at −80°C until further processing.\nLung homogenates were titered by plaque assay",
+          "reason": "The procedure is explicitly for quantification of influenza in lungs by titration."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Lung homogenates were titered by plaque assay on Madin-Darby canine kidney (MDCK) cells.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S177"
+          ],
+          "evidence_text": "Lung homogenates were titered by plaque assay on Madin-Darby canine kidney (MDCK) cells.",
+          "reason": "The quote appears verbatim and directly describes the assay being performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S177"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Tetramer staining",
+      "assay_name": "Tetramer staining",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Tetramer staining",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S208"
+          ],
+          "evidence_text": "by tetramer staining",
+          "reason": "The text explicitly states tetramer staining was used in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "Tetramer and Phenotypic Staining of CD8 T Cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S173"
+          ],
+          "evidence_text": "Tetramer and Phenotypic Staining of CD8 T Cells",
+          "reason": "This heading refers to the same tetramer staining assay used to enumerate influenza-specific T cells."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "influenza-specific CD8 positive T cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S77",
+            "S208",
+            "S215"
+          ],
+          "evidence_text": "the influenza-specific CD8 + T cell responses against the three major influenza epitopes",
+          "reason": "The assay readout is influenza-specific CD8 T-cell responses enumerated by tetramer staining."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Seven days after IAV infection, influenza viral titer was determined (upper panel) and IAV-specific T cells were enumerated from the BAL of IAV+ MCMV− (MCMV−) or IAV+ MCMV+ (MCMV+) mice by tetramer staining for NP, PA and PB1-specific responses.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S208"
+          ],
+          "evidence_text": "Seven days after IAV infection, influenza viral titer was determined (upper panel) and IAV-specific T cells were enumerated from the BAL of IAV+ MCMV− (MCMV−) or IAV+ MCMV+ (MCMV+) mice by tetramer staining for NP, PA and PB1-specific responses.",
+          "reason": "The quote appears verbatim and directly describes the assay being performed here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S208"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

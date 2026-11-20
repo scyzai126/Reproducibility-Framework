@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     # its retries into a soft loss -- a skipped round, an ERROR record -- rather than a crash,
     # so over a corpus a short budget shows up as silently poorer registries, not as errors.
     OPENAI_MAX_RETRIES: int = 5
+    ANTHROPIC_API_KEY: str = ""
     IMMPORT_BASE_URL: str = "https://www.immport.org"
     IMMPORT_USERNAME: str = ""
     IMMPORT_PASSWORD: str = ""

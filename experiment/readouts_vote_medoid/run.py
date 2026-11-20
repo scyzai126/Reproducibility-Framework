@@ -34,7 +34,7 @@ from app.agent.assay_extractor import clean_registry, paper_names, parse_registr
 from app.agent.assay_merger import blocked_folds, canonical_groups  # noqa: E402
 from app.agent.assay_registry import normalize_assay_name  # noqa: E402
 
-V3 = _REPO_ROOT / "data" / "31paper_assays" / "assay_result_v3"
+V3 = _REPO_ROOT / "data" / "benchmark_agent_assays" / "assay_result_v3"
 FIELDS = ("standard_technique_name", "sample_type", "readouts")
 
 

@@ -224,7 +224,7 @@ async def test_the_dry_run_makes_no_call(corpus, runner, monkeypatch, capsys):
 @pytest.mark.asyncio
 async def test_result_version_routes_every_paper_under_that_folder(corpus, runner, monkeypatch,
                                                                    tmp_path):
-    """--result-version: each paper's folder is created under data/31paper_assays/<NAME>/ before
+    """--result-version: each paper's folder is created under data/benchmark_agent_assays/<NAME>/ before
     the run, so done_path and the pipeline land there instead of in the cache."""
     xml_dir, _registry_root = corpus
     from app.agent import assay_service

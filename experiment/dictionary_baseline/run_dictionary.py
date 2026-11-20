@@ -187,7 +187,7 @@ def extra_terms(report: dict, top: int = 15) -> list[tuple[str, int]]:
 def run_report(runs_dir: Path = RUNS_DIR, comparison_dir: Path = COMPARISON_DIR) -> str:
     runs = run_names(runs_dir)
     lines = ["# Dictionary baseline vs the assay agent, against benchmark v5", "",
-             "Agent: `data/31paper_assays/assay_result_v3`. Dictionary variants: `<vocab>_<scope>`.", "",
+             "Agent: `data/benchmark_agent_assays/assay_result_v3`. Dictionary variants: `<vocab>_<scope>`.", "",
              mode_tables(comparison_dir, runs_dir, run_calls={r: 0 for r in runs})]
     for run in runs:
         path = comparison_dir / f"{run}.json"

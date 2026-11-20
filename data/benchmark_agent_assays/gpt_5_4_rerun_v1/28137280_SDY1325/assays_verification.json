@@ -1,0 +1,435 @@
+{
+  "summary": {
+    "total": 5,
+    "accept": 3,
+    "review": 2,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {
+      "aliases[]": {
+        "NOT_SUPPORTED": 1
+      },
+      "sample_type": {
+        "NOT_SUPPORTED": 1
+      }
+    }
+  },
+  "results": [
+    {
+      "assay_id": "microarray",
+      "assay_name": "microarray",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "microarray",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S26",
+            "S27"
+          ],
+          "evidence_text": "RNA samples were randomly allocated to an Illumina® Human HT12v4.0 Expression BeadChip microarray. RNA was converted into biotin-labelled cRNA and hybridised to a BeadChip microarray.",
+          "reason": "The text explicitly describes microarray profiling being performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "Transcriptomic analysis",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S24"
+          ],
+          "evidence_text": "Transcriptomic analysis",
+          "reason": "This section heading refers to the microarray-based transcriptomic assay performed here."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "gene expression microarray",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S5"
+          ],
+          "evidence_text": "gene expression microarray",
+          "reason": "The abstract names gene expression microarray as one of the assays used to assess responses."
+        },
+        {
+          "field_name": "aliases[2]",
+          "proposed_value": "Transcriptomics",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S77"
+          ],
+          "evidence_text": "Transcriptomics",
+          "reason": "The study overview table uses Transcriptomics to denote this assay category."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S24"
+          ],
+          "evidence_text": "Total RNA was extracted from 2.5 ml peripheral blood collected into a PAXgene™ RNA stabilisation tube",
+          "reason": "This sentence directly states the specimen used for the transcriptomic assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "whole-blood transcript expression levels",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S29",
+            "S31"
+          ],
+          "evidence_text": "Sample transcript profile raw data were extracted from Illumina® GenomeStudio version 1.9.0. Transcript intensities were normalised",
+          "reason": "The assay output is explicitly described as transcript profile raw data and transcript intensities from blood-derived RNA."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "RNA samples were randomly allocated to an Illumina® Human HT12v4.0 Expression BeadChip microarray.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S26"
+          ],
+          "evidence_text": "RNA samples were randomly allocated to an Illumina® Human HT12v4.0 Expression BeadChip microarray.",
+          "reason": "The quote appears verbatim and documents that the microarray assay was performed."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S26"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "flow cytometric characterisation of B cells and plasma cells",
+      "assay_name": "flow cytometric characterisation of B cells and plasma cells",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "flow cytometric characterisation of B cells and plasma cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S49",
+            "S54"
+          ],
+          "evidence_text": "Purified, CD19 + B cells, re-suspended in phosphate-buffered saline (PBS)-EDTA + 0.5% bovine serum albumin (BSA), were added at 2 × 10 5 cells per well of a V-bottom, 96-well culture plate in a 50-μl volume. The cells were analysed on a Beckman-Coulter Cyan Flow Cytometer with 9-colour parameters.",
+          "reason": "The methods section explicitly describes performing flow cytometric characterization on study samples."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "Antibodies for flow cytometric characterisation of B cells and plasma cells",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "This names the antibody reagents section, not the assay itself."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "flow cytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S5"
+          ],
+          "evidence_text": "B-cell responses were assessed by ELISpot, serum bactericidal assay, flow cytometry and gene expression microarray.",
+          "reason": "The text uses flow cytometry to refer to this measurement."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "purified CD19-positive B cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S46",
+            "S49"
+          ],
+          "evidence_text": "Purified CD19 + B cells where then obtained by anti-CD19-magnetic bead separation (Miltenyi Biotech, UK) as per the manufacturer’s instructions using AutoMACs® (Miltenyi Biotech, UK). Purified, CD19 + B cells",
+          "reason": "The flow cytometry procedure was performed on purified CD19+ B cells."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "frequencies of plasma cells and memory B-cell subsets defined by surface-marker staining",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S50",
+            "S110",
+            "S111"
+          ],
+          "evidence_text": "The B cells were then labelled with a combination of the above antibodies to give: (1) plasma cells, which were viable (PI − ) CD3 − CD14 − CD16 − CD19 + CD20 lo/- CD38 hi CD27 hi with subsets based on expression of CXCR3 and HLA-DR; (2) memory B cells, which were viable (PI − ) CD3 − CD14 − CD16 − CD19 + CD20 + CD43 − CD5 − CD27 + with subsets based on IgM and IgD expression (IgM + only, IgM + IgD + , IgD + only and switched IgM − IgD − ). The overall frequencies of total CD38 hi CD27 hi plasma cells per group ( c ) and CXCR3 HLA-DR subsets ( d ) at baseline and 1 week after each vaccine dose are shown per group. Data are expressed as percentage of total B cells",
+          "reason": "The assay measured plasma-cell and memory B-cell subsets by marker staining and reported their frequencies."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "The cells were analysed on a Beckman-Coulter Cyan Flow Cytometer with 9-colour parameters.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S54"
+          ],
+          "evidence_text": "The cells were analysed on a Beckman-Coulter Cyan Flow Cytometer with 9-colour parameters.",
+          "reason": "The quoted sentence appears verbatim and shows the assay was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S54"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Serum bactericidal assay",
+      "assay_name": "Serum bactericidal assay",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Serum bactericidal assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S56"
+          ],
+          "evidence_text": "Human complement serum bactericidal assays (SBAs) for detection of meningococcal serogroups A and C were performed",
+          "reason": "The text explicitly states that serum bactericidal assays were performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "SBAs",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S56"
+          ],
+          "evidence_text": "serum bactericidal assays (SBAs)",
+          "reason": "This is an explicit abbreviation for the same assay."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "SBA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S57"
+          ],
+          "evidence_text": "human SBA activity",
+          "reason": "This wording refers to the same serum bactericidal assay measurement."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "serum",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S57"
+          ],
+          "evidence_text": "Serum samples collected at days 0, 28 and 56 were assessed",
+          "reason": "The assay was explicitly performed on serum samples."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "bactericidal activity titres against meningococcal serogroups A and C",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S57",
+            "S60"
+          ],
+          "evidence_text": "assessed for human SBA activity against serogroup A (F8238) and serogroup C (C11). SBA titres were expressed as the reciprocal end point serum dilutions yielding ≥50% killing of bacterial colonies",
+          "reason": "The assay measured SBA activity/titres against meningococcal serogroups A and C."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Serum samples collected at days 0, 28 and 56 were assessed for human SBA activity against serogroup A (F8238) and serogroup C (C11).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S57"
+          ],
+          "evidence_text": "Serum samples collected at days 0, 28 and 56 were assessed for human SBA activity against serogroup A (F8238) and serogroup C (C11).",
+          "reason": "The quote appears verbatim and shows this assay was performed on study samples."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S57"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "B-cell enzyme-linked immunospot assay",
+      "assay_name": "B-cell enzyme-linked immunospot assay",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "B-cell enzyme-linked immunospot assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S62"
+          ],
+          "evidence_text": "## B-cell enzyme-linked immunospot assay",
+          "reason": "This Methods subsection heading identifies an ELISpot assay performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "ELISpot",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S64"
+          ],
+          "evidence_text": "cultured ELISpot",
+          "reason": "This wording refers to the same ELISpot assay."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "B mem ELISpots",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S218"
+          ],
+          "evidence_text": "B mem ELISpots (MenA, MenC, DT)",
+          "reason": "This table label refers to the same B-cell memory ELISpot measurement."
+        },
+        {
+          "field_name": "aliases[2]",
+          "proposed_value": "enzyme-linked immunospot (ELISpot)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S79"
+          ],
+          "evidence_text": "using enzyme-linked immunospot (ELISpot)",
+          "reason": "This wording explicitly names the same assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S65"
+          ],
+          "evidence_text": "PBMCs were suspended in R10",
+          "reason": "PBMCs are explicitly stated as the cells used in this ELISpot assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "frequencies of meningococcal polysaccharide- and diphtheria toxoid-specific antibody-secreting cells and memory B cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S64",
+            "S79"
+          ],
+          "evidence_text": "Memory B cells were assessed using cultured ELISpot performed on blood samples collected at days 0, 28 and 56.\nWe measured anti-meningococcal capsular group A (MenA) and C (MenC) specific SBA titers, ex vivo and cultured antibody-secreting cell (ASC) frequencies using enzyme-linked immunospot (ELISpot), following each vaccination.",
+          "reason": "The text states ELISpot measured cultured memory B-cell responses and ex vivo/cultured antigen-specific ASC frequencies including MenA, MenC, and diphtheria toxoid."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Memory B cells were assessed using cultured ELISpot performed on blood samples collected at days 0, 28 and 56.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S64"
+          ],
+          "evidence_text": "Memory B cells were assessed using cultured ELISpot performed on blood samples collected at days 0, 28 and 56.",
+          "reason": "The quote appears verbatim and shows the assay was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S64"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Quantitative real-time PCR",
+      "assay_name": "Quantitative real-time PCR",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Quantitative real-time PCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S68"
+          ],
+          "evidence_text": "## Quantitative real-time PCR",
+          "reason": "This methods subsection explicitly identifies a PCR assay performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "real-time PCR (RT-PCR)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S73"
+          ],
+          "evidence_text": "The real-time PCR (RT-PCR)",
+          "reason": "This wording is used in the text for the same assay."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "quantitative PCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S189"
+          ],
+          "evidence_text": "we conducted quantitative PCR",
+          "reason": "This wording refers to the same PCR assay used to measure XBP1 isoforms."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "The PCR methods specify RNA extracted from PAXgene tubes but do not explicitly name the specimen as peripheral blood for this assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "spliced and unspliced XBP1 transcript levels relative to GAPDH",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S70",
+            "S71",
+            "S72",
+            "S75",
+            "S189"
+          ],
+          "evidence_text": "A primer sequence specific to the spliced XBP1 isoform was obtained from the literature... to create a primer complementary to the unspliced XBP1 isoform... GAPDH mRNA expression was used as an internal control... the median ΔCt (cycle threshold compared with the internal control GAPDH) used in subsequent analyses... we conducted quantitative PCR using primers specific for the spliced and unspliced isoforms of XBP1",
+          "reason": "The text states the assay measured spliced and unspliced XBP1 relative to GAPDH."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "The real-time PCR (RT-PCR) used the Platinum® SYBR® Green SuperMix-UDG detection system (with ROX) on a StepOnePlus™ instrument (Thermo Fisher scientific, Massachusetts).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S73"
+          ],
+          "evidence_text": "The real-time PCR (RT-PCR) used the Platinum® SYBR® Green SuperMix-UDG detection system (with ROX) on a StepOnePlus™ instrument (Thermo Fisher scientific, Massachusetts).",
+          "reason": "The quote appears verbatim and describes the assay as performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S73"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

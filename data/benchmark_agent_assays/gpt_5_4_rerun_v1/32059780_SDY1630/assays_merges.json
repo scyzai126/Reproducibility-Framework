@@ -1,0 +1,53 @@
+{
+  "summary": {
+    "groups_merged": 0,
+    "entries_folded": 0,
+    "folds_blocked": 3
+  },
+  "results": [],
+  "blocked": [
+    {
+      "member": "High-dimensional parameter flow cytometric analysis of NK cell subsets",
+      "kept_apart_from": "flow cytometry assay",
+      "anchor": "Flow cytometry analysis and cell sorting",
+      "obi_id": "OBI:0000916",
+      "obi_label": "flow cytometry assay",
+      "reason": "readouts differs: 'cell surface and intracellular marker expression on NK cells and subsets' vs 'high-parameter NK cell marker expression profiles for maturation and functional markers'",
+      "judged": {
+        "verdict": "DIFFERENT",
+        "reason": "Record A describes general NK cell surface and intracellular marker analysis/sorting, whereas Record B is a distinct high-parameter BD Symphony NK subset profiling panel focused on maturation and functional marker expression."
+      }
+    },
+    {
+      "member": "In vitro cytokine stimulation and functional assays of NK cells",
+      "kept_apart_from": "flow cytometry assay",
+      "anchor": "Flow cytometry analysis and cell sorting",
+      "obi_id": "OBI:0000916",
+      "obi_label": "flow cytometry assay",
+      "reason": "readouts differs: 'cell surface and intracellular marker expression on NK cells and subsets' vs 'intracellular IFN-γ production after cytokine stimulation'",
+      "judged": {
+        "verdict": "DIFFERENT",
+        "reason": "Record A measures NK-cell surface/intracellular phenotypic marker expression, whereas Record B measures intracellular IFN-γ functional response after cytokine stimulation in sorted NK cells."
+      }
+    },
+    {
+      "member": "For measuring degranulation by NK cells",
+      "kept_apart_from": "flow cytometry assay",
+      "anchor": "Flow cytometry analysis and cell sorting",
+      "obi_id": "OBI:0000916",
+      "obi_label": "flow cytometry assay",
+      "reason": "readouts differs: 'cell surface and intracellular marker expression on NK cells and subsets' vs 'CD107a expression as a degranulation marker after co-culture with K562 cells'",
+      "judged": {
+        "verdict": "DIFFERENT",
+        "reason": "Record A measures general NK-cell surface and intracellular marker expression, whereas Record B measures the distinct functional response of NK-cell degranulation via CD107a after K562 co-culture."
+      }
+    }
+  ],
+  "key_map": {
+    "Flow cytometry analysis and cell sorting": "flow cytometry assay",
+    "High-dimensional parameter flow cytometric analysis of NK cell subsets": "flow cytometry assay (2)",
+    "In vitro cytokine stimulation and functional assays of NK cells": "flow cytometry assay (3)",
+    "For measuring degranulation by NK cells": "flow cytometry assay (4)",
+    "Whole transcriptome profiling of NK cell subsets": "bulk RNA-seq assay"
+  }
+}

@@ -4,7 +4,7 @@ review page. **This is the comparison to use**; `compare_assay_benchmark.py` is 
 library it imports from (tiers, statuses, the OBI graph) and its own report lets a curator row
 claim every agent entry on a tier, which is what this script was written to stop.
 
-`data/benchmark_assay/benchmark_assay_v5/` is the curators' latest pass (--benchmark-dir for
+`data/benchmark_curator_assay/benchmark_assay_v5/` is the curators' latest pass (--benchmark-dir for
 another). Three things differ from the shared algorithm:
 
 * Several assay names a curator listed separately map to the same OBI term (four flow-cytometry
@@ -37,10 +37,10 @@ Usage:
     python3 scripts/compare_assay_benchmark_v2.py [--only SDY1289] [--benchmark-dir DIR]
                                                   [--registry-dir DIR] [--out-stem NAME] [--strict]
 
-Reads  : data/benchmark_assay/benchmark_assay_v5/*.json
-         data/31paper_assays/assay_result_v1/<pmid>_<SDY>/{assays_benchmark,assays_OBI}.json
+Reads  : data/benchmark_curator_assay/benchmark_assay_v5/*.json
+         data/benchmark_agent_assays/assay_result_v1/<pmid>_<SDY>/{assays_benchmark,assays_OBI}.json
          data/OBI/obi.obo
-Writes : data/benchmark_assay/comparison/<out-stem>.{json,html} -- or, with --registry-dir,
+Writes : data/benchmark_curator_assay/comparison/<out-stem>.{json,html} -- or, with --registry-dir,
          <registry-dir>/comparison/<out-stem>.{json,html}, so another result version's report
          never overwrites the default's.
 """
@@ -69,9 +69,9 @@ from compare_assay_benchmark import (  # noqa: E402
 )
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-BENCHMARK_DIR = REPO_ROOT / "data" / "benchmark_assay" / "benchmark_assay_v5"
-REGISTRY_DIR = REPO_ROOT / "data" / "31paper_assays" / "assay_result_v1"
-OUT_DIR = REPO_ROOT / "data" / "benchmark_assay" / "comparison"
+BENCHMARK_DIR = REPO_ROOT / "data" / "benchmark_curator_assay" / "benchmark_assay_v5"
+REGISTRY_DIR = REPO_ROOT / "data" / "benchmark_agent_assays" / "assay_result_v1"
+OUT_DIR = REPO_ROOT / "data" / "benchmark_curator_assay" / "comparison"
 OUT_STEM = "benchmark_vs_agent"
 
 #: Scores for every comparison arm, rebuilt by `experiment/common/compare_arms.py`. The page

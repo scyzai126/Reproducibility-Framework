@@ -1,0 +1,106 @@
+{
+  "pmid": "D114",
+  "study": "35801589",
+  "title": "HIV viral transcription and immune perturbations in the CNS of people with HIV despite ART",
+  "source_format": "xml",
+  "llm_called": true,
+  "llm_model": "gpt-5.4",
+  "da_accessions": [],
+  "data_availability_statement": null,
+  "data_availability_source": null,
+  "deposited": [
+    {
+      "accession": "GSE202410",
+      "repository": "GEO",
+      "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE202410",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "GEO",
+        "role": "this_study",
+        "in_da_statement": true,
+        "reason": "The paper states in the Data and code section that 'scRNA-Seq data have been deposited ... at accession number GSE202410.'"
+      },
+      "decided_by": "llm",
+      "reason": "The paper states in the Data and code section that 'scRNA-Seq data have been deposited ... at accession number GSE202410.'",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": true,
+      "evidence": [
+        {
+          "section": "Data and code.",
+          "quote": "scRNA-Seq data have been deposited at the National Center for Biotechnology Information’s Gene Expression Omnibus and are publicly available at accession number GSE202410 .",
+          "context": "scRNA-Seq data have been deposited at the National Center for Biotechnology Information’s Gene Expression Omnibus and are publicly available at accession number GSE202410 .",
+          "in_da": false
+        }
+      ]
+    }
+  ],
+  "reused": [
+    {
+      "accession": "github.com/KlugerLab/DAseq",
+      "repository": "GitHub",
+      "url": "https://github.com/KlugerLab/DAseq",
+      "kind": "code",
+      "llm": {
+        "is_accession": true,
+        "repository": "GitHub",
+        "role": "public_data",
+        "in_da_statement": true,
+        "reason": "In the Data and code section it is described as 'An R package implementation of DA-seq,' i.e. a third-party tool repository used by the study."
+      },
+      "decided_by": "llm",
+      "reason": "In the Data and code section it is described as 'An R package implementation of DA-seq,' i.e. a third-party tool repository used by the study.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": true,
+      "evidence": [
+        {
+          "section": "Data and code.",
+          "quote": "STG code is freely available at https://runopti.github.io/stg/ An R package implementation of DA-seq is freely available at GitHub, https://github.com/KlugerLab/DAseq",
+          "context": "All original code is publicly available as of the date of publication. STG code is freely available at https://runopti.github.io/stg/ An R package implementation of DA-seq is freely available at GitHub, https://github.com/KlugerLab/DAseq",
+          "in_da": false
+        }
+      ]
+    }
+  ],
+  "referenced": [
+    {
+      "accession": "K03455.1",
+      "repository": "GenBank",
+      "url": "https://www.ncbi.nlm.nih.gov/nuccore/K03455.1",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "GenBank",
+        "role": "reference",
+        "in_da_statement": false,
+        "reason": "It is cited as the HIV-1 HXB2 GenBank sequence used to build a custom alignment reference, not as deposited study data."
+      },
+      "decided_by": "llm",
+      "reason": "It is cited as the HIV-1 HXB2 GenBank sequence used to build a custom alignment reference, not as deposited study data.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "scRNA-Seq and differential abundance analysis.",
+          "quote": "To detect HIV viral transcripts in 10x Genomics scRNA-Seq data from blood and CSF, a single custom reference with human GRCh38 for protein coding genes and HIV viral consensus complete genome sequence HXB2 (GenBank: K03455.1 ) was used to create a custom reference with cellranger mkref from the 10x Genomics Cell Ranger pipeline.",
+          "context": "The top 20 principal components were used for computing t-distributed stochastic neighbor embedding coordinates for visualization, as well as differential abundance analysis to identify most DA cell subpopulations between different states/tissues in the merged data (BLD: HIV vs. control, CSF: HIV vs. uninfected, uninfected: CSF vs. BLD, HIV: CSF vs. BLD) with the tool DA-seq ( 31 ). To detect HIV viral transcripts in 10x Genomics scRNA-Seq data from blood and CSF, a single custom reference with human GRCh38 for protein coding genes and HIV viral consensus complete genome sequence HXB2 (GenBank: K03455.1 ) was used to create a custom reference with cellranger mkref from the 10x Genomics Cell Ranger pipeline.",
+          "in_da": false
+        }
+      ]
+    }
+  ],
+  "registration": [],
+  "unclear": [],
+  "reviews": [
+    "GSE202410: the model reads it as in the DA statement; the pattern search found it outside it",
+    "github.com/KlugerLab/DAseq: the model reads it as in the DA statement; the pattern search found it outside it"
+  ],
+  "dropped": [],
+  "warnings": []
+}

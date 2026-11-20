@@ -58,8 +58,8 @@ from arms import (  # noqa: E402
     summary_table, to_registry)
 from arms import loose as _loose, read as _read, write as _write  # noqa: E402
 
-SOURCE_DIR = REPO_ROOT / "data" / "31paper_assays" / "assay_result_v3"
-BENCHMARK_DIR = REPO_ROOT / "data" / "benchmark_assay" / "benchmark_assay_v5"
+SOURCE_DIR = REPO_ROOT / "data" / "benchmark_agent_assays" / "assay_result_v3"
+BENCHMARK_DIR = REPO_ROOT / "data" / "benchmark_curator_assay" / "benchmark_assay_v5"
 
 OBO_PATH = REPO_ROOT / "data" / "OBI" / "obi.obo"
 PROMPT_PATH = HERE / "prompt.txt"

@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Compare the agent's assay registries against the human-curated benchmarks.
 
-`data/benchmark_assay/<SDY>[_<pmid>]_*.json` holds a curator's assay list per paper, keyed by
+`data/benchmark_curator_assay/<SDY>[_<pmid>]_*.json` holds a curator's assay list per paper, keyed by
 **OBI label**. Several curator suffixes are in use (`_Assay_Hailong`, `_assays_AS_v2`, ...); every
-file in the folder is scored, and the suffix is not read. `data/31paper_assays/<pmid>_<SDY>/assays_benchmark.json` holds ours, keyed by
+file in the folder is scored, and the suffix is not read. `data/benchmark_agent_assays/<pmid>_<SDY>/assays_benchmark.json` holds ours, keyed by
 the paper's own wording, and the sibling `assays_OBI.json` carries an `obi_id` per entry. Most of the
 pairing is therefore ontology-ID equality; the rest falls through name/alias/quote tiers. No LLM call.
 
@@ -14,10 +14,10 @@ unmatched assays are listed as EXTRA with their paper evidence, for a human to j
 Usage:
     ./.venv/bin/python scripts/compare_assay_benchmark.py [--only SDY2189] [--stdout]
 
-Reads  : data/benchmark_assay/*.json
-         data/31paper_assays/<pmid>_<SDY>/{assays_benchmark,assays_OBI}.json
+Reads  : data/benchmark_curator_assay/*.json
+         data/benchmark_agent_assays/<pmid>_<SDY>/{assays_benchmark,assays_OBI}.json
          data/OBI/obi.obo
-Writes : data/benchmark_assay/comparison/{comparison.json,comparison.md}
+Writes : data/benchmark_curator_assay/comparison/{comparison.json,comparison.md}
 """
 
 from __future__ import annotations
@@ -33,8 +33,8 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 # The same two folders app.agent.assay_table names -- this script is loaded by it, so it cannot
 # import from the app without a cycle; keep the two in step by hand.
-BENCHMARK_DIR = REPO_ROOT / "data" / "benchmark_assay" / "benchmark_assay_v5"
-REGISTRY_DIR = REPO_ROOT / "data" / "31paper_assays" / "assay_result_v1"
+BENCHMARK_DIR = REPO_ROOT / "data" / "benchmark_curator_assay" / "benchmark_assay_v5"
+REGISTRY_DIR = REPO_ROOT / "data" / "benchmark_agent_assays" / "assay_result_v1"
 #: The benchmark side resolves against the FULL assay vocabulary — the 1794-term assay branch
 #: of obi.obo — not `obi_assay_noncompositional_index.json`. That 1249-term file is the pool our
 #: own mapper retrieves from; a curator is free to use a term the prune dropped, and resolving

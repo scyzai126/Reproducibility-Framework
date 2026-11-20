@@ -104,12 +104,12 @@ def registry_from_claims(claims: dict) -> dict:
 _ENRICHED_FIELDS = ("platform", "sample_type", "readouts")
 
 #: The corpus folder, and the versioned result folder inside it that holds the benchmark
-#: papers' registries. Every reader of `data/31paper_assays/<version>/<pmid>_<SDY>/` derives its
+#: papers' registries. Every reader of `data/benchmark_agent_assays/<version>/<pmid>_<SDY>/` derives its
 #: root from these two -- assay_service.REGISTRY_ROOT included -- so bumping the version is one
 #: edit. Defined here rather than in assay_service because this module sits below it in the
 #: import graph. The previous layout had the registries directly under the corpus folder; they
 #: moved into a versioned subfolder and every root that still pointed one level up found nothing.
-CORPUS_ROOT = Path(__file__).resolve().parents[4] / "data" / "31paper_assays"
+CORPUS_ROOT = Path(__file__).resolve().parents[4] / "data" / "benchmark_agent_assays"
 RESULT_VERSION = "assay_result_v1"
 #: Where the benchmark papers' registries live (assay_service.REGISTRY_ROOT reads the same).
 _REGISTRY_ROOT = CORPUS_ROOT / RESULT_VERSION

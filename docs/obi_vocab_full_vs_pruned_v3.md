@@ -13,7 +13,7 @@
 > and its finding that the **compositional** prune carries the score still stands — that prune
 > is still applied.
 
-*2026-10-27. 31 papers, 177 assay entries (`data/31paper_assays/assay_result_v3/`), scored
+*2026-10-27. 31 papers, 177 assay entries (`data/benchmark_agent_assays/assay_result_v3/`), scored
 against benchmark v5. Each arm re-ran round 4 (embedding top-20 + one LLM pick) with a
 different candidate pool and nothing else changed. Data: `experiment/obi_vocab_v3/`.*
 

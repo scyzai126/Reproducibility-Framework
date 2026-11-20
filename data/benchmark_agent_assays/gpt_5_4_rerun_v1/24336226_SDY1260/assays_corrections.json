@@ -1,0 +1,95 @@
+{
+  "summary": {
+    "assays": 8,
+    "fields_re_extracted": 1,
+    "actions": {
+      "REPLACED": 1
+    },
+    "reported_not_corrected": 2
+  },
+  "results": [
+    {
+      "assay_id": "DNA microarray",
+      "assay_name": "DNA microarray",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "ELISA",
+      "assay_name": "ELISA",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "serum bactericidal titers (SBA)",
+      "assay_name": "serum bactericidal titers (SBA)",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "FACS",
+      "assay_name": "FACS",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "Measurement of antibody secreting cells by FACS and ELISpot",
+            "flow cytometry"
+          ],
+          "blind_answer": [
+            "flow cytometry"
+          ],
+          "dropped": [
+            "Measurement of antibody secreting cells by FACS and ELISpot"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "ELISpot",
+      "assay_name": "ELISpot",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "FACS staining",
+      "assay_name": "FACS staining",
+      "record_verdict": "REVIEW",
+      "corrections": [],
+      "reported_not_corrected": [
+        {
+          "field_name": "name_in_paper",
+          "verdict": "NOT_SUPPORTED",
+          "reason": "The text describes cells being stained and acquired on an instrument but does not name the assay as \"FACS staining\" or clearly establish that specific assay identity."
+        }
+      ]
+    },
+    {
+      "assay_id": "ELISA kits",
+      "assay_name": "ELISA kits",
+      "record_verdict": "REVIEW",
+      "corrections": [],
+      "reported_not_corrected": [
+        {
+          "field_name": "name_in_paper",
+          "verdict": "NOT_SUPPORTED",
+          "reason": "\"ELISA kits\" names a product/reagent rather than the assay as named in the paper."
+        }
+      ]
+    },
+    {
+      "assay_id": "Luminex",
+      "assay_name": "Luminex",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    }
+  ]
+}

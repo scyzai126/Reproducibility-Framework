@@ -1,0 +1,105 @@
+{
+  "pmid": "D33",
+  "study": "40359016",
+  "title": "Early multiple sclerosis activity associated with TBX21+CD21loCXCR3+ B cell expansion resembling EBV-induced phenotypes",
+  "source_format": "xml",
+  "llm_called": true,
+  "llm_model": "gpt-5.4",
+  "da_accessions": [
+    "GSE267750"
+  ],
+  "data_availability_statement": "All clinical data associated with the STAyCIS Trial are publicly available on the TrialShare website, https://www.itntrialshare.org/project/Studies/ITN020AIPUBLIC/Study%20Data/begin.view B cell scRNA-Seq + CITE-Seq data from the eMS cohort reported herein are deposited in the National Center for Biotechnology Information Gene Expression Omnibus (accession GSE267750 ). Additional methods are available in Supplemental Methods .",
+  "data_availability_source": "section",
+  "deposited": [
+    {
+      "accession": "GSE267750",
+      "repository": "GEO",
+      "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE267750",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "GEO",
+        "role": "this_study",
+        "in_da_statement": true,
+        "reason": "The Data availability section states that \"B cell scRNA-Seq + CITE-Seq data from the eMS cohort reported herein are deposited ... (accession GSE267750).\""
+      },
+      "decided_by": "llm",
+      "reason": "The Data availability section states that \"B cell scRNA-Seq + CITE-Seq data from the eMS cohort reported herein are deposited ... (accession GSE267750).\"",
+      "found_by": "text",
+      "in_da_section": true,
+      "da_source": "section",
+      "llm_in_da": true,
+      "evidence": [
+        {
+          "section": "Data availability.",
+          "quote": "All clinical data associated with the STAyCIS Trial are publicly available on the TrialShare website, https://www.itntrialshare.org/project/Studies/ITN020AIPUBLIC/Study%20Data/begin.view B cell scRNA-Seq + CITE-Seq data from the eMS cohort reported herein are deposited in the National Center for Biotechnology Information Gene Expression Omnibus (accession GSE267750 ).",
+          "context": "All clinical data associated with the STAyCIS Trial are publicly available on the TrialShare website, https://www.itntrialshare.org/project/Studies/ITN020AIPUBLIC/Study%20Data/begin.view B cell scRNA-Seq + CITE-Seq data from the eMS cohort reported herein are deposited in the National Center for Biotechnology Information Gene Expression Omnibus (accession GSE267750 ). Additional methods are available in Supplemental Methods .",
+          "in_da": true
+        }
+      ]
+    }
+  ],
+  "reused": [],
+  "referenced": [
+    {
+      "accession": "github.com/plger/scDblFinder",
+      "repository": "GitHub",
+      "url": "https://github.com/plger/scDblFinder",
+      "kind": "code",
+      "llm": {
+        "is_accession": true,
+        "repository": "GitHub",
+        "role": "reference",
+        "in_da_statement": false,
+        "reason": "The paper says it reanalyzed data with the third-party tool scDblFinder from that GitHub URL, indicating a software reference rather than this study's deposited code."
+      },
+      "decided_by": "llm",
+      "reason": "The paper says it reanalyzed data with the third-party tool scDblFinder from that GitHub URL, indicating a software reference rather than this study's deposited code.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "ABC gene expression programs correlate with subsequent MS activity after baseline.",
+          "quote": "Finally, reanalysis of the sequencing data with scDblFinder (v1.18; https://github.com/plger/scDblFinder ; commit ID 20e4d51) identified only 1 of the 37 eMS cohort barcodes in ABC 2 as a potential doublet.",
+          "context": "Detailed examination of the raw RNA counts for highly expressed cell type biomarkers from eMS ABC 2 cells ( n = 37 total) identified 28 cells with nonzero MS4A1 (CD20) versus 2 cells each with nonzero CD3E (1 cell also CD19 + and MS4A1 + ) and FCGR1A (1 cell also CD19 + and the other MS4A1 + ). Finally, reanalysis of the sequencing data with scDblFinder (v1.18; https://github.com/plger/scDblFinder ; commit ID 20e4d51) identified only 1 of the 37 eMS cohort barcodes in ABC 2 as a potential doublet. Thus, the ABC 2 cluster had numerous characteristics to support assignment as singlet B cells, though limited presence of other cells may not be excluded definitively.",
+          "in_da": false
+        }
+      ]
+    }
+  ],
+  "registration": [
+    {
+      "accession": "NCT00094172",
+      "repository": "ClinicalTrials.gov",
+      "url": "https://clinicaltrials.gov/study/NCT00094172",
+      "kind": "registration",
+      "llm": {
+        "is_accession": true,
+        "repository": "ClinicalTrials.gov",
+        "role": "registration",
+        "in_da_statement": false,
+        "reason": "It is cited as \"ClinicalTrials.gov NCT00094172\" for the STAyCIS Trial in the study population description, not as a deposited dataset."
+      },
+      "decided_by": "regex",
+      "reason": "clinical-trial registration, not a data deposit",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "Study population and procedures.",
+          "quote": "Beginning at t 1 , 11 people were treated with atorvastatin and 5 were given a placebo as part of the ITN STAyCIS Trial ( 65 ) (ClinicalTrials.gov NCT00094172 ).",
+          "context": "Peripheral blood mononuclear cells (PBMCs) were collected from a subset of the original Immune Tolerance Network (ITN) STAyCIS Trial cohort of people ( n = 16 of 81 original participants; 11 female, 5 male) at 2 time points following initial diagnosis: t 1 (baseline visit; at least 28 days after completion of corticosteroid treatment and within 210 days of presentation) and t 2 (at least 3 months … Beginning at t 1 , 11 people were treated with atorvastatin and 5 were given a placebo as part of the ITN STAyCIS Trial ( 65 ) (ClinicalTrials.gov NCT00094172 ). Treatments were given for 12 months or until participants met the primary endpoint of MS activity, defined as 3 or more new T2 lesions or 1 clinical exacerbation.",
+          "in_da": false
+        }
+      ]
+    }
+  ],
+  "unclear": [],
+  "reviews": [],
+  "dropped": [],
+  "warnings": []
+}

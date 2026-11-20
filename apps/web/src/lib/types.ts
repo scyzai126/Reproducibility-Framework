@@ -196,7 +196,7 @@ export interface AssayObiRow {
   resource: ObiResource | null;
   /** "high" for exact matches, a cosine similarity for LLM-picked ones, null when unresolved. */
   obi_confidence: string | number | null;
-  /** The curator's matching assay(s) from data/benchmark_assay, " / "-joined; corpus table only. */
+  /** The curator's matching assay(s) from data/benchmark_curator_assay, " / "-joined; corpus table only. */
   benchmark_assay?: string | null;
   benchmark_obi_label?: string | null;
   benchmark_obi_id?: string | null;
@@ -369,7 +369,7 @@ export interface DataRepository {
 }
 
 /**
- * Where a paper's own data lives: data/benchmark_assay/data_availability/<SDY>_<PMID>.json, plus -- on a result
+ * Where a paper's own data lives: data/benchmark_curator_assay/data_availability/<SDY>_<PMID>.json, plus -- on a result
  * from a run -- the lines to read and the step's cost. `error` is set when the step failed; the
  * assays from the same run are unaffected.
  */

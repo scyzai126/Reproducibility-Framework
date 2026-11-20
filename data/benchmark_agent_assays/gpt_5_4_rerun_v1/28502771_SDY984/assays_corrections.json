@@ -1,0 +1,124 @@
+{
+  "summary": {
+    "assays": 12,
+    "fields_re_extracted": 3,
+    "actions": {
+      "REPLACED": 2,
+      "CLEARED": 1
+    },
+    "reported_not_corrected": 1
+  },
+  "results": [
+    {
+      "assay_id": "Flow cytometry",
+      "assay_name": "Flow cytometry",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Zostavax®-specific IFN-γ, IL-4 and IL-21 ELISPOT",
+      "assay_name": "Zostavax®-specific IFN-γ, IL-4 and IL-21 ELISPOT",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Zostavax®-specific and total IgG B cell ELISPOT",
+      "assay_name": "Zostavax®-specific and total IgG B cell ELISPOT",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Zostavax®-specific IgG/IgA ELISA",
+      "assay_name": "Zostavax®-specific IgG/IgA ELISA",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Viral DNA detection",
+      "assay_name": "Viral DNA detection",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "readouts",
+          "action": "REPLACED",
+          "previous": "VZV DNA detection and copy number; amplicon melting curves",
+          "blind_answer": "VZV DNA in blood, specifically PCR amplification/detection of the VZV genome ORF63 sequence and nested ORF63 amplicons"
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "nested PCR analysis",
+      "assay_name": "nested PCR analysis",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "sample_type",
+          "action": "CLEARED",
+          "previous": "whole blood",
+          "blind_answer": null
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "partial sequencing of amplicons",
+      "assay_name": "partial sequencing of amplicons",
+      "record_verdict": "REVIEW",
+      "corrections": [],
+      "reported_not_corrected": [
+        {
+          "field_name": "name_in_paper",
+          "verdict": "NOT_SUPPORTED",
+          "reason": "This names a sub-step within viral DNA detection rather than a clearly presented standalone assay."
+        }
+      ]
+    },
+    {
+      "assay_id": "Multiplex cytokine assays",
+      "assay_name": "Multiplex cytokine assays",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Cytokine Bead Array (CBA)",
+      "assay_name": "Cytokine Bead Array (CBA)",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "readouts",
+          "action": "REPLACED",
+          "previous": "cytokine and chemokine concentrations including IL-6, TNF, CXCL8, CCL2, CXCL9 and CXCL10; beads read by flow cytometry",
+          "blind_answer": "cytokines and chemokines in cell-free culture supernatants, including IL-6, TNF, CXCL8, CCL2, CXCL9, and CXCL10"
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "PBMC Transcriptomics analysis",
+      "assay_name": "PBMC Transcriptomics analysis",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Plasma Metabolomics analysis",
+      "assay_name": "Plasma Metabolomics analysis",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "tandem MS-MS experiments",
+      "assay_name": "tandem MS-MS experiments",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    }
+  ]
+}

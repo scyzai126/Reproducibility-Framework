@@ -65,7 +65,7 @@ sys.path.insert(0, str(_REPO_ROOT / "scripts"))
 
 from compare_assay_benchmark import ObiGraph, _surface_forms, normalize  # noqa: E402
 
-REGISTRY_DIR = _REPO_ROOT / "data" / "31paper_assays" / "assay_result_v3"
+REGISTRY_DIR = _REPO_ROOT / "data" / "benchmark_agent_assays" / "assay_result_v3"
 REPORT = _REPO_ROOT / "docs" / "immport_measurement_coverage_2026-11.md"
 #: Records that a measurement happened and nothing about which one.
 UNINFORMATIVE = {"other", "not specified", "unknown", ""}

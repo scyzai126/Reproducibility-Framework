@@ -1,1 +1,0 @@
-CREATE INDEX idx_expsample_2_treatment on expsample_2_treatment(treatment_accession,expsample_accession);

@@ -1,6 +1,6 @@
 # Assay workflow review, 2026-10-30
 
-Reviewed against `data/31paper_assays/assay_result_v3/` scored on `benchmark_assay_v5`
+Reviewed against `data/benchmark_agent_assays/assay_result_v3/` scored on `benchmark_assay_v5`
 (`comparison/benchmark_v5_vs_agent.json`), the round-1..5 code in `assay_service._run_rounds`,
 and the earlier reviews (`assay_entry_grain.md`, the 2026-10-19 Tier 1/2/3 list).
 

@@ -2,7 +2,7 @@
 
 app.agent.data_availability holds the steps; this module sequences them for one paper -- load,
 one LLM call, repository validation, combine, locate -- and writes the two files the CLI has
-always written to data/benchmark_assay/data_availability/:
+always written to data/benchmark_curator_assay/data_availability/:
 
   <SDY>_<PMID>_llm.json  before validation: every ID, its sentences, DA membership, the LLM's roles
   <SDY>_<PMID>.json      the final answer: `data_repositories` and `unconfirmed`
@@ -41,7 +41,7 @@ from app.config import settings
 
 logger = logging.getLogger(__name__)
 
-OUT_DIR = Path(__file__).resolve().parents[4] / "data" / "benchmark_assay" / "data_availability"
+OUT_DIR = Path(__file__).resolve().parents[4] / "data" / "benchmark_curator_assay" / "data_availability"
 
 
 def stem_for(pubmed_id: str, study_accession: str) -> str:

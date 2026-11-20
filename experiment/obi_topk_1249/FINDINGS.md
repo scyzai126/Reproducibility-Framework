@@ -4,7 +4,7 @@
 
 ## 设计
 
-同一批输入(`data/31paper_assays/assay_result_v3` 的 31 个 registry 的 `assays.json`),
+同一批输入(`data/benchmark_agent_assays/assay_result_v3` 的 31 个 registry 的 `assays.json`),
 同一评分器(`scripts/compare_assay_benchmark_v2.py` 对 benchmark v5),只变两个变量:
 
 - **词表**:701(现行 pruned)vs 1249(noncompositional,只去 compositional、保留 domain)

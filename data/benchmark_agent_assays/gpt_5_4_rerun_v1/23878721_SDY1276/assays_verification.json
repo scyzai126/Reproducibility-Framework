@@ -1,0 +1,287 @@
+{
+  "summary": {
+    "total": 4,
+    "accept": 4,
+    "review": 0,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {}
+  },
+  "results": [
+    {
+      "assay_id": "Whole-genome genotyping",
+      "assay_name": "Whole-genome genotyping",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Whole-genome genotyping",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S130"
+          ],
+          "evidence_text": "Genotyping was performed on Illumina HumanOmniExpress microarrays",
+          "reason": "The text explicitly states that genotyping was performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "Genotyping",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S130"
+          ],
+          "evidence_text": "Genotyping was performed",
+          "reason": "This wording refers to the same assay performed in the study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood genomic DNA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S104",
+            "S122",
+            "S123"
+          ],
+          "evidence_text": "Genotyping was carried out on a peripheral blood genomic DNA sample obtained on day 1.",
+          "reason": "The study explicitly links genotyping to peripheral blood genomic DNA."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "genome-wide single nucleotide polymorphism genotypes",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S130",
+            "S131"
+          ],
+          "evidence_text": "Genotyping was performed on Illumina HumanOmniExpress microarrays... The arrays include 730,525 SNP markers.",
+          "reason": "The assay measured SNP genotypes on a genome-wide array."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Genotyping was performed on Illumina HumanOmniExpress microarrays (Illumina, Inc., San Diego, CA) following the manufacturer’s instructions.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S130"
+          ],
+          "evidence_text": "Genotyping was performed on Illumina HumanOmniExpress microarrays (Illumina, Inc., San Diego, CA) following the manufacturer’s instructions.",
+          "reason": "The quote appears verbatim and directly states the assay was performed here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S130"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Measurement of global transcript abundance",
+      "assay_name": "Measurement of global transcript abundance",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Measurement of global transcript abundance",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S134",
+            "S135"
+          ],
+          "evidence_text": "## Measurement of global transcript abundance  [methods]\n[S134] In vitro transcription was performed using Ambion Illumina TotalPrep RNA Amplification Kits (Applied Biosystems/Ambion, Austin, TX). [S135] cRNA was hybridized onto Illumina HumanHT-12v3 or HumanHT-12v4 Expression BeadChips (Illumina, Inc.), following the manufacturer’s protocol.",
+          "reason": "This methods subsection describes an expression microarray procedure performed in the study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "whole blood",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S125",
+            "S126",
+            "S135"
+          ],
+          "evidence_text": "whole-blood samples (2.5 ml) were collected in PAXgene RNA stabilization tubes",
+          "reason": "The RNA used for the expression BeadChip assay came from whole-blood samples."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "global transcript abundance measured by expression microarray",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S135",
+            "S137"
+          ],
+          "evidence_text": "cRNA was hybridized onto Illumina HumanHT-12v3 or HumanHT-12v4 Expression BeadChips (Illumina, Inc.), following the manufacturer’s protocol. [S137] The arrays have 48,742 (v3) and 47,301 (v4) reporters, representing approximately 25,000 genes and non-annotated gene candidates.",
+          "reason": "The subsection explicitly describes expression microarrays used to measure transcript abundance genome-wide."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "cRNA was hybridized onto Illumina HumanHT-12v3 or HumanHT-12v4 Expression BeadChips (Illumina, Inc.), following the manufacturer’s protocol.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S135"
+          ],
+          "evidence_text": "cRNA was hybridized onto Illumina HumanHT-12v3 or HumanHT-12v4 Expression BeadChips (Illumina, Inc.), following the manufacturer’s protocol.",
+          "reason": "The quote appears verbatim and states the assay was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S135"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Hemagglutination inhibition tests",
+      "assay_name": "Hemagglutination inhibition tests",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Hemagglutination inhibition tests",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S140"
+          ],
+          "evidence_text": "Hemagglutination inhibition (HAI) tests were performed",
+          "reason": "The text explicitly states that hemagglutination inhibition tests were performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "HAI",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S140"
+          ],
+          "evidence_text": "Hemagglutination inhibition (HAI) tests",
+          "reason": "HAI is explicitly given as the abbreviation for this assay."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "Hemagglutination inhibition (HAI) tests",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S140"
+          ],
+          "evidence_text": "Hemagglutination inhibition (HAI) tests were performed",
+          "reason": "This wording directly names the same assay performed in the study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "serum",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S138",
+            "S139",
+            "S140"
+          ],
+          "evidence_text": "Whole blood (10 ml) was collected in Vacutainer Serum Separator Tubes (Beckton–Dickinson). Serum was separated by centrifugation prior to storage at −20°C. Hemagglutination inhibition (HAI) tests were performed",
+          "reason": "The assay is described in the serum samples section and explicitly uses serum dilution, supporting serum as the specimen."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "antibody titers against each viral antigen included in the vaccine",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S140",
+            "S144"
+          ],
+          "evidence_text": "HAI and neutralizing antibody titers were measured for each viral antigen included in the vaccine.",
+          "reason": "The text states that HAI measured antibody titers for each viral antigen included in the vaccine."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Hemagglutination inhibition (HAI) tests were performed as previously described ( Dowdle et al., 1979 ), except for a starting serum dilution of 1:4 and the use of turkey red blood cells.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S140"
+          ],
+          "evidence_text": "Hemagglutination inhibition (HAI) tests were performed as previously described ( Dowdle et al., 1979 ), except for a starting serum dilution of 1:4 and the use of turkey red blood cells.",
+          "reason": "The quote appears verbatim and explicitly shows the assay was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S140"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Neutralizing antibody tests",
+      "assay_name": "Neutralizing antibody tests",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Neutralizing antibody tests",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S142"
+          ],
+          "evidence_text": "Neutralizing antibody tests were performed",
+          "reason": "The text explicitly states that neutralizing antibody tests were performed in this study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "serum",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S138",
+            "S139",
+            "S142"
+          ],
+          "evidence_text": "Whole blood (10 ml) was collected in Vacutainer Serum Separator Tubes (Beckton–Dickinson). Serum was separated by centrifugation prior to storage at −20°C. Neutralizing antibody tests were performed",
+          "reason": "The neutralizing antibody tests are described within the serum sample section and follow preparation of serum."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "neutralizing antibody titers against each viral antigen included in the vaccine",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S142",
+            "S143",
+            "S144"
+          ],
+          "evidence_text": "Neutralizing antibody tests were performed as previously described ( Frank et al., 1980 ) except that hamster serum was not included. Test strains were the same as those used in the vaccine. HAI and neutralizing antibody titers were measured for each viral antigen included in the vaccine.",
+          "reason": "The text states that neutralizing antibody titers were measured for each viral antigen included in the vaccine."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Neutralizing antibody tests were performed as previously described ( Frank et al., 1980 ) except that hamster serum was not included.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S142"
+          ],
+          "evidence_text": "Neutralizing antibody tests were performed as previously described ( Frank et al., 1980 ) except that hamster serum was not included.",
+          "reason": "The quote appears verbatim and directly shows the assay was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S142"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

@@ -9,9 +9,9 @@ What one paper costs today (measured, `data/assay_usage_ledger.csv`): 21–25 ca
 Facts verified for running papers concurrently in one process:
 - `assay_verifier`/`assay_corrector` build a fresh `asyncio.Semaphore(8)` per call (assay_verifier.py:821, assay_corrector.py:382), so N papers in flight = up to 8·N concurrent OpenAI calls.
 - The usage trace is a `ContextVar` started inside `assay_report` (assay_trace.py:86–96, assay_service.py:886); asyncio copies the context into each task, so concurrent papers record separately. `assay_ledger.record_run` appends its row synchronously in the `finally` (assay_service.py:896). Round 4's OBI mapper runs in a worker thread with its own sync client.
-- Each paper writes only inside its own `registry_dir(pmid, sdy)`; the roots are module globals read at call time. `registry_dir` checks `REGISTRY_ROOT` (default `data/31paper_assays/assay_result_v1`) before `CACHE_ROOT`, so **both** must be re-pointed or a benchmark paper would overwrite its v1 registry.
+- Each paper writes only inside its own `registry_dir(pmid, sdy)`; the roots are module globals read at call time. `registry_dir` checks `REGISTRY_ROOT` (default `data/benchmark_agent_assays/assay_result_v1`) before `CACHE_ROOT`, so **both** must be re-pointed or a benchmark paper would overwrite its v1 registry.
 - No retry/timeout is configured on the shared client (`claim_parser._get_client`, SDK default 2 retries); the SDK backs off on 429 by itself when `max_retries` is raised.
-- `data/31paper_assays/assay_result_v3` holds XML-based registries for 27 of the 36 curated papers (4 more are `_pdf`); copying them saves 27 runs (~$11).
+- `data/benchmark_agent_assays/assay_result_v3` holds XML-based registries for 27 of the 36 curated papers (4 more are `_pdf`); copying them saves 27 runs (~$11).
 - Benchmark XML copies in `HIPC papers/xml` carry the same sentence numbering as `data/JAT_XML`, so a copied v3 registry's quotes still match.
 
 ## How batching and parallelism work (the answer to the question)

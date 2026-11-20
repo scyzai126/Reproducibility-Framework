@@ -13,7 +13,7 @@ The rows keep the schema `GET /agent/assay-obi` serves and `AssayObiRow` (apps/w
 renders -- study, assay, standard_technique_name, sample_type, readouts, obi_id, obi_label, resource,
 obi_confidence -- plus:
 
-* the curator's matching assay from `data/benchmark_assay/`, paired by
+* the curator's matching assay from `data/benchmark_curator_assay/`, paired by
   scripts/compare_assay_benchmark.py -- the same pairing the benchmark report scores:
   `benchmark_assay`, `benchmark_obi_label`, `benchmark_obi_id` (" / "-joined where several curator
   assays pair with one of ours, null where none does) and `benchmark_items`, one structured entry
@@ -41,7 +41,7 @@ from app.agent.assay_service import split_stem
 _REPO_ROOT = Path(__file__).resolve().parents[4]
 #: The curators' latest pass. v1 was deleted when v2 and v4 were added; the compare script and
 #: tests/test_benchmark_assay_data.py name the same folder.
-BENCHMARK_DIR = _REPO_ROOT / "data" / "benchmark_assay" / "benchmark_assay_v5"
+BENCHMARK_DIR = _REPO_ROOT / "data" / "benchmark_curator_assay" / "benchmark_assay_v5"
 #: The benchmark pairing lives in a CLI script that is not an importable package.
 _COMPARISON_SCRIPT = _REPO_ROOT / "scripts" / "compare_assay_benchmark.py"
 

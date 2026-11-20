@@ -1,0 +1,81 @@
+{
+  "flow cytometry assay": {
+    "name_in_paper": [
+      "Flow Cytometry Analysis"
+    ],
+    "standard_technique_name": "flow cytometry",
+    "aliases": [],
+    "sample_type": "peripheral blood mononuclear cells",
+    "readouts": "frequency of innate immune cell subsets (dendritic cells, monocytes, NK cells) and mean fluorescence intensity of activation/costimulatory surface markers; acquired on a flow cytometer",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Flow Cytometry Analysis",
+      "sentence_ids": [
+        "S106"
+      ],
+      "quote": "PBMC samples were frozen in liquid nitrogen, thawed, stained, and acquired on an LSR Fortessa flow cytometer."
+    }
+  },
+  "cytometric bead array assay": {
+    "name_in_paper": [
+      "Cytokine and Chemokine Multiplex Analysis"
+    ],
+    "standard_technique_name": "Luminex multiplex bead assay",
+    "aliases": [
+      "Luminex assay",
+      "13-plex assay"
+    ],
+    "sample_type": "plasma",
+    "readouts": "plasma concentrations of 13 cytokines/chemokines (including IP-10, MCP-1, MIP-1β); read on a Luminex-200 instrument",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Cytokine and Chemokine Multiplex Analysis",
+      "sentence_ids": [
+        "S116"
+      ],
+      "quote": "Samples were read in duplicates according to the manufacturer’s protocol on a Bio-Plex Luminex-200 (Bio-Rad) and analyzed using Bio-Plex Manager software."
+    }
+  },
+  "bulk RNA-seq assay": {
+    "name_in_paper": [
+      "Next-Generation RNA Sequencing"
+    ],
+    "standard_technique_name": "bulk RNA sequencing",
+    "aliases": [
+      "RNA-seq",
+      "Next-Generation RNA Sequencing of Full Blood",
+      "RNA Extraction and Next-Generation RNA Sequencing"
+    ],
+    "sample_type": "whole blood",
+    "readouts": "gene-level read counts / gene expression levels; sequenced on an Illumina HiSeq 2500",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "RNA Extraction and Next-Generation RNA Sequencing",
+      "sentence_ids": [
+        "S123"
+      ],
+      "quote": "Diluted libraries were multiplex-sequenced on the Illumina HiSeq 2500 instrument (single read, 50-bp run)."
+    }
+  },
+  "enzyme-linked immunosorbent assay": {
+    "name_in_paper": [
+      "ELISA"
+    ],
+    "standard_technique_name": "enzyme-linked immunosorbent assay",
+    "aliases": [],
+    "sample_type": null,
+    "readouts": "EBOV glycoprotein-binding antibody levels (optical density; ELISA units/mL) against Kikwit GP or inactivated Gueckedou whole virions",
+    "generate_claim": true,
+    "source": "results",
+    "evidence": {
+      "section": "EBOV-GP-Binding Antibody Responses Induced by the Vaccine",
+      "sentence_ids": [
+        "S42"
+      ],
+      "quote": "GP-specific antibody responses were measured using an ELISA in two centralized laboratories (Marburg, Germany and United States Army Medical Research Institute for Infectious Diseases [USAMRIID], USA) on days 0, 7, 14, 28, 56, 84, and 180."
+    }
+  }
+}

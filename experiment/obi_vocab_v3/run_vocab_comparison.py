@@ -9,7 +9,7 @@ LLM pick -- with only the vocabulary swapped between arms:
     noncompositional  data/OBI/obi_assay_noncompositional_{index,embeddings}.json  1249, defined, not run by default
 
 Every arm maps the same input, the canonical `assays.json` of each registry under
-data/31paper_assays/assay_result_v3 (31 papers, 177 entries), so keys stay those of
+data/benchmark_agent_assays/assay_result_v3 (31 papers, 177 entries), so keys stay those of
 `assays_benchmark.json` and the v2 comparator can score each arm as it scores the corpus. No
 BROAD re-pick and no round-5 fold: the difference between arms is the candidate pool and nothing
 else. The stored v3 mapping (same pruned vocabulary, run on 2026-10-2x) is the free reference
@@ -46,8 +46,8 @@ REPO_ROOT = HERE.parents[1]
 for p in (REPO_ROOT / "apps" / "api", REPO_ROOT / "scripts"):
     sys.path.insert(0, str(p))
 
-SOURCE_DIR = REPO_ROOT / "data" / "31paper_assays" / "assay_result_v3"
-BENCHMARK_DIR = REPO_ROOT / "data" / "benchmark_assay" / "benchmark_assay_v5"
+SOURCE_DIR = REPO_ROOT / "data" / "benchmark_agent_assays" / "assay_result_v3"
+BENCHMARK_DIR = REPO_ROOT / "data" / "benchmark_curator_assay" / "benchmark_assay_v5"
 REFERENCE_REPORT = SOURCE_DIR / "comparison" / "benchmark_v5_vs_agent.json"
 OBI_DIR = REPO_ROOT / "data" / "OBI"
 RUNS_DIR = HERE / "runs"

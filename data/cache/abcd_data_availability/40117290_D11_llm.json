@@ -1,0 +1,265 @@
+{
+  "pmid": "D11",
+  "study": "40117290",
+  "title": "Activated polyreactive B cells are clonally expanded in autoantibody positive and patients with recent-onset type 1 diabetes",
+  "source_format": "xml",
+  "llm_called": true,
+  "llm_model": "gpt-5.4",
+  "da_accessions": [
+    "github.com/CUAnschutzBDC/smith_nicholas_sc_antigen"
+  ],
+  "data_availability_statement": "Further information and requests for resources should be directed to Mia J. Smith ( mia.smith@cuanschutz.edu ). This study did not generate new unique reagents. Single-cell RNA-seq fastq and process files have been deposited at NCBI GEO and are publicly available as of the date of publication. Accession numbers are listed in the key resources table . All scripts and the analysis pipeline written in ‘snakemake’ v6.3.0 to replicate this analysis are publicly available on github ( https://github.com/CUAnschutzBDC/smith_nicholas_sc_antigen ). All R analysis, scar, dropkick, and T1K were run through docker containers that are available on dockerhub ( https://hub.docker.com/repositories/kwellswrasman - smith_2024_scar, smith_2024_dropkick, smith_2024_r_docker, smith_2024_t1k). Full links to these images are listed in the key resources table . Any additional information required to reanalyze the data reported in this paper is available from Kristen L. Wells ( kristen.wells-wrasman@cuanschutz.edu ) upon request.",
+  "data_availability_source": "section",
+  "deposited": [
+    {
+      "accession": "github.com/CUAnschutzBDC/smith_nicholas_sc_antigen",
+      "repository": "GitHub",
+      "url": "https://github.com/CUAnschutzBDC/smith_nicholas_sc_antigen",
+      "kind": "code",
+      "llm": {
+        "is_accession": true,
+        "repository": "GitHub",
+        "role": "this_study",
+        "in_da_statement": true,
+        "reason": "The Data and code availability section says all scripts and the analysis pipeline to replicate this analysis are publicly available on this GitHub."
+      },
+      "decided_by": "llm",
+      "reason": "The Data and code availability section says all scripts and the analysis pipeline to replicate this analysis are publicly available on this GitHub.",
+      "found_by": "text",
+      "in_da_section": true,
+      "da_source": "section",
+      "llm_in_da": true,
+      "evidence": [
+        {
+          "section": "Data and code availability",
+          "quote": "All scripts and the analysis pipeline written in ‘snakemake’ v6.3.0 to replicate this analysis are publicly available on github ( https://github.com/CUAnschutzBDC/smith_nicholas_sc_antigen ).",
+          "context": "Accession numbers are listed in the key resources table . All scripts and the analysis pipeline written in ‘snakemake’ v6.3.0 to replicate this analysis are publicly available on github ( https://github.com/CUAnschutzBDC/smith_nicholas_sc_antigen ). All R analysis, scar, dropkick, and T1K were run through docker containers that are available on dockerhub ( https://hub.docker.com/repositories/kwellswrasman - smith_2024_scar, smith_2024_dropkick, smith_2024_r_docker, smith_2024_t1k).",
+          "in_da": true
+        },
+        {
+          "section": "Pre-processing",
+          "quote": "The antibody reference used can be found on our github https://github.com/CUAnschutzBDC/smith_nicholas_sc_antigen/blob/main/files/antibodies.csv .",
+          "context": "V(D)J data was aligned using the 10x genomics reference refdata-cellranger-vdj-GRCh38-alts-ensembl-5.0.0 downloaded from 10x genomics ( https://www.10xgenomics.com/support/software/cell-ranger/downloads ). The antibody reference used can be found on our github https://github.com/CUAnschutzBDC/smith_nicholas_sc_antigen/blob/main/files/antibodies.csv .",
+          "in_da": false
+        },
+        {
+          "section": "Table: KEY RESOURCES TABLE",
+          "quote": "Original code | This paper | https://github.com/CUAnschutzBDC/smith_nicholas_sc_antigen",
+          "context": "Original code | This paper | https://github.com/CUAnschutzBDC/smith_nicholas_sc_antigen",
+          "in_da": false
+        }
+      ]
+    },
+    {
+      "accession": "GSE270142",
+      "repository": "GEO",
+      "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE270142",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "GEO",
+        "role": "this_study",
+        "in_da_statement": true,
+        "reason": "The Data and code availability section says single-cell RNA-seq fastq and processed files have been deposited at NCBI GEO, and the key resources table gives GEO: GSE270142."
+      },
+      "decided_by": "llm",
+      "reason": "The Data and code availability section says single-cell RNA-seq fastq and processed files have been deposited at NCBI GEO, and the key resources table gives GEO: GSE270142.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": true,
+      "evidence": [
+        {
+          "section": "Table: KEY RESOURCES TABLE",
+          "quote": "Sequencing files | This paper | GEO: GSE270142",
+          "context": "Sequencing files | This paper | GEO: GSE270142",
+          "in_da": false
+        }
+      ]
+    }
+  ],
+  "reused": [
+    {
+      "accession": "github.com/mourisl/T1K",
+      "repository": "GitHub",
+      "url": "https://github.com/mourisl/T1K",
+      "kind": "code",
+      "llm": {
+        "is_accession": true,
+        "repository": "GitHub",
+        "role": "public_data",
+        "in_da_statement": false,
+        "reason": "The Methods say they performed HLA prediction using the example in the T1K tutorial, so this is a third-party tool repository they used."
+      },
+      "decided_by": "llm",
+      "reason": "The Methods say they performed HLA prediction using the example in the T1K tutorial, so this is a third-party tool repository they used.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "HLA typing",
+          "quote": "We performed HLA prediction using the example for 10x genomics data in their tutorial https://github.com/mourisl/T1K .",
+          "context": "We identified HLA type using the ‘T1K‘ 78 package. We performed HLA prediction using the example for 10x genomics data in their tutorial https://github.com/mourisl/T1K . Briefly, we used the R2 fastq as in input file, the R1 fastq as the barcode file, 0 15 + as the barcode range, the whitelist provided by 10x genomics as the barcodeWhitelist, and the hlaidx rna seq fasta file provided by the T1K package for the reference file.",
+          "in_da": false
+        },
+        {
+          "section": "Table: KEY RESOURCES TABLE",
+          "quote": "T1K | Song 78 | https://github.com/mourisl/T1K",
+          "context": "T1K | Song 78 | https://github.com/mourisl/T1K",
+          "in_da": false
+        }
+      ]
+    },
+    {
+      "accession": "github.com/CUAnschutzBDC/scAnalysisR",
+      "repository": "GitHub",
+      "url": "https://github.com/CUAnschutzBDC/scAnalysisR",
+      "kind": "code",
+      "llm": {
+        "is_accession": true,
+        "repository": "GitHub",
+        "role": "public_data",
+        "in_da_statement": false,
+        "reason": "The paper says most figures were created using the scAnalysisR package available on GitHub, indicating use of an external software repository."
+      },
+      "decided_by": "llm",
+      "reason": "The paper says most figures were created using the scAnalysisR package available on GitHub, indicating use of an external software repository.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "ACKNOWLEDGMENTS",
+          "quote": "Most figures were created using the ‘scAnalysisR’ package available on github ( https://github.com/CUAnschutzBDC/scAnalysisR ).",
+          "context": "Most figures were created using the ‘scAnalysisR’ package available on github ( https://github.com/CUAnschutzBDC/scAnalysisR ). Figure 1A was created using BioRender, Figure 1B was created using FlowJo software v10.9, and Figure 7 was created using GraphPad Prism v9.",
+          "in_da": false
+        },
+        {
+          "section": "Table: KEY RESOURCES TABLE",
+          "quote": "scAnalysisR | Wells 75 , 76 | https://github.com/CUAnschutzBDC/scAnalysisR",
+          "context": "scAnalysisR | Wells 75 , 76 | https://github.com/CUAnschutzBDC/scAnalysisR",
+          "in_da": false
+        }
+      ]
+    },
+    {
+      "accession": "github.com/chris-mcginnis-ucsf/DoubletFinder",
+      "repository": "GitHub",
+      "url": "https://github.com/chris-mcginnis-ucsf/DoubletFinder",
+      "kind": "code",
+      "llm": {
+        "is_accession": true,
+        "repository": "GitHub",
+        "role": "public_data",
+        "in_da_statement": false,
+        "reason": "The Methods state doublets were removed using DoubletFinder, so this is an external tool repository used in the analysis."
+      },
+      "decided_by": "llm",
+      "reason": "The Methods state doublets were removed using DoubletFinder, so this is an external tool repository used in the analysis.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "Table: KEY RESOURCES TABLE",
+          "quote": "DoubletFinder | McGinnis et al. 68 | https://github.com/chris-mcginnis-ucsf/DoubletFinder",
+          "context": "DoubletFinder | McGinnis et al. 68 | https://github.com/chris-mcginnis-ucsf/DoubletFinder",
+          "in_da": false
+        }
+      ]
+    },
+    {
+      "accession": "github.com/rnabioco/clustifyr",
+      "repository": "GitHub",
+      "url": "https://github.com/rnabioco/clustifyr",
+      "kind": "code",
+      "llm": {
+        "is_accession": true,
+        "repository": "GitHub",
+        "role": "public_data",
+        "in_da_statement": false,
+        "reason": "The Methods say cluster identity was determined using clustifyr, making this a third-party software repository used by the study."
+      },
+      "decided_by": "llm",
+      "reason": "The Methods say cluster identity was determined using clustifyr, making this a third-party software repository used by the study.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "Table: KEY RESOURCES TABLE",
+          "quote": "Clustifyr | Fu et al. 69 | https://github.com/rnabioco/clustifyr",
+          "context": "Clustifyr | Fu et al. 69 | https://github.com/rnabioco/clustifyr",
+          "in_da": false
+        }
+      ]
+    },
+    {
+      "accession": "github.com/Novartis/scAR",
+      "repository": "GitHub",
+      "url": "https://github.com/Novartis/scAR",
+      "kind": "code",
+      "llm": {
+        "is_accession": true,
+        "repository": "GitHub",
+        "role": "public_data",
+        "in_da_statement": false,
+        "reason": "The Methods say they performed scar ambient background removal with scAR, so this is an external tool repository used in analysis."
+      },
+      "decided_by": "llm",
+      "reason": "The Methods say they performed scar ambient background removal with scAR, so this is an external tool repository used in analysis.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "Table: KEY RESOURCES TABLE",
+          "quote": "Scar | Sheng et al. 70 | https://github.com/Novartis/scAR",
+          "context": "Scar | Sheng et al. 70 | https://github.com/Novartis/scAR",
+          "in_da": false
+        }
+      ]
+    },
+    {
+      "accession": "github.com/immunogenomics/harmony",
+      "repository": "GitHub",
+      "url": "https://github.com/immunogenomics/harmony",
+      "kind": "code",
+      "llm": {
+        "is_accession": true,
+        "repository": "GitHub",
+        "role": "public_data",
+        "in_da_statement": false,
+        "reason": "The batch correction Methods say they tested harmony on their data, so this is a third-party software repository used by the study."
+      },
+      "decided_by": "llm",
+      "reason": "The batch correction Methods say they tested harmony on their data, so this is a third-party software repository used by the study.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "Table: KEY RESOURCES TABLE",
+          "quote": "Harmony | Korsunsky et al. 71 | https://github.com/immunogenomics/harmony",
+          "context": "Harmony | Korsunsky et al. 71 | https://github.com/immunogenomics/harmony",
+          "in_da": false
+        }
+      ]
+    }
+  ],
+  "referenced": [],
+  "registration": [],
+  "unclear": [],
+  "reviews": [
+    "GSE270142: the model reads it as in the DA statement; the pattern search found it outside it"
+  ],
+  "dropped": [],
+  "warnings": []
+}

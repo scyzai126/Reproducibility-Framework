@@ -1,0 +1,432 @@
+{
+  "summary": {
+    "total": 6,
+    "accept": 5,
+    "review": 1,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {
+      "sample_type": {
+        "NOT_SUPPORTED": 1
+      }
+    }
+  },
+  "results": [
+    {
+      "assay_id": "Flow cytometry and sorting",
+      "assay_name": "Flow cytometry and sorting",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Flow cytometry and sorting",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S16",
+            "S18"
+          ],
+          "evidence_text": "For surface staining, cells were incubated with antibodies ( Table S2 for list) for 30 minutes at 4°C in the dark along with DAPI (Biolegend). Cells were acquired on an LSRII flow cytometer or sorted with Influx cell sorter (BD Biosciences) and analyzed using FlowJo (Treestar, Ashland, OR).",
+          "reason": "The methods section explicitly describes performing flow cytometry and cell sorting in this study."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "surface and intracellular protein expression",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S16",
+            "S17"
+          ],
+          "evidence_text": "For surface staining, cells were incubated with antibodies ( Table S2 for list) for 30 minutes at 4°C in the dark along with DAPI (Biolegend). For intracellular staining, cells were incubated in perm-fix buffer (eBioscience) and stained with antibodies for 60 min at 20–25°C.",
+          "reason": "The assay includes antibody-based surface and intracellular staining, supporting protein expression as the readout."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Cells were acquired on an LSRII flow cytometer or sorted with Influx cell sorter (BD Biosciences) and analyzed using FlowJo (Treestar, Ashland, OR).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S18"
+          ],
+          "evidence_text": "Cells were acquired on an LSRII flow cytometer or sorted with Influx cell sorter (BD Biosciences) and analyzed using FlowJo (Treestar, Ashland, OR).",
+          "reason": "The quote appears verbatim and directly states that the assay was performed here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S18"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Whole-Transcriptome Profiling by RNA-Sequencing",
+      "assay_name": "Whole-Transcriptome Profiling by RNA-Sequencing",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Whole-Transcriptome Profiling by RNA-Sequencing",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S19",
+            "S21"
+          ],
+          "evidence_text": "## Whole-Transcriptome Profiling by RNA-Sequencing",
+          "reason": "This methods subsection explicitly names an RNA-sequencing procedure performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "RNAseq",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S56"
+          ],
+          "evidence_text": "RNAseq",
+          "reason": "This wording refers to the same RNA-sequencing assay used in the study."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "RNA-seq",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S25"
+          ],
+          "evidence_text": "RNA-seq",
+          "reason": "This wording refers to the same RNA-sequencing assay used in the study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "sorted cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S19"
+          ],
+          "evidence_text": "Total RNA was isolated from sorted cells",
+          "reason": "The RNA-sequencing assay was performed on RNA isolated from sorted cells."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "whole-transcriptome gene expression profiles",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S56",
+            "S57"
+          ],
+          "evidence_text": "We used whole transcriptome profiling by RNAseq to investigate... We initially analyzed differential gene expression",
+          "reason": "The assay is explicitly described as whole-transcriptome profiling used to analyze gene expression."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Library was prepared using a poly-A pull-down and Illumina TruSeq RNA kit, and sequenced using Illumina HiSeq2000.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S21"
+          ],
+          "evidence_text": "Library was prepared using a poly-A pull-down and Illumina TruSeq RNA kit, and sequenced using Illumina HiSeq2000.",
+          "reason": "The quote appears verbatim and describes the RNA-sequencing assay being performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S21"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "CyTOF Sample Preparation and Analysis",
+      "assay_name": "CyTOF Sample Preparation and Analysis",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "CyTOF Sample Preparation and Analysis",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S26"
+          ],
+          "evidence_text": "CyTOF Sample Preparation and Analysis",
+          "reason": "This is the methods subsection heading for a CyTOF assay performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "CyTOF",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S88"
+          ],
+          "evidence_text": "CyTOF",
+          "reason": "The text uses this term to refer to the same assay."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "cytometry by time-of-flight",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S88"
+          ],
+          "evidence_text": "cytometry by time-of-flight (CyTOF)",
+          "reason": "The text explicitly defines this wording as the same assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "cryopreserved cell suspensions",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S26"
+          ],
+          "evidence_text": "Cryopreserved cell suspensions were thawed",
+          "reason": "This sentence identifies the specimen material used for the CyTOF assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "multiparameter protein marker expression on cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S27",
+            "S89"
+          ],
+          "evidence_text": "stained with a panel of antibodies",
+          "reason": "The assay measured multiple antibody-defined cellular protein markers."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Samples were then incubated in 0.125nM Ir intercalator and acquired on a CyTOF2 (Fluidigm).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S28"
+          ],
+          "evidence_text": "Samples were then incubated in 0.125nM Ir intercalator and acquired on a CyTOF2 (Fluidigm).",
+          "reason": "The quote appears verbatim and shows the assay was performed on study samples."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S28"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "T cell proliferation assays",
+      "assay_name": "T cell proliferation assays",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "T cell proliferation assays",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S32",
+            "S33"
+          ],
+          "evidence_text": "Memory CD8 + T cells from BM, LN, Spl or Lung tissues were sorted ( Fig S1 ) and stained with Proliferation Dye eFluor™450 (eBioscience). Cells were plated (5×10 5 /mL) in media (RPMI-1640, 10% FBS, 1mM sodium pyruvate, 100 U/mL penicillin, 100ug/mL streptomycin, 2mM L-glutamine, and 100 μM β-Mercaptoethanol) with Human CD3/CD28 Activator (StemCell technologies) and analyzed 4–5 days later by flow cytometry.",
+          "reason": "The methods explicitly describe performing proliferation assays on sorted memory CD8+ T cells."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "memory CD8 + T cells from bone marrow, lymph node, spleen or lung tissues",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S32"
+          ],
+          "evidence_text": "Memory CD8 + T cells from BM, LN, Spl or Lung tissues were sorted",
+          "reason": "This sentence directly states the specimen used in the proliferation assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "cell proliferation measured by dilution or loss of proliferation dye after stimulation",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S32",
+            "S33",
+            "S165",
+            "S166"
+          ],
+          "evidence_text": "stained with Proliferation Dye eFluor™450 (eBioscience). Cells were plated ... with Human CD3/CD28 Activator ... and analyzed 4–5 days later by flow cytometry. Proliferation of CD8 + TEM cells to anti-CD3/CD28 stimulation shown as %e-fluor450-negative (divided cells) ... Data from A compiled from 6 individuals by percent divided (%eFluor450low)",
+          "reason": "The text supports proliferation as the readout and indicates it was assessed by loss/low signal of the proliferation dye after stimulation."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Cells were plated (5×10 5 /mL) in media (RPMI-1640, 10% FBS, 1mM sodium pyruvate, 100 U/mL penicillin, 100ug/mL streptomycin, 2mM L-glutamine, and 100 μM β-Mercaptoethanol) with Human CD3/CD28 Activator (StemCell technologies) and analyzed 4–5 days later by flow cytometry.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S33"
+          ],
+          "evidence_text": "Cells were plated (5×10 5 /mL) in media (RPMI-1640, 10% FBS, 1mM sodium pyruvate, 100 U/mL penicillin, 100ug/mL streptomycin, 2mM L-glutamine, and 100 μM β-Mercaptoethanol) with Human CD3/CD28 Activator (StemCell technologies) and analyzed 4–5 days later by flow cytometry.",
+          "reason": "The quote appears verbatim and describes the assay being performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S33"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "HLA multimer staining",
+      "assay_name": "HLA multimer staining",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "HLA multimer staining",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S36"
+          ],
+          "evidence_text": "Cells were stained with HLA multimer reagents containing epitopes of CMV",
+          "reason": "The text explicitly states that cells were stained with HLA multimer reagents in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "CMV-multimer",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S36"
+          ],
+          "evidence_text": "CMV-multimer",
+          "reason": "This term is explicitly given as the name for the HLA multimer reagents used here."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "HLA multimer reagents containing epitopes of CMV (CMV-multimer)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S36"
+          ],
+          "evidence_text": "HLA multimer reagents containing epitopes of CMV (CMV-multimer)",
+          "reason": "This wording directly refers to the same staining assay performed here."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "whole mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S34",
+            "S36"
+          ],
+          "evidence_text": "whole mononuclear cells from Blood, BM, or LN were cultured\nCells were stained with HLA multimer reagents containing epitopes of CMV",
+          "reason": "The assay was applied to whole mononuclear cells in the cases described immediately before the staining step."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "CMV epitope-specific T cells detected by HLA multimer staining",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S36"
+          ],
+          "evidence_text": "Cells were stained with HLA multimer reagents containing epitopes of CMV (CMV-multimer)",
+          "reason": "Staining with CMV epitope-containing HLA multimers supports detection of CMV-specific T cells as the assay readout."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Cells were stained with HLA multimer reagents containing epitopes of CMV (CMV-multimer) ( Table S2 ) as previously described.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S36"
+          ],
+          "evidence_text": "Cells were stained with HLA multimer reagents containing epitopes of CMV (CMV-multimer) ( Table S2 ) as previously described.",
+          "reason": "The quote appears verbatim and describes the assay being performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S36"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Human T cell receptor (TCR) sequencing and analysis",
+      "assay_name": "Human T cell receptor (TCR) sequencing and analysis",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Human T cell receptor (TCR) sequencing and analysis",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S37",
+            "S38"
+          ],
+          "evidence_text": "DNA was extracted from cells using the Gentra Puregene kit (Qiagen, Valencia, CA). TCR-Vβ sequences were amplified from the indicated DNA quantities ( Table S3 ) with specific primers as published.( 21 ) Amplicons were purified using the AMPure XP system (Beckman Coulter, Inc., Indianapolis, IN); libraries were generated using the Qiagen Multiplex PCR kit and sequenced using Illumina MiSeq.",
+          "reason": "The methods explicitly describe performing TCR sequencing and analysis in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "sequencing of the TCR CDR3β variable (V) regions",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S122"
+          ],
+          "evidence_text": "we performed sequencing of the TCR CDR3β variable (V) regions of memory CD8 + T cells",
+          "reason": "This wording refers to the same TCR sequencing assay performed in the study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "cells",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "The text specifies DNA extracted from cells and memory CD8+ T cells, not the generic specimen value 'cells' as the assay sample type."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "TCR-Vβ sequence repertoires and clonality/diversity",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S38",
+            "S39",
+            "S43"
+          ],
+          "evidence_text": "TCR-Vβ sequences were amplified from the indicated DNA quantities ( Table S3 ) with specific primers as published.( 21 ) Amplicons were purified using the AMPure XP system (Beckman Coulter, Inc., Indianapolis, IN); libraries were generated using the Qiagen Multiplex PCR kit and sequenced using Illumina MiSeq. Raw sequence data (fastq files) were filtered as previously described( 22 ) and clone assembly were processed by MiXCR (v2.1).( 23 ) Clonality was measured for all TCR clones by normalizing the entropy values of each sample to the number of unique TCR sequences, resulting in a value ranging from 0 (most diverse) to 1 (least diverse). For clonality and diversity analysis, the same input T-cell DNA was used and calculated using different orders.( 25 , 26 )",
+          "reason": "The assay generated TCR sequence data and the study explicitly analyzed clonality and diversity from those sequences."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "TCR-Vβ sequences were amplified from the indicated DNA quantities ( Table S3 ) with specific primers as published.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S38"
+          ],
+          "evidence_text": "TCR-Vβ sequences were amplified from the indicated DNA quantities ( Table S3 ) with specific primers as published.",
+          "reason": "The quote appears verbatim and describes the assay being performed here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S38"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

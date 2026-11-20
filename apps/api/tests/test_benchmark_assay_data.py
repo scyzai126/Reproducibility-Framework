@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pytest
 
-BENCHMARK_DIR = Path(__file__).resolve().parents[3] / "data" / "benchmark_assay" / "benchmark_assay_v5"
+BENCHMARK_DIR = Path(__file__).resolve().parents[3] / "data" / "benchmark_curator_assay" / "benchmark_assay_v5"
 
 
 def _benchmark_files() -> list[Path]:

@@ -1,0 +1,308 @@
+{
+  "summary": {
+    "total": 4,
+    "accept": 4,
+    "review": 0,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {}
+  },
+  "results": [
+    {
+      "assay_id": "Single-Cell RNA-seq",
+      "assay_name": "Single-Cell RNA-seq",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Single-Cell RNA-seq",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S260"
+          ],
+          "evidence_text": "## Single-Cell RNA-seq",
+          "reason": "The Methods section explicitly identifies this assay as Single-Cell RNA-seq."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "scRNA-seq",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S2"
+          ],
+          "evidence_text": "single cell RNA-sequencing (scRNA-seq)",
+          "reason": "The text uses scRNA-seq as a synonym for the same assay."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "Chromium 3′-scRNA-seq",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S14"
+          ],
+          "evidence_text": "Chromium 3′-scRNA-seq",
+          "reason": "The text explicitly names Chromium 3′-scRNA-seq as the same single-cell RNA-seq assay workflow."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "CD3-positive T cells from lungs, lung-draining lymph nodes, bone marrow, and peripheral blood",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S251",
+            "S256",
+            "S257",
+            "S259"
+          ],
+          "evidence_text": "We isolated mononuclear cells from donor lungs, lung-draining lymph nodes (LN) and bone marrow (BM) as previously described 10 , 11 . For BM and peripheral blood, we isolated mononuclear cells by density gradient centrifugation using Lymphocyte Separation Medium (Corning). T cells were enriched from all samples using magnetic negative selection for CD3 + T cells (MojoSort Human CD3 + T cell Isolation Kit; BioLegend), followed by a dead cell removal kit (Miltenyi Biotec), resulting in 80–90% purity. After stimulation, dead cells were removed as above before cell isolation for single-cell RNA-seq.",
+          "reason": "The assay was performed on CD3+ T cells enriched from lungs, lung-draining lymph nodes, bone marrow, and peripheral blood."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "single-cell transcript sequences and gene expression profiles",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S261",
+            "S264"
+          ],
+          "evidence_text": "We barcoded captured mRNA was barcoded during cDNA synthesis and converted the barcoded cDNA into pooled single-cell RNA-seq libraries for Illumina sequencing using the Chromium Single Cell 3′ Solution (10x Genomics) according to the manufacturer’s instructions. All of the libraries were sequenced with an 8-base index read, a 26-base read 1 containing cell-identifying barcodes and unique molecular identifiers (UMIs), and a 98-base read 2 containing transcript sequences",
+          "reason": "The assay generated transcript sequences from barcoded single cells for downstream gene expression profiling."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "We barcoded captured mRNA was barcoded during cDNA synthesis and converted the barcoded cDNA into pooled single-cell RNA-seq libraries for Illumina sequencing using the Chromium Single Cell 3′ Solution (10x Genomics) according to the manufacturer’s instructions.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S261"
+          ],
+          "evidence_text": "We barcoded captured mRNA was barcoded during cDNA synthesis and converted the barcoded cDNA into pooled single-cell RNA-seq libraries for Illumina sequencing using the Chromium Single Cell 3′ Solution (10x Genomics) according to the manufacturer’s instructions.",
+          "reason": "The quoted sentence appears verbatim and describes the assay being performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S261"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "flow cytometry",
+      "assay_name": "flow cytometry",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "flow cytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S405"
+          ],
+          "evidence_text": "To evaluate the expression of T cell surface markers by flow cytometry",
+          "reason": "The text explicitly states that flow cytometry was performed in this study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "tissue and blood cell suspensions",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S405"
+          ],
+          "evidence_text": "we incubated tissue and blood cell suspensions",
+          "reason": "The assay is explicitly described as being performed on tissue and blood cell suspensions."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "fluorescence of T cell surface markers and viability dye",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S405",
+            "S408"
+          ],
+          "evidence_text": "To evaluate the expression of T cell surface markers by flow cytometry... and Fixable Viability Dye eFluor 780 (eBioscience). We acquired cell fluorescence data",
+          "reason": "The text states the assay evaluated T cell surface marker expression using fluorochrome-conjugated antibodies and acquired fluorescence data including a viability dye."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "To evaluate the expression of T cell surface markers by flow cytometry, we incubated tissue and blood cell suspensions with Human TruStain FcX (BioLegend) and stained with following fluorochrome-conjugated antibodies: CD3 (UCHT1, BD Biosciences; OKT3, BioLegend), CD4 (SK3, BD Biosciences; SK3, Tonbo Biosciences), CD8 (SK1, BioLegend; RPA-T8, BD Biosciences), CCR7 (G043H7; BioLegend), CD45RA (HI100; BioLegend), CD25 (BC96; BioLegend), CD127 (A019D5; BioLegend), CD69 (FN50; BioLegend), CD103 (Ber-ACT8; BioLegend), CD45 (HI30; BioLegend), and Fixable Viability Dye eFluor 780 (eBioscience).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S405"
+          ],
+          "evidence_text": "To evaluate the expression of T cell surface markers by flow cytometry, we incubated tissue and blood cell suspensions with Human TruStain FcX (BioLegend) and stained with following fluorochrome-conjugated antibodies: CD3 (UCHT1, BD Biosciences; OKT3, BioLegend), CD4 (SK3, BD Biosciences; SK3, Tonbo Biosciences), CD8 (SK1, BioLegend; RPA-T8, BD Biosciences), CCR7 (G043H7; BioLegend), CD45RA (HI100; BioLegend), CD25 (BC96; BioLegend), CD127 (A019D5; BioLegend), CD69 (FN50; BioLegend), CD103 (Ber-ACT8; BioLegend), CD45 (HI30; BioLegend), and Fixable Viability Dye eFluor 780 (eBioscience).",
+          "reason": "The quoted text appears verbatim and directly describes the assay being performed here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S405"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "proliferation assays",
+      "assay_name": "proliferation assays",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "proliferation assays",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S406"
+          ],
+          "evidence_text": "For stimulation/proliferation assays",
+          "reason": "The Methods explicitly describes proliferation assays being performed in this study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "CD3-positive T cells from single cell suspensions",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S406"
+          ],
+          "evidence_text": "we magnetically enriched for CD3 + T cells from single cell suspensions",
+          "reason": "This sentence directly states the specimen used for the proliferation assays."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "cell proliferation dye dilution and intracellular NME1 and CD25 fluorescence",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S406",
+            "S407",
+            "S408",
+            "S176",
+            "S490",
+            "S491"
+          ],
+          "evidence_text": "stained cells with Cell Proliferation Dye eFluor 450 (eBioscience) ... At indicated time points, we performed intercellular staining of NME1 ... We acquired cell fluorescence data using a BD LSR II flow cytometer ... Bottom row: CD25 and NME1 expression by proliferating CD3 + T cells after 5 days of stimulation.",
+          "reason": "The text supports proliferation dye labeling and fluorescence measurement of intracellular NME1 and CD25 in the proliferation assay workflow."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "For stimulation/proliferation assays, we magnetically enriched for CD3 + T cells from single cell suspensions, stained cells with Cell Proliferation Dye eFluor 450 (eBioscience), and cultured cells for up to 120 h with or without TCR stimulation as above.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S406"
+          ],
+          "evidence_text": "For stimulation/proliferation assays, we magnetically enriched for CD3 + T cells from single cell suspensions, stained cells with Cell Proliferation Dye eFluor 450 (eBioscience), and cultured cells for up to 120 h with or without TCR stimulation as above.",
+          "reason": "The quote appears verbatim and describes the assay being performed here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S406"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Quantitative real-time PCR",
+      "assay_name": "Quantitative real-time PCR",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Quantitative real-time PCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S411",
+            "S418"
+          ],
+          "evidence_text": "## Quantitative real-time PCR",
+          "reason": "The Methods section explicitly names and describes this assay as performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "quantitative real-time PCR (qPCR)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S418"
+          ],
+          "evidence_text": "performed quantitative real-time PCR (qPCR)",
+          "reason": "This wording explicitly refers to the same assay performed here."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "qPCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S418",
+            "S419"
+          ],
+          "evidence_text": "quantitative real-time PCR (qPCR)",
+          "reason": "The abbreviation is explicitly introduced as the same assay."
+        },
+        {
+          "field_name": "aliases[2]",
+          "proposed_value": "Quntitative PCR (qPCR)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S419"
+          ],
+          "evidence_text": "Quntitative PCR (qPCR) reactions were set up according to manufacturer’s instructions",
+          "reason": "This wording in the source refers to the same qPCR assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "sorted live CD4-positive and CD8-positive T cells from peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S412",
+            "S414",
+            "S417"
+          ],
+          "evidence_text": "PBMC were magnetically enriched for CD3 + T cells, and sorted for live CD4 + and CD8 + T cells",
+          "reason": "The qPCR assay was performed on sorted live CD4+ and CD8+ T cells derived from PBMC."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "NME1, IL2RA, IFIT3, and TBP transcript levels as fold changes",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S418",
+            "S419"
+          ],
+          "evidence_text": "using TaqMan Gene Expression Assays (NME1 Hs00264824_m1; IL2RA Hs00907777_m1; IFIT3 Hs00155468_m1; TBP Hs00427620_m1) ... fold changes between stimulated and unstimulated cells at each time point were calculated",
+          "reason": "The assay measured these transcripts and reported fold changes."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "We converted RNA to cDNA via SuperScript IV VILO Master Mix (Invitrogen) and performed quantitative real-time PCR (qPCR) on a Viia 7 Real-Time PCR system (Applied Biosystems) using TaqMan Gene Expression Assays (NME1 Hs00264824_m1; IL2RA Hs00907777_m1; IFIT3 Hs00155468_m1; TBP Hs00427620_m1) and TaqMan Fast Advanced Master Mix, all from ThermoFisher Scientific.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S418"
+          ],
+          "evidence_text": "We converted RNA to cDNA via SuperScript IV VILO Master Mix (Invitrogen) and performed quantitative real-time PCR (qPCR) on a Viia 7 Real-Time PCR system (Applied Biosystems) using TaqMan Gene Expression Assays (NME1 Hs00264824_m1; IL2RA Hs00907777_m1; IFIT3 Hs00155468_m1; TBP Hs00427620_m1) and TaqMan Fast Advanced Master Mix, all from ThermoFisher Scientific.",
+          "reason": "The quote appears verbatim and directly states that qPCR was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S418"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

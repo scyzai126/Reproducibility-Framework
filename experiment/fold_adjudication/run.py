@@ -33,7 +33,7 @@ sys.path.insert(0, str(_REPO_ROOT / "apps" / "api"))
 from app.agent.assay_fold_judge import adjudicate, judged_pairs  # noqa: E402
 from app.agent.assay_merger import blocked_folds, build_merge_report, canonical_groups  # noqa: E402
 
-V3 = _REPO_ROOT / "data" / "31paper_assays" / "assay_result_v3"
+V3 = _REPO_ROOT / "data" / "benchmark_agent_assays" / "assay_result_v3"
 RUNS = Path(__file__).with_name("runs")
 
 
