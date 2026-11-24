@@ -1,0 +1,109 @@
+{
+  "pmid": "32439709",
+  "study": "SDY1631",
+  "title": "TRM integrins CD103 and CD49a differentially support adherence and motility after resolution of influenza virus infection",
+  "source_format": "xml",
+  "llm_called": true,
+  "llm_model": "gpt-5.4",
+  "da_accessions": [
+    "SDY1631"
+  ],
+  "data_availability_statement": "The data supporting this publication are available at ImmPort under study accession SDY1631 ( https://www.immport.org ) ( 52 ).",
+  "data_availability_source": "section",
+  "deposited": [
+    {
+      "accession": "github.com/tophamlab20/projections",
+      "repository": "GitHub",
+      "url": "https://github.com/tophamlab20/projections",
+      "kind": "code",
+      "llm": {
+        "is_accession": true,
+        "repository": "GitHub",
+        "role": "this_study",
+        "in_da_statement": false,
+        "reason": "The Methods cite this GitHub URL for the MATLAB script used for automated process detection in this study's TIRF images."
+      },
+      "decided_by": "llm",
+      "reason": "The Methods cite this GitHub URL for the MATLAB script used for automated process detection in this study's TIRF images.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "In Vitro Imaging.",
+          "quote": "For automated process detection in MATLAB, single Z plane TIRF images of cells over time were preprocessed for intensity thresholding prior to generating a binarized version ( https://github.com/tophamlab20/projections/blob/master/projections.m ).",
+          "context": "Multifield time lapses were taken while samples were kept at 37 °C with 5% CO 2 with a stage top incubation system (Oko-Lab). For automated process detection in MATLAB, single Z plane TIRF images of cells over time were preprocessed for intensity thresholding prior to generating a binarized version ( https://github.com/tophamlab20/projections/blob/master/projections.m ). The Image Opening morphological filter was applied to identify the inside perimeter of the cell body.",
+          "in_da": false
+        }
+      ]
+    },
+    {
+      "accession": "github.com/TophamLab/Registration",
+      "repository": "GitHub",
+      "url": "https://github.com/TophamLab/Registration",
+      "kind": "code",
+      "llm": {
+        "is_accession": true,
+        "repository": "GitHub",
+        "role": "this_study",
+        "in_da_statement": false,
+        "reason": "The Methods say all images were registered using code at this GitHub repository as part of this study's intravital image analysis."
+      },
+      "decided_by": "llm",
+      "reason": "The Methods say all images were registered using code at this GitHub repository as part of this study's intravital image analysis.",
+      "found_by": "text",
+      "in_da_section": false,
+      "da_source": null,
+      "llm_in_da": false,
+      "evidence": [
+        {
+          "section": "Intravital Multiphoton Imaging.",
+          "quote": "All images were registered within MATLAB (MathWorks) using the registration code provided by the Center for Integrated Research Computing ( https://github.com/TophamLab/Registration ) and were analyzed and visualized using Imaris (Bitplane) software.",
+          "context": "in the Olympus Fluoview software. All images were registered within MATLAB (MathWorks) using the registration code provided by the Center for Integrated Research Computing ( https://github.com/TophamLab/Registration ) and were analyzed and visualized using Imaris (Bitplane) software.",
+          "in_da": false
+        }
+      ]
+    },
+    {
+      "accession": "SDY1631",
+      "repository": "ImmPort",
+      "url": "https://www.immport.org/shared/study/SDY1631",
+      "kind": "data",
+      "llm": {
+        "is_accession": true,
+        "repository": "ImmPort",
+        "role": "this_study",
+        "in_da_statement": true,
+        "reason": "The paper states in Data Availability and data deposition that the data supporting this publication are available at ImmPort under study accession SDY1631."
+      },
+      "decided_by": "llm",
+      "reason": "The paper states in Data Availability and data deposition that the data supporting this publication are available at ImmPort under study accession SDY1631.",
+      "found_by": "text",
+      "in_da_section": true,
+      "da_source": "section",
+      "llm_in_da": true,
+      "evidence": [
+        {
+          "section": "Data Availability.",
+          "quote": "The data supporting this publication are available at ImmPort under study accession SDY1631 ( https://www.immport.org ) ( 52 ).",
+          "context": "The data supporting this publication are available at ImmPort under study accession SDY1631 ( https://www.immport.org ) ( 52 ).",
+          "in_da": true
+        },
+        {
+          "section": "fn-group",
+          "quote": "Data deposition: The data sets in this paper are available in the NIH public immunology data repository ImmPort ( https://www.immport.org ) under accession number SDY1631 .",
+          "context": "Data deposition: The data sets in this paper are available in the NIH public immunology data repository ImmPort ( https://www.immport.org ) under accession number SDY1631 .",
+          "in_da": true
+        }
+      ]
+    }
+  ],
+  "reused": [],
+  "referenced": [],
+  "registration": [],
+  "unclear": [],
+  "reviews": [],
+  "dropped": [],
+  "warnings": []
+}

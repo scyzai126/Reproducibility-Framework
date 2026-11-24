@@ -1,0 +1,58 @@
+{
+  "summary": {
+    "assays": 5,
+    "fields_re_extracted": 1,
+    "actions": {
+      "REPLACED": 1
+    },
+    "reported_not_corrected": 0
+  },
+  "results": [
+    {
+      "assay_id": "Flow Cytometry",
+      "assay_name": "Flow Cytometry",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "In Vitro Imaging",
+      "assay_name": "In Vitro Imaging",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "TIRF microscopy",
+      "assay_name": "TIRF microscopy",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Tracheal Whole-Mount Imaging",
+      "assay_name": "Tracheal Whole-Mount Imaging",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Intravital Multiphoton Imaging",
+      "assay_name": "Intravital Multiphoton Imaging",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "evidence",
+          "action": "REPLACED",
+          "previous": "All images were collected by an Olympus FVMPE-RS system (Olympus) using an Olympus 25× water objective (XLPLN25XWMP2, 1.05 NA).",
+          "blind_answer": {
+            "quote": "Intravital tracheal imaging was performed as described in Lambert Emo et al. ( 36 ).",
+            "sentence_ids": []
+          },
+          "note": "sentence_ids set to where the quote was found: quote is verbatim but cites no sentence ids; it is in S184, S185"
+        }
+      ],
+      "reported_not_corrected": []
+    }
+  ]
+}

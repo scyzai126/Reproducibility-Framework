@@ -1,0 +1,325 @@
+{
+  "summary": {
+    "total": 5,
+    "accept": 4,
+    "review": 1,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {
+      "evidence.quote": {
+        "NOT_SUPPORTED": 1
+      }
+    }
+  },
+  "results": [
+    {
+      "assay_id": "Flow Cytometry",
+      "assay_name": "Flow Cytometry",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Flow Cytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S154",
+            "S156"
+          ],
+          "evidence_text": "Staining was achieved as previously described ( 51 ). Samples were run on an LSRII (BD Biosciences) and analyzed using FlowJo (Tree Star).",
+          "reason": "The Methods section explicitly describes samples being run for flow cytometric analysis in this study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "single-cell suspensions from bronchoalveolar lavage, lung, and trachea",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S149",
+            "S152",
+            "S155"
+          ],
+          "evidence_text": "Bronchoalveolar lavage (BAL), lung, and tracheal samples were prepared as previously described ( 51 ). Cell suspensions were filtered and separated by a 75:40 Percoll (GE Healthcare) discontinuous gradient. Briefly, single-cell suspensions were stained in PBS",
+          "reason": "The text links BAL, lung, and tracheal preparations to single-cell suspensions that were stained for flow cytometry."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "cell-surface marker staining including TCRβ, CD8α, CD69, CD49a, CD103, CD44, and influenza tetramer binding",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S155"
+          ],
+          "evidence_text": "single-cell suspensions were stained in PBS with purified CD16/32 (clone 2.4G2); fixable live/dead indicator (Invitrogen); some combination of the antibodies TCRβ, CD8α, CD69, CD49a, CD103, and CD44 (Biolegend or BD Biosciences); and influenza tetramers (NP and PA) (NIH Tetramer Core Facility).",
+          "reason": "The flow cytometry staining panel explicitly includes these surface markers and influenza tetramers."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Briefly, single-cell suspensions were stained in PBS with purified CD16/32 (clone 2.4G2); fixable live/dead indicator (Invitrogen); some combination of the antibodies TCRβ, CD8α, CD69, CD49a, CD103, and CD44 (Biolegend or BD Biosciences); and influenza tetramers (NP and PA) (NIH Tetramer Core Facility).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S155"
+          ],
+          "evidence_text": "Briefly, single-cell suspensions were stained in PBS with purified CD16/32 (clone 2.4G2); fixable live/dead indicator (Invitrogen); some combination of the antibodies TCRβ, CD8α, CD69, CD49a, CD103, and CD44 (Biolegend or BD Biosciences); and influenza tetramers (NP and PA) (NIH Tetramer Core Facility).",
+          "reason": "The quote appears verbatim and describes staining performed for this study's flow cytometry assay."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S155"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "In Vitro Imaging",
+      "assay_name": "In Vitro Imaging",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "In Vitro Imaging",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S157",
+            "S159",
+            "S160",
+            "S161"
+          ],
+          "evidence_text": "For in vitro migration imaging, GFP OT-I cells were negatively enriched from lungs for CD8 T cells using the Miltenyi Biotec CD8 Isolation Kit (#130-104-075) and resuspended in L15 medium (Invitrogen) containing 2 mg/mL d-glucose. These cells were placed in the chamber at 37 °C and allowed to adhere for 20 min, and microscopy was conducted using a TE2000-U microscope (Nikon) coupled to a CoolSNAP HQ CCD camera with a 20× objective (CFI Plan Fluor ELWD DM; Nikon) and 0.45 numerical aperture. Cells were imaged for 20 min with images taken every 20 s.",
+          "reason": "The text explicitly describes an in vitro imaging procedure performed in this study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "CD8 T cells negatively enriched from lungs",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S159"
+          ],
+          "evidence_text": "For in vitro migration imaging, GFP OT-I cells were negatively enriched from lungs for CD8 T cells",
+          "reason": "This sentence directly states the cells used for the in vitro imaging assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "cell motility on collagen IV or E-cadherin, including speed, displacement, and straightness",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S157",
+            "S164",
+            "S223",
+            "S225",
+            "S226"
+          ],
+          "evidence_text": "Cell migration chambers (Millicell EZ slide eight-well glass, Millipore, or Delta T dish, Biotech) were coated with 10 µg/cm 2 mouse collagen IV (Corning) in 0.05 M HCl for 1 h at room temperature or 2.5 µg/cm 2 mouse E-cadherin (R&D Systems) overnight at 4 °C in PBS. Migration analysis was performed in Imaris software (Bitplane). Cell motility was quantified on mouse collagen IV or E-cadherin before and after addition of blocking antibody. Speed (track length/time) ( A ), displacement rate (displacement/time) ( B ), and straightness (total track length/displacement) ( C ) were calculated.",
+          "reason": "The source explicitly states that in vitro imaging quantified motility on collagen IV or E-cadherin using speed, displacement rate, and straightness."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "These cells were placed in the chamber at 37 °C and allowed to adhere for 20 min, and microscopy was conducted using a TE2000-U microscope (Nikon) coupled to a CoolSNAP HQ CCD camera with a 20× objective (CFI Plan Fluor ELWD DM; Nikon) and 0.45 numerical aperture.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S160"
+          ],
+          "evidence_text": "These cells were placed in the chamber at 37 °C and allowed to adhere for 20 min, and microscopy was conducted using a TE2000-U microscope (Nikon) coupled to a CoolSNAP HQ CCD camera with a 20× objective (CFI Plan Fluor ELWD DM; Nikon) and 0.45 numerical aperture.",
+          "reason": "The quote appears verbatim and describes microscopy performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S160"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "TIRF microscopy",
+      "assay_name": "TIRF microscopy",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "TIRF microscopy",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S165"
+          ],
+          "evidence_text": "For TIRF microscopy, images were collected",
+          "reason": "The text explicitly states that TIRF microscopy was performed."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "CD8 T cells negatively enriched from lungs",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S159",
+            "S165"
+          ],
+          "evidence_text": "For in vitro migration imaging, GFP OT-I cells were negatively enriched from lungs for CD8 T cells using the Miltenyi Biotec CD8 Isolation Kit (#130-104-075) and resuspended in L15 medium (Invitrogen) containing 2 mg/mL d-glucose. For TIRF microscopy, images were collected",
+          "reason": "The TIRF microscopy appears within the same in vitro imaging procedure using GFP OT-I CD8 T cells negatively enriched from lungs."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "cell-surface morphology and number of cellular processes over time on collagen IV or E-cadherin",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S60",
+            "S63",
+            "S167",
+            "S171"
+          ],
+          "evidence_text": "To more closely examine these integrins engaging their respective substrates, cells were imaged on collagen IV and E-cadherin using total internal reflection fluorescence (TIRF) microscopy. Cells on collagen had a median of 4 (IQR of 2) cellular processes per cell observed by TIRF microscopy. For automated process detection in MATLAB, single Z plane TIRF images of cells over time were preprocessed for intensity thresholding prior to generating a binarized version. Finally, each cellular process was labeled and counted, and the number of processes for each cell at a given time point was returned.",
+          "reason": "The text supports imaging cells on collagen IV or E-cadherin and measuring morphology-related features including cellular processes over time."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "For TIRF microscopy, images were collected using a 60×/1.49 numerical aperture oil immersion TIRF objective (Nikon) placed on an inverted Ti-E microscope (Nikon) coupled to a Dragonfly TIRF module (Andor).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S165"
+          ],
+          "evidence_text": "For TIRF microscopy, images were collected using a 60×/1.49 numerical aperture oil immersion TIRF objective (Nikon) placed on an inverted Ti-E microscope (Nikon) coupled to a Dragonfly TIRF module (Andor).",
+          "reason": "The quote appears verbatim and describes TIRF microscopy performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S165"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Tracheal Whole-Mount Imaging",
+      "assay_name": "Tracheal Whole-Mount Imaging",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Tracheal Whole-Mount Imaging",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S174",
+            "S176"
+          ],
+          "evidence_text": "Excised mouse trachea was incubated in PBS serum, anti-CD16/32, and indicated antibodies for 4 h at room temperature. Images were acquired on an Olympus FV1000",
+          "reason": "The section describes whole-mount tracheal staining and imaging performed in this study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "mouse trachea and human tracheal tissue",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S174",
+            "S177",
+            "S180"
+          ],
+          "evidence_text": "Excised mouse trachea was incubated in PBS serum, anti-CD16/32, and indicated antibodies for 4 h at room temperature. Fresh, transplant donor–quality human tracheal tissue was obtained from the Human Tissue Core of LungMAP at the University of Rochester. Human trachea was stained for 72 h",
+          "reason": "The assay was performed on both excised mouse trachea and human tracheal tissue."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "localization of CD49a, CD103, CD8, and E-cadherin staining in whole-mount tracheal tissue",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S175",
+            "S180",
+            "S236",
+            "S238",
+            "S239"
+          ],
+          "evidence_text": "The following antibodies were used in different combinations at the indicated dilutions: CD103–Alexa Fluor 594 (Biolegend), 1:50; CD49a-Alexa Fluor 647 (BD Biosciences), 1:25; and E-cadherin–APC (Biolegend) 1:50. Human trachea was stained for 72 h in PBS serum and the following Biolegend antibodies: hCD103–Alexa Fluor 594, 1:40; hCD8–Alexa Fluor 488, 1:40; hCD49a–Alexa Fluor 647, 1:40; and E-cadherin–APC, 1:40. Tracheal whole mounts from mice that received GFP OT-I CD8 T cells prior to infection were stained for CD49a and CD103 where indicated. Human tracheal whole mount was stained with anti-human CD8, CD49a, CD103, and E-cadherin ( E ). Arrows indicate regions of localized staining.",
+          "reason": "The text supports staining-based localization of these markers in whole-mount tracheal tissue."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Images were acquired on an Olympus FV1000 (Center for Advanced Light Microscopy and Nanoscopy Shared Resource Laboratory) using an Olympus Plan Apo 60×/1.43 NA objective.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S176"
+          ],
+          "evidence_text": "Images were acquired on an Olympus FV1000 (Center for Advanced Light Microscopy and Nanoscopy Shared Resource Laboratory) using an Olympus Plan Apo 60×/1.43 NA objective.",
+          "reason": "The quote appears verbatim and describes imaging performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S176"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Intravital Multiphoton Imaging",
+      "assay_name": "Intravital Multiphoton Imaging",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Intravital Multiphoton Imaging",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S184"
+          ],
+          "evidence_text": "Intravital tracheal imaging was performed",
+          "reason": "The study explicitly states that intravital imaging was performed."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "trachea",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S184"
+          ],
+          "evidence_text": "Intravital tracheal imaging was performed",
+          "reason": "The assay was performed on the trachea."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "in vivo CD8 T cell motility over time in the trachea",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S89",
+            "S242",
+            "S243"
+          ],
+          "evidence_text": "Transgenic OT-I T cells from wild-type (WT) or integrin-deficient mice were transferred to wild-type hosts and imaged at 2 wk postinfection to examine CD8 T cell movement over time. Intravital imaging of the trachea was utilized to examine CD8 T cell motility in vivo on day 14 postinfection. Speed ( A ), displacement rate ( B ), and straightness ( C ) were enumerated.",
+          "reason": "The text explicitly states that intravital tracheal imaging measured in vivo CD8 T cell motility over time."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "All images were collected by an Olympus FVMPE-RS system (Olympus) using an Olympus 25× water objective (XLPLN25XWMP2, 1.05 NA).",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "The quote is present but only describes imaging equipment and does not by itself establish the assay identity or that intravital multiphoton imaging was performed."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S200"
+      },
+      "conflict_detected": true,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    }
+  ]
+}
