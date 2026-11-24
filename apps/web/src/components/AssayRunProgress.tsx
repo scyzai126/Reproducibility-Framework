@@ -15,7 +15,8 @@ const ROUNDS: { name: AssayRoundName; label: string }[] = [
   { name: 'correct', label: 'correct' },
   { name: 'obi', label: 'OBI map' },
   { name: 'canonicalize', label: 'canonicalize' },
-  // Runs in parallel with the five rounds above, not after them.
+  { name: 'judge', label: 'judge folds' },
+  // Runs in parallel with the six rounds above, not after them.
   { name: 'data_availability', label: 'data repositories' },
 ];
 

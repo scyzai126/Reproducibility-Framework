@@ -257,6 +257,8 @@ export interface AssayPaperSummary extends PaperRef {
 
 export type AssayRoundName =
   | 'extract' | 'verify' | 'correct' | 'obi' | 'canonicalize'
+  /** Round 6: asks once about each fold round 5 refused on readouts or sample type. */
+  | 'judge'
   /** Not an assay round: the data-availability step a web run makes in parallel with them. */
   | 'data_availability';
 
@@ -277,6 +279,8 @@ export interface AssayEstimateRound {
   groups: number | null;
   /** Round 5: entries that would fold onto one OBI term. */
   folds: { key: string; members: string[] }[];
+  /** Round 6: the refused folds that would be asked about, one call each. */
+  pairs?: { member: string; anchor: string }[];
 }
 
 export interface AssayEstimate extends PaperRef {
@@ -340,6 +344,8 @@ export interface AssayRunResult {
   corrections?: Record<string, unknown> | null;
   merges?: Record<string, unknown> | null;
   dropped?: Record<string, { reason?: string }>;
+  /** Entries fewer than a majority of the extraction calls found: reported, not delivered. */
+  minority?: Record<string, Record<string, unknown>>;
   rounds?: Record<string, Record<string, unknown>>;
   contract_warnings?: string[];
   meta?: {

@@ -14,6 +14,7 @@ const ROUND_LABEL: Record<string, string> = {
   correct: 'correct',
   obi: 'OBI map',
   canonicalize: 'canonicalize',
+  judge: 'judge folds',
   data_availability: 'data repositories',
 };
 
@@ -23,6 +24,7 @@ const ROUND_DOES: Record<string, string> = {
   correct: 'repairs what verification refused, one call per flagged field',
   obi: 'resolves each name to an OBI term; exact matches are free',
   canonicalize: 'keys by OBI term and folds duplicates; free',
+  judge: 'asks once about each fold round 5 refused on readouts or sample type',
   data_availability:
     'runs alongside the assays: finds where the study deposited its data; one call when the paper names an accession, repository lookups free',
 };
@@ -44,6 +46,12 @@ function roundNote(round: AssayEstimateRound): string {
       return `${round.free_matches} of ${round.assays} match the vocabulary for free`;
     case 'canonicalize':
       return `${round.entries} entries → ${round.groups}, keyed by OBI term`;
+    case 'judge': {
+      const pairs = round.pairs?.length ?? round.calls;
+      return pairs
+        ? `${pairs} refused fold${pairs === 1 ? '' : 's'} to ask about`
+        : 'no refused fold to ask about';
+    }
     case 'data_availability':
       return round.entries
         ? `${round.entries} accession-like ID${round.entries === 1 ? '' : 's'} named in the paper`
@@ -71,6 +79,8 @@ export default function AssayEstimateCard({ estimate, onConfirm, busy }: Props) 
     : 'Cost unknown until round 1 finishes';
   const paidMisses = estimate.rounds.find((r) => r.name === 'obi')?.misses ?? [];
   const folds = estimate.rounds.find((r) => r.name === 'canonicalize')?.folds ?? [];
+  // Counted, not written in: the data-repository step runs alongside the rounds and is not one.
+  const roundCount = estimate.rounds.filter((r) => r.name !== 'data_availability').length;
 
   return (
     <section className="border border-gray-200 rounded-xl bg-white shadow-sm overflow-hidden">
@@ -154,7 +164,7 @@ export default function AssayEstimateCard({ estimate, onConfirm, busy }: Props) 
         >
           {busy
             ? 'Starting…'
-            : `Run all 5 rounds${estimate.total_calls_known ? ` — ≈${estimate.total_calls} calls` : ''}`}
+            : `Run all ${roundCount} rounds${estimate.total_calls_known ? ` — ≈${estimate.total_calls} calls` : ''}`}
         </button>
       </footer>
     </section>

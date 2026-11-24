@@ -53,6 +53,10 @@ function writeStoredJob(value: Stored | null) {
   }
 }
 
+function samePaper(a: PaperRef | null, b: PaperRef | null): boolean {
+  return !!a && !!b && a.pubmed_id === b.pubmed_id && a.study_accession === b.study_accession;
+}
+
 function isTerminal(job: AssayJob | null): boolean {
   return !!job && (job.state === 'done' || job.state === 'error' || job.state === 'cancelled');
 }
@@ -91,18 +95,32 @@ export default function AssayExtractPanel() {
 
   const pollTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const failures = useRef(0);
+  // Bumped by every stopPolling. A poll step that was mid-request when polling stopped sees a
+  // newer generation when its reply lands and neither sets state nor re-arms the timer.
+  const pollGeneration = useRef(0);
+  // The paper on screen, readable from a reply that arrives late. A reply for any other paper
+  // is dropped: without this, clicking a second paper before the first had loaded left the
+  // first paper's estimate under the second paper's name, with a Run button beneath it.
+  const selected = useRef<PaperRef | null>(null);
+  // Everything below the paper list. The list is up to 70vh tall, so what a click loads lands
+  // below the fold; without scrolling to it, selecting a paper looks like it did nothing.
+  const detailRef = useRef<HTMLDivElement | null>(null);
 
   const stopPolling = useCallback(() => {
     if (pollTimer.current) clearTimeout(pollTimer.current);
     pollTimer.current = null;
+    pollGeneration.current += 1;
   }, []);
 
   /** Load what a previous run left. Free, so it is safe to do on selection. */
   const loadRegistry = useCallback(async (ref: PaperRef) => {
     try {
-      setRegistry(await fetchAssayRegistry(ref));
+      const stored = await fetchAssayRegistry(ref);
+      if (samePaper(selected.current, ref)) setRegistry(stored);
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      if (samePaper(selected.current, ref)) {
+        setError(err instanceof Error ? err.message : String(err));
+      }
     }
   }, []);
 
@@ -126,9 +144,11 @@ export default function AssayExtractPanel() {
    */
   const poll = useCallback((jobId: string) => {
     stopPolling();
+    const generation = pollGeneration.current;
     const step = async () => {
       try {
         const next = await fetchAssayJob(jobId);
+        if (generation !== pollGeneration.current) return;
         failures.current = 0;
         setLostContact(false);
         setJob(next);
@@ -145,11 +165,15 @@ export default function AssayExtractPanel() {
         }
         pollTimer.current = setTimeout(step, POLL_MS);
       } catch (err) {
+        if (generation !== pollGeneration.current) return;
         if (err instanceof JobGoneError) {
           // The normal case under `uvicorn --reload`, not an edge one.
           writeStoredJob(null);
           setJob(null);
           void refreshPapers();
+          // Re-read it, so "shown below" is what the lost run wrote and not what was on disk
+          // before it started.
+          if (selected.current) void loadRegistry(selected.current);
           setNotice(
             'That run’s progress was lost when the backend restarted — anything it wrote is ' +
               'still on disk, and is shown below.'
@@ -180,6 +204,8 @@ export default function AssayExtractPanel() {
               p.pubmed_id === stored.pubmed_id && p.study_accession === stored.study_accession
           );
           if (match) {
+            selected.current = {
+              pubmed_id: match.pubmed_id, study_accession: match.study_accession };
             setPaper(match);
             void loadRegistry(match);
           }
@@ -209,11 +235,19 @@ export default function AssayExtractPanel() {
       setNotice(null);
       setLostContact(false);
       const ref = { pubmed_id: next.pubmed_id, study_accession: next.study_accession };
+      selected.current = ref;
       await loadRegistry(ref);
+      if (!samePaper(selected.current, ref)) return;
+      // After the registry has rendered, so the scroll has somewhere to go.
+      requestAnimationFrame(() =>
+        detailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
       try {
-        setEstimate(await estimateAssayRun(ref));
+        const sized = await estimateAssayRun(ref);
+        if (samePaper(selected.current, ref)) setEstimate(sized);
       } catch (err) {
-        setError(err instanceof Error ? err.message : String(err));
+        if (samePaper(selected.current, ref)) {
+          setError(err instanceof Error ? err.message : String(err));
+        }
       }
     },
     [loadRegistry, stopPolling]
@@ -280,6 +314,7 @@ export default function AssayExtractPanel() {
         disabled={running}
       />
 
+      <div ref={detailRef} className="space-y-4 scroll-mt-4">
       {error && <Notice tone="rose">{error}</Notice>}
       {notice && <Notice tone="gray">{notice}</Notice>}
       {lostContact && (
@@ -356,6 +391,7 @@ export default function AssayExtractPanel() {
           cost.
         </Notice>
       )}
+      </div>
     </div>
   );
 }

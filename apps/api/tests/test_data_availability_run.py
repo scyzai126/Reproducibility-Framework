@@ -46,6 +46,8 @@ def test_a_paper_naming_an_accession_costs_one_call(papers):
     round_ = das.estimate("111", "SDY1")
 
     assert (round_["name"], round_["calls"], round_["exact"]) == ("data_availability", 1, True)
+    # After the assay chain's six rounds, not sharing a number with the judge round.
+    assert round_["round"] == 7
     assert round_["entries"] >= 1
 
 

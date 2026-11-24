@@ -66,14 +66,16 @@ def estimate(pubmed_id: str, study_accession: str) -> dict:
     """What the data step would cost, in the shape of an assay estimate round. Free.
 
     Exact: the step makes one call when the paper names any accession, and none otherwise.
+    Numbered 7, after the assay chain's six rounds: it was 6 until the judge round took that
+    number, and the estimate then listed two round 6s.
     """
     path = paper_path(pubmed_id, study_accession)
     if path is None:
-        return {"round": 6, "name": "data_availability", "calls": 0, "exact": True,
+        return {"round": 7, "name": "data_availability", "calls": 0, "exact": True,
                 "basis": "no paper file", "entries": 0}
     paper = load(path)
     candidates = len(llm_candidates(paper["entries"]))
-    return {"round": 6, "name": "data_availability", "calls": 1 if candidates else 0,
+    return {"round": 7, "name": "data_availability", "calls": 1 if candidates else 0,
             "exact": True, "basis": "one call per paper naming an accession",
             "entries": len(paper["entries"])}
 

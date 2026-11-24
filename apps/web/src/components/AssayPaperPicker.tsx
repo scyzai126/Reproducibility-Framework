@@ -15,6 +15,12 @@ function formatDate(iso: string | null): string {
   return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
+function runSecond(iso: string | null): number {
+  if (!iso) return Infinity;
+  const ms = Date.parse(iso);
+  return Number.isNaN(ms) ? 0 : Math.floor(ms / 1000);
+}
+
 /**
  * The papers that have been extracted: those with a registry on disk.
  *
@@ -26,10 +32,16 @@ function formatDate(iso: string | null): string {
 export default function AssayPaperPicker({ papers, value, onSelect, disabled }: Props) {
   const [query, setQuery] = useState('');
 
+  // Newest run first, so a paper just extracted is at the top rather than wherever its accession
+  // sorts. Compared to the second: the benchmark papers were written in one batch milliseconds
+  // apart, and the sort is stable, so they tie and keep the backend's accession order. A paper
+  // with no run yet is only listed while selected, and goes first.
   const listed = useMemo(
-    () => papers.filter((p) =>
-      p.has_registry ||
-      (value?.pubmed_id === p.pubmed_id && value?.study_accession === p.study_accession)),
+    () => papers
+      .filter((p) =>
+        p.has_registry ||
+        (value?.pubmed_id === p.pubmed_id && value?.study_accession === p.study_accession))
+      .sort((a, b) => runSecond(b.updated_at) - runSecond(a.updated_at)),
     [papers, value]
   );
 
