@@ -1,0 +1,84 @@
+{
+  "single-value binding of antibody with reporter to antigen assay": {
+    "name_in_paper": [
+      "serum sIgE"
+    ],
+    "standard_technique_name": "fluorescence enzyme immunoassay",
+    "aliases": [],
+    "sample_type": "serum",
+    "readouts": "peanut-specific IgE levels",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Oral food challenges and serum sIgE",
+      "sentence_ids": [
+        "S157"
+      ],
+      "quote": "Serum sIgE was measured using the ImmunoCAP System FEIA (Phadia AB)."
+    },
+    "identity_review": {
+      "verdict": "NOT_SUPPORTED",
+      "reason": "The text states serum sIgE was measured but does not establish 'serum sIgE' as a reproducible assay technique name rather than an analyte/readout."
+    }
+  },
+  "cytometry time of flight assay": {
+    "name_in_paper": [
+      "mass cytometry"
+    ],
+    "standard_technique_name": "mass cytometry",
+    "aliases": [],
+    "sample_type": "peripheral blood mononuclear cells",
+    "readouts": "immune cell population frequencies and expression of surface and intracellular markers including cytokines",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Cell culture and preparation of cells for mass cytometry",
+      "sentence_ids": [
+        "S185"
+      ],
+      "quote": "Samples were acquired on the mass cytometer (Helios, Fluidigm) after standard instrument setup procedures."
+    }
+  },
+  "cytometry time of flight assay (2)": {
+    "name_in_paper": [
+      "manual gating"
+    ],
+    "standard_technique_name": "mass cytometry",
+    "aliases": [],
+    "sample_type": "peripheral blood mononuclear cells",
+    "readouts": "frequencies of major immune cell populations, subpopulations, cytokine-positive cells, and peanut-specific CD4 T cells from mass cytometry data",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Mass cytometry data analysis",
+      "sentence_ids": [
+        "S188"
+      ],
+      "quote": "Live, single cells were analyzed by manual gating and unsupervised computational methods in parallel."
+    },
+    "identity_review": {
+      "verdict": "NOT_SUPPORTED",
+      "reason": "Manual gating is described as an analysis approach on mass cytometry data rather than a standalone assay technique performed on samples."
+    }
+  },
+  "Oral food challenges": {
+    "name_in_paper": [
+      "Oral food challenges"
+    ],
+    "standard_technique_name": "oral food challenge",
+    "aliases": [
+      "OFC"
+    ],
+    "sample_type": null,
+    "readouts": "clinical allergic reaction to peanut after controlled ingestion",
+    "generate_claim": false,
+    "source": "methods",
+    "evidence": {
+      "section": "Oral food challenges and serum sIgE",
+      "sentence_ids": [
+        "S154"
+      ],
+      "quote": "OFC to peanut were performed in all subjects according to standardized protocols 30 ."
+    }
+  }
+}

@@ -1,0 +1,157 @@
+{
+  "SDY180": {
+    "agent": {
+      "single-value binding of antibody with reporter to antigen assay": {
+        "verdict": "Same assay, different term",
+        "match": [
+          "EXP13540",
+          "EXP29358"
+        ],
+        "comment": "Pneumococcal antibody assay. The paper says only 'commercial immunoassays' and names no platform, so the agent's term differs from ImmPort's two labels."
+      }
+    },
+    "immport": {
+      "EXP13887": {
+        "verdict": "Not in paper",
+        "comment": "Nanostring is in neither the article nor the supplementary methods. ImmPort holds 18 samples for it."
+      }
+    }
+  },
+  "SDY212": {
+    "agent": {
+      "MHC tetramer/multimer assay measuring binding of a T cell epitope:MHC:TCR complex": {
+        "verdict": "Not deposited in ImmPort",
+        "agent_only": true,
+        "comment": "Tetramer staining was done in mice. ImmPort's flow cytometry experiments are the human cohort, so the rule's flow match was removed by hand."
+      },
+      "enzyme-linked immunosorbent assay": {
+        "verdict": "Not deposited in ImmPort",
+        "comment": "ImmPort has no ELISA experiment for this study."
+      },
+      "viral plaque assay": {
+        "verdict": "Not deposited in ImmPort",
+        "comment": "Virus quantified in infected lung tissue (mouse work). ImmPort has no such experiment for this study."
+      },
+      "genotyping by SNP array assay": {
+        "verdict": "Not deposited in ImmPort",
+        "comment": "ImmPort has no genotyping experiment for this study."
+      }
+    },
+    "immport": {
+      "EXP13396": {
+        "verdict": "Belongs to another paper",
+        "comment": "The HA peptide microarray is the work of PMID 23591775, another paper of this study, not the paper we processed."
+      }
+    }
+  },
+  "SDY404": {
+    "agent": {
+      "western blot assay": {
+        "verdict": "Not deposited in ImmPort",
+        "comment": "ImmPort has no western blot experiment for this study."
+      }
+    },
+    "immport": {
+      "EXP13359": {
+        "verdict": "Belongs to another paper",
+        "comment": "The year-2 arrays are reported in Thakar et al. 2015, not in the paper we processed."
+      },
+      "EXP13702": {
+        "verdict": "Belongs to another paper",
+        "comment": "The year-2 arrays are reported in Thakar et al. 2015, not in the paper we processed."
+      },
+      "EXP28368": {
+        "verdict": "Not in paper",
+        "comment": "Metabolomics is not in the paper we processed, and we could not trace it to a paper."
+      },
+      "EXP28414": {
+        "verdict": "Not in paper",
+        "comment": "Proteomics is not in the paper we processed, and we could not trace it to a paper."
+      }
+    }
+  },
+  "SDY984": {
+    "agent": {
+      "amplicon sequencing assay": {
+        "verdict": "Not deposited in ImmPort",
+        "comment": "ImmPort has no sequencing experiment for this study."
+      }
+    },
+    "immport": {
+      "EXP14914": {
+        "verdict": "Empty in ImmPort",
+        "comment": "Filed under 'Other' and holds no samples (0 expsample rows); a placeholder, not a measured assay."
+      }
+    }
+  },
+  "SDY1264": {
+    "agent": {
+      "serum neutralization of viral infectivity assay (2)": {
+        "verdict": "Not deposited in ImmPort",
+        "agent_only": true,
+        "comment": "PRNT was used in trial 2. ImmPort's neutralization experiment is the CPE assay of trial 1, so the rule's match was removed by hand."
+      },
+      "cytometric bead array assay": {
+        "verdict": "Not deposited in ImmPort",
+        "comment": "ImmPort holds only a microarray and a neutralization (CPE) experiment for this study."
+      },
+      "flow cytometry assay": {
+        "verdict": "Not deposited in ImmPort",
+        "comment": "ImmPort holds only a microarray and a neutralization (CPE) experiment for this study."
+      },
+      "real time reverse-transcription polymerase chain reaction assay": {
+        "verdict": "Not deposited in ImmPort",
+        "comment": "ImmPort holds only a microarray and a neutralization (CPE) experiment for this study."
+      },
+      "fluorescence microscopy assay": {
+        "verdict": "Not deposited in ImmPort",
+        "comment": "ImmPort holds only a microarray and a neutralization (CPE) experiment for this study."
+      },
+      "western blot assay": {
+        "verdict": "Not deposited in ImmPort",
+        "comment": "ImmPort holds only a microarray and a neutralization (CPE) experiment for this study."
+      },
+      "enzyme-linked immunosorbent assay": {
+        "verdict": "Not deposited in ImmPort",
+        "comment": "ImmPort holds only a microarray and a neutralization (CPE) experiment for this study."
+      }
+    }
+  },
+  "SDY1289": {
+    "immport": {
+      "EXP15292": {
+        "verdict": "In supplement only",
+        "comment": "PRNT is described only in Supplemental Table 2. The agent read the main text, so it could not find it."
+      }
+    }
+  },
+  "SDY1655": {
+    "agent": {
+      "cytometric bead array assay": {
+        "verdict": "Same assay, ImmPort label questionable",
+        "comment": "Paper: 'Human Cytokine Array/Chemokine Array 71-403 Plex Panel (HD71)', run by Eve Technologies. That panel is bead-based (vendor information, not stated in the paper), so 'Protein microarray' looks like a mislabel taken from the word 'Array'."
+      },
+      "real time reverse-transcription polymerase chain reaction assay": {
+        "verdict": "Same assay, different term",
+        "match": [
+          "EXP29873"
+        ],
+        "comment": "Paper: 'RT-qPCR' on nasopharyngeal swabs for SARS-CoV-2 RNA. ImmPort's technique list has no reverse-transcription PCR option, so it uses real time PCR; the two OBI terms are siblings. The agent's term is the more accurate one."
+      }
+    },
+    "immport": {
+      "EXP29871": {
+        "verdict": "Legend line only; data in ImmPort, not in the paper",
+        "comment": "Paper side: the only mention is one legend line in the supplement spreadsheet (Supplementary Table 1, row 20): 'Plasma anti-S1-IgG and IgM levels. OD450 values for ELISA.' The spreadsheet has no anti-S1 data column under it, the supplement has no methods section, and the main text describes no anti-S1 ELISA (it only says controls were negative 'by RT-qPCR and serology'). ImmPort side: the assay was run for this study and its data are deposited: 177 IgG results from 112 subjects, in OD450, the same unit as the legend. The agent had no method text to extract."
+      },
+      "EXP29872": {
+        "verdict": "Legend line only; data in ImmPort, not in the paper",
+        "comment": "Paper side: the only mention is one legend line in the supplement spreadsheet (Supplementary Table 1, row 20): 'Plasma anti-S1-IgG and IgM levels. OD450 values for ELISA.' The spreadsheet has no anti-S1 data column under it, the supplement has no methods section, and the main text describes no anti-S1 ELISA (it only says controls were negative 'by RT-qPCR and serology'). ImmPort side: the assay was run for this study and its data are deposited: 162 IgM results from 97 subjects, in OD450, the same unit as the legend. The agent had no method text to extract."
+      },
+      "EXP29874": {
+        "verdict": "Not in paper",
+        "comment": "Saliva RT-PCR is in neither the article nor the supplement. ImmPort holds 63 samples for it."
+      }
+    }
+  }
+}

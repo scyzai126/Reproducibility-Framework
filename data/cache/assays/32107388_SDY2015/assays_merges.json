@@ -1,0 +1,28 @@
+{
+  "summary": {
+    "groups_merged": 0,
+    "entries_folded": 0,
+    "folds_blocked": 1
+  },
+  "results": [],
+  "blocked": [
+    {
+      "member": "manual gating",
+      "kept_apart_from": "cytometry time of flight assay",
+      "anchor": "mass cytometry",
+      "obi_id": "OBI:0002115",
+      "obi_label": "cytometry time of flight assay",
+      "reason": "readouts differs: 'immune cell population frequencies and expression of surface and intracellular markers including cytokines' vs 'frequencies of major immune cell populations, subpopulations, cytokine-positive cells, and peanut-specific CD4 T cells from mass cytometry data'",
+      "judged": {
+        "verdict": "DIFFERENT",
+        "reason": "Record A is the broader mass-cytometry acquisition measuring immune population frequencies plus surface and intracellular marker expression, whereas Record B specifically measures manually gated frequencies of major/subset populations, cytokine-positive cells, and peanut-specific CD4 T cells from that data."
+      }
+    }
+  ],
+  "key_map": {
+    "serum sIgE": "single-value binding of antibody with reporter to antigen assay",
+    "mass cytometry": "cytometry time of flight assay",
+    "manual gating": "cytometry time of flight assay (2)",
+    "Oral food challenges": "Oral food challenges"
+  }
+}

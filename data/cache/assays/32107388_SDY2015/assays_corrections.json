@@ -1,0 +1,67 @@
+{
+  "summary": {
+    "assays": 4,
+    "fields_re_extracted": 1,
+    "actions": {
+      "REPLACED": 1
+    },
+    "reported_not_corrected": 2
+  },
+  "results": [
+    {
+      "assay_id": "serum sIgE",
+      "assay_name": "serum sIgE",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "ImmunoCAP System FEIA"
+          ],
+          "blind_answer": [
+            "peanut sIgE",
+            "sIgE level"
+          ],
+          "dropped": [
+            "ImmunoCAP System FEIA"
+          ]
+        }
+      ],
+      "reported_not_corrected": [
+        {
+          "field_name": "name_in_paper",
+          "verdict": "NOT_SUPPORTED",
+          "reason": "The text states serum sIgE was measured but does not establish 'serum sIgE' as a reproducible assay technique name rather than an analyte/readout."
+        }
+      ]
+    },
+    {
+      "assay_id": "mass cytometry",
+      "assay_name": "mass cytometry",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "manual gating",
+      "assay_name": "manual gating",
+      "record_verdict": "REVIEW",
+      "corrections": [],
+      "reported_not_corrected": [
+        {
+          "field_name": "name_in_paper",
+          "verdict": "NOT_SUPPORTED",
+          "reason": "Manual gating is described as an analysis approach on mass cytometry data rather than a standalone assay technique performed on samples."
+        }
+      ]
+    },
+    {
+      "assay_id": "Oral food challenges",
+      "assay_name": "Oral food challenges",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    }
+  ]
+}

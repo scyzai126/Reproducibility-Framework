@@ -1,0 +1,266 @@
+{
+  "summary": {
+    "total": 4,
+    "accept": 2,
+    "review": 2,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {
+      "name_in_paper": {
+        "NOT_SUPPORTED": 2
+      },
+      "aliases[]": {
+        "CONTRADICTED": 1
+      }
+    }
+  },
+  "results": [
+    {
+      "assay_id": "serum sIgE",
+      "assay_name": "serum sIgE",
+      "assay_identity_verdict": "NOT_SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "serum sIgE",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "The text states serum sIgE was measured but does not establish 'serum sIgE' as a reproducible assay technique name rather than an analyte/readout."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "ImmunoCAP System FEIA",
+          "verdict": "CONTRADICTED",
+          "evidence_sentence_ids": [
+            "S157"
+          ],
+          "evidence_text": "using the ImmunoCAP System FEIA (Phadia AB)",
+          "reason": "This is the named system/instrument used to measure the analyte, not an alias for the assay itself."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "serum",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S157"
+          ],
+          "evidence_text": "Serum sIgE was measured",
+          "reason": "The assay was explicitly performed on serum."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "peanut-specific IgE levels",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S10",
+            "S11",
+            "S14",
+            "S15",
+            "S157"
+          ],
+          "evidence_text": "an sIgE level of ≥0.35 kUA/L to peanut",
+          "reason": "The study reports peanut sIgE levels as the measured quantity."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Serum sIgE was measured using the ImmunoCAP System FEIA (Phadia AB).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S157"
+          ],
+          "evidence_text": "Serum sIgE was measured using the ImmunoCAP System FEIA (Phadia AB).",
+          "reason": "The quote appears verbatim and shows the measurement was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S157"
+      },
+      "conflict_detected": true,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    },
+    {
+      "assay_id": "mass cytometry",
+      "assay_name": "mass cytometry",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "mass cytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S185"
+          ],
+          "evidence_text": "Samples were acquired on the mass cytometer",
+          "reason": "The text explicitly shows mass cytometry was performed in this study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S159",
+            "S185"
+          ],
+          "evidence_text": "PBMCs were isolated from whole blood by density gradient and cryopreserved as detailed previously 11 . ... Samples were acquired on the mass cytometer",
+          "reason": "The assay samples acquired on the mass cytometer were PBMCs."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "immune cell population frequencies and expression of surface and intracellular markers including cytokines",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S173",
+            "S180",
+            "S188",
+            "S200"
+          ],
+          "evidence_text": "PBMCs were resuspended in 70 µl of surface antibody cocktail ... pooled cells were resuspended in 100 µl of intracellular antibody cocktail ... Live, single cells were analyzed by manual gating and unsupervised computational methods in parallel. ... For cytokine production following 24 h stimulation with PMA/ionomycin, IL-2, TNFα, and IFNγ expression were analyzed in all cell populations",
+          "reason": "The text supports measurement of cell populations and surface, intracellular, and cytokine marker expression."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Samples were acquired on the mass cytometer (Helios, Fluidigm) after standard instrument setup procedures.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S185"
+          ],
+          "evidence_text": "Samples were acquired on the mass cytometer (Helios, Fluidigm) after standard instrument setup procedures.",
+          "reason": "The quoted sentence appears verbatim and shows the assay was performed here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S185"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "manual gating",
+      "assay_name": "manual gating",
+      "assay_identity_verdict": "NOT_SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "manual gating",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "Manual gating is described as an analysis approach on mass cytometry data rather than a standalone assay technique performed on samples."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S188"
+          ],
+          "evidence_text": "Live, single cells were analyzed by manual gating",
+          "reason": "The manual gating was applied to live single cells derived from PBMC samples in this study."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "frequencies of major immune cell populations, subpopulations, cytokine-positive cells, and peanut-specific CD4 T cells from mass cytometry data",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S189",
+            "S200",
+            "S203"
+          ],
+          "evidence_text": "For manual gating, major immune cell populations were identified based on the gating strategy outlined in Supplementary Fig. 7 using FlowJo V10.6. For cytokine production following 24 h stimulation with PMA/ionomycin, IL-2, TNFα, and IFNγ expression were analyzed in all cell populations. For quantification of antigen-specific CD4 T cells following peanut stimulation, CD40L + CD69 + cells were identified within the CD4 T-cell population by manual gating",
+          "reason": "The text states that manual gating identified immune cell populations, analyzed cytokine expression, and quantified antigen-specific CD4 T cells."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Live, single cells were analyzed by manual gating and unsupervised computational methods in parallel.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S188"
+          ],
+          "evidence_text": "Live, single cells were analyzed by manual gating and unsupervised computational methods in parallel.",
+          "reason": "The quote appears verbatim and shows that manual gating was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S188"
+      },
+      "conflict_detected": true,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REJECT"
+    },
+    {
+      "assay_id": "Oral food challenges",
+      "assay_name": "Oral food challenges",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Oral food challenges",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S154"
+          ],
+          "evidence_text": "OFC to peanut were performed in all subjects",
+          "reason": "The text explicitly states that oral food challenges were performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "OFC",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S9"
+          ],
+          "evidence_text": "Oral food challenges (OFCs) were performed in all subjects",
+          "reason": "The text defines OFC as oral food challenges for the same assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "clinical allergic reaction to peanut after controlled ingestion",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S156"
+          ],
+          "evidence_text": "HealthNuts-standardized cessation criteria for a positive OFC result were any of the following occurring within 2 h of ingestion: three or more concurrent noncontact urticaria persisting for at least 5 min, perioral or periorbital angioedema, vomiting, and evidence of circulatory or respiratory compromise",
+          "reason": "The assay readout is whether a clinical allergic reaction occurred after peanut ingestion."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "OFC to peanut were performed in all subjects according to standardized protocols 30 .",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S154"
+          ],
+          "evidence_text": "OFC to peanut were performed in all subjects according to standardized protocols 30 .",
+          "reason": "The quoted text appears verbatim and shows the assay was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S154"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

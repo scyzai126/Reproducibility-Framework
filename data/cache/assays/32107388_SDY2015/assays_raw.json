@@ -1,0 +1,274 @@
+{
+  "extract": {
+    "run1": {
+      "reply": "{\n  \"serum sIgE\": {\n    \"name_in_paper\": \"serum sIgE\",\n    \"standard_technique_name\": \"fluorescence enzyme immunoassay\",\n    \"aliases\": [],\n    \"sample_type\": \"serum\",\n    \"readouts\": \"peanut-specific IgE levels\",\n    \"generate_claim\": true,\n    \"evidence\": {\n      \"section\": \"Oral food challenges and serum sIgE\",\n      \"quote\": \"Serum sIgE was measured using the ImmunoCAP System FEIA (Phadia AB).\"\n    }\n  },\n  \"mass cytometry\": {\n    \"name_in_paper\": \"mass cytometry\",\n    \"standard_technique_name\": \"mass cytometry\",\n    \"aliases\": [],\n    \"sample_type\": \"peripheral blood mononuclear cells\",\n    \"readouts\": \"immune cell frequencies and expression of surface and intracellular markers\",\n    \"generate_claim\": true,\n    \"evidence\": {\n      \"section\": \"Cell culture and preparation of cells for mass cytometry\",\n      \"quote\": \"Samples were acquired on the mass cytometer (Helios, Fluidigm) after standard instrument setup procedures.\"\n    }\n  },\n  \"manual gating\": {\n    \"name_in_paper\": \"manual gating\",\n    \"standard_technique_name\": \"mass cytometry\",\n    \"aliases\": [],\n    \"sample_type\": \"peripheral blood mononuclear cells\",\n    \"readouts\": \"frequencies of major immune cell populations, cell subsets, intracellular cytokine-positive cells, and CD40L+ CD69+ antigen-specific CD4 T cells from mass cytometry data\",\n    \"generate_claim\": true,\n    \"evidence\": {\n      \"section\": \"Mass cytometry data analysis\",\n      \"quote\": \"Live, single cells were analyzed by manual gating and unsupervised computational methods in parallel.\"\n    }\n  },\n  \"Oral food challenges\": {\n    \"name_in_paper\": \"Oral food challenges\",\n    \"standard_technique_name\": \"oral food challenge\",\n    \"aliases\": [\n      \"OFC\"\n    ],\n    \"sample_type\": null,\n    \"readouts\": \"clinical allergic reaction to peanut after graded ingestion\",\n    \"generate_claim\": true,\n    \"evidence\": {\n      \"section\": \"Oral food challenges and serum sIgE\",\n      \"quote\": \"OFC to peanut were performed in all subjects according to standardized protocols.\"\n    }\n  }\n}",
+      "source_kind": "xml",
+      "usage": {
+        "prompt": 18871,
+        "cached": 0,
+        "completion": 521,
+        "reasoning": 0
+      }
+    },
+    "run3": {
+      "reply": "{\n  \"Oral food challenges\": {\n    \"name_in_paper\": \"Oral food challenges\",\n    \"standard_technique_name\": \"oral food challenge\",\n    \"aliases\": [\n      \"OFC\"\n    ],\n    \"sample_type\": null,\n    \"readouts\": \"clinical allergic reaction to peanut after controlled ingestion\",\n    \"generate_claim\": false,\n    \"evidence\": {\n      \"section\": \"Oral food challenges and serum sIgE\",\n      \"quote\": \"OFC to peanut were performed in all subjects according to standardized protocols 30 .\"\n    }\n  },\n  \"serum sIgE\": {\n    \"name_in_paper\": \"serum sIgE\",\n    \"standard_technique_name\": \"fluorescence enzyme immunoassay\",\n    \"aliases\": [],\n    \"sample_type\": \"serum\",\n    \"readouts\": \"peanut-specific IgE levels\",\n    \"generate_claim\": true,\n    \"evidence\": {\n      \"section\": \"Oral food challenges and serum sIgE\",\n      \"quote\": \"Serum sIgE was measured using the ImmunoCAP System FEIA (Phadia AB).\"\n    }\n  },\n  \"mass cytometry\": {\n    \"name_in_paper\": \"mass cytometry\",\n    \"standard_technique_name\": \"mass cytometry\",\n    \"aliases\": [],\n    \"sample_type\": \"peripheral blood mononuclear cells\",\n    \"readouts\": \"immune cell population frequencies and expression of surface and intracellular markers including cytokines\",\n    \"generate_claim\": true,\n    \"evidence\": {\n      \"section\": \"Cell culture and preparation of cells for mass cytometry\",\n      \"quote\": \"Samples were acquired on the mass cytometer (Helios, Fluidigm) after standard instrument setup procedures.\"\n    }\n  },\n  \"manual gating\": {\n    \"name_in_paper\": \"manual gating\",\n    \"standard_technique_name\": \"mass cytometry\",\n    \"aliases\": [],\n    \"sample_type\": \"peripheral blood mononuclear cells\",\n    \"readouts\": \"frequencies of major immune cell populations, subpopulations, cytokine-positive cells, and peanut-specific CD4 T cells from mass cytometry data\",\n    \"generate_claim\": true,\n    \"evidence\": {\n      \"section\": \"Mass cytometry data analysis\",\n      \"quote\": \"Live, single cells were analyzed by manual gating and unsupervised computational methods in parallel.\"\n    }\n  }\n}",
+      "source_kind": "xml",
+      "usage": {
+        "prompt": 18871,
+        "cached": 18176,
+        "completion": 521,
+        "reasoning": 0
+      }
+    },
+    "run2": {
+      "reply": "{\n  \"Oral food challenges\": {\n    \"name_in_paper\": \"Oral food challenges\",\n    \"standard_technique_name\": \"oral food challenge\",\n    \"aliases\": [\n      \"OFC\"\n    ],\n    \"sample_type\": null,\n    \"readouts\": \"clinical allergic reaction to peanut after controlled ingestion\",\n    \"generate_claim\": false,\n    \"evidence\": {\n      \"section\": \"Oral food challenges and serum sIgE\",\n      \"quote\": \"OFC to peanut were performed in all subjects according to standardized protocols 30 .\"\n    }\n  },\n  \"ImmunoCAP System FEIA\": {\n    \"name_in_paper\": \"ImmunoCAP System FEIA\",\n    \"standard_technique_name\": \"fluorescence enzyme immunoassay\",\n    \"aliases\": [],\n    \"sample_type\": \"serum\",\n    \"readouts\": \"peanut-specific IgE levels\",\n    \"generate_claim\": true,\n    \"evidence\": {\n      \"section\": \"Oral food challenges and serum sIgE\",\n      \"quote\": \"Serum sIgE was measured using the ImmunoCAP System FEIA (Phadia AB).\"\n    }\n  },\n  \"mass cytometry\": {\n    \"name_in_paper\": \"mass cytometry\",\n    \"standard_technique_name\": \"mass cytometry\",\n    \"aliases\": [],\n    \"sample_type\": \"peripheral blood mononuclear cells\",\n    \"readouts\": \"immune cell surface-marker and intracellular-marker expression; cell population frequencies; intracellular cytokine expression after stimulation\",\n    \"generate_claim\": true,\n    \"evidence\": {\n      \"section\": \"Cell culture and preparation of cells for mass cytometry\",\n      \"quote\": \"Samples were acquired on the mass cytometer (Helios, Fluidigm) after standard instrument setup procedures.\"\n    }\n  },\n  \"quantification of antigen-specific CD4 T cells\": {\n    \"name_in_paper\": \"quantification of antigen-specific CD4 T cells\",\n    \"standard_technique_name\": \"flow cytometry\",\n    \"aliases\": [],\n    \"sample_type\": \"peripheral blood mononuclear cells\",\n    \"readouts\": \"frequency of peanut-stimulated CD40L+ CD69+ CD4 T cells; fold change over unstimulated condition\",\n    \"generate_claim\": true,\n    \"evidence\": {\n      \"section\": \"Mass cytometry data analysis\",\n      \"quote\": \"For quantification of antigen-specific CD4 T cells following peanut stimulation, CD40L + CD69 + cells were identified within the CD4 T-cell population by manual gating 14 .\"\n    }\n  }\n}",
+      "source_kind": "xml",
+      "usage": {
+        "prompt": 18871,
+        "cached": 18176,
+        "completion": 559,
+        "reasoning": 0
+      }
+    }
+  },
+  "verify": {
+    "serum sIgE": {
+      "reply": "{\n  \"assay_id\": \"serum sIgE\",\n  \"assay_identity_verdict\": \"NOT_SUPPORTED\",\n  \"field_verifications\": [\n    {\n      \"field_name\": \"name_in_paper\",\n      \"proposed_value\": \"serum sIgE\",\n      \"verdict\": \"NOT_SUPPORTED\",\n      \"evidence_sentence_ids\": [],\n      \"evidence_text\": null,\n      \"reason\": \"The text states serum sIgE was measured but does not establish 'serum sIgE' as a reproducible assay technique name rather than an analyte/readout.\"\n    },\n    {\n      \"field_name\": \"aliases[0]\",\n      \"proposed_value\": \"ImmunoCAP System FEIA\",\n      \"verdict\": \"CONTRADICTED\",\n      \"evidence_sentence_ids\": [\n        \"S157\"\n      ],\n      \"evidence_text\": \"using the ImmunoCAP System FEIA (Phadia AB)\",\n      \"reason\": \"This is the named system/instrument used to measure the analyte, not an alias for the assay itself.\"\n    },\n    {\n      \"field_name\": \"sample_type\",\n      \"proposed_value\": \"serum\",\n      \"verdict\": \"SUPPORTED\",\n      \"evidence_sentence_ids\": [\n        \"S157\"\n      ],\n      \"evidence_text\": \"Serum sIgE was measured\",\n      \"reason\": \"The assay was explicitly performed on serum.\"\n    },\n    {\n      \"field_name\": \"readouts\",\n      \"proposed_value\": \"peanut-specific IgE levels\",\n      \"verdict\": \"SUPPORTED\",\n      \"evidence_sentence_ids\": [\n        \"S10\",\n        \"S11\",\n        \"S14\",\n        \"S15\",\n        \"S157\"\n      ],\n      \"evidence_text\": \"an sIgE level of ≥0.35 kUA/L to peanut\",\n      \"reason\": \"The study reports peanut sIgE levels as the measured quantity.\"\n    },\n    {\n      \"field_name\": \"evidence.quote\",\n      \"proposed_value\": \"Serum sIgE was measured using the ImmunoCAP System FEIA (Phadia AB).\",\n      \"verdict\": \"SUPPORTED\",\n      \"evidence_sentence_ids\": [\n        \"S157\"\n      ],\n      \"evidence_text\": \"Serum sIgE was measured using the ImmunoCAP System FEIA (Phadia AB).\",\n      \"reason\": \"The quote appears verbatim and shows the measurement was performed in this study.\"\n    }\n  ],\n  \"conflict_detected\": true,\n  \"record_verdict\": \"REVIEW\"\n}",
+      "usage": {
+        "prompt": 15621,
+        "cached": 0,
+        "completion": 552,
+        "reasoning": 0
+      }
+    },
+    "Oral food challenges": {
+      "reply": "{\n  \"assay_id\": \"Oral food challenges\",\n  \"assay_identity_verdict\": \"SUPPORTED\",\n  \"field_verifications\": [\n    {\n      \"field_name\": \"name_in_paper\",\n      \"proposed_value\": \"Oral food challenges\",\n      \"verdict\": \"SUPPORTED\",\n      \"evidence_sentence_ids\": [\n        \"S154\"\n      ],\n      \"evidence_text\": \"OFC to peanut were performed in all subjects\",\n      \"reason\": \"The text explicitly states that oral food challenges were performed in this study.\"\n    },\n    {\n      \"field_name\": \"aliases[0]\",\n      \"proposed_value\": \"OFC\",\n      \"verdict\": \"SUPPORTED\",\n      \"evidence_sentence_ids\": [\n        \"S9\"\n      ],\n      \"evidence_text\": \"Oral food challenges (OFCs) were performed in all subjects\",\n      \"reason\": \"The text defines OFC as oral food challenges for the same assay.\"\n    },\n    {\n      \"field_name\": \"readouts\",\n      \"proposed_value\": \"clinical allergic reaction to peanut after controlled ingestion\",\n      \"verdict\": \"SUPPORTED\",\n      \"evidence_sentence_ids\": [\n        \"S156\"\n      ],\n      \"evidence_text\": \"HealthNuts-standardized cessation criteria for a positive OFC result were any of the following occurring within 2 h of ingestion: three or more concurrent noncontact urticaria persisting for at least 5 min, perioral or periorbital angioedema, vomiting, and evidence of circulatory or respiratory compromise\",\n      \"reason\": \"The assay readout is whether a clinical allergic reaction occurred after peanut ingestion.\"\n    },\n    {\n      \"field_name\": \"evidence.quote\",\n      \"proposed_value\": \"OFC to peanut were performed in all subjects according to standardized protocols 30 .\",\n      \"verdict\": \"SUPPORTED\",\n      \"evidence_sentence_ids\": [\n        \"S154\"\n      ],\n      \"evidence_text\": \"OFC to peanut were performed in all subjects according to standardized protocols 30 .\",\n      \"reason\": \"The quoted text appears verbatim and shows the assay was performed in this study.\"\n    }\n  ],\n  \"conflict_detected\": false,\n  \"record_verdict\": \"ACCEPT\"\n}",
+      "usage": {
+        "prompt": 15605,
+        "cached": 15104,
+        "completion": 483,
+        "reasoning": 0
+      }
+    },
+    "manual gating": {
+      "reply": "{\n  \"assay_id\": \"manual gating\",\n  \"assay_identity_verdict\": \"NOT_SUPPORTED\",\n  \"field_verifications\": [\n    {\n      \"field_name\": \"name_in_paper\",\n      \"proposed_value\": \"manual gating\",\n      \"verdict\": \"NOT_SUPPORTED\",\n      \"evidence_sentence_ids\": [],\n      \"evidence_text\": null,\n      \"reason\": \"Manual gating is described as an analysis approach on mass cytometry data rather than a standalone assay technique performed on samples.\"\n    },\n    {\n      \"field_name\": \"sample_type\",\n      \"proposed_value\": \"peripheral blood mononuclear cells\",\n      \"verdict\": \"SUPPORTED\",\n      \"evidence_sentence_ids\": [\n        \"S188\"\n      ],\n      \"evidence_text\": \"Live, single cells were analyzed by manual gating\",\n      \"reason\": \"The manual gating was applied to live single cells derived from PBMC samples in this study.\"\n    },\n    {\n      \"field_name\": \"readouts\",\n      \"proposed_value\": \"frequencies of major immune cell populations, subpopulations, cytokine-positive cells, and peanut-specific CD4 T cells from mass cytometry data\",\n      \"verdict\": \"SUPPORTED\",\n      \"evidence_sentence_ids\": [\n        \"S189\",\n        \"S200\",\n        \"S203\"\n      ],\n      \"evidence_text\": \"For manual gating, major immune cell populations were identified based on the gating strategy outlined in Supplementary Fig. 7 using FlowJo V10.6. For cytokine production following 24 h stimulation with PMA/ionomycin, IL-2, TNFα, and IFNγ expression were analyzed in all cell populations. For quantification of antigen-specific CD4 T cells following peanut stimulation, CD40L + CD69 + cells were identified within the CD4 T-cell population by manual gating\",\n      \"reason\": \"The text states that manual gating identified immune cell populations, analyzed cytokine expression, and quantified antigen-specific CD4 T cells.\"\n    },\n    {\n      \"field_name\": \"evidence.quote\",\n      \"proposed_value\": \"Live, single cells were analyzed by manual gating and unsupervised computational methods in parallel.\",\n      \"verdict\": \"SUPPORTED\",\n      \"evidence_sentence_ids\": [\n        \"S188\"\n      ],\n      \"evidence_text\": \"Live, single cells were analyzed by manual gating and unsupervised computational methods in parallel.\",\n      \"reason\": \"The quote appears verbatim and shows that manual gating was performed in this study.\"\n    }\n  ],\n  \"conflict_detected\": true,\n  \"record_verdict\": \"REJECT\"\n}",
+      "usage": {
+        "prompt": 15616,
+        "cached": 15104,
+        "completion": 556,
+        "reasoning": 0
+      }
+    },
+    "mass cytometry": {
+      "reply": "{\n  \"assay_id\": \"mass cytometry\",\n  \"assay_identity_verdict\": \"SUPPORTED\",\n  \"field_verifications\": [\n    {\n      \"field_name\": \"name_in_paper\",\n      \"proposed_value\": \"mass cytometry\",\n      \"verdict\": \"SUPPORTED\",\n      \"evidence_sentence_ids\": [\n        \"S185\"\n      ],\n      \"evidence_text\": \"Samples were acquired on the mass cytometer\",\n      \"reason\": \"The text explicitly shows mass cytometry was performed in this study.\"\n    },\n    {\n      \"field_name\": \"sample_type\",\n      \"proposed_value\": \"peripheral blood mononuclear cells\",\n      \"verdict\": \"SUPPORTED\",\n      \"evidence_sentence_ids\": [\n        \"S159\",\n        \"S185\"\n      ],\n      \"evidence_text\": \"PBMCs were isolated from whole blood by density gradient and cryopreserved as detailed previously 11 . ... Samples were acquired on the mass cytometer\",\n      \"reason\": \"The assay samples acquired on the mass cytometer were PBMCs.\"\n    },\n    {\n      \"field_name\": \"readouts\",\n      \"proposed_value\": \"immune cell population frequencies and expression of surface and intracellular markers including cytokines\",\n      \"verdict\": \"SUPPORTED\",\n      \"evidence_sentence_ids\": [\n        \"S173\",\n        \"S180\",\n        \"S188\",\n        \"S200\"\n      ],\n      \"evidence_text\": \"PBMCs were resuspended in 70 µl of surface antibody cocktail ... pooled cells were resuspended in 100 µl of intracellular antibody cocktail ... Live, single cells were analyzed by manual gating and unsupervised computational methods in parallel. ... For cytokine production following 24 h stimulation with PMA/ionomycin, IL-2, TNFα, and IFNγ expression were analyzed in all cell populations\",\n      \"reason\": \"The text supports measurement of cell populations and surface, intracellular, and cytokine marker expression.\"\n    },\n    {\n      \"field_name\": \"evidence.quote\",\n      \"proposed_value\": \"Samples were acquired on the mass cytometer (Helios, Fluidigm) after standard instrument setup procedures.\",\n      \"verdict\": \"SUPPORTED\",\n      \"evidence_sentence_ids\": [\n        \"S185\"\n      ],\n      \"evidence_text\": \"Samples were acquired on the mass cytometer (Helios, Fluidigm) after standard instrument setup procedures.\",\n      \"reason\": \"The quoted sentence appears verbatim and shows the assay was performed here.\"\n    }\n  ],\n  \"conflict_detected\": false,\n  \"record_verdict\": \"ACCEPT\"\n}",
+      "usage": {
+        "prompt": 15615,
+        "cached": 15104,
+        "completion": 553,
+        "reasoning": 0
+      }
+    }
+  },
+  "correct": {
+    "serum sIgE": {
+      "aliases": {
+        "reply": "{\"value\":[\"peanut sIgE\",\"sIgE level\"],\"reason\":\"Besides \\\"serum sIgE,\\\" the paper refers to this assay as \\\"peanut sIgE\\\" and \\\"sIgE level\\\" in the study design and results text.\"}",
+        "usage": {
+          "prompt": 13278,
+          "cached": 0,
+          "completion": 58,
+          "reasoning": 0
+        }
+      }
+    }
+  },
+  "obi": {
+    "serum sIgE": {
+      "reply": "11 exact",
+      "candidates": [
+        "1. OBI:0001501 | fluorescence detection assay | definition: An assay in which a material's fluorescence is determined. | descendants: 7 (similarity: 0.6815)",
+        "2. OBI:0002969 | cyclic immunofluoroescence assay | definition: A type of microscopy assay resulting in highly multiplexed immunofluorescence imaging through sequential rounds of imaging followed by fluorophore inactivation. | descendants: 0 (similarity: 0.6689)",
+        "3. OBI:0003087 | autofluorescence assay | intrinsic fluorescence assay | definition: A fluorescence detection assay in which the light that is naturally emitted by a sample is visualized after excitation of the sample with light at a suitable wavelength. | descendants: 1 (similarity: 0.6262)",
+        "4. OBI:0003228 | fluorescent immunospot assay | FLUOROSPOT | definition: A cytometry assay that detects the presence of cells that secrete a material of interest (analyte). In the assay, a plate is coated with an antibody specific to the analyte of interest. These antibodies capture the analytes secreted by the cells. The analytes are then detected using fluorescent labe... | descendants: 0 (similarity: 0.6248)",
+        "5. OBI:0001499 | binding assay using fluorescence detection | definition: A binding assay that uses fluorescence detection as an indicator of binding. | descendants: 28 (similarity: 0.6238)",
+        "6. OBI:0003091 | multiplexed fluorescent antibody imaging assay | definition: An imaging assay in which multiple cycles consisting of fluorescent labeling, imaging, and fluorophor deactivation are used to detect multiple proteins and their locations in a given sample of tissues or cells. | descendants: 2 (similarity: 0.6231)",
+        "7. OBI:0002960 | fluorescence imaging-based reporter gene assay | definition: A type of reporter gene assay that employs fluorescence imaging to detect a reporter gene's expression. | descendants: 0 (similarity: 0.6143)",
+        "8. CHMO:0000087 | fluorescence microscopy assay | fluorescence imaging | fluorescence microscopic imaging | FM | definition: Any type of light microscopy assay where the specimen can be made to fluoresce (emit energy as visible light) by illuminating it with light of specific wavelengths. These specimens are called fluorophores. | descendants: 2 (similarity: 0.6125)",
+        "9. OBI:0002946 | fluorescence imaging-based apoptosis assay | definition: A type of cytometry assay in which fluorescent dyes are used to label and detect proteins or structures associated with molecular processes of apoptosis. | descendants: 0 (similarity: 0.6076)",
+        "10. OBI:0000661 | enzyme-linked immunosorbent assay | ELISA | definition: An analyte assay where binding of an enzyme linked antibody to a material entity that is immobilized on solid support is detected utilizing a chemiluminescent reaction. Depending on the setup, the enzyme-linked antibody could be binding directly to the analyte, or it serves as a secondary antibody d... | descendants: 53 (similarity: 0.6002)",
+        "11. OBI:0002773 | single-value binding of antibody with reporter to antigen assay | IA | immunoassay | definition: An assay that detects the linking of antigens and antibodies via special signaling mechanisms, such as EIA, ELISA, chemiluminescence, etc. that produces one measure (quantitative or qualitative) of the analyte of interest | descendants: 0 (similarity: 0.5389)",
+        "12. OBI:0600031 | enzyme-linked immunospot assay | ELISPOT assay | definition: A cytometry assay in which cells are cultured on a surface coated with a capture antibody binding a secretory material of interest which subsequently gets stained resulting in a spot for each cell producing the secretory material of interest. | descendants: 43 (similarity: 0.5248)",
+        "13. OBI:2100234 | total venous blood IgE assay | definition: An assay that measures IgE in venous blood as part of a total order | descendants: 0 (similarity: 0.5208)",
+        "14. OBI:2100179 | quantitative venous blood IgA assay | definition: An assay that measures IgA in venous blood as part of a quantitative order | descendants: 0 (similarity: 0.4392)",
+        "15. OBI:0003589 | serum anti-Epstein-Barr virus antibody level assay | EBV | definition: An antigen specific antibodies assay that is meant to detect antibodies that bind to Epstein-Barr virus (EBV) antigens in a serum sample. | descendants: 0 (similarity: 0.4319)",
+        "16. OBI:2100177 | quantitative venous blood IgG assay | definition: An assay that measures IgG in venous blood as part of a quantitative order | descendants: 0 (similarity: 0.4124)",
+        "17. OBI:2100178 | quantitative venous blood IgM assay | definition: An assay that measures IgM in venous blood as part of a quantitative order | descendants: 0 (similarity: 0.4044)",
+        "18. OBI:0001488 | epitope tolerance induction experiment | tolerance induction | definition: An efficacy of epitope intervention experiment that tests the ability of the intervention to decrease an existing immune response | descendants: 4 (similarity: 0.3966)",
+        "19. OBI:0003234 | induced sputum assay | definition: An assay that has an induced sputum specimen as evaluant. | descendants: 1 (similarity: 0.3961)",
+        "20. OBI:0000743 | immune response assay | definition: An assay that determines information about an immune response | descendants: 1 (similarity: 0.3958)",
+        "21. OBI:0001184 | epitope protection experiment | protection from challenge | definition: An efficacy of epitope intervention experiment that tests the efficacy of inducing an immune epitope response to prevent disease in a host. | descendants: 43 (similarity: 0.3888)",
+        "22. OBI:0003590 | serum anti-cytomegalovirus antibody level assay | CMV | definition: A CMV antibody assay that has serum as an input. | descendants: 0 (similarity: 0.3839)",
+        "23. OBI:0002152 | EBV IgG antibody assay | EBV IgG Ab assay | definition: An antigen specific antibodies assay that is meant to detect immunoglobulin G (IgG) antibodies that bind to Epstein-Barr virus (EBV) antigens. | descendants: 0 (similarity: 0.3839)",
+        "24. OBI:0003419 | antigen specific antibodies in milk assay | definition: An antigen specific antibodies assay that has a milk specimen as evaluant. | descendants: 0 (similarity: 0.383)",
+        "25. OBI:0002153 | EBV IgM antibody assay | EBV IgM Ab assay | definition: An antigen specific antibodies assay that is meant to detect immunoglobulin M (IgM) antibodies that bind to Epstein-Barr virus (EBV) antigens. | descendants: 0 (similarity: 0.3828)",
+        "26. OBI:0001188 | epitope disease exacerbation experiment | exacerbation assay | definition: An efficacy of epitope intervention experiment that tests the ability of inducing an epitope immune response to increase the severity of an existing disease in the host. | descendants: 4 (similarity: 0.3705)",
+        "27. OBI:1110128 | immune epitope assay | definition: An assay that detects the binding of an epitope to an adaptive immune receptor, or an immune process resulting from such a binding event, or characterizes the structrue of the complex resulting from such a binding event. | descendants: 539 (similarity: 0.3663)",
+        "28. OBI:2100396 | cerebrospinal fluid eosinophil count assay | definition: A cytometry assay that measures the count of eosinophils in cerebrospinal fluid | descendants: 0 (similarity: 0.3656)",
+        "29. OBI:0003418 | antigen specific antibodies in blood assay | definition: An antigen specific antibodies assay that has a blood specimen as evaluant. | descendants: 0 (similarity: 0.3649)",
+        "30. OBI:0002727 | insecticide resistance by short interspersed elements PCR assay | Short Interspersed Elements PCR | definition: An insecticide resistance assay that is based on monitoring known mutations by PCR amplification of short interspersed elements (SINEs). | descendants: 0 (similarity: 0.3644)"
+      ],
+      "usage": {
+        "prompt": 4161,
+        "cached": 0,
+        "completion": 5,
+        "reasoning": 0
+      }
+    },
+    "mass cytometry": {
+      "reply": "1 exact",
+      "candidates": [
+        "1. OBI:0002115 | cytometry time of flight assay | CyTOF | mass cytometry assay | definition: A cytometry assay in which the presence of molecules of interest on or in cells is indicated by binding of antibodies labeled with rare earth element tags which are detected by time-of-flight mass spectrometry. | descendants: 2 (exact name match; similarity: 0.5887)",
+        "2. OBI:0003096 | imaging mass cytometry assay | imaging CyTOF | IMC | definition: A cytometry time of flight assay in which molecules of interest on or in cells are imaged through a system in which samples are labeled with multiple different rare-earth tagged antibodies. The sample is then ablated with a laser and the labeled material is detected by cytometry time of flight mass... | descendants: 0 (child of exact name match; similarity: 0.588)",
+        "3. OBI:0003100 | multiplexed ion beam imaging assay | MIBI | definition: A cytometry time of flight assay in which molecules of interest on or in cells are imaged through a system in which samples are labeled with multiple different rare-earth tagged antibodies. A primary ion beam is ued to rasterize sections under vacuum, releasing showers of secondary ions detected by... | descendants: 0 (child of exact name match; similarity: 0.5528)",
+        "4. OBI:0003027 | macrophage assay | definition: A cytometry assay that measures the abundance and/or characteristics of macrophages | descendants: 3 (similarity: 0.6285)",
+        "5. OBI:0003025 | monocyte assay | definition: A cytometry assay that measures the abundance and/or characteristics of monocytes | descendants: 6 (similarity: 0.6205)",
+        "6. OBI:0003016 | myelocyte assay | definition: A cytometry assay that measures the abundance and/or characteristics of myelocytes | descendants: 2 (similarity: 0.6185)",
+        "7. OBI:2100048 | megakaryocyte count assay | definition: A cytometry assay that measures the count of megakaryocytes | descendants: 0 (similarity: 0.6147)",
+        "8. OBI:2100050 | macrophage count assay | definition: A cytometry assay that measures the count of macrophages | descendants: 0 (similarity: 0.6081)",
+        "9. OBI:0000916 | flow cytometry assay | FACS | definition: A cytometry assay in which an input cell population is put in solution, is passed by a laser, and optical sensors are used to detect scattering of the laser light and/or fluorescence of specific markers to count and characterize the particles in solution. | descendants: 50 (similarity: 0.6051)",
+        "10. OBI:0003017 | metamyelocyte assay | definition: A cytometry assay that measures the abundance and/or characteristics of metamyelocytes | descendants: 3 (similarity: 0.5922)",
+        "11. OBI:2100009 | monocyte count assay | definition: A cytometry assay that measures the count of monocytes | descendants: 0 (similarity: 0.5867)",
+        "12. OBI:0003021 | basophil assay | definition: A cytometry assay that measures the abundance and/or characteristics of basophils | descendants: 6 (similarity: 0.5769)",
+        "13. OBI:2100335 | manual differential bodily fluid macrophage count assay | definition: A cytometry assay that measures the count of macrophages in bodily fluid as part of a manual differential order | descendants: 0 (similarity: 0.5718)",
+        "14. OBI:0003024 | lymphocyte assay | definition: A cytometry assay that measures the abundance and/or characteristics of lymphocytes | descendants: 9 (similarity: 0.5717)",
+        "15. OBI:0000975 | cell-cell binding detection by flow cytometry assay | definition: A binding assay which uses a flow cytometer to detect pairs of cells that are bound to each other by staining them with different fluorescent labels. | descendants: 0 (similarity: 0.5667)",
+        "16. OBI:0003022 | neutrophil assay | definition: A cytometry assay that measures the abundance and/or characteristics of neutrophils | descendants: 11 (similarity: 0.5651)",
+        "17. OBI:2100005 | basophil count assay | definition: A cytometry assay that measures the count of basophils | descendants: 0 (similarity: 0.5617)",
+        "18. OBI:2100013 | leukocyte count assay | definition: A cytometry assay that measures the count of leukocytes | descendants: 0 (similarity: 0.5605)",
+        "19. OBI:2100008 | lymphocyte count assay | definition: A cytometry assay that measures the count of lymphocytes | descendants: 0 (similarity: 0.5579)",
+        "20. OBI:0000882 | cell-cell killing assay | definition: A cytometry assay that monitors a cell population to track how many are killed by other cells. | descendants: 8 (similarity: 0.5569)",
+        "21. OBI:2100365 | venous blood megakaryocyte count assay | definition: A cytometry assay that measures the count of megakaryocytes in venous blood | descendants: 0 (similarity: 0.555)",
+        "22. OBI:0001977 | cytometry assay | definition: An assay that counts and/or measures characteristics of cells. | descendants: 295 (similarity: 0.5547)",
+        "23. OBI:0003019 | promyelocyte assay | definition: A cytometry assay that measures the abundance and/or characteristics of promyelocytes | descendants: 1 (similarity: 0.5524)",
+        "24. OBI:2100345 | bodily fluid cell count assay | definition: A cytometry assay that measures the count of cells in bodily fluid | descendants: 0 (similarity: 0.5524)",
+        "25. OBI:2100027 | segmented neutrophil of bone marrow count assay | definition: A cytometry assay that measures the count of segmented neutrophil of bone marrows | descendants: 0 (similarity: 0.5508)",
+        "26. OBI:0003028 | platelet assay | definition: A cytometry assay that measures the abundance and/or characteristics of platelets | descendants: 6 (similarity: 0.5503)",
+        "27. OBI:2100060 | automated differential venous blood monocyte count assay | definition: A cytometry assay that measures the count of monocytes in venous blood as part of a automated differential order | descendants: 0 (similarity: 0.5478)",
+        "28. OBI:2100006 | neutrophil count assay | definition: A cytometry assay that measures the count of neutrophils | descendants: 0 (similarity: 0.5471)",
+        "29. OBI:0002952 | fluorescence imaging multiplex cytological profiling | definition: A type of cytometry assay in which fluorescent dyes are used to stain seven major cellular components followed by automatic image capture and analysis which extracts shape, texture, and intensity parameters. | descendants: 0 (similarity: 0.5438)",
+        "30. OBI:2100333 | manual differential bodily fluid monocyte count assay | definition: A cytometry assay that measures the count of monocytes in bodily fluid as part of a manual differential order | descendants: 0 (similarity: 0.5435)"
+      ],
+      "usage": {
+        "prompt": 3905,
+        "cached": 0,
+        "completion": 5,
+        "reasoning": 0
+      }
+    },
+    "manual gating": {
+      "reply": "8 exact",
+      "candidates": [
+        "1. OBI:0003027 | macrophage assay | definition: A cytometry assay that measures the abundance and/or characteristics of macrophages | descendants: 3 (similarity: 0.6285)",
+        "2. OBI:0003025 | monocyte assay | definition: A cytometry assay that measures the abundance and/or characteristics of monocytes | descendants: 6 (similarity: 0.6205)",
+        "3. OBI:0003016 | myelocyte assay | definition: A cytometry assay that measures the abundance and/or characteristics of myelocytes | descendants: 2 (similarity: 0.6185)",
+        "4. OBI:2100048 | megakaryocyte count assay | definition: A cytometry assay that measures the count of megakaryocytes | descendants: 0 (similarity: 0.6147)",
+        "5. OBI:2100050 | macrophage count assay | definition: A cytometry assay that measures the count of macrophages | descendants: 0 (similarity: 0.6081)",
+        "6. OBI:0000916 | flow cytometry assay | FACS | definition: A cytometry assay in which an input cell population is put in solution, is passed by a laser, and optical sensors are used to detect scattering of the laser light and/or fluorescence of specific markers to count and characterize the particles in solution. | descendants: 50 (similarity: 0.6051)",
+        "7. OBI:0003017 | metamyelocyte assay | definition: A cytometry assay that measures the abundance and/or characteristics of metamyelocytes | descendants: 3 (similarity: 0.5922)",
+        "8. OBI:0002115 | cytometry time of flight assay | CyTOF | mass cytometry assay | definition: A cytometry assay in which the presence of molecules of interest on or in cells is indicated by binding of antibodies labeled with rare earth element tags which are detected by time-of-flight mass spectrometry. | descendants: 2 (similarity: 0.5887)",
+        "9. OBI:0003096 | imaging mass cytometry assay | imaging CyTOF | IMC | definition: A cytometry time of flight assay in which molecules of interest on or in cells are imaged through a system in which samples are labeled with multiple different rare-earth tagged antibodies. The sample is then ablated with a laser and the labeled material is detected by cytometry time of flight mass... | descendants: 0 (similarity: 0.588)",
+        "10. OBI:2100335 | manual differential bodily fluid macrophage count assay | definition: A cytometry assay that measures the count of macrophages in bodily fluid as part of a manual differential order | descendants: 0 (similarity: 0.5718)",
+        "11. OBI:2100333 | manual differential bodily fluid monocyte count assay | definition: A cytometry assay that measures the count of monocytes in bodily fluid as part of a manual differential order | descendants: 0 (similarity: 0.5435)",
+        "12. OBI:0002177 | patch clamp assay | definition: An intracellular electrophysiology assay where a glass micropipette is sealed to the surface of the cell membrane as a recording electrode to study ion channel activity. The key distinction of this technique is the electrical resistance of the seal between the cell membrane and the pipette is of the... | descendants: 4 (similarity: 0.3459)",
+        "13. OBI:0003125 | mosaicism with repeat frameshift genetic sparse labeling | MORF genetic sparse labeling | definition: A 3D neural cell structure determination assay where sparse and stochastic methods are used to label genetically-defined neurons. | descendants: 0 (similarity: 0.3223)",
+        "14. OBI:0002184 | cut open oocyte voltage clamp assay | COVG | definition: The cut-open oocyte Vaseline gap (COVG) voltage-clamp technique is designed to solve weaknesses in the two elextrode voltage clamp by maximizing the benefits of the Xenopus oocyte expression system by improving on clamp speed, signal-to-noise ratio, and ability to effectively perfuse the oocyte. In... | descendants: 0 (similarity: 0.3148)",
+        "15. OBI:0003314 | mapping RNA-genome interactions assay | MARGI | definition: A nuclear ligation assay for probing RNA-DNA interactions in the nucleus. Nuclei are crosslinked, and RNA fragments are ligated to proximal DNA fragments via a special linker molecule. After reverse transcription, high-throughput sequencing is performed. | descendants: 0 (similarity: 0.3018)",
+        "16. OBI:0002182 | voltage clamp assay | definition: An cellular electrophysiology assay where the membrane potential of a cell is controlled by the experimentalist. This is accomplished through a feedback mechanism where any change in membrane potential is countered by permitting electrical current to flow into or out of the cell. | descendants: 2 (similarity: 0.3005)",
+        "17. OBI:2100332 | manual differential bodily fluid mesothelial cell count assay | definition: A cytometry assay that measures the count of mesothelial cells in bodily fluid as part of a manual differential order | descendants: 0 (similarity: 0.2986)",
+        "18. OBI:0001671 | electrophoretic mobility shift assay | band shift assay | EMSA | gel mobility shift assay | gel retardation assay | definition: An assay that measures information about Protein-DNA or Protein-RNA interactions using gel electrophoresis and relying on the fact the molecular interactions will cause the heterodimer to be retarded on the gel when compared to controls corresponding to protein extract alone and protein extract + ne... | descendants: 0 (similarity: 0.2957)",
+        "19. OBI:0002164 | mammalian 2-hybrid assay | definition: A binding assay that increases the expression of a reporter gene in mammalian cells by proteins of interest attached to two portions of the transcriptional activator, bringing those portions closer together. | descendants: 0 (similarity: 0.2866)",
+        "20. OBI:0002180 | inside-out patch clamp assay | definition: A patch-clamp assay where a patch of the membrane is attached to the patch pipette, detached from the rest of the cell, and the cytosolic surface of the membrane is exposed to the external media, or bath. This provides the experimenter has access to the intracellular surface of the membrane via the... | descendants: 0 (similarity: 0.2835)",
+        "21. OBI:0002183 | two electrode voltage clamp assay | TEVC | definition: The two electrode voltage clamp (TEVC) method utilizes two low-resistance pipettes, one sensing voltage and the other injecting current. The microelectrodes are filled with conductive solution and inserted into the cell to artificially control membrane potential. The membrane acts as a dielectric as... | descendants: 0 (similarity: 0.2817)",
+        "22. OBI:0002181 | outside-out patch clamp assay | definition: A patch-clamp assay where a patch of the membrane is attached to the patch pipette. In this configuration, the external surface of the cell membrane is exposed as the outside of the membrane patch relative to the patch electrode. An outside-out patch starts with a gigaohm seal in a whole-cell record... | descendants: 0 (similarity: 0.2807)",
+        "23. OBI:0002675 | massively parallel reporter assay | MPRA | definition: An assay in which multiplexing the construction and interrogation of larger libraries of reporter constructs allows measurement of the transcriptional regulatory activities of thousands to hundreds of thousands of DNA sequences. | descendants: 0 (similarity: 0.2783)",
+        "24. OBI:0001673 | nano-cap analysis of gene expression assay | nano-CAGE | definition: A transcription profiling assay that is performed using a very low amount (nanogram scale) of mRNA samples using Cap analysis gene expression (CAGE). | descendants: 0 (similarity: 0.2778)",
+        "25. OBI:2100331 | manual differential bodily fluid segmented neutrophil count assay | definition: A cytometry assay that measures the count of segmented neutrophils in bodily fluid as part of a manual differential order | descendants: 0 (similarity: 0.2769)",
+        "26. OBI:0003901 | multi-electrode array assay | definition: A multi-unit recording assay using a multi-electrode array (MEA) on the surface of a well on a cell culture plate. | descendants: 6 (similarity: 0.2743)",
+        "27. OBI:0002179 | cell-attached patch clamp assay | definition: A patch-clamp assay where the electrode is left in place on the cell, and the membrane patch has been left intact been perforated. This maintains the separation of the interior of the pipette to the intracellular space of the cell. Measurements made with this technique involve recording currents thr... | descendants: 0 (similarity: 0.2738)",
+        "28. OBI:0002185 | current clamp assay | definition: The current clamp technique records the membrane potential by injecting current into a cell through the recording electrode. Unlike in the voltage clamp mode, where the membrane potential is held at a level determined by the experimenter, in \"current clamp\" mode the membrane potential is free to var... | descendants: 0 (similarity: 0.2723)",
+        "29. OBI:0002160 | multiplexed indexed T7 ChIP-seq assay | Mint-ChIP | Mint-ChIP-seq | definition: A ChIP-seq assay which leverages T7 promoter amplification to allow low sample input and chromatin barcoding and pool-and-split multiplexing for high-throughput, quantitative profiling of chromatin states. | descendants: 0 (similarity: 0.2706)",
+        "30. OBI:0003290 | mosquito membrane feeding assay | definition: An assay that evaluates host-to-mosquito transmission of a parasite organism by feeding a specimen of host blood infected with the parasite organism to a collection of mosquitoes through a mosquito membrane feeding device and, after a given time, dissecting the mosquitoes and counting the number of... | descendants: 0 (similarity: 0.2697)"
+      ],
+      "usage": {
+        "prompt": 4480,
+        "cached": 0,
+        "completion": 5,
+        "reasoning": 0
+      }
+    },
+    "Oral food challenges": {
+      "reply": "none",
+      "candidates": [
+        "1. OBI:0003237 | feces assay | definition: An assay that has a feces specimen as evaluant. | descendants: 3 (similarity: 0.4125)",
+        "2. OBI:0001982 | protection from challenge in vivo intervention experiment | definition: An in vivo intervention experiment that tests the ability of the intervention to prevent occurrence of a disease in a host. | descendants: 0 (similarity: 0.3812)",
+        "3. OBI:0002733 | blood meal by counter current immunoelectrophoresis assay | CIE | countercurrent immunoelectrophoresis | definition: A blood meal assay that uses a counter current immunoelectrophoresis technique. | descendants: 0 (similarity: 0.3745)",
+        "4. OBI:0001983 | tolerance induction intervention experiment | definition: An in vivo intervention experiment that tests the ability of the intervention to decrease an immune response. | descendants: 0 (similarity: 0.3576)",
+        "5. OBI:0003239 | saliva assay | definition: An assay that has a saliva specimen as evaluant. | descendants: 0 (similarity: 0.356)",
+        "6. OBI:0001189 | epitope protection experiment based on survival | host survival after challenge | definition: An epitope protection experiment that determines the success of the epitope intervention based on increased survival of the host. | descendants: 4 (similarity: 0.3493)",
+        "7. OBI:0001184 | epitope protection experiment | protection from challenge | definition: An efficacy of epitope intervention experiment that tests the efficacy of inducing an immune epitope response to prevent disease in a host. | descendants: 43 (similarity: 0.349)",
+        "8. OBI:0002732 | blood meal assay | blood meal analysis | definition: An assay that analyzes the specimen taken from blood meal fed organism, such as insect. | descendants: 2 (similarity: 0.3438)",
+        "9. OBI:0001488 | epitope tolerance induction experiment | tolerance induction | definition: An efficacy of epitope intervention experiment that tests the ability of the intervention to decrease an existing immune response | descendants: 4 (similarity: 0.3434)",
+        "10. OBI:0002734 | DNA based blood meal finger printing assay | DNA based blood meal finger printing | definition: A DNA fingerprinting assay that uses DNA extracted from blood meal fed organism, such as insect. | descendants: 0 (similarity: 0.3351)",
+        "11. OBI:0003506 | finger to finger assessment | definition: A functional assessment of an individual's ability to touch index fingers together in front of the sternum without oscillation for a specified duration of time | descendants: 0 (similarity: 0.3346)",
+        "12. OBI:0003529 | spontaneous speech assessment | definition: A functional assessment of an individual's ability to articulate spoken words. | descendants: 0 (similarity: 0.3323)",
+        "13. OBI:0003457 | epitope protection from infectious challenge experiment based on survival | survival after infectious challenge | definition: An epitope protection from infectious challenge experiment that determines the success of the epitope intervention based on increased survival of the host compared to controls. | descendants: 4 (similarity: 0.3313)",
+        "14. OBI:0003503 | tongue atrophy assessment | definition: An observational assessment of the loss of muscle tissue related to tongue movement due to inactivity or disease. | descendants: 0 (similarity: 0.3295)",
+        "15. OBI:0001183 | epitope protection from tumor challenge experiment | protection from tumor challenge | definition: An epitope protection experiment in which the ability of the epitope to protect the host from developing tumors is assessed. | descendants: 14 (similarity: 0.3282)",
+        "16. OBI:0003459 | epitope protection from tumor challenge experiment based on survival | survival after tumor challenge | definition: An epitope protection from tumor challenge experiment that determines the success of the epitope intervention based on increased survival of the host compared to controls. | descendants: 4 (similarity: 0.3274)",
+        "17. OBI:0001179 | epitope protection from infectious challenge experiment | protection from infectious challenge | definition: An epitope protection experiment in which the ability of the epitope to protect the host from an infection is assessed. | descendants: 14 (similarity: 0.3271)",
+        "18. OBI:0003507 | nose to finger assessment | definition: A functional assessment of an individual's ability to touch their own nose and then touch an examiners finger in front of them and then touch their own nose once more. | descendants: 0 (similarity: 0.3256)",
+        "19. OBI:0003039 | feces microbiology assay | stool test for microorganisms | definition: An organism detection assay that detects microorganisms in a feces specimen. | descendants: 0 (similarity: 0.3243)",
+        "20. OBI:0003285 | nasopharyngeal or oropharyngeal swab microbiology assay | definition: An organism detection assay that detects microorganisms in a nasopharyngeal or oropharyngeal swab specimen. | descendants: 0 (similarity: 0.3203)",
+        "21. OBI:0003501 | functional assessment of individual | definition: A physical examination of an organism's ability to perform functional activities. | descendants: 37 (similarity: 0.3195)",
+        "22. OBI:0003504 | forced cough assessment | definition: A functional assessment of an individual's ability to cough forcefully. | descendants: 0 (similarity: 0.319)",
+        "23. OBI:0003792 | bacterial flagellin detection in feces assay | definition: An analyte assay measuring bacterial flagellin in a feces sample. | descendants: 0 (similarity: 0.3165)",
+        "24. OBI:0002147 | HIV group O antibody assay | HIV I/II Plus O assay | definition: An antigen specific antibodies assay that is meant to detect antibodies that bind to human immunodeficiency virus (HIV) group O antigens. | descendants: 0 (similarity: 0.3155)",
+        "25. OBI:0003813 | organism development assay in late embryo based on examination of surface structure | external fetal exam | definition: An organism development assay in late embryo that evaluates only the external surface structure of the organism | descendants: 0 (similarity: 0.3124)",
+        "26. OBI:0003510 | finger taps assessment | definition: A functional assessment of an individual's ability to touch their finger-tip to thumb as many times as possible during a specified duration of time. | descendants: 0 (similarity: 0.3118)",
+        "27. OBI:2100037 | folic acids assay | definition: An analyte assay that measures the abundance of folic acids | descendants: 2 (similarity: 0.3097)",
+        "28. OBI:2100036 | elemental oxygen assay | definition: An analyte assay that measures the abundance of elemental oxygen | descendants: 13 (similarity: 0.3067)",
+        "29. OBI:0003536 | observational assessment of individual | definition: A physical examination of an organism through visual assesment. | descendants: 3 (similarity: 0.3045)",
+        "30. OBI:0003505 | speech test assessment | definition: A functional assessment of an individual's ability to understandably repeat spoken sentences. | descendants: 0 (similarity: 0.3025)"
+      ],
+      "usage": {
+        "prompt": 3922,
+        "cached": 0,
+        "completion": 4,
+        "reasoning": 0
+      }
+    }
+  },
+  "obi_fulllist": {
+    "Oral food challenges": {
+      "reply": "none",
+      "n_candidates": 1249,
+      "usage": {
+        "prompt": 67396,
+        "cached": 0,
+        "completion": 4,
+        "reasoning": 0
+      }
+    }
+  },
+  "judge": {
+    "cytometry time of flight assay (2) vs cytometry time of flight assay": {
+      "reply": "DIFFERENT: Record A is the broader mass-cytometry acquisition measuring immune population frequencies plus surface and intracellular marker expression, whereas Record B specifically measures manually gated frequencies of major/subset populations, cytokine-positive cells, and peanut-specific CD4 T cells from that data.",
+      "usage": {
+        "prompt": 566,
+        "cached": 0,
+        "completion": 58,
+        "reasoning": 0
+      }
+    }
+  }
+}
