@@ -1,0 +1,126 @@
+{
+  "real time reverse-transcription polymerase chain reaction assay": {
+    "name_in_paper": [
+      "RT-qPCR"
+    ],
+    "standard_technique_name": "real time reverse-transcription polymerase chain reaction",
+    "aliases": [
+      "quantitative PCR with reverse tran- scription (RT–qPCR)",
+      "SARS-CoV-2 RT-qPCR analysis"
+    ],
+    "sample_type": "nasopharyngeal swabs",
+    "readouts": "SARS-CoV-2 viral RNA load as genome copies",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Viral RNA measurements",
+      "sentence_ids": [
+        "S167"
+      ],
+      "quote": "RNA concentrations were measured from nasopharyngeal samples by RT-qPCR as previously described 23 .",
+      "in_supplement": false
+    },
+    "obi_id": "OBI:0000911",
+    "obi_label": "real time reverse-transcription polymerase chain reaction assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.7627,
+    "obi_granularity": "EXACT"
+  },
+  "cytokine assay": {
+    "name_in_paper": [
+      "Human Cytokine Array/Chemokine Array 71–403 Plex Panel (HD71)"
+    ],
+    "standard_technique_name": "multiplex immunoassay",
+    "aliases": [],
+    "sample_type": "serum",
+    "readouts": "cytokine and chemokine levels",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Cytokine and chemokine measurements",
+      "sentence_ids": [
+        "S177"
+      ],
+      "quote": "Sera were shipped to Eve Technologies (Calgary, Alberta, Canada) on dry ice, and levels of cytokines and chemokines were measured with Human Cytokine Array/Chemokine Array 71–403 Plex Panel (HD71).",
+      "in_supplement": false
+    },
+    "obi_id": "OBI:0002766",
+    "obi_label": "cytokine assay",
+    "resource": "embedding_llm",
+    "obi_confidence": 0.4296,
+    "obi_granularity": "BROAD"
+  },
+  "flow cytometry assay": {
+    "name_in_paper": [
+      "flow cytometry"
+    ],
+    "standard_technique_name": "flow cytometry",
+    "aliases": [],
+    "sample_type": "peripheral blood mononuclear cells",
+    "readouts": "leukocyte and immune cell subset frequencies, counts, and surface marker expression",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Flow cytometry",
+      "sentence_ids": [
+        "S186"
+      ],
+      "quote": "Briefly, freshly isolated PBMCs were plated at 1–2 × 10 6 cells / well in a 96 well U-bottom plate.",
+      "in_supplement": false
+    },
+    "obi_id": "OBI:0000916",
+    "obi_label": "flow cytometry assay",
+    "resource": "exact_original_llm",
+    "obi_confidence": "high",
+    "obi_granularity": "EXACT"
+  },
+  "flow cytometry assay (2)": {
+    "name_in_paper": [
+      "intracellular cytokine staining"
+    ],
+    "standard_technique_name": "flow cytometry",
+    "aliases": [],
+    "sample_type": "peripheral blood mononuclear cells",
+    "readouts": "intracellular cytokine production by T cells after stimulation",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Flow cytometry",
+      "sentence_ids": [
+        "S192"
+      ],
+      "quote": "For intracellular cytokine staining following stimulation, cells were resuspended in 200 μL cRPMI (RPMI-1640 supplemented with 10% FBS, 2 mM L-glutamine, 100 U/ml penicillin, and 100 mg/ml streptomycin, 1mM Sodium Pyruvate, and 50uM 2-Mercaptoethanol) and stored at 4°C overnight.",
+      "in_supplement": false
+    },
+    "obi_id": "OBI:0000916",
+    "obi_label": "flow cytometry assay",
+    "resource": "embedding_llm_normalized",
+    "obi_confidence": 0.7858,
+    "obi_granularity": "BROAD"
+  },
+  "enzyme-linked immunosorbent assay": {
+    "name_in_paper": [
+      "ELISA"
+    ],
+    "standard_technique_name": "enzyme-linked immunosorbent assay",
+    "aliases": [],
+    "sample_type": "plasma",
+    "readouts": "soluble mediator levels",
+    "generate_claim": true,
+    "source": "results",
+    "evidence": {
+      "section": "Overview of COVID-19 immunological features",
+      "sentence_ids": [
+        "S23",
+        "S24"
+      ],
+      "quote": "We analysed PBMC and plasma samples from patients with moderate or severe COVID-19 and healthy HCW donors ( Fig. 1a , gating strategy in) by flow cytometry and ELISA to quantify leuko- cytes and soluble mediators, respectively.",
+      "in_supplement": false
+    },
+    "obi_id": "OBI:0000661",
+    "obi_label": "enzyme-linked immunosorbent assay",
+    "resource": "exact_original",
+    "obi_confidence": "high",
+    "obi_granularity": null
+  }
+}

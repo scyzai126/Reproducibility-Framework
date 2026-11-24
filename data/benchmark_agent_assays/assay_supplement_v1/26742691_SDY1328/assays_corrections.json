@@ -1,0 +1,114 @@
+{
+  "summary": {
+    "assays": 8,
+    "fields_re_extracted": 2,
+    "actions": {
+      "REPLACED": 2
+    },
+    "reported_not_corrected": 2
+  },
+  "results": [
+    {
+      "assay_id": "GM1-enzyme-linked immunosorbent assay (ELISA)",
+      "assay_name": "GM1-enzyme-linked immunosorbent assay (ELISA)",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "MONOLISA Anti-HBs PLUS kit",
+      "assay_name": "MONOLISA Anti-HBs PLUS kit",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "commercially available kit",
+      "assay_name": "commercially available kit",
+      "record_verdict": "REVIEW",
+      "corrections": [],
+      "reported_not_corrected": [
+        {
+          "field_name": "name_in_paper",
+          "verdict": "NOT_SUPPORTED",
+          "reason": "This phrase names a product category rather than a specific assay technique."
+        }
+      ]
+    },
+    {
+      "assay_id": "Anti-Tetanus IgG kit",
+      "assay_name": "Anti-Tetanus IgG kit",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "Anti-Tetanus IgG",
+            "commercially available kit (Sekisui Virotech, catalogue number EC124.00)"
+          ],
+          "blind_answer": [],
+          "dropped": [
+            "Anti-Tetanus IgG",
+            "commercially available kit (Sekisui Virotech, catalogue number EC124.00)"
+          ]
+        }
+      ],
+      "reported_not_corrected": [
+        {
+          "field_name": "name_in_paper",
+          "verdict": "NOT_SUPPORTED",
+          "reason": "The text describes quantification of Anti-Tetanus IgG using a commercially available kit but does not name the assay itself as \"Anti-Tetanus IgG kit\"."
+        }
+      ]
+    },
+    {
+      "assay_id": "microarray",
+      "assay_name": "microarray",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "gene-expression signature",
+            "transcriptional profiling",
+            "transcriptomic"
+          ],
+          "blind_answer": [
+            "microarrays",
+            "gene-expression signatures",
+            "transcriptional profiling",
+            "transcriptomic profiling"
+          ],
+          "dropped": [
+            "gene-expression signature",
+            "transcriptomic"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Polychromatic FCM",
+      "assay_name": "Polychromatic FCM",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "multiplex ELISA protocol Human Inflammation multianalyte profiling",
+      "assay_name": "multiplex ELISA protocol Human Inflammation multianalyte profiling",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "complete blood count",
+      "assay_name": "complete blood count",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    }
+  ]
+}

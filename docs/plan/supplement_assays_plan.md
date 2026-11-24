@@ -36,6 +36,8 @@
 
 ### 阶段 3（付费，先 `--dry-run` 等确认）— 在 supplement 文字上跑完整的 voted 链，再比对
 
+> **2026-11-20 改为另一种做法，本阶段没有按下面的写法实现。** supplement 不单独跑，而是接在正文后面作为一份文档跑一次链：`scripts/run_assay_pipeline.py --supplement`。见 `docs/plan/assay_supplement_workflow_plan.md`。
+
 1. 只跑阶段 2 判定为「有 supplementary methods」的文章（估计 7–12 篇，不是 31 篇）。
 2. 新脚本 `scripts/run_supplement_assays.py`：仍然走 `assay_service.assay_report`（三次提取投票 → verify → correct → OBI → canonicalize → judge，不新增单次提取路径），只是把论文来源换成 `supplement.txt`。为此给 `assay_report` 加一个可选参数 `source_text=None`（传入时跳过 `locate_paper_source`），这是对核心代码唯一的改动。
 3. 结果写到新的 result version `data/benchmark_agent_assays/assay_result_v3_supplement/<pmid>_<SDY>/`，不动 v3 的正文结果。ledger 照常记一行。

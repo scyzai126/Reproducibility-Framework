@@ -4,7 +4,7 @@ The assay chain reads the main text only. jats_parser drops `<supplementary-mate
 purpose, and what it drops is a file name and a caption, never the supplement's prose -- so a
 method described only in a supplement has never reached the extractor. This module gets that
 prose: it lists the files a paper's XML names, unpacks the archive Europe PMC serves for the
-paper, reads the PDFs and .docx files in it, and renders the text in the same shape
+paper, reads the PDFs and .docx files in it (and the note lines of an .xlsx), and renders the text in the same shape
 parse_jats_xml produces (`## heading  [bucket]` blocks, `[S<n>]` sentence markers), so every
 pass of the chain can read a supplement exactly as it reads a paper.
 
@@ -54,8 +54,11 @@ def file_kind(name: str) -> str:
 
 
 def is_readable(name: str) -> bool:
-    """Whether this module can turn the file into text. A legacy .doc is not."""
-    return file_kind(name) in _TEXT_KINDS
+    """Whether this module can turn the file into text. A legacy .doc is not.
+
+    An .xlsx is read for its note lines only (`xlsx_notes`), never for its data.
+    """
+    return file_kind(name) in _TEXT_KINDS or Path(name).suffix.lower() == ".xlsx"
 
 
 _ARTICLE_COPY = re.compile(r"article\s+plus\s+supplement", re.IGNORECASE)
@@ -194,6 +197,55 @@ def docx_text(data: bytes) -> str:
     return "\n".join(lines)
 
 
+#: A spreadsheet is read for the prose its authors wrote around the data -- a column guide, a
+#: legend line -- which is the only place some assays are named (SDY1655's anti-S1 ELISA:
+#: "Plasma anti-S1-IgG and IgM levels. OD450 values for ELISA."). A note line is a row whose one
+#: filled cell is a phrase; a header row or a data row fills several cells and is never read.
+_XLSX_MAX_ROWS = 5000
+_XLSX_NOTES_CAP = 8000
+_XLSX_MIN_WORDS = 4
+
+
+def xlsx_notes(data: bytes) -> str:
+    """The note lines of an .xlsx, sheet by sheet, one per line; "" when it has none.
+
+    Each line ends in a full stop so the sentence numbering keeps one note to one sentence.
+    Only the first `_XLSX_MAX_ROWS` rows of a sheet are scanned and the whole is cut at
+    `_XLSX_NOTES_CAP` characters, at a line boundary.
+    """
+    from openpyxl import load_workbook
+
+    try:
+        book = load_workbook(io.BytesIO(data), read_only=True, data_only=True)
+    except Exception:  # noqa: BLE001 - not a workbook, or a broken one: no text
+        return ""
+    lines: list[str] = []
+    seen: set[str] = set()
+    used = 0
+    try:
+        for sheet in book.worksheets:
+            notes = []
+            for row in sheet.iter_rows(max_row=_XLSX_MAX_ROWS, values_only=True):
+                filled = [cell for cell in row if cell is not None and str(cell).strip()]
+                if len(filled) != 1 or not isinstance(filled[0], str):
+                    continue
+                note = re.sub(r"\s+", " ", filled[0]).strip()
+                if len(note.split()) < _XLSX_MIN_WORDS or note in seen:
+                    continue
+                seen.add(note)
+                notes.append(note if note[-1] in ".!?" else note + ".")
+            if not notes:
+                continue
+            for line in [f'Notes in sheet "{sheet.title}".', *notes]:
+                if used + len(line) + 1 > _XLSX_NOTES_CAP:
+                    return "\n".join(lines)
+                lines.append(line)
+                used += len(line) + 1
+    finally:
+        book.close()
+    return "\n".join(lines)
+
+
 #: A PDF text layer is cut at this, far above any supplement's prose. What sits past it in
 #: practice is hundreds of pages of tables.
 _PDF_TEXT_CAP = 2_000_000
@@ -207,6 +259,8 @@ def file_text(path: Path) -> str:
             return extract_pdf_text(path.read_bytes(), max_chars=_PDF_TEXT_CAP)
         if kind == "docx":
             return docx_text(path.read_bytes())
+        if path.suffix.lower() == ".xlsx":
+            return xlsx_notes(path.read_bytes())
     except Exception:  # noqa: BLE001 - a corrupt download is a file with no text, not a crash
         return ""
     return ""

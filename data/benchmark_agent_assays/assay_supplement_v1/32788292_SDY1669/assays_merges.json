@@ -1,0 +1,46 @@
+{
+  "summary": {
+    "groups_merged": 0,
+    "entries_folded": 0,
+    "folds_blocked": 2
+  },
+  "results": [],
+  "blocked": [
+    {
+      "member": "Flow cytometry for immune cell phenotyping",
+      "kept_apart_from": "flow cytometry assay",
+      "anchor": "In vitro stimulation of peripheral blood leukocytes",
+      "obi_id": "OBI:0000916",
+      "obi_label": "flow cytometry assay",
+      "reason": "readouts differs: 'fractions of plasmacytoid dendritic cells, myeloid dendritic cells, and monocytes producing intracellular cytokines and phospho-NF-kB p65 after TLR ligand stimulation' vs 'cell-surface marker expression including HLA-DR and CD86 on immune cell subsets'",
+      "judged": {
+        "verdict": "DIFFERENT",
+        "reason": "Record A measures intracellular functional responses after TLR stimulation (cytokine production and phospho-NF-kB p65 in pDCs/mDCs/monocytes), whereas Record B measures baseline cell-surface phenotyping markers such as HLA-DR and CD86 on immune cell subsets."
+      }
+    },
+    {
+      "member": "highly sensitive ELISA enabled by single molecule array (SIMoA) technology",
+      "kept_apart_from": "enzyme-linked immunosorbent assay",
+      "anchor": "ELISA assays",
+      "obi_id": "OBI:0000661",
+      "obi_label": "enzyme-linked immunosorbent assay",
+      "reason": "readouts differs: 'protein concentrations of EN-RAGE, TNFSF14, and OSM' vs 'interferon-alpha concentration'",
+      "judged": {
+        "verdict": "DIFFERENT",
+        "reason": "both are plasma ELISAs, but Record A measures EN-RAGE, TNFSF14, and OSM proteins whereas Record B measures interferon-alpha."
+      }
+    }
+  ],
+  "key_map": {
+    "Phospho-CyTOF analysis of peripheral blood mononuclear cells": "cytometry time of flight assay",
+    "In vitro stimulation of peripheral blood leukocytes": "flow cytometry assay",
+    "Plasma protein profiling using Olink multiplex panel": "Olink assay",
+    "ELISA assays": "enzyme-linked immunosorbent assay",
+    "CITE-seq single-cell RNA sequencing": "cellular indexing of transcriptomes and epitopes by sequencing",
+    "Flow cytometry for immune cell phenotyping": "flow cytometry assay (2)",
+    "Bulk transcriptomics": "bulk RNA-seq assay",
+    "highly sensitive ELISA enabled by single molecule array (SIMoA) technology": "enzyme-linked immunosorbent assay (2)",
+    "Bacterial DNA quantification by PCR": "real time polymerase chain reaction assay",
+    "Quantitation of LPS in plasma": "bacterial lipopolysaccharide detection in plasma assay"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "summary": {
+    "groups_merged": 0,
+    "entries_folded": 0,
+    "folds_blocked": 1
+  },
+  "results": [],
+  "blocked": [
+    {
+      "member": "Inhibition ELISA",
+      "kept_apart_from": "enzyme-linked immunosorbent assay",
+      "anchor": "IgM capture ELISA",
+      "obi_id": "OBI:0000661",
+      "obi_label": "enzyme-linked immunosorbent assay",
+      "reason": "readouts differs: 'seroconversion' vs 'anti-CHIKV antibody titer increase'",
+      "judged": {
+        "verdict": "DIFFERENT",
+        "reason": "one measures CHIKV-specific IgM seroconversion by IgM capture ELISA, while the other measures a >4-fold increase in anti-CHIKV antibody titer by inhibition ELISA."
+      }
+    }
+  ],
+  "key_map": {
+    "IgM capture ELISA": "enzyme-linked immunosorbent assay",
+    "Inhibition ELISA": "enzyme-linked immunosorbent assay (2)",
+    "mass cytometry": "cytometry time of flight assay",
+    "multiplex ELISA": "cytometric bead array assay",
+    "RNA-seq": "bulk RNA-seq assay",
+    "real-time RT–PCR": "real time reverse-transcription polymerase chain reaction assay"
+  }
+}

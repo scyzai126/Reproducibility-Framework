@@ -1,0 +1,655 @@
+{
+  "summary": {
+    "total": 9,
+    "accept": 6,
+    "review": 3,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {
+      "aliases[]": {
+        "NOT_SUPPORTED": 1
+      },
+      "sample_type": {
+        "NOT_SUPPORTED": 1
+      },
+      "readouts": {
+        "NOT_SUPPORTED": 1
+      }
+    }
+  },
+  "results": [
+    {
+      "assay_id": "gene array analysis of whole-blood and VaxDesign samples",
+      "assay_name": "gene array analysis of whole-blood and VaxDesign samples",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "gene array analysis of whole-blood and VaxDesign samples",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S120",
+            "S124"
+          ],
+          "evidence_text": "Whole-blood total RNA was purified from PaxGene tubes using RNA extraction kits (QIAGEN). ... The biotinylated cRNA was hybridized onto Illumina Human RefSeq-8 BeadChips v2 (Montreal and Lausanne samples) or v3 (VaxDesign samples)",
+          "reason": "The methods section explicitly describes gene array processing on whole-blood and VaxDesign samples performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "gene array",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S41"
+          ],
+          "evidence_text": "These results demonstrate the proper validation of our gene array data by two different strategies",
+          "reason": "This wording refers to the same assay data generated in the study."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "microarray analysis",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S107",
+            "S108"
+          ],
+          "evidence_text": "Gene modulation in response to the antigen (day 7 vs. 0) was assessed by microarray analysis.",
+          "reason": "The text uses this term for the same array-based transcription measurement."
+        },
+        {
+          "field_name": "aliases[2]",
+          "proposed_value": "Illumina array",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "The text names Illumina chips and BeadChips but does not clearly use this phrase as an assay name."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "whole blood",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S120"
+          ],
+          "evidence_text": "Whole-blood total RNA was purified from PaxGene tubes",
+          "reason": "The assay is explicitly performed on whole-blood RNA samples."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "gene expression levels from whole-blood total RNA hybridized to Illumina BeadChips",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S124",
+            "S127",
+            "S130"
+          ],
+          "evidence_text": "The biotinylated cRNA was hybridized onto Illumina Human RefSeq-8 BeadChips v2 (Montreal and Lausanne samples) or v3 (VaxDesign samples) ... Gene expression data were analyzed ... The LIMMA package ( 61 ) was used to identify differentially expressed genes",
+          "reason": "The assay measured gene expression from RNA hybridized to Illumina BeadChips."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "The biotinylated cRNA was hybridized onto Illumina Human RefSeq-8 BeadChips v2 (Montreal and Lausanne samples) or v3 (VaxDesign samples) at 58°C for 20 h and quantified using Illumina BeadStation 500GX scanner and Illumina BeadStudio v3 software.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S124"
+          ],
+          "evidence_text": "The biotinylated cRNA was hybridized onto Illumina Human RefSeq-8 BeadChips v2 (Montreal and Lausanne samples) or v3 (VaxDesign samples) at 58°C for 20 h and quantified using Illumina BeadStation 500GX scanner and Illumina BeadStudio v3 software.",
+          "reason": "The quote appears verbatim and directly describes the assay being performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S124"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "qPCR validation",
+      "assay_name": "qPCR validation",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "qPCR validation",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S133",
+            "S137"
+          ],
+          "evidence_text": "Changes in gene expression observed by microarray analyses were verified by qPCR.",
+          "reason": "The text explicitly describes qPCR being performed in this study as a validation assay."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "qPCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S133"
+          ],
+          "evidence_text": "verified by qPCR",
+          "reason": "This wording refers to the same assay performed here."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "quantitative real-time PCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S32"
+          ],
+          "evidence_text": "performing quantitative real-time PCR (qPCR)",
+          "reason": "This is explicitly given as the expanded name of qPCR for the same assay."
+        },
+        {
+          "field_name": "aliases[2]",
+          "proposed_value": "RT-PCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S188"
+          ],
+          "evidence_text": "Genes that were subsequently evaluated by RT-PCR",
+          "reason": "RT-PCR is used in the paper to refer to the same gene-expression validation assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "whole-blood RNA samples",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "The qPCR section mentions samples and RNA samples but does not explicitly state they were whole-blood RNA samples for this assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "expression of 43 selected genes",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S134"
+          ],
+          "evidence_text": "The expression of 43 genes, which were chosen according to our microarray results and to biomedical literature, was analyzed",
+          "reason": "The text explicitly states that this assay measured expression of 43 genes."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "The expression of 43 genes, which were chosen according to our microarray results and to biomedical literature, was analyzed on samples obtained at day 0 and 7 after vaccination from the Montreal and Lausanne cohorts.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S134"
+          ],
+          "evidence_text": "The expression of 43 genes, which were chosen according to our microarray results and to biomedical literature, was analyzed on samples obtained at day 0 and 7 after vaccination from the Montreal and Lausanne cohorts.",
+          "reason": "The quote appears verbatim and describes the assay being performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S134"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "IL-1β ELISA",
+      "assay_name": "IL-1β ELISA",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "IL-1β ELISA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S154"
+          ],
+          "evidence_text": "analyzed using an IL-1β ELISA kit (BD)",
+          "reason": "The text explicitly states that an IL-1β ELISA was performed."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "ELISA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S154"
+          ],
+          "evidence_text": "IL-1β ELISA kit",
+          "reason": "ELISA refers to the same assay used to analyze the supernatants."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "monocyte-derived dendritic cell culture supernatants",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S152",
+            "S154"
+          ],
+          "evidence_text": "Immature DCs were generated by culturing monocytes for 6 d in the presence of 100 ng/ml GM-CSF (R&D Systems) and 25 ng/ml IL-4 (R&D Systems). The cells were then incubated with live, UV-inactivated or heat-inactivated YF17D, at a multiplicity of infection of 10. After 24 and 48 h, supernatants were collected and analyzed using an IL-1β ELISA kit (BD).",
+          "reason": "The assay was performed on supernatants collected from cultured monocyte-derived DCs."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "IL-1β concentration in culture supernatants",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S154"
+          ],
+          "evidence_text": "supernatants were collected and analyzed using an IL-1β ELISA kit (BD)",
+          "reason": "The assay explicitly measured IL-1β in the collected culture supernatants."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "After 24 and 48 h, supernatants were collected and analyzed using an IL-1β ELISA kit (BD).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S154"
+          ],
+          "evidence_text": "After 24 and 48 h, supernatants were collected and analyzed using an IL-1β ELISA kit (BD).",
+          "reason": "The quote appears verbatim and directly describes the assay being performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S154"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "CFSE labeling",
+      "assay_name": "CFSE labeling",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "CFSE labeling",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S59",
+            "S155"
+          ],
+          "evidence_text": "their proliferation was measured by CFSE labeling",
+          "reason": "The text explicitly states CFSE labeling was used in this study to measure proliferation."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S155"
+          ],
+          "evidence_text": "PBMCs from vaccinated volunteers were labeled with CFSE",
+          "reason": "The assay was performed on PBMCs."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "CD4 and CD8 T cell proliferative responses to YF17D-derived peptide pools measured by CFSE dilution",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S59",
+            "S65",
+            "S67",
+            "S159"
+          ],
+          "evidence_text": "PBMCs sampled at day 60 after vaccination were incubated in the presence of each of 22 YF17D-derived peptide pools ... and their proliferation was measured by CFSE labeling.",
+          "reason": "The text states CFSE labeling measured proliferation after peptide-pool stimulation, and reports both CD4+ and CD8+ T cell proliferative responses."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "PBMCs from vaccinated volunteers were labeled with CFSE (Invitrogen), as previously described ( 64 ).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S155"
+          ],
+          "evidence_text": "PBMCs from vaccinated volunteers were labeled with CFSE (Invitrogen), as previously described ( 64 ).",
+          "reason": "The quoted text appears verbatim and describes the assay being performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S155"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "cytometric bead assay",
+      "assay_name": "cytometric bead assay",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "cytometric bead assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S72"
+          ],
+          "evidence_text": "We used cytometric bead assay (CBA)",
+          "reason": "The text explicitly states that cytometric bead assay was used in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "CBA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S72"
+          ],
+          "evidence_text": "cytometric bead assay (CBA)",
+          "reason": "CBA is explicitly introduced as the abbreviation for this assay."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "BD Th1/Th2 CBA array",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S161"
+          ],
+          "evidence_text": "The BD Th1/Th2 CBA array (BD)",
+          "reason": "This wording refers to the specific CBA assay used here."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cell supernatants",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S161"
+          ],
+          "evidence_text": "in PBMCs supernatants",
+          "reason": "The assay is explicitly stated to measure analytes in PBMC supernatants."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "levels of IL-2, IL-4, IL-5, IL-10, IFN-γ, and TNF in supernatants; beads read on a flow cytometer",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [
+            "S161"
+          ],
+          "evidence_text": "measure levels of IL-2, IL-4, IL-5, IL-10, IFN-γ, and TNF in PBMCs supernatants",
+          "reason": "The cytokine measurements are supported, but the source does not state that the beads were read on a flow cytometer for this assay."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "The BD Th1/Th2 CBA array (BD) was used to measure levels of IL-2, IL-4, IL-5, IL-10, IFN-γ, and TNF in PBMCs supernatants, as suggested by the manufacturer.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S161"
+          ],
+          "evidence_text": "The BD Th1/Th2 CBA array (BD) was used to measure levels of IL-2, IL-4, IL-5, IL-10, IFN-γ, and TNF in PBMCs supernatants, as suggested by the manufacturer.",
+          "reason": "The quote appears verbatim and directly describes the assay being performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S161"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Flow cytometric analysis of IFN-γ/IL-2–producing activated CD4 T cells",
+      "assay_name": "Flow cytometric analysis of IFN-γ/IL-2–producing activated CD4 T cells",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Flow cytometric analysis of IFN-γ/IL-2–producing activated CD4 T cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S162",
+            "S163"
+          ],
+          "evidence_text": "To assess the cytokine production ability of YF17D-specific helper T cells, 2 million PBMCs from vaccinated subjects (day 14 and 28) were stimulated for 6 h with YF17D-derived peptide pools, in the presence of Brefeldin A (Sigma-Aldrich), and then stained with anti-CD8 and -CD4 antibodies. They were then permeabilized and stained with anti-CD154, IL-2, and IFN-γ (BD).",
+          "reason": "This methods subsection describes a flow-cytometric staining assay performed in this study on stimulated PBMCs."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "polychromatic flow cytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S80"
+          ],
+          "evidence_text": "We further demonstrated the emergence of a mixed Th1/Th2 response to the vaccine at the single-cell level using polychromatic flow cytometry.",
+          "reason": "This phrase refers to the same flow-cytometric measurement used to assess vaccine-specific T-cell responses at the single-cell level."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S162"
+          ],
+          "evidence_text": "2 million PBMCs from vaccinated subjects",
+          "reason": "The assay was explicitly performed on PBMCs."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "frequencies of activated vaccine-specific CD4 T cells expressing CD154, IL-2, and IFN-γ after peptide stimulation",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S81",
+            "S82",
+            "S225",
+            "S226"
+          ],
+          "evidence_text": "identifying antigen-specific T cells by the expression of the activation marker CD154 ( 17 , 18 ) and the production of IL-2 and IFN-γ. As illustrated in Fig. 7 a , 35.2% of CD4 + CD154 + cells expressed IL-2 alone, 8.6% expressed IFN-γ alone, and 29.5% expressed both IL-2 and IFN-γ.",
+          "reason": "The text explicitly states that the assay measured frequencies/percentages of antigen-specific activated CD4 T cells expressing CD154, IL-2, and IFN-γ after peptide stimulation."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "To assess the cytokine production ability of YF17D-specific helper T cells, 2 million PBMCs from vaccinated subjects (day 14 and 28) were stimulated for 6 h with YF17D-derived peptide pools, in the presence of Brefeldin A (Sigma-Aldrich), and then stained with anti-CD8 and -CD4 antibodies.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S162"
+          ],
+          "evidence_text": "To assess the cytokine production ability of YF17D-specific helper T cells, 2 million PBMCs from vaccinated subjects (day 14 and 28) were stimulated for 6 h with YF17D-derived peptide pools, in the presence of Brefeldin A (Sigma-Aldrich), and then stained with anti-CD8 and -CD4 antibodies.",
+          "reason": "The quote appears verbatim and describes this assay being performed in the study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S162"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "flow cytometry of long-term vaccine-specific CD4+ T helper phenotype",
+      "assay_name": "flow cytometry of long-term vaccine-specific CD4+ T helper phenotype",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "flow cytometry of long-term vaccine-specific CD4+ T helper phenotype",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S164",
+            "S166",
+            "S167"
+          ],
+          "evidence_text": "To determine the T helper phenotype of long-term, vaccine-specific CD4 + T cells, 2 million PBMCs were stimulated for 6 d with YF17D peptide pools, and subsequently restimulated with the same pools for 12 h, in the presence of Brefeldin A. Non-restimulated cells were used as controls. The cells were then stained with anti-CD3, -CD4, -CD8, -CD45RA, -CCR7, -CCR4, -CXCR3, and -CCR6 antibodies (BD). After permeabilization, they were stained for intracellular CD154 and fixed.",
+          "reason": "The text describes a flow-cytometric staining procedure specifically to determine the long-term vaccine-specific CD4+ T helper phenotype."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S164"
+          ],
+          "evidence_text": "2 million PBMCs were stimulated for 6 d with YF17D peptide pools",
+          "reason": "PBMCs are explicitly stated as the specimen used in this assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "surface and intracellular markers defining central memory Th1 and Th2 phenotypes among vaccine-specific CD4+ T cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S166",
+            "S167",
+            "S86",
+            "S91"
+          ],
+          "evidence_text": "The cells were then stained with anti-CD3, -CD4, -CD8, -CD45RA, -CCR7, -CCR4, -CXCR3, and -CCR6 antibodies (BD). After permeabilization, they were stained for intracellular CD154 and fixed.",
+          "reason": "The assay measures marker expression used to discriminate Th1 and Th2 phenotypes among antigen-specific central memory CD4+ T cells."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "To determine the T helper phenotype of long-term, vaccine-specific CD4 + T cells, 2 million PBMCs were stimulated for 6 d with YF17D peptide pools, and subsequently restimulated with the same pools for 12 h, in the presence of Brefeldin A.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S164"
+          ],
+          "evidence_text": "To determine the T helper phenotype of long-term, vaccine-specific CD4 + T cells, 2 million PBMCs were stimulated for 6 d with YF17D peptide pools, and subsequently restimulated with the same pools for 12 h, in the presence of Brefeldin A.",
+          "reason": "The quote appears verbatim and describes the assay being performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S164"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "CD4 + T cell stimulation assay",
+      "assay_name": "CD4 + T cell stimulation assay",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "CD4 + T cell stimulation assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S177",
+            "S178"
+          ],
+          "evidence_text": "Purified CD4 + T cells were co-cultured with untreated or YF17D-pulsed DCs at a ratio of 60:1 for 14 d; thereafter, the activated lymphocytes were harvested and evaluated for effector activity using autologous DCs as APCs. The T cells and APCs were co-cultured for 7 h, stained with CD4 antibody, permeabilized, and labeled intracellularly with anti–IFN-γ, –IL-5, –IL-13, and -CD154 antibodies.",
+          "reason": "This subsection describes an assay actually performed in the study on purified CD4+ T cells."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "CD4 positive T cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S177"
+          ],
+          "evidence_text": "Purified CD4 + T cells were co-cultured with untreated or YF17D-pulsed DCs",
+          "reason": "The assay was performed on purified CD4+ T cells."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "intracellular IFN-γ, IL-5, IL-13, and CD154 expression after co-culture and restimulation",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S177",
+            "S178"
+          ],
+          "evidence_text": "thereafter, the activated lymphocytes were harvested and evaluated for effector activity using autologous DCs as APCs. The T cells and APCs were co-cultured for 7 h, stained with CD4 antibody, permeabilized, and labeled intracellularly with anti–IFN-γ, –IL-5, –IL-13, and -CD154 antibodies.",
+          "reason": "The text explicitly states intracellular labeling for IFN-γ, IL-5, IL-13, and CD154 after co-culture."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "The T cells and APCs were co-cultured for 7 h, stained with CD4 antibody, permeabilized, and labeled intracellularly with anti–IFN-γ, –IL-5, –IL-13, and -CD154 antibodies.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S178"
+          ],
+          "evidence_text": "The T cells and APCs were co-cultured for 7 h, stained with CD4 antibody, permeabilized, and labeled intracellularly with anti–IFN-γ, –IL-5, –IL-13, and -CD154 antibodies.",
+          "reason": "The quote appears verbatim and describes the assay being performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S178"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Multiplex cytokine analysis",
+      "assay_name": "Multiplex cytokine analysis",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Multiplex cytokine analysis",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S179"
+          ],
+          "evidence_text": "analyzed for cytokine production using the Beadlyte human 22-plex Multi-cytokine Detection System",
+          "reason": "The text explicitly describes a multiplex cytokine measurement performed in this study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "DC/T cell co-culture supernatants",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S179"
+          ],
+          "evidence_text": "the supernatants were also collected and stored frozen until analyzed for cytokine production",
+          "reason": "The assay was performed on supernatants from DC/T cell co-cultures."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "cytokine production in culture supernatants measured with a 22-plex bead-based assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S179"
+          ],
+          "evidence_text": "analyzed for cytokine production using the Beadlyte human 22-plex Multi-cytokine Detection System",
+          "reason": "The passage states that cytokine production was measured in supernatants with a 22-plex multiplex system."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "At the time the lymphocytes were harvested from DC/T cell co-cultures, the supernatants were also collected and stored frozen until analyzed for cytokine production using the Beadlyte human 22-plex Multi-cytokine Detection System (Millipore) on a Bio-Plex reader (Bio-Rad Laboratories).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S179"
+          ],
+          "evidence_text": "At the time the lymphocytes were harvested from DC/T cell co-cultures, the supernatants were also collected and stored frozen until analyzed for cytokine production using the Beadlyte human 22-plex Multi-cytokine Detection System (Millipore) on a Bio-Plex reader (Bio-Rad Laboratories).",
+          "reason": "The quote appears verbatim and directly describes the assay being performed here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S179"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

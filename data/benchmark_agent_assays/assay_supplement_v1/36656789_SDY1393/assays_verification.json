@@ -1,0 +1,254 @@
+{
+  "summary": {
+    "total": 3,
+    "accept": 1,
+    "review": 2,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {
+      "aliases[]": {
+        "NOT_SUPPORTED": 2
+      }
+    }
+  },
+  "results": [
+    {
+      "assay_id": "hemagglutination inhibition assay",
+      "assay_name": "hemagglutination inhibition assay",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "hemagglutination inhibition assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S103"
+          ],
+          "evidence_text": "using a standard hemagglutination inhibition assay",
+          "reason": "The text explicitly states this assay was used in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "HAI",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S37",
+            "S38"
+          ],
+          "evidence_text": "hemagglutination inhibition assay (HAI)",
+          "reason": "The text explicitly defines HAI as the same assay."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "standard hemagglutination inhibition assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S103"
+          ],
+          "evidence_text": "using a standard hemagglutination inhibition assay",
+          "reason": "This wording refers to the same assay used in the study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "serum samples",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S103"
+          ],
+          "evidence_text": "using serum samples obtained at day 0 and 28",
+          "reason": "The text explicitly states the specimen used for this assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "influenza vaccine strain antibody titers",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S38",
+            "S128",
+            "S129"
+          ],
+          "evidence_text": "models HAI titer fold changes as an exponential function of strain‐specific baseline titers",
+          "reason": "The text explicitly links HAI to strain-specific titers, supporting antibody titer readouts."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Antibody response to vaccination was assessed using serum samples obtained at day 0 and 28 using a standard hemagglutination inhibition assay (Frey et al., 2010 ).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S103"
+          ],
+          "evidence_text": "Antibody response to vaccination was assessed using serum samples obtained at day 0 and 28 using a standard hemagglutination inhibition assay (Frey et al., 2010 ).",
+          "reason": "The quote appears verbatim and states the assay was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S103"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "flow cytometry",
+      "assay_name": "flow cytometry",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "flow cytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S108",
+            "S120"
+          ],
+          "evidence_text": "for RNA extraction and flow cytometry.\n[S109] An antibody cocktail for platelet flow cytometry analyses included",
+          "reason": "The text explicitly describes flow cytometry being performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "platelet flow cytometry analyses",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S109"
+          ],
+          "evidence_text": "platelet flow cytometry analyses",
+          "reason": "This wording refers to the same assay described in the methods."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "FACS",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "The text mentions FACS buffer and BD FACS DeVa software, but does not clearly use FACS as a name for the assay itself."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "platelet rich plasma",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S108",
+            "S118"
+          ],
+          "evidence_text": "The straw‐colored platelet rich plasma (PRP) was carefully transferred to a 15 ml conical tube for RNA extraction and flow cytometry.\n[S118] About 100 μl of PRP was mixed with 100 μl of antibody cocktail.",
+          "reason": "The assay was explicitly performed on platelet rich plasma."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "surface expression of CD40L, CD62p, and CD63 on platelets; percentage of CD41+CD40L+, CD41+CD62P+ and CD41+CD63+ particles",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S75",
+            "S124"
+          ],
+          "evidence_text": "determining the surface expression of p‐selectin (CD62p, encoded by the SELP gene), CD40 Ligand (CD40L) and CD63 by flow cytometry\n[S124] The activation status of platelets was further estimated as percentage of CD41+ CD40L+, CD41+CD62P+ and CD41+CD63+ particles.",
+          "reason": "The text explicitly states these proteins and percentages were measured by this assay."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "The activation status of platelets was further estimated as percentage of CD41+ CD40L+, CD41+CD62P+ and CD41+CD63+ particles.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S124"
+          ],
+          "evidence_text": "The activation status of platelets was further estimated as percentage of CD41+ CD40L+, CD41+CD62P+ and CD41+CD63+ particles.",
+          "reason": "The quote appears verbatim and describes a measurement performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S124"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "RNA-seq",
+      "assay_name": "RNA-seq",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "RNA-seq",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S143"
+          ],
+          "evidence_text": "RNA‐seq libraries were prepared",
+          "reason": "The text explicitly states that RNA-seq libraries were prepared in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "RNASeq",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S210"
+          ],
+          "evidence_text": "Cohort characteristics for RNASeq analysis",
+          "reason": "This wording refers to the same RNA sequencing assay used in the study."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "RNA expression analysis",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "This is a broader analytical description and is not clearly used as a name for the RNA-seq assay itself."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "platelet rich plasma",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S108",
+            "S132"
+          ],
+          "evidence_text": "The straw‐colored platelet rich plasma (PRP) was carefully transferred to a 15 ml conical tube for RNA extraction and flow cytometry. About 500 μl PRP was added to 700 μl of QIAsol lysis reagent",
+          "reason": "The assay RNA was extracted from platelet rich plasma."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "platelet transcriptome gene expression counts",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S17",
+            "S148"
+          ],
+          "evidence_text": "elucidation of the platelet transcriptome via RNA‐seq. Gene counts were determined",
+          "reason": "The text states that RNA-seq was used to characterize the platelet transcriptome and that gene counts were generated."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "RNA‐seq libraries were prepared using the Takara Bio SMARTer Stranded Total RNA‐Seq‐kit ‐ Pico Input Mammalian per the manufacturer's instructions.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S143"
+          ],
+          "evidence_text": "RNA‐seq libraries were prepared using the Takara Bio SMARTer Stranded Total RNA‐Seq‐kit ‐ Pico Input Mammalian per the manufacturer's instructions.",
+          "reason": "The quote appears verbatim and directly shows the assay was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S143"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

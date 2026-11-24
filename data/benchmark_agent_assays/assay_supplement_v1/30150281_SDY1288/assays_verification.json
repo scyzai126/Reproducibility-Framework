@@ -1,0 +1,496 @@
+{
+  "summary": {
+    "total": 6,
+    "accept": 2,
+    "review": 4,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {
+      "readouts": {
+        "NOT_SUPPORTED": 2
+      },
+      "aliases[]": {
+        "NOT_SUPPORTED": 1,
+        "CONTRADICTED": 1
+      }
+    }
+  },
+  "results": [
+    {
+      "assay_id": "IgM capture ELISA",
+      "assay_name": "IgM capture ELISA",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "IgM capture ELISA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S156"
+          ],
+          "evidence_text": "seroconversion by IgM capture ELISA",
+          "reason": "The text explicitly states that IgM capture ELISA was evaluated in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "ELISA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S156"
+          ],
+          "evidence_text": "IgM capture ELISA",
+          "reason": "ELISA refers to the same assay technique named in the study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "paired acute and convalescent sera",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S156"
+          ],
+          "evidence_text": "in paired acute and convalescent sera",
+          "reason": "The sentence directly links the IgM capture ELISA evaluation to paired acute and convalescent sera."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "anti-CHIKV IgM seroconversion",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "The text states seroconversion by IgM capture ELISA but does not explicitly specify anti-CHIKV IgM as the measured quantity."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "In addition, seroconversion by IgM capture ELISA and/or a >4‐fold increase in antibody titer by Inhibition ELISA in paired acute and convalescent sera were evaluated (Galo et al , 2017 ).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S156"
+          ],
+          "evidence_text": "In addition, seroconversion by IgM capture ELISA and/or a >4‐fold increase in antibody titer by Inhibition ELISA in paired acute and convalescent sera were evaluated (Galo et al , 2017 ).",
+          "reason": "The quote appears verbatim and shows the assay was evaluated in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S156"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Inhibition ELISA",
+      "assay_name": "Inhibition ELISA",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Inhibition ELISA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S156"
+          ],
+          "evidence_text": "a >4‐fold increase in antibody titer by Inhibition ELISA",
+          "reason": "The text explicitly states that Inhibition ELISA was used in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "ELISA",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "ELISA is a broader assay category and the text does not show it is used as a specific alias for Inhibition ELISA."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "paired acute and convalescent sera",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S156"
+          ],
+          "evidence_text": "in paired acute and convalescent sera",
+          "reason": "The specimen is explicitly linked to the Inhibition ELISA measurement."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "anti-CHIKV antibody titer increase",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S156"
+          ],
+          "evidence_text": "a >4‐fold increase in antibody titer by Inhibition ELISA",
+          "reason": "The assay is explicitly used to evaluate an increase in antibody titer."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "In addition, seroconversion by IgM capture ELISA and/or a >4‐fold increase in antibody titer by Inhibition ELISA in paired acute and convalescent sera were evaluated (Galo et al , 2017 ).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S156"
+          ],
+          "evidence_text": "In addition, seroconversion by IgM capture ELISA and/or a >4‐fold increase in antibody titer by Inhibition ELISA in paired acute and convalescent sera were evaluated (Galo et al , 2017 ).",
+          "reason": "The quote appears verbatim and states that the measurement was evaluated in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S156"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "mass cytometry",
+      "assay_name": "mass cytometry",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "mass cytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S159"
+          ],
+          "evidence_text": "mass cytometry for cellular phenotyping",
+          "reason": "The text explicitly states that mass cytometry was performed on study samples."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "CyTOF",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S26"
+          ],
+          "evidence_text": "We used CyTOF",
+          "reason": "CyTOF is explicitly used to refer to the same mass cytometry assay."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "37‐marker CyTOF antibody panel",
+          "verdict": "CONTRADICTED",
+          "evidence_sentence_ids": [
+            "S169"
+          ],
+          "evidence_text": "stained with a validated 37‐marker CyTOF antibody panel",
+          "reason": "This names a reagent panel used in the assay, not the assay itself."
+        },
+        {
+          "field_name": "aliases[2]",
+          "proposed_value": "37‐plex mass cytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S2"
+          ],
+          "evidence_text": "37‐plex mass cytometry of peripheral blood mononuclear cells ( PBMC s)",
+          "reason": "This wording refers to the same mass cytometry measurement performed in the study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S2"
+          ],
+          "evidence_text": "37‐plex mass cytometry of peripheral blood mononuclear cells ( PBMC s)",
+          "reason": "The assay is explicitly described as being performed on PBMCs."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "single-cell expression of 37 immune cell surface markers and CHIKV envelope protein E2",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S26",
+            "S166"
+          ],
+          "evidence_text": "We used CyTOF to quantify 37 immune cell surface markers and the CHIKV envelope protein E2 in each of our samples.",
+          "reason": "The text explicitly states that CyTOF quantified these markers, and CyTOF is described as single-cell resolution."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "All selected cases had an acute‐phase sample collected on days 1–2 of illness and a convalescent sample collected on days 15–17 post‐illness for serum, whole blood in PAXgene solution, and PBMCs; these were subject to transcriptomic analysis via RNA‐seq, CHIKV viral titer assays, multiplex ELISA for cytokines, and mass cytometry for cellular phenotyping as illustrated in Fig 1 .",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S159"
+          ],
+          "evidence_text": "All selected cases had an acute‐phase sample collected on days 1–2 of illness and a convalescent sample collected on days 15–17 post‐illness for serum, whole blood in PAXgene solution, and PBMCs; these were subject to transcriptomic analysis via RNA‐seq, CHIKV viral titer assays, multiplex ELISA for cytokines, and mass cytometry for cellular phenotyping as illustrated in Fig 1 .",
+          "reason": "The quote appears verbatim and explicitly states that mass cytometry was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S159"
+      },
+      "conflict_detected": true,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    },
+    {
+      "assay_id": "multiplex ELISA",
+      "assay_name": "multiplex ELISA",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "multiplex ELISA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S192"
+          ],
+          "evidence_text": "Cytokines and chemokines were measured using a multiplex ELISA‐based assay (Luminex).",
+          "reason": "The Methods section explicitly states that a multiplex ELISA-based assay was performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "multiplex ELISA‐based assay (Luminex)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S192"
+          ],
+          "evidence_text": "multiplex ELISA‐based assay (Luminex)",
+          "reason": "This wording directly refers to the same assay performed here."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "Luminex",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S192"
+          ],
+          "evidence_text": "Luminex",
+          "reason": "Here Luminex is used as the name of the multiplex ELISA-based assay."
+        },
+        {
+          "field_name": "aliases[2]",
+          "proposed_value": "multiplex ELISA‐based assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S192"
+          ],
+          "evidence_text": "multiplex ELISA‐based assay",
+          "reason": "This phrase names the same assay used to measure cytokines and chemokines."
+        },
+        {
+          "field_name": "aliases[3]",
+          "proposed_value": "multiplex ELISA-based assay (Luminex)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S192"
+          ],
+          "evidence_text": "multiplex ELISA‐based assay (Luminex)",
+          "reason": "This is the same assay designation despite hyphen variant in the proposal."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "serum",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S193",
+            "S194"
+          ],
+          "evidence_text": "All serum samples were inactivated with a UV‐C lamp (254 nm) for 10 min on ice in a biosafety‐level 3 laboratory at the University of California, Berkeley. Each sample was run in duplicate in a 96‐well microtiter plate using 25 μl serum from each patient from acute and convalescent timepoints",
+          "reason": "The assay was explicitly performed on serum samples."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "concentrations of 40 cytokines, chemokines, and growth factors measured by bead fluorescence",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "The text supports concentrations of cytokines and chemokines and mean fluorescence data, but not this exact combined summary including growth factors among the 40 analytes."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Forty analytes (cytokines and chemokines) were measured using a Luminex‐200 system and the XMap Platform (Luminex Corporation).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S195"
+          ],
+          "evidence_text": "Forty analytes (cytokines and chemokines) were measured using a Luminex‐200 system and the XMap Platform (Luminex Corporation).",
+          "reason": "The quote appears verbatim and describes the assay being performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S195"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "RNA-seq",
+      "assay_name": "RNA-seq",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "RNA-seq",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S159"
+          ],
+          "evidence_text": "transcriptomic analysis via RNA‐seq",
+          "reason": "The text explicitly states that RNA-seq was performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "whole‐blood RNA ‐seq",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S2"
+          ],
+          "evidence_text": "whole‐blood RNA ‐seq",
+          "reason": "This phrase refers to the same RNA-seq assay performed in the study."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "transcriptomic analysis via RNA‐seq",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S159"
+          ],
+          "evidence_text": "transcriptomic analysis via RNA‐seq",
+          "reason": "This wording explicitly names the same RNA-seq measurement."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "whole blood in PAXgene solution",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S159"
+          ],
+          "evidence_text": "whole blood in PAXgene solution",
+          "reason": "The sentence links whole blood in PAXgene solution to transcriptomic analysis via RNA-seq."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "whole-blood transcript abundances and gene expression levels",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S111",
+            "S222",
+            "S223"
+          ],
+          "evidence_text": "RNA‐seq enables the estimation of transcript abundances and transcript‐level differential expression analyses ... gene expression in units of FPKM was quantified ... Gene expression in units of overlapping read counts were also obtained",
+          "reason": "The text states that RNA-seq was used to estimate transcript abundances and quantify gene expression."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "All selected cases had an acute‐phase sample collected on days 1–2 of illness and a convalescent sample collected on days 15–17 post‐illness for serum, whole blood in PAXgene solution, and PBMCs; these were subject to transcriptomic analysis via RNA‐seq, CHIKV viral titer assays, multiplex ELISA for cytokines, and mass cytometry for cellular phenotyping as illustrated in Fig 1 .",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S159"
+          ],
+          "evidence_text": "All selected cases had an acute‐phase sample collected on days 1–2 of illness and a convalescent sample collected on days 15–17 post‐illness for serum, whole blood in PAXgene solution, and PBMCs; these were subject to transcriptomic analysis via RNA‐seq, CHIKV viral titer assays, multiplex ELISA for cytokines, and mass cytometry for cellular phenotyping as illustrated in Fig 1 .",
+          "reason": "The quote appears verbatim and directly states that RNA-seq was performed on study samples."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S159"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "real-time RT–PCR",
+      "assay_name": "real-time RT–PCR",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "real-time RT–PCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S155"
+          ],
+          "evidence_text": "Chikungunya cases were laboratory‐confirmed by detection of CHIKV using real‐time RT–PCR",
+          "reason": "The text explicitly states that real-time RT–PCR was used in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "real-time RT-PCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S155"
+          ],
+          "evidence_text": "real‐time RT–PCR",
+          "reason": "This wording refers to the same assay performed in the study."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "CHIKV viral titer assays",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S159",
+            "S199"
+          ],
+          "evidence_text": "CHIKV viral titer assays",
+          "reason": "This phrase names the assay section and corresponds to the RT-PCR-based viral quantification procedure described there."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "acute-phase samples",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S155"
+          ],
+          "evidence_text": "in acute‐phase samples",
+          "reason": "The text explicitly states the assay was performed on acute-phase samples."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "detection and quantification of chikungunya virus RNA copies",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S155",
+            "S200",
+            "S206"
+          ],
+          "evidence_text": "detection of CHIKV using real‐time RT–PCR ... Primers for the E1 gene were designed to quantify CHIKV copies in each patient ... For quantification of CHIKV copies",
+          "reason": "The assay is explicitly described as detecting CHIKV and quantifying CHIKV copies."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "The SuperScript III One‐Step RT‐PCR System (Invitrogen) was used for reverse transcription of viral RNA and subsequent amplification of viral complementary DNA (cDNA).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S203"
+          ],
+          "evidence_text": "The SuperScript III One‐Step RT‐PCR System (Invitrogen) was used for reverse transcription of viral RNA and subsequent amplification of viral complementary DNA (cDNA).",
+          "reason": "The quote appears verbatim and describes the assay procedure performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S203"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

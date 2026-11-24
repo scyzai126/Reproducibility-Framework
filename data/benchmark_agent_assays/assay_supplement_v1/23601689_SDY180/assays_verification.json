@@ -1,0 +1,412 @@
+{
+  "summary": {
+    "total": 6,
+    "accept": 3,
+    "review": 3,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {
+      "aliases[]": {
+        "NOT_SUPPORTED": 2
+      },
+      "name_in_paper": {
+        "NOT_SUPPORTED": 1
+      }
+    }
+  },
+  "results": [
+    {
+      "assay_id": "Microarray Assay",
+      "assay_name": "Microarray Assay",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Microarray Assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S118",
+            "S120"
+          ],
+          "evidence_text": "## Microarray Assay [methods]\n[S118] Total RNA was isolated from the whole-blood lysate",
+          "reason": "The source contains a Methods subsection titled 'Microarray Assay' and describes it being performed in this study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "whole blood",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S118"
+          ],
+          "evidence_text": "Total RNA was isolated from the whole-blood lysate",
+          "reason": "The microarray assay explicitly used RNA isolated from whole-blood lysate."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "whole-genome transcript abundance signal intensities",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S120",
+            "S121"
+          ],
+          "evidence_text": "Amplified RNA was hybridized to Illumina HT-12 V3 beadchips (48,803 probes) and scanned on an Illumina Beadstation 500. Illumina’s BeadStudio version 2 software was used to generate signal-intensity values from the scans.",
+          "reason": "The assay generated genome-wide probe measurements and corresponding signal-intensity values."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Amplified RNA was hybridized to Illumina HT-12 V3 beadchips (48,803 probes) and scanned on an Illumina Beadstation 500.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S120"
+          ],
+          "evidence_text": "Amplified RNA was hybridized to Illumina HT-12 V3 beadchips (48,803 probes) and scanned on an Illumina Beadstation 500.",
+          "reason": "The quote appears verbatim and describes the assay being performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S120"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Flow Cytometry",
+      "assay_name": "Flow Cytometry",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Flow Cytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S127",
+            "S128",
+            "S129"
+          ],
+          "evidence_text": "## Flow Cytometry",
+          "reason": "The source contains a Methods subsection explicitly describing flow cytometry performed in this study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "whole blood",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S115",
+            "S127"
+          ],
+          "evidence_text": "Blood was collected in Tempus blood RNA tubes (Life Technologies) for microarray and acid citrate dextrose tubes (ACD, BD Vacutainer) for whole-blood flow cytometry, CBC, and serum analysis of neutralizing antibodies",
+          "reason": "The text explicitly links whole-blood flow cytometry to blood collected for this assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "immune cell population abundances including plasmablasts",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S91",
+            "S92",
+            "S209"
+          ],
+          "evidence_text": "Plasmablasts were identified by polychromatic flow cytometry in whole blood samples as CD19 +/lo CD20 − CD27 + CD38 hi plasmablasts and plasma cells.",
+          "reason": "The text states that flow cytometry identified plasmablasts and plotted their abundance over time, supporting immune cell population abundance readouts including plasmablasts."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Samples were processed within 2 hr after blood draw and acquired on a BD Special Order LSRII flow cytometer.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S128"
+          ],
+          "evidence_text": "Samples were processed within 2 hr after blood draw and acquired on a BD Special Order LSRII flow cytometer.",
+          "reason": "The quoted sentence appears verbatim and describes flow cytometry acquisition performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S128"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Hemagglutinin Inhibition Assays",
+      "assay_name": "Hemagglutinin Inhibition Assays",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Hemagglutinin Inhibition Assays",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S133",
+            "S136"
+          ],
+          "evidence_text": "2-fold serial dilutions of human sera were mixed and preincubated in 96-well plates for 30 min at room temperature with 8 hemagglutinin units of virus",
+          "reason": "The methods describe a hemagglutinin inhibition assay being performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "HI",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S277"
+          ],
+          "evidence_text": "Haemagglutinin inhibition (HI)",
+          "reason": "HI is explicitly used as shorthand for the same assay."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "Hemagglutinin Inhibition and Virus-Neutralization Assays for Quantitating Seasonal Influenza Virus Neutralizing Antibodies",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "This heading names a combined section covering two assays rather than an alias specific to the hemagglutinin inhibition assay alone."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "serum",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S133"
+          ],
+          "evidence_text": "human sera",
+          "reason": "The assay is explicitly performed on sera."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "neutralizing antibody titers against influenza virus strains measured by inhibition of hemagglutination",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S133",
+            "S136"
+          ],
+          "evidence_text": "Neutralizing antibody titers were determined as the reciprocal value of the highest dilution that displayed no hemagglutinating activity.",
+          "reason": "The text states this assay determined neutralizing antibody titers based on absence of hemagglutinating activity against influenza strains."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Neutralizing antibody titers were determined as the reciprocal value of the highest dilution that displayed no hemagglutinating activity.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S136"
+          ],
+          "evidence_text": "Neutralizing antibody titers were determined as the reciprocal value of the highest dilution that displayed no hemagglutinating activity.",
+          "reason": "The quote appears verbatim and describes the assay readout used here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S136"
+      },
+      "conflict_detected": true,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    },
+    {
+      "assay_id": "Virus-neutralization assays",
+      "assay_name": "Virus-neutralization assays",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Virus-neutralization assays",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S137"
+          ],
+          "evidence_text": "Virus-neutralization assays were performed",
+          "reason": "The text explicitly states that virus-neutralization assays were performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "Hemagglutinin Inhibition and Virus-Neutralization Assays for Quantitating Seasonal Influenza Virus Neutralizing Antibodies",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "This is a section heading naming both HI and virus-neutralization assays, not an unambiguous alias for the virus-neutralization assay alone."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "VN",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S217",
+            "S277",
+            "S278"
+          ],
+          "evidence_text": "VN",
+          "reason": "The text uses VN to refer to virus neutralization titers for this assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "serum",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S115",
+            "S133"
+          ],
+          "evidence_text": "serum analysis of neutralizing antibodies",
+          "reason": "The study states serum was used for analysis of neutralizing antibodies, which includes this assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "neutralizing antibody titers against influenza virus strains",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S136",
+            "S137"
+          ],
+          "evidence_text": "Neutralizing antibody titers were determined as the reciprocal value of the highest dilution that displayed no hemagglutinating activity. Virus-neutralization assays were performed by using the same virus strains",
+          "reason": "The text states the assay quantified neutralizing antibody titers using the influenza virus strains described."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Virus-neutralization assays were performed by using the same virus strains and as reported earlier ( Steel et al., 2009 ).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S137"
+          ],
+          "evidence_text": "Virus-neutralization assays were performed by using the same virus strains and as reported earlier ( Steel et al., 2009 ).",
+          "reason": "The quote appears verbatim and explicitly indicates the assay was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S137"
+      },
+      "conflict_detected": true,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REVIEW"
+    },
+    {
+      "assay_id": "commercial immunoassays",
+      "assay_name": "commercial immunoassays",
+      "assay_identity_verdict": "NOT_SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "commercial immunoassays",
+          "verdict": "NOT_SUPPORTED",
+          "evidence_sentence_ids": [],
+          "evidence_text": null,
+          "reason": "This phrase names a vague assay category rather than a specific technique."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "antibody response to 14 pneumococcal polysaccharides",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S138"
+          ],
+          "evidence_text": "Antibody response to 14 pneumococcal polysaccharides was measured",
+          "reason": "The text explicitly states this measurement was made."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Antibody response to 14 pneumococcal polysaccharides was measured by using commercial immunoassays.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S138"
+          ],
+          "evidence_text": "Antibody response to 14 pneumococcal polysaccharides was measured by using commercial immunoassays.",
+          "reason": "The quote appears verbatim and describes a measurement performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S138"
+      },
+      "conflict_detected": false,
+      "record_verdict": "REVIEW",
+      "model_record_verdict": "REJECT"
+    },
+    {
+      "assay_id": "Multiplex Cytokine Analysis",
+      "assay_name": "Multiplex Cytokine Analysis",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Multiplex Cytokine Analysis",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S139"
+          ],
+          "evidence_text": "## Multiplex Cytokine Analysis",
+          "reason": "This Methods subsection heading identifies a measurement procedure performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "Luminex",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S140"
+          ],
+          "evidence_text": "Luminex Technology",
+          "reason": "The text uses Luminex to denote the multiplex bead-based cytokine assay technology used here."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "serum",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S139"
+          ],
+          "evidence_text": "Sera were analyzed",
+          "reason": "The assay is explicitly stated to be performed on sera."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "cytokine and chemokine concentrations measured with antibody-conjugated beads",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S139",
+            "S140"
+          ],
+          "evidence_text": "Sera were analyzed for cytokine production by using the Multiplex 42-human cytokine and chemokine panel of antibodies conjugated beads and biotin pairs (Cf. Luminex Technology, Millipore)",
+          "reason": "The assay is described as measuring cytokines and chemokines using antibody-conjugated beads."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Sera were analyzed for cytokine production by using the Multiplex 42-human cytokine and chemokine panel of antibodies conjugated beads and biotin pairs.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S139"
+          ],
+          "evidence_text": "Sera were analyzed for cytokine production by using the Multiplex 42-human cytokine and chemokine panel of antibodies conjugated beads and biotin pairs",
+          "reason": "This exact quote appears in the Methods and states the assay was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S139, except for trailing punctuation not in the source"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

@@ -58,6 +58,7 @@ changed nothing correctly -- experiment/obi_repick_fulllist/).
 Usage:
     python3 scripts/run_assay_pipeline.py <registry_dir> [--dry-run]
     python3 scripts/run_assay_pipeline.py --pmid 34252919 --sdy SDY2189 [--dry-run]
+    python3 scripts/run_assay_pipeline.py --pmid 28854372 --sdy SDY1373 --supplement [--dry-run]
 
 Example:
     python3 scripts/run_assay_pipeline.py data/benchmark_agent_assays/assay_result_v1/34252919_SDY2189 --dry-run
@@ -137,7 +138,7 @@ def _print_fields(assays: dict, obi: dict | None = None) -> None:
         print(f"      OBI: {term}  ({mapped.get('resource') or 'not mapped'})")
 
 
-def _dry_run(pmid: str, sdy: str) -> None:
+def _dry_run(pmid: str, sdy: str, supplement: bool = False) -> None:
     """Print what the chain would cost, without calling anything.
 
     A printer over assay_service.estimate_run, which does the counting. The column layout and
@@ -146,7 +147,7 @@ def _dry_run(pmid: str, sdy: str) -> None:
     has to reach the same answer or the cost gate means two different things in two places.
     """
     try:
-        estimate = estimate_run(pmid, sdy)
+        estimate = estimate_run(pmid, sdy, supplement=supplement)
     except PaperNotFoundError as exc:
         raise SystemExit(str(exc))
 
@@ -160,6 +161,14 @@ def _dry_run(pmid: str, sdy: str) -> None:
         print("  entries will carry sentence_ids: [];  quotes are checked against the whole "
               "document and")
         print("  the methods-vs-results cross-check reports 'unknown'.")
+    if supplement:
+        print(f"  supplement workflow -- main text + supplement in one document; "
+              f"{estimate['supplement_chars']:,} of those chars are the supplement.")
+        print("  round 1 reads prompts/extract_assays_supplement.txt.")
+        if estimate.get("sized_from"):
+            print(f"  this workflow has not run on this paper: rounds 2-6 are sized from the "
+                  f"main-text registry\n  {estimate['sized_from']} -- a floor, the supplement "
+                  "can only add entries.")
     print(f"registry: {estimate['registry_dir']}")
 
     by_name = {round_["name"]: round_ for round_ in estimate["rounds"]}
@@ -269,7 +278,7 @@ def report_result(result: dict) -> None:
     # Checked on the delivered registry, against the source it came from: a PDF has no sentence
     # markers, so demanding sentence_ids there printed a false WARNING on every entry.
     # The mapping says which key is an OBI label; without it every re-keyed entry warned.
-    for warning in contract_warnings(assays, expect_sentence_ids=(kind == "xml"),
+    for warning in contract_warnings(assays, expect_sentence_ids=(kind != "pdf"),
                                      obi=result.get("obi")):
         print(f"  WARNING  {warning}")
     for key, quote in (check.get("per_assay") or {}).items():
@@ -379,6 +388,17 @@ def report_result(result: dict) -> None:
         if key not in errors:
             print(f"  UNMAPPED  {key}: no OBI term")
 
+    # Supplement workflow only. An entry whose every quote is the supplement's is what that
+    # workflow exists to find, and the curated benchmark cites no supplement, so a scorer counts
+    # each one as unmatched: printed per entry, with whether the main text names it at all.
+    supplement = result.get("supplement")
+    if supplement:
+        print(f"  supplement: {supplement['chars']:,} chars, from {supplement['first_sentence_id']}")
+        for item in supplement["entries"]:
+            where = ("the main text names it too" if item["named_in_main_text"]
+                     else "not named in the main text")
+            print(f"  SUPPLEMENT  {item['key']}: evidence is in the supplement; {where}")
+
     _print_fields(assays, result.get("obi"))
     meta = result["meta"]
     print(f"\n{meta['llm_calls']} call(s) spent.")
@@ -418,11 +438,12 @@ def use_result_version(version: str, pmid: str, sdy: str) -> Path:
     return target
 
 
-async def main(pmid: str, sdy: str) -> None:
+async def main(pmid: str, sdy: str, supplement: bool = False) -> None:
     # A Claude model id in OPENAI_MODEL runs the same chain through the Anthropic adapter.
     client = AsyncAnthropicChat() if is_claude(settings.OPENAI_MODEL) else _get_client()
     try:
-        result = await assay_report(pmid, sdy, client, verify=True, correct=True)
+        result = await assay_report(pmid, sdy, client, verify=True, correct=True,
+                                    supplement=supplement)
     except PaperNotFoundError as exc:
         raise SystemExit(str(exc))
 
@@ -440,6 +461,12 @@ if __name__ == "__main__":
     parser.add_argument("--result-version", metavar="NAME", default="",
                         help="write under data/benchmark_agent_assays/NAME/ instead of the configured "
                              "result folder (e.g. assay_result_v3); the folder is created")
+    parser.add_argument("--supplement", action="store_true",
+                        help="the supplement workflow: read main text + supplement "
+                             "(data/supplements/<SDY>_<pmid>/supplement.txt) as one document, "
+                             "on prompts/extract_assays_supplement.txt; writes under "
+                             "data/benchmark_agent_assays/assay_supplement_v1/ and leaves the "
+                             "main-text registry alone")
     args = parser.parse_args()
 
     if args.registry_dir is not None:
@@ -449,10 +476,16 @@ if __name__ == "__main__":
     else:
         parser.error("give a registry directory, or --pmid/--sdy")
 
-    if args.result_version.strip():
+    if args.supplement:
+        # The supplement workflow has a root of its own; --result-version renames that one and
+        # leaves the main-text root, which the dry run sizes from, where it is.
+        if args.result_version.strip():
+            assay_service.SUPPLEMENT_REGISTRY_ROOT = (
+                assay_service.CORPUS_ROOT / args.result_version.strip())
+    elif args.result_version.strip():
         use_result_version(args.result_version.strip(), pubmed_id, study)
 
     if args.dry_run:
-        _dry_run(pubmed_id, study)
+        _dry_run(pubmed_id, study, supplement=args.supplement)
     else:
-        asyncio.run(main(pubmed_id, study))
+        asyncio.run(main(pubmed_id, study, supplement=args.supplement))

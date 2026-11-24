@@ -37,7 +37,7 @@ from pathlib import Path
 
 from openai import AsyncOpenAI
 
-from app.agent import assay_ledger, assay_trace
+from app.agent import assay_ledger, assay_supplement, assay_trace
 from app.agent.assay_consensus import consensus_with_support
 from app.agent.assay_corrector import (
     build_report as build_correction_report,
@@ -103,6 +103,11 @@ REGISTRY_ROOT = CORPUS_ROOT / RESULT_VERSION
 #: assay registry and its data-repository files together. Benchmark papers stay in REGISTRY_ROOT,
 #: so the corpus table (built from REGISTRY_ROOT alone) never picks up a new paper.
 CACHE_ROOT = _REPO_ROOT / "data" / "cache" / "assays"
+#: Where the supplement workflow (`assay_report(supplement=True)`) keeps its registries:
+#: `<pmid>_<SDY>/`, the same files the main-text workflow writes. A folder of its own, so that
+#: workflow never reads or overwrites a main-text registry, and the two can be scored side by
+#: side. Module-level and read at call time, like the roots above.
+SUPPLEMENT_REGISTRY_ROOT = CORPUS_ROOT / assay_supplement.RESULT_VERSION
 #: Marks a registry built from a PDF because the paper has no JATS XML: `<pmid>_<SDY>_pdf`.
 #: Its entries carry no sentence ids, so the folder name says so up front.
 PDF_DIR_SUFFIX = "_pdf"
@@ -315,6 +320,39 @@ def registry_dir(pubmed_id: str, study_accession: str) -> Path:
     return plain
 
 
+def supplement_registry_dir(pubmed_id: str, study_accession: str) -> Path:
+    """Where the supplement workflow writes this paper's registry."""
+    name = f"{(pubmed_id or '').strip()}_{(study_accession or '').strip()}"
+    return SUPPLEMENT_REGISTRY_ROOT / name
+
+
+def supplement_source(pubmed_id: str, study_accession: str) -> tuple[Path, str, str, int]:
+    """(xml path, title, combined text, first supplement sentence number) for one paper.
+
+    The supplement workflow's paper_source. It needs both halves and says which is missing
+    rather than quietly running the main-text workflow under another name: the JATS XML (a
+    PDF-only paper has no sentence-numbered main text to append to) and the rendered supplement
+    scripts/download_paper_supplements.py writes.
+    """
+    xml_path = locate_paper_xml(pubmed_id, study_accession)
+    if xml_path is None:
+        raise PaperNotFoundError(
+            f"The supplement workflow needs the paper's JATS XML: none under {XML_ROOT} for "
+            f"pubmed_id={pubmed_id!r} study_accession={study_accession!r}")
+    supplement_path = assay_supplement.supplement_text_path(pubmed_id, study_accession)
+    if not supplement_path.is_file():
+        raise PaperNotFoundError(
+            f"No supplement text for pubmed_id={pubmed_id!r} "
+            f"study_accession={study_accession!r}: {_display_path(supplement_path)} does not "
+            f"exist. Put the supplement files in its files/ folder and run "
+            f"scripts/download_paper_supplements.py --no-download")
+    title, main = paper_source_text(xml_path)
+    text, first = assay_supplement.combine(main, supplement_path.read_text(encoding="utf-8"))
+    if first is None:
+        raise PaperNotFoundError(f"{_display_path(supplement_path)} holds no text")
+    return xml_path, title, text, first
+
+
 def is_cached(pubmed_id: str, study_accession: str) -> bool:
     """True for a paper outside the benchmark, whose results live under CACHE_ROOT."""
     return registry_dir(pubmed_id, study_accession).parent == CACHE_ROOT
@@ -517,7 +555,7 @@ def _read_json(path: Path) -> dict | None:
         return None
 
 
-def estimate_run(pubmed_id: str, study_accession: str) -> dict:
+def estimate_run(pubmed_id: str, study_accession: str, supplement: bool = False) -> dict:
     """What the five-round chain would cost, as data. No API call, no printing.
 
     Every round runs on every request, so the only question is how many calls each will make. A
@@ -535,14 +573,32 @@ def estimate_run(pubmed_id: str, study_accession: str) -> dict:
     Raises PaperNotFoundError when neither an XML nor a PDF is on disk. The round sizes do not
     depend on which one it is -- the PDF rides along as a file part on round 1's single call
     rather than adding one -- so a PDF paper is estimated exactly as an XML paper is.
-    """
-    source = locate_paper_source(pubmed_id, study_accession)
-    if source is None:
-        raise _not_found(pubmed_id, study_accession)
-    kind, paper_path = source
 
-    out_dir = registry_dir(pubmed_id, study_accession)
-    title, source_text = paper_source(kind, paper_path)
+    `supplement=True` estimates the supplement workflow: the document is main text +
+    supplement and the registry is the one under SUPPLEMENT_REGISTRY_ROOT. Before that
+    workflow has run on a paper there is nothing of its own to size rounds 2-6 from, so they
+    are sized from the paper's main-text registry and `sized_from` names that folder -- a
+    floor, since the supplement can only add entries.
+    """
+    sized_from = None
+    if supplement:
+        paper_path, title, source_text, _ = supplement_source(pubmed_id, study_accession)
+        kind = "xml"
+        registry_out = supplement_registry_dir(pubmed_id, study_accession)
+        out_dir = registry_out
+        if not any((out_dir / name).exists()
+                   for name in ("assays_precorrection.json", "assays.json")):
+            out_dir = registry_dir(pubmed_id, study_accession)
+            sized_from = _display_path(out_dir)
+    else:
+        source = locate_paper_source(pubmed_id, study_accession)
+        if source is None:
+            raise _not_found(pubmed_id, study_accession)
+        kind, paper_path = source
+
+        out_dir = registry_dir(pubmed_id, study_accession)
+        registry_out = out_dir
+        title, source_text = paper_source(kind, paper_path)
 
     # Each round is sized from the file that round actually read last time, because round 5
     # re-keys assays.json by OBI label and the earlier files keep the extractor's wording. Sizing
@@ -627,12 +683,17 @@ def estimate_run(pubmed_id: str, study_accession: str) -> dict:
         "pubmed_id": pubmed_id,
         "study_accession": study_accession,
         "paper_source": paper_path.name,
-        "paper_source_kind": kind,
+        "paper_source_kind": assay_supplement.SOURCE_KIND if supplement else kind,
         "paper_title": title,
         "source_chars": len(source_text),
+        # Supplement workflow only: how much of the document is the supplement, and the
+        # main-text registry rounds 2-6 were sized from when this workflow has not run yet.
+        "supplement_chars": (len(source_text) - len(assay_supplement.main_text(source_text))
+                             if supplement else None),
+        "sized_from": sized_from,
         # Absolute: the CLI prints this path. The display form is what a browser should show.
-        "registry_dir": str(out_dir),
-        "registry_dir_display": _display_path(out_dir),
+        "registry_dir": str(registry_out),
+        "registry_dir_display": _display_path(registry_out),
         "has_registry": extracted is not None,
         "has_verification": verification is not None,
         "has_obi": obi is not None,
@@ -828,8 +889,16 @@ async def assay_report(
     model: str = settings.OPENAI_MODEL,
     on_progress: Callable[[dict], None] | None = None,
     extractions: int | None = None,
+    supplement: bool = False,
 ) -> dict:
     """Answer "what assays did this paper use?" in five rounds, and return the accurate set.
+
+    `supplement=True` is the supplement workflow: the same rounds over one document of main
+    text + supplement (assay_supplement.combine), round 1 on
+    prompts/extract_assays_supplement.txt, written under SUPPLEMENT_REGISTRY_ROOT. Each
+    entry's evidence then carries `in_supplement`, and the result a `supplement` block. Off by
+    default, and when off nothing below differs from before the workflow existed: same
+    prompt, same document, same folder.
 
     Round 1 extracts (prompts/extract_assays.txt, or prompts/extract_assays_pdf.txt for a
     paper that has only a PDF) `extractions` times -- EXTRACTIONS by default -- concurrently,
@@ -874,20 +943,28 @@ async def assay_report(
             on_progress(event)
         except Exception:
             logger.exception("assay progress listener raised; the run continues")
-    source = locate_paper_source(pubmed_id, study_accession)
-    if source is None:
-        raise _not_found(pubmed_id, study_accession)
-    kind, paper_path = source
+    first_supplement_id = None
+    if supplement:
+        paper_path, title, source_text, first_supplement_id = supplement_source(
+            pubmed_id, study_accession)
+        kind = "xml"
+        out_dir = supplement_registry_dir(pubmed_id, study_accession)
+    else:
+        source = locate_paper_source(pubmed_id, study_accession)
+        if source is None:
+            raise _not_found(pubmed_id, study_accession)
+        kind, paper_path = source
 
-    title, source_text = paper_source(kind, paper_path)
-    out_dir = registry_dir(pubmed_id, study_accession)
+        title, source_text = paper_source(kind, paper_path)
+        out_dir = registry_dir(pubmed_id, study_accession)
     # Every reply this run gets is kept beside the registry, written after each round so a run
     # that dies part-way keeps the rounds it paid for. Stopped in the finally below.
     trace = assay_trace.start()
     try:
         return await _run_rounds(pubmed_id, study_accession, client, verify, correct, model,
                                  _emit, kind, paper_path, title, source_text, out_dir, trace,
-                                 extractions if extractions is not None else EXTRACTIONS)
+                                 extractions if extractions is not None else EXTRACTIONS,
+                                 first_supplement_id=first_supplement_id)
     finally:
         assay_trace.stop()
         # One row in the corpus-wide ledger (data/assay_usage_ledger.csv): tokens and the
@@ -916,8 +993,16 @@ async def _extraction_attempt(label: str, call) -> tuple[str, dict | None, str |
 
 async def _run_rounds(pubmed_id, study_accession, client, verify, correct, model, _emit,
                       kind, paper_path, title, source_text, out_dir, trace,
-                      extractions: int) -> dict:
-    """assay_report's five rounds, split out so the trace's start/stop wraps them."""
+                      extractions: int, first_supplement_id: int | None = None) -> dict:
+    """assay_report's five rounds, split out so the trace's start/stop wraps them.
+
+    `first_supplement_id` is set only by the supplement workflow, and is the one thing that
+    tells the two apart here: round 1 then calls that workflow's extractor, Methods are looked
+    for in the supplement too, and the evidence is marked before the registry is written.
+    """
+    with_supplement = first_supplement_id is not None
+    extractor = (assay_supplement.extract_assays_with_supplement if with_supplement
+                 else extract_assays)
     registry_path = out_dir / "assays.json"
     minority_path = out_dir / "assays_minority.json"
     precorrection_path = out_dir / "assays_precorrection.json"
@@ -952,7 +1037,7 @@ async def _run_rounds(pubmed_id, study_accession, client, verify, correct, model
                 pdf_bytes, paper_path.name, title, client, model, run_label=label))
     else:
         def _attempt(label: str):
-            return _extraction_attempt(label, extract_assays(
+            return _extraction_attempt(label, extractor(
                 source_text, title, client, model, run_label=label))
     outcomes = [await _attempt(labels[0])]
     outcomes.extend(await asyncio.gather(*(_attempt(label) for label in labels[1:])))
@@ -1024,7 +1109,9 @@ async def _run_rounds(pubmed_id, study_accession, client, verify, correct, model
     # Says why an empty or thin extraction may be: with no Methods section (a short report whose
     # methods sit in a supplement) round 1 had only the main text to read. XML only -- a PDF's
     # text layer carries no section tags to tell.
-    if kind == "xml" and not has_methods_section(source_text):
+    methods_present = (assay_supplement.has_methods_section if with_supplement
+                       else has_methods_section)
+    if kind == "xml" and not methods_present(source_text):
         rounds["extract"]["no_methods"] = True
     _emit(round="extract", state="done", calls=n_extract, assays=len(assays),
           minority=len(minority), failed=sorted(failed))
@@ -1221,6 +1308,17 @@ async def _run_rounds(pubmed_id, study_accession, client, verify, correct, model
     # registry -- and the OBI mapping and the deliverable beside it, keyed the same way. Nothing
     # else writes it: the step-wise scripts that promoted a corrected registry on their own,
     # skipping rounds 4 and 5, were removed 2026-10-30.
+    supplement_report = None
+    if with_supplement:
+        # By code, from the sentence ids the quotes were placed at: which evidence is the
+        # supplement's. Here and not earlier, so it describes the entries as delivered --
+        # after a repair replaced a quote and after round 5 folded members together.
+        assay_supplement.mark_supplement_evidence(assays, first_supplement_id)
+        supplement_report = {
+            "first_sentence_id": f"S{first_supplement_id}",
+            "chars": len(source_text) - len(assay_supplement.main_text(source_text)),
+            "entries": assay_supplement.supplement_entries(assays, source_text),
+        }
     registry_path.write_text(json.dumps(assays, indent=2, ensure_ascii=False) + "\n",
                              encoding="utf-8")
     # The deliverable is written only when round 4 ran. Without a mapping, rounds 5 and 6 were
@@ -1251,7 +1349,10 @@ async def _run_rounds(pubmed_id, study_accession, client, verify, correct, model
         "pubmed_id": pubmed_id,
         "paper_title": title,
         "paper_source": paper_path.name,
-        "paper_source_kind": kind,
+        "paper_source_kind": assay_supplement.SOURCE_KIND if with_supplement else kind,
+        # Supplement workflow only, else None: where the supplement starts, how long it is,
+        # and the entries evidenced from it alone.
+        "supplement": supplement_report,
         # What the run was billed for, per round, summed from the trace's per-call usage.
         "usage": assay_trace.usage_summary(trace.as_json()),
         "assays": assays,

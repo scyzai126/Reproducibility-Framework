@@ -1,0 +1,63 @@
+{
+  "summary": {
+    "assays": 3,
+    "fields_re_extracted": 2,
+    "actions": {
+      "REPLACED": 1,
+      "REAFFIRMED": 1
+    },
+    "reported_not_corrected": 0
+  },
+  "results": [
+    {
+      "assay_id": "hemagglutination inhibition assay",
+      "assay_name": "hemagglutination inhibition assay",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "flow cytometry",
+      "assay_name": "flow cytometry",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "platelet flow cytometry analyses",
+            "FACS"
+          ],
+          "blind_answer": [
+            "platelet flow cytometry analyses",
+            "flow cytometry analysis"
+          ],
+          "dropped": [
+            "FACS"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "RNA-seq",
+      "assay_name": "RNA-seq",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REAFFIRMED",
+          "previous": [
+            "RNASeq",
+            "RNA expression analysis"
+          ],
+          "blind_answer": [
+            "RNASeq",
+            "RNA expression analysis"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    }
+  ]
+}

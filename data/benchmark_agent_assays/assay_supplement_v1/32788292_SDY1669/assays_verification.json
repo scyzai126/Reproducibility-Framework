@@ -1,0 +1,862 @@
+{
+  "summary": {
+    "total": 10,
+    "accept": 10,
+    "review": 0,
+    "reject": 0,
+    "errors": 0,
+    "quotes_missing": 0,
+    "quotes_misattributed": 0,
+    "quotes_absent": 0,
+    "field_issues": {}
+  },
+  "results": [
+    {
+      "assay_id": "Phospho-CyTOF analysis of peripheral blood mononuclear cells",
+      "assay_name": "Phospho-CyTOF analysis of peripheral blood mononuclear cells",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Phospho-CyTOF analysis of peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S281"
+          ],
+          "evidence_text": "Phospho-CyTOF analysis of peripheral blood mononuclear cells",
+          "reason": "This exact Methods heading identifies an assay performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "mass cytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S10"
+          ],
+          "evidence_text": "We used mass cytometry to assess immune responses to SARS-CoV-2 infection",
+          "reason": "This wording refers to the same assay performed here."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "phospho-CyTOF",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S11"
+          ],
+          "evidence_text": "we used a phospho-CyTOF panel",
+          "reason": "This is another name used for the same mass cytometry assay."
+        },
+        {
+          "field_name": "aliases[2]",
+          "proposed_value": "CyTOF assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S286"
+          ],
+          "evidence_text": "The CyTOF assay was run in 5 batches of 20 samples each.",
+          "reason": "This explicitly names the same assay as performed in the study."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S11"
+          ],
+          "evidence_text": "To characterize immune cell phenotypes in PBMCs",
+          "reason": "The assay was performed on PBMCs."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "immune cell subset frequencies and intracellular signaling or marker intensities including phospho-specific epitopes and H3K27ac",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S11",
+            "S20"
+          ],
+          "evidence_text": "we used a phospho-CyTOF panel that includes 22 cell surface markers and 12 intracellular markers against an assortment of kinases and phospho-specific epitopes of signaling molecules and H3K27ac... We next used manual gating to identify 25 immune cell subsets ... and determined whether there were changes in the frequency or signaling molecules of innate immune cell populations",
+          "reason": "The text supports measurement of immune subsets and intracellular marker/signaling intensities including phospho-epitopes and H3K27ac."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "We used mass cytometry to assess immune responses to SARS-CoV-2 infection in 52 COVID-19 patients, who were confirmed positive for viral RNA by polymerase chain reaction (PCR), and 62 age- and gender-matched healthy controls distributed between the two cohorts.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S10"
+          ],
+          "evidence_text": "We used mass cytometry to assess immune responses to SARS-CoV-2 infection in 52 COVID-19 patients, who were confirmed positive for viral RNA by polymerase chain reaction (PCR), and 62 age- and gender-matched healthy controls distributed between the two cohorts.",
+          "reason": "The quote appears verbatim and shows the assay was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S10"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "In vitro stimulation of peripheral blood leukocytes",
+      "assay_name": "In vitro stimulation of peripheral blood leukocytes",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "In vitro stimulation of peripheral blood leukocytes",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S315"
+          ],
+          "evidence_text": "In vitro stimulation of peripheral blood leukocytes",
+          "reason": "This Methods heading names a procedure performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "intracellular staining assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S44"
+          ],
+          "evidence_text": "we performed an intracellular staining assay to detect cytokine responses",
+          "reason": "This wording refers to the measurement procedure used in this assay."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "flow cytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S327",
+            "S328"
+          ],
+          "evidence_text": "analysis using BD Symphony Flow Cytometer. All flow cytometry data were analyzed using Flowjo software v10",
+          "reason": "The assay's intracellular staining data were acquired and analyzed as flow cytometry."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S44"
+          ],
+          "evidence_text": "ex vivo stimulation of PBMCs",
+          "reason": "The assay was explicitly performed on PBMCs."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "fractions of plasmacytoid dendritic cells, myeloid dendritic cells, and monocytes producing intracellular cytokines and phospho-NF-kB p65 after TLR ligand stimulation",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S46",
+            "S48",
+            "S50",
+            "S53",
+            "S191",
+            "S193",
+            "S195"
+          ],
+          "evidence_text": "there was reduced production of IFN-α in response to the TLR stimuli in the pDCs of infected individuals compared with those of healthy controls ... The TNF-α response was also significantly reduced in the pDCs of infected individuals ... the response in mDCs as well as that in monocytes were also significantly lower in response to stimulation with a bacterial ligand cocktail ... or with the viral TLR cocktail ... as measured by p65 (Ser 529 ) in the same cells ... the fraction of pDCs in PBMCs ... producing IFN-α, TNF-α, or IFN-α + TNF-α ... the fraction of mDCs in PBMCs ... producing IL-6, TNF-α, or IL-6 + TNF-α ... Fold change of NF-κβ p65 (Ser 529 ) staining in PBMCs stimulated with bacterial cocktail",
+          "reason": "The text explicitly states cytokine-producing fractions in pDCs, mDCs, and monocytes and p65 phosphorylation after stimulation."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "To test this, we performed ex vivo stimulation of PBMCs from healthy or COVID-19–infected individuals, using a mixture of synthetic TLR7 and TLR 8 (TLR7/8) and TLR3 ligands, which are known to be expressed by viruses, and we performed an intracellular staining assay to detect cytokine responses.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S44"
+          ],
+          "evidence_text": "To test this, we performed ex vivo stimulation of PBMCs from healthy or COVID-19–infected individuals, using a mixture of synthetic TLR7 and TLR 8 (TLR7/8) and TLR3 ligands, which are known to be expressed by viruses, and we performed an intracellular staining assay to detect cytokine responses.",
+          "reason": "The quote appears verbatim and directly states the assay was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S44"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Plasma protein profiling using Olink multiplex panel",
+      "assay_name": "Plasma protein profiling using Olink multiplex panel",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Plasma protein profiling using Olink multiplex panel",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S329"
+          ],
+          "evidence_text": "Plasma protein profiling using Olink multiplex panel",
+          "reason": "This exact methods heading names an assay performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "Olink multiplex inflammation panel",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S58"
+          ],
+          "evidence_text": "using the Olink multiplex inflammation panel",
+          "reason": "This wording refers to the same plasma protein profiling assay."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "Olink multiplex proximity extension assay (PEA) inflammation panel",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S335"
+          ],
+          "evidence_text": "Olink multiplex proximity extension assay (PEA) inflammation panel",
+          "reason": "This is another name used for the same assay."
+        },
+        {
+          "field_name": "aliases[2]",
+          "proposed_value": "PEA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S336"
+          ],
+          "evidence_text": "The PEA is a dual-recognition immunoassay",
+          "reason": "PEA is explicitly used as the assay abbreviation in the methods."
+        },
+        {
+          "field_name": "aliases[3]",
+          "proposed_value": "Olink multiplex panel",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S329"
+          ],
+          "evidence_text": "Plasma protein profiling using Olink multiplex panel",
+          "reason": "This wording refers to the same Olink assay."
+        },
+        {
+          "field_name": "aliases[4]",
+          "proposed_value": "multiplex Olink analysis",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S70",
+            "S71"
+          ],
+          "evidence_text": "Consistent with the multiplex Olink analysis",
+          "reason": "This phrase refers back to the same Olink multiplex measurement."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "plasma",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S58"
+          ],
+          "evidence_text": "in plasma samples from the Atlanta cohort",
+          "reason": "The assay was explicitly performed on plasma samples."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "concentrations of 92 cytokines and chemokines quantified by proximity extension immunoassay with microfluidic qPCR readout",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S58",
+            "S336",
+            "S339"
+          ],
+          "evidence_text": "measures 92 different cytokines and chemokines... The PEA is a dual-recognition immunoassay... the amplicon is then finally quantified by microfluidic qPCR",
+          "reason": "The text states the assay measured 92 cytokines and chemokines using PEA with microfluidic qPCR quantification."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Therefore, we evaluated cytokines and chemokines in plasma samples from the Atlanta cohort using the Olink multiplex inflammation panel that measures 92 different cytokines and chemokines.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S58"
+          ],
+          "evidence_text": "Therefore, we evaluated cytokines and chemokines in plasma samples from the Atlanta cohort using the Olink multiplex inflammation panel that measures 92 different cytokines and chemokines.",
+          "reason": "The quote appears verbatim and shows the assay was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S58"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "ELISA assays",
+      "assay_name": "ELISA assays",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "ELISA assays",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S341"
+          ],
+          "evidence_text": "ELISA assays",
+          "reason": "The Methods explicitly names and describes ELISA assays performed in this study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "enzyme-linked immunosorbent assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S69"
+          ],
+          "evidence_text": "enzyme-linked immunosorbent assay (ELISA)",
+          "reason": "This wording refers to the same assay used for validation in the study."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "sandwich ELISA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S479"
+          ],
+          "evidence_text": "measured by sandwich ELISA kits",
+          "reason": "This refers to the ELISA format used for the same measurements."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "plasma",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S70"
+          ],
+          "evidence_text": "in the plasma of severe and intensive care unit (ICU) COVID-19 patients",
+          "reason": "The ELISA measurements are explicitly stated to be performed on plasma."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "protein concentrations of EN-RAGE, TNFSF14, and OSM",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S341",
+            "S342",
+            "S349",
+            "S353"
+          ],
+          "evidence_text": "The Olink data for the three key cytokines, EN-RAGE, OSM and TNFSF14 were validated with ELISA. EN-RAGE and TNFSF14 were measured using the human EN-RAGE DuoSet ELISA and Human LIGHT/TNFSF14 Quantikine ELISA kits purchased from R&D Systems, respectively. OSM was measured using Human Oncostatin-M/OSM ELISA kit from Abcam which uses Simplestep ELISA technology. The concentration of unknown samples were interpolated from standards",
+          "reason": "The text explicitly states ELISA measured EN-RAGE, TNFSF14, and OSM concentrations."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Given the pronounced and unappreciated observations of the enhanced plasma concentrations of TNFSF14, EN-RAGE, and OSM and their correlation to disease severity, we used an enzyme-linked immunosorbent assay (ELISA) to independently validate these results.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S69"
+          ],
+          "evidence_text": "Given the pronounced and unappreciated observations of the enhanced plasma concentrations of TNFSF14, EN-RAGE, and OSM and their correlation to disease severity, we used an enzyme-linked immunosorbent assay (ELISA) to independently validate these results.",
+          "reason": "The quote appears verbatim and states that ELISA was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S69"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "CITE-seq single-cell RNA sequencing",
+      "assay_name": "CITE-seq single-cell RNA sequencing",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "CITE-seq single-cell RNA sequencing",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S75",
+            "S354"
+          ],
+          "evidence_text": "we used cellular indexing of transcriptomes and epitopes by sequencing (CITE-seq)",
+          "reason": "The study explicitly states that it used CITE-seq, matching the proposed assay identity."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "cellular indexing of transcriptomes and epitopes by sequencing (CITE-seq)",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S75"
+          ],
+          "evidence_text": "cellular indexing of transcriptomes and epitopes by sequencing (CITE-seq)",
+          "reason": "This phrase is explicitly used as the assay name in the study."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "CITE-seq",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S75"
+          ],
+          "evidence_text": "CITE-seq",
+          "reason": "This abbreviation explicitly refers to the same assay performed in the study."
+        },
+        {
+          "field_name": "aliases[2]",
+          "proposed_value": "cellular indexing of transcriptomes and epitopes by sequencing",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S75"
+          ],
+          "evidence_text": "cellular indexing of transcriptomes and epitopes by sequencing",
+          "reason": "This wording is explicitly used for the same assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S75"
+          ],
+          "evidence_text": "PBMC samples",
+          "reason": "The assay is explicitly described as being performed on PBMC samples."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "single-cell transcriptomes and antibody-derived surface protein measurements",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S75",
+            "S76",
+            "S78",
+            "S85"
+          ],
+          "evidence_text": "profiled the gene and protein expression in PBMC samples",
+          "reason": "The text states that CITE-seq profiled gene and protein expression, consistent with single-cell transcriptomes and antibody-derived protein measurements."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "To investigate the molecular and cellular processes that lead to the distinctive inflammatory program, we used cellular indexing of transcriptomes and epitopes by sequencing (CITE-seq) and profiled the gene and protein expression in PBMC samples of COVID-19–infected individuals.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S75"
+          ],
+          "evidence_text": "To investigate the molecular and cellular processes that lead to the distinctive inflammatory program, we used cellular indexing of transcriptomes and epitopes by sequencing (CITE-seq) and profiled the gene and protein expression in PBMC samples of COVID-19–infected individuals.",
+          "reason": "The quote appears verbatim and explicitly states that the assay was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S75"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Flow cytometry for immune cell phenotyping",
+      "assay_name": "Flow cytometry for immune cell phenotyping",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Flow cytometry for immune cell phenotyping",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S398"
+          ],
+          "evidence_text": "Flow cytometry for immune cell phenotyping",
+          "reason": "The methods explicitly name and describe this flow cytometry procedure as performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "Flow cytometry analysis of PBMCs analyzed in parallel to the CITE-seq experiment",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S229"
+          ],
+          "evidence_text": "Flow cytometry analysis of PBMCs analyzed in parallel to the CITE-seq experiment.",
+          "reason": "This wording refers to the same flow cytometry assay in Figure 5."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "Flow cytometry analysis of PBMCs",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S229"
+          ],
+          "evidence_text": "Flow cytometry analysis of PBMCs",
+          "reason": "This is a shortened wording for the same assay described in Figure 5."
+        },
+        {
+          "field_name": "aliases[2]",
+          "proposed_value": "flow cytometry",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S398"
+          ],
+          "evidence_text": "Flow cytometry for immune cell phenotyping",
+          "reason": "The assay is explicitly a flow cytometry procedure."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S229"
+          ],
+          "evidence_text": "Flow cytometry analysis of PBMCs analyzed in parallel to the CITE-seq experiment.",
+          "reason": "The figure caption explicitly states that PBMCs were analyzed by this assay."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "cell-surface marker expression including HLA-DR and CD86 on immune cell subsets",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S136",
+            "S229",
+            "S230",
+            "S401"
+          ],
+          "evidence_text": "we observed a reduction in the expression of the proteins CD86 and human leukocyte antigen class DR (HLA-DR) on monocytes and mDCs of COVID-19 patients",
+          "reason": "The text states this flow cytometry assay measured HLA-DR and CD86 protein expression on immune cell subsets."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Flow cytometry analysis of PBMCs analyzed in parallel to the CITE-seq experiment.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S229"
+          ],
+          "evidence_text": "Flow cytometry analysis of PBMCs analyzed in parallel to the CITE-seq experiment.",
+          "reason": "The quote appears verbatim and indicates the assay was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S229"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Bulk transcriptomics",
+      "assay_name": "Bulk transcriptomics",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Bulk transcriptomics",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S405"
+          ],
+          "evidence_text": "Bulk transcriptomics",
+          "reason": "This is an explicit Methods subsection heading for an assay performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "bulk RNA sequencing (RNA-seq) analysis",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S116"
+          ],
+          "evidence_text": "we performed bulk RNA sequencing (RNA-seq) analysis of PBMCs",
+          "reason": "This wording explicitly refers to the same assay."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "bulk RNA-seq",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S117"
+          ],
+          "evidence_text": "the bulk RNA-seq dataset",
+          "reason": "This is a direct alternate name for the same assay output."
+        },
+        {
+          "field_name": "aliases[2]",
+          "proposed_value": "RNA-seq",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S116"
+          ],
+          "evidence_text": "bulk RNA sequencing (RNA-seq) analysis",
+          "reason": "The text explicitly introduces RNA-seq as the assay name."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S116"
+          ],
+          "evidence_text": "analysis of PBMCs",
+          "reason": "The assay is explicitly stated to be performed on PBMCs."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "bulk gene expression levels in peripheral blood mononuclear cells",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S118",
+            "S120"
+          ],
+          "evidence_text": "We observed a strong induction of the ISGs in COVID-19 subjects compared with healthy donors in this dataset as well. Of note, we did not detect expression of genes encoding IFN-α or IFN-β",
+          "reason": "The assay measured gene expression in PBMCs."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "To investigate this further and to independently validate the observations in the CITE-seq analysis, we performed bulk RNA sequencing (RNA-seq) analysis of PBMCs in an extended group of subjects (17 COVID-19 patients and 17 healthy controls) from the same cohort.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S116"
+          ],
+          "evidence_text": "To investigate this further and to independently validate the observations in the CITE-seq analysis, we performed bulk RNA sequencing (RNA-seq) analysis of PBMCs in an extended group of subjects (17 COVID-19 patients and 17 healthy controls) from the same cohort.",
+          "reason": "The quote appears verbatim and explicitly states the assay was performed in this study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S116"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "highly sensitive ELISA enabled by single molecule array (SIMoA) technology",
+      "assay_name": "highly sensitive ELISA enabled by single molecule array (SIMoA) technology",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "highly sensitive ELISA enabled by single molecule array (SIMoA) technology",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S110"
+          ],
+          "evidence_text": "measured the concentration of IFN-α in plasma using a highly sensitive ELISA enabled by single molecule array (SIMoA) technology",
+          "reason": "The text explicitly states this assay was used in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "SIMoA technology",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S110"
+          ],
+          "evidence_text": "single molecule array (SIMoA) technology",
+          "reason": "This wording refers to the same assay named in the paper."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "plasma",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S110"
+          ],
+          "evidence_text": "IFN-α in plasma",
+          "reason": "The assay is explicitly described as measuring plasma."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "interferon-alpha concentration",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S110"
+          ],
+          "evidence_text": "measured the concentration of IFN-α",
+          "reason": "The assay directly measured IFN-α concentration."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "We thus measured the concentration of IFN-α in plasma using a highly sensitive ELISA enabled by single molecule array (SIMoA) technology.",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S110"
+          ],
+          "evidence_text": "We thus measured the concentration of IFN-α in plasma using a highly sensitive ELISA enabled by single molecule array (SIMoA) technology.",
+          "reason": "The quote appears verbatim and states the assay was performed here."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S110"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Bacterial DNA quantification by PCR",
+      "assay_name": "Bacterial DNA quantification by PCR",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Bacterial DNA quantification by PCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S416"
+          ],
+          "evidence_text": "Bacterial DNA quantification by PCR",
+          "reason": "This Methods heading explicitly names a PCR assay performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "qPCR",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S418"
+          ],
+          "evidence_text": "Bacterial DNA quantification was performed by qPCR",
+          "reason": "The text uses qPCR to refer to this bacterial DNA quantification assay."
+        },
+        {
+          "field_name": "aliases[1]",
+          "proposed_value": "PCR quantitation of bacterial 16 S ribosomal RNA (rRNA) gene product",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S168"
+          ],
+          "evidence_text": "as measured by PCR quantitation of bacterial 16 S ribosomal RNA (rRNA) gene product",
+          "reason": "This wording refers to the same bacterial DNA PCR measurement."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "plasma",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S167",
+            "S416"
+          ],
+          "evidence_text": "we measured bacterial DNA and lipopolysaccharide (LPS) in the plasma",
+          "reason": "The assay measured bacterial DNA in plasma."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "absolute copies of bacterial 16S ribosomal RNA gene DNA",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S424",
+            "S425"
+          ],
+          "evidence_text": "The absolute number of copies of the 16S rRNA gene was determined by comparison with a quantitative standard curve generated with serial dilution of a microbial DNA standard from Enterococcus faecalis (Sigma Aldrich). The average quantities of 16S copies per sample were presented as copies/ml plasma.",
+          "reason": "The assay readout is the absolute quantity of 16S rRNA gene copies in plasma."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Notably, the plasma of severe and ICU patients had significantly higher levels of bacterial DNA, as measured by PCR quantitation of bacterial 16 S ribosomal RNA (rRNA) gene product, and of LPS, as measured by a TLR4-based reporter assay ( Fig. 6, A and B ).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S168"
+          ],
+          "evidence_text": "Notably, the plasma of severe and ICU patients had significantly higher levels of bacterial DNA, as measured by PCR quantitation of bacterial 16 S ribosomal RNA (rRNA) gene product, and of LPS, as measured by a TLR4-based reporter assay ( Fig. 6, A and B ).",
+          "reason": "The quote appears verbatim and states that this PCR-based bacterial DNA measurement was performed in the study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S168, S169"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    },
+    {
+      "assay_id": "Quantitation of LPS in plasma",
+      "assay_name": "Quantitation of LPS in plasma",
+      "assay_identity_verdict": "SUPPORTED",
+      "field_verifications": [
+        {
+          "field_name": "name_in_paper",
+          "proposed_value": "Quantitation of LPS in plasma",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S426"
+          ],
+          "evidence_text": "Quantitation of LPS in plasma",
+          "reason": "This is an explicit Methods subsection heading for an assay performed in the study."
+        },
+        {
+          "field_name": "aliases[0]",
+          "proposed_value": "TLR4-based reporter assay",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S168"
+          ],
+          "evidence_text": "as measured by a TLR4-based reporter assay",
+          "reason": "The text uses this wording to refer to the same LPS measurement assay."
+        },
+        {
+          "field_name": "sample_type",
+          "proposed_value": "plasma",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S167",
+            "S426"
+          ],
+          "evidence_text": "we measured bacterial DNA and lipopolysaccharide (LPS) in the plasma",
+          "reason": "The assay is explicitly described as measuring LPS in plasma."
+        },
+        {
+          "field_name": "readouts",
+          "proposed_value": "lipopolysaccharide quantity measured by TLR4 reporter cell secreted alkaline phosphatase activity",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S426",
+            "S428",
+            "S429"
+          ],
+          "evidence_text": "The LPS in plasma was quantified using human embryonic kidney (HEK)-Blue-hTLR4 cells ... before secreted alkaline phosphatase activity was measured at 620 nm. The absolute quantities of LPS in plasma were determined by comparison with a quantitative standard curve",
+          "reason": "The methods explicitly state that secreted alkaline phosphatase activity was measured to quantify LPS."
+        },
+        {
+          "field_name": "evidence.quote",
+          "proposed_value": "Notably, the plasma of severe and ICU patients had significantly higher levels of bacterial DNA, as measured by PCR quantitation of bacterial 16 S ribosomal RNA (rRNA) gene product, and of LPS, as measured by a TLR4-based reporter assay ( Fig. 6, A and B ).",
+          "verdict": "SUPPORTED",
+          "evidence_sentence_ids": [
+            "S168"
+          ],
+          "evidence_text": "Notably, the plasma of severe and ICU patients had significantly higher levels of bacterial DNA, as measured by PCR quantitation of bacterial 16 S ribosomal RNA (rRNA) gene product, and of LPS, as measured by a TLR4-based reporter assay ( Fig. [S169] 6, A and B ).",
+          "reason": "The quoted sentence appears in the source and states that this assay was performed in the study."
+        }
+      ],
+      "quote_check": {
+        "unknown_sentence_ids": [],
+        "located_ids": [],
+        "status": "found",
+        "verdict": "SUPPORTED",
+        "detail": "quote found in sentences S168, S169"
+      },
+      "conflict_detected": false,
+      "record_verdict": "ACCEPT",
+      "model_record_verdict": "ACCEPT"
+    }
+  ]
+}

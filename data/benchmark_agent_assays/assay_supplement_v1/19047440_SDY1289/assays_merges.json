@@ -1,0 +1,45 @@
+{
+  "summary": {
+    "groups_merged": 0,
+    "entries_folded": 0,
+    "folds_blocked": 2
+  },
+  "results": [],
+  "blocked": [
+    {
+      "member": "flow cytometry of long-term vaccine-specific CD4+ T helper phenotype",
+      "kept_apart_from": "flow cytometry assay",
+      "anchor": "Flow cytometric analysis of IFN-γ/IL-2–producing activated CD4 T cells",
+      "obi_id": "OBI:0000916",
+      "obi_label": "flow cytometry assay",
+      "reason": "readouts differs: 'frequencies of activated vaccine-specific CD4 T cells expressing CD154, IL-2, and IFN-γ after peptide stimulation' vs 'surface and intracellular markers defining central memory Th1 and Th2 phenotypes among vaccine-specific CD4+ T cells'",
+      "judged": {
+        "verdict": "DIFFERENT",
+        "reason": "Record A measures short-term intracellular cytokine production/activation markers (CD154, IL-2, IFN-γ) in vaccine-specific CD4 T cells after 6 h stimulation, whereas Record B measures a different marker set defining long-term central memory Th1/Th2 phenotype after prolonged stimulation."
+      }
+    },
+    {
+      "member": "CD4 + T cell stimulation assay",
+      "kept_apart_from": "flow cytometry assay",
+      "anchor": "Flow cytometric analysis of IFN-γ/IL-2–producing activated CD4 T cells",
+      "obi_id": "OBI:0000916",
+      "obi_label": "flow cytometry assay",
+      "reason": "sample_type differs: 'peripheral blood mononuclear cells' vs 'CD4 positive T cells'",
+      "judged": {
+        "verdict": "DIFFERENT",
+        "reason": "the specimens and marker/readout panels differ, with Record A measuring activated vaccine-specific CD4 T cells in PBMCs by IL-2/IFN-γ/CD154 after peptide stimulation and Record B measuring intracellular IFN-γ/IL-5/IL-13/CD154 in isolated CD4+ T cells after co-culture/restimulation."
+      }
+    }
+  ],
+  "key_map": {
+    "gene array analysis of whole-blood and VaxDesign samples": "transcription profiling by array assay",
+    "qPCR validation": "real time reverse-transcription polymerase chain reaction assay",
+    "IL-1β ELISA": "enzyme-linked immunosorbent assay",
+    "CFSE labeling": "cell proliferation assay using carboxyfluorescein succinimidyl ester staining",
+    "cytometric bead assay": "analyte detection by flow based bead assay",
+    "Flow cytometric analysis of IFN-γ/IL-2–producing activated CD4 T cells": "flow cytometry assay",
+    "flow cytometry of long-term vaccine-specific CD4+ T helper phenotype": "flow cytometry assay (2)",
+    "CD4 + T cell stimulation assay": "flow cytometry assay (3)",
+    "Multiplex cytokine analysis": "cytometric bead array assay"
+  }
+}

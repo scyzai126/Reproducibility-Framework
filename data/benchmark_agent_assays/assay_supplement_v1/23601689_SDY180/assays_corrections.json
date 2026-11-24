@@ -1,0 +1,91 @@
+{
+  "summary": {
+    "assays": 6,
+    "fields_re_extracted": 2,
+    "actions": {
+      "REPLACED": 2
+    },
+    "reported_not_corrected": 1
+  },
+  "results": [
+    {
+      "assay_id": "Microarray Assay",
+      "assay_name": "Microarray Assay",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Flow Cytometry",
+      "assay_name": "Flow Cytometry",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Hemagglutinin Inhibition Assays",
+      "assay_name": "Hemagglutinin Inhibition Assays",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "HI",
+            "Hemagglutinin Inhibition and Virus-Neutralization Assays for Quantitating Seasonal Influenza Virus Neutralizing Antibodies"
+          ],
+          "blind_answer": [
+            "hemagglutinin inhibition",
+            "HI"
+          ],
+          "dropped": [
+            "Hemagglutinin Inhibition and Virus-Neutralization Assays for Quantitating Seasonal Influenza Virus Neutralizing Antibodies"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "Virus-neutralization assays",
+      "assay_name": "Virus-neutralization assays",
+      "record_verdict": "REVIEW",
+      "corrections": [
+        {
+          "field": "aliases",
+          "action": "REPLACED",
+          "previous": [
+            "Hemagglutinin Inhibition and Virus-Neutralization Assays for Quantitating Seasonal Influenza Virus Neutralizing Antibodies",
+            "VN"
+          ],
+          "blind_answer": [
+            "virus neutralization (VN)"
+          ],
+          "dropped": [
+            "Hemagglutinin Inhibition and Virus-Neutralization Assays for Quantitating Seasonal Influenza Virus Neutralizing Antibodies"
+          ]
+        }
+      ],
+      "reported_not_corrected": []
+    },
+    {
+      "assay_id": "commercial immunoassays",
+      "assay_name": "commercial immunoassays",
+      "record_verdict": "REVIEW",
+      "corrections": [],
+      "reported_not_corrected": [
+        {
+          "field_name": "name_in_paper",
+          "verdict": "NOT_SUPPORTED",
+          "reason": "This phrase names a vague assay category rather than a specific technique."
+        }
+      ]
+    },
+    {
+      "assay_id": "Multiplex Cytokine Analysis",
+      "assay_name": "Multiplex Cytokine Analysis",
+      "record_verdict": "ACCEPT",
+      "corrections": [],
+      "reported_not_corrected": []
+    }
+  ]
+}

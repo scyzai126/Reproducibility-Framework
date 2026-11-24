@@ -1,0 +1,117 @@
+{
+  "IgM capture ELISA": {
+    "name_in_paper": "IgM capture ELISA",
+    "standard_technique_name": "enzyme-linked immunosorbent assay",
+    "aliases": [
+      "ELISA"
+    ],
+    "sample_type": "paired acute and convalescent sera",
+    "readouts": "anti-CHIKV IgM seroconversion",
+    "generate_claim": false,
+    "source": "methods",
+    "evidence": {
+      "section": "Study participants",
+      "sentence_ids": [
+        "S156"
+      ],
+      "quote": "In addition, seroconversion by IgM capture ELISA and/or a >4‐fold increase in antibody titer by Inhibition ELISA in paired acute and convalescent sera were evaluated (Galo et al , 2017 )."
+    }
+  },
+  "Inhibition ELISA": {
+    "name_in_paper": "Inhibition ELISA",
+    "standard_technique_name": "enzyme-linked immunosorbent assay",
+    "aliases": [
+      "ELISA"
+    ],
+    "sample_type": "paired acute and convalescent sera",
+    "readouts": "anti-CHIKV antibody titer increase",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Study participants",
+      "sentence_ids": [
+        "S156"
+      ],
+      "quote": "In addition, seroconversion by IgM capture ELISA and/or a >4‐fold increase in antibody titer by Inhibition ELISA in paired acute and convalescent sera were evaluated (Galo et al , 2017 )."
+    }
+  },
+  "mass cytometry": {
+    "name_in_paper": "mass cytometry",
+    "standard_technique_name": "mass cytometry",
+    "aliases": [
+      "CyTOF",
+      "37‐marker CyTOF antibody panel",
+      "37‐plex mass cytometry"
+    ],
+    "sample_type": "peripheral blood mononuclear cells",
+    "readouts": "single-cell expression of 37 immune cell surface markers and CHIKV envelope protein E2",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Study participants",
+      "sentence_ids": [
+        "S159"
+      ],
+      "quote": "All selected cases had an acute‐phase sample collected on days 1–2 of illness and a convalescent sample collected on days 15–17 post‐illness for serum, whole blood in PAXgene solution, and PBMCs; these were subject to transcriptomic analysis via RNA‐seq, CHIKV viral titer assays, multiplex ELISA for cytokines, and mass cytometry for cellular phenotyping as illustrated in Fig 1 ."
+    }
+  },
+  "multiplex ELISA": {
+    "name_in_paper": "multiplex ELISA",
+    "standard_technique_name": "multiplex bead assay",
+    "aliases": [
+      "multiplex ELISA‐based assay (Luminex)",
+      "Luminex",
+      "multiplex ELISA‐based assay",
+      "multiplex ELISA-based assay (Luminex)"
+    ],
+    "sample_type": "serum",
+    "readouts": "concentrations of 40 cytokines, chemokines, and growth factors measured by bead fluorescence",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Multiplex ELISA",
+      "sentence_ids": [
+        "S195"
+      ],
+      "quote": "Forty analytes (cytokines and chemokines) were measured using a Luminex‐200 system and the XMap Platform (Luminex Corporation)."
+    }
+  },
+  "RNA-seq": {
+    "name_in_paper": "RNA-seq",
+    "standard_technique_name": "bulk RNA sequencing",
+    "aliases": [
+      "whole‐blood RNA ‐seq",
+      "transcriptomic analysis via RNA‐seq"
+    ],
+    "sample_type": "whole blood in PAXgene solution",
+    "readouts": "whole-blood transcript abundances and gene expression levels",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Study participants",
+      "sentence_ids": [
+        "S159"
+      ],
+      "quote": "All selected cases had an acute‐phase sample collected on days 1–2 of illness and a convalescent sample collected on days 15–17 post‐illness for serum, whole blood in PAXgene solution, and PBMCs; these were subject to transcriptomic analysis via RNA‐seq, CHIKV viral titer assays, multiplex ELISA for cytokines, and mass cytometry for cellular phenotyping as illustrated in Fig 1 ."
+    }
+  },
+  "real-time RT–PCR": {
+    "name_in_paper": "real-time RT–PCR",
+    "standard_technique_name": "real time reverse-transcription polymerase chain reaction",
+    "aliases": [
+      "real-time RT-PCR",
+      "CHIKV viral titer assays"
+    ],
+    "sample_type": "acute-phase samples",
+    "readouts": "detection and quantification of chikungunya virus RNA copies",
+    "generate_claim": true,
+    "source": "methods",
+    "evidence": {
+      "section": "Viral titer assays",
+      "sentence_ids": [
+        "S203"
+      ],
+      "quote": "The SuperScript III One‐Step RT‐PCR System (Invitrogen) was used for reverse transcription of viral RNA and subsequent amplification of viral complementary DNA (cDNA)."
+    }
+  }
+}

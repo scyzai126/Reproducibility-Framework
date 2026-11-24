@@ -222,3 +222,74 @@ def test_render_cuts_other_blocks_before_methods():
 def test_render_of_nothing_is_empty():
     assert ps.render([]) == ""
     assert ps.render([("a.pdf", "   \n  ")]) == ""
+
+
+# --- .xlsx note lines ---------------------------------------------------------------------
+
+
+def _xlsx(sheets: dict[str, list[list]]) -> bytes:
+    from openpyxl import Workbook
+
+    book = Workbook()
+    book.remove(book.active)
+    for title, rows in sheets.items():
+        sheet = book.create_sheet(title)
+        for row in rows:
+            sheet.append(row)
+    buffer = io.BytesIO()
+    book.save(buffer)
+    return buffer.getvalue()
+
+
+LEGEND = "Plasma anti-S1-IgG and IgM levels. OD450 values for ELISA."
+
+
+def test_xlsx_notes_keeps_single_cell_phrases_and_skips_headers_and_data():
+    data = _xlsx({"Sheet1": [
+        ["Information"],                                  # one word: a label, not a note
+        [LEGEND],
+        ["Age: age at admission"],
+        [None, None],
+        ["Data"],
+        ["ID", "ICU", "Clinical score", "Np load"],       # header row
+        ["HCW001", 0, 0, 3.4],                            # data row
+        [12345],                                          # a lone number
+    ]})
+    assert ps.xlsx_notes(data).splitlines() == [
+        'Notes in sheet "Sheet1".', LEGEND, "Age: age at admission."]
+
+
+def test_xlsx_notes_reads_every_sheet_and_drops_repeats():
+    data = _xlsx({"A": [["Flow cytometry data, percent of live cells"]],
+                  "B": [["Flow cytometry data, percent of live cells"],
+                        ["Cytokine data in pg per mL"]],
+                  "C": [["x", "y"], [1, 2]]})
+    assert ps.xlsx_notes(data).splitlines() == [
+        'Notes in sheet "A".', "Flow cytometry data, percent of live cells.",
+        'Notes in sheet "B".', "Cytokine data in pg per mL."]
+
+
+def test_xlsx_notes_is_cut_at_the_cap_on_a_line_boundary(monkeypatch):
+    monkeypatch.setattr(ps, "_XLSX_NOTES_CAP", 60)
+    data = _xlsx({"S": [["first note line of four words"], ["second note line of four words"]]})
+    assert ps.xlsx_notes(data).splitlines() == ['Notes in sheet "S".',
+                                                "first note line of four words."]
+
+
+def test_xlsx_notes_of_a_broken_file_is_empty():
+    assert ps.xlsx_notes(b"not a workbook") == ""
+
+
+def test_xlsx_is_readable_and_xls_is_not(tmp_path):
+    assert ps.is_readable("table.XLSX") and not ps.is_readable("table.xls")
+    assert ps.file_kind("table.xlsx") == "table"
+    path = tmp_path / "s1.xlsx"
+    path.write_bytes(_xlsx({"Sheet1": [[LEGEND]]}))
+    assert LEGEND in ps.file_text(path)
+
+
+def test_xlsx_note_reaches_the_rendered_supplement_as_its_own_sentence():
+    rendered = ps.render([("s2.xlsx", ps.xlsx_notes(_xlsx({"Sheet1": [
+        ["Age: age at admission"], [LEGEND]]})))])
+    assert "## s2.xlsx  [other]" in rendered
+    assert "] Plasma anti-S1-IgG and IgM levels." in rendered
