@@ -48,3 +48,8 @@ data/OBI/obi_assay_full_index.json
 data/OBI/obi_assay_full_embeddings.json
 data/OBI/obi_assay_pruned_index.json
 data/OBI/obi_assay_pruned_embeddings.json
+
+# Raw supplement downloads (pdf/xlsx/images, ~380MB, one file over GitHub's 100MB limit).
+# Only the rendered supplement.txt beside each folder is read by the pipeline and committed.
+# Rebuildable with scripts/download_paper_supplements.py from data/supplements/manifest.csv.
+data/supplements/*/files/
